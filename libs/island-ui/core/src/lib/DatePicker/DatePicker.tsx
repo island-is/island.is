@@ -39,13 +39,27 @@ const languageConfig = {
     formatWithTime: dateFormatWithTime.is,
     timeFormat: timeFormat.is,
     locale: is,
+    parseFallbacks: ['d.M.yyyy', 'dd/MM/yyyy', 'd/M/yyyy'],
   },
   en: {
     format: dateFormat.en,
     formatWithTime: dateFormatWithTime.en,
     timeFormat: timeFormat.en,
     locale: en,
+    parseFallbacks: ['d/M/yyyy', 'dd.MM.yyyy', 'd.M.yyyy'],
   },
+}
+
+const tryParseDate = (
+  str: string,
+  primary: string,
+  fallbacks: string[],
+): Date | null => {
+  for (const fmt of [primary, ...fallbacks]) {
+    const d = parse(str.trim(), fmt, new Date())
+    if (isValid(d)) return d
+  }
+  return null
 }
 
 export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
@@ -106,6 +120,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   )
   const [isOpen, setIsOpen] = useState(false)
   const hoverDateRef = React.useRef<Date | null>(null)
+  // Blocks onChange during typing; reset async so calendar clicks are unaffected.
+  const isTypingInInputRef = useRef(false)
   const [shouldAlignEnd, setShouldAlignEnd] = useState(false)
 
   const currentLanguage = languageConfig[locale]
@@ -207,6 +223,17 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
+                  if (isTypingInInputRef.current) {
+                    // Block intermediate parses, but allow a fully-typed range through.
+                    const arr = Array.isArray(date) ? date : []
+                    const bothValid =
+                      arr[0] instanceof Date &&
+                      !isNaN(arr[0].getTime()) &&
+                      arr[1] instanceof Date &&
+                      !isNaN(arr[1].getTime())
+                    if (!bothValid) return
+                  }
+
                   const [start, end] = date
 
                   if (start === null && end === null) {
@@ -242,37 +269,39 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     setStartDate(start)
                     setEndDate(end)
 
-                    if (end === null) {
-                      setIsOpen(true)
-                    } else {
+                    if (end !== null) {
                       hoverDateRef.current = null
                       setIsOpen(false)
-                    }
-
-                    if (end !== null && handleChange) {
-                      handleChange(start, end)
+                      if (handleChange) {
+                        handleChange(start, end)
+                      }
+                    } else {
+                      setIsOpen(true)
                     }
                   }
                 }
               : (date: any) => {
                   if (date === null) {
                     setStartDate(null)
-                    // also close when cleared via calendar UI (if ever)
                     setIsOpen(false)
                     return
                   }
                   if (date instanceof Date && !isNaN(date.getTime())) {
                     setStartDate(date)
                     handleChange && handleChange(date)
-                    // close after single-date selection
                     setIsOpen(false)
                   }
                 }
           }
           onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
             if (!range) return
+            // handleSelect also calls onChangeRaw before onChange — skip for calendar clicks.
+            if (!(e.target instanceof HTMLInputElement)) return
+            isTypingInInputRef.current = true
+            setTimeout(() => {
+              isTypingInInputRef.current = false
+            }, 0)
             const v = (e.target as HTMLInputElement).value
-            // If the input is cleared via keyboard, reset both dates
             if (!v || v.trim() === '') {
               setStartDate(null)
               setEndDate(null)
@@ -297,14 +326,17 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               e.preventDefault()
               const v = (e.target as HTMLInputElement).value
               if (!v || v.trim() === '') return
-              const parts = v.split(' - ')
+              const parts = v.split(/\s*-\s*/)
               if (parts.length !== 2) return
               const fmt = showTimeInput
                 ? currentLanguage.formatWithTime
                 : currentLanguage.format
-              const parsedStart = parse(parts[0].trim(), fmt, new Date())
-              const parsedEnd = parse(parts[1].trim(), fmt, new Date())
-              if (!isValid(parsedStart) || !isValid(parsedEnd)) return
+              const fallbacks = showTimeInput
+                ? []
+                : currentLanguage.parseFallbacks
+              const parsedStart = tryParseDate(parts[0], fmt, fallbacks)
+              const parsedEnd = tryParseDate(parts[1], fmt, fallbacks)
+              if (!parsedStart || !parsedEnd) return
               const [s, end2] =
                 parsedEnd < parsedStart
                   ? [parsedEnd, parsedStart]
@@ -394,7 +426,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
 
                 if (startDay && endDay) {
                   handleChange && handleChange(startDay, endDay)
-                  // if range completed via custom container (quick ranges etc.)
                   setIsOpen(false)
                 }
               }}
