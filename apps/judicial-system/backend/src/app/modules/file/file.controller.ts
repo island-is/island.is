@@ -473,14 +473,14 @@ export class FileController {
   )
   @Get('policeDigitalCaseFileTokenUrl')
   @ApiOkResponse({
-    type: String,
+    type: SignedUrl,
     description: 'Gets a token URL for a police digital case file',
   })
   getPoliceDigitalCaseFileTokenUrl(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @Query('policeDigitalFileId') policeDigitalFileId: string,
-  ): Promise<{ url: string }> {
+  ): Promise<SignedUrl> {
     if (!policeDigitalFileId?.trim()) {
       throw new BadRequestException('Missing policeDigitalFileId')
     }
