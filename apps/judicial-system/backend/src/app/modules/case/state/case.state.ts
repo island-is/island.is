@@ -33,6 +33,7 @@ type Transition = (
   update: UpdateCase,
   theCase: Case,
   actor: Actor,
+  nationalId?: string,
 ) => UpdateCase
 
 interface IndictmentCaseRule {
@@ -209,7 +210,12 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.CORRECTING,
       ],
       fromAppealStates: [undefined],
-      transition: (update: UpdateCase, theCase: Case, actor: Actor) => {
+      transition: (
+        update: UpdateCase,
+        theCase: Case,
+        actor: Actor,
+        nationalId?: string,
+      ) => {
         if (
           theCase.indictmentRulingDecision !==
           CaseIndictmentRulingDecision.DISMISSAL
@@ -234,6 +240,7 @@ const indictmentCaseStateMachine: Map<
             appealState: CaseAppealState.APPEALED,
             accusedPostponedAppealDate:
               update.accusedPostponedAppealDate ?? nowFactory(),
+            appealedByNationalId: nationalId,
           }
         }
 
@@ -669,6 +676,7 @@ const transitionIndictmentCase = (
   theCase: Case,
   update: UpdateCase,
   actor: Actor,
+  nationalId?: string,
 ): UpdateCase => {
   const currentState = update.state ?? theCase.state
   const currentAppealState =
@@ -707,7 +715,7 @@ const transitionIndictmentCase = (
     )
   }
 
-  return rule.transition(update, theCase, actor)
+  return rule.transition(update, theCase, actor, nationalId)
 }
 
 const transitionRequestCase = (
@@ -761,7 +769,13 @@ export const transitionCase = function (
   }
 
   if (isIndictmentCase(theCase.type)) {
-    return transitionIndictmentCase(transition, theCase, update, actor)
+    return transitionIndictmentCase(
+      transition,
+      theCase,
+      update,
+      actor,
+      user.nationalId,
+    )
   }
 
   if (isRequestCase(theCase.type)) {
