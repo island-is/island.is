@@ -63,7 +63,7 @@ export class FarmersResolver {
     return this.farmersService.getSubsidies(
       user,
       input.farmId,
-      input.after,
+      input.cursor,
       input.orderField,
       input.orderDirection,
       input.paymentCategoryId,
