@@ -25,7 +25,7 @@ export const ShipDetail = () => {
   const { data, loading, error } = useShipDetailQuery({
     variables: {
       input: {
-        id: id ?? '',
+        registrationNumber: id ?? '',
         locale: lang === 'en' ? ShipRegistryLocale.En : ShipRegistryLocale.Is,
       },
     },

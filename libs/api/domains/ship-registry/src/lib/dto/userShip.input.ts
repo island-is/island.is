@@ -4,7 +4,7 @@ import { LocaleEnum } from '../models/enums'
 @InputType('ShipRegistryUserShipInput')
 export class UserShipInput {
   @Field()
-  id!: string
+  registrationNumber!: string
 
   @Field(() => LocaleEnum, { nullable: true, defaultValue: LocaleEnum.Is })
   locale?: LocaleEnum

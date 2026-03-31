@@ -1,7 +1,7 @@
 query ShipsOverview {
   shipRegistryUserShips {
     data {
-      id
+      registrationNumber
       name
       regionAcronym
       seaworthiness {

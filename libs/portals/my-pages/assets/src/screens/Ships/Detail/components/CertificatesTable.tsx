@@ -48,7 +48,8 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
               variant={
                 value === ShipRegistryCertificateStatus.Invalid
                   ? 'red'
-                  : value === ShipRegistryCertificateStatus.ReinspectionNeeded
+                  : value === ShipRegistryCertificateStatus.ReinspectionNeeded ||
+                    value === ShipRegistryCertificateStatus.InInspectionWindow
                   ? 'yellow'
                   : 'mint'
               }
@@ -57,6 +58,8 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
                 ? formatMessage(shipsMessages.invalidTag)
                 : value === ShipRegistryCertificateStatus.ReinspectionNeeded
                 ? formatMessage(shipsMessages.reinspectionNeededTag)
+                : value === ShipRegistryCertificateStatus.InInspectionWindow
+                ? formatMessage(shipsMessages.inInspectionWindowTag)
                 : formatMessage(shipsMessages.validTag)}
             </Tag>
           ) : null,
@@ -84,6 +87,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
       <Box marginBottom={3} style={{ maxWidth: 318 }}>
         <Input
           name="cert-search"
+          aria-label={formatMessage(shipsMessages.certificatesSearchPlaceholder)}
           placeholder={formatMessage(
             shipsMessages.certificatesSearchPlaceholder,
           )}
@@ -96,7 +100,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
 
       {loading ? (
         <EmptyTable loading />
-      ) : !certificates.length ? (
+      ) : !filteredCertificates.length ? (
         <EmptyTable message={formatMessage(shipsMessages.certificatesEmpty)} />
       ) : (
         <T.Table {...getTableProps()}>
@@ -144,26 +148,9 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
                             <div className={styles.line} />
                           )}
                           <Box
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            {...(row as any).getToggleRowExpandedProps()}
-                            onClick={(e: React.MouseEvent) => {
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              if ((row as any).isExpanded) {
-                                setCollapsingRows((prev) => {
-                                  const next = new Set(prev)
-                                  next.add(row.id)
-                                  return next
-                                })
-                              }
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              ;(row as any)
-                                .getToggleRowExpandedProps()
-                                .onClick(e)
-                            }}
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
-                            cursor="pointer"
                           >
                             <Button
                               circle
@@ -174,6 +161,28 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
                               size="small"
                               type="button"
                               variant="primary"
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              {...(row as any).getToggleRowExpandedProps()}
+                              aria-label={
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                (row as any).isExpanded
+                                  ? formatMessage(shipsMessages.collapseRow)
+                                  : formatMessage(shipsMessages.expandRow)
+                              }
+                              onClick={(e: React.MouseEvent) => {
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                if ((row as any).isExpanded) {
+                                  setCollapsingRows((prev) => {
+                                    const next = new Set(prev)
+                                    next.add(row.id)
+                                    return next
+                                  })
+                                }
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                ;(row as any)
+                                  .getToggleRowExpandedProps()
+                                  .onClick(e)
+                              }}
                             />
                           </Box>
                         </T.Data>

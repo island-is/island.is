@@ -1802,4 +1802,16 @@ export const shipsMessages = defineMessages({
     id: 'sp.ships:certificates-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  inInspectionWindowTag: {
+    id: 'sp.ships:in-inspection-window-tag',
+    defaultMessage: 'Í skoðunarglugga',
+  },
+  expandRow: {
+    id: 'sp.ships:expand-row',
+    defaultMessage: 'Opna línu',
+  },
+  collapseRow: {
+    id: 'sp.ships:collapse-row',
+    defaultMessage: 'Loka línu',
+  },
 })

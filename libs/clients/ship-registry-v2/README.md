@@ -9,6 +9,7 @@ This client connects to Iceland's ship registry via X-Road to access ship inform
 ## Usage
 
 ```typescript
+import { User } from '@island.is/auth-nest-tools'
 import {
   ShipRegistryClientV2Module,
   ShipRegistryClientV2Service,

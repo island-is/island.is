@@ -3,8 +3,8 @@ import { ShipRegistryLocalizedValue } from './localizedValue.model'
 
 @ObjectType('ShipRegistryEngine')
 export class ShipRegistryEngine {
-  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
-  name?: ShipRegistryLocalizedValue
+  @Field(() => ShipRegistryLocalizedValue)
+  name!: ShipRegistryLocalizedValue
 
   @Field(() => ShipRegistryLocalizedValue, { nullable: true })
   year?: ShipRegistryLocalizedValue

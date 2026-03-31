@@ -1,7 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { TableGrid } from '@island.is/portals/my-pages/core'
-import { isDefined } from '@island.is/shared/utils'
 import { shipsMessages } from '../../../../lib/messages'
 import { ShipDetailQuery } from '../ShipDetail.generated'
 
@@ -17,6 +16,7 @@ interface Props {
 
 export const RegistrationTab = ({ ship, loading }: Props) => {
   const { formatMessage } = useLocale()
+  const renderableEngines = (ship?.engines ?? []).filter((e) => e.name?.value)
 
   return (
     <Box marginTop={4}>
@@ -160,47 +160,42 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
           ]}
         />
       )}
-      {(ship?.engines?.length ?? 0) > 0 && (
+      {renderableEngines.length > 0 && (
         <Box marginTop={6}>
-          {(ship?.engines?.length ?? 0) > 1 && (
+          {renderableEngines.length > 1 && (
             <Text variant="h5">
               {formatMessage(shipsMessages.enginesTitle)}
             </Text>
           )}
           <Stack space={2}>
-            {ship?.engines
-              ?.map((engine, i) => {
-                if (!engine.name?.value) return null
-                return (
-                  <Box key={i} marginTop={2}>
-                    <TableGrid
-                      title={`${engine.name?.label}: ${engine.name?.value}`}
-                      loading={loading}
-                      dataArray={[
-                        [
-                          {
-                            title:
-                              engine.power?.label ??
-                              formatMessage(shipsMessages.enginePower),
-                            value:
-                              formatMeasurement(
-                                engine.power?.value,
-                                engine.power?.unit,
-                              ) ?? '-',
-                          },
-                          {
-                            title:
-                              engine.year?.label ??
-                              formatMessage(shipsMessages.engineYear),
-                            value: engine.year?.value ?? '-',
-                          },
-                        ],
-                      ]}
-                    />
-                  </Box>
-                )
-              })
-              .filter(isDefined)}
+            {renderableEngines.map((engine, i) => (
+              <Box key={i} marginTop={2}>
+                <TableGrid
+                  title={`${engine.name?.label}: ${engine.name?.value}`}
+                  loading={loading}
+                  dataArray={[
+                    [
+                      {
+                        title:
+                          engine.power?.label ??
+                          formatMessage(shipsMessages.enginePower),
+                        value:
+                          formatMeasurement(
+                            engine.power?.value,
+                            engine.power?.unit,
+                          ) ?? '-',
+                      },
+                      {
+                        title:
+                          engine.year?.label ??
+                          formatMessage(shipsMessages.engineYear),
+                        value: engine.year?.value ?? '-',
+                      },
+                    ],
+                  ]}
+                />
+              </Box>
+            ))}
           </Stack>
         </Box>
       )}

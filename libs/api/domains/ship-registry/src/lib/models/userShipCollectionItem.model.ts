@@ -1,10 +1,10 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { ShipRegistrySeaworthiness } from './seaworthiness.model'
 
 @ObjectType('ShipRegistryUserShipCollectionItem')
 export class UserShipCollectionItem {
-  @Field(() => ID)
-  id!: string
+  @Field(() => Int)
+  registrationNumber!: number
 
   @Field()
   name!: string

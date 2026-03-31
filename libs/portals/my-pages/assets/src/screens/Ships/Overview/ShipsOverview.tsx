@@ -20,7 +20,7 @@ export const ShipsOverview = () => {
 
   const { data, loading, error } = useShipsOverviewQuery()
 
-  const ships = data?.shipRegistryUserShips?.data
+  const ships = data?.shipRegistryUserShips?.data ?? []
 
   return (
     <IntroWrapperV2
@@ -33,17 +33,17 @@ export const ShipsOverview = () => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && ships && ships.length === 0 && <EmptyState />}
-      {!loading && !error && ships && ships.length > 0 && (
+      {!loading && !error && ships.length === 0 && <EmptyState />}
+      {!loading && !error && ships.length > 0 && (
         <Stack space={2}>
           {ships.map((ship) => (
             <ActionCard
-              key={ship.id}
+              key={ship.registrationNumber}
               heading={ship.name}
               text={
                 ship.regionAcronym
-                  ? `${ship.id}, ${ship.regionAcronym}`
-                  : ship.id
+                  ? `${ship.registrationNumber}, ${ship.regionAcronym}`
+                  : String(ship.registrationNumber)
               }
               tag={
                 ship.seaworthiness
@@ -62,7 +62,7 @@ export const ShipsOverview = () => {
                 icon: 'arrowForward',
                 onClick: () =>
                   navigate(
-                    AssetsPaths.AssetsShipDetail.replace(':id', ship.id),
+                    AssetsPaths.AssetsShipDetail.replace(':id', String(ship.registrationNumber)),
                   ),
               }}
             />

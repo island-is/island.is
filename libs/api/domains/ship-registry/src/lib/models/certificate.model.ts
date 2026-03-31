@@ -1,7 +1,7 @@
 import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { ShipRegistryCertificateStatus } from './enums'
 
-@ObjectType('ShipRegistryCertificate')
+@ObjectType()
 export class ShipRegistryCertificate {
   @Field()
   name!: string

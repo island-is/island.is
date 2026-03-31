@@ -10,11 +10,11 @@ registerEnumType(LocaleEnum, {
 })
 
 export enum ShipRegistryCertificateStatus {
-  Valid = 'VALID',
-  Invalid = 'INVALID',
-  ReinspectionNeeded = 'REINSPECTION_NEEDED',
-  InInspectionWindow = 'IN_INSPECTION_WINDOW',
-  Unknown = 'UNKNOWN',
+  Valid = 'valid',
+  Invalid = 'invalid',
+  ReinspectionNeeded = 'reinspectionNeeded',
+  InInspectionWindow = 'inInspectionWindow',
+  Unknown = 'unknown',
 }
 
 registerEnumType(ShipRegistryCertificateStatus, {

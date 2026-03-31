@@ -9,8 +9,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
 import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
-import { LocaleEnum } from './models/enums'
-import { ShipRegistryCertificateStatus } from './models/enums'
+import { LocaleEnum, ShipRegistryCertificateStatus } from './models/enums'
 import { parseDate } from './utils'
 import format from 'date-fns/format'
 
@@ -61,7 +60,7 @@ export const mapToUserShipCollectionItem = (
     : undefined
 
   return {
-    id: ship.shipRegistrationNumber,
+    registrationNumber: Number(ship.shipRegistrationNumber),
     name: ship.shipName,
     regionAcronym: ship.regionalAcronym ?? undefined,
     seaworthiness: validTo
@@ -88,7 +87,7 @@ export const mapToUserShipFromDetails = (
 
   const seaworthinessDate =
     info.seaworthyExpiryDate?.value && info.seaworthyExpiryDate?.value !== '-'
-      ? new Date(info.seaworthyExpiryDate.value)
+      ? parseDate(info.seaworthyExpiryDate.value)
       : undefined
 
   const fisheryName = toLocalizedValue(info.fishery, locale)
@@ -105,7 +104,7 @@ export const mapToUserShipFromDetails = (
     hullMaterial: toLocalizedValue(info.hullMaterial, locale),
     classificationSociety: toLocalizedValue(info.classificationSociety, locale),
     phoneOnBoard: toLocalizedValue(info.phoneOnBoardShip, locale),
-    isSeaworthy: info.seaworthyExpiryDate?.value !== '-',
+    isSeaworthy: seaworthinessDate != null && seaworthinessDate > new Date(),
     seaworthinessCertificateValidTo: toLocalizedValue(
       seaworthinessDate
         ? {
@@ -137,25 +136,27 @@ export const mapToUserShipFromDetails = (
       : undefined,
     engines: ship.mainEngines
       ?.map((engine) => {
-        const e = {
-          name: toLocalizedValue(engine.engineName, locale),
+        const name = toLocalizedValue(engine.engineName, locale)
+        if (!name) return undefined
+        return {
+          name,
           year: toLocalizedValue(engine.engineYear, locale),
           power: toLocalizedValue(engine.enginePower, locale),
         }
-        return Object.values(e).some(Boolean) ? e : undefined
       })
       .filter(isDefined),
     certificates: ship.shipCertificateDetails
       ?.map((cert) => {
-        if (!cert.issueDate) return undefined
+        const issueDate = cert.issueDate ? parseDate(cert.issueDate) : null
+        if (!issueDate || !cert.certificateTypeName) return undefined
         return {
           name: cert.certificateTypeName,
           status: mapCertificateStatus(cert.certificateIssueStatusEnum),
-          issueDate: parseDate(cert.issueDate),
+          issueDate,
           validToDate:
-            cert.validToDate !== '' ? parseDate(cert.validToDate) : undefined,
+            cert.validToDate !== '' ? parseDate(cert.validToDate) ?? undefined : undefined,
           extensionDate: cert.extensionDate
-            ? parseDate(cert.extensionDate)
+            ? parseDate(cert.extensionDate) ?? undefined
             : undefined,
         }
       })
