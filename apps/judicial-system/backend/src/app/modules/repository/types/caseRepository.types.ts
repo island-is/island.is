@@ -38,7 +38,6 @@ export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
-  { model: AppealCase, as: 'appealCase', required: false },
   {
     model: AppealCase,
     as: 'appealCase',
