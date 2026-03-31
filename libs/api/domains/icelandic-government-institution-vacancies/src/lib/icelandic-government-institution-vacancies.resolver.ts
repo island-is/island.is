@@ -132,12 +132,14 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     input: IcelandicGovernmentInstitutionVacanciesInput,
     user?: FeatureFlagUser,
   ) {
-    // Check feature flag to determine which client to use
-    const useNewApi = await this.featureFlagClient.getValue(
-      Features.useNewVacancyApi,
-      false,
-      user,
-    )
+    // Check override, then feature flag, to determine which client to use
+    const useNewApi =
+      input.useNewApiOverride ??
+      (await this.featureFlagClient.getValue(
+        Features.useNewVacancyApi,
+        false,
+        user,
+      ))
 
     let errorOccurred = false
     let mappedVacancies
@@ -158,6 +160,10 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         // request parameters inside this loop.
         // eslint-disable-next-line no-constant-condition
         while (true) {
+          this.logger.info('Calling Elfur API: v1VacancyGetVacancyListGet', {
+            rowOffset,
+            fetchSize: pageSize,
+          })
           const page = (await this.elfurApi.v1VacancyGetVacancyListGet({
             rowOffset,
             fetchSize: pageSize,
@@ -201,6 +207,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       let vacancies: DefaultApiVacanciesListItem[] = []
 
       try {
+        this.logger.info('Calling X-Road API: vacanciesGet')
         vacancies = (await this.xRoadApi.vacanciesGet({
           accept: VacanciesGetAcceptEnum.Json,
           language: mapToXRoadListLanguageEnum(input.language),
@@ -345,19 +352,25 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     id: string,
     language?: VacancyLanguageEnum,
     user?: FeatureFlagUser,
+    useNewApiOverride?: boolean,
   ) {
-    // Check feature flag to determine which client to use
-    const useNewApi = await this.featureFlagClient.getValue(
-      Features.useNewVacancyApi,
-      false,
-      user,
-    )
+    // Check override, then feature flag, to determine which client to use
+    const useNewApi =
+      useNewApiOverride ??
+      (await this.featureFlagClient.getValue(
+        Features.useNewVacancyApi,
+        false,
+        user,
+      ))
 
     let vacancy
 
     if (useNewApi) {
       // Use new Elfur API (Financial Management Authority)
       try {
+        this.logger.info('Calling Elfur API: v1VacancyGetVacancyGet', {
+          vacancyId: id,
+        })
         const item = (await this.elfurApi.v1VacancyGetVacancyGet({
           vacancyId: id,
         })) as VacancyResponseDto
@@ -400,6 +413,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       }
 
       try {
+        this.logger.info('Calling X-Road API: vacanciesVacancyIdGet', {
+          vacancyId: numericId,
+        })
         const item = (await this.xRoadApi.vacanciesVacancyIdGet({
           vacancyId: numericId,
           accept: VacanciesVacancyIdGetAcceptEnum.Json,
@@ -471,8 +487,16 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
     const featureFlagUser = this.getFeatureFlagUser(req)
 
+    this.logger.info('Resolving vacancy by id', {
+      id: input.id,
+      useNewApiOverride: input.useNewApiOverride ?? 'none',
+    })
+
     // The prefix of the id determines what service to call
     if (input.id.startsWith(CMS_ID_PREFIX)) {
+      this.logger.info('Fetching vacancy from CMS', {
+        id: input.id.slice(CMS_ID_PREFIX.length),
+      })
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
       const id = input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
@@ -481,15 +505,18 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         id,
         input.language,
         featureFlagUser,
+        input.useNewApiOverride,
       )
     }
 
     // If no prefix is present then we determine what service to call depending on the feature flag and id format
-    const useNewApi = await this.featureFlagClient.getValue(
-      Features.useNewVacancyApi,
-      false,
-      featureFlagUser,
-    )
+    const useNewApi =
+      input.useNewApiOverride ??
+      (await this.featureFlagClient.getValue(
+        Features.useNewVacancyApi,
+        false,
+        featureFlagUser,
+      ))
 
     if (useNewApi) {
       // New API: first try CMS, then external service
@@ -499,6 +526,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
           input.id,
           input.language,
           featureFlagUser,
+          input.useNewApiOverride,
         )
       }
       return vacancyFromCms
@@ -512,6 +540,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         input.id,
         input.language,
         featureFlagUser,
+        input.useNewApiOverride,
       )
     }
   }
