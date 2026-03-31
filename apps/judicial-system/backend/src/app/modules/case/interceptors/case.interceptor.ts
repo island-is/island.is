@@ -7,6 +7,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -162,6 +163,36 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
+const getDefenceUserDefendants = (
+  theCase: Case,
+  user: User,
+): Defendant[] | undefined => {
+  const myDefendants = theCase.defendants?.filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(user.nationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+
+  if (!myDefendants?.length) {
+    return theCase.defendants
+  }
+
+  const allCancelledOrDismissed = myDefendants.every((defendant) =>
+    DefendantEventLog.getEventLogByEventType(
+      [
+        DefendantEventType.INDICTMENT_CANCELLED,
+        DefendantEventType.INDICTMENT_DISMISSED,
+      ],
+      defendant.eventLogs,
+    ),
+  )
+
+  return allCancelledOrDismissed ? myDefendants : theCase.defendants
+}
+
 const transformCase = (
   theCase: Case,
   user: User | undefined,
@@ -169,7 +200,10 @@ const transformCase = (
   return {
     ...theCase.toJSON(),
     defendants: transformDefendants({
-      defendants: theCase.defendants,
+      defendants:
+        user && isDefenceUser(user)
+          ? getDefenceUserDefendants(theCase, user)
+          : theCase.defendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),

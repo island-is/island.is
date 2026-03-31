@@ -1,7 +1,10 @@
 import { useContext } from 'react'
 
+import { isDefenceUser } from '@island.is/judicial-system/types'
+
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { FormContext } from '../FormProvider/FormProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -18,6 +21,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     onProsecutorClick,
   } = props
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const {
     defendants,
     cancelledAndDismissedDefendants,
@@ -40,9 +44,16 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     showItem,
   } = useInfoCardItems()
 
-  const excludedDefendants = workingCase.defendants?.filter(
+  const allCancelledOrDismissed = workingCase.defendants?.every(
     (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
   )
+
+  const excludedDefendants =
+    isDefenceUser(user) && allCancelledOrDismissed
+      ? []
+      : workingCase.defendants?.filter(
+          (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
+        )
 
   return (
     <InfoCard

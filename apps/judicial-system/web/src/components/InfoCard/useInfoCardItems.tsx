@@ -11,7 +11,7 @@ import {
   getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isRequestCase } from '@island.is/judicial-system/types'
+import { isDefenceUser, isRequestCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
@@ -39,7 +39,7 @@ import * as styles from './InfoCard.css'
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
 
   // helper for info card items. If items have no values they will have [{falsy value}]
   const showItem = (item: Item) =>
@@ -58,8 +58,14 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants?.filter(
-      (defendant) => defendant.indictmentCancelledOrDismissedState === null,
+    const allCancelledOrDismissed = workingCase.defendants?.every(
+      (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
+    )
+
+    const defendants = workingCase.defendants?.filter((defendant) =>
+      isDefenceUser(user) && allCancelledOrDismissed
+        ? true
+        : defendant.indictmentCancelledOrDismissedState === null,
     )
     const isMultipleDefendants = defendants && defendants.length > 1
 
