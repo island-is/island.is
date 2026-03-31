@@ -48,7 +48,8 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
               variant={
                 value === ShipRegistryCertificateStatus.Invalid
                   ? 'red'
-                  : value === ShipRegistryCertificateStatus.ReinspectionNeeded ||
+                  : value ===
+                      ShipRegistryCertificateStatus.ReinspectionNeeded ||
                     value === ShipRegistryCertificateStatus.InInspectionWindow
                   ? 'yellow'
                   : 'mint'
@@ -87,7 +88,9 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
       <Box marginBottom={3} style={{ maxWidth: 318 }}>
         <Input
           name="cert-search"
-          aria-label={formatMessage(shipsMessages.certificatesSearchPlaceholder)}
+          aria-label={formatMessage(
+            shipsMessages.certificatesSearchPlaceholder,
+          )}
           placeholder={formatMessage(
             shipsMessages.certificatesSearchPlaceholder,
           )}

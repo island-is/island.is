@@ -32,7 +32,10 @@ export class UserShipsService {
     registrationNumber: string,
     locale?: LocaleEnum,
   ): Promise<UserShip | null> {
-    const ship = await this.shipRegistryClientV2Service.getShipDetails(user, registrationNumber)
+    const ship = await this.shipRegistryClientV2Service.getShipDetails(
+      user,
+      registrationNumber,
+    )
 
     if (!ship) {
       return null

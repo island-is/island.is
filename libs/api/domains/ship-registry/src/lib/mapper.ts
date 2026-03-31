@@ -154,7 +154,9 @@ export const mapToUserShipFromDetails = (
           status: mapCertificateStatus(cert.certificateIssueStatusEnum),
           issueDate,
           validToDate:
-            cert.validToDate !== '' ? parseDate(cert.validToDate) ?? undefined : undefined,
+            cert.validToDate !== ''
+              ? parseDate(cert.validToDate) ?? undefined
+              : undefined,
           extensionDate: cert.extensionDate
             ? parseDate(cert.extensionDate) ?? undefined
             : undefined,

@@ -62,7 +62,10 @@ export const ShipsOverview = () => {
                 icon: 'arrowForward',
                 onClick: () =>
                   navigate(
-                    AssetsPaths.AssetsShipDetail.replace(':id', String(ship.registrationNumber)),
+                    AssetsPaths.AssetsShipDetail.replace(
+                      ':id',
+                      String(ship.registrationNumber),
+                    ),
                   ),
               }}
             />
