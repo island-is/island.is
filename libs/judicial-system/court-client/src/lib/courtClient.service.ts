@@ -1,4 +1,9 @@
-import https, { Agent } from 'https'
+import https from 'https'
+import {
+  Agent as UndiciAgent,
+  fetch as undiciFetch,
+  RequestInit as UndiciRequestInit,
+} from 'undici'
 
 import {
   BadGatewayException,
@@ -32,8 +37,6 @@ import {
   CreateThingbokApi,
   CreateThingbokRequest,
   CredentialsData,
-  FetchParams,
-  RequestContext,
   UpdateCaseWithDefendantApi,
   UpdateCaseWithDefendantData,
   UpdateCaseWithProsecutorApi,
@@ -58,14 +61,6 @@ export type UpdateCaseWithDefendantArgs = Omit<
   UpdateCaseWithDefendantData,
   'authenticationToken'
 >
-
-const injectAgentMiddleware = (agent: Agent) => {
-  return async (context: RequestContext): Promise<FetchParams> => {
-    const { url, init } = context
-
-    return { url, init: { ...init, agent } } as FetchParams
-  }
-}
 
 const stripResult = (str: string): string => {
   if (str[0] !== '"') {
@@ -93,6 +88,57 @@ interface ConnectionState {
 }
 
 const MAX_ERRORS_BEFORE_RELOGIN = 5
+
+interface RequestInitWithDispatcher extends RequestInit {
+  dispatcher: UndiciAgent
+}
+
+const resolveRequestUrl = (input: RequestInfo | URL): string => {
+  if (typeof input === 'string') {
+    return input
+  }
+
+  if (input instanceof URL) {
+    return input.toString()
+  }
+
+  return input.url
+}
+
+const toWebResponse = async (
+  response: Awaited<ReturnType<typeof undiciFetch>>,
+): Promise<Response> => {
+  return new Response(await response.arrayBuffer(), {
+    status: response.status,
+    statusText: response.statusText,
+    headers: Object.fromEntries(response.headers.entries()),
+  })
+}
+
+const fetchWithDispatcher = async (
+  input: RequestInfo | URL,
+  init: RequestInit | undefined,
+  dispatcher: UndiciAgent,
+): Promise<Response> => {
+  const initWithDispatcher: RequestInitWithDispatcher = {
+    ...(init ?? {}),
+    dispatcher,
+  }
+
+  const response = await undiciFetch(
+    resolveRequestUrl(input),
+    initWithDispatcher as UndiciRequestInit,
+  )
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: await response.text(),
+    }
+  }
+
+  return toWebResponse(response)
+}
 
 export abstract class CourtClientService {
   abstract createCase(courtId: string, args: CreateCaseArgs): Promise<string>
@@ -145,7 +191,14 @@ export class CourtClientServiceImplementation implements CourtClientService {
       ca: config.clientPem,
       rejectUnauthorized: false,
     })
-    const middleware = agent ? [{ pre: injectAgentMiddleware(agent) }] : []
+    const dispatcher = new UndiciAgent({
+      connect: {
+        cert: config.clientCert,
+        key: config.clientKey,
+        ca: config.clientPem,
+        rejectUnauthorized: false,
+      },
+    })
     const defaultHeaders = { 'X-Road-Client': config.clientId }
     const basePath = createXRoadAPIPath(
       config.tlsBasePathWithEnv,
@@ -154,20 +207,9 @@ export class CourtClientServiceImplementation implements CourtClientService {
       config.courtApiPath,
     )
     const providerConfiguration = new Configuration({
-      fetchApi: (input, init) =>
-        fetch(input, init).then(async (res) => {
-          if (res.ok) {
-            return res
-          }
-
-          throw {
-            status: res.status,
-            message: await res.text(),
-          }
-        }),
+      fetchApi: (input, init) => fetchWithDispatcher(input, init, dispatcher),
       basePath,
       headers: defaultHeaders,
-      middleware,
     })
 
     this.authenticateUserApi = new AuthenticateUserApi(providerConfiguration)
