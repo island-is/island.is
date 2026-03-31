@@ -7,8 +7,6 @@ export class SpousalTaxCardEligibility {
   canApply?: boolean
 
   @Field(() => String, { nullable: true })
-  reasonNotAllowed?: string | null
-
+  reasonNotAllowed?: string
   @Field(() => [YearWithMonths], { nullable: true })
-  allowedYearMonths?: YearWithMonths[] | null
-}
+  allowedYearMonths?: YearWithMonths[]}

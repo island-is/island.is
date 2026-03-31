@@ -294,6 +294,7 @@ export class SocialInsuranceService {
       spouseEligibility: spouseEligibility
         ? {
             ...spouseEligibility,
+            reasonNotAllowed: spouseEligibility.reasonNotAllowed ?? undefined,
             allowedYearMonths: toYearWithMonths(
               spouseEligibility.allowedYearMonths,
             ),
