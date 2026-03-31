@@ -13,11 +13,15 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   ) {}
 
   private paymentTypesOverviewApiWithAuth = (user: User) =>
-    this.paymentTypesOverviewApi.withMiddleware(new AuthMiddleware(user as Auth))
+    this.paymentTypesOverviewApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   async getPaymentTypesOverview(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn[] | null> {
+  ): Promise<
+    TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn[] | null
+  > {
     return this.paymentTypesOverviewApiWithAuth(user)
       .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet({})
       .catch((error) => {
@@ -28,7 +32,10 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
 
   async getBenefitChildrenInformation(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn[] | null> {
+  ): Promise<
+    | TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn[]
+    | null
+  > {
     return this.paymentTypesOverviewApiWithAuth(user)
       .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet({})
       .catch((error) => {
