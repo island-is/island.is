@@ -556,7 +556,6 @@ const caseReceivedByPrisonAdmin = (
   )
 }
 
-
 export const indictmentCaseEventFunctions = [
   createCase,
   caseSentToCourt,
