@@ -1169,8 +1169,8 @@ export class InternalCaseService {
       .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        theCase.appealReceivedByCourtDate,
+        theCase.appealCase?.appealCaseNumber,
+        theCase.appealCase?.appealReceivedByCourtDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1191,15 +1191,15 @@ export class InternalCaseService {
       .updateAppealCaseWithAssignedRoles(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        theCase.appealAssistant?.nationalId,
-        theCase.appealAssistant?.name,
-        theCase.appealJudge1?.nationalId,
-        theCase.appealJudge1?.name,
-        theCase.appealJudge2?.nationalId,
-        theCase.appealJudge2?.name,
-        theCase.appealJudge3?.nationalId,
-        theCase.appealJudge3?.name,
+        theCase.appealCase?.appealCaseNumber,
+        theCase.appealCase?.appealAssistant?.nationalId,
+        theCase.appealCase?.appealAssistant?.name,
+        theCase.appealCase?.appealJudge1?.nationalId,
+        theCase.appealCase?.appealJudge1?.name,
+        theCase.appealCase?.appealJudge2?.nationalId,
+        theCase.appealCase?.appealJudge2?.name,
+        theCase.appealCase?.appealJudge3?.nationalId,
+        theCase.appealCase?.appealJudge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1231,9 +1231,9 @@ export class InternalCaseService {
       .updateAppealCaseWithConclusion(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        Boolean(theCase.appealRulingModifiedHistory),
-        theCase.appealRulingDecision,
+        theCase.appealCase?.appealCaseNumber,
+        Boolean(theCase.appealCase?.appealRulingModifiedHistory),
+        theCase.appealCase?.appealRulingDecision,
         appealRulingDate,
       )
       .then(() => ({ delivered: true }))
