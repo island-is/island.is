@@ -240,6 +240,13 @@ export const TypeSelectionScreen = ({
       : allOptions.filter((o) => o.value === ApplicationTypes.AD)
   }, [regulationsEnabled, f])
 
+  // Lock the type selection once the user has progressed past this screen
+  // (i.e. downstream data like department or a regulation draft exists).
+  const hasDownstreamData = !!(
+    getValueViaPath(application.answers, InputFields.advert.department) ||
+    getValueViaPath(application.answers, 'regulation.draftId')
+  )
+
   const isRegulationType =
     selected === ApplicationTypes.BASE_REGULATION ||
     selected === ApplicationTypes.AMENDING_REGULATION
@@ -262,8 +269,13 @@ export const TypeSelectionScreen = ({
               borderColor={selected === option.value ? 'blue300' : 'blue200'}
               borderWidth="standard"
               padding={3}
-              cursor="pointer"
-              onClick={() => handleSelect(option.value)}
+              cursor={hasDownstreamData ? undefined : 'pointer'}
+              opacity={hasDownstreamData && selected !== option.value ? 0.5 : 1}
+              onClick={() => {
+                if (!hasDownstreamData) {
+                  handleSelect(option.value)
+                }
+              }}
             >
               <RadioButton
                 id={`applicationType-${option.value}`}
@@ -271,6 +283,7 @@ export const TypeSelectionScreen = ({
                 label={option.label}
                 value={option.value}
                 checked={selected === option.value}
+                disabled={hasDownstreamData}
                 large
               />
               <Box marginTop={1} paddingLeft={4}>

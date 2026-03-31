@@ -263,15 +263,15 @@ const OJOITemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(90),
           onEntry: [
             defineTemplateApi({
+              action: TemplateApiActions.syncRegulationDraft,
+              shouldPersistToExternalData: false,
+              throwOnError: true,
+            }),
+            defineTemplateApi({
               action: TemplateApiActions.postApplication,
               shouldPersistToExternalData: true,
               externalDataId: 'successfullyPosted',
-              throwOnError: false,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.syncRegulationDraft,
-              shouldPersistToExternalData: false,
-              throwOnError: false,
+              throwOnError: true,
             }),
           ],
           actionCard: {
