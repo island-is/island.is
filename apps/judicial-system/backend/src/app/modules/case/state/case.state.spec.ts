@@ -1218,7 +1218,7 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('appeal %s', (type) => {
-    const allowedFromStates = [CaseState.COMPLETED]
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [undefined]
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1490,7 +1490,7 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('withdraw appeal %s', (type) => {
-    const allowedFromStates = [CaseState.COMPLETED]
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [
       CaseAppealState.APPEALED,
       CaseAppealState.RECEIVED,
@@ -1663,7 +1663,7 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('receive appeal %s', (type) => {
-    const allowedFromStates = [CaseState.COMPLETED]
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [CaseAppealState.APPEALED]
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1827,7 +1827,7 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('complete appeal %s', (type) => {
-    const allowedFromStates = [CaseState.COMPLETED]
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [
       CaseAppealState.RECEIVED,
       CaseAppealState.WITHDRAWN,
@@ -2000,7 +2000,7 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('reopen appeal %s', (type) => {
-    const allowedFromStates = [CaseState.COMPLETED]
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [CaseAppealState.COMPLETED]
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
