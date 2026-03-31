@@ -116,7 +116,7 @@ const Appeals: CustomScreen<AppealsProps> = ({
       if (!appeal || !appeal.verdictDate) return null
 
       const today = new Date()
-      const isInFuture = today > new Date(appeal.verdictDate)
+      const isInFuture = today < new Date(appeal.verdictDate)
       const formattedDate = format(
         new Date(appeal.verdictDate ?? ''),
         'd. MMMM yyyy',
