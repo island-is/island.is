@@ -1,6 +1,8 @@
 import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
 import { GetUnemploymentApplicationOverviewQuery } from './Status.generated'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
+import { useLocale } from '@island.is/localization'
+import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 
 type OverviewRow = NonNullable<
   GetUnemploymentApplicationOverviewQuery['vmstApplicationsUnemploymentApplicationOverview']['rows']
@@ -33,14 +35,14 @@ const getRowTag = (
     case 'application-status':
       return applicationStatusName
         ? () => (
-            <Tag variant="mint" outlined>
+            <Tag variant="mint" outlined disabled>
               {applicationStatusName}
             </Tag>
           )
         : undefined
     case 'last-job-search-confirmation-date':
       return () => (
-        <Tag variant="blue" outlined>
+        <Tag variant="blue" outlined disabled>
           {getJobSearchConfirmationDateRange()}
         </Tag>
       )
@@ -54,6 +56,7 @@ export const OverviewTable = ({
   applicationStatusName,
   dataRequested,
 }: OverviewTableProps) => {
+  const { formatMessage } = useLocale()
   return (
     <Box paddingTop={4}>
       <Stack space={0}>
@@ -70,11 +73,11 @@ export const OverviewTable = ({
         {dataRequested && (
           <>
             <UserInfoLine
-              label={'Gögn'}
-              content={'Nánari upplýsingar má finna undir Mín gögn'}
+              label={formatMessage(um.statusDataLabel)}
+              content={formatMessage(um.statusDataContent)}
               renderEnd={() => (
-                <Tag variant="red" outlined>
-                  Vantar gögn
+                <Tag variant="red" outlined disabled>
+                  {formatMessage(um.statusDataMissing)}
                 </Tag>
               )}
             />

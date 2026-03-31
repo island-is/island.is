@@ -53,4 +53,16 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:statusTabApplicantMobile',
     defaultMessage: 'Upplýsingar',
   },
+  statusDataLabel: {
+    id: 'sp.social-benefits-unemployment:statusDataLabel',
+    defaultMessage: 'Gögn',
+  },
+  statusDataContent: {
+    id: 'sp.social-benefits-unemployment:statusDataContent',
+    defaultMessage: 'Nánari upplýsingar má finna undir Mín gögn',
+  },
+  statusDataMissing: {
+    id: 'sp.social-benefits-unemployment:statusDataMissing',
+    defaultMessage: 'Vantar gögn',
+  },
 })

@@ -15,7 +15,6 @@ const Status = () => {
   const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery()
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
-
   const actionButtons = [
     {
       key: 'contact',
