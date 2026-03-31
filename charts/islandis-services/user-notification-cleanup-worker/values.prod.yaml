@@ -18,6 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'user-notification-cleanup-worker'
 args:
+  - '--no-experimental-fetch'
   - 'main.cjs'
   - '--job=cleanup'
 command:
@@ -37,6 +38,7 @@ grantNamespaces:
   - 'islandis'
   - 'identity-server-delegation'
   - 'application-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
