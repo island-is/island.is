@@ -20,6 +20,8 @@ const testUser = {
 
 const api = `https://${testOptions.subdomain}.zendesk.com/api/v2`
 
+let lastTicketPostBody: { ticket: Record<string, unknown> } | undefined
+
 const server = setupServer(
   rest.get(`${api}/search.json`, (req, res, ctx) => {
     const query = req.url.searchParams.get('query')
@@ -54,7 +56,10 @@ const server = setupServer(
 
     return res(ctx.status(201), ctx.json({ user: testUser }))
   }),
-  rest.post(`${api}/tickets.json`, (req, res, ctx) => {
+  rest.post(`${api}/tickets.json`, async (req, res, ctx) => {
+    lastTicketPostBody = (await req.json()) as {
+      ticket: Record<string, unknown>
+    }
     return res(ctx.status(201, 'Created'))
   }),
 )
@@ -64,6 +69,7 @@ describe('zendeskService', () => {
 
   beforeEach(async () => {
     server.listen()
+    lastTicketPostBody = undefined
     zendeskService = new ZendeskService(testOptions, mock<Logger>())
   })
 
@@ -113,5 +119,27 @@ describe('zendeskService', () => {
     })
 
     expect(results).toEqual(true)
+  })
+
+  it('should submit a ticket with requester, brand, form, and custom fields', async () => {
+    await zendeskService.submitTicket({
+      message: 'Body text',
+      subject: 'Subject',
+      requester: { name: 'Applicant', email: 'a@b.is' },
+      tags: ['hh_namskeid', 'hh_ci_x', 'hh_env_dev'],
+      customFields: [{ id: 1, value: 'x' }],
+      brandId: 46016159517467,
+      ticketFormId: 46207982902171,
+    })
+
+    expect(lastTicketPostBody?.ticket).toMatchObject({
+      subject: 'Subject',
+      requester: { name: 'Applicant', email: 'a@b.is' },
+      brand_id: 46016159517467,
+      ticket_form_id: 46207982902171,
+      tags: ['hh_namskeid', 'hh_ci_x', 'hh_env_dev'],
+      custom_fields: [{ id: 1, value: 'x' }],
+    })
+    expect(lastTicketPostBody?.ticket).not.toHaveProperty('requester_id')
   })
 })
