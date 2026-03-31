@@ -27,6 +27,7 @@ import {
   EstateEvent,
   EstateTypes,
   Roles,
+  SPOUSE,
   States,
 } from './constants'
 import { FeatureFlagClient } from '@island.is/feature-flags'
@@ -423,6 +424,23 @@ const EstateTemplate: ApplicationTemplate<
           shouldDeleteChargeIfPaymentFulfilled: true,
         },
         payerNationalId: (application) => {
+          const selectedEstate = getValueViaPath<string>(
+            application.answers,
+            'selectedEstate',
+          )
+
+          if (selectedEstate === EstateTypes.permitForUndividedEstate) {
+            const members = getValueViaPath<
+              Array<{ enabled: boolean; relation: string; nationalId: string }>
+            >(application.answers, 'estate.estateMembers')
+            const spouse = members?.find(
+              (member) => member.enabled && member.relation === SPOUSE,
+            )
+            if (spouse?.nationalId) {
+              return spouse.nationalId
+            }
+          }
+
           const data = getEstateDataFromApplication(application)
           if (isEstateInfo(data) && data.estate.nationalIdOfDeceased) {
             return data.estate.nationalIdOfDeceased

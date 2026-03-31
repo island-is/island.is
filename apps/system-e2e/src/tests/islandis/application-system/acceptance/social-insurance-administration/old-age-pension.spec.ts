@@ -173,7 +173,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
           .getByRole('heading', {
             name: label(
               socialInsuranceAdministrationMessage.conclusionScreen
-                .receivedAwaitingIncomePlanTitle,
+                .receivedTitle,
             ),
           })
           .first(),

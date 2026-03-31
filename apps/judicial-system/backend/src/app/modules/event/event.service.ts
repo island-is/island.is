@@ -138,8 +138,8 @@ export class EventService {
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
           }`
         : ''
-      const courtOfAppealsText = theCase.appealCaseNumber
-        ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
+      const courtOfAppealsText = theCase.appealCase?.appealCaseNumber
+        ? `\n>Landsréttur *${theCase.appealCase?.appealCaseNumber}*`
         : ''
       const courtDateText =
         event === 'SCHEDULE_COURT_DATE' || event === 'SCHEDULE_ARRAIGNMENT_DATE'

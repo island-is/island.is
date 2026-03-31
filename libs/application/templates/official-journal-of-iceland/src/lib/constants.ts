@@ -23,9 +23,16 @@ export const DEFAULT_PAGE_SIZE = 10
 
 export const MINIMUM_WEEKDAYS = 10
 
+export enum ApplicationTypes {
+  AD = 'ad',
+  BASE_REGULATION = 'base_regulation',
+  AMENDING_REGULATION = 'amending_regulation',
+}
+
 export enum Routes {
   REQUIREMENTS = 'requirements',
   INVOLVED_PARTY = 'involvedParty',
+  TYPE_SELECTION = 'typeSelection',
   COMMENTS = 'comments',
   ADVERT = 'advert',
   SIGNATURE = 'signature',
@@ -37,9 +44,16 @@ export enum Routes {
   COMPLETE = 'complete',
   REJECTED = 'rejected',
   MISC = 'misc',
-}
 
-// this will be replaced with correct values once the api is ready
+  // Regulation-specific routes
+  REGULATION_CONTENT = 'regulationContent',
+  REGULATION_META = 'regulationMeta',
+  REGULATION_PUBLISHING = 'regulationPublishing',
+  REGULATION_ATTACHMENTS = 'regulationAttachments',
+  REGULATION_IMPACTS = 'regulationImpacts',
+  REGULATION_PREVIEW = 'regulationPreview',
+  REGULATION_SUMMARY = 'regulationSummary',
+}
 
 export enum TypeIds {
   GJALDSKRA = '0',

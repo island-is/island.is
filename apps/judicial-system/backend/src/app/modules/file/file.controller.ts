@@ -67,6 +67,7 @@ import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
+import { UpdatePoliceDigitalCaseFilesDto } from './dto/updatePoliceDigitalCaseFiles.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
@@ -74,10 +75,12 @@ import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.g
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { PoliceDigitalCaseFileSyncResult } from './models/policeDigitalCaseFileSyncResult.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDigitalCaseFile.service'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
 
@@ -88,6 +91,7 @@ export class FileController {
   constructor(
     private readonly fileService: FileService,
     private readonly criminalRecordService: CriminalRecordService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -425,5 +429,76 @@ export class FileController {
       defendant,
       user,
     })
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Get('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    type: PoliceDigitalCaseFileSyncResult,
+    isArray: true,
+    description:
+      'Syncs with police digital file system source and returns all police digital case files for a case',
+  })
+  getPoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceDigitalCaseFileSyncResult[]> {
+    this.logger.debug(
+      `Syncing and getting police digital case files for case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      theCase.policeCaseNumbers,
+      user,
+    )
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Delete('policeDigitalCaseFile/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a police digital case file entry',
+  })
+  async deletePoliceDigitalCaseFile(
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting police digital case file ${fileId}`)
+
+    const success =
+      await this.policeDigitalCaseFileService.deletePoliceDigitalCaseFile(
+        theCase.id,
+        fileId,
+      )
+    return { success }
+  }
+
+  @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Patch('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    description: 'Updates order of police digital case files',
+  })
+  async updatePoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @Body() updateDto: UpdatePoliceDigitalCaseFilesDto,
+  ): Promise<object> {
+    this.logger.debug(
+      `Updating police digital case file orders for case ${caseId}`,
+    )
+
+    await this.sequelize.transaction((transaction) =>
+      this.policeDigitalCaseFileService.updatePoliceDigitalCaseFileOrders(
+        caseId,
+        updateDto.files,
+        transaction,
+      ),
+    )
+
+    return {}
   }
 }

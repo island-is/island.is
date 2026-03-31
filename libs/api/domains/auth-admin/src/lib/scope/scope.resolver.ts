@@ -11,6 +11,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
+import { CmsContentfulService } from '@island.is/cms'
 
 import { Scope } from './models/scope.model'
 import { CreateScopeInput } from './dto/create-scope.input'
@@ -22,11 +23,16 @@ import { ScopesInput } from './dto/scopes.input'
 import { ScopesPayload } from './dto/scopes.payload'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
+import { ScopeCategory } from './models/scope-category.model'
+import { ScopeTag } from './models/scope-tag.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Scope)
 export class ScopeResolver {
-  constructor(private readonly scopeService: ScopeService) {}
+  constructor(
+    private readonly scopeService: ScopeService,
+    private readonly cmsContentfulService: CmsContentfulService,
+  ) {}
 
   @Mutation(() => [CreateScopeResponse], {
     name: 'createAuthAdminScope',
@@ -102,5 +108,29 @@ export class ScopeResolver {
     }
 
     return Array.from(availableEnvironments)
+  }
+
+  @Query(() => [ScopeCategory], {
+    name: 'authAdminScopeCategories',
+    description: 'Get available categories for scope categorization',
+  })
+  async getScopeCategories(
+    @CurrentUser() user: User,
+    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
+    lang?: string,
+  ): Promise<ScopeCategory[]> {
+    return this.cmsContentfulService.getArticleCategories(lang ?? 'is')
+  }
+
+  @Query(() => [ScopeTag], {
+    name: 'authAdminScopeTags',
+    description: 'Get available tags (delegation scope tags) for scope tagging',
+  })
+  async getScopeTags(
+    @CurrentUser() user: User,
+    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
+    lang?: string,
+  ): Promise<ScopeTag[]> {
+    return this.cmsContentfulService.getDelegationScopeTags(lang ?? 'is')
   }
 }

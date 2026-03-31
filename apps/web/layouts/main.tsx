@@ -23,7 +23,6 @@ import { userMonitoring } from '@island.is/user-monitoring'
 import {
   Header,
   Main,
-  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -390,9 +389,6 @@ const Layout: Screen<LayoutProps> = ({
             closeButtonLabel={activeLocale === 'is' ? 'Loka' : 'Close'}
           />
         ))}
-        <Hidden above="sm">
-          <MobileAppBanner namespace={namespace} />
-        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{

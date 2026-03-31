@@ -3,7 +3,7 @@ import {
   QuestionnaireQuestionnairesStatusEnum,
 } from '@island.is/api/schema'
 import { Box, Button, Tag, TagVariant } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
   InfoLine,
@@ -20,6 +20,7 @@ import { useGetQuestionnaireQuery } from './questionnaires.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const QuestionnaireDetail: FC = () => {
+  useNamespaces('sp.health')
   const { id, org } = useParams<{ id?: string; org?: string }>()
 
   useHealthPlausibleSwap()
@@ -35,9 +36,14 @@ const QuestionnaireDetail: FC = () => {
 
   const { data, loading, error } = useGetQuestionnaireQuery({
     variables: {
-      input: { id: id ?? '', organization: organization },
+      input: {
+        id: id ?? '',
+        organization:
+          organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+      },
       locale: lang,
     },
+    fetchPolicy: 'network-only',
     skip: !id || !organization,
   })
 
@@ -61,12 +67,14 @@ const QuestionnaireDetail: FC = () => {
     )
   }
 
-  const answeredLink = HealthPaths.HealthQuestionnairesAnswered.replace(
-    ':org',
-    organization?.toLocaleLowerCase() ?? '',
-  )
-    .replace(':id', id)
-    .replace(':submissionId', latestSubmissionId ?? '')
+  const answeredLink = latestSubmissionId
+    ? HealthPaths.HealthQuestionnairesAnswered.replace(
+        ':org',
+        organization?.toLocaleLowerCase() ?? '',
+      )
+        .replace(':id', id)
+        .replace(':submissionId', latestSubmissionId)
+    : undefined
 
   const answerLink = HealthPaths.HealthQuestionnairesAnswer.replace(
     ':org',
@@ -121,6 +129,20 @@ const QuestionnaireDetail: FC = () => {
       buttonGroup={[
         link ? (
           <>
+            {!isDraft && canSubmitAgain && (
+              <Box className={styles.button} key={'answer-again-link-box'}>
+                <Button
+                  key={'answer-again-link'}
+                  fluid
+                  variant="utility"
+                  colorScheme={'primary'}
+                  size="small"
+                  onClick={() => navigate(answerLink)}
+                >
+                  {formatMessage(messages.answerAgain)}
+                </Button>
+              </Box>
+            )}
             <Box className={styles.button} key={'answer-link-box'}>
               <Button
                 key={'answer-link'}
@@ -137,23 +159,9 @@ const QuestionnaireDetail: FC = () => {
                   : formatMessage(messages.answer)}
               </Button>
             </Box>
-            {!isDraft && canSubmitAgain && (
-              <Box className={styles.button} key={'answer-again-link-box'}>
-                <Button
-                  key={'answer-again-link'}
-                  fluid
-                  variant="utility"
-                  colorScheme={'primary'}
-                  size="small"
-                  onClick={() => navigate(answerLink)}
-                >
-                  {formatMessage(messages.answerAgain)}
-                </Button>
-              </Box>
-            )}
           </>
         ) : null,
-        isDraft && answeredLink !== link ? (
+        isDraft && answeredLink ? (
           <Box className={styles.button} key={'answer-link-box'}>
             <Button
               fluid
@@ -206,6 +214,22 @@ const QuestionnaireDetail: FC = () => {
                 : formatMessage(messages.unknown)
             }
           />
+          {questionnaire?.sender && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-sender"
+              label={formatMessage(messages.questionnaireSender)}
+              content={questionnaire.sender}
+            />
+          )}
+          {questionnaire?.expirationDate && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-expiration"
+              label={formatMessage(messages.questionnaireExpiration)}
+              content={formatDate(questionnaire.expirationDate)}
+            />
+          )}
         </InfoLineStack>
       )}
       {!loading && !data?.questionnairesDetail && !error && (
