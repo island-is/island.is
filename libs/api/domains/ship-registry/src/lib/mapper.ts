@@ -92,7 +92,7 @@ export const mapToUserShipFromDetails = (
       : undefined
 
   return {
-    id: `${registrationNumber}`,
+    id: `${registrationNumber}-${locale}`,
     registrationNumber,
     name: info.shipName.value,
     region: toLocalizedValue(info.regionString, locale),

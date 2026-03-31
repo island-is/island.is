@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const CertificatesTable = ({ certificates, loading }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
   const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
 
@@ -63,7 +63,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [locale],
   )
 
   const filteredCertificates = useMemo(

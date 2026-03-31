@@ -162,7 +162,11 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
       )}
       {(ship?.engines?.length ?? 0) > 0 && (
         <Box marginTop={6}>
-          <Text variant="h5">{formatMessage(shipsMessages.enginesTitle)}</Text>
+          {(ship?.engines?.length ?? 0) > 1 && (
+            <Text variant="h5">
+              {formatMessage(shipsMessages.enginesTitle)}
+            </Text>
+          )}
           <Stack space={2}>
             {ship?.engines
               ?.map((engine, i) => {
