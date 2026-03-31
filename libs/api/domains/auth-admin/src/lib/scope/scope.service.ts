@@ -182,6 +182,7 @@ export class ScopeService extends MultiEnvironmentService {
     const scopeModels: Scope[] = Object.entries(groupedScopes)
       .map(([scopeName, scopes]) => ({
         scopeName,
+        modified: (scopes[0] as unknown as { modified?: Date }).modified,
         environments: scopes,
       }))
       .sort((a, b) => a.scopeName.localeCompare(b.scopeName))
@@ -222,6 +223,8 @@ export class ScopeService extends MultiEnvironmentService {
 
     return {
       scopeName: input.scopeName,
+      modified: (environmentsScopes[0] as unknown as { modified?: Date })
+        ?.modified,
       environments: environmentsScopes,
     }
   }

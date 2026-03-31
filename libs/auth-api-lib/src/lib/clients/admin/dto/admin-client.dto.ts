@@ -132,6 +132,9 @@ export class AdminClientDto {
   @ApiProperty()
   allowedAcr!: string[]
 
+  @ApiPropertyOptional()
+  modified?: Date
+
   @IsEnum(ClientSso)
   @ApiProperty({
     example: 'disabled',

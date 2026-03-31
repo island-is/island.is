@@ -37,6 +37,7 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
 query AuthAdminScope($input: ScopeInput!) {
   authAdminScope(input: $input) {
     scopeName
+    modified
     environments {
       ...AuthAdminScopeEnvironmentFragment
     }

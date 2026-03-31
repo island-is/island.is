@@ -589,6 +589,7 @@ export class AdminClientsService {
           (clientDelegationType) => clientDelegationType.delegationType,
         ) ?? [],
       allowedAcr: client.allowedAcr.map((v) => v.toString()) ?? [],
+      modified: client.modified,
     }
   }
 
