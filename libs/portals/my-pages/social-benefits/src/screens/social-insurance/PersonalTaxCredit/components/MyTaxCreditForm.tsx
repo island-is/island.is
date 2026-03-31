@@ -5,7 +5,7 @@ import { PercentageInput } from './PercentageInput'
 import { SocialInsuranceYearWithMonths } from '@island.is/api/schema'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { m } from '../../../../lib/messages'
-import { MyTaxCreditState } from '../types'
+import { MyTaxCreditState } from '../PersonalTaxCredit'
 
 interface Props {
   state: MyTaxCreditState

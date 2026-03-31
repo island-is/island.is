@@ -1,9 +1,9 @@
+import { MyTaxCreditState } from './PersonalTaxCredit'
 import {
   useRegisterSocialInsuranceTaxCardAllowanceMutation,
   useUpdateSocialInsuranceTaxCardAllowanceMutation,
   useDiscontinueSocialInsuranceTaxCardAllowanceMutation,
 } from './PersonalTaxCredit.generated'
-import { MyTaxCreditState } from './types'
 
 export const useTaxCardAllowance = () => {
   const [register, { loading: registering }] =

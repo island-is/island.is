@@ -19,12 +19,12 @@ import {
   useGetPersonalTaxCreditQuery,
   useSetSocialInsuranceSpouseTaxCardMutation,
   useSetSocialInsuranceSpouseTaxCardDueToDeathMutation,
+  SetSocialInsuranceSpouseTaxCardDueToDeathMutationVariables,
 } from './PersonalTaxCredit.generated'
 import { useTaxCardAllowance } from './useTaxCardAllowance'
 import { MyTaxCreditForm } from './components/MyTaxCreditForm'
 import { PersonalTaxCreditTable } from './components/PersonalTaxCreditTable'
 import { SpouseTaxCreditForm } from './components/SpouseTaxCreditForm'
-import { MyTaxCreditState, SpouseState } from './types'
 
 const INITIAL_MY_TAX_CREDIT: MyTaxCreditState = { action: null }
 
@@ -34,6 +34,29 @@ const INITIAL_SPOUSE: SpouseState = {
   year: null,
   month: null,
   percentage: '100',
+}
+
+export type MyTaxCreditState =
+  | {
+      action: 'register'
+      data: { year: number | null; month: number | null; percentage: string }
+    }
+  | { action: 'update'; data: { percentage: string } }
+  | {
+      action: 'discontinue'
+      data: { year: number | null; month: number | null }
+    }
+  | { action: null }
+
+type SpouseTaxCardDueToDeathInput =
+  SetSocialInsuranceSpouseTaxCardDueToDeathMutationVariables['input']
+
+export type SpouseState = {
+  deceased: boolean
+  grant: boolean
+  year: NonNullable<SpouseTaxCardDueToDeathInput['year']> | null
+  month: NonNullable<SpouseTaxCardDueToDeathInput['month']> | null
+  percentage: string
 }
 
 const PersonalTaxCredit = () => {
