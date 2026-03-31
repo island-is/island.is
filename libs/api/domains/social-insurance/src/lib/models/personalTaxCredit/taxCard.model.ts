@@ -4,8 +4,8 @@ import { SpousalTaxCardEligibility } from './spousalTaxCardEligibility.model'
 
 @ObjectType('SocialInsuranceTaxCardSummary')
 export class TaxCardSummary {
-  @Field(() => Number, { nullable: true })
-  percentage?: number
+  @Field(() => Number)
+  percentage!: number
 
   @Field({ nullable: true })
   validFrom?: Date
@@ -13,8 +13,8 @@ export class TaxCardSummary {
   @Field(() => Date, { nullable: true })
   validTo?: Date
 
-  @Field(() => String, { nullable: true })
-  taxCardType?: string
+  @Field(() => String)
+  taxCardType!: string
 }
 
 @ObjectType('SocialInsurancePersonalTaxCredit')
@@ -22,11 +22,11 @@ export class PersonalTaxCredit {
   @Field(() => [TaxCardSummary], { nullable: true })
   taxCards?: TaxCardSummary[]
 
-  @Field(() => Boolean, { nullable: true })
-  canEdit?: boolean
+  @Field(() => Boolean)
+  canEdit!: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  canDiscontinue?: boolean
+  @Field(() => Boolean)
+  canDiscontinue!: boolean
 
   @Field(() => [YearWithMonths], { nullable: true })
   registrationMonthsAndYears?: YearWithMonths[]

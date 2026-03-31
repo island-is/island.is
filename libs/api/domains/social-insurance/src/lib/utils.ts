@@ -221,7 +221,7 @@ export const toYearWithMonths = (
   return raw == null
     ? undefined
     : raw.map((ym) => ({
-        year: ym.year,
+        year: ym.year ?? 0,
         months: (ym.months ?? [])
           .filter(
             (m): m is { month: number; selectable?: boolean } =>

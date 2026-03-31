@@ -282,11 +282,11 @@ export class SocialInsuranceService {
         ...tc,
         validFrom: tc.validFrom ?? undefined,
         validTo: tc.validTo ?? undefined,
-        taxCardType: tc.taxCardType ?? undefined,
-        percentage: tc.percentage ?? undefined,
+        taxCardType: tc.taxCardType ?? '',
+        percentage: tc.percentage ?? 0,
       })),
-      canEdit: taxCardsResult?.canEditPersonalAllowance,
-      canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance,
+      canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
+      canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
       registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
       discontinuingMonthsAndYears: toYearWithMonths(
         discontinuingMonthsAndYears,
@@ -294,6 +294,7 @@ export class SocialInsuranceService {
       spouseEligibility: spouseEligibility
         ? {
             ...spouseEligibility,
+            canApply: spouseEligibility.canApply ?? false,
             reasonNotAllowed: spouseEligibility.reasonNotAllowed ?? undefined,
             allowedYearMonths: toYearWithMonths(
               spouseEligibility.allowedYearMonths,
