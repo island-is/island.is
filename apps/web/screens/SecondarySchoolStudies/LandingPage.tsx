@@ -142,10 +142,10 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
   // Fuse.js configuration
   const fuseOptions = {
-    threshold: 0.3,
+    threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,
-    minMatchCharLength: 3,
+    minMatchCharLength: 2,
     useExtendedSearch: true,
     keys: [
       { name: 'title', weight: 2 },
