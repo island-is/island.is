@@ -53,6 +53,7 @@ interface Props {
   translateLabel?: 'yes' | 'no'
   printable?: boolean
   tooltipFull?: boolean
+  renderEnd?: () => React.ReactNode
 }
 
 export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
@@ -76,6 +77,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   printable = false,
   tooltipFull,
   button,
+  renderEnd,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -195,6 +197,21 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               >
                 {formatMessage(button.title)}
               </Button>
+            </Box>
+          ) : renderEnd ? (
+            <Box
+              display="flex"
+              justifyContent={[
+                'flexStart',
+                'flexEnd',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
+              alignItems="center"
+              height="full"
+            >
+              {renderEnd()}
             </Box>
           ) : undefined}
         </GridColumn>
