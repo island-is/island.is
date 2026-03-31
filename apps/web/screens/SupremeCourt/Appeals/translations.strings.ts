@@ -25,7 +25,7 @@ export const m = {
     verdictDateInPastSuffix: {
       id: 'web.supremeCourt.appeals:listPage.verdictDateInPastSuffix',
       defaultMessage: 'Málið var flutt:',
-      description: 'Texti á eftir dagsetningu sem mál er sett á dagskrá',
+      description: 'Texti á undan dagsetningu sem mál var flutt',
     },
   }),
 }
