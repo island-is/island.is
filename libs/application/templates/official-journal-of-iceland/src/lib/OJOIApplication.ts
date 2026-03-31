@@ -33,6 +33,7 @@ export enum ApplicationStates {
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  READER = 'reader',
 }
 
 const getApplicationName = (application: Application) => {
@@ -88,10 +89,20 @@ const OJOITemplate: ApplicationTemplate<
     actions: {
       assignToInstitution: assign((context) => {
         const { application } = context
-
-        set(application, 'assignees', [
+        const assignees: string[] = [
           InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-        ])
+        ]
+
+        const readerNationalId = getValueViaPath<string>(
+          application.answers as Record<string, unknown>,
+          'reader.nationalId',
+        )
+
+        if (readerNationalId && !assignees.includes(readerNationalId)) {
+          assignees.push(readerNationalId)
+        }
+
+        set(application, 'assignees', assignees)
 
         return context
       }),
@@ -164,6 +175,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Draft').then((val) =>
+                  Promise.resolve(val.Draft),
+                ),
+            },
           ],
         },
         on: {
@@ -214,6 +234,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/DraftRetry').then((val) =>
+                  Promise.resolve(val.DraftRetry),
+                ),
+            },
           ],
         },
         on: {
@@ -228,6 +257,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
@@ -268,6 +298,15 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+            },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Submitted').then((val) =>
+                  Promise.resolve(val.Submitted),
+                ),
             },
           ],
         },
@@ -312,6 +351,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Complete').then((val) =>
+                  Promise.resolve(val.Complete),
+                ),
+            },
           ],
         },
       },
@@ -342,6 +390,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+            },
           ],
         },
       },
@@ -352,6 +409,13 @@ const OJOITemplate: ApplicationTemplate<
       return Roles.APPLICANT
     }
     if (application.assignees.includes(id)) {
+      const readerNationalId = getValueViaPath<string>(
+        application.answers as Record<string, unknown>,
+        'reader.nationalId',
+      )
+      if (readerNationalId === id) {
+        return Roles.READER
+      }
       return Roles.ASSIGNEE
     }
     return undefined

@@ -7,11 +7,20 @@ import { useFormContext } from 'react-hook-form'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import { useDepartments } from '../hooks/useDepartments'
+import { useInvolvedParties } from '../hooks/useInvolvedParties'
 import { useLazyQuery } from '@apollo/client'
 import { MAIN_TYPES_QUERY } from '../graphql/queries'
 import { cleanTypename } from '../lib/utils'
 import set from 'lodash/set'
-import { Box, RadioButton, Stack, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  RadioButton,
+  Select,
+  Stack,
+  Text,
+  Tooltip,
+  toast,
+} from '@island.is/island-ui/core'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
@@ -62,6 +71,32 @@ export const TypeSelectionScreen = ({
     officialJournalOfIcelandMainTypes: OfficialJournalOfIcelandMainTypesResponse
   }>(MAIN_TYPES_QUERY, { fetchPolicy: 'network-only' })
 
+  const currentInvolvedPartyId = getValueViaPath<string>(
+    application.answers,
+    InputFields.advert.involvedPartyId,
+  )
+
+  const currentReader = getValueViaPath<{
+    id: string
+    title: string
+    slug: string
+    nationalId: string
+  }>(application.answers, InputFields.typeSelection.reader)
+
+  const { involvedParties } = useInvolvedParties({
+    applicationId: application.id,
+  })
+
+  const readerOptions = useMemo(() => {
+    if (!involvedParties) return []
+    return involvedParties
+      .filter((p) => p.id !== currentInvolvedPartyId)
+      .map((p) => ({
+        label: p.title,
+        value: p,
+      }))
+  }, [involvedParties, currentInvolvedPartyId])
+
   const { value: regulationsEnabled } = useFeatureFlag(
     Features.officialJournalOfIcelandRegulations,
     false,
@@ -108,6 +143,35 @@ export const TypeSelectionScreen = ({
     return answers
   }
 
+  const handleReaderChange = async (
+    party: { id: string; title: string; slug: string; nationalId: string } | null,
+  ) => {
+    const currentAnswers = structuredClone(application.answers) as Record<
+      string,
+      unknown
+    >
+
+    if (party) {
+      set(currentAnswers, InputFields.typeSelection.reader, {
+        id: party.id,
+        title: party.title,
+        slug: party.slug,
+        nationalId: party.nationalId,
+      })
+      setValue(InputFields.typeSelection.reader, {
+        id: party.id,
+        title: party.title,
+        slug: party.slug,
+        nationalId: party.nationalId,
+      })
+    } else {
+      set(currentAnswers, InputFields.typeSelection.reader, undefined)
+      setValue(InputFields.typeSelection.reader, undefined)
+    }
+
+    await updateApplication(currentAnswers)
+  }
+
   const handleSelect = async (value: string) => {
     const previousValue = selected
     setSelected(value)
@@ -126,6 +190,10 @@ export const TypeSelectionScreen = ({
 
       if (isRegulation) {
         currentAnswers = await autoSelectRegulationType(currentAnswers)
+      } else {
+        // Clear reader when switching away from regulation type
+        set(currentAnswers, InputFields.typeSelection.reader, undefined)
+        setValue(InputFields.typeSelection.reader, undefined)
       }
 
       await updateApplication(currentAnswers)
@@ -167,6 +235,14 @@ export const TypeSelectionScreen = ({
       : allOptions.filter((o) => o.value === ApplicationTypes.AD)
   }, [regulationsEnabled, f])
 
+  const isRegulationType =
+    selected === ApplicationTypes.BASE_REGULATION ||
+    selected === ApplicationTypes.AMENDING_REGULATION
+
+  const defaultReaderOption = currentReader
+    ? readerOptions.find((o) => o.value.id === currentReader.id)
+    : undefined
+
   return (
     <FormScreen
       title={f(typeSelection.general.title)}
@@ -200,6 +276,42 @@ export const TypeSelectionScreen = ({
             </Box>
           ))}
         </Stack>
+        {isRegulationType && readerOptions.length > 0 && (
+          <Box marginTop={3}>
+            <Box
+              display="flex"
+              alignItems="center"
+              marginBottom={1}
+              columnGap={1}
+            >
+              <Text variant="h5">{f(typeSelection.reader.label)}</Text>
+              <Tooltip text={f(typeSelection.reader.tooltip)} />
+            </Box>
+            <Select
+              size="sm"
+              name={InputFields.typeSelection.reader}
+              label=""
+              placeholder={f(typeSelection.reader.placeholder)}
+              backgroundColor="blue"
+              isClearable
+              options={readerOptions}
+              defaultValue={defaultReaderOption}
+              onChange={(opt) => {
+                const party = opt?.value
+                if (party?.nationalId) {
+                  handleReaderChange({
+                    id: party.id,
+                    title: party.title,
+                    slug: party.slug,
+                    nationalId: party.nationalId,
+                  })
+                } else {
+                  handleReaderChange(null)
+                }
+              }}
+            />
+          </Box>
+        )}
       </Box>
     </FormScreen>
   )
