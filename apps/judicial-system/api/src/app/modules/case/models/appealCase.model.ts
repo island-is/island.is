@@ -19,7 +19,7 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field(() => CaseAppealState)
+  @Field(() => CaseAppealState, { nullable: true })
   readonly appealState?: CaseAppealState
 
   @Field(() => String, { nullable: true })
