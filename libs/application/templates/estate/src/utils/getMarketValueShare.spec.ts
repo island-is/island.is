@@ -90,4 +90,20 @@ describe('getMarketValueShare', () => {
       '500.000 kr.',
     )
   })
+
+  it('should round fractional results from decimal shares', () => {
+    // 123,123 * 0.03% = 36.9369 → rounds to 37
+    const answersWithFractionalResult: FormValue = {
+      estate: {
+        assets: [
+          {
+            marketValue: '123123',
+            share: 0.03,
+            enabled: true,
+          },
+        ],
+      },
+    }
+    expect(getMarketValueShare(answersWithFractionalResult)).toEqual('37 kr.')
+  })
 })

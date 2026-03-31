@@ -18,7 +18,7 @@ export const getMarketValueShare = (answers: FormValue) => {
       return acc
     }, 0)
 
-    return formatCurrency(String(sum))
+    return formatCurrency(String(Math.round(sum)))
   }
 
   return ''
