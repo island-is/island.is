@@ -31,12 +31,14 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   applyDativeCaseToCourtName,
+  formatDate,
   formatDOB,
   getRoleTitleFromCaseFileCategory,
   getWordByGender,
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
+import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -707,6 +709,26 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const isLastCourtSession = index + 1 === workingCase.courtSessions?.length
 
+  const accordionTitle = useMemo(() => {
+    const dateLabel = formatDate(
+      courtSession.startDate ??
+        workingCase.courtDate?.date ??
+        workingCase.arraignmentDate?.date,
+    )
+    const typeName =
+      courtSession.courtSessionType &&
+      courtSessionTypeNames[courtSession.courtSessionType]
+    return typeName && dateLabel
+      ? `${dateLabel} - ${typeName}`
+      : `Þinghald ${index + 1}`
+  }, [
+    courtSession.courtSessionType,
+    courtSession.startDate,
+    workingCase.arraignmentDate?.date,
+    workingCase.courtDate?.date,
+    index,
+  ])
+
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -727,7 +749,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         id={`courtRecordAccordionItem-${courtSession.id}`}
         label={
           <CourtSessionLabel
-            label={`Þinghald ${index + 1}`}
+            label={accordionTitle}
             ref={ref}
             isConfirmed={courtSession.isConfirmed}
           />
