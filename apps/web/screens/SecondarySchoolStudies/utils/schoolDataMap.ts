@@ -144,7 +144,7 @@ export const SCHOOL_DATA_MAP: Record<string, SchoolData> = {
     website: 'https://menntaborg.is/',
   },
   FJALLA: {
-    icon: 'MBR.svg', // Defaulting to Mennta- og barnamálaráðuneyti logo until we get a logo
+    icon: 'FJALLA.svg',
     website: 'https://fjallanam.is/',
   },
   HAR: {
@@ -152,7 +152,7 @@ export const SCHOOL_DATA_MAP: Record<string, SchoolData> = {
     website: 'https://harakademian.is/',
   },
   RAF: {
-    icon: 'MBR.svg', // Defaulting to Mennta- og barnamálaráðuneyti logo until we get a logo
+    icon: 'RAF.svg',
     website: 'https://www.rafmennt.is/',
   },
   LM: {
