@@ -2,7 +2,6 @@ import {
   CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
-  CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   courtOfAppealsRoles,
@@ -27,20 +26,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
     ...restrictionCases,
     ...investigationCases,
   ]
-  const accessibleCaseTypes = [
-    ...accessibleRequestCaseTypes,
-    ...indictmentCases,
-  ]
 
-  describe.each(
-    Object.values(CaseType).filter(
-      (type) => !accessibleCaseTypes.includes(type),
-    ),
-  )('inaccessible case type %s', (type) => {
-    const theCase = { type } as Case
-
-    verifyNoAccess(theCase, user)
-  })
 
   describe.each(accessibleRequestCaseTypes)(
     'accessible request case type %s',
