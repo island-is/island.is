@@ -144,7 +144,12 @@ export const TypeSelectionScreen = ({
   }
 
   const handleReaderChange = async (
-    party: { id: string; title: string; slug: string; nationalId: string } | null,
+    party: {
+      id: string
+      title: string
+      slug: string
+      nationalId: string
+    } | null,
   ) => {
     const currentAnswers = structuredClone(application.answers) as Record<
       string,

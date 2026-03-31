@@ -89,9 +89,7 @@ const OJOITemplate: ApplicationTemplate<
     actions: {
       assignToInstitution: assign((context) => {
         const { application } = context
-        const assignees: string[] = [
-          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-        ]
+        const assignees: string[] = [InstitutionNationalIds.DOMSMALA_RADUNEYTID]
 
         const readerNationalId = getValueViaPath<string>(
           application.answers as Record<string, unknown>,
