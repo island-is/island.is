@@ -1855,7 +1855,7 @@ export const m = defineMessages({
   },
   personalTaxCreditDescription: {
     id: 'service.portal:personal-tax-credit-description',
-    defaultMessage: 'Persónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
+    defaultMessage: 'Persónuafsláttur er 72.492. á mánuði á árinu 2026.',
   },
   paymentTypesOverview: {
     id: 'service.portal:payment-types-overview',

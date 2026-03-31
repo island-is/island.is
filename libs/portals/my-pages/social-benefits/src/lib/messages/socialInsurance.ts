@@ -170,7 +170,7 @@ export const m = defineMessages({
   },
   personalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
-    defaultMessage: 'Persónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
+    defaultMessage: 'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
   },
   personalTaxCreditNotRegistered: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
