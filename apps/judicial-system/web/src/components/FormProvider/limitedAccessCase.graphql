@@ -96,6 +96,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isAlternativeService
       alternativeServiceDescription
       indictmentReviewDecision
+      indictmentCancelledOrDismissedState {
+        type
+        time
+      }
       subpoenas {
         id
         created
