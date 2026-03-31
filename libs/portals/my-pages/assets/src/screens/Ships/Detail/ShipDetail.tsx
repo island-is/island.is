@@ -48,83 +48,89 @@ export const ShipDetail = () => {
         <EmptyState description={shipsMessages.notFound} />
       )}
 
-      <Stack space={3}>
-        <Box>
-          <InfoLineStack>
-            <InfoLine
-              loading={loading}
-              label={formatMessage(shipsMessages.seaworthinessTitle)}
-              content={
-                <Tag outlined variant={ship?.isSeaworthy ? 'mint' : 'red'}>
-                  {!ship?.isSeaworthy
-                    ? formatMessage(shipsMessages.invalidTag)
-                    : ship?.seaworthinessCertificateValidTo?.value
-                    ? formatMessage(shipsMessages.seaworthinessValidTo, {
-                        date: ship?.seaworthinessCertificateValidTo?.value,
-                      })
-                    : formatMessage(coreMessages.valid)}
-                </Tag>
-              }
-            />
-            <InfoLine
-              loading={loading}
-              label={formatMessage(shipsMessages.registrationNumber)}
-              content={ship?.registrationNumber?.toString() ?? '-'}
-            />
-            <InfoLine
-              loading={loading}
-              label={ship?.region?.label ?? formatMessage(shipsMessages.region)}
-              content={ship?.region?.value ?? undefined}
-            />
-            <InfoLine
-              loading={loading}
-              label={
-                ship?.usageType?.label ?? formatMessage(shipsMessages.shipType)
-              }
-              content={ship?.usageType?.value ?? undefined}
-            />
-            <InfoLine
-              loading={loading}
-              label={
-                ship?.imoNumber?.label ?? formatMessage(shipsMessages.imoNumber)
-              }
-              content={ship?.imoNumber?.value ?? undefined}
-            />
-            <InfoLine
-              loading={loading}
-              label={
-                ship?.phoneOnBoard?.label ??
-                formatMessage(shipsMessages.phoneOnBoard)
-              }
-              content={ship?.phoneOnBoard?.value ?? undefined}
-            />
-          </InfoLineStack>
-        </Box>
+      {(ship || loading) && (
+        <Stack space={3}>
+          <Box>
+            <InfoLineStack>
+              <InfoLine
+                loading={loading}
+                label={formatMessage(shipsMessages.seaworthinessTitle)}
+                content={
+                  <Tag outlined variant={ship?.isSeaworthy ? 'mint' : 'red'}>
+                    {!ship?.isSeaworthy
+                      ? formatMessage(shipsMessages.invalidTag)
+                      : ship?.seaworthinessCertificateValidTo?.value
+                      ? formatMessage(shipsMessages.seaworthinessValidTo, {
+                          date: ship?.seaworthinessCertificateValidTo?.value,
+                        })
+                      : formatMessage(coreMessages.valid)}
+                  </Tag>
+                }
+              />
+              <InfoLine
+                loading={loading}
+                label={formatMessage(shipsMessages.registrationNumber)}
+                content={ship?.registrationNumber?.toString() ?? '-'}
+              />
+              <InfoLine
+                loading={loading}
+                label={
+                  ship?.region?.label ?? formatMessage(shipsMessages.region)
+                }
+                content={ship?.region?.value ?? undefined}
+              />
+              <InfoLine
+                loading={loading}
+                label={
+                  ship?.usageType?.label ??
+                  formatMessage(shipsMessages.shipType)
+                }
+                content={ship?.usageType?.value ?? undefined}
+              />
+              <InfoLine
+                loading={loading}
+                label={
+                  ship?.imoNumber?.label ??
+                  formatMessage(shipsMessages.imoNumber)
+                }
+                content={ship?.imoNumber?.value ?? undefined}
+              />
+              <InfoLine
+                loading={loading}
+                label={
+                  ship?.phoneOnBoard?.label ??
+                  formatMessage(shipsMessages.phoneOnBoard)
+                }
+                content={ship?.phoneOnBoard?.value ?? undefined}
+              />
+            </InfoLineStack>
+          </Box>
 
-        {(ship || loading) && (
-          <Tabs
-            label={`${formatMessage(
-              shipsMessages.registrationTab,
-            )} / ${formatMessage(shipsMessages.certificatesTab)}`}
-            contentBackground="white"
-            tabs={[
-              {
-                label: formatMessage(shipsMessages.registrationTab),
-                content: <RegistrationTab ship={ship} loading={loading} />,
-              },
-              {
-                label: formatMessage(shipsMessages.certificatesTab),
-                content: (
-                  <CertificatesTable
-                    certificates={certificates}
-                    loading={loading}
-                  />
-                ),
-              },
-            ]}
-          />
-        )}
-      </Stack>
+          {(ship || loading) && (
+            <Tabs
+              label={`${formatMessage(
+                shipsMessages.registrationTab,
+              )} / ${formatMessage(shipsMessages.certificatesTab)}`}
+              contentBackground="white"
+              tabs={[
+                {
+                  label: formatMessage(shipsMessages.registrationTab),
+                  content: <RegistrationTab ship={ship} loading={loading} />,
+                },
+                {
+                  label: formatMessage(shipsMessages.certificatesTab),
+                  content: (
+                    <CertificatesTable
+                      certificates={certificates}
+                      loading={loading}
+                    />
+                  ),
+                },
+              ]}
+            />
+          )}
+        </Stack>
+      )}
     </IntroWrapperV2>
   )
 }

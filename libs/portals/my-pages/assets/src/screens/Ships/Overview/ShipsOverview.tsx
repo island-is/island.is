@@ -57,7 +57,7 @@ export const ShipsOverview = () => {
                   : undefined
               }
               cta={{
-                label: formatMessage(shipsMessages.skoða),
+                label: formatMessage(shipsMessages.view),
                 variant: 'text',
                 icon: 'arrowForward',
                 onClick: () =>

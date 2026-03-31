@@ -9,7 +9,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
 import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
-import { LocaleEnum } from './dto/locale.enum'
+import { LocaleEnum } from './models/enums'
 import { ShipRegistryCertificateStatus } from './models/enums'
 import { parseDate } from './utils'
 import format from 'date-fns/format'
@@ -91,6 +91,8 @@ export const mapToUserShipFromDetails = (
       ? new Date(info.seaworthyExpiryDate.value)
       : undefined
 
+  const fisheryName = toLocalizedValue(info.fishery, locale)
+
   return {
     id: `${registrationNumber}-${locale}`,
     registrationNumber,
@@ -113,29 +115,36 @@ export const mapToUserShipFromDetails = (
         : undefined,
       locale,
     ),
-    measurements: spec
+    measurements: (() => {
+      if (!spec) return undefined
+      const m = {
+        length: toLocalizedValue(spec.length, locale),
+        maxLength: toLocalizedValue(spec.maxLength, locale),
+        width: toLocalizedValue(spec.width, locale),
+        depth: toLocalizedValue(spec.depth, locale),
+        bruttoGrossTonnage: toLocalizedValue(spec.bruttoGRT, locale),
+        bruttoWeight: toLocalizedValue(spec.bruttoTonnage, locale),
+      }
+      return Object.values(m).some(Boolean) ? m : undefined
+    })(),
+    fishery: fisheryName
       ? {
-          length: toLocalizedValue(spec.length, locale),
-          maxLength: toLocalizedValue(spec.maxLength, locale),
-          width: toLocalizedValue(spec.width, locale),
-          depth: toLocalizedValue(spec.depth, locale),
-          bruttoGrossTonnage: toLocalizedValue(spec.bruttoGRT, locale),
-          bruttoWeight: toLocalizedValue(spec.bruttoTonnage, locale),
-        }
-      : undefined,
-    fishery: info.fishery?.value
-      ? {
-          name: toLocalizedValue(info.fishery, locale),
+          name: fisheryName,
           address: toLocalizedValue(info.fisheryAddress, locale),
           municipality: toLocalizedValue(info.fisheryMunicipality, locale),
           phoneNumber: toLocalizedValue(info.fisheryPhoneNo, locale),
         }
       : undefined,
-    engines: ship.mainEngines?.map((engine) => ({
-      name: toLocalizedValue(engine.engineName, locale),
-      year: toLocalizedValue(engine.engineYear, locale),
-      power: toLocalizedValue(engine.enginePower, locale),
-    })),
+    engines: ship.mainEngines
+      ?.map((engine) => {
+        const e = {
+          name: toLocalizedValue(engine.engineName, locale),
+          year: toLocalizedValue(engine.engineYear, locale),
+          power: toLocalizedValue(engine.enginePower, locale),
+        }
+        return Object.values(e).some(Boolean) ? e : undefined
+      })
+      .filter(isDefined),
     certificates: ship.shipCertificateDetails
       ?.map((cert) => {
         if (!cert.issueDate) return undefined

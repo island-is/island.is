@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { LocaleEnum } from './locale.enum'
+import { LocaleEnum } from '../models/enums'
 
 @InputType('ShipRegistryUserShipInput')
 export class UserShipInput {

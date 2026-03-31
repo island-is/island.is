@@ -2,6 +2,16 @@ import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
   input: './libs/clients/ship-registry-v2/src/clientConfig.json',
+  parser: {
+    filters: {
+      operations: {
+        include: [
+          'GET /ships/myships',
+          'GET /ships/myshipdetail/{shipRegistrationNumber}',
+        ],
+      },
+    },
+  },
   output: {
     path: './libs/clients/ship-registry-v2/gen/fetch',
     format: 'prettier',

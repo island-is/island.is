@@ -4,7 +4,7 @@ import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2
 import { UserShipsCollection } from '../models/userShipsCollection.model'
 import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mapper'
 import { UserShip } from '../models/userShip.model'
-import { LocaleEnum } from '../dto/locale.enum'
+import { LocaleEnum } from '../models/enums'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()

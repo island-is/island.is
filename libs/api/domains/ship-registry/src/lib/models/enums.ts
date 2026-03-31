@@ -1,5 +1,14 @@
 import { registerEnumType } from '@nestjs/graphql'
 
+export enum LocaleEnum {
+  Is = 'is',
+  En = 'en',
+}
+
+registerEnumType(LocaleEnum, {
+  name: 'ShipRegistryLocale',
+})
+
 export enum ShipRegistryCertificateStatus {
   Valid = 'VALID',
   Invalid = 'INVALID',

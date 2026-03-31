@@ -12,7 +12,7 @@ This client connects to Iceland's ship registry via X-Road to access ship inform
 import {
   ShipRegistryClientV2Module,
   ShipRegistryClientV2Service,
-  ShipDto,
+  ShipBaseInfoDto,
 } from '@island.is/clients/ship-registry-v2'
 
 @Module({
@@ -23,7 +23,7 @@ export class YourModule {
     private readonly shipRegistryService: ShipRegistryClientV2Service,
   ) {}
 
-  async getMyShips(user: User): Promise<ShipDto[]> {
+  async getMyShips(user: User): Promise<ShipBaseInfoDto[]> {
     return this.shipRegistryService.getShipsByOwner(user)
   }
 }
@@ -31,36 +31,19 @@ export class YourModule {
 
 ## API Methods
 
-### `getShipsByOwner(user: User): Promise<ShipDto[]>`
+### `getShipsByOwner(user: User): Promise<ShipBaseInfoDto[]>`
 
 Get all ships owned by the authenticated user.
 
-### `getShipDetails(user: User, registryNumber: string): Promise<ShipDto | null>`
+### `getShipDetails(user: User, registryNumber: string): Promise<MyShipDetailDto | null>`
 
 Get detailed information about a specific ship by its registry number.
-
-## DTOs
-
-### `ShipDto`
-
-```typescript
-interface ShipDto {
-  registryNumber?: string
-  name?: string
-  type?: string
-  length?: number
-  width?: number
-  ownerName?: string
-  ownerNationalId?: string
-  registrationDate?: Date
-}
-```
 
 ## Configuration
 
 The client requires the following environment variable:
 
-- `XROAD_SHIP_REGISTRY_PATH` - X-Road service path (configured via infrastructure DSL)
+- `XROAD_SHIP_REGISTRY_V2_PATH` - X-Road service path (configured via infrastructure DSL)
 
 ## Development
 

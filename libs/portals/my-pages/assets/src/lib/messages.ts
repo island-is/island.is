@@ -1762,7 +1762,7 @@ export const shipsMessages = defineMessages({
     id: 'sp.ships:engine-year',
     defaultMessage: 'Árgerð',
   },
-  skoða: {
+  view: {
     id: 'sp.ships:view',
     defaultMessage: 'Skoða',
   },
@@ -1801,9 +1801,5 @@ export const shipsMessages = defineMessages({
   certificatesSearchPlaceholder: {
     id: 'sp.ships:certificates-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
-  },
-  certificatesDownload: {
-    id: 'sp.ships:certificates-download',
-    defaultMessage: 'Sækja',
   },
 })
