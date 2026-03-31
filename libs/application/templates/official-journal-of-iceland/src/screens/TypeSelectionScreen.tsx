@@ -151,30 +151,25 @@ export const TypeSelectionScreen = ({
       nationalId: string
     } | null,
   ) => {
-    const currentAnswers = structuredClone(application.answers) as Record<
-      string,
-      unknown
-    >
+    const previousReader = currentReader ?? undefined
+    const value = party
+      ? {
+          id: party.id,
+          title: party.title,
+          slug: party.slug,
+          nationalId: party.nationalId,
+        }
+      : undefined
 
-    if (party) {
-      set(currentAnswers, InputFields.typeSelection.reader, {
-        id: party.id,
-        title: party.title,
-        slug: party.slug,
-        nationalId: party.nationalId,
+    try {
+      await updateApplicationV2({
+        path: InputFields.typeSelection.reader,
+        value,
       })
-      setValue(InputFields.typeSelection.reader, {
-        id: party.id,
-        title: party.title,
-        slug: party.slug,
-        nationalId: party.nationalId,
-      })
-    } else {
-      set(currentAnswers, InputFields.typeSelection.reader, undefined)
-      setValue(InputFields.typeSelection.reader, undefined)
+    } catch {
+      setValue(InputFields.typeSelection.reader, previousReader)
+      toast.error(f(errorMessages.dataSubmissionErrorTitle))
     }
-
-    await updateApplication(currentAnswers)
   }
 
   const handleSelect = async (value: string) => {
@@ -308,7 +303,7 @@ export const TypeSelectionScreen = ({
             <Select
               size="sm"
               name={InputFields.typeSelection.reader}
-              label=""
+              label={f(typeSelection.reader.label)}
               placeholder={f(typeSelection.reader.placeholder)}
               backgroundColor="blue"
               isClearable

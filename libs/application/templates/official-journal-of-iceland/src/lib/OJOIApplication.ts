@@ -406,16 +406,20 @@ const OJOITemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
+    const readerNationalId = getValueViaPath<string>(
+      application.answers as Record<string, unknown>,
+      'reader.nationalId',
+    )
+
+    if (readerNationalId === id) {
+      return Roles.READER
+    }
+
     if (application.assignees.includes(id)) {
-      const readerNationalId = getValueViaPath<string>(
-        application.answers as Record<string, unknown>,
-        'reader.nationalId',
-      )
-      if (readerNationalId === id) {
-        return Roles.READER
-      }
       return Roles.ASSIGNEE
     }
+
     return undefined
   },
 }
