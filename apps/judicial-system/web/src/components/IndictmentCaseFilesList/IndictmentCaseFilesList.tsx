@@ -279,6 +279,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
+  const allDefendantsCancelledOrDismissed = workingCase.defendants?.every(
+    (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
+  )
+  const hideCourtRecord =
+    isDefenceUser(user) && allDefendantsCancelledOrDismissed
+
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision,
@@ -511,20 +517,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                {hasGeneratedCourtRecord && (
-                  <PdfButton
-                    caseId={workingCase.id}
-                    connectedCaseParentId={connectedCaseParentId}
-                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                    pdfType="courtRecord"
-                    renderAs="row"
-                    elementId="Þingbók"
+                {hideCourtRecord ? (
+                  <AlertMessage
+                    type="info"
+                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
                   />
+                ) : (
+                  <>
+                    {hasGeneratedCourtRecord && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        connectedCaseParentId={connectedCaseParentId}
+                        title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                        pdfType="courtRecord"
+                        renderAs="row"
+                        elementId="Þingbók"
+                      />
+                    )}
+                    <RenderFiles
+                      caseFiles={filteredFiles.courtRecords}
+                      onOpenFile={onOpen}
+                    />
+                  </>
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.courtRecords}
-                  onOpenFile={onOpen}
-                />
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}
