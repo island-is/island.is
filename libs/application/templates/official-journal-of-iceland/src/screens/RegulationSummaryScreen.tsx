@@ -11,7 +11,7 @@ import { useEffect, useMemo } from 'react'
 
 export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { application } = props
+  const { application, setSubmitButtonDisabled } = props
 
   const { draftId, draftData, draftLoaded, loadDraft } = useRegulationDraft({
     applicationId: application.id,
@@ -43,6 +43,18 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
 
   const isLoading = (draftId && !draftLoaded) || !impactsLoaded
   const warnings = collectRegulationWarnings(enrichedAnswers)
+
+  useEffect(() => {
+    if (isLoading || warnings.length > 0) {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+    } else {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    }
+
+    return () => {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    }
+  }, [isLoading, warnings, setSubmitButtonDisabled])
 
   return (
     <FormScreen
