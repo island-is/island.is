@@ -152,72 +152,75 @@ export const FarmerLandsTable = <T extends object>({
             </T.Data>
           </T.Row>
         ) : null}
-        {!loading && rows.map((row) => {
-          prepareRow(row)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const isExpanded = (row as any).isExpanded
-          const isCollapsing = collapsingRows.has(row.id)
+        {!loading &&
+          rows.map((row) => {
+            prepareRow(row)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const isExpanded = (row as any).isExpanded
+            const isCollapsing = collapsingRows.has(row.id)
 
-          return (
-            <Fragment key={row.id}>
-              <T.Row {...row.getRowProps()}>
-                {row.cells.map((cell, i) => (
-                  <T.Data
-                    {...cell.getCellProps()}
-                    box={{
-                      background:
-                        isExpanded || isCollapsing ? 'blue100' : 'transparent',
-                      borderBottomWidth:
-                        isExpanded || isCollapsing ? undefined : 'standard',
-                      ...(i === 0 ? { position: 'relative' } : {}),
-                    }}
-                  >
-                    {i === 0 && (isExpanded || isCollapsing) && (
-                      <div className={styles.line} />
-                    )}
-                    {cell.column.id === 'expander' ? (
-                      cell.render('Cell')
-                    ) : (
-                      <Text variant="small">{cell.render('Cell')}</Text>
-                    )}
-                  </T.Data>
-                ))}
-              </T.Row>
-              {renderExpandedRow && (
-                <T.Row>
-                  <T.Data
-                    colSpan={columns.length}
-                    style={{ padding: 0 }}
-                    box={{ position: 'relative' }}
-                  >
-                    <AnimateHeight
-                      duration={300}
-                      height={isExpanded ? 'auto' : 0}
-                      onHeightAnimationEnd={(newHeight) => {
-                        if (newHeight === 0) {
-                          setCollapsingRows((prev) => {
-                            const next = new Set(prev)
-                            next.delete(row.id)
-                            return next
-                          })
-                        }
+            return (
+              <Fragment key={row.id}>
+                <T.Row {...row.getRowProps()}>
+                  {row.cells.map((cell, i) => (
+                    <T.Data
+                      {...cell.getCellProps()}
+                      box={{
+                        background:
+                          isExpanded || isCollapsing
+                            ? 'blue100'
+                            : 'transparent',
+                        borderBottomWidth:
+                          isExpanded || isCollapsing ? undefined : 'standard',
+                        ...(i === 0 ? { position: 'relative' } : {}),
                       }}
                     >
-                      {(isExpanded || isCollapsing) && (
-                        <>
-                          <div className={styles.line} />
-                          <Box background="blue100" padding={3}>
-                            {renderExpandedRow(row)}
-                          </Box>
-                        </>
+                      {i === 0 && (isExpanded || isCollapsing) && (
+                        <div className={styles.line} />
                       )}
-                    </AnimateHeight>
-                  </T.Data>
+                      {cell.column.id === 'expander' ? (
+                        cell.render('Cell')
+                      ) : (
+                        <Text variant="small">{cell.render('Cell')}</Text>
+                      )}
+                    </T.Data>
+                  ))}
                 </T.Row>
-              )}
-            </Fragment>
-          )
-        })}
+                {renderExpandedRow && (
+                  <T.Row>
+                    <T.Data
+                      colSpan={columns.length}
+                      style={{ padding: 0 }}
+                      box={{ position: 'relative' }}
+                    >
+                      <AnimateHeight
+                        duration={300}
+                        height={isExpanded ? 'auto' : 0}
+                        onHeightAnimationEnd={(newHeight) => {
+                          if (newHeight === 0) {
+                            setCollapsingRows((prev) => {
+                              const next = new Set(prev)
+                              next.delete(row.id)
+                              return next
+                            })
+                          }
+                        }}
+                      >
+                        {(isExpanded || isCollapsing) && (
+                          <>
+                            <div className={styles.line} />
+                            <Box background="blue100" padding={3}>
+                              {renderExpandedRow(row)}
+                            </Box>
+                          </>
+                        )}
+                      </AnimateHeight>
+                    </T.Data>
+                  </T.Row>
+                )}
+              </Fragment>
+            )
+          })}
       </T.Body>
     </T.Table>
   )
