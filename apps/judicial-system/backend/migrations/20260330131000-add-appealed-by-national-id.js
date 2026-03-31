@@ -9,9 +9,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.removeColumn(
-      'appeal_case',
-      'appealed_by_national_id',
-    )
+    return queryInterface.removeColumn('appeal_case', 'appealed_by_national_id')
   },
 }

@@ -23,9 +23,7 @@ import { transitionCase } from './case.state'
 // undefined = no appeal case record exists in DB.
 // CaseAppealState value = appeal case record exists with that state.
 const withAppealCase = (appealState?: CaseAppealState) =>
-  appealState !== undefined
-    ? { appealCase: { appealState } as AppealCase }
-    : {}
+  appealState !== undefined ? { appealCase: { appealState } as AppealCase } : {}
 
 // All possible appeal state options including "no appeal case"
 const allAppealOptions: (CaseAppealState | undefined)[] = [
