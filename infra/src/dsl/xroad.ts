@@ -889,7 +889,7 @@ export const ShipRegistry = new XroadConf({
     XROAD_SHIP_REGISTRY_V2_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1',
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1',
-      prod: 'IS-DEV/GOV/5405131040/Samgongustofa-Protected/Skutan-Gov-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Skutan-Gov-V1',
     },
   },
 })
