@@ -27,7 +27,6 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
     ...investigationCases,
   ]
 
-
   describe.each(accessibleRequestCaseTypes)(
     'accessible request case type %s',
     (type) => {
