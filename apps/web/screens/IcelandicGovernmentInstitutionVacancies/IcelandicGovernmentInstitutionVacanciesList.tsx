@@ -327,7 +327,9 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
         logoAlt: vacancy.institutionName ?? '',
         link: {
           label: n('viewDetails', 'Skoða nánar'),
-          href: `${linkResolver('vacancydetails', [vacancy.id?.toString() || '']).href}${useNewApiOverride ? '?api=new' : ''}`,
+          href: `${
+            linkResolver('vacancydetails', [vacancy.id?.toString() || '']).href
+          }${useNewApiOverride ? '?api=new' : ''}`,
         },
         tags,
         detailLines,
