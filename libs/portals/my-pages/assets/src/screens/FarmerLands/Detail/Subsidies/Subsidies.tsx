@@ -73,7 +73,7 @@ export const Subsidies = ({ farmId }: Props) => {
     FarmerLandSubsidyOrderDirection | undefined
   >(undefined)
 
-  const { data, loading, error } = useFarmerLandSubsidiesQuery({
+  const { data, previousData, loading, error } = useFarmerLandSubsidiesQuery({
     variables: {
       input: {
         farmId,
@@ -90,7 +90,8 @@ export const Subsidies = ({ farmId }: Props) => {
 
   const pageInfo = data?.farmerLandSubsidies?.pageInfo
   const subsidies = useMemo(() => data?.farmerLandSubsidies?.data ?? [], [data])
-  const filterOptions = data?.farmerLandSubsidies?.filterOptions
+  const filterOptions = (data ?? previousData)?.farmerLandSubsidies
+    ?.filterOptions
 
   const contractItems = useMemo(
     () =>
@@ -135,9 +136,11 @@ export const Subsidies = ({ farmId }: Props) => {
     [],
   )
 
-  const filterCount = [contractId, paymentCategoryId, dateFrom ?? dateTo].filter(
-    (v) => v != null,
-  ).length
+  const filterCount = [
+    contractId,
+    paymentCategoryId,
+    dateFrom ?? dateTo,
+  ].filter((v) => v != null).length
 
   const columns = useMemo<Column<FarmerLandSubsidy>[]>(
     () => [
