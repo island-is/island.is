@@ -16,8 +16,9 @@ import {
 } from '@island.is/nest/feature-flags'
 import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
 import {
-  TaxCardAllowanceAction,
+  RegisterTaxCardAllowanceInput,
   UpdateTaxCardAllowanceInput,
+  DiscontinueTaxCardAllowanceInput,
   SetSpouseTaxCardDueToDeathInput,
 } from '../dtos/personalTaxCredit.input'
 import { SocialInsuranceService } from '../socialInsurance.service'
@@ -42,6 +43,18 @@ export class PersonalTaxCreditResolver {
   }
 
   @Mutation(() => Boolean, {
+    name: 'registerSocialInsuranceTaxCardAllowance',
+  })
+  @Audit()
+  async registerTaxCardAllowance(
+    @Args('input') input: RegisterTaxCardAllowanceInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.service.setTaxCardAllowance(user, input)
+    return true
+  }
+
+  @Mutation(() => Boolean, {
     name: 'updateSocialInsuranceTaxCardAllowance',
   })
   @Audit()
@@ -49,16 +62,19 @@ export class PersonalTaxCreditResolver {
     @Args('input') input: UpdateTaxCardAllowanceInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    const { action, year, month, percentage } = input
-    if (action === TaxCardAllowanceAction.REGISTER) {
-      await this.service.setTaxCardAllowance(user, { year, month, percentage })
-    } else if (action === TaxCardAllowanceAction.EDIT) {
-      await this.service.editTaxCardAllowance(user, { percentage })
-    } else if (action === TaxCardAllowanceAction.DISCONTINUE) {
-      await this.service.discontinueTaxCardAllowance(user, { year, month })
-    } else {
-      throw new Error(`Unknown tax card allowance action: ${action}`)
-    }
+    await this.service.editTaxCardAllowance(user, input)
+    return true
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'discontinueSocialInsuranceTaxCardAllowance',
+  })
+  @Audit()
+  async discontinueTaxCardAllowance(
+    @Args('input') input: DiscontinueTaxCardAllowanceInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.service.discontinueTaxCardAllowance(user, input)
     return true
   }
 

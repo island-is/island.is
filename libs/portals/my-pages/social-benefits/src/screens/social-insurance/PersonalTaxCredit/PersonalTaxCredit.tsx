@@ -1,4 +1,3 @@
-import { SocialInsuranceTaxCardAllowanceAction } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -18,10 +17,10 @@ import { useState } from 'react'
 import { m } from '../../../lib/messages'
 import {
   useGetPersonalTaxCreditQuery,
-  useUpdateSocialInsuranceTaxCardAllowanceMutation,
   useSetSocialInsuranceSpouseTaxCardMutation,
   useSetSocialInsuranceSpouseTaxCardDueToDeathMutation,
 } from './PersonalTaxCredit.generated'
+import { useTaxCardAllowance } from './useTaxCardAllowance'
 import { MyTaxCreditForm } from './components/MyTaxCreditForm'
 import { PersonalTaxCreditTable } from './components/PersonalTaxCreditTable'
 import { SpouseTaxCreditForm } from './components/SpouseTaxCreditForm'
@@ -53,8 +52,7 @@ const PersonalTaxCredit = () => {
   const loading = networkStatus === NetworkStatus.loading
   const refetching = networkStatus === NetworkStatus.refetch
 
-  const [updateAllowance, { loading: updatingAllowance }] =
-    useUpdateSocialInsuranceTaxCardAllowanceMutation()
+  const taxCardAllowance = useTaxCardAllowance()
   const [setSpouseTaxCard, { loading: settingSpouseTaxCard }] =
     useSetSocialInsuranceSpouseTaxCardMutation()
   const [setSpouseTaxCardDueToDeath, { loading: settingSpouseDeceased }] =
@@ -64,41 +62,8 @@ const PersonalTaxCredit = () => {
 
   const handleSaveMyTaxCredit = async () => {
     if (!myTaxCredit.action) return
-
-    const { REGISTER, EDIT, DISCONTINUE } =
-      SocialInsuranceTaxCardAllowanceAction
     try {
-      if (myTaxCredit.action === REGISTER) {
-        await updateAllowance({
-          variables: {
-            input: {
-              action: REGISTER,
-              year: myTaxCredit.data.year ?? undefined,
-              month: myTaxCredit.data.month ?? undefined,
-              percentage: Number(myTaxCredit.data.percentage),
-            },
-          },
-        })
-      } else if (myTaxCredit.action === EDIT) {
-        await updateAllowance({
-          variables: {
-            input: {
-              action: EDIT,
-              percentage: Number(myTaxCredit.data.percentage),
-            },
-          },
-        })
-      } else if (myTaxCredit.action === DISCONTINUE) {
-        await updateAllowance({
-          variables: {
-            input: {
-              action: DISCONTINUE,
-              year: myTaxCredit.data.year ?? undefined,
-              month: myTaxCredit.data.month ?? undefined,
-            },
-          },
-        })
-      }
+      await taxCardAllowance.save(myTaxCredit)
       await refetch()
       setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
@@ -183,7 +148,7 @@ const PersonalTaxCredit = () => {
             discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
             isAlreadyRegistered={page?.canEdit ?? false}
             canDiscontinue={page?.canDiscontinue ?? false}
-            saving={updatingAllowance || refetching}
+            saving={taxCardAllowance.loading || refetching}
             onSave={handleSaveMyTaxCredit}
           />
         </Box>

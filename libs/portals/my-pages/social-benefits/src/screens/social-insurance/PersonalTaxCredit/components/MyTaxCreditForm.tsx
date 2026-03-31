@@ -2,10 +2,7 @@ import { Box, Button, Checkbox, Select, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/portals/my-pages/core'
 import { PercentageInput } from './PercentageInput'
-import {
-  SocialInsuranceTaxCardAllowanceAction,
-  SocialInsuranceYearWithMonths,
-} from '@island.is/api/schema'
+import { SocialInsuranceYearWithMonths } from '@island.is/api/schema'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { m } from '../../../../lib/messages'
 import { MyTaxCreditState } from '../types'
@@ -44,19 +41,21 @@ const toMonthOptions = (
   }))
 
 const isValid = (state: MyTaxCreditState): boolean => {
-  if (state.action === SocialInsuranceTaxCardAllowanceAction.REGISTER) {
+  if (state.action === 'register') {
     return !!(state.data.year && state.data.month && state.data.percentage)
   }
-  if (state.action === SocialInsuranceTaxCardAllowanceAction.EDIT) {
+  if (state.action === 'update') {
     return !!state.data.percentage
   }
-  if (state.action === SocialInsuranceTaxCardAllowanceAction.DISCONTINUE) {
+  if (state.action === 'discontinue') {
     return !!(state.data.year && state.data.month)
   }
   return false
 }
 
-const { REGISTER, EDIT, DISCONTINUE } = SocialInsuranceTaxCardAllowanceAction
+const REGISTER = 'register' as const
+const UPDATE = 'update' as const
+const DISCONTINUE = 'discontinue' as const
 
 export const MyTaxCreditForm: FC<Props> = ({
   state,
@@ -195,17 +194,17 @@ export const MyTaxCreditForm: FC<Props> = ({
         <Checkbox
           id="edit-personal-tax-credit"
           label={formatMessage(m.editPersonalTaxCredit)}
-          checked={state.action === EDIT}
+          checked={state.action === UPDATE}
           disabled={!isAlreadyRegistered}
           onChange={(e) =>
             setState(
               e.target.checked
-                ? { action: EDIT, data: { percentage: '' } }
+                ? { action: UPDATE, data: { percentage: '' } }
                 : { action: null },
             )
           }
         />
-        {state.action === EDIT && (
+        {state.action === UPDATE && (
           <Box paddingLeft={7}>
             <Box style={{ maxWidth: 480 }}>
               <PercentageInput
@@ -213,7 +212,7 @@ export const MyTaxCreditForm: FC<Props> = ({
                 name="edit-percentage"
                 value={state.data.percentage}
                 onChange={(value) =>
-                  setState({ action: EDIT, data: { percentage: value } })
+                  setState({ action: UPDATE, data: { percentage: value } })
                 }
               />
             </Box>

@@ -27,10 +27,22 @@ query getPersonalTaxCredit {
   }
 }
 
+mutation registerSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceRegisterTaxCardAllowanceInput!
+) {
+  registerSocialInsuranceTaxCardAllowance(input: $input)
+}
+
 mutation updateSocialInsuranceTaxCardAllowance(
   $input: SocialInsuranceUpdateTaxCardAllowanceInput!
 ) {
   updateSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation discontinueSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceDiscontinueTaxCardAllowanceInput!
+) {
+  discontinueSocialInsuranceTaxCardAllowance(input: $input)
 }
 
 mutation setSocialInsuranceSpouseTaxCard {
