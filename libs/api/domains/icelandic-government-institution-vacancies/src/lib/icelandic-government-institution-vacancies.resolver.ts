@@ -160,10 +160,12 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         // request parameters inside this loop.
         // eslint-disable-next-line no-constant-condition
         while (true) {
-          this.logger.info('Calling Elfur API: v1VacancyGetVacancyListGet', {
-            rowOffset,
-            fetchSize: pageSize,
-          })
+          if (input.useNewApiOverride) {
+            this.logger.info(
+              'Calling Elfur API via override: v1VacancyGetVacancyListGet',
+              { rowOffset, fetchSize: pageSize },
+            )
+          }
           const page = (await this.elfurApi.v1VacancyGetVacancyListGet({
             rowOffset,
             fetchSize: pageSize,
@@ -207,7 +209,6 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       let vacancies: DefaultApiVacanciesListItem[] = []
 
       try {
-        this.logger.info('Calling X-Road API: vacanciesGet')
         vacancies = (await this.xRoadApi.vacanciesGet({
           accept: VacanciesGetAcceptEnum.Json,
           language: mapToXRoadListLanguageEnum(input.language),
@@ -368,9 +369,12 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     if (useNewApi) {
       // Use new Elfur API (Financial Management Authority)
       try {
-        this.logger.info('Calling Elfur API: v1VacancyGetVacancyGet', {
-          vacancyId: id,
-        })
+        if (useNewApiOverride) {
+          this.logger.info(
+            'Calling Elfur API via override: v1VacancyGetVacancyGet',
+            { vacancyId: id },
+          )
+        }
         const item = (await this.elfurApi.v1VacancyGetVacancyGet({
           vacancyId: id,
         })) as VacancyResponseDto
@@ -413,9 +417,6 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       }
 
       try {
-        this.logger.info('Calling X-Road API: vacanciesVacancyIdGet', {
-          vacancyId: numericId,
-        })
         const item = (await this.xRoadApi.vacanciesVacancyIdGet({
           vacancyId: numericId,
           accept: VacanciesVacancyIdGetAcceptEnum.Json,
@@ -487,16 +488,14 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
     const featureFlagUser = this.getFeatureFlagUser(req)
 
-    this.logger.info('Resolving vacancy by id', {
-      id: input.id,
-      useNewApiOverride: input.useNewApiOverride ?? 'none',
-    })
+    if (input.useNewApiOverride) {
+      this.logger.info('Resolving vacancy by id via override', {
+        id: input.id,
+      })
+    }
 
     // The prefix of the id determines what service to call
     if (input.id.startsWith(CMS_ID_PREFIX)) {
-      this.logger.info('Fetching vacancy from CMS', {
-        id: input.id.slice(CMS_ID_PREFIX.length),
-      })
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
       const id = input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
