@@ -100,14 +100,6 @@ export const FarmerLandsTable = <T extends object>({
     return <Problem error={error} noBorder={false} />
   }
 
-  if (loading) {
-    return <EmptyTable loading />
-  }
-
-  if (!data.length) {
-    return <EmptyTable message={emptyMessage} />
-  }
-
   return (
     <T.Table {...getTableProps()}>
       <T.Head>
@@ -121,7 +113,8 @@ export const FarmerLandsTable = <T extends object>({
                 )}
                 text={{ variant: 'medium', fontWeight: 'semiBold' }}
                 style={{
-                  cursor: column.id !== 'expander' ? 'pointer' : 'default',
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  cursor: (column as any).canSort ? 'pointer' : 'default',
                 }}
               >
                 <Box display="flex" flexDirection="row" alignItems="center">
@@ -146,7 +139,20 @@ export const FarmerLandsTable = <T extends object>({
         ))}
       </T.Head>
       <T.Body {...getTableBodyProps()}>
-        {rows.map((row) => {
+        {loading ? (
+          <T.Row>
+            <T.Data colSpan={columns.length} style={{ padding: 0 }}>
+              <EmptyTable loading />
+            </T.Data>
+          </T.Row>
+        ) : !data.length ? (
+          <T.Row>
+            <T.Data colSpan={columns.length} style={{ padding: 0 }}>
+              <EmptyTable message={emptyMessage} />
+            </T.Data>
+          </T.Row>
+        ) : null}
+        {!loading && rows.map((row) => {
           prepareRow(row)
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const isExpanded = (row as any).isExpanded

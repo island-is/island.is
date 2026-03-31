@@ -268,15 +268,6 @@ export const farmerLandsMessages = defineMessages({
     id: 'sp.farmer-lands:usage',
     defaultMessage: 'Notkun matshluta',
   },
-  // Subsidies filters
-  subsidyFilterDateFrom: {
-    id: 'sp.farmer-lands:subsidy-filter-date-from',
-    defaultMessage: 'Dagsetning frá',
-  },
-  subsidyFilterDateTo: {
-    id: 'sp.farmer-lands:subsidy-filter-date-to',
-    defaultMessage: 'Dagsetning til',
-  },
   // Subsidies pagination
   subsidyPrevPage: {
     id: 'sp.farmer-lands:subsidy-prev-page',
