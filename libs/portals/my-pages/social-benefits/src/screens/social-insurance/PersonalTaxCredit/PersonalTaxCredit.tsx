@@ -74,6 +74,9 @@ const PersonalTaxCredit = () => {
   })
   const loading = networkStatus === NetworkStatus.loading
   const refetching = networkStatus === NetworkStatus.refetch
+  const [refetchingFor, setRefetchingFor] = useState<
+    'myTaxCard' | 'spouseTaxCard' | null
+  >(null)
 
   const taxCardAllowance = useTaxCardAllowance()
   const [setSpouseTaxCard, { loading: settingSpouseTaxCard }] =
@@ -87,10 +90,13 @@ const PersonalTaxCredit = () => {
     if (!myTaxCredit.action) return
     try {
       await taxCardAllowance.save(myTaxCredit)
+      setRefetchingFor('myTaxCard')
       await refetch()
+      setRefetchingFor(null)
       setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
     } catch (e) {
+      setRefetchingFor(null)
       console.error(e)
       toast.error(formatMessage(m.personalTaxCreditSaveError))
     }
@@ -114,10 +120,13 @@ const PersonalTaxCredit = () => {
       if (spouse.grant) {
         await setSpouseTaxCard()
       }
+      setRefetchingFor('spouseTaxCard')
       await refetch()
+      setRefetchingFor(null)
       setSpouse(INITIAL_SPOUSE)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
     } catch (e) {
+      setRefetchingFor(null)
       console.error(e)
       toast.error(formatMessage(m.personalTaxCreditSaveError))
     }
@@ -171,7 +180,7 @@ const PersonalTaxCredit = () => {
             discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
             isAlreadyRegistered={page?.canEdit ?? false}
             canDiscontinue={page?.canDiscontinue ?? false}
-            saving={taxCardAllowance.loading || refetching}
+            saving={taxCardAllowance.loading || refetchingFor === 'myTaxCard'}
             onSave={handleSaveMyTaxCredit}
           />
         </Box>
@@ -184,7 +193,11 @@ const PersonalTaxCredit = () => {
             state={spouse}
             setState={setSpouse}
             spouseEligibility={page?.spouseEligibility}
-            saving={settingSpouseTaxCard || settingSpouseDeceased || refetching}
+            saving={
+              settingSpouseTaxCard ||
+              settingSpouseDeceased ||
+              refetchingFor === 'spouseTaxCard'
+            }
             onSave={handleSaveSpouse}
           />
         </Box>
