@@ -1,12 +1,14 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { YearWithMonths } from './taxCardMonthsAndYears.model'
 
 @ObjectType('SocialInsuranceSpousalTaxCardEligibility')
 export class SpousalTaxCardEligibility {
-  @Field(() => Boolean, { nullable: true })
-  canApply?: boolean
+  @Field(() => Boolean)
+  canApply!: boolean
 
   @Field(() => String, { nullable: true })
   reasonNotAllowed?: string
+
   @Field(() => [YearWithMonths], { nullable: true })
-  allowedYearMonths?: YearWithMonths[]}
+  allowedYearMonths?: YearWithMonths[]
+}

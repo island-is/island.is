@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsurancePaymentTypeOverview')
 export class PaymentTypeOverview {
-  @Field(() => String, { nullable: true })
-  paymentType?: string
+  @Field(() => String)
+  paymentType!: string
 
   @Field(() => Date, { nullable: true })
   dateFrom?: Date
