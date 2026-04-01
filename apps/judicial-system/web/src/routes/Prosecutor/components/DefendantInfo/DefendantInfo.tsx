@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -24,6 +31,7 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { formatNationalRegistryAddress } from '@island.is/judicial-system-web/src/utils/formatNationalRegistryAddress'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -34,6 +42,52 @@ import {
   isBusiness,
   mapStringToGender,
 } from '@island.is/judicial-system-web/src/utils/utils'
+
+const isDefendantFieldMissing = (value?: string | null) => !value?.trim()
+
+const normalizeNationalId = (nationalId?: string | null) =>
+  nationalId?.replace('-', '') ?? ''
+
+type RegistryAutofillMode = 'replaceFromRegistry' | 'fillMissingOnly'
+
+const registryAutofillMode = (
+  lastAutofilledNationalId: string | null,
+  normalizedCurrentNationalId: string,
+): RegistryAutofillMode =>
+  lastAutofilledNationalId !== null &&
+  lastAutofilledNationalId !== normalizedCurrentNationalId
+    ? 'replaceFromRegistry'
+    : 'fillMissingOnly'
+
+const mergeRegistryIntoDefendantUpdate = (
+  update: UpdateDefendantInput,
+  defendant: Defendant,
+  registry: { name?: string | null; address?: string | null },
+  mode: RegistryAutofillMode,
+  options?: { genderRaw?: string | null },
+) => {
+  const replace = mode === 'replaceFromRegistry'
+  const name = registry.name?.trim()
+
+  if (name && (replace || isDefendantFieldMissing(defendant.name))) {
+    update.name = name
+  }
+
+  if (
+    registry.address &&
+    (replace || isDefendantFieldMissing(defendant.address))
+  ) {
+    update.address = registry.address
+  }
+
+  if (options) {
+    const genderFromRegistry = mapStringToGender(options.genderRaw)
+
+    if (genderFromRegistry && (replace || !defendant.gender)) {
+      update.gender = genderFromRegistry
+    }
+  }
+}
 
 interface Props {
   defendant: Defendant
@@ -75,22 +129,47 @@ const DefendantInfo: FC<Props> = (props) => {
       !!defendant.nationalId && isBusiness(defendant.nationalId),
     )
 
+  const lastAutofilledNationalIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    lastAutofilledNationalIdRef.current = null
+  }, [defendant.id])
+
   useEffect(() => {
     if (!isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
-    if (personData && personData.items && personData.items.length > 0) {
+    if (personData?.items?.length) {
       setAccusedAddressErrorMessage('')
       setIsGenderAndCitizenshipDisabled(false)
 
-      onChange({
+      const person = personData.items[0]
+      const addressFromRegistry = formatNationalRegistryAddress(
+        person.permanent_address,
+      )
+      const update: UpdateDefendantInput = {
         caseId: workingCase.id,
         defendantId: defendant.id,
-        name: personData.items[0].name,
-        gender: mapStringToGender(personData.items[0].gender),
-        address: personData.items[0].permanent_address.street?.nominative,
-      })
+      }
+      const normalizedNationalId = normalizeNationalId(defendant.nationalId)
+
+      mergeRegistryIntoDefendantUpdate(
+        update,
+        defendant,
+        { name: person.name, address: addressFromRegistry },
+        registryAutofillMode(
+          lastAutofilledNationalIdRef.current,
+          normalizedNationalId,
+        ),
+        { genderRaw: person.gender },
+      )
+
+      lastAutofilledNationalIdRef.current = normalizedNationalId
+
+      if (Object.keys(update).length > 2) {
+        onChange(update)
+      }
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,18 +180,35 @@ const DefendantInfo: FC<Props> = (props) => {
       return
     }
 
-    if (businessData && businessData.items && businessData.items.length > 0) {
+    if (businessData?.items?.length) {
       setAccusedAddressErrorMessage('')
       setIsGenderAndCitizenshipDisabled(true)
 
-      onChange({
+      const business = businessData.items[0]
+      const addressFromRegistry = formatNationalRegistryAddress(
+        business.legal_address,
+      )
+      const update: UpdateDefendantInput = {
         caseId: workingCase.id,
         defendantId: defendant.id,
-        name: businessData.items[0].full_name,
-        address: businessData.items[0].legal_address.street?.nominative,
-        gender: undefined,
-        citizenship: undefined,
-      })
+      }
+      const normalizedNationalId = normalizeNationalId(defendant.nationalId)
+
+      mergeRegistryIntoDefendantUpdate(
+        update,
+        defendant,
+        { name: business.full_name, address: addressFromRegistry },
+        registryAutofillMode(
+          lastAutofilledNationalIdRef.current,
+          normalizedNationalId,
+        ),
+      )
+
+      lastAutofilledNationalIdRef.current = normalizedNationalId
+
+      if (Object.keys(update).length > 2) {
+        onChange(update)
+      }
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
