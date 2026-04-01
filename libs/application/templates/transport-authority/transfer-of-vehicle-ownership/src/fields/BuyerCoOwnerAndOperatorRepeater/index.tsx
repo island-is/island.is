@@ -116,7 +116,7 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
             : allCoOwners.indexOf(field)
         return (
           <BuyerCoOwnerAndOperatorRepeaterItem
-            id={id}
+            id={id as string}
             repeaterField={field}
             index={index}
             rowLocation={rowLocation + 1}

@@ -1,15 +1,12 @@
 import {
-  buildHiddenInput,
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  getValueViaPath,
   YES,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
 import * as m from '../../../lib/messages'
+import { nationalIdPreface } from '../../../utils/assigneeUtils'
 
 export const otherApprovalSection = buildSection({
   id: 'assigneePrereqSection',
@@ -26,7 +23,12 @@ export const otherApprovalSection = buildSection({
           marginBottom: 4,
         }),
         buildCheckboxField({
-          id: 'assigneePrereq.confirmRead',
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'confirmRead'),
+          condition: (answers) => {
+            console.log('answers: ', answers)
+            return true
+          },
           options: [
             {
               label: m.assigneeApproval.prereqConfirmRead,
@@ -36,47 +38,47 @@ export const otherApprovalSection = buildSection({
           marginBottom: 4,
           required: true,
         }),
-        buildHiddenInput({
-          id: 'assigneePrerequisitesCompleted',
-          defaultValue: (application: Application) => {
-            const existing = (getValueViaPath<string[]>(
-              application.answers,
-              'assigneePrerequisitesCompleted',
-            ) ?? []) as string[]
-            const confirm = getValueViaPath<string[]>(
-              application.answers,
-              'assigneePrereq.confirmRead',
-            )
-            const nrOk =
-              application.externalData?.nationalRegistry?.status === 'success'
-            const taxOk =
-              application.externalData?.getPersonalTaxReturn?.status ===
-              'success'
-            const userNationalId = getValueViaPath<string>(
-              application.externalData,
-              'nationalRegistry.data.nationalId',
-            )
-            const normalizedUser = userNationalId?.trim()
-              ? kennitala.isValid(userNationalId)
-                ? kennitala.sanitize(userNationalId)
-                : userNationalId
-              : ''
-            const assignees = application.assignees ?? []
-            const isAssignee =
-              normalizedUser && assignees.includes(normalizedUser)
-            const hasConfirm = Array.isArray(confirm) && confirm.includes(YES)
-            if (!nrOk || !taxOk || !isAssignee || !hasConfirm) {
-              return existing
-            }
-            const already = existing.some(
-              (id) =>
-                (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
-                normalizedUser,
-            )
-            if (already) return existing
-            return [...existing, normalizedUser]
-          },
-        }),
+        // buildHiddenInput({
+        //   id: 'assigneePrerequisitesCompleted',
+        //   defaultValue: (application: Application) => {
+        //     const existing = (getValueViaPath<string[]>(
+        //       application.answers,
+        //       'assigneePrerequisitesCompleted',
+        //     ) ?? []) as string[]
+        //     const confirm = getValueViaPath<string[]>(
+        //       application.answers,
+        //       assigneePrereqConfirmReadPath(application),
+        //     )
+        //     const nrOk =
+        //       application.externalData?.nationalRegistry?.status === 'success'
+        //     const taxOk =
+        //       application.externalData?.getPersonalTaxReturn?.status ===
+        //       'success'
+        //     const userNationalId = getValueViaPath<string>(
+        //       application.externalData,
+        //       'nationalRegistry.data.nationalId',
+        //     )
+        //     const normalizedUser = userNationalId?.trim()
+        //       ? kennitala.isValid(userNationalId)
+        //         ? kennitala.sanitize(userNationalId)
+        //         : userNationalId
+        //       : ''
+        //     const assignees = application.assignees ?? []
+        //     const isAssignee =
+        //       normalizedUser && assignees.includes(normalizedUser)
+        //     const hasConfirm = Array.isArray(confirm) && confirm.includes(YES)
+        //     if (!nrOk || !taxOk || !isAssignee || !hasConfirm) {
+        //       return existing
+        //     }
+        //     const already = existing.some(
+        //       (id) =>
+        //         (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
+        //         normalizedUser,
+        //     )
+        //     if (already) return existing
+        //     return [...existing, normalizedUser]
+        //   },
+        // }),
       ],
     }),
   ],

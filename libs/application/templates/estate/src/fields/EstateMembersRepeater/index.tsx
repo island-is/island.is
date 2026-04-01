@@ -37,7 +37,7 @@ import { getEstateDataFromApplication } from '../../lib/utils'
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
-  const { id } = field
+  const id = field.id as string
   const { formatMessage } = useLocale()
   const { getValues, setValue, setError } = useFormContext()
   const { fields, append, remove, update, replace } = useFieldArray({

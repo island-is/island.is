@@ -31,7 +31,7 @@ interface ClaimsRepeaterProps {
 export const ClaimsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ClaimsRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id } = field
+  const id = field.id as string
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.claims
   const { formatMessage } = useLocale()

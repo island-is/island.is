@@ -2,6 +2,8 @@ import { FC } from 'react'
 import {
   buildFieldRequired,
   formatTextWithLocale,
+  resolveFieldClearOnChange,
+  resolveFieldId,
 } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -12,6 +14,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface Props extends FieldBaseProps {
   field: NationalIdWithNameField
@@ -21,23 +24,54 @@ export const NationalIdWithNameFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field, error }) => {
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
+  const {
+    id,
+    title,
+    description,
+    titleVariant,
+    marginTop,
+    marginBottom,
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+    searchPersons,
+    searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
+    clearOnChange,
+    clearOnChangeDefaultValue,
+    setOnChange,
+  } = field
+  const resolvedId = resolveFieldId({ id }, application, user)
 
   return (
-    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
-      {field.title && (
-        <Text variant={field.titleVariant ?? 'h3'} marginBottom={2}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
+      {title && (
+        <Text variant={titleVariant ?? 'h3'} marginBottom={2}>
           {formatTextWithLocale(
-            field.title,
+            title,
             application,
             locale as Locale,
             formatMessage,
           )}
         </Text>
       )}
-      {field.description && (
+      {description && (
         <FieldDescription
           description={formatTextWithLocale(
-            field.description,
+            description,
             application,
             locale as Locale,
             formatMessage,
@@ -45,33 +79,36 @@ export const NationalIdWithNameFormField: FC<
         />
       )}
       <NationalIdWithName
-        id={field.id}
+        id={resolvedId}
         application={application}
-        disabled={field.disabled}
-        required={buildFieldRequired(application, field.required)}
-        customNationalIdLabel={field.customNationalIdLabel}
-        customNameLabel={field.customNameLabel}
-        onNationalIdChange={field.onNationalIdChange}
-        onNameChange={field.onNameChange}
-        nationalIdDefaultValue={field.nationalIdDefaultValue}
-        nameDefaultValue={field.nameDefaultValue}
-        errorMessage={field.errorMessage}
-        minAgePerson={field.minAgePerson}
-        searchPersons={field.searchPersons}
-        searchCompanies={field.searchCompanies}
-        showPhoneField={field.showPhoneField}
-        showEmailField={field.showEmailField}
-        phoneRequired={field.phoneRequired}
-        emailRequired={field.emailRequired}
-        phoneLabel={field.phoneLabel}
-        emailLabel={field.emailLabel}
+        disabled={disabled}
+        required={buildFieldRequired(application, required)}
+        customNationalIdLabel={customNationalIdLabel}
+        customNameLabel={customNameLabel}
+        onNationalIdChange={onNationalIdChange}
+        onNameChange={onNameChange}
+        nationalIdDefaultValue={nationalIdDefaultValue}
+        nameDefaultValue={nameDefaultValue}
+        errorMessage={errorMessage}
+        minAgePerson={minAgePerson}
+        searchPersons={searchPersons}
+        searchCompanies={searchCompanies}
+        showPhoneField={showPhoneField}
+        showEmailField={showEmailField}
+        phoneRequired={phoneRequired}
+        emailRequired={emailRequired}
+        phoneLabel={phoneLabel}
+        emailLabel={emailLabel}
         error={error}
-        clearOnChange={field.clearOnChange}
-        clearOnChangeDefaultValue={field.clearOnChangeDefaultValue}
+        clearOnChange={resolveFieldClearOnChange(
+          { clearOnChange },
+          application,
+        )}
+        clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         setOnChange={async (optionValue) => {
-          if (typeof field.setOnChange === 'function')
-            return await field.setOnChange(optionValue, application)
-          else if (field.setOnChange) return field.setOnChange
+          if (typeof setOnChange === 'function')
+            return await setOnChange(optionValue, application)
+          else if (setOnChange) return setOnChange
           return []
         }}
       />

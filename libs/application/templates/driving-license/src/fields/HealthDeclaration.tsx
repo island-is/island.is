@@ -14,11 +14,12 @@ interface PropTypes extends FieldBaseProps {
 const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
+  const id = field.id as string
 
   const { setValue, getValues } = useFormContext()
 
   const checkForGlassesMismatch = (value: string) => {
-    if (field.id === 'healthDeclaration.usesContactGlasses') {
+    if (id === 'healthDeclaration.usesContactGlasses') {
       const glassesUsedPreviously = application.externalData.glassesCheck.data
 
       if (
@@ -45,14 +46,11 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
         </GridColumn>
         <GridColumn span={['8/12', '3/12']} offset={['0', '1/12']}>
           <RadioController
-            id={field.id}
+            id={id}
             split="1/2"
             smallScreenSplit="1/2"
             largeButtons={false}
-            defaultValue={
-              (getValueViaPath(application.answers, field.id) as string[]) ??
-              undefined
-            }
+            defaultValue={getValueViaPath<string[]>(application.answers, id)}
             options={[
               {
                 label: formatMessage(m.yes),
@@ -71,20 +69,20 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
                 ) as string[]
                 if (
                   value === YES &&
-                  !(currValues as string[])?.some((x) => x === field.id)
+                  !(currValues as string[])?.some((x) => x === id)
                 ) {
                   setValue('healthDeclarationValidForBELicense', [
                     ...(currValues ?? []),
-                    field.id,
+                    id,
                   ])
                 } else {
                   setValue(
                     'healthDeclarationValidForBELicense',
-                    currValues?.filter((x) => x !== field.id),
+                    currValues?.filter((x) => x !== id),
                   )
                 }
               }
-              if (field.id === 'healthDeclaration.usesContactGlasses') {
+              if (id === 'healthDeclaration.usesContactGlasses') {
                 checkForGlassesMismatch(value)
               }
             }}

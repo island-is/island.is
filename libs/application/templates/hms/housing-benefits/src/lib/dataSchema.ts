@@ -123,6 +123,16 @@ const baseSchema = z.object({
       confirmRead: z.array(z.string()).optional(),
     })
     .optional(),
+  assigneePrereqByNationalId: z
+    .record(
+      z.string(),
+      z
+        .object({
+          confirmRead: z.array(z.string()).optional(),
+        })
+        .optional(),
+    )
+    .optional(),
   assigneeApproval: z
     .object({
       confirmRead: z.array(z.string()).optional(),
@@ -158,15 +168,33 @@ const baseSchema = z.object({
     })
     .optional(),
   incomeHasOtherIncome: z.union([z.literal(YES), z.literal(NO)]).optional(),
-  incomeContractorCheckbox: z.array(z.literal(YES)).optional(),
-  incomeForeignCheckbox: z.array(z.literal(YES)).optional(),
-  incomeOtherCheckbox: z.array(z.literal(YES)).optional(),
+  incomeContractorCheckbox: z
+    .union([z.array(z.literal(YES)), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
+  incomeForeignCheckbox: z
+    .union([z.array(z.literal(YES)), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
+  incomeOtherCheckbox: z
+    .union([z.array(z.literal(YES)), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   incomeContractorDescription: z.string().optional(),
-  incomeContractorFiles: z.array(fileSchema).optional(),
+  incomeContractorFiles: z
+    .union([z.array(fileSchema), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   incomeForeignDescription: z.string().optional(),
-  incomeForeignFiles: z.array(fileSchema).optional(),
+  incomeForeignFiles: z
+    .union([z.array(fileSchema), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   incomeOtherDescription: z.string().optional(),
-  incomeOtherFiles: z.array(fileSchema).optional(),
+  incomeOtherFiles: z
+    .union([z.array(fileSchema), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   payment: z
     .object({
       paymentRadio: z.enum(['me', 'landlord']).optional(),

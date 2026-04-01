@@ -1,4 +1,8 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  resolveFieldId,
+} from '@island.is/application/core'
 import { FieldBaseProps, VehicleRadioField } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -10,6 +14,7 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -34,17 +39,34 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   clearOnChange,
   clearOnChangeDefaultValue,
 }) => {
+  const {
+    id,
+    itemType,
+    itemList,
+    shouldValidateErrorMessages,
+    shouldValidateDebtStatus,
+    shouldValidateRenewal,
+    alertMessageErrorTitle,
+    validationErrorMessages,
+    validationErrorFallbackMessage,
+    inputErrorMessage,
+    debtStatusErrorMessage,
+    renewalExpiresAtTag,
+    validateRenewal,
+  } = field
   const { formatMessage, formatDateFns } = useLocale()
+  const user = useUserInfo()
   const { setValue } = useFormContext()
+  const resolvedId = resolveFieldId({ id }, application, user)
 
-  let answersSelectedValueKey = field.id
-  let answersSelectedIndexKey = field.id
-  if (field.itemType === 'VEHICLE') {
-    answersSelectedValueKey = `${field.id}.plate`
-    answersSelectedIndexKey = `${field.id}.vehicle`
-  } else if (field.itemType === 'PLATE') {
-    answersSelectedValueKey = `${field.id}.regno`
-    answersSelectedIndexKey = `${field.id}.value`
+  let answersSelectedValueKey = resolvedId
+  let answersSelectedIndexKey = resolvedId
+  if (itemType === 'VEHICLE') {
+    answersSelectedValueKey = `${resolvedId}.plate`
+    answersSelectedIndexKey = `${resolvedId}.vehicle`
+  } else if (itemType === 'PLATE') {
+    answersSelectedValueKey = `${resolvedId}.regno`
+    answersSelectedIndexKey = `${resolvedId}.value`
   }
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
@@ -59,11 +81,11 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
 
       setSelectedValue(permno)
 
-      setValue(`${field.id}.plate`, permno)
-      setValue(`${field.id}.type`, vehicle?.make)
-      setValue(`${field.id}.color`, vehicle?.color || undefined)
+      setValue(`${resolvedId}.plate`, permno)
+      setValue(`${resolvedId}.type`, vehicle?.make)
+      setValue(`${resolvedId}.color`, vehicle?.color || undefined)
       setValue(
-        `${field.id}.vehicleHasMilesOdometer`,
+        `${resolvedId}.vehicleHasMilesOdometer`,
         vehicle?.vehicleHasMilesOdometer,
       )
 
@@ -83,13 +105,12 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const options: Option[] = []
-  if (field.itemType === 'VEHICLE') {
-    const vehicles = field.itemList as VehicleDetails[]
+  if (itemType === 'VEHICLE') {
+    const vehicles = itemList as VehicleDetails[]
     for (const [index, vehicle] of vehicles.entries()) {
       const hasValidationError =
-        field.shouldValidateErrorMessages &&
-        !!vehicle.validationErrorMessages?.length
-      const hasDebtError = field.shouldValidateDebtStatus && !vehicle.isDebtLess
+        shouldValidateErrorMessages && !!vehicle.validationErrorMessages?.length
+      const hasDebtError = shouldValidateDebtStatus && !vehicle.isDebtLess
       const disabled = hasValidationError || hasDebtError
 
       options.push({
@@ -109,9 +130,9 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                 <AlertMessage
                   type="error"
                   title={
-                    field.alertMessageErrorTitle &&
+                    alertMessageErrorTitle &&
                     formatText(
-                      field.alertMessageErrorTitle,
+                      alertMessageErrorTitle,
                       application,
                       formatMessage,
                     )
@@ -121,9 +142,9 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                       <BulletList>
                         {hasDebtError && (
                           <Bullet>
-                            {field.debtStatusErrorMessage &&
+                            {debtStatusErrorMessage &&
                               formatText(
-                                field.debtStatusErrorMessage,
+                                debtStatusErrorMessage,
                                 application,
                                 formatMessage,
                               )}
@@ -132,18 +153,18 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                         {hasValidationError &&
                           vehicle.validationErrorMessages?.map((error) => {
                             const message =
-                              field.validationErrorMessages &&
+                              validationErrorMessages &&
                               formatMessage(
                                 getValueViaPath<MessageDescriptor>(
-                                  field.validationErrorMessages,
+                                  validationErrorMessages,
                                   error.errorNo || '',
                                 ) || '',
                               )
                             const defaultMessage = error.defaultMessage
                             const fallbackMessage =
-                              (field.validationErrorFallbackMessage &&
+                              (validationErrorFallbackMessage &&
                                 formatText(
-                                  field.validationErrorFallbackMessage,
+                                  validationErrorFallbackMessage,
                                   application,
                                   formatMessage,
                                 )) +
@@ -167,14 +188,12 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         disabled: disabled,
       })
     }
-  } else if (field.itemType === 'PLATE') {
-    const plates = field.itemList as PlateOwnership[]
+  } else if (itemType === 'PLATE') {
+    const plates = itemList as PlateOwnership[]
     for (const [index, plate] of plates.entries()) {
       const hasValidationError =
-        field.shouldValidateErrorMessages &&
-        !!plate.validationErrorMessages?.length
-      const canRenew =
-        !field.shouldValidateRenewal || field.validateRenewal?.(plate)
+        shouldValidateErrorMessages && !!plate.validationErrorMessages?.length
+      const canRenew = !shouldValidateRenewal || validateRenewal?.(plate)
       const disabled = hasValidationError || !canRenew
 
       options.push({
@@ -192,8 +211,8 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                 </Text>
               </Box>
               <Tag variant={canRenew ? 'mint' : 'red'} disabled>
-                {field.renewalExpiresAtTag &&
-                  formatMessage(field.renewalExpiresAtTag, {
+                {renewalExpiresAtTag &&
+                  formatMessage(renewalExpiresAtTag, {
                     date: formatDateFns(new Date(plate.endDate), 'do MMM yyyy'),
                   })}
               </Tag>
@@ -203,9 +222,9 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                 <AlertMessage
                   type="error"
                   title={
-                    field.alertMessageErrorTitle &&
+                    alertMessageErrorTitle &&
                     formatText(
-                      field.alertMessageErrorTitle,
+                      alertMessageErrorTitle,
                       application,
                       formatMessage,
                     )
@@ -215,10 +234,10 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                       <BulletList>
                         {plate.validationErrorMessages?.map((error) => {
                           const message =
-                            field.validationErrorMessages &&
+                            validationErrorMessages &&
                             formatMessage(
                               getValueViaPath<MessageDescriptor>(
-                                field.validationErrorMessages,
+                                validationErrorMessages,
                                 error.errorNo || '',
                               ) || '',
                             )
@@ -226,9 +245,9 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                           const defaultMessage = error.defaultMessage
 
                           const fallbackMessage =
-                            (field.validationErrorFallbackMessage &&
+                            (validationErrorFallbackMessage &&
                               formatText(
-                                field.validationErrorFallbackMessage,
+                                validationErrorFallbackMessage,
                                 application,
                                 formatMessage,
                               )) +
@@ -266,11 +285,11 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         clearOnChangeDefaultValue={clearOnChangeDefaultValue}
       />
 
-      {!selectedValue?.length && !!errors?.[field.id] && (
+      {!selectedValue?.length && !!errors?.[resolvedId] && (
         <InputError
           errorMessage={
-            field.inputErrorMessage &&
-            formatText(field.inputErrorMessage, application, formatMessage)
+            inputErrorMessage &&
+            formatText(inputErrorMessage, application, formatMessage)
           }
         />
       )}

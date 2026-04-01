@@ -7,7 +7,7 @@ import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { Locale } from '@island.is/shared/types'
+import { BffUser, Locale } from '@island.is/shared/types'
 import { FormatMessage } from './external'
 
 export type BeforeSubmitCallback = (
@@ -123,7 +123,10 @@ export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
 
 export interface FormItem extends TestSupport {
-  readonly id?: string
+  readonly id?:
+    | string
+    | ((application: Application) => string)
+    | ((application: Application, user: BffUser) => string)
   condition?: Condition
   readonly type: string
   readonly title?: FormTextWithLocale

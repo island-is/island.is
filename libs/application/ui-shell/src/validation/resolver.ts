@@ -1,12 +1,32 @@
-import { validateAnswers } from '@island.is/application/core'
-import { FormNode, FormValue } from '@island.is/application/types'
+import { resolveFieldId, validateAnswers } from '@island.is/application/core'
+import {
+  Application,
+  Field,
+  FormItemTypes,
+  FormNode,
+  FormValue,
+  MultiField,
+} from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form'
 import { ResolverContext } from '../types'
 
-// Get all field id's from the provided form node
-const getFormNodeFieldIds = (formNode: FormNode) =>
-  formNode?.children?.filter((x) => x.id).map((x) => x.id as string) ?? []
+const getFormNodeFieldIds = (
+  formNode: FormNode,
+  application: Application,
+  user?: BffUser,
+): string[] => {
+  if (formNode.type === FormItemTypes.MULTI_FIELD && 'children' in formNode) {
+    return (formNode as MultiField).children.map((c) =>
+      resolveFieldId(c as Field, application, user),
+    )
+  }
+  if ('component' in formNode && 'id' in formNode) {
+    return [resolveFieldId(formNode as Field, application, user)]
+  }
+  return []
+}
 
 type Resolver = ({
   formValue,
@@ -28,11 +48,20 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
     }
   }
 
+  const applicationForFields: Application = {
+    ...context.application,
+    answers: formValue,
+  }
+
   const validationError = validateAnswers({
     dataSchema: context.dataSchema,
     answers: formValue,
     isFullSchemaValidation: false,
-    currentScreenFields: getFormNodeFieldIds(context.formNode),
+    currentScreenFields: getFormNodeFieldIds(
+      context.formNode as FormNode,
+      applicationForFields,
+      context.user,
+    ),
     formatMessage,
   })
 

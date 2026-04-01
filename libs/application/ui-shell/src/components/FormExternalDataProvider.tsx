@@ -17,6 +17,7 @@ import {
   coreMessages,
   getErrorReasonIfPresent,
   formatText,
+  resolveFieldId,
 } from '@island.is/application/core'
 import {
   Application,
@@ -29,6 +30,7 @@ import {
   RecordObject,
   SetBeforeSubmitCallback,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
@@ -202,6 +204,7 @@ const FormExternalDataProvider: FC<
     externalDataProvider: ExternalDataProviderScreen
     formValue: FormValue
     errors: RecordObject
+    user?: BffUser
   }>
 > = ({
   addExternalData,
@@ -212,6 +215,7 @@ const FormExternalDataProvider: FC<
   externalDataProvider,
   formValue,
   errors,
+  user,
 }) => {
   const [shouldUseMockPayment, setShouldUseMockPayment] = useState(false)
   const [hasApproved, setHasApproved] = useState(false)
@@ -240,11 +244,10 @@ const FormExternalDataProvider: FC<
   const enableMockPayment = dataProviders.some(
     (x) => x.action === 'Payment.mockPaymentCatalog',
   )
+  const resolvedId = id ? resolveFieldId({ id }, application, user) : undefined
 
   // If id is undefined then the error won't be attached to the field with id
-  const error = getValueViaPath(errors, id ?? '', undefined) as
-    | string
-    | undefined
+  const error = getValueViaPath<string>(errors, resolvedId ?? '', undefined)
 
   const activateBeforeSubmitCallback = (
     checked: boolean,
@@ -296,9 +299,9 @@ const FormExternalDataProvider: FC<
   }
 
   useEffect(() => {
-    if (!id) return
-    setValue(id, false)
-  }, [id, setValue])
+    if (!resolvedId) return
+    setValue(resolvedId as string, false)
+  }, [resolvedId, setValue])
 
   useEffect(() => {
     activateBeforeSubmitCallback(hasApproved, shouldUseMockPayment)
@@ -350,7 +353,7 @@ const FormExternalDataProvider: FC<
       </Box>
       <Controller
         name={`${id}`}
-        defaultValue={getValueViaPath(formValue, id as string, false)}
+        defaultValue={getValueViaPath(formValue, resolvedId ?? '', false)}
         rules={{ required: true }}
         render={({ field: { onChange, value } }) => {
           return (
@@ -359,8 +362,8 @@ const FormExternalDataProvider: FC<
                 large={true}
                 onChange={(e) => {
                   const isChecked = e.target.checked
-                  clearErrors(id)
-                  setValue(id as string, isChecked)
+                  clearErrors(resolvedId)
+                  setValue(resolvedId ?? '', isChecked)
                   setHasApproved(isChecked)
                   onChange(isChecked)
                 }}
@@ -376,7 +379,7 @@ const FormExternalDataProvider: FC<
                       : formatMessage(coreMessages.externalDataAgreement)}
                   </Markdown>
                 }
-                value={id}
+                value={resolvedId}
               />
               {error && <InputError errorMessage={error} />}
             </>

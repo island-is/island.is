@@ -9,6 +9,7 @@ export const AssigneePrereqForm = buildForm({
   id: 'AssigneePrereq',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   logo: HmsLogo,
   children: [otherApprovalSection, externalDataSection],
 })

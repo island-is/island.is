@@ -12,7 +12,7 @@ const parentBDefaults = {
 }
 
 const MockParents = ({ application, field }: CRCFieldBaseProps) => {
-  const { id } = field
+  const id = field.id as string
   const { answers } = application
   const parents = answers.mockData?.parents
 

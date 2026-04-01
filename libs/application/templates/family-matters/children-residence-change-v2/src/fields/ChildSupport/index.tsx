@@ -10,7 +10,7 @@ const ChildSupport = ({ field, error }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
   return (
     <Terms
-      id={id}
+      id={id as string}
       error={error}
       disabled={disabled}
       options={[

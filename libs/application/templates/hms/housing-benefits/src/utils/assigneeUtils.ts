@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getHouseholdMembersForTable } from './rentalAgreementUtils'
 
@@ -164,6 +165,20 @@ export const getAssigneeApproverDisplayName = (
   }
 
   const members = getHouseholdMembersOver18ExcludingApplicant(application)
-  const member = members.find((m) => normalizeKt(m.nationalId) === normalizedSubject)
+  const member = members.find(
+    (m) => normalizeKt(m.nationalId) === normalizedSubject,
+  )
   return member?.name?.trim() ?? ''
+}
+
+export const nationalIdPreface = (
+  _application: Application,
+  user: BffUser,
+  fieldKey: string,
+) => {
+  const nationalId = user.profile.nationalId
+  const normalized = kennitala.isValid(nationalId)
+    ? kennitala.sanitize(nationalId)
+    : nationalId
+  return `${normalized}.${fieldKey}`
 }

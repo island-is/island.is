@@ -23,7 +23,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { Locale } from '@island.is/shared/types'
+import { BffUser, Locale } from '@island.is/shared/types'
 import { FormatMessage } from './external'
 
 export type RecordObject<T = unknown> = Record<string, T>
@@ -34,6 +34,9 @@ export type MaybeWithApplicationAndField<T> =
 export type MaybeWithApplicationAndFieldAndLocale<T> =
   | T
   | ((application: Application, field: Field, locale: Locale) => T)
+export type MaybeWithApplicationAndUser<T> =
+  | T
+  | ((application: Application, user: BffUser) => T)
 
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
@@ -334,8 +337,12 @@ export interface SelectOption<T = string | number> {
   value: T
 }
 
-export interface BaseField extends FormItem {
-  readonly id: string
+export interface BaseField extends Omit<FormItem, 'id'> {
+  /**
+   * Answer path in react-hook-form / `application.answers`. May be a function of `application`
+   * (e.g. per-assignee keys from `application.assignees` or answers).
+   */
+  readonly id: MaybeWithApplicationAndUser<string>
   readonly component: FieldComponents | string
   readonly title?: FormTextWithLocale
   readonly description?: FormTextWithLocale
@@ -349,7 +356,8 @@ export interface BaseField extends FormItem {
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
-  clearOnChange?: string[]
+  /** Static paths or `(application) => paths` when using a dynamic `id`. */
+  clearOnChange?: MaybeWithApplication<string[]>
   clearOnChangeDefaultValue?:
     | string
     | string[]

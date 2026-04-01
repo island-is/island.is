@@ -4,6 +4,8 @@ import {
   buildFieldReadOnly,
   buildFieldRequired,
   formatTextWithLocale,
+  resolveFieldClearOnChange,
+  resolveFieldId,
 } from '@island.is/application/core'
 import { FieldBaseProps, TextField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -12,6 +14,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
@@ -59,7 +62,9 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
   } = field
   const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
-  const value = watch(id)
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id }, application, user)
+  const value = watch(resolvedId)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -85,7 +90,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           disabled={disabled}
           readOnly={buildFieldReadOnly(application, readOnly)}
           allowNegative={allowNegative}
-          id={id}
+          id={resolvedId}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
             placeholder || '',
@@ -113,7 +118,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           error={error}
           onChange={(e) => {
             if (error) {
-              clearErrors(id)
+              clearErrors(resolvedId)
             }
             onChange(e)
           }}
@@ -142,7 +147,10 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           max={max}
           min={min}
           step={step}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'

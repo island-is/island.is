@@ -31,7 +31,7 @@ interface OtherAssetsRepeaterProps {
 export const OtherAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & OtherAssetsRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id } = field
+  const id = field.id as string
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.otherAssets
   const { formatMessage } = useLocale()

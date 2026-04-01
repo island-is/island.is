@@ -1,8 +1,13 @@
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  resolveFieldId,
+  resolveFormItemId,
+} from '@island.is/application/core'
 import {
   Application,
   DataProviderItem,
   ExternalData,
+  Field,
   FieldTypes,
   FormComponent,
   FormItemTypes,
@@ -13,6 +18,7 @@ import {
 import { FormScreen, MOCKPAYMENT } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
+import { BffUser } from '@island.is/shared/types'
 
 export const verifyExternalData = (
   externalData: ExternalData,
@@ -37,8 +43,11 @@ export const getFieldsWithNoAnswer = (
   screen: FormScreen,
   answers: FormValue,
   errorMessage: string,
+  application?: Application,
+  user?: BffUser,
 ): RecordObject<string> => {
   let missingAnswers: RecordObject<string> = {}
+  const app = application ?? ({ answers } as Application)
 
   if (screen.type === FormItemTypes.MULTI_FIELD) {
     const { children } = screen
@@ -46,11 +55,11 @@ export const getFieldsWithNoAnswer = (
     for (const child of children) {
       missingAnswers = {
         ...missingAnswers,
-        ...getFieldsWithNoAnswer(child, answers, errorMessage),
+        ...getFieldsWithNoAnswer(child, answers, errorMessage, app, user),
       }
     }
   } else if (screen.type !== FormItemTypes.REPEATER && screen.isNavigable) {
-    const screenId = screen.id!
+    const screenId = resolveFieldId(screen as Field, app, user)
     const screenAnswer = getValueViaPath(answers, screenId)
     const hasBeenAnswered = !answerIsMissing(screenAnswer)
     const shouldBeAnswered = !get(screen, 'doesNotRequireAnswer')
@@ -91,8 +100,11 @@ export const findSubmitField = (
 export const extractAnswersToSubmitFromScreen = (
   data: FormValue,
   screen: FormScreen,
+  application?: Application,
+  user?: BffUser,
 ): FormValue => {
-  const screenId = screen.id ?? ''
+  const app = application ?? ({ answers: data } as Application)
+  const screenId = resolveFormItemId(screen, app, user)
 
   if (
     screen.isPartOfRepeater ||
@@ -100,7 +112,7 @@ export const extractAnswersToSubmitFromScreen = (
   ) {
     const baseId =
       screen.type === FormItemTypes.MULTI_FIELD
-        ? screen.children[0].id
+        ? resolveFieldId(screen.children[0] as Field, app, user)
         : screenId
 
     // We always submit the whole array for the repeater answers
@@ -126,7 +138,7 @@ export const extractAnswersToSubmitFromScreen = (
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,
-        screen.children.map((c) => c.id),
+        screen.children.map((c) => resolveFieldId(c as Field, app, user)),
       )
     case FormItemTypes.REPEATER:
       return {}

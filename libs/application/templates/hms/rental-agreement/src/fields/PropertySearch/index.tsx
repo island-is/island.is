@@ -35,7 +35,7 @@ interface Props extends FieldBaseProps {
 export const PropertySearch = ({ field, errors }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue, getValues } = useFormContext()
-  const { id } = field
+  const id = field.id as string
   const storedValue: AddressProps = getValues(id)
   const onlyAddressSearch: boolean =
     field?.props && typeof field.props['onlyAddressSearch'] === 'boolean'
