@@ -6,12 +6,12 @@ import {
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
+import { areAllDefendantsCancelledOrDismissed } from '../../utils/utils'
 import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { areAllDefendantsCancelledOrDismissed } from '../../utils/utils'
 
 export interface Props {
   displayAppealExpirationInfo?: boolean
