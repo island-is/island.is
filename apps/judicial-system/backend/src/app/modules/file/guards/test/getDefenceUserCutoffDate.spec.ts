@@ -1,6 +1,4 @@
-import {
-  DefendantEventType,
-} from '@island.is/judicial-system/types'
+import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../../repository'
 import { getDefenceUserCutoffDate } from '../caseFileCategory'
@@ -15,8 +13,7 @@ const laterDate = new Date('2024-02-01')
 const makeEventLog = (
   eventType: DefendantEventType,
   created: Date,
-): DefendantEventLog =>
-  ({ eventType, created } as unknown as DefendantEventLog)
+): DefendantEventLog => ({ eventType, created } as unknown as DefendantEventLog)
 
 const makeDefendant = (
   defenderNationalId: string | undefined,
@@ -131,7 +128,7 @@ describe('getDefenceUserCutoffDate', () => {
   })
 
   describe('when the case also has defendants assigned to a different defender', () => {
-    it('only considers the defender\'s own defendants', () => {
+    it("only considers the defender's own defendants", () => {
       const defendants = [
         // The current defender's defendant — dismissed
         makeDefendant(nationalId, [
