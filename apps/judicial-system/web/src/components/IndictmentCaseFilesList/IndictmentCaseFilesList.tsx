@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
@@ -29,11 +32,13 @@ import {
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -182,12 +187,34 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
-      canViewRulings:
-        isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewRulings: (() => {
+        if (isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) {
+          return true
+        }
+        if (isDefenceUser(user)) {
+          const myDefendants = workingCase.defendants?.filter(
+            (defendant) =>
+              defendant.defenderNationalId &&
+              normalizeAndFormatNationalId(user?.nationalId).includes(
+                defendant.defenderNationalId,
+              ),
+          )
+          return (
+            isNonEmptyArray(myDefendants) &&
+            areAllDefendantsCancelledOrDismissed(myDefendants)
+          )
+        }
+        return false
+      })(),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [user, workingCase.hasCivilClaims, workingCase.state],
+    [
+      user,
+      workingCase.defendants,
+      workingCase.hasCivilClaims,
+      workingCase.state,
+    ],
   )
 }
 
@@ -278,6 +305,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+
+  const hideCourtRecord =
+    isDefenceUser(user) &&
+    areAllDefendantsCancelledOrDismissed(workingCase.defendants)
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
@@ -511,20 +542,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                {hasGeneratedCourtRecord && (
-                  <PdfButton
-                    caseId={workingCase.id}
-                    connectedCaseParentId={connectedCaseParentId}
-                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                    pdfType="courtRecord"
-                    renderAs="row"
-                    elementId="Þingbók"
+                {hideCourtRecord ? (
+                  <AlertMessage
+                    type="info"
+                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
                   />
+                ) : (
+                  <>
+                    {hasGeneratedCourtRecord && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        connectedCaseParentId={connectedCaseParentId}
+                        title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                        pdfType="courtRecord"
+                        renderAs="row"
+                        elementId="Þingbók"
+                      />
+                    )}
+                    <RenderFiles
+                      caseFiles={filteredFiles.courtRecords}
+                      onOpenFile={onOpen}
+                    />
+                  </>
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.courtRecords}
-                  onOpenFile={onOpen}
-                />
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}
