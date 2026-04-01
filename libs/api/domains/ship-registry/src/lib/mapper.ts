@@ -56,7 +56,7 @@ export const mapToUserShipCollectionItem = (
   }
 
   const validTo = ship.seaWorthyExpiry
-    ? new Date(ship.seaWorthyExpiry)
+    ? parseDate(ship.seaWorthyExpiry)
     : undefined
 
   return {

@@ -29,7 +29,6 @@ export class UserShipsResolver {
 
   @Query(() => UserShipsCollection, {
     name: 'shipRegistryUserShips',
-    nullable: true,
   })
   async userShips(@CurrentUser() user: User): Promise<UserShipsCollection> {
     return this.userShipsService.getUserShips(user)

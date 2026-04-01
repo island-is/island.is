@@ -171,7 +171,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
             {renderableEngines.map((engine, i) => (
               <Box key={i} marginTop={2}>
                 <TableGrid
-                  title={`${engine.name?.label}: ${engine.name?.value}`}
+                  title={engine.name?.label ? `${engine.name.label}: ${engine.name.value}` : engine.name?.value}
                   loading={loading}
                   dataArray={[
                     [
