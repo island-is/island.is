@@ -2,7 +2,7 @@ import { useLocale } from '@island.is/localization'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { TableGrid } from '@island.is/portals/my-pages/core'
 import { shipsMessages } from '../../../../lib/messages'
-import { ShipDetailQuery } from '../ShipDetail.generated'
+import type { ShipDetailQuery } from '../ShipDetail.generated'
 
 const formatMeasurement = (value?: string | null, unit?: string | null) => {
   if (!value) return undefined
