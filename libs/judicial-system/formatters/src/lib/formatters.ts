@@ -225,7 +225,7 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'brot í nánu sambandi',
   ANIMAL_PROTECTION: 'brot á lögum um dýravernd',
-  FOREIGN_NATIONALS: 'brot á lögum um útlendinga',
+  FOREIGN_NATIONALS: 'brot gegn útlendingalögum',
   PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
   PROPERTY_DAMAGE: 'eignaspjöll',
   NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
