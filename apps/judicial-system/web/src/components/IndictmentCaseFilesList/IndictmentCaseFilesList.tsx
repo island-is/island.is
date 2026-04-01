@@ -209,7 +209,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [user, workingCase.defendants, workingCase.hasCivilClaims, workingCase.state],
+    [
+      user,
+      workingCase.defendants,
+      workingCase.hasCivilClaims,
+      workingCase.state,
+    ],
   )
 }
 
