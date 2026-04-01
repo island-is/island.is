@@ -75,13 +75,6 @@ const requirementKeyToStep = (
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.currentLocalResidencyDescription,
       }
-    //TODO: Remove when RLS/SGS supports health certificate in BE license
-    case RequirementKey.beRequiresHealthCertificate:
-      return {
-        title: requirementsMessages.beLicenseRequiresHealthCertificateTitle,
-        description:
-          requirementsMessages.beLicenseRequiresHealthCertificateDescription,
-      }
     case RequirementKey.hasNoPhoto:
       return {
         title: requirementsMessages.beLicenseQualityPhotoTitle,

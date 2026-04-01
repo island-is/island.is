@@ -5,15 +5,15 @@ import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
+  valueIndex: number
 }
 
-export const NationalIdDisplay = ({ item }: Props) => {
+export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
   const { lang, formatMessage } = useLocale()
 
-  const values = (item.values ?? []).filter((v): v is NonNullable<typeof v> =>
-    Boolean(v),
-  )
-  const showIndex = values.length > 1
+  const value = item.values?.[valueIndex]
+  const nationalId = value?.json?.nationalId ?? undefined
+  const name = value?.json?.name ?? undefined
 
   return (
     <Box
@@ -24,63 +24,41 @@ export const NationalIdDisplay = ({ item }: Props) => {
       height="full"
     >
       <Stack space={0}>
-        <Text as="p" fontWeight="semiBold">
+        <Text as="p" fontWeight="semiBold" lineHeight="sm">
           {item.name?.[lang]}
         </Text>
-        {values.map((valueDto, index) => {
-          const nationalId = valueDto.json?.nationalId ?? undefined
-          const name = valueDto.json?.name ?? undefined
-
-          return (
-            <Box key={`${valueDto.id ?? item.id}-${index}`} marginLeft={2}>
-              {showIndex && (
-                <>
-                  <Text fontWeight="medium">{`${index + 1}:`}</Text>
-                  <Text fontWeight="medium" color="dark350">
-                    {`${formatMessage(m.nationalId)}:`}
-                    {'\u00A0\u00A0\u00A0'}
-                    {nationalId && (
-                      <Text as="span" fontWeight="light" color="dark400">
-                        {nationalId}
-                      </Text>
-                    )}
-                  </Text>
-                  <Text fontWeight="medium" color="dark350">
-                    {`${formatMessage(m.individualName)}:`}
-                    {'\u00A0\u00A0\u00A0'}
-                    {name && (
-                      <Text as="span" fontWeight="light" color="dark400">
-                        {name}
-                      </Text>
-                    )}
-                  </Text>
-                </>
+        <Box marginLeft={2}>
+          <>
+            <Text fontWeight="medium" color="dark350" lineHeight="sm">
+              {`${formatMessage(m.nationalId)}:`}
+              {'\u00A0\u00A0\u00A0'}
+              {nationalId && (
+                <Text
+                  as="span"
+                  fontWeight="light"
+                  color="dark400"
+                  lineHeight="sm"
+                >
+                  {nationalId}
+                </Text>
               )}
-              {!showIndex && (
-                <>
-                  <Text fontWeight="medium" color="dark350">
-                    {`${formatMessage(m.nationalId)}:`}
-                    {'\u00A0\u00A0\u00A0'}
-                    {nationalId && (
-                      <Text as="span" fontWeight="light" color="dark400">
-                        {nationalId}
-                      </Text>
-                    )}
-                  </Text>
-                  <Text fontWeight="medium" color="dark350">
-                    {`${formatMessage(m.individualName)}:`}
-                    {'\u00A0\u00A0\u00A0'}
-                    {name && (
-                      <Text as="span" fontWeight="light" color="dark400">
-                        {name}
-                      </Text>
-                    )}
-                  </Text>
-                </>
+            </Text>
+            <Text fontWeight="medium" color="dark350" lineHeight="sm">
+              {`${formatMessage(m.individualName)}:`}
+              {'\u00A0\u00A0\u00A0'}
+              {name && (
+                <Text
+                  as="span"
+                  fontWeight="light"
+                  color="dark400"
+                  lineHeight="sm"
+                >
+                  {name}
+                </Text>
               )}
-            </Box>
-          )
-        })}
+            </Text>
+          </>
+        </Box>
       </Stack>
     </Box>
   )

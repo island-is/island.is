@@ -78,4 +78,10 @@ export class FieldSettingsInput {
 
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isPhoneRequired?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isEmailRequired?: boolean
 }

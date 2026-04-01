@@ -7,8 +7,10 @@ import {
 } from '@island.is/shared/constants'
 import cn from 'classnames'
 import getYear from 'date-fns/getYear'
+import isValid from 'date-fns/isValid'
 import en from 'date-fns/locale/en-US'
 import is from 'date-fns/locale/is'
+import parse from 'date-fns/parse'
 import range from 'lodash/range'
 import * as React from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
@@ -37,13 +39,27 @@ const languageConfig = {
     formatWithTime: dateFormatWithTime.is,
     timeFormat: timeFormat.is,
     locale: is,
+    parseFallbacks: ['d.M.yyyy', 'dd/MM/yyyy', 'd/M/yyyy'],
   },
   en: {
     format: dateFormat.en,
     formatWithTime: dateFormatWithTime.en,
     timeFormat: timeFormat.en,
     locale: en,
+    parseFallbacks: ['d/M/yyyy', 'dd.MM.yyyy', 'd.M.yyyy'],
   },
+}
+
+const tryParseDate = (
+  str: string,
+  primary: string,
+  fallbacks: string[],
+): Date | null => {
+  for (const fmt of [primary, ...fallbacks]) {
+    const d = parse(str.trim(), fmt, new Date())
+    if (isValid(d)) return d
+  }
+  return null
 }
 
 export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
@@ -103,6 +119,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     'closed',
   )
   const [isOpen, setIsOpen] = useState(false)
+  const hoverDateRef = React.useRef<Date | null>(null)
+  // Blocks onChange during typing; reset async so calendar clicks are unaffected.
+  const isTypingInInputRef = useRef(false)
   const [shouldAlignEnd, setShouldAlignEnd] = useState(false)
 
   const currentLanguage = languageConfig[locale]
@@ -178,7 +197,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           popperPlacement="bottom-start"
           open={isOpen}
           onInputClick={() => {
-            setIsOpen(true)
+            if (!range) setIsOpen(true)
             onInputClick && onInputClick()
           }}
           onCalendarOpen={() => {
@@ -194,6 +213,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onCalendarClose={() => {
             setDatePickerState('closed')
             setIsOpen(false)
+            hoverDateRef.current = null
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
           // We handle closing manually in range mode
@@ -203,6 +223,17 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
+                  if (isTypingInInputRef.current) {
+                    // Block intermediate parses, but allow a fully-typed range through.
+                    const arr = Array.isArray(date) ? date : []
+                    const bothValid =
+                      arr[0] instanceof Date &&
+                      !isNaN(arr[0].getTime()) &&
+                      arr[1] instanceof Date &&
+                      !isNaN(arr[1].getTime())
+                    if (!bothValid) return
+                  }
+
                   const [start, end] = date
 
                   if (start === null && end === null) {
@@ -217,41 +248,60 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     (end === null ||
                       (end instanceof Date && !isNaN(end.getTime())))
                   ) {
+                    if (
+                      end === null &&
+                      startDate !== null &&
+                      endDate === null &&
+                      start < startDate
+                    ) {
+                      setStartDate(start)
+                      setEndDate(startDate)
+                      hoverDateRef.current = null
+                      setIsOpen(false)
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      ;(datePickerRef.current as any)?.setState({
+                        inputValue: null,
+                      })
+                      handleChange && handleChange(start, startDate)
+                      return
+                    }
+
                     setStartDate(start)
                     setEndDate(end)
 
-                    if (end === null) {
-                      // first click in range – keep calendar open
-                      setIsOpen(true)
-                    } else {
-                      // range complete – close calendar
+                    if (end !== null) {
+                      hoverDateRef.current = null
                       setIsOpen(false)
-                    }
-
-                    if (end !== null && handleChange) {
-                      handleChange(start, end)
+                      if (handleChange) {
+                        handleChange(start, end)
+                      }
+                    } else {
+                      setIsOpen(true)
                     }
                   }
                 }
               : (date: any) => {
                   if (date === null) {
                     setStartDate(null)
-                    // also close when cleared via calendar UI (if ever)
                     setIsOpen(false)
                     return
                   }
                   if (date instanceof Date && !isNaN(date.getTime())) {
                     setStartDate(date)
                     handleChange && handleChange(date)
-                    // close after single-date selection
                     setIsOpen(false)
                   }
                 }
           }
           onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
             if (!range) return
+            // handleSelect also calls onChangeRaw before onChange — skip for calendar clicks.
+            if (!(e.target instanceof HTMLInputElement)) return
+            isTypingInInputRef.current = true
+            setTimeout(() => {
+              isTypingInInputRef.current = false
+            }, 0)
             const v = (e.target as HTMLInputElement).value
-            // If the input is cleared via keyboard, reset both dates
             if (!v || v.trim() === '') {
               setStartDate(null)
               setEndDate(null)
@@ -264,9 +314,60 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               return
             }
 
-            if (e.key === 'Enter' || e.key === 'ArrowDown') setIsOpen(true)
-            if (e.key === 'Escape') setIsOpen(false)
+            if (e.key === 'Escape') {
+              setIsOpen(false)
+              return
+            }
+            if (e.key === 'ArrowDown') {
+              setIsOpen(true)
+              return
+            }
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              const v = (e.target as HTMLInputElement).value
+              if (!v || v.trim() === '') return
+              const parts = v.split(/\s*-\s*/)
+              if (parts.length !== 2) return
+              const fmt = showTimeInput
+                ? currentLanguage.formatWithTime
+                : currentLanguage.format
+              const fallbacks = showTimeInput
+                ? []
+                : currentLanguage.parseFallbacks
+              const parsedStart = tryParseDate(parts[0], fmt, fallbacks)
+              const parsedEnd = tryParseDate(parts[1], fmt, fallbacks)
+              if (!parsedStart || !parsedEnd) return
+              const [s, end2] =
+                parsedEnd < parsedStart
+                  ? [parsedEnd, parsedStart]
+                  : [parsedStart, parsedEnd]
+              setStartDate(s)
+              setEndDate(end2)
+              setIsOpen(false)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ;(datePickerRef.current as any)?.setState({ inputValue: null })
+              handleChange && handleChange(s, end2)
+            }
           }}
+          onDayMouseEnter={
+            range
+              ? (date: Date) => {
+                  hoverDateRef.current = startDate && !endDate ? date : null
+                }
+              : undefined
+          }
+          dayClassName={
+            range
+              ? (date: Date) => {
+                  const hover = hoverDateRef.current
+                  if (!startDate || endDate !== null || !hover) return null
+                  if (hover >= startDate) return null
+                  return date >= hover && date <= startDate
+                    ? 'react-datepicker__day--in-selecting-range'
+                    : null
+                }
+              : undefined
+          }
           startDate={startDate}
           endDate={range ? endDate : undefined}
           selectsRange={range}
@@ -291,6 +392,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               clearLabel={clearLabel}
               size={size}
               onClick={onInputClick}
+              onIconClick={range ? () => setIsOpen((prev) => !prev) : undefined}
               onClear={() => {
                 setStartDate(null)
                 setEndDate(null)
@@ -324,7 +426,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
 
                 if (startDay && endDay) {
                   handleChange && handleChange(startDay, endDay)
-                  // if range completed via custom container (quick ranges etc.)
                   setIsOpen(false)
                 }
               }}
@@ -352,6 +453,7 @@ const CustomInput = forwardRef<
     clearLabel?: string
     onClear?: () => void
     onInputClick?: ReactDatePickerProps['onInputClick']
+    onIconClick?: () => void
   }
 >(
   (
@@ -359,15 +461,26 @@ const CustomInput = forwardRef<
       className,
       placeholderText,
       onInputClick,
+      onIconClick,
       fixedFocusState,
       icon,
+      onClick,
       ...props
     },
     ref,
   ) => (
     <Input
       {...props}
-      icon={icon}
+      icon={
+        onIconClick && icon
+          ? {
+              ...icon,
+              onClick: onIconClick,
+              ariaLabel: 'Open calendar',
+            }
+          : icon
+      }
+      onClick={onIconClick ? undefined : onClick}
       ref={ref}
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}

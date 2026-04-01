@@ -40,15 +40,17 @@ export const incomeTypeValueModifier = (
   return selectedOption ?? null
 }
 
+// Sets currency to ISK for non-foreign income types.
+// For foreign income types, preserves the existing currency when editing,
+// or clears it to null so the user must select one.
 export const currencyValueModifier = (activeField?: Record<string, string>) => {
-  const foreignIncomeTypes = [
-    FOREIGN_BASIC_PENSION,
-    FOREIGN_PENSION,
-    FOREIGN_INCOME,
-    INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
-    DIVIDENDS_IN_FOREIGN_BANKS,
-  ]
-  return foreignIncomeTypes.includes(activeField?.incomeType ?? '') ? null : ISK
+  if (isForeignCurrency(activeField)) {
+    return activeField?.currency && activeField.currency !== ISK
+      ? activeField.currency
+      : null
+  }
+
+  return ISK
 }
 
 export const incomePerYearValueModifier = (
@@ -149,4 +151,12 @@ export const isMonthlyIncome = (activeField?: Record<string, string>) => {
     activeField?.income === RatioType.MONTHLY &&
     activeField?.incomeCategory === INCOME
   )
+}
+
+// filter out removed rows from income plan table,
+// used for calculating total income and determining whether
+// to show alert and question about zero income
+export const getActiveIncomeRows = (value: unknown) => {
+  const rows = Array.isArray(value) ? value : [] // check if value is an array, if not return empty array to avoid errors
+  return rows.filter((row) => !row.isRemoved)
 }
