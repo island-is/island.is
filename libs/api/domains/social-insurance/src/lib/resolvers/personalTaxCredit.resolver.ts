@@ -74,5 +74,4 @@ export class PersonalTaxCreditResolver {
     await this.service.discontinueTaxCardAllowance(user, input)
     return true
   }
-
 }
