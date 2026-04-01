@@ -79,7 +79,7 @@ const generateCell = <T>(value?: T, sortValue?: string): CaseTableCell<T> => {
 
 const generateDate = (date: Date | undefined): CaseTableCell<StringValue> => {
   const dateValue = formatDate(date, 'd.M.yyyy')
-  const sortValue = formatDate(date, 'yyyyMMdd')
+  const sortValue = formatDate(date, 'yyyyMMddHHmm')
 
   if (!dateValue || !sortValue) {
     return generateCell()
