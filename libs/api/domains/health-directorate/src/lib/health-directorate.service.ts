@@ -2,12 +2,10 @@ import { Auth } from '@island.is/auth-nest-tools'
 import {
   CreateEuPatientConsentDto,
   HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   UserVisibleAppointmentStatuses,
   VaccinationDto,
-  organLocale,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
@@ -66,15 +64,13 @@ export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly healthApi: HealthDirectorateHealthService,
-    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
-    const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
     const data: OrganDonorDto | null =
-      await this.organDonationApi.getOrganDonation(auth, lang)
+      await this.healthApi.getOrganDonation(auth, locale)
     if (data === null) {
       return null
     }
@@ -101,8 +97,7 @@ export class HealthDirectorateService {
     auth: Auth,
     locale: Locale,
   ): Promise<Array<Organ>> {
-    const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+    const data = await this.healthApi.getDonationExceptions(auth, locale)
 
     const limitations: Array<Organ> =
       data?.map((item) => {
@@ -123,14 +118,14 @@ export class HealthDirectorateService {
     const filteredList =
       input.organLimitations?.filter((item) => item !== 'other') ?? []
 
-    return await this.organDonationApi.updateOrganDonation(
+    return await this.healthApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,
         exceptions: filteredList,
         exceptionComment: input.comment,
       },
-      locale === 'is' ? organLocale.Is : organLocale.En,
+      locale,
     )
   }
 
