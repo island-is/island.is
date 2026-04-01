@@ -945,7 +945,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     }
   }
 
-  const requestDays = getOrFallback(isRequestingRights, requestValue)
+  const requestDays = getOrFallback(
+    isRequestingRights === YES || isRequestingRightsSecondary === YES
+      ? YES
+      : NO,
+    requestValue,
+  )
 
   let isGivingRights =
     transferRights === TransferRightsOption.GIVE
