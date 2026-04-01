@@ -34,6 +34,7 @@ import {
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -279,11 +280,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const allDefendantsCancelledOrDismissed = workingCase.defendants?.every(
-    (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
-  )
   const hideCourtRecord =
-    isDefenceUser(user) && allDefendantsCancelledOrDismissed
+    isDefenceUser(user) &&
+    areAllDefendantsCancelledOrDismissed(workingCase.defendants)
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(

@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isDefenceUser, isRequestCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
@@ -58,12 +59,9 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const allCancelledOrDismissed = workingCase.defendants?.every(
-      (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
-    )
-
     const defendants = workingCase.defendants?.filter((defendant) =>
-      isDefenceUser(user) && allCancelledOrDismissed
+      isDefenceUser(user) &&
+      areAllDefendantsCancelledOrDismissed(workingCase.defendants)
         ? true
         : defendant.indictmentCancelledOrDismissedState === null,
     )
