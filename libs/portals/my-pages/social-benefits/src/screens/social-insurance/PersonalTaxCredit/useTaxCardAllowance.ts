@@ -15,17 +15,14 @@ export const useTaxCardAllowance = () => {
 
   const save = async (myTaxCredit: MyTaxCreditState) => {
     switch (myTaxCredit.action) {
-      case 'register':
+      case 'register': {
+        const { year, month, percentage } = myTaxCredit.data
+        if (year == null || month == null) break
         await register({
-          variables: {
-            input: {
-              year: myTaxCredit.data.year ?? undefined,
-              month: myTaxCredit.data.month ?? undefined,
-              percentage: Number(myTaxCredit.data.percentage),
-            },
-          },
+          variables: { input: { year, month, percentage: Number(percentage) } },
         })
         break
+      }
       case 'update':
         await update({
           variables: {
@@ -35,16 +32,14 @@ export const useTaxCardAllowance = () => {
           },
         })
         break
-      case 'discontinue':
+      case 'discontinue': {
+        const { year, month } = myTaxCredit.data
+        if (year == null || month == null) break
         await discontinue({
-          variables: {
-            input: {
-              year: myTaxCredit.data.year ?? undefined,
-              month: myTaxCredit.data.month ?? undefined,
-            },
-          },
+          variables: { input: { year, month } },
         })
         break
+      }
     }
   }
 

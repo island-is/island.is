@@ -289,8 +289,8 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-types-section-title',
     defaultMessage: 'Greiðslur til þín og gildistími þeirra',
   },
-  benefitChildrenSectionTitle: {
-    id: 'sp.social-insurance-maintenance:benefit-children-section-title',
+  childBenefitsSectionTitle: {
+    id: 'sp.social-insurance-maintenance:child-benefits-section-title',
     defaultMessage: 'TR greiðir til þín vegna eftirfarandi barna',
   },
   paymentTypeName: {

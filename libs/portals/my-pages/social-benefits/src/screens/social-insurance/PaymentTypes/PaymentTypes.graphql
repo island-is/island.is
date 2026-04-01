@@ -5,7 +5,7 @@ query GetPaymentTypesOverview {
       dateFrom
       dateTo
     }
-    benefitChildren {
+    childBenefits {
       name
       nationalId
     }

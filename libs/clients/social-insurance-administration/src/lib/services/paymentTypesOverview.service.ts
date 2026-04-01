@@ -30,7 +30,7 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
       })
   }
 
-  async getBenefitChildrenInformation(
+  async getChildBenefitsInformation(
     user: User,
   ): Promise<
     | TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn[]

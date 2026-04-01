@@ -16,14 +16,6 @@ query getPersonalTaxCredit {
       year
       months
     }
-    spouseEligibility {
-      canApply
-      reasonNotAllowed
-      allowedYearMonths {
-        year
-        months
-      }
-    }
   }
 }
 
@@ -45,12 +37,3 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
   discontinueSocialInsuranceTaxCardAllowance(input: $input)
 }
 
-mutation setSocialInsuranceSpouseTaxCard {
-  setSocialInsuranceSpouseTaxCard
-}
-
-mutation setSocialInsuranceSpouseTaxCardDueToDeath(
-  $input: SocialInsuranceSetSpouseTaxCardDueToDeathInput!
-) {
-  setSocialInsuranceSpouseTaxCardDueToDeath(input: $input)
-}

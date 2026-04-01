@@ -65,7 +65,7 @@ const PaymentTypes = () => {
   }
 
   const isEmpty =
-    !result?.paymentTypes?.length && !result?.benefitChildren?.length
+    !result?.paymentTypes?.length && !result?.childBenefits?.length
 
   return (
     <IntroWrapper {...introProps}>
@@ -130,10 +130,10 @@ const PaymentTypes = () => {
           </Stack>
         )}
 
-        {result?.benefitChildren && result.benefitChildren.length > 0 && (
+        {result?.childBenefits && result.childBenefits.length > 0 && (
           <Stack space={2}>
             <Text variant="eyebrow" color="purple400">
-              {formatMessage(m.benefitChildrenSectionTitle)}
+              {formatMessage(m.childBenefitsSectionTitle)}
             </Text>
             <T.Table>
               <T.Head>
@@ -151,7 +151,7 @@ const PaymentTypes = () => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {result.benefitChildren.map((child, index) => (
+                {result.childBenefits.map((child, index) => (
                   <T.Row key={`${child.nationalId}-${index}`}>
                     <T.Data>{child.name ?? '-'}</T.Data>
                     <T.Data>

@@ -15,12 +15,9 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
-import {
-  RegisterTaxCardAllowanceInput,
-  UpdateTaxCardAllowanceInput,
-  DiscontinueTaxCardAllowanceInput,
-  SetSpouseTaxCardDueToDeathInput,
-} from '../dtos/personalTaxCredit.input'
+import { RegisterTaxCardAllowanceInput } from '../dtos/registerTaxCardAllowance.input'
+import { UpdateTaxCardAllowanceInput } from '../dtos/updateTaxCardAllowance.input'
+import { DiscontinueTaxCardAllowanceInput } from '../dtos/discontinueTaxCardAllowance.input'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
 @Resolver()
@@ -78,24 +75,4 @@ export class PersonalTaxCreditResolver {
     return true
   }
 
-  @Mutation(() => Boolean, {
-    name: 'setSocialInsuranceSpouseTaxCard',
-  })
-  @Audit()
-  async setSpouseTaxCard(@CurrentUser() user: User): Promise<boolean> {
-    await this.service.setSpouseTaxCard(user)
-    return true
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'setSocialInsuranceSpouseTaxCardDueToDeath',
-  })
-  @Audit()
-  async setSpouseTaxCardDueToDeath(
-    @Args('input') input: SetSpouseTaxCardDueToDeathInput,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    await this.service.setSpouseTaxCardDueToDeath(user, input)
-    return true
-  }
 }

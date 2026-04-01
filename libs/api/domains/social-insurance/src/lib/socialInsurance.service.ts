@@ -11,7 +11,6 @@ import {
   TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
   TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
   TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
-  TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -44,7 +43,7 @@ import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionC
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 import { parseIncomePlanStatus } from './mappers/parseIncomePlanStatus'
 import {
-  mapBenefitChildInformation,
+  mapChildBenefitInformation,
   mapPaymentTypeOverview,
 } from './mappers/mapPaymentTypesOverview'
 import { PaymentTypesOverviewResult } from './models/paymentTypes/paymentTypesOverviewResult.model'
@@ -259,12 +258,7 @@ export class SocialInsuranceService {
   }
 
   async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
-    const [taxCardsResult, spouseEligibility] = await Promise.all([
-      this.personalTaxCreditClient.getTaxCards(user),
-      this.personalTaxCreditClient.getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
-        user,
-      ),
-    ])
+    const taxCardsResult = await this.personalTaxCreditClient.getTaxCards(user)
 
     const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
       ? undefined
@@ -291,16 +285,6 @@ export class SocialInsuranceService {
       discontinuingMonthsAndYears: toYearWithMonths(
         discontinuingMonthsAndYears,
       ),
-      spouseEligibility: spouseEligibility
-        ? {
-            ...spouseEligibility,
-            canApply: spouseEligibility.canApply ?? false,
-            reasonNotAllowed: spouseEligibility.reasonNotAllowed ?? undefined,
-            allowedYearMonths: toYearWithMonths(
-              spouseEligibility.allowedYearMonths,
-            ),
-          }
-        : undefined,
     }
   }
 
@@ -325,29 +309,18 @@ export class SocialInsuranceService {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async setSpouseTaxCard(user: User): Promise<void> {
-    return this.personalTaxCreditClient.setSpouseTaxCard(user, {})
-  }
-
-  async setSpouseTaxCardDueToDeath(
-    user: User,
-    input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
-  ): Promise<void> {
-    return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
-  }
-
   async getPaymentTypesOverview(
     user: User,
   ): Promise<PaymentTypesOverviewResult | null> {
     try {
-      const [paymentTypes, benefitChildren] = await Promise.all([
+      const [paymentTypes, childBenefits] = await Promise.all([
         this.paymentTypesOverviewClient.getPaymentTypesOverview(user),
-        this.paymentTypesOverviewClient.getBenefitChildrenInformation(user),
+        this.paymentTypesOverviewClient.getChildBenefitsInformation(user),
       ])
-      if (!paymentTypes && !benefitChildren) return null
+      if (!paymentTypes && !childBenefits) return null
       return {
         paymentTypes: paymentTypes?.map(mapPaymentTypeOverview),
-        benefitChildren: benefitChildren?.map(mapBenefitChildInformation),
+        childBenefits: childBenefits?.map(mapChildBenefitInformation),
       }
     } catch (error) {
       this.logger.warn('Payment types overview fetch failed', {

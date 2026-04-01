@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { YearWithMonths } from './taxCardMonthsAndYears.model'
-import { SpousalTaxCardEligibility } from './spousalTaxCardEligibility.model'
 
 @ObjectType('SocialInsuranceTaxCardSummary')
 export class TaxCardSummary {
@@ -33,7 +32,4 @@ export class PersonalTaxCredit {
 
   @Field(() => [YearWithMonths], { nullable: true })
   discontinuingMonthsAndYears?: YearWithMonths[]
-
-  @Field(() => SpousalTaxCardEligibility, { nullable: true })
-  spouseEligibility?: SpousalTaxCardEligibility
 }

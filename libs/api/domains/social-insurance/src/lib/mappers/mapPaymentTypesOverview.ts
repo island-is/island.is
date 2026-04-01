@@ -2,7 +2,7 @@ import {
   TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn,
   TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn,
 } from '@island.is/clients/social-insurance-administration'
-import { BenefitChildInformation } from '../models/paymentTypes/benefitChildInformation.model'
+import { ChildBenefitInformation } from '../models/paymentTypes/childBenefitInformation.model'
 import { PaymentTypeOverview } from '../models/paymentTypes/paymentTypeOverview.model'
 
 export const mapPaymentTypeOverview = (
@@ -13,9 +13,9 @@ export const mapPaymentTypeOverview = (
   dateTo: row.dateTo ? new Date(row.dateTo) : undefined,
 })
 
-export const mapBenefitChildInformation = (
+export const mapChildBenefitInformation = (
   row: TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn,
-): BenefitChildInformation => ({
+): ChildBenefitInformation => ({
   name: row.name ?? '',
   nationalId: row.nationalId ?? undefined,
 })
