@@ -104,7 +104,7 @@ export const mapToUserShipFromDetails = (
     hullMaterial: toLocalizedValue(info.hullMaterial, locale),
     classificationSociety: toLocalizedValue(info.classificationSociety, locale),
     phoneOnBoard: toLocalizedValue(info.phoneOnBoardShip, locale),
-    isSeaworthy: seaworthinessDate != null && seaworthinessDate > new Date(),
+    isSeaworthy: seaworthinessDate != null && seaworthinessDate >= new Date(),
     seaworthinessCertificateValidTo: toLocalizedValue(
       seaworthinessDate
         ? {
