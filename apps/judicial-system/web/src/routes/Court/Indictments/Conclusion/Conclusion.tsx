@@ -283,12 +283,10 @@ const Conclusion: FC = () => {
           update.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.RULING
         ) {
-          const defendantVerdictsToCreate = workingCase.defendants?.map(
-            (item) => ({
-              defendantId: item.id,
-              isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
-            }),
-          )
+          const defendantVerdictsToCreate = activeDefendants?.map((item) => ({
+            defendantId: item.id,
+            isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
+          }))
 
           promises.push(
             createVerdicts({
@@ -299,7 +297,7 @@ const Conclusion: FC = () => {
         }
 
         promises.push(
-          ...(workingCase.defendants?.map((defendant) =>
+          ...(activeDefendants?.map((defendant) =>
             updateDefendant({
               caseId: workingCase.id,
               defendantId: defendant.id,
@@ -762,7 +760,7 @@ const Conclusion: FC = () => {
               <SectionHeading title="Hvern á að kljúfa frá málinu?" />
               <Select
                 name="defendant"
-                options={workingCase.defendants?.map((defendant) => ({
+                options={activeDefendants?.map((defendant) => ({
                   label: defendant.name ?? 'Nafn ekki skráð',
                   value: defendant.id,
                 }))}
@@ -778,7 +776,7 @@ const Conclusion: FC = () => {
                 }
                 isDisabled={workingCase.state === CaseState.CORRECTING}
                 onChange={(option) => {
-                  const defendant = workingCase.defendants?.find(
+                  const defendant = activeDefendants?.find(
                     (defendant) => defendant.id === option?.value,
                   )
                   setSelectedDefendant(defendant ?? null)
@@ -859,9 +857,9 @@ const Conclusion: FC = () => {
           {selectedAction === IndictmentDecision.COMPLETING &&
             (selectedDecision === CaseIndictmentRulingDecision.FINE ||
               selectedDecision === CaseIndictmentRulingDecision.RULING) &&
-            isNonEmptyArray(workingCase.defendants) && (
+            isNonEmptyArray(activeDefendants) && (
               <Box component="section" className={grid({ gap: 3 })}>
-                {workingCase.defendants.map((defendant) => (
+                {activeDefendants.map((defendant) => (
                   <BlueBox key={defendant.id} className={grid({ gap: 2 })}>
                     <SectionHeading
                       title={defendant.name || ''}
@@ -914,52 +912,47 @@ const Conclusion: FC = () => {
               </Box>
             )}
           {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
-            isNonEmptyArray(workingCase.defendants) && (
+            isNonEmptyArray(activeDefendants) && (
               <>
-                {workingCase.defendants
-                  .filter(
-                    (defendant) =>
-                      defendant.indictmentCancelledOrDismissedState === null,
-                  )
-                  .map((defendant) => (
-                    <BlueBox
-                      key={`completing-for-some-${defendant.id}`}
-                      className={grid({ gap: 2 })}
-                    >
-                      <SectionHeading
-                        title={defendant.name || ''}
-                        variant="h4"
-                        marginBottom={0}
-                      />
-                      <Select
-                        id={`completing-for-some-${defendant.id}`}
-                        label="Lyktir"
-                        placeholder="Veldu lyktir ef á við"
-                        options={completingForSomeOptions}
-                        value={completingForSomeOptions.find(
-                          (option) =>
-                            option.value ===
-                            completingForSomeSelections[defendant.id],
-                        )}
-                        onChange={(selectedOption) => {
-                          setCompletingForSomeSelections((prevSelections) => ({
-                            ...prevSelections,
-                            [defendant.id]: selectedOption?.value as
-                              | CaseIndictmentRulingDecision
-                              | undefined,
-                          }))
-                        }}
-                        isDisabled={
-                          workingCase.state === CaseState.CORRECTING ||
-                          (!completingForSomeSelections[defendant.id] &&
-                            completingForSomeSelectedCount >=
-                              (workingCase.defendants?.length ?? 0) - 1)
-                        }
-                        size="sm"
-                        isClearable
-                      />
-                    </BlueBox>
-                  ))}
+                {activeDefendants.map((defendant) => (
+                  <BlueBox
+                    key={`completing-for-some-${defendant.id}`}
+                    className={grid({ gap: 2 })}
+                  >
+                    <SectionHeading
+                      title={defendant.name || ''}
+                      variant="h4"
+                      marginBottom={0}
+                    />
+                    <Select
+                      id={`completing-for-some-${defendant.id}`}
+                      label="Lyktir"
+                      placeholder="Veldu lyktir ef á við"
+                      options={completingForSomeOptions}
+                      value={completingForSomeOptions.find(
+                        (option) =>
+                          option.value ===
+                          completingForSomeSelections[defendant.id],
+                      )}
+                      onChange={(selectedOption) => {
+                        setCompletingForSomeSelections((prevSelections) => ({
+                          ...prevSelections,
+                          [defendant.id]: selectedOption?.value as
+                            | CaseIndictmentRulingDecision
+                            | undefined,
+                        }))
+                      }}
+                      isDisabled={
+                        workingCase.state === CaseState.CORRECTING ||
+                        (!completingForSomeSelections[defendant.id] &&
+                          completingForSomeSelectedCount >=
+                            (workingCase.defendants?.length ?? 0) - 1)
+                      }
+                      size="sm"
+                      isClearable
+                    />
+                  </BlueBox>
+                ))}
                 {Object.values(completingForSomeSelections).some(
                   (value) => value === CaseIndictmentRulingDecision.DISMISSAL,
                 ) && (
