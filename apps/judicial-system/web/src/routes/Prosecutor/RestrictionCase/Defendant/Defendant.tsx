@@ -43,10 +43,8 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-const isLokeCaseWithId = (
-  origin: typeof CaseOrigin[keyof typeof CaseOrigin] | null | undefined,
-  id: string,
-) => origin === CaseOrigin.LOKE && Boolean(id)
+const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
+  origin === CaseOrigin.LOKE && Boolean(id)
 
 export const Defendant = () => {
   const router = useRouter()
