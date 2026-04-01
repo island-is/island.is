@@ -12,7 +12,7 @@ export class TaxCardSummary {
   @Field(() => Date, { nullable: true })
   validTo?: Date
 
-  @Field(() => String)
+  @Field()
   taxCardType!: string
 }
 
@@ -21,10 +21,10 @@ export class PersonalTaxCredit {
   @Field(() => [TaxCardSummary], { nullable: true })
   taxCards?: TaxCardSummary[]
 
-  @Field(() => Boolean)
+  @Field()
   canEdit!: boolean
 
-  @Field(() => Boolean)
+  @Field()
   canDiscontinue!: boolean
 
   @Field(() => [YearWithMonths], { nullable: true })

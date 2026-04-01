@@ -5,6 +5,6 @@ export class TaxAllowanceAction {
   @Field(() => Int)
   value!: number
 
-  @Field(() => String)
+  @Field()
   name!: string
 }

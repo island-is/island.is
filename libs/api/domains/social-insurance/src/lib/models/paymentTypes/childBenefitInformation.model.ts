@@ -2,9 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceChildBenefitInformation')
 export class ChildBenefitInformation {
-  @Field(() => String)
+  @Field()
   name!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   nationalId?: string
 }
