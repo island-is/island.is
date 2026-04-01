@@ -1,6 +1,7 @@
 import { FC, useContext } from 'react'
 
 import {
+  isDefenceUser,
   isPrisonAdminUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
@@ -9,6 +10,8 @@ import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
+import { areAllDefendantsCancelledOrDismissed } from '../../utils/utils'
 
 export interface Props {
   displayAppealExpirationInfo?: boolean
@@ -23,6 +26,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const {
     showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     policeCaseNumbers,
     courtCaseNumber,
     prosecutorsOffice,
@@ -44,6 +48,14 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     displayVerdictViewDate,
     displaySentToPrisonAdminDate,
   } = props
+
+  const excludedDefendants =
+    isDefenceUser(user) &&
+    areAllDefendantsCancelledOrDismissed(workingCase.defendants)
+      ? []
+      : workingCase.defendants?.filter(
+          (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
+        )
 
   return (
     <InfoCard
@@ -98,6 +110,18 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                       ]
                     : []),
                 ],
+                columns: 2,
+              },
+            ]
+          : []),
+        ...(isNonEmptyArray(excludedDefendants)
+          ? [
+              {
+                id: 'cancelled-and-dismissed-defendants-section',
+                items:
+                  excludedDefendants.map((defendant) =>
+                    cancelledAndDismissedDefendants(defendant),
+                  ) || [],
                 columns: 2,
               },
             ]
