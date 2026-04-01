@@ -2430,7 +2430,7 @@ export class CaseNotificationService extends BaseNotificationService {
       {
         userHasAccessToRVG: true,
         courtCaseNumber: theCase.courtCaseNumber,
-        linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
     )
@@ -2740,7 +2740,7 @@ export class CaseNotificationService extends BaseNotificationService {
         userHasAccessToRVG: true,
         courtCaseNumber: theCase.courtCaseNumber,
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
-        linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
     )
@@ -2875,7 +2875,7 @@ export class CaseNotificationService extends BaseNotificationService {
           userHasAccessToRVG: true,
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCase?.appealCaseNumber ?? 'NONE',
-          linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
         },
       )
@@ -3158,7 +3158,7 @@ export class CaseNotificationService extends BaseNotificationService {
         {
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCase?.appealCaseNumber ?? 'NONE',
-          linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
         },
       )
@@ -3365,7 +3365,7 @@ export class CaseNotificationService extends BaseNotificationService {
         appealRulingDecision: getAppealResultTextByValue(
           theCase.appealCase?.appealRulingDecision,
         ),
-        linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
     )
@@ -3379,7 +3379,7 @@ export class CaseNotificationService extends BaseNotificationService {
       }),
     )
 
-    // Prosecutor — use CLOSED_INDICTMENT_OVERVIEW_ROUTE
+    // Prosecutor — use ROUTE_HANDLER_ROUTE
     const prosecutorHtml = this.formatMessage(
       isReopened
         ? notifications.caseAppealResent.body
@@ -3391,7 +3391,7 @@ export class CaseNotificationService extends BaseNotificationService {
         appealRulingDecision: getAppealResultTextByValue(
           theCase.appealCase?.appealRulingDecision,
         ),
-        linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
     )
