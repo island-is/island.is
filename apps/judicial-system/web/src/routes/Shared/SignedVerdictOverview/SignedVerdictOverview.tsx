@@ -55,7 +55,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UpdateCase,
-  useAppealAlertBanner,
+  useAppealCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -215,7 +215,7 @@ export const SignedVerdictOverview: FC = () => {
     isSendingNotification,
   } = useCase()
 
-  const { appealBanner, appealModals } = useAppealAlertBanner()
+  const { appealBanner, appealModals } = useAppealCase()
 
   /**
    * If the case is not rejected it must be accepted because
@@ -360,7 +360,7 @@ export const SignedVerdictOverview: FC = () => {
     return true
   }
 
-  const shouldDisplayAlertBanner =
+  const shouldDisplayAppealBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
@@ -368,7 +368,7 @@ export const SignedVerdictOverview: FC = () => {
 
   return (
     <>
-      {shouldDisplayAlertBanner && appealBanner}
+      {shouldDisplayAppealBanner && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

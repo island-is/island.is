@@ -29,7 +29,7 @@ import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import InfoCard from '../../../components/InfoCard/InfoCard'
 import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
@@ -40,7 +40,7 @@ export const CaseOverview = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { appealBanner, appealModals } = useAppealAlertBanner()
+  const { appealBanner, appealModals } = useAppealCase()
   const {
     defendants,
     policeCaseNumbers,
@@ -58,13 +58,13 @@ export const CaseOverview = () => {
     showItem,
   } = useInfoCardItems()
 
-  const shouldDisplayAlertBanner =
+  const shouldDisplayAppealBanner =
     isCompletedCase(workingCase.state) &&
     (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
   return (
     <>
-      {shouldDisplayAlertBanner && appealBanner}
+      {shouldDisplayAppealBanner && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

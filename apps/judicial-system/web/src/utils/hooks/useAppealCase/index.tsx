@@ -34,8 +34,8 @@ import {
 
 import { hasSentNotification } from '../../utils'
 import useCase from '../useCase'
-import { strings } from './useAppealAlertBanner.strings'
-import * as styles from './useAppealAlertBanner.css'
+import { strings } from './useAppealCase.strings'
+import * as styles from './useAppealCase.css'
 
 const renderLinkButton = (text: string, href: string) => {
   return (
@@ -76,7 +76,7 @@ export const getAppealDecision = (
   }
 }
 
-const useAppealAlertBanner = () => {
+const useAppealCase = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
@@ -350,4 +350,4 @@ const useAppealAlertBanner = () => {
   }
 }
 
-export default useAppealAlertBanner
+export default useAppealCase

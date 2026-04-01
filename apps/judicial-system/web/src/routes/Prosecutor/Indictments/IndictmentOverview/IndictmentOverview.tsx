@@ -41,7 +41,7 @@ import {
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -87,9 +87,9 @@ const IndictmentOverview: FC = () => {
     ConfirmationModal | undefined
   >()
 
-  const { appealBanner, appealModals } = useAppealAlertBanner()
+  const { appealBanner, appealModals } = useAppealCase()
 
-  const shouldDisplayAlertBanner =
+  const shouldDisplayAppealBanner =
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
@@ -128,7 +128,7 @@ const IndictmentOverview: FC = () => {
 
   return (
     <>
-      {shouldDisplayAlertBanner && appealBanner}
+      {shouldDisplayAppealBanner && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
