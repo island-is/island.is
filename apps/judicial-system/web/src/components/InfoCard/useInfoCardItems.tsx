@@ -13,7 +13,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isDefenceUser, isRequestCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
@@ -22,6 +21,7 @@ import {
   Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
