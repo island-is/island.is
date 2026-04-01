@@ -78,7 +78,7 @@ export interface Category {
   categoryName?: string | null
   publishDate?: Date | null
   dateTo?: Date
-  validToCode?: number
+  validToCode?: number | null
   validToText?: string | null
   comment?: string | null
 }
@@ -117,6 +117,19 @@ export interface QualityPhoto {
 
 export interface QualitySignature {
   data: string
+}
+
+export interface QualityPhotoAndSignature {
+  imageId: number | null
+  imageTypeId: number | null
+  imageTypeName: string | null
+  imageDate: Date | null
+  pohto: string | null
+  signatureId: number | null
+  signatureTypeId: number | null
+  signatureTypeName: string | null
+  signatureDate: Date | null
+  signature: string | null
 }
 
 export type CanApplyErrorCodeBTemporary =
