@@ -1,6 +1,7 @@
 import { CanActivate } from '@nestjs/common'
 
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -47,7 +48,7 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals gu
     it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
+        allowedCaseTypes: [...restrictionCases, ...investigationCases, ...indictmentCases],
       })
     })
   })
