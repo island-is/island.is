@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 
 import {
   CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -41,7 +42,11 @@ describe('AppealCaseFiles', () => {
                 ...mockCase(CaseType.CUSTODY),
                 state: CaseState.ACCEPTED,
                 decision: CaseDecision.ACCEPTING,
-                appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                appealCase: {
+                  id: 'test_appeal_case_id',
+                  appealState: CaseAppealState.RECEIVED,
+                  appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                },
               }}
             >
               <AppealCaseFiles />
@@ -66,7 +71,11 @@ describe('AppealCaseFiles', () => {
                 ...mockCase(CaseType.CUSTODY),
                 state: CaseState.ACCEPTED,
                 decision: CaseDecision.ACCEPTING,
-                appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                appealCase: {
+                  id: 'test_appeal_case_id',
+                  appealState: CaseAppealState.RECEIVED,
+                  appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                },
               }}
             >
               <AppealCaseFiles />
