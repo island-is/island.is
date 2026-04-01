@@ -47,9 +47,9 @@ const InfoCard: FC<Props> = (props) => {
               )}
               {item.values.map((value, index) =>
                 typeof value === 'string' ? (
-                  <Text key={`${value}-${index}`}>{value}</Text>
+                  <Text key={`${value}-${index}`} className={styles.breakWord}>{value}</Text>
                 ) : (
-                  <Box key={`${value}-${index}`}>{value}</Box>
+                  <Box key={`${value}-${index}`} className={styles.breakWord}>{value}</Box>
                 ),
               )}
             </Box>
