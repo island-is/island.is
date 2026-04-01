@@ -1218,7 +1218,7 @@ export class CaseService {
       }
     }
 
-    // This only applies to restriction cases
+    // Applies to request cases and indictment dismissal appeals
     if (
       updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
     ) {
@@ -1240,7 +1240,7 @@ export class CaseService {
       }
     }
 
-    // This only applies to restriction cases
+    // Applies to request cases and indictment dismissal appeals
     if (
       updatedCase.appealCase?.prosecutorStatementDate?.getTime() !==
       theCase.appealCase?.prosecutorStatementDate?.getTime()
