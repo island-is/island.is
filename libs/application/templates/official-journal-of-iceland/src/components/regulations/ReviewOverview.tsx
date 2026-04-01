@@ -77,6 +77,7 @@ export type ReviewOverviewProps = {
   hasWarnings: boolean
   price?: number
   priceLoading?: boolean
+  priceError?: boolean
 }
 
 export const ReviewOverview = ({
@@ -84,6 +85,7 @@ export const ReviewOverview = ({
   hasWarnings,
   price,
   priceLoading,
+  priceError,
 }: ReviewOverviewProps) => {
   const { formatMessage: f, formatDateFns, formatNumber } = useLocale()
   const user = useUserInfo()
@@ -187,6 +189,8 @@ export const ReviewOverview = ({
       <OverviewItem label="Áætlað verð">
         {priceLoading ? (
           <Text>...</Text>
+        ) : priceError ? (
+          <Text>Ekki tókst að sækja verð</Text>
         ) : (
           <Text>{`${formatNumber(price ?? 0)} kr.`}</Text>
         )}

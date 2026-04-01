@@ -20,7 +20,7 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   })
 
   const { impacts, impactsLoaded } = useRegulationImpacts({ draftId })
-  const { price, loading: priceLoading } = usePrice({
+  const { price, loading: priceLoading, error: priceError } = usePrice({
     applicationId: application.id,
   })
 
@@ -80,6 +80,7 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
               hasWarnings={warnings.length > 0}
               price={price}
               priceLoading={priceLoading}
+              priceError={!!priceError}
             />
           </>
         )}
