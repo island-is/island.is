@@ -13,8 +13,7 @@ export const application = defineMessages({
   },
   pageDescription: {
     id: 'vmst.eui.application:pageDescription',
-    defaultMessage:
-      'Vinsamlegast taktu fram frá hvaða degi þú óskar eftir að vera ekki lengur á atvinnuleysisbótum og skráðu ástæður afskráningar þinnar. Það hjálpar okkur að bæta þjónustuna okkar.',
+    defaultMessage: 'Hér eru þær upplýsingar sem hægt er að breyta.',
     description: `Page description`,
   },
   addressTitle: {
@@ -185,6 +184,11 @@ export const application = defineMessages({
     defaultMessage: 'Ég er með ökuréttindi',
     description: `Drivers license checkbox label`,
   },
+  workMachineTitle: {
+    id: 'vmst.eui.application:workMachineTitle',
+    defaultMessage: 'Vinnuvélaréttindi',
+    description: `Work machine label`,
+  },
   workMachineCheckbox: {
     id: 'vmst.eui.application:workMachineCheckbox',
     defaultMessage: 'Ég er með vinnuvélaréttindi',
@@ -194,11 +198,6 @@ export const application = defineMessages({
     id: 'vmst.eui.application:languageTitle',
     defaultMessage: 'Tungumálakunnátta',
     description: `Language title`,
-  },
-  languageDescription: {
-    id: 'vmst.eui.application:languageDescription',
-    defaultMessage: 'TODO',
-    description: `language description`,
   },
   languageNameLabel: {
     id: 'vmst.eui.application:languageNameLabel',
@@ -231,5 +230,36 @@ export const application = defineMessages({
     defaultMessage:
       'Með samþykki gefur þú leyfi fyrir miðlun þessarra upplýsinga frá Vinnumálastofnun yfir í EURES vefgáttina.',
     description: `Eures info box`,
+  },
+  requiredError: {
+    id: 'vmst.eui.application:requiredError',
+    defaultMessage: 'Þessi dálkur er skilyrtur',
+    description: 'Error message when validation fails',
+  },
+  bankValidationError: {
+    id: 'vmst.eui.application:bankValidationError',
+    defaultMessage: 'Bankanúmer er ógilt',
+    description: 'Error message when bank validation fails',
+  },
+  ledgerValidationError: {
+    id: 'vmst.eui.application:ledgerValidationError',
+    defaultMessage: 'Höfuðboók er ógild',
+    description: 'Error message when ledger validation fails',
+  },
+  accountNumberValidationError: {
+    id: 'vmst.eui.application:accountNumberValidationError',
+    defaultMessage: 'Reikningsnúmer er ógilt',
+    description: 'Error message when account number validation fails',
+  },
+  bankAccountValidationError: {
+    id: 'vmst.eui.application:bankAccountValidationError',
+    defaultMessage:
+      'Ógild gildi fundust. Athugaðu að bankanúmer skal vera 4 tölustafir, höfuðbók 2 tölustafir og reikningsnúmer 4-6 tölustafir',
+    description: 'Message for invalid input in account information',
+  },
+  bankAccountValidationErrorTitle: {
+    id: 'vmst.eui.application:bankAccountValidationErrorTitle',
+    defaultMessage: 'Vinsamlegast athugið',
+    description: 'Title for invalid input in account information',
   },
 })

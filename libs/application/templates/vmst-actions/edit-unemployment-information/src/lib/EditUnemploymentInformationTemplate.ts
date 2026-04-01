@@ -7,17 +7,18 @@ import {
   Application,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
   ApplicationConfigurations,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { dataSchema } from './dataSchema'
+import { editUnemploymentInfoDataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { UnemploymentApi } from '../dataProviders'
+import { ApiActions } from '../shared/constants'
 
 const EditUnemploymentInformationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -30,7 +31,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
   institution: 'VMST', // TODO
   translationNamespaces:
     ApplicationConfigurations.EditUnemploymentInformation.translation, // TODO: Change to the correct translation namespace
-  dataSchema,
+  dataSchema: editUnemploymentInfoDataSchema,
   // Note: only use this if any data should remain after pruning for better visibility in the admin portal
   // adminDataConfig: {
   //   whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
@@ -62,7 +63,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [UserProfileApi, UnemploymentApi],
+              api: [UnemploymentApi],
               delete: true,
             },
           ],
@@ -79,6 +80,9 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

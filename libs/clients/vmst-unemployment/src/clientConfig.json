@@ -1028,6 +1028,42 @@
         ]
       }
     },
+    "/api/UnemploymentApplication/overview/{ssn}": {
+      "get": {
+        "tags": [
+          "UnemploymentApplication"
+        ],
+        "operationId": "UnemploymentApplication_GetLatestUnemploymentApplicationOverview",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_UnemploymentApplicationOverviewResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/UnemploymentApplication/{applicationId}": {
       "get": {
         "tags": [
@@ -4629,6 +4665,9 @@
           },
           "selectableInWorkList": {
             "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
@@ -5029,6 +5068,33 @@
           "saveEURES": {
             "type": "boolean",
             "nullable": true
+          },
+          "unionIds": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "pensionId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "childCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "usedPersonalTaxCredit": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "rskEmploymentHistory": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer"
+            }
           }
         }
       },
@@ -5137,6 +5203,56 @@
           }
         }
       },
+      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "ssn": {
+                "type": "string",
+                "nullable": true
+              },
+              "periods": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_RskPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "ratio": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "Galdur_XRoad_API_Models_ApplicantInfoSupportDataResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -5168,7 +5284,7 @@
           "education": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationItem"
+              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationProgramDTO"
             }
           },
           "drivingLicenses": {
@@ -8750,56 +8866,6 @@
           }
         }
       },
-      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "nullable": true
-              },
-              "ssn": {
-                "type": "string",
-                "nullable": true
-              },
-              "periods": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Entities_RskPeriod": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "employerSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "startDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "endDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "ratio": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
       "Galdur_Application_Applications_UnemploymentApplications_Commands_CreateUnemploymentApplication_CreateUnemploymentApplicationCommand": {
         "type": "object",
         "additionalProperties": false,
@@ -9106,6 +9172,54 @@
             "type": "string",
             "description": "Staðfesting á atvinnuleit í hverjum mánuði",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_UnemploymentApplicationOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "unemploymentApplicationId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatusId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataRequested": {
+            "type": "boolean"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_OverviewRowDTO"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_OverviewRowDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
           }
         }
       },

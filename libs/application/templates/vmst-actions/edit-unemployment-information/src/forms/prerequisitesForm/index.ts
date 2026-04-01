@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
 import { UnemploymentApi } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
@@ -23,12 +23,6 @@ export const Prerequisites = buildForm({
           id: 'approveExternalData',
           title: 'External data',
           dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: 'User profile TODO',
-              subTitle: 'User profile TODO',
-            }),
-
             buildDataProviderItem({
               provider: UnemploymentApi,
               title: 'current application TODO',

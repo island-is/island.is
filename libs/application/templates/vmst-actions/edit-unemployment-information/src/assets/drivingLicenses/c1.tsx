@@ -18,8 +18,8 @@ export const C1: React.FC<React.PropsWithChildren<unknown>> = () => (
     />
     <path d="M76.0351 0H102V14.1176H76.0351V0Z" fill="#00003C" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M74.6316 15.5294H89.8673C89.0382 16.2652 88.4259 17.2425 88.1417 18.3529H74.4548C73.8316 15.9173 71.6335 14.1176 69.0175 14.1176C66.4016 14.1176 64.2035 15.9173 63.5803 18.3529H62V10.5882L65.1579 3.52941H74.6316V15.5294ZM63.4035 10.6558V11.2941H71.1228V4.94118H65.8596L63.4035 10.6558Z"
       fill="#00003C"
     />

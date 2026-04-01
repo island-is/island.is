@@ -13,7 +13,6 @@ export const getSortedJobCodes = (
       'currentApplicationInformation.data.supportData.jobCodes',
     ) ?? []
 
-  console.log('jobList', jobList)
   const getName = (job: GaldurDomainModelsSettingsJobCodesJobCodeDTO) =>
     (locale === 'is' ? job.name : job.english ?? job.name) ?? ''
 

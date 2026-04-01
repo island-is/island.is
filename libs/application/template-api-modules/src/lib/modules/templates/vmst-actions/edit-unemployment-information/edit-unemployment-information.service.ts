@@ -10,6 +10,7 @@ import {
   GaldurExternalDomainRequestsUpdateApplicantRequest,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { generateAnswers } from './edit-unemployment-information.utils'
 
 interface ApplicationInformationWithSupportData {
   currentApplication: GaldurXRoadAPIModelsApplicantInfoResponse
@@ -46,31 +47,11 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
-    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
-    const reqObject: GaldurExternalDomainRequestsUpdateApplicantRequest = {
-      serviceAreaId: 'TODO',
-      currentAddress: 'TODO',
-      currentPostCodeId: 'TODO',
-      passCode: 'TODO',
-      bankAccount: {
-        bankId: 'TODO',
-        ledgerId: 'TODO',
-        accountNumber: 'TODO',
-      },
-      preferredJobs: [
-        {
-          jobCodeId: 'TODO',
-        },
-      ],
-      educationHistory: [],
-      employmentHistory: [],
-      drivingLicenses: [],
-      workMachineRights: [],
-      languageAbility: [],
-      saveEURES: false,
-    }
+    const answerObject = generateAnswers(answers, externalData)
+    const reqObject: GaldurExternalDomainRequestsUpdateApplicantRequest =
+      answerObject
 
     await this.vmstUnemploymentClientService.updateCurrentApplicationForActions(
       {
