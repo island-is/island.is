@@ -9,7 +9,14 @@
  * - Simplified to show regulation summary in a clean format
  */
 import { useMemo, ReactNode } from 'react'
-import { Box, Divider, Inline, Stack, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  Inline,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { prettyName, RegName } from '@island.is/regulations'
