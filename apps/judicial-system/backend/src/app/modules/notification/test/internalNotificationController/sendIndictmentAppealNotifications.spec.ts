@@ -141,7 +141,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
         expect.objectContaining({
           to: [{ name: judge.name, address: judge.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Registrar
@@ -149,7 +149,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
         expect.objectContaining({
           to: [{ name: registrar.name, address: registrar.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Court
@@ -157,7 +157,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
         expect.objectContaining({
           to: [{ name: 'Héraðsdómur Reykjavíkur', address: court.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Defender 1
@@ -218,7 +218,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
         expect.objectContaining({
           to: [{ name: judge.name, address: judge.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Registrar
@@ -240,7 +240,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Defender 2 (NOT defender 1 — excluded as appealer)
@@ -384,7 +384,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Defender 1
@@ -541,7 +541,7 @@ describe('InternalNotificationController - Send indictment appeal statement noti
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: expect.stringContaining(courtCaseNumber),
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Defender 2 (defender1 excluded as submitter)
@@ -699,7 +699,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
         expect.objectContaining({
           to: [{ name: judge.name, address: judge.email }],
           subject: expect.stringContaining(courtCaseNumber),
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Prosecutor
@@ -707,7 +707,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: expect.stringContaining(courtCaseNumber),
-          html: expect.stringContaining(`/akaera/yfirlit/${caseId}`),
+          html: expect.stringContaining(`/beinir/${caseId}`),
         }),
       )
       // Defender 1
