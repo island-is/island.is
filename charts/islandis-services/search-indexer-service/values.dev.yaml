@@ -32,8 +32,10 @@ env:
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-external'
+  - 'envoy-gateway-external'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3
@@ -51,6 +53,16 @@ hpa:
     replicas:
       max: 1
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'search-indexer-service.dev01.devland.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
 ingress:
@@ -120,7 +132,7 @@ initContainer:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
 namespace: 'search-indexer'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

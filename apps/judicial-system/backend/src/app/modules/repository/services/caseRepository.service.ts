@@ -1,3 +1,4 @@
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import {
   CountOptions,
@@ -26,6 +27,7 @@ import {
   StringType,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -37,7 +39,11 @@ import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import { UpdateCase } from '../types/caseRepository.types'
+import {
+  appealCaseFields,
+  UpdateAppealCase,
+  UpdateCase,
+} from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -95,6 +101,10 @@ interface UpdateCaseOptions {
   transaction: Transaction
 }
 
+interface UpsertAppealCaseOptions {
+  transaction: Transaction
+}
+
 @Injectable()
 export class CaseRepositoryService {
   constructor(
@@ -112,6 +122,8 @@ export class CaseRepositoryService {
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
+    @InjectModel(AppealCase)
+    private readonly appealCaseModel: typeof AppealCase,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -352,9 +364,22 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
-      const result = await this.caseModel.create(data, options)
+      const caseData = omit(data, appealCaseFields)
+
+      const result = await this.caseModel.create(caseData, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
+
+      const appealData = pick(
+        data,
+        appealCaseFields,
+      ) as Partial<UpdateAppealCase>
+
+      if (Object.keys(appealData).length > 0) {
+        await this.upsertAppealCase(result.id, appealData as UpdateAppealCase, {
+          transaction: options.transaction,
+        })
+      }
 
       return result
     } catch (error) {
@@ -442,10 +467,7 @@ export class CaseRepositoryService {
       // Move the defendant to the new case
       const defendantUpdateOptions: UpdateOptions = {
         where: { id: defendantId, caseId },
-      }
-
-      if (transaction) {
-        defendantUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -458,10 +480,7 @@ export class CaseRepositoryService {
       // Move the defandant's subpoenas to the new case
       const subpoenaUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        subpoenaUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -474,10 +493,7 @@ export class CaseRepositoryService {
       // Move the defendant's verdicts to the new case
       const verdictUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        verdictUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -487,10 +503,7 @@ export class CaseRepositoryService {
       // Move the defendant's event logs to the new case
       const defendantEventLogUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        defendantEventLogUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -501,11 +514,7 @@ export class CaseRepositoryService {
       )
 
       // Set the postponedIndefinitelyExplanation case string
-      const caseStringCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        caseStringCreateOptions.transaction = transaction
-      }
+      const caseStringCreateOptions: CreateOptions = { transaction }
 
       promises.push(
         this.caseStringModel.create(
@@ -540,11 +549,7 @@ export class CaseRepositoryService {
       })
 
       if (arraignmentDate) {
-        const dateLogCreateOptions: CreateOptions = {}
-
-        if (transaction) {
-          dateLogCreateOptions.transaction = transaction
-        }
+        const dateLogCreateOptions: CreateOptions = { transaction }
 
         promises.push(
           this.dateLogModel.create(
@@ -567,11 +572,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const eventLogCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        eventLogCreateOptions.transaction = transaction
-      }
+      const eventLogCreateOptions: CreateOptions = { transaction }
 
       for (const eventLog of eventLogs) {
         promises.push(
@@ -588,11 +589,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const victimCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        victimCreateOptions.transaction = transaction
-      }
+      const victimCreateOptions: CreateOptions = { transaction }
 
       for (const victim of victims) {
         promises.push(
@@ -609,11 +606,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const indictmentCountCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        indictmentCountCreateOptions.transaction = transaction
-      }
+      const indictmentCountCreateOptions: CreateOptions = { transaction }
 
       for (const indictmentCount of indictmentCounts) {
         promises.push(
@@ -643,10 +636,7 @@ export class CaseRepositoryService {
 
       const caseFileUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId, category: caseFilesCategoriesToMove },
-      }
-
-      if (transaction) {
-        caseFileUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -666,11 +656,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const caseFileCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        caseFileCreateOptions.transaction = transaction
-      }
+      const caseFileCreateOptions: CreateOptions = { transaction }
 
       for (const caseFile of caseFiles) {
         promises.push(
@@ -713,33 +699,104 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
-        ...updateOptions,
-        returning: true,
-      })
+      const caseData = omit(data, appealCaseFields)
 
-      if (numberOfAffectedRows < 1) {
-        throw new InternalServerErrorException(
-          `Could not update case ${caseId}`,
-        )
-      }
+      let updatedCase: Case
 
-      if (numberOfAffectedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
-          { data: Object.keys(data) },
+      if (Object.keys(caseData).length > 0) {
+        const [numberOfAffectedRows, cases] = await this.caseModel.update(
+          caseData,
+          {
+            ...updateOptions,
+            returning: true,
+          },
         )
+
+        if (numberOfAffectedRows < 1) {
+          throw new InternalServerErrorException(
+            `Could not update case ${caseId}`,
+          )
+        }
+
+        if (numberOfAffectedRows > 1) {
+          // Tolerate failure, but log error
+          this.logger.error(
+            `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
+            { data: Object.keys(data) },
+          )
+        }
+
+        updatedCase = cases[0]
+      } else {
+        const theCase = await this.caseModel.findByPk(caseId, {
+          transaction: options.transaction,
+        })
+
+        if (!theCase) {
+          throw new InternalServerErrorException(
+            `Could not update case ${caseId}`,
+          )
+        }
+
+        updatedCase = theCase
       }
 
       this.logger.debug(`Updated case ${caseId}`)
 
-      return cases[0]
+      const appealData = pick(
+        data,
+        appealCaseFields,
+      ) as Partial<UpdateAppealCase>
+
+      if (Object.keys(appealData).length > 0) {
+        await this.upsertAppealCase(caseId, appealData as UpdateAppealCase, {
+          transaction: options.transaction,
+        })
+      }
+
+      return updatedCase
     } catch (error) {
       this.logger.error(`Error updating case ${caseId} with data:`, {
         data: Object.keys(data),
         error,
       })
+
+      throw error
+    }
+  }
+
+  async upsertAppealCase(
+    caseId: string,
+    data: UpdateAppealCase,
+    options: UpsertAppealCaseOptions,
+  ): Promise<AppealCase> {
+    try {
+      this.logger.debug(`Upserting appeal case for case ${caseId} with data:`, {
+        data: Object.keys(data),
+      })
+
+      const existing = await this.appealCaseModel.findOne({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const [result] = await this.appealCaseModel.upsert(
+        { ...existing?.toJSON(), ...data, caseId },
+        {
+          transaction: options.transaction,
+          returning: true,
+          conflictFields: ['case_id'],
+        },
+      )
+
+      this.logger.debug(`Upserted appeal case for case ${caseId}`)
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error upserting appeal case for case ${caseId} with data:`,
+        { data: Object.keys(data), error },
+      )
 
       throw error
     }

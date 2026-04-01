@@ -15,7 +15,10 @@ import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CourseChargesModule } from '@island.is/api/domains/course-charges'
+import {
+  CourseChargesModule,
+  CourseChargesConfig,
+} from '@island.is/api/domains/course-charges'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -74,6 +77,8 @@ import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
+import { OpenDataModule } from '@island.is/api/domains/open-data'
+import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import {
@@ -186,6 +191,7 @@ import { SignatureCollectionModule } from '@island.is/api/domains/signature-coll
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
@@ -229,7 +235,10 @@ import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
-import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import {
+  SecondarySchoolClientConfig,
+  SecondarySchoolPublicClientConfig,
+} from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
@@ -375,6 +384,8 @@ const environment = getConfig
     SeminarsModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,
+    OpenDataModule,
+    OneSystemsRulingsModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
@@ -429,6 +440,7 @@ const environment = getConfig
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
+        FinanceClientV3Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,
@@ -502,11 +514,13 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
         PaymentsApiModuleConfig,
         VmstUnemploymentClientConfig,
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
+        CourseChargesConfig,
       ],
     }),
   ],

@@ -12,10 +12,10 @@ export class FieldSettingsFactory {
     let keys: string[] = ['zendeskIsCustomField', 'zendeskCustomFieldId']
     switch (type) {
       case FieldTypesEnum.TEXTBOX:
-        keys = ['minLength', 'maxLength', 'isLarge', ...keys]
+        keys = ['minLength', 'maxLength', 'isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
-        keys = ['minValue', 'maxValue', ...keys]
+        keys = ['minValue', 'maxValue', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText', ...keys]
@@ -42,7 +42,7 @@ export class FieldSettingsFactory {
         keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.APPLICANT:
-        keys = ['applicantType', ...keys]
+        keys = ['applicantType', 'isPhoneRequired', 'isEmailRequired', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.CHECKBOX:
         keys = ['isLarge', 'hasDescription', ...keys]

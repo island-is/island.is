@@ -22,7 +22,11 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import {
+  CaseTableMembershipResponse,
+  CaseTableResponse,
+  SearchCasesResponse,
+} from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
@@ -39,6 +43,7 @@ import {
 import {
   CaseFile,
   DeleteFileResponse,
+  PoliceDigitalCaseFile,
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
@@ -50,18 +55,10 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
-import { CaseStatistics } from '../statistics'
-import {
-  CaseDataExportInput,
-  IndictmentCaseStatistics,
-  IndictmentStatisticsInput,
-  RequestCaseStatistics,
-  RequestStatisticsInput,
-  SubpoenaStatistics,
-  SubpoenaStatisticsInput,
-} from '../statistics'
+import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
@@ -73,10 +70,54 @@ type Transformer<TResult> = (data: never) => TResult
 const caseTransformer = <TCase>(data: never): TCase => {
   const theCase = data as TCase & {
     dateLogs?: { dateType: DateType; date: string }[]
+    appealCase?: {
+      appealState?: unknown
+      appealCaseNumber?: unknown
+      appealReceivedByCourtDate?: unknown
+      prosecutorStatementDate?: unknown
+      defendantStatementDate?: unknown
+      appealAssistantId?: unknown
+      appealAssistant?: unknown
+      appealJudge1Id?: unknown
+      appealJudge1?: unknown
+      appealJudge2Id?: unknown
+      appealJudge2?: unknown
+      appealJudge3Id?: unknown
+      appealJudge3?: unknown
+      appealRulingDecision?: unknown
+      appealConclusion?: unknown
+      appealRulingModifiedHistory?: unknown
+      requestAppealRulingNotToBePublished?: unknown
+      appealValidToDate?: unknown
+      isAppealCustodyIsolation?: unknown
+      appealIsolationToDate?: unknown
+    }
   }
 
   return {
     ...theCase,
+    appealState: theCase.appealCase?.appealState,
+    appealCaseNumber: theCase.appealCase?.appealCaseNumber,
+    appealReceivedByCourtDate: theCase.appealCase?.appealReceivedByCourtDate,
+    prosecutorStatementDate: theCase.appealCase?.prosecutorStatementDate,
+    defendantStatementDate: theCase.appealCase?.defendantStatementDate,
+    appealAssistantId: theCase.appealCase?.appealAssistantId,
+    appealAssistant: theCase.appealCase?.appealAssistant,
+    appealJudge1Id: theCase.appealCase?.appealJudge1Id,
+    appealJudge1: theCase.appealCase?.appealJudge1,
+    appealJudge2Id: theCase.appealCase?.appealJudge2Id,
+    appealJudge2: theCase.appealCase?.appealJudge2,
+    appealJudge3Id: theCase.appealCase?.appealJudge3Id,
+    appealJudge3: theCase.appealCase?.appealJudge3,
+    appealRulingDecision: theCase.appealCase?.appealRulingDecision,
+    appealConclusion: theCase.appealCase?.appealConclusion,
+    appealRulingModifiedHistory:
+      theCase.appealCase?.appealRulingModifiedHistory,
+    requestAppealRulingNotToBePublished:
+      theCase.appealCase?.requestAppealRulingNotToBePublished,
+    appealValidToDate: theCase.appealCase?.appealValidToDate,
+    isAppealCustodyIsolation: theCase.appealCase?.isAppealCustodyIsolation,
+    appealIsolationToDate: theCase.appealCase?.appealIsolationToDate,
     arraignmentDate: theCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     ),
@@ -233,6 +274,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`search-cases?${params.toString()}`)
   }
 
+  getCaseTableMembership(caseId: string): Promise<CaseTableMembershipResponse> {
+    return this.get(`case/${caseId}/case-table-membership`)
+  }
+
   getCaseStatistics(
     fromDate?: Date,
     toDate?: Date,
@@ -245,13 +290,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     if (institutionId) params.append('institutionId', institutionId)
 
     return this.get(`cases/statistics?${params.toString()}`)
-  }
-
-  getIndictmentCaseStatistics(
-    query: IndictmentStatisticsInput,
-  ): Promise<IndictmentCaseStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/indictments/statistics?${searchParams.toString()}`)
   }
 
   private serializeNestedObject<T extends object>(
@@ -279,20 +317,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     })
 
     return params.toString()
-  }
-
-  getRequestCaseStatistics(
-    query: RequestStatisticsInput,
-  ): Promise<RequestCaseStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/requests/statistics?${searchParams}`)
-  }
-
-  getSubpoenaStatistics(
-    query: SubpoenaStatisticsInput,
-  ): Promise<SubpoenaStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/subpoenas/statistics?${searchParams}`)
   }
 
   getPreprocessedDataCsvSignedUrl(
@@ -479,6 +503,40 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceDefendants(caseId: string): Promise<PoliceDefendant[]> {
+    return this.get(`case/${caseId}/policeDefendants`)
+  }
+
+  getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
+    return this.get(`case/${caseId}/policeDigitalCaseFiles`)
+  }
+
+  getPoliceDigitalCaseFileTokenUrl(
+    caseId: string,
+    policeDigitalFileId: string,
+  ): Promise<string> {
+    const params = new URLSearchParams({ policeDigitalFileId })
+    return this.get<{ url: string }>(
+      `case/${caseId}/policeDigitalCaseFileTokenUrl?${params.toString()}`,
+    ).then((res) => res.url)
+  }
+
+  deletePoliceDigitalCaseFile(
+    caseId: string,
+    fileId: string,
+  ): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/policeDigitalCaseFile/${fileId}`)
+  }
+
+  updatePoliceDigitalCaseFiles(
+    caseId: string,
+    updates: unknown[],
+  ): Promise<void> {
+    return this.patch(`case/${caseId}/policeDigitalCaseFiles`, {
+      files: updates,
+    })
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {

@@ -21,6 +21,7 @@ import {
   Filter,
   GridContainer,
   Hidden,
+  type IconMapIcon,
   Inline,
   Select,
   Stack,
@@ -116,6 +117,21 @@ const mapCourtToTopLevelCourt = (
   if (court === 'Hæstiréttur') return 'supremeCourt'
   if (court === 'landsrettur') return 'courtOfAppeal'
   return 'all'
+}
+
+const shouldResetCaseFiltersOnCourtChange = (
+  previousCourt: string,
+  nextCourt: string,
+  retrialCourtOptionValue: string,
+) => {
+  const topLevel = mapCourtToTopLevelCourt(nextCourt)
+  const previousTopLevel = mapCourtToTopLevelCourt(previousCourt)
+
+  return (
+    (topLevel !== previousTopLevel && topLevel !== 'all') ||
+    nextCourt === retrialCourtOptionValue ||
+    previousCourt === retrialCourtOptionValue
+  )
 }
 
 enum QueryParam {
@@ -507,6 +523,7 @@ interface FiltersProps {
   updateRenderKey: () => void
   whiteBackground?: boolean
   selectedCourtLevel: 'all' | 'courtOfAppeal' | 'supremeCourt' | 'districtCourt'
+  isRetrialCourt?: boolean
 }
 
 const Filters = ({
@@ -519,12 +536,22 @@ const Filters = ({
   updateRenderKey,
   whiteBackground = false,
   selectedCourtLevel,
+  isRetrialCourt = false,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const [expandedItemIds, setExpandedItemIds] = useState<string[]>(
     startExpanded ? FILTER_ACCORDION_ITEM_IDS : [],
   )
   const [openFiltersToggle, setOpenFiltersToggle] = useState(!startExpanded)
+
+  useEffect(() => {
+    // When switching to Endurupptökudómur we want the "Málategundir" section
+    // completely gone (including its expanded state).
+    if (!isRetrialCourt) return
+    setExpandedItemIds((prev) =>
+      prev.filter((id) => id !== FILTER_ACCORDION_ITEM_IDS[4]),
+    )
+  }, [isRetrialCourt])
 
   const keywordOptions = useMemo(() => {
     return keywords.map((keyword) => ({
@@ -680,81 +707,83 @@ const Filters = ({
             />
           </AccordionItem>
 
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[4]}
-            label={formatMessage(m.listPage.caseTypeAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={
-              queryState[QueryParam.CASE_TYPES] ||
-              queryState[QueryParam.CASE_CATEGORIES]
-                ? 'blue400'
-                : undefined
-            }
-          >
-            <Stack space={2}>
-              <Stack space={2} key={renderKey}>
-                {caseFilterOptions[selectedCourtLevel].options.map(
-                  ({ label, typeOfOption }) => {
-                    const queryParamKey =
-                      typeOfOption ===
-                      WebVerdictCaseFilterOptionType.CaseCategory
-                        ? QueryParam.CASE_CATEGORIES
-                        : QueryParam.CASE_TYPES
-                    return (
-                      <DebouncedCheckbox
-                        debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                        key={label}
-                        checked={Boolean(
-                          queryState[queryParamKey]?.includes(label),
-                        )}
-                        label={label}
-                        value={label}
-                        onChange={(checked) => {
-                          updateQueryState(queryParamKey, (previousState) => {
-                            let updatedValues = [
-                              ...(previousState[queryParamKey] ?? []),
-                            ]
-                            if (checked) {
-                              updatedValues.push(label)
-                            } else {
-                              updatedValues = updatedValues.filter(
-                                (value) => value !== label,
-                              )
-                            }
-                            return {
-                              ...previousState,
-                              [queryParamKey]:
-                                updatedValues.length === 0
-                                  ? null
-                                  : updatedValues,
-                            }
-                          })
-                        }}
-                      />
-                    )
-                  },
-                )}
+          {!isRetrialCourt && (
+            <AccordionItem
+              id={FILTER_ACCORDION_ITEM_IDS[4]}
+              label={formatMessage(m.listPage.caseTypeAccordionLabel)}
+              expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
+              onToggle={(expanded) => {
+                handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
+              }}
+              iconVariant="small"
+              labelVariant="h5"
+              labelColor={
+                queryState[QueryParam.CASE_TYPES] ||
+                queryState[QueryParam.CASE_CATEGORIES]
+                  ? 'blue400'
+                  : undefined
+              }
+            >
+              <Stack space={2}>
+                <Stack space={2} key={renderKey}>
+                  {caseFilterOptions[selectedCourtLevel].options.map(
+                    ({ label, typeOfOption }) => {
+                      const queryParamKey =
+                        typeOfOption ===
+                        WebVerdictCaseFilterOptionType.CaseCategory
+                          ? QueryParam.CASE_CATEGORIES
+                          : QueryParam.CASE_TYPES
+                      return (
+                        <DebouncedCheckbox
+                          debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                          key={label}
+                          checked={Boolean(
+                            queryState[queryParamKey]?.includes(label),
+                          )}
+                          label={label}
+                          value={label}
+                          onChange={(checked) => {
+                            updateQueryState(queryParamKey, (previousState) => {
+                              let updatedValues = [
+                                ...(previousState[queryParamKey] ?? []),
+                              ]
+                              if (checked) {
+                                updatedValues.push(label)
+                              } else {
+                                updatedValues = updatedValues.filter(
+                                  (value) => value !== label,
+                                )
+                              }
+                              return {
+                                ...previousState,
+                                [queryParamKey]:
+                                  updatedValues.length === 0
+                                    ? null
+                                    : updatedValues,
+                              }
+                            })
+                          }}
+                        />
+                      )
+                    },
+                  )}
+                </Stack>
+                <Box display="flex" justifyContent="flexEnd">
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    size="small"
+                    onClick={() => {
+                      updateQueryState(QueryParam.CASE_TYPES, [])
+                      updateRenderKey()
+                    }}
+                  >
+                    {formatMessage(m.listPage.clearFilter)}
+                  </Button>
+                </Box>
               </Stack>
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.CASE_TYPES, [])
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
-            </Stack>
-          </AccordionItem>
+            </AccordionItem>
+          )}
 
           <AccordionItem
             id={FILTER_ACCORDION_ITEM_IDS[5]}
@@ -1088,13 +1117,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     label={formatMessage(m.listPage.courtSelectLabel)}
                     onChange={(option) => {
                       if (option) {
-                        const topLevel = mapCourtToTopLevelCourt(option.value)
-                        const previousTopLevel = mapCourtToTopLevelCourt(
-                          queryState[QueryParam.COURT],
-                        )
                         if (
-                          topLevel !== previousTopLevel &&
-                          topLevel !== 'all'
+                          shouldResetCaseFiltersOnCourtChange(
+                            queryState[QueryParam.COURT],
+                            option.value,
+                            retrialCourtOptionValue,
+                          )
                         ) {
                           updateQueryState(QueryParam.CASE_CATEGORIES, null)
                           updateQueryState(QueryParam.CASE_TYPES, null)
@@ -1127,13 +1155,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           key={tag.value}
                           active={isActive}
                           onClick={() => {
-                            const topLevel = mapCourtToTopLevelCourt(tag.value)
-                            const previousTopLevel = mapCourtToTopLevelCourt(
-                              queryState[QueryParam.COURT],
-                            )
                             if (
-                              topLevel !== previousTopLevel &&
-                              topLevel !== 'all'
+                              shouldResetCaseFiltersOnCourtChange(
+                                queryState[QueryParam.COURT],
+                                tag.value,
+                                retrialCourtOptionValue,
+                              )
                             ) {
                               updateQueryState(QueryParam.CASE_CATEGORIES, null)
                               updateQueryState(QueryParam.CASE_TYPES, null)
@@ -1329,6 +1356,9 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   selectedCourtLevel={mapCourtToTopLevelCourt(
                     queryState[QueryParam.COURT],
                   )}
+                  isRetrialCourt={
+                    queryState[QueryParam.COURT] === retrialCourtOptionValue
+                  }
                   renderKey={renderKey}
                   startExpanded={true}
                   caseFilterOptions={caseFilterOptions}
@@ -1404,6 +1434,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         selectedCourtLevel={mapCourtToTopLevelCourt(
                           queryState[QueryParam.COURT],
                         )}
+                        isRetrialCourt={
+                          queryState[QueryParam.COURT] ===
+                          retrialCourtOptionValue
+                        }
                         renderKey={renderKey}
                         updateRenderKey={updateRenderKey}
                         caseFilterOptions={caseFilterOptions}
@@ -1421,7 +1455,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
                   .map((verdict) => {
-                    const detailLines = [
+                    const detailLines: {
+                      icon: IconMapIcon
+                      text: string | React.ReactNode
+                    }[] = [
                       {
                         icon: 'calendar',
                         text: verdict.verdictDate
@@ -1431,12 +1468,24 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       { icon: 'hammer', text: verdict.court ?? '' },
                     ]
 
-                    if (verdict.presidentJudge?.name) {
+                    if (verdict.verdictJudges?.length) {
                       detailLines.push({
                         icon: 'person',
-                        text: `${verdict.presidentJudge?.name ?? ''} ${
-                          verdict.presidentJudge?.title ?? ''
-                        }`,
+                        text: (
+                          <Stack space={1}>
+                            {verdict.verdictJudges.map((judge, index) => {
+                              const judgeName = judge?.name ?? ''
+                              if (!judgeName) return null
+                              let judgeTitle = judge?.title ?? ''
+                              if (judgeName === judgeTitle) judgeTitle = ''
+                              return (
+                                <Text key={index} variant="small">
+                                  {judgeName} {judgeTitle}
+                                </Text>
+                              )
+                            })}
+                          </Stack>
+                        ),
                       })
                     }
 

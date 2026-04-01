@@ -160,7 +160,7 @@ export type RepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
+  condition?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -268,7 +268,7 @@ export type RepeaterItem = {
   | {
       component: 'alertMessage'
       title?: MaybeWithApplicationAndActiveField<StaticText>
-      message?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<StaticText>
       alertType?: AlertType
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']
@@ -409,6 +409,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
+  PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
   DISPLAY = 'DISPLAY',
@@ -452,6 +453,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
   DISPLAY = 'DisplayFormField',
@@ -981,6 +983,38 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export type PaginatedSearchableTableRow = Record<
+  string,
+  string | number | null | undefined
+>
+
+export type PaginatedSearchableTableHeader = {
+  key: string
+  label: FormText
+  editable?: boolean
+  inputType?: 'text' | 'number'
+  min?: number
+}
+
+export interface PaginatedSearchableTableField extends BaseField {
+  readonly type: FieldTypes.PAGINATED_SEARCHABLE_TABLE
+  component: FieldComponents.PAGINATED_SEARCHABLE_TABLE
+  rowIdKey: string
+  rows:
+    | PaginatedSearchableTableRow[]
+    | ((application: Application) => PaginatedSearchableTableRow[])
+  headers:
+    | PaginatedSearchableTableHeader[]
+    | ((application: Application) => PaginatedSearchableTableHeader[])
+  searchLabel: FormText
+  searchPlaceholder: FormText
+  emptyState: FormText
+  searchKeys?: string[]
+  savePropertyNames?: string[]
+  pageSize?: number
+  callbackId?: string
+}
+
 export interface SliderField extends BaseField {
   readonly type: FieldTypes.SLIDER
   readonly color?: Colors
@@ -1150,6 +1184,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
+  | PaginatedSearchableTableField
   | SliderField
   | InformationCardField
   | DisplayField

@@ -393,7 +393,7 @@ export class FileService {
     )
 
     if (
-      theCase.appealCaseNumber &&
+      theCase.appealCase?.appealCaseNumber &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -466,13 +466,10 @@ export class FileService {
       { transaction },
     )
 
-    // Only add a court document if a court session exists
     if (
       isIndictmentCase(theCase.type) &&
-      theCase.state === CaseState.RECEIVED &&
+      [CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) &&
       theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0 &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
@@ -706,7 +703,7 @@ export class FileService {
         user,
         theCase.id,
         file.id,
-        theCase.appealCaseNumber,
+        theCase.appealCase?.appealCaseNumber,
         file.category,
         file.name,
         url,

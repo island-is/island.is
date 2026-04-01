@@ -150,7 +150,7 @@ module.exports = {
           INSERT INTO payment_fulfillment
             (id, payment_flow_id, payment_method, confirmation_ref_id, fjs_charge_id, created, modified)
           SELECT
-            uuid_generate_v4(),
+            gen_random_uuid(),
             p.payment_flow_id,
             'card',
             p.confirmation_id,

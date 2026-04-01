@@ -7,6 +7,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   BasicChargeItem,
@@ -69,9 +70,10 @@ const PassportTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PASSPORT,
-  name: m.formName.defaultMessage,
+  name: m.formName,
   codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportApplication,
+  translationNamespaces: [ApplicationConfigurations.Passport.translation],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -94,12 +96,12 @@ const PassportTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.confirm.defaultMessage,
+                  name: m.confirm,
                   type: 'primary',
                 },
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: m.confirm.defaultMessage,
+                  name: m.confirm,
                   type: 'primary',
                 },
               ],

@@ -523,16 +523,6 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isRegisteredInPrisonSystem?: boolean
-
-  @Allow()
-  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly penalties?: string
 }

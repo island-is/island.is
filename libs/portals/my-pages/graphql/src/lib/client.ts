@@ -44,6 +44,9 @@ export const client = new ApolloClient({
       AuthLegalGuardianDelegation: {
         keyFields: ['from', ['nationalId']],
       },
+      AuthDelegationsGroupedByIdentity: {
+        keyFields: ['nationalId', 'type'],
+      },
       Query: {
         fields: {
           authDelegations: {

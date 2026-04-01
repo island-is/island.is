@@ -4,15 +4,9 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import {
   OrganizationsApi,
-  OrganizationsControllerCreateRequest,
   OrganizationsControllerFindAdminRequest,
-  OrganizationsControllerFindOneRequest,
 } from '@island.is/clients/form-system'
-import {
-  GetOrganizationAdminInput,
-  GetOrganizationInput,
-} from '../../dto/organization.input'
-import { Organization } from '../../models/organization.model'
+import { GetOrganizationAdminInput } from '../../dto/organization.input'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 
 @Injectable()
@@ -36,32 +30,6 @@ export class OrganizationsService {
 
   private organizationsApiWithAuth(auth: User) {
     return this.organizationsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async createOrganization(
-    auth: User,
-    input: GetOrganizationInput,
-  ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(
-      auth,
-    ).organizationsControllerCreate(
-      input as OrganizationsControllerCreateRequest,
-    )
-
-    return response as Organization
-  }
-
-  async getOrganization(
-    auth: User,
-    input: GetOrganizationInput,
-  ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(
-      auth,
-    ).organizationsControllerFindOne(
-      input as OrganizationsControllerFindOneRequest,
-    )
-
-    return response as Organization
   }
 
   async getOrganizationAdmin(

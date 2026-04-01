@@ -52,7 +52,3 @@ This service is optional as there is a fallback for dev
 Fetch development secrets
 
 - Run `yarn get-secrets api`
-
-## Code owners and maintainers
-
-- [Deloitte](https://github.com/orgs/island-is/teams/deloitte)

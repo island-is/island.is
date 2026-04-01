@@ -18,6 +18,7 @@ import { MessageDescriptor } from 'react-intl'
 import {
   differentNeedsMessages,
   pendingActionMessages,
+  primarySchoolMessages,
   sharedMessages,
 } from '../lib/messages'
 import {
@@ -377,6 +378,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
+  const currentSchoolMunicipality = getValueViaPath<string>(
+    answers,
+    'currentSchool.municipality',
+  )
+
+  const hasCurrentSchool = getValueViaPath<YesOrNo>(
+    answers,
+    'currentSchool.hasCurrentSchool',
+  )
+
   const attachmentsFiles =
     getValueViaPath<FileType[]>(answers, 'attachments.files') ?? []
 
@@ -482,6 +493,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     hasCurrentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    currentSchoolMunicipality,
+    hasCurrentSchool,
     attachmentsFiles,
     attachmentsAnswer,
     terms,
@@ -579,6 +592,11 @@ export const getApplicationExternalData = (
   const schools =
     getValueViaPath<Organization[]>(externalData, 'schools.data') ?? []
 
+  const isApplicationBlocked = getValueViaPath<boolean>(
+    externalData,
+    'isApplicationBlocked.data.hasActiveApplications',
+  )
+
   return {
     children,
     applicantName,
@@ -598,6 +616,7 @@ export const getApplicationExternalData = (
     socialProfile,
     preferredSchool,
     schools,
+    isApplicationBlocked,
   }
 }
 
@@ -1001,4 +1020,12 @@ export const mapApplicationType = (answers: FormValue) => {
     default:
       return ApplicationFeatureConfigType.ENROLLMENT
   }
+}
+
+export const getNewSchoolTitle = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? primarySchoolMessages.school.subSectionTitle
+    : primarySchoolMessages.newSchool.subSectionTitle
 }

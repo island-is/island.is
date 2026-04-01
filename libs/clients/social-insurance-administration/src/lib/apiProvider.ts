@@ -8,6 +8,7 @@ import { ConfigFactory } from './configFactory'
 import {
   Api,
   ApplicationWriteApi,
+  BankInformationWriteApi,
   MedicalDocumentApiForDisabilityPension,
   QuestionnairesApiForDisabilityPension,
   Scope,
@@ -15,6 +16,7 @@ import {
 import {
   ApplicationApi,
   ApplicantApi,
+  BankInformationApi,
   GeneralApi,
   DocumentsApi,
   IncomePlanApi,
@@ -41,7 +43,7 @@ const apiCollection: Array<{
 }> = [
   {
     api: ApplicationWriteApi,
-    scopes: ['@tr.is/umsoknir:write'],
+    scopes: ['@tr.is/umsoknir:write', '@tr.is/fylgiskjol:write'],
     autoAuth: true,
   },
   {
@@ -57,6 +59,16 @@ const apiCollection: Array<{
   {
     api: GeneralApi,
     scopes: ['@tr.is/almennt:read'],
+    autoAuth: true,
+  },
+  {
+    api: BankInformationApi,
+    scopes: ['@tr.is/bankaupplysingar:read'],
+    autoAuth: true,
+  },
+  {
+    api: BankInformationWriteApi,
+    scopes: ['@tr.is/bankaupplysingar:write'],
     autoAuth: true,
   },
   {

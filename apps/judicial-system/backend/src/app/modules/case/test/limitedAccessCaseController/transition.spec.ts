@@ -108,7 +108,7 @@ describe('LimitedAccessCaseController - Transition', () => {
             type: CaseType.EXPULSION_FROM_HOME,
             state,
             caseFiles,
-            appealState,
+            appealCase: { appealState },
           } as Case,
           { transition },
         )
@@ -127,7 +127,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         id: caseId,
         state,
         caseFiles,
-        appealState: CaseAppealState.APPEALED,
+        appealCase: { appealState: CaseAppealState.APPEALED },
         accusedPostponedAppealDate: date,
       } as Case
       let then: Then
@@ -192,7 +192,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         id: caseId,
         state,
         caseFiles,
-        appealState: CaseAppealState.WITHDRAWN,
+        appealCase: { appealState: CaseAppealState.WITHDRAWN },
       } as Case
       let then: Then
 

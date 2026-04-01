@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -49,6 +50,8 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: e.application.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
+  translationNamespaces:
+    ApplicationConfigurations.EuropeanHealthInsuranceCard.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

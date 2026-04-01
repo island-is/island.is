@@ -12,6 +12,7 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
+import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -21,6 +22,7 @@ export class ApplicationMapper {
   ): ApplicationDto {
     const applicationDto: ApplicationDto = {
       id: application.id,
+      nationalId: application.nationalId,
       isTest: application.isTest,
       dependencies: application.dependencies,
       completed: application.completed,
@@ -32,8 +34,9 @@ export class ApplicationMapper {
       draftFinishedSteps: application.draftFinishedSteps,
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
+      useValidate: form.useValidate,
+      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
-      validationServiceUrl: form.validationServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,
@@ -69,11 +72,19 @@ export class ApplicationMapper {
           screens: section.screens?.map((screen) => {
             return {
               id: screen.id,
+              identifier: screen.identifier,
               sectionId: screen.sectionId,
               name: screen.name,
               displayOrder: screen.displayOrder,
-              multiset: screen.multiset,
-              callRuleset: screen.callRuleset,
+              multiMax: screen.multiMax,
+              isMulti: screen.isMulti,
+              shouldValidate: form.useValidate && screen.shouldValidate,
+              shouldPopulate: form.usePopulate && screen.shouldPopulate,
+              screenError: {
+                hasError: false,
+                title: { is: '', en: '' },
+                message: { is: '', en: '' },
+              },
               isHidden: this.isHidden(
                 screen.id,
                 application.dependencies,
@@ -84,6 +95,7 @@ export class ApplicationMapper {
               fields: screen.fields?.map((field) => {
                 return {
                   id: field.id,
+                  identifier: field.identifier,
                   screenId: field.screenId,
                   name: field.name,
                   displayOrder: field.displayOrder,
@@ -239,13 +251,7 @@ export class ApplicationMapper {
           label: app.tagLabel,
           variant: app.tagVariant,
         },
-        deleteButton: false,
-        pendingAction: {
-          displayStatus: 'displayStatus',
-          title: 'title',
-          content: 'content',
-          button: 'button',
-        },
+        deleteButton: true,
         history:
           app.events?.map((event) => {
             return {
@@ -255,7 +261,9 @@ export class ApplicationMapper {
           }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -298,7 +306,9 @@ export class ApplicationMapper {
           }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -309,6 +319,29 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
+    } as MyPagesApplicationResponseDto
+  }
+
+  mapApplicationToApplicationAdminDto(
+    application: Application,
+    locale?: Locale,
+  ): ApplicationAdminDto {
+    return {
+      id: application.id,
+      created: application.created,
+      modified: application.modified,
+      formId: application.formId,
+      formName:
+        locale === 'is'
+          ? application.form?.name?.is
+          : application.form?.name?.en,
+      formSlug: application.form?.slug,
+      applicant: application.nationalId,
+      status: application.status,
+      state: application.state,
+      pruneAt: application.pruneAt,
+      pruned: application.pruned,
+      institutionNationalId: application.form?.organization?.nationalId,
     }
   }
 }

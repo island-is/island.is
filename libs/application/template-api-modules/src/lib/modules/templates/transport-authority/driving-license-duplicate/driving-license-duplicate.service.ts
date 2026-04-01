@@ -87,6 +87,16 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
         ? null
         : selectedPhoto
 
+    // When using a Thjodskra photo, also send the signature biometricId from Thjodskra
+    const allThjodskraPhotos = getValueViaPath<
+      { biometricId: string; contentSpecification: string }[]
+    >(application.externalData, 'allPhotosFromThjodskra.data.images', [])
+
+    const signatureBiometricsId = imageBiometricsId
+      ? allThjodskraPhotos?.find((p) => p.contentSpecification === 'SIGNATURE')
+          ?.biometricId ?? null
+      : null
+
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
         pickUpLicense: Boolean(pickUpLicense),
@@ -94,6 +104,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
         token: auth.authorization,
         stolenOrLost: true,
         imageBiometricsId: imageBiometricsId,
+        signatureBiometricsId: signatureBiometricsId,
       })
       .catch((e) => {
         this.logger.error('Error submitting application', {

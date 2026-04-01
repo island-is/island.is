@@ -24,6 +24,7 @@ export const nationalIdWithNameSubsection = buildSubSection({
           title: 'Lookup name of a person by national ID',
           searchPersons: true,
           marginBottom: 4,
+          doesNotRequireAnswer: true,
         }),
         buildNationalIdWithNameField({
           id: 'nationalIdWithNameField2',
@@ -31,12 +32,14 @@ export const nationalIdWithNameSubsection = buildSubSection({
           searchPersons: true,
           searchCompanies: true,
           marginBottom: 4,
+          doesNotRequireAnswer: true,
         }),
         buildNationalIdWithNameField({
           id: 'nationalIdWithNameField3',
           title: 'Lookup name of a person and include email and phone number',
           showEmailField: true,
           showPhoneField: true,
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

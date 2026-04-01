@@ -19,6 +19,7 @@ import {
 } from '../lib/utils/dependencyHelper'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { removeTypename } from '../lib/utils/removeTypename'
+import { FILE_TYPE_MAP } from '../lib/utils/fileTypes'
 
 // TODO
 // This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
@@ -67,6 +68,10 @@ type FieldActions =
     }
   | {
       type: 'CHANGE_IS_REQUIRED'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
+  | {
+      type: 'CHANGE_IS_PART_OF_MULTI'
       payload: { update: (updatedActiveItem?: ActiveItem) => void }
     }
 
@@ -136,7 +141,8 @@ type ChangeActions =
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
-  | { type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE'; payload: { value: number } }
+  | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
+  | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
@@ -160,7 +166,28 @@ type ChangeActions =
       }
     }
   | {
-      type: 'TOGGLE_MULTI_SET'
+      type: 'TOGGLE_IS_MULTI'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'CHANGE_MULTI_MAX'
+      payload: {
+        value: number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_VALIDATE'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_POPULATE'
       payload: {
         checked: boolean
         update: (updatedActiveItem?: ActiveItem) => void
@@ -181,6 +208,18 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_ZENDESK_INTERNAL'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_VALIDATE'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_POPULATE'
       payload: {
         value: boolean
       }
@@ -216,6 +255,14 @@ type InputSettingsActions =
         property: 'isLarge' | 'hasDescription'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_APPLICANT_FIELD_SETTINGS'
+      payload: {
+        field: FormSystemField
+        property: 'isPhoneRequired' | 'isEmailRequired'
+        value: boolean
       }
     }
   | {
@@ -307,6 +354,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
+  isPublished: boolean
 }
 
 export const controlReducer = (
@@ -547,6 +595,28 @@ export const controlReducer = (
       }
     }
 
+    case 'CHANGE_IS_PART_OF_MULTI': {
+      const currentData = activeItem.data as FormSystemField
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isPartOfMultiset: !currentData?.isPartOfMultiset,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          fields: fields?.map((i) =>
+            i?.id === currentData?.id ? newActive.data : i,
+          ),
+        },
+      }
+    }
+
     // Change
     case 'CHANGE_APPLICANT_NAME': {
       const { lang, newValue, id } = action.payload
@@ -681,12 +751,21 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE': {
+    case 'CHANGE_DRAFT_DAYS_TO_LIVE': {
       return {
         ...state,
         form: {
           ...form,
-          daysUntilApplicationPrune: action.payload.value,
+          draftDaysToLive: action.payload.value,
+        },
+      }
+    }
+    case 'CHANGE_SUBMISSION_DAYS_TO_LIVE': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          submissionDaysToLive: action.payload.value,
         },
       }
     }
@@ -739,11 +818,41 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_SUBMISSION_URL': {
+      const nextUrl = action.payload.value
+
+      // Only force these flags when switching to Zendesk
+      const nextFields =
+        nextUrl === 'zendesk'
+          ? (fields ?? []).map((field) => {
+              if (!field) return field
+              if (field.fieldType !== 'APPLICANT') return field
+
+              const fs = field.fieldSettings as
+                | Record<string, unknown>
+                | null
+                | undefined
+
+              // “has keys then set both to true” => require both to be present (not null/undefined)
+              const hasPhone = fs?.['isPhoneRequired'] != null
+              const hasEmail = fs?.['isEmailRequired'] != null
+              if (!hasPhone || !hasEmail) return field
+
+              return {
+                ...field,
+                fieldSettings: {
+                  ...(field.fieldSettings ?? {}),
+                  isEmailRequired: true,
+                },
+              }
+            })
+          : fields
+
       const updatedState = {
         ...state,
         form: {
           ...form,
-          submissionServiceUrl: action.payload.value,
+          submissionServiceUrl: nextUrl,
+          fields: nextFields,
         },
       }
       return updatedState
@@ -754,6 +863,26 @@ export const controlReducer = (
         form: {
           ...form,
           zendeskInternal: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_VALIDATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          useValidate: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_POPULATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          usePopulate: action.payload.value,
         },
       }
       return updatedState
@@ -821,13 +950,80 @@ export const controlReducer = (
       }
     }
 
-    case 'TOGGLE_MULTI_SET': {
+    case 'TOGGLE_IS_MULTI': {
+      const currentData = activeItem.data as FormSystemScreen
+
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isMulti: action.payload.checked,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'CHANGE_MULTI_MAX': {
       const currentData = activeItem.data as FormSystemScreen
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
-          multiset: action.payload.checked ? 1 : 0,
+          multiMax: action.payload.value,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_VALIDATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldValidate: action.payload.checked ? true : false,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_POPULATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldPopulate: action.payload.checked ? true : false,
         },
       }
       action.payload.update(newActive)
@@ -897,13 +1093,42 @@ export const controlReducer = (
       const { property, checked, value, update } = action.payload
 
       const updateFileTypesArray = (): string => {
-        const newFileTypes = field.fieldSettings?.fileTypes?.split(',') ?? []
-        if (checked) {
-          return [...newFileTypes, value as string].toString()
-        } else {
-          return newFileTypes.filter((type) => type !== value).toString()
+        const allExt = Object.keys(FILE_TYPE_MAP).filter((k) => k !== '*')
+        const nextValue = String(value ?? '').trim()
+
+        const existingList = (field.fieldSettings?.fileTypes ?? '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter((t) => t.length > 0)
+
+        const hadStar = existingList.includes('*')
+
+        // Toggle "*"
+        if (nextValue === '*') {
+          return checked ? ['*', ...allExt].join(',') : ''
         }
+
+        // Selected set: if "*" was selected, treat all extensions as selected
+        const selected = new Set<string>(
+          hadStar ? allExt : existingList.filter((t) => t !== '*'),
+        )
+
+        if (checked) {
+          selected.add(nextValue)
+        } else {
+          selected.delete(nextValue)
+        }
+
+        // If after the toggle everything is selected, include "*"
+        const nowAllSelected = allExt.every((ext) => selected.has(ext))
+        if (nowAllSelected) {
+          return ['*', ...allExt].join(',')
+        }
+
+        // Partial selection: do NOT include "*"
+        return allExt.filter((ext) => selected.has(ext)).join(',')
       }
+
       const newField = {
         ...field,
         fieldSettings: {
@@ -946,6 +1171,23 @@ export const controlReducer = (
           type: 'Field',
           data: newField,
         },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_APPLICANT_FIELD_SETTINGS': {
+      const { field, property, value } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...field?.fieldSettings,
+          [property]: value,
+        },
+      }
+      return {
+        ...state,
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),

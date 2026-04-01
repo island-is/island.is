@@ -30,9 +30,10 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
-
-import * as strings from './DefendantInfo.strings'
+import {
+  isBusiness,
+  mapStringToGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   defendant: Defendant
@@ -56,16 +57,15 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
-  const { personData, businessData, personError, businessError } =
-    useNationalRegistry(defendant.nationalId)
+  const { personData, businessData, error, notFound } = useNationalRegistry(
+    defendant.nationalId,
+  )
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
     { label: formatMessage(core.female), value: Gender.FEMALE },
     { label: formatMessage(core.otherGender), value: Gender.OTHER },
   ]
-
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
     useState<string>('')
@@ -75,40 +75,29 @@ const DefendantInfo: FC<Props> = (props) => {
       !!defendant.nationalId && isBusiness(defendant.nationalId),
     )
 
-  const mapNationalRegistryGenderToGender = (gender: string) => {
-    return gender === 'male'
-      ? Gender.MALE
-      : gender === 'female'
-      ? Gender.FEMALE
-      : Gender.OTHER
-  }
-
   useEffect(() => {
-    if (personError || (personData && personData.items?.length === 0)) {
-      setNationalIdNotFound(true)
+    if (!isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
     if (personData && personData.items && personData.items.length > 0) {
       setAccusedAddressErrorMessage('')
-      setNationalIdNotFound(false)
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange({
         caseId: workingCase.id,
         defendantId: defendant.id,
         name: personData.items[0].name,
-        gender: mapNationalRegistryGenderToGender(personData.items[0].gender),
+        gender: mapStringToGender(personData.items[0].gender),
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData, personError])
+  }, [personData, error])
 
   useEffect(() => {
-    if (businessError || (businessData && businessData.items?.length === 0)) {
-      setNationalIdNotFound(true)
+    if (isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
@@ -127,7 +116,7 @@ const DefendantInfo: FC<Props> = (props) => {
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessData, businessError])
+  }, [businessData, error])
 
   return (
     <BlueBox className={grid({ gap: 2 })}>
@@ -140,69 +129,66 @@ const DefendantInfo: FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(strings.defendantInfo.delete)}
+            Eyða
           </Button>
         </Box>
       )}
-      <Checkbox
-        name={`noNationalId-${defendant.id}`}
-        label={formatMessage(
-          strings.defendantInfo.doesNotHaveIcelandicNationalId,
-          {
-            isIndictment: isIndictmentCase(workingCase.type),
-          },
-        )}
-        checked={Boolean(defendant.noNationalId)}
-        onChange={() => {
-          setNationalIdNotFound(false)
+      {!isIndictmentCase(workingCase.type) && (
+        <Checkbox
+          name={`noNationalId-${defendant.id}`}
+          label="Varnaraðili er ekki með íslenska kennitölu"
+          checked={Boolean(defendant.noNationalId)}
+          onChange={() => {
+            updateDefendantState(
+              {
+                caseId: workingCase.id,
+                defendantId: defendant.id,
+                noNationalId: !defendant.noNationalId,
+                nationalId: null,
+              },
+              setWorkingCase,
+            )
 
-          updateDefendantState(
-            {
+            onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
               noNationalId: !defendant.noNationalId,
               nationalId: null,
-            },
-            setWorkingCase,
-          )
-
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            noNationalId: !defendant.noNationalId,
-            nationalId: null,
-          })
-        }}
-        filled
-        large
-      />
-      <InputNationalId
-        isDateOfBirth={Boolean(defendant.noNationalId)}
-        value={defendant.nationalId ?? ''}
-        onBlur={(value) =>
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            nationalId: value || null,
-          })
-        }
-        onChange={(value) =>
-          updateDefendantState(
-            {
+            })
+          }}
+          filled
+          large
+        />
+      )}
+      <div>
+        <InputNationalId
+          isDateOfBirth={Boolean(defendant.noNationalId)}
+          value={defendant.nationalId ?? ''}
+          onBlur={(value) =>
+            onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
               nationalId: value || null,
-            },
-            setWorkingCase,
-          )
-        }
-        required={!defendant.noNationalId}
-      />
-      {defendant.nationalId?.length === 11 && nationalIdNotFound && (
-        <Text color="red600" variant="eyebrow" marginTop={1}>
-          {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
-        </Text>
-      )}
+            })
+          }
+          onChange={(value) =>
+            updateDefendantState(
+              {
+                caseId: workingCase.id,
+                defendantId: defendant.id,
+                nationalId: value || null,
+              },
+              setWorkingCase,
+            )
+          }
+          required={!defendant.noNationalId}
+        />
+        {defendant.nationalId?.length === 11 && notFound && (
+          <Text color="red600" variant="eyebrow" marginTop={1}>
+            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+          </Text>
+        )}
+      </div>
       <InputName
         value={defendant.name ?? ''}
         onBlur={(value) =>

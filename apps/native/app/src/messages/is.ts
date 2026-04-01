@@ -189,10 +189,6 @@ export const is = {
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
-  'homeBanner.vehicleMileage.title': 'Skrá kílómetrastöðu',
-  'homeBanner.vehicleMileage.description':
-    'Skráðu kílómetrastöðu þinna ökutækja',
-  'homeBanner.vehicleMileage.cta': 'Skoða ökutæki',
   'button.seeAll': 'Sjá allt',
 
   // home options
@@ -760,6 +756,17 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
+  'health.overview.medicine': 'Lyf',
+  'health.overview.seeAllCategories': 'Sjá alla flokka',
+
+  // health: categories
+  'health.categories.screenTitle': 'Heilsuflokkar',
+  'health.categories.healthCategories': 'Heilsuflokkar',
+  'health.categories.moreOnMyPages': 'Meira á mínum síðum',
+  'health.categories.referrals': 'Tilvísanir',
+  'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
+  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',
@@ -933,8 +940,10 @@ export const is = {
   'health.prescriptions.description':
     'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
   'health.prescriptions.drug': 'Lyf',
+  'health.prescriptions.strength': 'Styrkur',
+  'health.prescriptions.indication': 'Notað við',
   'health.prescriptions.type': 'Tegund',
-  'health.prescriptions.indication': 'Lyf er notað við',
+  'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Ávísað magn',
   'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
   'health.prescriptions.issueDate': 'Útgáfudagur',

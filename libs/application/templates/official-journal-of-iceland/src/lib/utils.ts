@@ -38,7 +38,7 @@ const getHolidayMap = (year: number): IsHolidayMap => {
   return yearHolidays
 }
 
-const isWorkday = (date: Date): boolean => {
+export const isWorkday = (date: Date): boolean => {
   const wDay = date.getDay()
   if (wDay === 0 || wDay === 6) {
     return false
@@ -46,7 +46,7 @@ const isWorkday = (date: Date): boolean => {
   const holidays = getHolidayMap(date.getFullYear())
   return holidays[toISODate(date)] !== true
 }
-const getNextWorkday = (date: Date) => {
+export const getNextWorkday = (date: Date) => {
   // Returns the next workday.
   let nextDay = date
   let iterations = 0
@@ -65,7 +65,7 @@ export const isDateNotBeforeToday = (dateStr: string) => {
   return date >= today
 }
 
-const addWorkDays = (date: Date, days: number) => {
+export const addWorkDays = (date: Date, days: number) => {
   let result = new Date(date)
   while (days > 0) {
     result = addDays(result, 1)
@@ -74,6 +74,28 @@ const addWorkDays = (date: Date, days: number) => {
     }
   }
   return result
+}
+
+/**
+ * Get the next workday at least `num` working days from now.
+ * Ported from regulations-admin: libs/portals/admin/regulations-admin/src/utils/index.ts
+ * @param num number of working days
+ * @returns Date `num` working days from now (guaranteed to be a workday)
+ */
+export const getWorkdayMinimumDate = (num: number) => {
+  let d = new Date()
+  let dateNum = 0
+
+  while (num > dateNum) {
+    if (isWorkday(d)) {
+      dateNum++
+    }
+    d = addDays(d, 1)
+  }
+
+  d = getNextWorkday(d)
+
+  return d
 }
 
 const getWeekendDates = (

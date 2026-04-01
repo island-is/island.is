@@ -46,6 +46,7 @@ import {
   RealEstateAgent,
   RegistryPerson,
   SyslumennAuction,
+  SyslumennDelegationType,
   TemporaryEventLicence,
   VehicleRegistration,
 } from './syslumennClient.types'
@@ -761,11 +762,13 @@ export class SyslumennService {
   async checkIfDelegationExists(
     toNationalId: string,
     fromNationalId: string,
+    delegationType: SyslumennDelegationType,
   ): Promise<boolean> {
     const { id, api } = await this.createApi()
-    const delegations: LogradamadurSvar[] = await api.logradamadurGet({
+    const delegations = await api.virkUmbodGet({
       audkenni: id,
       kennitala: toNationalId,
+      tegundUmbods: delegationType,
     })
 
     return delegations.some(

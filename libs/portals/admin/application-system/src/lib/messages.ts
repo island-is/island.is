@@ -224,6 +224,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:searchStrPlaceholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  datePlaceholder: {
+    id: 'admin-portal.application-system:datePlaceholder',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  searchStr: {
+    id: 'admin-portal.application-system:searchStr',
+    defaultMessage: 'Leitarorð',
+  },
   filterFrom: {
     id: 'admin-portal.application-system:filterFrom',
     defaultMessage: 'Frá',
@@ -235,6 +243,10 @@ export const m = defineMessages({
   resultCount: {
     id: 'admin-portal.application-system:resultCount',
     defaultMessage: '{count} umsóknir fundust',
+  },
+  tableHeaderInstitution: {
+    id: 'admin-portal.application-system:tableHeaderInstitution',
+    defaultMessage: 'Stofnun',
   },
   tableHeaderType: {
     id: 'admin-portal.application-system:tableHeaderType',

@@ -26,7 +26,10 @@ import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
-import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
+import {
+  lifetimeSettingsStep,
+  urlSettingsStep,
+} from '../../lib/utils/customSections'
 
 export const Navbar = () => {
   const {
@@ -37,7 +40,7 @@ export const Navbar = () => {
     openComponents,
   } = useContext(ControlContext) as IControlContext
   const { formatMessage } = useIntl()
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const { sections, screens, fields } = form
   const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
   const { hasPayment } = form
@@ -125,22 +128,6 @@ export const Navbar = () => {
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
-    if (type === 'Section') {
-      setOpenComponents((prev) => ({
-        ...prev,
-        sections: prev.sections.includes(id as string)
-          ? prev.sections.filter((sectionId) => sectionId !== id)
-          : [...prev.sections, id as string],
-      }))
-    } else if (type === 'Screen') {
-      setOpenComponents((prev) => ({
-        ...prev,
-        screens: prev.screens.includes(id as string)
-          ? prev.screens.filter((screenId) => screenId !== id)
-          : [...prev.screens, id as string],
-      }))
-    }
-
     if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -158,6 +145,16 @@ export const Navbar = () => {
           activeItem: {
             type: 'Section',
             data: urlSettingsStep,
+          },
+        },
+      })
+    } else if (id === lifetimeSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: lifetimeSettingsStep,
           },
         },
       })
@@ -290,6 +287,14 @@ export const Navbar = () => {
           focusComponent={focusComponent}
         />
       </div>
+      <div>
+        <NavComponent
+          type="Section"
+          data={lifetimeSettingsStep}
+          active={activeItem.data?.id === lifetimeSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
     </>
   )
 
@@ -297,10 +302,10 @@ export const Navbar = () => {
     <div>
       <Box className={cn(styles.navbarContainer)}>
         <DndContext
-          sensors={sensors}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onDragOver={onDragOver}
+          sensors={isPublished ? [] : sensors}
+          onDragStart={isPublished ? undefined : onDragStart}
+          onDragEnd={isPublished ? undefined : onDragEnd}
+          onDragOver={isPublished ? undefined : onDragOver}
         >
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
@@ -348,7 +353,12 @@ export const Navbar = () => {
         paddingTop={3}
         className={cn(styles.addSectionButton)}
       >
-        <Button variant="ghost" size="small" onClick={addSection}>
+        <Button
+          variant="ghost"
+          size="small"
+          onClick={addSection}
+          disabled={isPublished}
+        >
           {formatMessage(m.addSection)}
         </Button>
       </Box>

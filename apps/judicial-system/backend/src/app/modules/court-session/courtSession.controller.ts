@@ -18,11 +18,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -94,6 +95,7 @@ export class CourtSessionController {
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Body() courtSessionToUpdate: UpdateCourtSessionDto,
+    @CurrentHttpUser() user: User,
   ): Promise<CourtSession> {
     this.logger.debug(
       `Updating court session ${courtSessionId} of case ${caseId}`,
@@ -104,6 +106,7 @@ export class CourtSessionController {
         caseId,
         courtSessionId,
         courtSessionToUpdate,
+        user,
         transaction,
       ),
     )
@@ -160,7 +163,7 @@ export class CourtSessionController {
     const courtSessions = theCase.courtSessions
     if (
       !courtSessions ||
-      courtSessions.length < 2 ||
+      courtSessions.length === 0 ||
       courtSessionId !== courtSessions[courtSessions.length - 1].id
     ) {
       throw new BadRequestException(

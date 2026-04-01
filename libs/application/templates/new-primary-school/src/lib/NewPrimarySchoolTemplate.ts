@@ -23,6 +23,7 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -48,6 +49,7 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationExternalData,
   getApplicationType,
   getOtherGuardian,
   otherGuardianApprovalStatePendingAction,
@@ -108,6 +110,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               externalDataId: 'preferredSchool',
               throwOnError: true,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.getIsApplicationBlocked,
+              externalDataId: 'isApplicationBlocked',
+              throwOnError: true,
+            }),
           ],
           roles: [
             {
@@ -136,10 +143,46 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-            actions: 'setApplicationType',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              actions: 'setApplicationType',
+              cond: (application) => {
+                const { isApplicationBlocked } = getApplicationExternalData(
+                  application?.application?.externalData,
+                )
+
+                if (
+                  isRunningOnEnvironment('local') ||
+                  isRunningOnEnvironment('dev')
+                ) {
+                  return true
+                }
+
+                return !isApplicationBlocked
+              },
+            },
+            {
+              target: States.APPLICATION_BLOCKED,
+            },
+          ],
+        },
+      },
+      [States.APPLICATION_BLOCKED]: {
+        meta: {
+          name: States.APPLICATION_BLOCKED,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ApplicationBlocked').then((module) =>
+                  Promise.resolve(module.ApplicationBlocked),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {

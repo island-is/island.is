@@ -15,6 +15,8 @@ export enum FileType {
   DIPLOMA,
   DIPLOMA_SUPPLEMENT,
   TRANSCRIPT,
+  MICRO_CREDENTIALS_SUPPLEMENT,
+  MICRO_CREDENTIALS_TRANSCRIPT,
 }
 
 export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {

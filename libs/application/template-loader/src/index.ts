@@ -109,5 +109,5 @@ export const getApplicationTranslationNamespaces = async (
     .concat(template?.translationNamespaces ?? [])
 
   // We load the core namespace for the application system + the ones defined in the application template
-  return ['application.system', ...translationNamespaces]
+  return [...new Set(['application.system', ...translationNamespaces])] // Remove duplicates
 }

@@ -20,17 +20,17 @@ export const buildAlternativeServiceExistsCondition = (exists: boolean) =>
       SELECT 1
       FROM defendant
       WHERE defendant.case_id = "Case".id
-        AND defendant.is_alternative_service = true
+        AND defendant.is_alternative_service = TRUE
     )
   `)
 
-export const buildIsSentToPrisonExistsCondition = (exists: boolean) =>
+export const buildIsSentToPrisonAdminExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
     ${exists ? '' : 'NOT'} EXISTS (
       SELECT 1
       FROM defendant
       WHERE defendant.case_id = "Case".id
-        AND defendant.is_sent_to_prison_admin = true
+        AND defendant.is_sent_to_prison_admin = TRUE
         AND defendant.indictment_review_decision = '${
           IndictmentCaseReviewDecision.ACCEPT
         }'

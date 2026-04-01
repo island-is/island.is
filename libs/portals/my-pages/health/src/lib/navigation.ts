@@ -249,10 +249,9 @@ export const healthNavigation: PortalNavigationItem = {
               breadcrumbHide: true,
             },
             {
-              name: messages.questionnaire,
+              name: messages.answers,
               path: HealthPaths.HealthQuestionnairesAnswered,
               navHide: true,
-              breadcrumbHide: true,
             },
           ],
         },
@@ -268,15 +267,17 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthPatientDataPermits,
           children: [
             {
-              name: messages.addPermit,
+              name: messages.patientDataPermit,
               path: HealthPaths.HealthPatientDataPermitsAdd,
               navHide: true,
+              breadcrumbHide: true,
             },
             {
               name: messages.permit,
               path: HealthPaths.HealthPatientDataPermitsDetail,
               navHide: true,
               searchHide: true,
+              breadcrumbHide: true,
             },
           ],
         },

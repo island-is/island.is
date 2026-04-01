@@ -19,8 +19,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate, randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
-import { Case, CaseRepositoryService } from '../../../repository'
-import { include } from '../../case.service'
+import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
 
 jest.mock('../../../../factories')
 
@@ -136,7 +135,7 @@ describe('CaseController - Create court case', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           isArchived: false,
@@ -203,7 +202,7 @@ describe('CaseController - Create court case', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           isArchived: false,

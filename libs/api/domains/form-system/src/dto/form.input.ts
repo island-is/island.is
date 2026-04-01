@@ -62,11 +62,14 @@ export class UpdateFormDtoInput {
   @Field(() => Boolean, { nullable: true })
   zendeskInternal?: boolean
 
-  @Field(() => String, { nullable: true })
-  submissionServiceUrl?: string
+  @Field(() => Boolean, { nullable: true })
+  useValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  usePopulate?: boolean
 
   @Field(() => String, { nullable: true })
-  validationServiceUrl?: string
+  submissionServiceUrl?: string
 
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
@@ -75,7 +78,10 @@ export class UpdateFormDtoInput {
   isTranslated?: boolean
 
   @Field(() => Int, { nullable: true })
-  daysUntilApplicationPrune?: number
+  draftDaysToLive?: number
+
+  @Field(() => Int, { nullable: true })
+  submissionDaysToLive?: number
 
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
@@ -135,7 +141,10 @@ export class FormInput {
   beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
-  daysUntilApplicationPrune?: number
+  draftDaysToLive?: number
+
+  @Field(() => Int, { nullable: true })
+  submissionDaysToLive?: number
 
   @Field(() => Int, { nullable: true })
   derivedFrom?: number

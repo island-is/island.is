@@ -570,7 +570,7 @@ describe('CaseController - Update', () => {
       const updatedCase = {
         ...theCase,
         type,
-        prosecutorStatementDate: date,
+        appealCase: { prosecutorStatementDate: date },
         caseFiles,
       }
       let then: Then
@@ -623,7 +623,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.TRAVEL_BAN,
-      appealCaseNumber,
+      appealCase: { appealCaseNumber },
     }
 
     beforeEach(async () => {
@@ -654,11 +654,13 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.SEARCH_WARRANT,
-      appealCaseNumber,
-      appealAssistantId,
-      appealJudge1Id,
-      appealJudge2Id,
-      appealJudge3Id,
+      appealCase: {
+        appealCaseNumber,
+        appealAssistantId,
+        appealJudge1Id,
+        appealJudge2Id,
+        appealJudge3Id,
+      },
     }
 
     beforeEach(async () => {
@@ -668,7 +670,7 @@ describe('CaseController - Update', () => {
       await givenWhenThen(
         caseId,
         user,
-        { ...theCase, appealCaseNumber } as Case,
+        { ...theCase, appealCase: { appealCaseNumber } } as Case,
         caseToUpdate,
       )
     })
@@ -694,11 +696,13 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-      appealCaseNumber,
-      appealAssistantId,
-      appealJudge1Id,
-      appealJudge2Id,
-      appealJudge3Id,
+      appealCase: {
+        appealCaseNumber,
+        appealAssistantId,
+        appealJudge1Id,
+        appealJudge2Id,
+        appealJudge3Id,
+      },
     }
 
     beforeEach(async () => {
@@ -710,11 +714,13 @@ describe('CaseController - Update', () => {
         user,
         {
           ...theCase,
-          appealCaseNumber: uuid(),
-          appealAssistantId,
-          appealJudge1Id,
-          appealJudge2Id,
-          appealJudge3Id,
+          appealCase: {
+            appealCaseNumber: uuid(),
+            appealAssistantId,
+            appealJudge1Id,
+            appealJudge2Id,
+            appealJudge3Id,
+          },
         } as Case,
         caseToUpdate,
       )
@@ -793,7 +799,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.RESTRAINING_ORDER,
-      appealCaseNumber,
+      appealCase: { appealCaseNumber },
       caseFiles,
     }
 
@@ -806,7 +812,7 @@ describe('CaseController - Update', () => {
         user,
         {
           ...theCase,
-          appealCaseNumber: uuid(),
+          appealCase: { appealCaseNumber: uuid() },
           caseFiles,
         } as Case,
         caseToUpdate,
@@ -966,13 +972,16 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
+      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
           caseId,
           value: postponedIndefinitelyExplanation,
         },
-        { transaction },
+        {
+          conflictFields: ['case_id', 'string_type'],
+          transaction,
+        },
       )
     })
   })
@@ -986,13 +995,16 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
+      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           stringType: StringType.CIVIL_DEMANDS,
           caseId,
           value: civilDemands,
         },
-        { transaction },
+        {
+          conflictFields: ['case_id', 'string_type'],
+          transaction,
+        },
       )
     })
   })

@@ -8,7 +8,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     description
     state
     policeCaseNumbers
-    publicProsecutorIsRegisteredInPoliceSystem
     defendants {
       id
       noNationalId
@@ -24,6 +23,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       defenderChoice
       defendantPlea
       subpoenaType
+      publicProsecutorIsRegisteredInPoliceSystem
     }
     defenderName
     defenderNationalId
@@ -215,7 +215,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealValidToDate
     appealIsolationToDate
     requestAppealRulingNotToBePublished
-    isRegisteredInPrisonSystem
     prosecutorsOffice {
       id
       name

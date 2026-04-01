@@ -37,6 +37,7 @@ env:
   XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur'
   XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
   XROAD_FINANCES_V2_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2'
+  XROAD_FINANCES_V3_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3'
   XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
   XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
   XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
@@ -58,6 +59,7 @@ grantNamespaces:
   - 'islandis'
   - 'nginx-ingress-external'
   - 'services-bff-portals-admin'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -76,6 +78,16 @@ hpa:
     replicas:
       max: 10
       min: 3
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'api.island.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/download'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
 ingress:
@@ -89,7 +101,7 @@ ingress:
           - '/download'
 namespace: 'download-service'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

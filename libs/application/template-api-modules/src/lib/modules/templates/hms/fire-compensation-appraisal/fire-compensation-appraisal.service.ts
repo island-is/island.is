@@ -6,7 +6,11 @@ import {
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
+import {
+  Fasteign,
+  FasteignirApi,
+  FasteignSimpleWrapper,
+} from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
@@ -20,14 +24,14 @@ import {
 import {
   getApplicant,
   mapAnswersToApplicationDto,
-  mapAnswersToApplicationFilesContentDto,
+  mapAnswersToSingleApplicationFilesContentDto,
   paymentForAppraisal,
 } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-import uniqBy from 'lodash/uniqBy'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
+import { FetchError } from '@island.is/clients/middlewares'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -60,12 +64,24 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     // If on prod we fetch a list of all the fasteignanúmer for kennitala and then
     // fetch each property individually with the full data.
     else {
+      let simpleProperties: FasteignSimpleWrapper | undefined
+      const api = this.getRealEstatesWithAuth(auth)
       try {
-        const api = this.getRealEstatesWithAuth(auth)
-        const simpleProperties = await api.fasteignirGetFasteignir({
+        simpleProperties = await api.fasteignirGetFasteignir({
           kennitala: auth.nationalId,
         })
+      } catch (error) {
+        this.logger.warn(
+          `Fetch properties list for applicationId: ${
+            application.id
+          } failed with problem:  ${
+            error instanceof FetchError ? error.problem : error.message
+          }`,
+          error,
+        )
+      }
 
+      try {
         properties = await Promise.all(
           simpleProperties?.fasteignir?.map((property) => {
             return api.fasteignirGetFasteign({
@@ -76,8 +92,15 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
             })
           }) ?? [],
         )
-      } catch (e) {
-        this.logger.error('Failed to fetch properties:', e.message)
+      } catch (error) {
+        this.logger.warn(
+          `Fetch property details for applicationId: ${
+            application.id
+          } failed with problem:  ${
+            error instanceof FetchError ? error.problem : error.message
+          }`,
+          error,
+        )
         throw new TemplateApiError(
           {
             title: prereqMessages.getPropertiesErrorTitle,
@@ -105,15 +128,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     const { application } = props
 
     try {
-      const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+      const selectedRealEstateId = getValueViaPath<string>(
         application.answers,
-        'otherPropertiesThanIOwnCheckbox',
-      )?.includes(YES)
-
-      const selectedRealEstateId = otherPropertiesThanIOwn
-        ? 'F' +
-          getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
-        : getValueViaPath<string>(application.answers, 'realEstate')
+        'realEstate',
+      )
 
       if (!selectedRealEstateId) {
         throw new TemplateApiError('Selected real estate id is not set', 500)
@@ -124,15 +142,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'usageUnits',
       )
 
-      const properties = otherPropertiesThanIOwn
-        ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
-        : await this.getProperties(props)
+      const properties = getValueViaPath<Array<Fasteign>>(
+        application.externalData,
+        'getProperties.data',
+      )
 
       if (!properties) {
         throw new TemplateApiError('Properties is undefined', 500)
       }
 
-      const property = properties.find(
+      const property = properties?.find(
         (property) => property.fasteignanumer === selectedRealEstateId,
       )
 
@@ -148,9 +167,17 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         usageUnitsFireAppraisal?.reduce((acc, curr) => {
           return (acc ?? 0) + (curr ?? 0)
         }, 0) ?? 0
+
       return paymentForAppraisal(selectedUnitsFireAppraisal)
-    } catch (e) {
-      this.logger.error('Failed to calculate amount:', e.message)
+    } catch (error) {
+      this.logger.error(
+        `Failed to calculate amount for applicationId: ${
+          application.id
+        } with problem: ${
+          error instanceof FetchError ? error.problem : error.message
+        }`,
+        error,
+      )
       throw new TemplateApiError(
         'Error came up calculating the current fire compensation appraisal',
         500,
@@ -278,63 +305,50 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      // get content of files from S3
-      const fetchedFiles = await this.attachmentService.getFiles(application, [
-        'photos',
-      ])
-
-      const files = uniqBy(fetchedFiles, 'key')
-
-      const missingFiles = files.filter(
-        (file) => !file.fileContent || file.fileContent.trim().length === 0,
-      )
-
-      if (missingFiles.length > 0) {
-        this.logger.error('Missing file content for attachments', {
-          missingKeys: missingFiles.map((file) => file.key),
-        })
-        throw new TemplateApiError(
-          'Failed to submit application, missing file content',
-          500,
-        )
-      }
-
       // Map the application to the dto interface
-      const applicationDto = mapAnswersToApplicationDto(application, files)
-
+      const applicationDto = mapAnswersToApplicationDto(application)
       // Send the application to HMS
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
       })
-
       if (res.status !== 200) {
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
         )
       }
-      // Map the photos to the dto interface
-      const applicationFilesContentDtoArray =
-        mapAnswersToApplicationFilesContentDto(application, files)
 
-      // Send the photos in to HMS
-      const photoResults = await Promise.all(
-        applicationFilesContentDtoArray.map(
-          async (applicationFilesContentDto) => {
-            return await this.hmsApplicationSystemService.apiApplicationUploadPost(
-              {
-                applicationFilesContentDto,
-              },
-            )
-          },
-        ),
+      // Get the generator
+      const fileGenerator = this.attachmentService.getFilesGenerator(
+        application,
+        ['photos'],
       )
 
-      if (photoResults.some((result) => result.status !== 200)) {
-        throw new TemplateApiError(
-          'Failed to upload photos, non 200 status',
-          500,
+      const uniqueFileKeys = new Set<string>()
+
+      // Process one file at a time to avoid creating intermetiate arrays
+      for await (const file of fileGenerator) {
+        // Skip if the file has already been processed
+        if (uniqueFileKeys.has(file.key)) {
+          continue
+        }
+        uniqueFileKeys.add(file.key)
+        const attachment = mapAnswersToSingleApplicationFilesContentDto(
+          application,
+          file,
         )
+        // Kick off each upload as soon as the attachment has been downloaded and mapped
+        this.hmsApplicationSystemService // Don't wait for upload to finish, allow them to run asyncronously on the background
+          .apiApplicationUploadPost({
+            applicationFilesContentDto: attachment,
+          })
+          .then((res) => {
+            this.logger.info('Successfully uploaded attachment:', res)
+          })
+          .catch((e) => {
+            // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
+            this.logger.error(`Failed to upload attachment: ${e}`)
+          })
       }
 
       return res
