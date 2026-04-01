@@ -55,9 +55,7 @@ export const mapToUserShipCollectionItem = (
     return undefined
   }
 
-  const validTo = ship.seaWorthyExpiry
-    ? parseDate(ship.seaWorthyExpiry)
-    : undefined
+  const validTo = ship.seaWorthyExpiry ?? undefined
 
   return {
     registrationNumber: Number(ship.shipRegistrationNumber),
