@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
@@ -34,6 +37,7 @@ import {
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFileTable } from '../Table'
@@ -183,12 +187,29 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
-      canViewRulings:
-        isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewRulings: (() => {
+        if (isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) {
+          return true
+        }
+        if (isDefenceUser(user)) {
+          const myDefendants = workingCase.defendants?.filter(
+            (defendant) =>
+              defendant.defenderNationalId &&
+              normalizeAndFormatNationalId(user?.nationalId).includes(
+                defendant.defenderNationalId,
+              ),
+          )
+          return (
+            isNonEmptyArray(myDefendants) &&
+            areAllDefendantsCancelledOrDismissed(myDefendants)
+          )
+        }
+        return false
+      })(),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [user, workingCase.hasCivilClaims, workingCase.state],
+    [user, workingCase.defendants, workingCase.hasCivilClaims, workingCase.state],
   )
 }
 
