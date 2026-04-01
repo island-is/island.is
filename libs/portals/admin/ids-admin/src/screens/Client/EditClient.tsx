@@ -149,9 +149,7 @@ export const EditClient = () => {
           />
           {!isMachineApplication && (
             <AllowedCorsOrigins
-              allowedCorsOrigins={
-                selectedEnvironment?.allowedCorsOrigins ?? []
-              }
+              allowedCorsOrigins={selectedEnvironment?.allowedCorsOrigins ?? []}
             />
           )}
           {!isMachineApplication && (
