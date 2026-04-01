@@ -150,6 +150,15 @@ const regulationSchema = z
   })
   .partial()
 
+export const readerSchema = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    slug: z.string(),
+    nationalId: z.string(),
+  })
+  .optional()
+
 export const partialSchema = z.object({
   requirements: z
     .object({
@@ -166,6 +175,7 @@ export const partialSchema = z.object({
   signature: signatureSchema.optional(),
   misc: miscSchema.optional(),
   regulation: regulationSchema.optional(),
+  reader: readerSchema,
 })
 
 // We make properties optional to throw custom error messages
