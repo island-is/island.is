@@ -5,6 +5,7 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { ReviewWarnings, ReviewOverview } from '../components/regulations'
 import { collectRegulationWarnings } from '../utils/regulationValidations'
+import { usePrice } from '../hooks/usePrice'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useEffect, useMemo } from 'react'
@@ -19,6 +20,13 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   })
 
   const { impacts, impactsLoaded } = useRegulationImpacts({ draftId })
+  const {
+    price,
+    loading: priceLoading,
+    error: priceError,
+  } = usePrice({
+    applicationId: application.id,
+  })
 
   // Load draft data from DB on mount
   useEffect(() => {
@@ -74,6 +82,9 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
             <ReviewOverview
               answers={enrichedAnswers}
               hasWarnings={warnings.length > 0}
+              price={price}
+              priceLoading={priceLoading}
+              priceError={!!priceError}
             />
           </>
         )}
