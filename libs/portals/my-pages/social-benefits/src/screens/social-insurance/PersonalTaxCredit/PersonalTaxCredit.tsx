@@ -71,7 +71,9 @@ const PersonalTaxCredit = () => {
       title={formatMessage(m.personalTaxCredit)}
       intro={formatMessage(m.personalTaxCreditDescription)}
       serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
-      serviceProviderTooltip={formatMessage(coreMessages.socialInsuranceTooltip)}
+      serviceProviderTooltip={formatMessage(
+        coreMessages.socialInsuranceTooltip,
+      )}
     >
       {loading ? (
         <CardLoader />

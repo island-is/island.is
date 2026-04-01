@@ -25,7 +25,8 @@ const PaymentTypes = () => {
   const { data, loading, error } = useGetPaymentTypesOverviewQuery()
 
   const result = data?.socialInsurancePaymentTypesOverview
-  const isEmpty = !result?.paymentTypes?.length && !result?.childBenefits?.length
+  const isEmpty =
+    !result?.paymentTypes?.length && !result?.childBenefits?.length
 
   const buttonGroup = [
     <LinkResolver
@@ -49,7 +50,9 @@ const PaymentTypes = () => {
       title={formatMessage(m.paymentTypesOverview)}
       intro={formatMessage(m.paymentTypesOverviewDescription)}
       serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
-      serviceProviderTooltip={formatMessage(coreMessages.socialInsuranceTooltip)}
+      serviceProviderTooltip={formatMessage(
+        coreMessages.socialInsuranceTooltip,
+      )}
       buttonGroup={buttonGroup}
     >
       {loading ? (
