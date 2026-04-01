@@ -6,7 +6,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
-  AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
   conclusion,
@@ -31,8 +30,7 @@ const CourtOfAppealOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description, isLoadingAppealBanner } =
-    useAppealAlertBanner(workingCase)
+  const { appealBanner } = useAppealAlertBanner()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -55,13 +53,7 @@ const CourtOfAppealOverview = () => {
 
   return (
     <>
-      {!isLoadingAppealBanner && (
-        <AlertBanner
-          variant="warning"
-          title={title}
-          description={description}
-        />
-      )}
+      {appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

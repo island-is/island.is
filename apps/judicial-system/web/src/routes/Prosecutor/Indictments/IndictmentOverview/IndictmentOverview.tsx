@@ -3,19 +3,14 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  signedVerdictOverview as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import {
-  AlertBanner,
   BlueBox,
   Conclusion,
   ConnectedCaseFilesAccordionItem,
@@ -29,7 +24,6 @@ import {
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   MarkdownWrapper,
-  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -56,7 +50,6 @@ import {
   CONFIRM_PROSECUTOR_DECISION,
   ConfirmationModal,
 } from '../../../PublicProsecutor/components/utils'
-import { strings as svoStrings } from '../../../Shared/SignedVerdictOverview/SignedVerdictOverview.strings'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview: FC = () => {
@@ -94,16 +87,7 @@ const IndictmentOverview: FC = () => {
     ConfirmationModal | undefined
   >()
 
-  const [appealModalVisible, setAppealModalVisible] = useState<
-    'ConfirmAppealAfterDeadline' | 'ConfirmStatementAfterDeadline' | undefined
-  >()
-
-  const { title, description, child, isLoadingAppealBanner } =
-    useAppealAlertBanner(
-      workingCase,
-      () => setAppealModalVisible('ConfirmAppealAfterDeadline'),
-      () => setAppealModalVisible('ConfirmStatementAfterDeadline'),
-    )
+  const { appealBanner, appealModals } = useAppealAlertBanner()
 
   const shouldDisplayAlertBanner =
     workingCase.indictmentRulingDecision ===
@@ -144,11 +128,7 @@ const IndictmentOverview: FC = () => {
 
   return (
     <>
-      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
-        <AlertBanner variant="warning" title={title} description={description}>
-          {child}
-        </AlertBanner>
-      )}
+      {shouldDisplayAlertBanner && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -337,52 +317,7 @@ const IndictmentOverview: FC = () => {
             }
           />
         </FormContentContainer>
-        {appealModalVisible === 'ConfirmAppealAfterDeadline' && (
-          <Modal
-            title={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.title,
-            )}
-            text={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.text,
-            )}
-            primaryButton={{
-              text: formatMessage(
-                m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
-              ),
-              onClick: () =>
-                router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`),
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
-              ),
-              onClick: () => setAppealModalVisible(undefined),
-            }}
-          />
-        )}
-        {appealModalVisible === 'ConfirmStatementAfterDeadline' && (
-          <Modal
-            title={formatMessage(
-              svoStrings.confirmStatementAfterDeadlineModalTitle,
-            )}
-            text={formatMessage(
-              svoStrings.confirmStatementAfterDeadlineModalText,
-            )}
-            primaryButton={{
-              text: formatMessage(
-                svoStrings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-              ),
-              onClick: () =>
-                router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`),
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                svoStrings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-              ),
-              onClick: () => setAppealModalVisible(undefined),
-            }}
-          />
-        )}
+        {appealModals}
       </PageLayout>
     </>
   )

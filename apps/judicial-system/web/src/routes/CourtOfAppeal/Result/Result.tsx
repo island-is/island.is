@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertBanner, AlertMessage } from '@island.is/island-ui/core'
+import { AlertMessage } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
@@ -36,8 +36,7 @@ const CourtOfAppealResult = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const { title, description, isLoadingAppealBanner } =
-    useAppealAlertBanner(workingCase)
+  const { appealBanner } = useAppealAlertBanner()
   const {
     defendants,
     policeCaseNumbers,
@@ -57,13 +56,7 @@ const CourtOfAppealResult = () => {
 
   return (
     <>
-      {!isLoadingAppealBanner && (
-        <AlertBanner
-          variant="warning"
-          title={title}
-          description={description}
-        />
-      )}
+      {appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

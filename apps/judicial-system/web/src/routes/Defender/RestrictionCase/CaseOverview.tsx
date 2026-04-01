@@ -1,9 +1,7 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isInvestigationCase,
@@ -11,7 +9,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  AlertBanner,
   AppealCaseFilesOverview,
   CaseDates,
   CaseResentExplanation,
@@ -22,7 +19,6 @@ import {
   FormContentContainer,
   FormContext,
   MarkdownWrapper,
-  Modal,
   PageHeader,
   PageLayout,
   PdfButton,
@@ -39,22 +35,12 @@ import InfoCard from '../../../components/InfoCard/InfoCard'
 import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 
-type availableModals =
-  | 'NoModal'
-  | 'ConfirmAppealAfterDeadline'
-  | 'ConfirmStatementAfterDeadline'
-
 export const CaseOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { title, description, child, isLoadingAppealBanner } =
-    useAppealAlertBanner(
-      workingCase,
-      () => setModalVisible('ConfirmAppealAfterDeadline'),
-      () => setModalVisible('ConfirmStatementAfterDeadline'),
-    )
+  const { appealBanner, appealModals } = useAppealAlertBanner()
   const {
     defendants,
     policeCaseNumbers,
@@ -71,8 +57,6 @@ export const CaseOverview = () => {
     victims,
     showItem,
   } = useInfoCardItems()
-  const router = useRouter()
-  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
@@ -80,11 +64,7 @@ export const CaseOverview = () => {
 
   return (
     <>
-      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
-        <AlertBanner variant="warning" title={title} description={description}>
-          {child}
-        </AlertBanner>
-      )}
+      {shouldDisplayAlertBanner && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -289,56 +269,7 @@ export const CaseOverview = () => {
             </Box>
           )}
         </FormContentContainer>
-        {modalVisible === 'ConfirmAppealAfterDeadline' && (
-          <Modal
-            title={formatMessage(strings.confirmAppealAfterDeadlineModalTitle)}
-            text={formatMessage(strings.confirmAppealAfterDeadlineModalText)}
-            primaryButton={{
-              text: formatMessage(
-                strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
-              ),
-              onClick: () => {
-                router.push(
-                  `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
-                )
-              },
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
-              ),
-              onClick: () => {
-                setModalVisible('NoModal')
-              },
-            }}
-          />
-        )}
-        {modalVisible === 'ConfirmStatementAfterDeadline' && (
-          <Modal
-            title={formatMessage(
-              strings.confirmStatementAfterDeadlineModalTitle,
-            )}
-            text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
-            primaryButton={{
-              text: formatMessage(
-                strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-              ),
-              onClick: () => {
-                router.push(
-                  `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
-                )
-              },
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-              ),
-              onClick: () => {
-                setModalVisible('NoModal')
-              },
-            }}
-          />
-        )}
+        {appealModals}
       </PageLayout>
     </>
   )
