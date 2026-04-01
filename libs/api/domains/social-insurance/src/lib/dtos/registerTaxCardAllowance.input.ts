@@ -5,9 +5,9 @@ export class RegisterTaxCardAllowanceInput {
   @Field(() => Int)
   percentage!: number
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   year!: number
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   month!: number
 }

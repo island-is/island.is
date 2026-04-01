@@ -10,15 +10,15 @@ import {
   CardLoader,
   IntroWrapper,
   m as coreMessages,
+  TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { NetworkStatus } from '@apollo/client'
-import { useState } from 'react'
 import { m } from '../../../lib/messages'
 import { useGetPersonalTaxCreditQuery } from './PersonalTaxCredit.generated'
 import { useTaxCardAllowance } from './useTaxCardAllowance'
 import { MyTaxCreditForm } from './components/MyTaxCreditForm'
 import { PersonalTaxCreditTable } from './components/PersonalTaxCreditTable'
+import { useState } from 'react'
 
 const INITIAL_MY_TAX_CREDIT: MyTaxCreditState = { action: null }
 
@@ -42,11 +42,9 @@ const PersonalTaxCredit = () => {
     INITIAL_MY_TAX_CREDIT,
   )
 
-  const { data, networkStatus, error, refetch } = useGetPersonalTaxCreditQuery({
+  const { data, loading, error, refetch } = useGetPersonalTaxCreditQuery({
     errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
   })
-  const loading = networkStatus === NetworkStatus.loading
   const [refetching, setRefetching] = useState(false)
 
   const taxCardAllowance = useTaxCardAllowance()
@@ -68,68 +66,56 @@ const PersonalTaxCredit = () => {
     }
   }
 
-  const introProps = {
-    title: formatMessage(m.personalTaxCredit),
-    intro: formatMessage(m.personalTaxCreditDescription),
-    serviceProviderSlug: 'tryggingastofnun' as const,
-    serviceProviderTooltip: formatMessage(coreMessages.socialInsuranceTooltip),
-  }
-
-  if (loading) {
-    return (
-      <IntroWrapper {...introProps}>
-        <CardLoader />
-      </IntroWrapper>
-    )
-  }
-
-  if (error) {
-    return (
-      <IntroWrapper {...introProps}>
-        <Problem error={error} noBorder={false} />
-      </IntroWrapper>
-    )
-  }
-
   return (
-    <IntroWrapper {...introProps}>
-      <Stack space={6}>
-        {!!page?.taxCards?.length && (
-          <PersonalTaxCreditTable taxCards={page.taxCards} />
-        )}
+    <IntroWrapper
+      title={formatMessage(m.personalTaxCredit)}
+      intro={formatMessage(m.personalTaxCreditDescription)}
+      serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
+      serviceProviderTooltip={formatMessage(coreMessages.socialInsuranceTooltip)}
+    >
+      {loading ? (
+        <CardLoader />
+      ) : error ? (
+        <Problem error={error} noBorder={false} />
+      ) : (
+        <Stack space={6}>
+          {!!page?.taxCards?.length && (
+            <PersonalTaxCreditTable taxCards={page.taxCards} />
+          )}
 
-        {!page?.taxCards?.length && (
+          {!page?.taxCards?.length && (
+            <AlertMessage
+              type="info"
+              message={formatMessage(m.personalTaxCreditNotRegistered)}
+            />
+          )}
+
+          <Box>
+            <Text variant="h4" marginBottom={3}>
+              {formatMessage(m.myPersonalTaxCredit)}
+            </Text>
+            <MyTaxCreditForm
+              state={myTaxCredit}
+              setState={setMyTaxCredit}
+              monthsAndYears={page?.registrationMonthsAndYears}
+              discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
+              isAlreadyRegistered={page?.canEdit ?? false}
+              canDiscontinue={page?.canDiscontinue ?? false}
+              saving={taxCardAllowance.loading || refetching}
+              onSave={handleSaveMyTaxCredit}
+            />
+          </Box>
+
           <AlertMessage
             type="info"
-            message={formatMessage(m.personalTaxCreditNotRegistered)}
+            message={
+              <Text as="span" variant="small" whiteSpace="preLine">
+                {formatMessage(m.taxBracketInfo)}
+              </Text>
+            }
           />
-        )}
-
-        <Box>
-          <Text variant="h4" marginBottom={3}>
-            {formatMessage(m.myPersonalTaxCredit)}
-          </Text>
-          <MyTaxCreditForm
-            state={myTaxCredit}
-            setState={setMyTaxCredit}
-            monthsAndYears={page?.registrationMonthsAndYears}
-            discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
-            isAlreadyRegistered={page?.canEdit ?? false}
-            canDiscontinue={page?.canDiscontinue ?? false}
-            saving={taxCardAllowance.loading || refetching}
-            onSave={handleSaveMyTaxCredit}
-          />
-        </Box>
-
-        <AlertMessage
-          type="info"
-          message={
-            <Text as="span" variant="small" whiteSpace="preLine">
-              {formatMessage(m.taxBracketInfo)}
-            </Text>
-          }
-        />
-      </Stack>
+        </Stack>
+      )}
     </IntroWrapper>
   )
 }
