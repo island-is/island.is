@@ -102,7 +102,13 @@ const resolveRequestUrl = (input: RequestInfo | URL): string => {
     return input.toString()
   }
 
-  return input.url
+  if (input instanceof Request) {
+    throw new Error(
+      'Court client fetchApi does not support Request as the first argument; the OpenAPI runtime always passes a string URL.',
+    )
+  }
+
+  throw new Error('Unreachable')
 }
 
 const toWebResponse = async (
