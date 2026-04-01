@@ -48,7 +48,11 @@ describe('InternalCaseController - Deliver received date to court of appeals gua
     it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases, ...indictmentCases],
+        allowedCaseTypes: [
+          ...restrictionCases,
+          ...investigationCases,
+          ...indictmentCases,
+        ],
       })
     })
   })
