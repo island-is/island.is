@@ -36,4 +36,3 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
 ) {
   discontinueSocialInsuranceTaxCardAllowance(input: $input)
 }
-
