@@ -126,6 +126,7 @@ const prosecutionIndictmentsInProgressColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'caseSentToCourtDate',
+  'prosecutorInitials',
   'indictmentCaseState',
   'indictmentArraignmentDate',
 ]
