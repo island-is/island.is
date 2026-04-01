@@ -11,7 +11,7 @@ import { useEffect, useMemo } from 'react'
 
 export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { application } = props
+  const { application, setSubmitButtonDisabled } = props
 
   const { draftId, draftData, draftLoaded, loadDraft } = useRegulationDraft({
     applicationId: application.id,
@@ -43,6 +43,18 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
 
   const isLoading = (draftId && !draftLoaded) || !impactsLoaded
   const warnings = collectRegulationWarnings(enrichedAnswers)
+  const hasWarnings = isLoading || warnings.length > 0
+
+  useEffect(() => {
+    setSubmitButtonDisabled && setSubmitButtonDisabled(hasWarnings)
+  }, [hasWarnings, setSubmitButtonDisabled])
+
+  useEffect(() => {
+    return () => {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <FormScreen
@@ -55,7 +67,10 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
           <SkeletonLoader height={80} borderRadius="large" />
         ) : (
           <>
-            <ReviewWarnings answers={enrichedAnswers} />
+            <ReviewWarnings
+              answers={enrichedAnswers}
+              goToScreen={props.goToScreen}
+            />
             <ReviewOverview
               answers={enrichedAnswers}
               hasWarnings={warnings.length > 0}
