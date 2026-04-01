@@ -1,4 +1,10 @@
-import { Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Button,
+  Stack,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -58,9 +64,18 @@ const PaymentTypes = () => {
     )
   }
 
+  const isEmpty =
+    !result?.paymentTypes?.length && !result?.benefitChildren?.length
+
   return (
     <IntroWrapper {...introProps}>
       <Stack space={6}>
+        {isEmpty && (
+          <AlertMessage
+            type="info"
+            message={formatMessage(m.noPaymentTypesFound)}
+          />
+        )}
         {result?.paymentTypes && result.paymentTypes.length > 0 && (
           <Stack space={2}>
             <Text variant="eyebrow" color="purple400">

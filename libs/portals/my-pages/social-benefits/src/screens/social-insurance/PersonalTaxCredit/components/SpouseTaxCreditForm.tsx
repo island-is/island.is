@@ -163,7 +163,14 @@ export const SpouseTaxCreditForm: FC<Props> = ({
       <Box marginTop={3}>
         <Button
           onClick={onSave}
-          disabled={(!state.deceased && !state.grant) || saving}
+          disabled={
+            (!state.deceased && !state.grant) ||
+            (state.deceased &&
+              (!!spouseEligibility?.reasonNotAllowed ||
+                state.year == null ||
+                state.month == null)) ||
+            saving
+          }
           loading={saving}
           size="small"
         >

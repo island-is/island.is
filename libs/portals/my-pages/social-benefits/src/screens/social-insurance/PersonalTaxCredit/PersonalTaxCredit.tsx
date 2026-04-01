@@ -97,7 +97,7 @@ const PersonalTaxCredit = () => {
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
     } catch (e) {
       setRefetchingFor(null)
-      console.error(e)
+
       toast.error(formatMessage(m.personalTaxCreditSaveError))
     }
   }
@@ -127,7 +127,7 @@ const PersonalTaxCredit = () => {
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
     } catch (e) {
       setRefetchingFor(null)
-      console.error(e)
+
       toast.error(formatMessage(m.personalTaxCreditSaveError))
     }
   }

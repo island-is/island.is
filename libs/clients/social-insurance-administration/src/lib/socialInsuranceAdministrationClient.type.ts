@@ -31,7 +31,6 @@ export type Scope =
   | '@tr.is/bankaupplysingar:read'
   | '@tr.is/personuafslattur:read'
   | '@tr.is/personuafslattur:write'
-  | '@tr.is/greidslutegundir:read'
   | '@tr.is/yfirlitgreidslutegunda:read'
 
 export type Api =

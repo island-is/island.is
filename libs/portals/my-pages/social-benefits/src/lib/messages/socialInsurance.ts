@@ -309,4 +309,8 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:calculate-my-rights',
     defaultMessage: 'Reikna mín réttindi',
   },
+  noPaymentTypesFound: {
+    id: 'sp.social-insurance-maintenance:no-payment-types-found',
+    defaultMessage: 'Engar greiðslutegundir fundust.',
+  },
 })
