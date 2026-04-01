@@ -50,7 +50,6 @@ export class CourtSessionService {
   create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
     return this.courtSessionRepositoryService.create(theCase.id, {
       transaction,
-      courtSessionType: theCase.courtSessionType,
     })
   }
 

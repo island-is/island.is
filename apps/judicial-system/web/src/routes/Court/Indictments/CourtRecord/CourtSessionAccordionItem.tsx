@@ -38,7 +38,6 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -715,14 +714,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         workingCase.courtDate?.date ??
         workingCase.arraignmentDate?.date,
     )
-    const typeName =
-      courtSession.courtSessionType &&
-      courtSessionTypeNames[courtSession.courtSessionType]
-    return typeName && dateLabel
-      ? `${dateLabel} - ${typeName}`
+    return dateLabel
+      ? `Þinghald ${index + 1} - ${dateLabel}`
       : `Þinghald ${index + 1}`
   }, [
-    courtSession.courtSessionType,
     courtSession.startDate,
     workingCase.arraignmentDate?.date,
     workingCase.courtDate?.date,

@@ -13,7 +13,6 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CourtSessionRulingType,
   CourtSessionStringType,
-  CourtSessionType,
   EventType,
 } from '@island.is/judicial-system/types'
 
@@ -25,7 +24,6 @@ import { CourtDocumentRepositoryService } from './courtDocumentRepository.servic
 
 interface CreateCourtSessionOptions {
   transaction: Transaction
-  courtSessionType?: CourtSessionType
 }
 
 interface UpdateCourtSessionOptions {
@@ -51,7 +49,6 @@ interface UpdateCourtSession {
   attestingWitnessId?: string
   closingEntries?: string
   isConfirmed?: boolean
-  courtSessionType?: CourtSessionType
 }
 
 @Injectable()
@@ -75,10 +72,7 @@ export class CourtSessionRepositoryService {
       this.logger.debug(`Creating a new court session for case ${caseId}`)
 
       const courtSession = await this.courtSessionModel.create(
-        {
-          caseId,
-          courtSessionType: options.courtSessionType ?? null,
-        },
+        { caseId },
         options,
       )
 

@@ -15,7 +15,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
-  CourtSessionType,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCourtSessionDto {
@@ -92,9 +91,4 @@ export class UpdateCourtSessionDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isConfirmed?: boolean
-
-  @IsOptional()
-  @IsEnum(CourtSessionType)
-  @ApiPropertyOptional({ enum: CourtSessionType })
-  readonly courtSessionType?: CourtSessionType
 }

@@ -282,7 +282,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       startDate
       isConfirmed
-      courtSessionType
       ruling
       filedDocuments {
         id
@@ -375,7 +374,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         endDate
         ruling
         isConfirmed
-        courtSessionType
         filedDocuments {
           id
           created

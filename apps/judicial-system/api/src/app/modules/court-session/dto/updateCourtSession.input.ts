@@ -15,7 +15,6 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 import {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
-  CourtSessionType,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -114,10 +113,4 @@ export class UpdateCourtSessionInput {
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   readonly isConfirmed?: boolean
-
-  @Allow()
-  @IsOptional()
-  @IsEnum(CourtSessionType)
-  @Field(() => CourtSessionType, { nullable: true })
-  readonly courtSessionType?: CourtSessionType
 }

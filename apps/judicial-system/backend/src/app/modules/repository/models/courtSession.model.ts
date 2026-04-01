@@ -15,7 +15,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
-  CourtSessionType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
@@ -49,14 +48,6 @@ export class CourtSession extends Model {
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
   caseId!: string
-
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CourtSessionType),
-  })
-  @ApiPropertyOptional({ enum: CourtSessionType })
-  courtSessionType?: CourtSessionType
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })

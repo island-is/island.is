@@ -3,7 +3,6 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
-  CourtSessionType,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -31,9 +30,6 @@ export class CourtSessionResponse {
 
   @Field(() => ID, { nullable: true })
   readonly caseId?: string
-
-  @Field(() => CourtSessionType, { nullable: true })
-  readonly courtSessionType?: CourtSessionType
 
   @Field(() => String, { nullable: true })
   readonly location?: string

@@ -307,7 +307,6 @@ query Case($input: CaseQueryInput!) {
       created
       modified
       caseId
-      courtSessionType
       location
       judgeId
       judge {
@@ -459,7 +458,6 @@ query Case($input: CaseQueryInput!) {
         startDate
         endDate
         isConfirmed
-        courtSessionType
         filedDocuments {
           id
           created
