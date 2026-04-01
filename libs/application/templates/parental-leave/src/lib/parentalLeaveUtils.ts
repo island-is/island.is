@@ -926,29 +926,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
         ) as YesOrNo)
   let isRequestingRights = isRequestingRightsSecondary
 
+  const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
+    | number
+    | undefined
+
   /*
    ** When multiple births is selected and applicant is not using all 'common' rights
    ** Need this check so we are not returning wrong answer
+   ** Only override if applicant has not explicitly requested personal days
    */
   if (isRequestingRights === YES && hasMultipleBirths === YES) {
     if (
       multipleBirthsRequestDays * 1 !==
-      (multipleBirths - 1) * multipleBirthsDefaultDays
+        (multipleBirths - 1) * multipleBirthsDefaultDays &&
+      !(Number(requestValue) > 0)
     ) {
       isRequestingRights = NO
     }
   }
 
-  const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
-    | number
-    | undefined
-
-  const requestDays = getOrFallback(
-    isRequestingRights === YES
-      ? isRequestingRights
-      : isRequestingRightsSecondary,
-    requestValue,
-  )
+  const requestDays = getOrFallback(isRequestingRights, requestValue)
 
   let isGivingRights =
     transferRights === TransferRightsOption.GIVE
