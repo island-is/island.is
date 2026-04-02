@@ -1218,21 +1218,175 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('appeal %s', (type) => {
-    describe.each(Object.values(CaseState))(
-      'state %s - should not appeal',
-      (fromState) => {
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should appeal as prosecutor',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            {
+              id: uuid(),
+              role: UserRole.PROSECUTOR,
+              institution: {
+                type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+              },
+            } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({ appealState: CaseAppealState.APPEALED })
+          expect(res.prosecutorPostponedAppealDate).toBeDefined()
+        },
+      )
+
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should appeal as defender',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            {
+              id: uuid(),
+              role: UserRole.DEFENDER,
+            } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({ appealState: CaseAppealState.APPEALED })
+          expect(res.accusedPostponedAppealDate).toBeDefined()
+        },
+      )
+
+      it('should not appeal a non-dismissal indictment case', () => {
         // Arrange
         const act = () =>
           transitionCase(
             CaseTransition.APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
-            { id: uuid() } as User,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+            } as Case,
+            {
+              id: uuid(),
+              role: UserRole.PROSECUTOR,
+              institution: {
+                type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+              },
+            } as User,
           )
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-      },
-    )
+        expect(act).toThrow('Only dismissed indictment cases can be appealed')
+      })
+
+      it('should not appeal as neutral actor', () => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            {
+              id: uuid(),
+              role: UserRole.DISTRICT_COURT_JUDGE,
+              institution: { type: InstitutionType.DISTRICT_COURT },
+            } as User,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+        expect(act).toThrow('Neutral cannot appeal an indictment case')
+      })
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.APPEAL,
+              {
+                id: uuid(),
+                state: fromState,
+                appealCase: { appealState: fromAppealState },
+                type,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+              } as Case,
+              {
+                id: uuid(),
+                role: UserRole.PROSECUTOR,
+                institution: {
+                  type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                },
+              } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each([undefined, ...Object.values(CaseAppealState)])(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.APPEAL,
+              {
+                id: uuid(),
+                state: fromState,
+                appealCase: { appealState: fromAppealState },
+                type,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+              } as Case,
+              {
+                id: uuid(),
+                role: UserRole.PROSECUTOR,
+                institution: {
+                  type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                },
+              } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
@@ -1336,21 +1490,88 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('withdraw appeal %s', (type) => {
-    describe.each(Object.values(CaseState))(
-      'state %s - should not withdraw appeal',
-      (fromState) => {
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
+    const allowedFromAppealStates = [
+      CaseAppealState.APPEALED,
+      CaseAppealState.RECEIVED,
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should withdraw appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.WITHDRAW_APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({
+            appealState: CaseAppealState.WITHDRAWN,
+          })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not withdraw appeal', (fromAppealState) => {
         // Arrange
         const act = () =>
           transitionCase(
             CaseTransition.WITHDRAW_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
             { id: uuid() } as User,
           )
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-      },
-    )
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each([undefined, ...Object.values(CaseAppealState)])(
+        'appeal state %s - should not withdraw appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.WITHDRAW_APPEAL,
+              {
+                id: uuid(),
+                state: fromState,
+                appealCase: { appealState: fromAppealState },
+                type,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+              } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
@@ -1442,21 +1663,84 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('receive appeal %s', (type) => {
-    describe.each(Object.values(CaseState))(
-      'state %s - should not receive appeal',
-      (fromState) => {
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
+    const allowedFromAppealStates = [CaseAppealState.APPEALED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should receive appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.RECEIVE_APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({ appealState: CaseAppealState.RECEIVED })
+          expect(res.appealReceivedByCourtDate).toBeDefined()
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not receive appeal', (fromAppealState) => {
         // Arrange
         const act = () =>
           transitionCase(
             CaseTransition.RECEIVE_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
             { id: uuid() } as User,
           )
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-      },
-    )
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each([undefined, ...Object.values(CaseAppealState)])(
+        'appeal state %s - should not receive appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.RECEIVE_APPEAL,
+              {
+                id: uuid(),
+                state: fromState,
+                appealCase: { appealState: fromAppealState },
+                type,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+              } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
@@ -1543,21 +1827,88 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('complete appeal %s', (type) => {
-    describe.each(Object.values(CaseState))(
-      'state %s - should not complete appeal',
-      (fromState) => {
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
+    const allowedFromAppealStates = [
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should complete appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.COMPLETE_APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({
+            appealState: CaseAppealState.COMPLETED,
+          })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not complete appeal', (fromAppealState) => {
         // Arrange
         const act = () =>
           transitionCase(
             CaseTransition.COMPLETE_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
             { id: uuid() } as User,
           )
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-      },
-    )
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each([undefined, ...Object.values(CaseAppealState)])(
+        'appeal state %s - should not complete appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.COMPLETE_APPEAL,
+              {
+                id: uuid(),
+                state: fromState,
+                appealCase: { appealState: fromAppealState },
+                type,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+              } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
@@ -1649,21 +2000,83 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('reopen appeal %s', (type) => {
-    describe.each(Object.values(CaseState))(
-      'state %s - should not reopen appeal',
-      (fromState) => {
+    const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
+    const allowedFromAppealStates = [CaseAppealState.COMPLETED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should reopen appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.REOPEN_APPEAL,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({ appealState: CaseAppealState.RECEIVED })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not reopen appeal', (fromAppealState) => {
         // Arrange
         const act = () =>
           transitionCase(
             CaseTransition.REOPEN_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              appealCase: { appealState: fromAppealState },
+              type,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            } as Case,
             { id: uuid() } as User,
           )
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-      },
-    )
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each([undefined, ...Object.values(CaseAppealState)])(
+        'appeal state %s - should not reopen appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.REOPEN_APPEAL,
+              {
+                id: uuid(),
+                state: fromState,
+                appealCase: { appealState: fromAppealState },
+                type,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+              } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
