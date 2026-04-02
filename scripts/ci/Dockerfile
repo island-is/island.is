@@ -6,7 +6,7 @@ ARG PLAYWRIGHT_VERSION
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS base
+FROM public.ecr.aws/docker/library/node:24.13.1-bookworm-slim AS base
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -73,7 +73,7 @@ RUN --mount=type=secret,id=nx_cloud_access_token \
 # ------------------------------------------------
 # Minimal node base for outputs
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS output-base
+FROM public.ecr.aws/docker/library/node:24.13.1-bookworm-slim AS output-base
 ENV NODE_ENV=production
 WORKDIR /webapp
 RUN groupadd runners && useradd -m -g runners runner

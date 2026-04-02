@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS runner
+FROM public.ecr.aws/docker/library/node:24.13.1-bookworm-slim AS runner
 
 # hadolint ignore=DL3018
 RUN apt-get update && apt-get install -y \
@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
   g++ \
   && rm -rf /var/lib/apt/lists/*
 
-FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS build
+FROM public.ecr.aws/docker/library/node:24.13.1-bookworm-slim AS build
 WORKDIR /app/infra
 ENV NODE_OPTIONS=--openssl-legacy-provider
 COPY infra/.yarnrc.yml infra/package.json infra/yarn.lock ./
