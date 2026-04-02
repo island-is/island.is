@@ -1,0 +1,38 @@
+query getPersonalTaxCredit {
+  socialInsurancePersonalTaxCredit {
+    taxCards {
+      percentage
+      validFrom
+      validTo
+      taxCardType
+    }
+    canEdit
+    canDiscontinue
+    registrationMonthsAndYears {
+      year
+      months
+    }
+    discontinuingMonthsAndYears {
+      year
+      months
+    }
+  }
+}
+
+mutation registerSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceRegisterTaxCardAllowanceInput!
+) {
+  registerSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation updateSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceUpdateTaxCardAllowanceInput!
+) {
+  updateSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation discontinueSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceDiscontinueTaxCardAllowanceInput!
+) {
+  discontinueSocialInsuranceTaxCardAllowance(input: $input)
+}
