@@ -30,11 +30,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
+  CaseAppealState,
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useAppealCase,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -64,6 +66,7 @@ const Completed: FC = () => {
   const { handleUpload } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const { appealBanner, appealModals } = useAppealCase()
 
   const [isLoading, setIsLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState<modal>()
@@ -190,17 +193,25 @@ const Completed: FC = () => {
     return isValidDefendants && isValidRuling
   }
 
+  const shouldDisplayAppealBanner =
+    workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.DISMISSAL &&
+    (workingCase.hasBeenAppealed ||
+      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED)
+
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      onNavigationTo={handleNavigationTo}
-    >
+    <>
+      {shouldDisplayAppealBanner && appealBanner}
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={isLoadingWorkingCase}
+        notFound={caseNotFound}
+        onNavigationTo={handleNavigationTo}
+      >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
@@ -373,7 +384,9 @@ const Completed: FC = () => {
       {modalVisible === 'REOPEN' && (
         <ReopenModal onClose={() => setModalVisible(undefined)} />
       )}
+      {appealModals}
     </PageLayout>
+    </>
   )
 }
 
