@@ -14,3 +14,15 @@ export const EstateOnEntryApi = defineTemplateApi({
   action: 'syslumennOnEntry',
   shouldPersistToExternalData: true,
 })
+
+export const GetSignatoriesApi = defineTemplateApi({
+  action: 'getSignatories',
+  shouldPersistToExternalData: true,
+  externalDataId: 'getSignatories',
+})
+
+export const CheckReviewFlagApi = defineTemplateApi({
+  action: 'checkReviewFlag',
+  shouldPersistToExternalData: true,
+  externalDataId: 'checkReviewFlag',
+})
