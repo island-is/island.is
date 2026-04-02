@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from 'react'
+import { ReactElement, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -17,22 +17,25 @@ import {
 } from '@island.is/judicial-system/types'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
+  AlertBanner,
   FormContext,
+  Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseAppealState,
+  CaseTransition,
   InstitutionType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { hasSentNotification } from '../../utils'
-import { strings } from './useAppealAlertBanner.strings'
-import * as styles from './useAppealAlertBanner.css'
+import useCase from '../useCase'
+import { strings } from './useAppealCase.strings'
+import * as styles from './useAppealCase.css'
 
 const renderLinkButton = (text: string, href: string) => {
   return (
@@ -73,15 +76,36 @@ export const getAppealDecision = (
   }
 }
 
-const useAppealAlertBanner = (
-  workingCase: Case,
-  onAppealAfterDeadline?: () => void,
-  onStatementAfterDeadline?: () => void,
-  onReceiveAppeal?: () => void,
-) => {
+const useAppealCase = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { isLoadingWorkingCase } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, setWorkingCase } =
+    useContext(FormContext)
+  const { transitionCase } = useCase()
+
+  const [appealModalVisible, setAppealModalVisible] = useState<
+    | 'ConfirmAppealAfterDeadline'
+    | 'ConfirmStatementAfterDeadline'
+    | 'AppealReceived'
+    | undefined
+  >()
+
+  const handleReceivedTransition = () => {
+    transitionCase(
+      workingCase.id,
+      CaseTransition.RECEIVE_APPEAL,
+      setWorkingCase,
+    ).then((updatedCase) => {
+      if (updatedCase) {
+        setAppealModalVisible('AppealReceived')
+      }
+    })
+  }
+
+  const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
+  const statementRoute = isDefenceUser(user)
+    ? DEFENDER_STATEMENT_ROUTE
+    : STATEMENT_ROUTE
 
   let title = ''
   let description: string | undefined = undefined
@@ -177,7 +201,11 @@ const useAppealAlertBanner = (
       )
     } else {
       child = isStatementDeadlineExpired ? (
-        <Button variant="text" size="small" onClick={onStatementAfterDeadline}>
+        <Button
+          variant="text"
+          size="small"
+          onClick={() => setAppealModalVisible('ConfirmStatementAfterDeadline')}
+        >
           {formatMessage(strings.statementLinkText)}
         </Button>
       ) : (
@@ -228,7 +256,11 @@ const useAppealAlertBanner = (
     } else if (isDistrictCourtUser(user)) {
       child = (
         <Box>
-          <Button variant="text" size="small" onClick={onReceiveAppeal}>
+          <Button
+            variant="text"
+            size="small"
+            onClick={handleReceivedTransition}
+          >
             {`${formatMessage(strings.appealReceivedNotificationLinkText)} `}
           </Button>
           <span className={styles.tooltipContainer}>
@@ -245,7 +277,11 @@ const useAppealAlertBanner = (
       isAppealDeadlineExpired: isAppealDeadlineExpired,
     })
     child = isAppealDeadlineExpired ? (
-      <Button variant="text" size="small" onClick={onAppealAfterDeadline}>
+      <Button
+        variant="text"
+        size="small"
+        onClick={() => setAppealModalVisible('ConfirmAppealAfterDeadline')}
+      >
         {formatMessage(strings.appealLinkText)}
       </Button>
     ) : (
@@ -258,12 +294,60 @@ const useAppealAlertBanner = (
     )
   }
 
+  const appealModals = (
+    <>
+      {appealModalVisible === 'ConfirmAppealAfterDeadline' && (
+        <Modal
+          title="Kærufrestur er liðinn"
+          text="Viltu halda áfram og senda kæru?"
+          primaryButton={{
+            text: 'Já, senda kæru',
+            onClick: () => router.push(`${appealRoute}/${workingCase.id}`),
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setAppealModalVisible(undefined),
+          }}
+        />
+      )}
+      {appealModalVisible === 'ConfirmStatementAfterDeadline' && (
+        <Modal
+          title="Frestur til að skila greinargerð er liðinn"
+          text="Viltu halda áfram og senda greinargerð?"
+          primaryButton={{
+            text: 'Já, senda greinargerð',
+            onClick: () => router.push(`${statementRoute}/${workingCase.id}`),
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setAppealModalVisible(undefined),
+          }}
+        />
+      )}
+      {appealModalVisible === 'AppealReceived' && (
+        <Modal
+          title="Tilkynningar sendar á málsaðila"
+          text="Kæra hefur borist Landsrétti. Sækjandi og verjandi hafa fengið tilkynningu um frest til að skila greinargerð."
+          primaryButton={{
+            text: 'Loka glugga',
+            onClick: () => setAppealModalVisible(undefined),
+          }}
+        />
+      )}
+    </>
+  )
+
+  const appealBanner =
+    isLoadingWorkingCase || (!title && !description) ? null : (
+      <AlertBanner variant="warning" title={title} description={description}>
+        {child}
+      </AlertBanner>
+    )
+
   return {
-    isLoadingAppealBanner: isLoadingWorkingCase,
-    title,
-    description,
-    child,
+    appealBanner,
+    appealModals,
   }
 }
 
-export default useAppealAlertBanner
+export default useAppealCase

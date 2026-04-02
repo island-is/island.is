@@ -65,53 +65,12 @@ export const strings = defineMessages({
     description:
       'Texti í viðvörunarglugga sem birtir upplýsingar um hvenær tilkynning um móttöku kæru var send',
   },
-  decisionAccept: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionAccept',
-    defaultMessage: 'Staðfesting',
-    description:
-      'Staðfesting á "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionRepeal: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionRepeal',
-    defaultMessage: 'Fella úr gildi',
-    description:
-      'Fallið úr gildi í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionChanged: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionChanged',
-    defaultMessage: 'Niðurstöðu breytt',
-    description:
-      'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionDismissedFromCourtOfAppeal: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionDismissedFromCourtOfAppeal',
-    defaultMessage: 'Frávísun frá Landsrétti',
-    description:
-      'Frávísun frá Landsrétti í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionDismissedFromCourt: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionDismissedFromCourt',
-    defaultMessage: 'Frávísun frá héraðsdómi',
-    description:
-      'Frávísun frá héraðsdómi í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionUnlabeling: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionUnlabeling',
-    defaultMessage: 'Ómerking og heimvísun',
-    description:
-      'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
   notifyCOATooltip: {
     id: 'judicial.system.core:appeal_alert_banner.notify_COA_tooltip',
     defaultMessage:
       'Tilkynning um móttöku kæru og frest til að skila greinargerð sendist á Landsrétt og aðila málsins',
     description:
       'Texti í tilkynningarglugga sem birtist þegar héraðsdómari er að fara að móttaka kæru.',
-  },
-  appealWithdrawnTitle: {
-    id: 'judicial.system.core:appeal_alert_banner.appeal_withdrawn_title',
-    defaultMessage: 'Kæra afturkölluð',
-    description: 'Titill á niðurstöðu landsréttar þegar kæru er lokið.',
   },
   appealWithdrawnDescription: {
     id: 'judicial.system.core:appeal_alert_banner.appeal_withdrawn_description',

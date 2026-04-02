@@ -13,6 +13,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -76,7 +77,11 @@ const Statement = () => {
 
   const previousUrl = `${
     isDefenceUser(user)
-      ? constants.DEFENDER_ROUTE
+      ? isIndictmentCase(workingCase.type)
+        ? constants.DEFENDER_INDICTMENT_ROUTE
+        : constants.DEFENDER_ROUTE
+      : isIndictmentCase(workingCase.type)
+      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
