@@ -36,7 +36,7 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "3.145.0",
     "@types/lodash": "4.14.160",
-    "aws-sdk": "^2.1003.0",
+    "aws-sdk": "^2.1693.0",
     "glob": "10.3.3",
     "json-refs": "3.0.15",
     "json-schema-to-zod": "2.4.1",
