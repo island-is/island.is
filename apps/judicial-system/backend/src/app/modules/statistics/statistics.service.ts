@@ -571,6 +571,7 @@ export class StatisticsService {
             { key: 'caseTypeDescriptor', header: 'Tegund máls' },
             { key: 'subtypeDescriptor', header: 'Sakarefni' },
             { key: 'origin', header: 'Stofnað í' },
+            { key: 'prosecutorId', header: 'Ákærandi' },
             { key: 'defendantId', header: 'Varnaraðili' },
             { key: 'serviceStatusDescriptor', header: 'Birting' },
             { key: 'rulingDecisionDescriptor', header: 'Lyktir' },
