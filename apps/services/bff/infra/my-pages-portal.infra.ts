@@ -17,7 +17,11 @@ export const serviceSetup = (
     .env({
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),
-        dev: json(['https://api.dev01.devland.is']),
+        // TODO: REMOVE - feature deploy workaround, use ref() for proper solution
+        dev: json([
+          'https://api.dev01.devland.is',
+          'https://featprimary-school-assessments-api.dev01.devland.is',
+        ]),
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },

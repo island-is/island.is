@@ -1,6 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { EducationPaths } from './paths'
+import { primarySchoolMessages as psm } from './messages'
 
 export const educationNavigation: PortalNavigationItem = {
   name: m.education,
@@ -16,11 +17,48 @@ export const educationNavigation: PortalNavigationItem = {
       description: m.educationPrimarySchoolIntro,
       searchTags: [m.educationAssessment],
       path: EducationPaths.EducationGrunnskoli,
+      // No subnav in sidebar for grunnskóli
       children: [
         {
+          // Old assessment screen — hidden from nav and breadcrumb
           name: m.educationAssessment,
+          navHide: true,
+          breadcrumbHide: true,
           searchHide: true,
           path: EducationPaths.EducationAssessment,
+        },
+        {
+          // Student list — same content as grunnskoli root via wrapper, hide from both
+          name: m.educationGrunnskoli,
+          navHide: true,
+          breadcrumbHide: true,
+          searchHide: true,
+          path: EducationPaths.PrimarySchoolList,
+          children: [
+            {
+              // Student hub — "Nemandi" in breadcrumb
+              name: psm.studentLabel,
+              navHide: true,
+              path: EducationPaths.PrimarySchoolStudent,
+              children: [
+                {
+                  name: psm.hubOverview,
+                  navHide: true,
+                  path: EducationPaths.PrimarySchoolOverview,
+                },
+                {
+                  name: psm.assessmentTitle,
+                  navHide: true,
+                  path: EducationPaths.PrimarySchoolAssessment,
+                },
+                {
+                  name: psm.permissionTitle,
+                  navHide: true,
+                  path: EducationPaths.PrimarySchoolStudentPermission,
+                },
+              ],
+            },
+          ],
         },
       ],
     },

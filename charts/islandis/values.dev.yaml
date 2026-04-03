@@ -444,6 +444,7 @@ api:
     XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1'
+    XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
@@ -1699,6 +1700,7 @@ download-service:
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1'
+    XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
@@ -3168,7 +3170,7 @@ services-bff-portals-admin:
 services-bff-portals-my-pages:
   enabled: true
   env:
-    BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is"]'
+    BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is","https://featprimary-school-assessments-api.dev01.devland.is"]'
     BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is/minarsidur","https://beta.dev01.devland.is/umsoknir","https://beta.dev01.devland.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://beta.dev01.devland.is/bff/callbacks'

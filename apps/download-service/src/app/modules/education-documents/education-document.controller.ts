@@ -12,6 +12,7 @@ import {
   UniversityIdShort,
   UniversityShortIdMap,
 } from '@island.is/clients/university-careers'
+import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { AuditService } from '@island.is/nest/audit'
 import { Locale } from '@island.is/shared/types'
 import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
@@ -24,6 +25,7 @@ import { Response } from 'express'
 export class EducationController {
   constructor(
     private readonly universitiesApi: UniversityCareersClientService,
+    private readonly primarySchoolService: PrimarySchoolClientService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -65,6 +67,48 @@ export class EducationController {
       res.header(
         'Content-Disposition',
         `inline; filename=${user.nationalId}-skoli-${UniversityShortIdMap[uni]}-brautskraning-${trackNumber}.pdf`,
+      )
+      res.header('Content-Type', 'application/pdf')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
+      return res.status(200).end(buffer)
+    }
+    return res.end()
+  }
+
+  @Post('/primary-school/:studentId/result/:assignmentResultId/pdf')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Get a primary school assignment result PDF',
+  })
+  async getPrimarySchoolAssignmentResultPdf(
+    @Param('studentId') studentId: string,
+    @Param('assignmentResultId') assignmentResultId: string,
+    @CurrentUser() user: User,
+    @Res() res: Response,
+  ) {
+    const blob = await this.primarySchoolService.getAssignmentResultPdf(
+      user,
+      studentId,
+      assignmentResultId,
+    )
+
+    if (blob) {
+      this.auditService.audit({
+        action: 'getPrimarySchoolAssignmentResultPdf',
+        auth: user,
+        resources: `${studentId}/${assignmentResultId}`,
+      })
+
+      const contentArrayBuffer = await blob.arrayBuffer()
+      const buffer = Buffer.from(contentArrayBuffer)
+
+      res.header('Content-length', buffer.length.toString())
+      res.header(
+        'Content-Disposition',
+        `inline; filename=${user.nationalId}-namsmat-${assignmentResultId}.pdf`,
       )
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')

@@ -27,6 +27,7 @@ import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
 import { EducationV2Module } from '@island.is/api/domains/education'
+import { PrimarySchoolModule } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import {
   EmailSignupModule,
@@ -229,6 +230,7 @@ import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-heal
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { GradeClientConfig } from '@island.is/clients/mms/grade'
+import { PrimarySchoolClientConfig } from '@island.is/clients/mms/primary-school'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
@@ -293,6 +295,7 @@ const environment = getConfig
       fileDownloadBucket: environment.education.fileDownloadBucket as string,
     }),
     EducationV2Module,
+    PrimarySchoolModule,
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
@@ -504,6 +507,7 @@ const environment = getConfig
         JudicialSystemSPClientConfig,
         FriggClientConfig,
         GradeClientConfig,
+        PrimarySchoolClientConfig,
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
