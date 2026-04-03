@@ -9,6 +9,8 @@ import { redirects } from './assetRedirects'
 import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
 import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 
+const FARMERS_LANDS_FLAG = 'FarmersLands'
+
 const IPOverview = lazy(() =>
   import(
     './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
@@ -51,6 +53,14 @@ const WorkMachinesOverview = lazy(() =>
 )
 const WorkMachinesDetail = lazy(() =>
   import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+)
+
+const FarmerLandsOverview = lazy(() =>
+  import('./screens/FarmerLands/Overview/FarmerLandsOverview'),
+)
+
+const FarmerLandDetail = lazy(() =>
+  import('./screens/FarmerLands/Detail/FarmerLandDetail'),
 )
 
 const VehicleMileage = lazy(() =>
@@ -113,6 +123,20 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsWorkMachinesDetail,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
         element: <WorkMachinesDetail />,
+      },
+      {
+        name: m.farmerLands,
+        path: AssetsPaths.AssetsFarmerLands,
+        key: FARMERS_LANDS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <FarmerLandsOverview />,
+      },
+      {
+        name: m.farmerLands,
+        path: AssetsPaths.AssetsFarmerLandDetail,
+        key: FARMERS_LANDS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <FarmerLandDetail />,
       },
       {
         name: m.myVehicles,

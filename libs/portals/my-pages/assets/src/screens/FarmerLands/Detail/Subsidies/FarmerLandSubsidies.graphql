@@ -1,0 +1,34 @@
+query FarmerLandSubsidies($input: FarmerLandSubsidiesInput!) {
+  farmerLandSubsidies(input: $input) {
+    data {
+      id
+      paymentDate
+      contract
+      paymentCategory
+      grossAmount
+      offset
+      netPaid
+      name
+      nationalId
+      units
+      unitPrice
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    filterOptions {
+      contracts {
+        contractId
+        contractName
+      }
+      paymentCategories {
+        paymentCategoryId
+        paymentCategoryName
+      }
+    }
+  }
+}

@@ -122,5 +122,17 @@ export const assetsNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.farmerLands,
+      description: m.farmerLandsIntro,
+      path: AssetsPaths.AssetsFarmerLands,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsFarmerLandDetail,
+        },
+      ],
+    },
   ],
 }
