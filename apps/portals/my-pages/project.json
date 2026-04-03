@@ -4,6 +4,7 @@
   "sourceRoot": "apps/portals/my-pages/src",
   "projectType": "application",
   "tags": ["scope:portals-mypages"],
+  "implicitDependencies": ["services-user-profile"],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
