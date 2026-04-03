@@ -4,6 +4,7 @@ query GetClient($input: AuthAdminClientInput!) {
     clientId
     clientType
     availableEnvironments
+    modified
     environments {
       id
       environment

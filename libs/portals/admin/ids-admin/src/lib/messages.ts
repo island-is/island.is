@@ -69,6 +69,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:advanced-settings',
     defaultMessage: 'Advanced settings',
   },
+  modified: {
+    id: 'ap.ids-admin:modified',
+    defaultMessage: 'Last modified: {date}',
+  },
   back: {
     id: 'ap.ids-admin:back',
     defaultMessage: 'Back',

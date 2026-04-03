@@ -61,6 +61,7 @@ export class ClientsService extends MultiEnvironmentService {
         clientId,
         clientType: clients[0].clientType,
         sso: clients[0].sso,
+        modified: (clients[0] as unknown as { modified?: Date }).modified,
         environments: clients,
       }))
       .sort((a, b) => a.clientId.localeCompare(b.clientId))
@@ -109,6 +110,7 @@ export class ClientsService extends MultiEnvironmentService {
       clientId,
       clientType: clientEnvs[0].clientType,
       sso: clientEnvs[0].sso,
+      modified: (clientEnvs[0] as unknown as { modified?: Date }).modified,
       environments: clientEnvs,
     }
   }
