@@ -182,6 +182,8 @@ import { ExemptionForTransportationModule } from './transport-authority/exemptio
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
 import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
+import { CarExportImportModule } from './car-export-import/car-export-import.module'
+import { CarExportImportService } from './car-export-import/car-export-import.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -264,6 +266,7 @@ export const modules = [
   UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
   CarRentalDayrateReturnsModule,
+  CarExportImportModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
   LegalGazetteTemplateModule,
@@ -358,6 +361,7 @@ export const services = [
   UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
   CarRentalDayrateReturnsService,
+  CarExportImportService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
   LegalGazetteTemplateService,
