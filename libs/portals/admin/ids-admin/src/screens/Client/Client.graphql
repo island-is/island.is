@@ -51,6 +51,7 @@ query GetClient($input: AuthAdminClientInput!) {
         }
         domainName
       }
+      allowedCorsOrigins
     }
   }
 }
