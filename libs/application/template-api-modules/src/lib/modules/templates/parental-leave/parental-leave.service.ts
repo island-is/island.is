@@ -94,7 +94,7 @@ import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3
 interface VMSTError {
   type: string
   title: string
-  status: number
+  status: number | string
   traceId: string
   errors: Record<string, string[]>
 }
@@ -121,11 +121,20 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return e.message
     }
 
-    return {
-      message: e.errors
-        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
-        : e.status,
+    if (e.errors) {
+      return {
+        message: Object.entries(e.errors).map(([, values]) =>
+          values.join(', '),
+        ),
+      }
     }
+
+    // VMST may return the error message in the status field as a string
+    if (typeof e.status === 'string') {
+      return { message: e.status }
+    }
+
+    return { message: e.title ?? 'Villa kom upp' }
   }
 
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {

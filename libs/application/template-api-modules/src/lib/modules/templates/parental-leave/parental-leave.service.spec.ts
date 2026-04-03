@@ -602,4 +602,69 @@ describe('ParentalLeaveService', () => {
       expect(mockedSendEmail.mock.calls.length).toBe(0)
     })
   })
+
+  describe('parseErrors', () => {
+    it('should return error message from Error instance', () => {
+      const error = new Error('Something went wrong')
+      const result = (parentalLeaveService as any).parseErrors(error)
+      expect(result).toBe('Something went wrong')
+    })
+
+    it('should return joined error values when errors object is present', () => {
+      const vmstError = {
+        type: 'https://tools.ietf.org/html/rfc7231#section-6.5.1',
+        title: 'Bad Request',
+        status: 400,
+        traceId: 'abc-123',
+        errors: {
+          field1: ['Error one', 'Error two'],
+          field2: ['Error three'],
+        },
+      }
+      const result = (parentalLeaveService as any).parseErrors(vmstError)
+      expect(result).toEqual({
+        message: ['Error one, Error two', 'Error three'],
+      })
+    })
+
+    it('should return status string when VMST returns error message in status field', () => {
+      // This is the format VMST uses for transfer-day errors:
+      // { status: "Ekki hægt að úthluta meir en 44 framsalsdögum" }
+      const vmstError = {
+        type: '',
+        title: '',
+        status: 'Ekki hægt að úthluta meir en 44 framsalsdögum',
+        traceId: '',
+        errors: undefined as unknown as Record<string, string[]>,
+      }
+      const result = (parentalLeaveService as any).parseErrors(vmstError)
+      expect(result).toEqual({
+        message: 'Ekki hægt að úthluta meir en 44 framsalsdögum',
+      })
+    })
+
+    it('should return title as fallback when status is a number and no errors object', () => {
+      const vmstError = {
+        type: '',
+        title: 'Internal Server Error',
+        status: 500,
+        traceId: '',
+        errors: undefined as unknown as Record<string, string[]>,
+      }
+      const result = (parentalLeaveService as any).parseErrors(vmstError)
+      expect(result).toEqual({ message: 'Internal Server Error' })
+    })
+
+    it('should return default message when title is missing', () => {
+      const vmstError = {
+        type: '',
+        title: undefined as unknown as string,
+        status: 500,
+        traceId: '',
+        errors: undefined as unknown as Record<string, string[]>,
+      }
+      const result = (parentalLeaveService as any).parseErrors(vmstError)
+      expect(result).toEqual({ message: 'Villa kom upp' })
+    })
+  })
 })
