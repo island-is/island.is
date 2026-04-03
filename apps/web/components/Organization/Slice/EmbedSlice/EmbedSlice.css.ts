@@ -14,3 +14,16 @@ export const responsiveIframe = style({
   left: 0,
   border: 'none',
 })
+
+export const placeholder = style({
+  position: 'absolute',
+  inset: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const disclaimer = style({
+  position: 'absolute',
+  inset: 0,
+})
