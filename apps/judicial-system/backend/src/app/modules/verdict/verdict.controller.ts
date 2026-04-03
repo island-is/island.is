@@ -26,8 +26,16 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 import { getVerdictServiceStatusText } from '@island.is/judicial-system/formatters'
-import { indictmentCases } from '@island.is/judicial-system/types'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
+import {
+  IndictmentCaseNotificationType,
+  indictmentCases,
+  ServiceRequirement,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -129,7 +137,7 @@ export class VerdictController {
       `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
+    const updatedVerdict = await this.sequelize.transaction((transaction) =>
       this.verdictService.update(
         verdict,
         verdictToUpdate,
@@ -138,6 +146,27 @@ export class VerdictController {
         defendantId,
       ),
     )
+
+    // When prosecution office manually records service date (defendant did not
+    // open ruling on island.is), send driving license suspension notification
+    // so the office can register it in the separate system.
+    const wasNotServedBefore = !verdict.serviceDate
+    const isNowServedByManualEntry =
+      wasNotServedBefore &&
+      verdictToUpdate.serviceDate &&
+      verdict.serviceRequirement === ServiceRequirement.REQUIRED
+    const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+    if (isNowServedByManualEntry && defendant?.isDrivingLicenseSuspended) {
+      addMessagesToQueue({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        },
+      })
+    }
+
+    return updatedVerdict
   }
 
   @UseGuards(
