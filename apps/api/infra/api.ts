@@ -64,6 +64,7 @@ import {
   FireCompensation,
   VMSTUnemployment,
   GoProVerdicts,
+  IcelandicGovernmentEmployees,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -487,16 +488,6 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
       VERDICTS_SUPREME_COURT_BEARER_TOKEN:
         '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
-      FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
-        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
-      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
-        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
-      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
-        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
-      FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE:
-        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
-      FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
-        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
     })
     .xroad(
       AdrAndMachine,
@@ -559,6 +550,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      IcelandicGovernmentEmployees,
       LSH,
       PracticalExams,
       VMSTUnemployment,
