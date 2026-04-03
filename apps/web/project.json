@@ -119,6 +119,14 @@
         "parallel": false
       }
     },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d",
+        "cwd": "apps/web"
+      },
+      "configurations": {}
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
@@ -132,6 +140,12 @@
     },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    },
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts"
+      }
     }
   }
 }
