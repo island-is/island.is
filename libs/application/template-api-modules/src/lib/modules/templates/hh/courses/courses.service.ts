@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
 import {
   ApplicationTypes,
   type ApplicationWithAttachments,
@@ -15,7 +17,11 @@ import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
-import { COURSE_LIST_PAGE_SLUG_MAP, GET_COURSE_BY_ID_QUERY } from './constants'
+import {
+  COURSE_LIST_PAGE_SLUG_MAP,
+  GET_COURSE_BY_ID_QUERY,
+  ZENDESK_TICKET_IDS,
+} from './constants'
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
@@ -105,19 +111,36 @@ export class CoursesService extends BaseTemplateApiService {
         healthcenter,
       )
 
-      await this.sharedTemplateApiService.sendEmail(
-        (_props) => ({
-          to: this.coursesConfig.applicationRecipientEmail,
-          from: {
-            name: this.coursesConfig.applicationSenderName,
-            address: this.coursesConfig.applicationSenderEmail,
-          },
-          subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
-          text: message,
-          replyTo: email,
-        }),
-        application,
+      const customFields = this.buildZendeskCustomFields(
+        course.title,
+        name,
+        courseInstance,
+        courseUrl,
       )
+
+      const tags = this.buildZendeskRegistrationTags(courseInstance.id)
+
+      const emailNormalized = email.trim().toLowerCase()
+      let zendeskUser = await this.zendeskService.getUserByEmail(
+        emailNormalized,
+      )
+      if (!zendeskUser) {
+        zendeskUser = await this.zendeskService.createUser(
+          name,
+          emailNormalized,
+          phone,
+        )
+      }
+
+      await this.zendeskService.submitTicket({
+        subject: this.coursesConfig.applicationEmailSubject,
+        message,
+        requesterId: zendeskUser.id,
+        tags,
+        customFields,
+        brandId: ZENDESK_TICKET_IDS.brandId,
+        ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
+      })
 
       return { success: true }
     } catch (error) {
@@ -221,8 +244,7 @@ export class CoursesService extends BaseTemplateApiService {
   private async getZendeskParticipantNationalIds(
     courseInstanceId: string,
   ): Promise<Set<string>> {
-    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
-    const query = `type:ticket subject:"${subject}"`
+    const query = this.buildZendeskTicketSearchQuery(courseInstanceId)
     let tickets
     try {
       tickets = await this.zendeskService.searchTickets(query)
@@ -250,6 +272,85 @@ export class CoursesService extends BaseTemplateApiService {
     }
 
     return nationalIds
+  }
+
+  private buildZendeskRegistrationTags(courseInstanceId: string): string[] {
+    return [
+      this.coursesConfig.zendeskTagProduct,
+      this.buildZendeskInstanceTag(courseInstanceId),
+      this.coursesConfig.zendeskEnvTag,
+    ]
+  }
+
+  private buildZendeskInstanceTag(courseInstanceId: string): string {
+    return `${ZENDESK_TICKET_IDS.instanceTagPrefix}${courseInstanceId}`
+  }
+
+  private buildZendeskTicketSearchQuery(courseInstanceId: string): string {
+    const product = this.coursesConfig.zendeskTagProduct
+    const instanceTag = this.buildZendeskInstanceTag(courseInstanceId)
+    const envTag = this.coursesConfig.zendeskEnvTag
+    return `type:ticket tags:"${product}" tags:"${instanceTag}" tags:"${envTag}"`
+  }
+
+  private buildZendeskCustomFields(
+    courseTitle: string,
+    applicantName: string,
+    courseInstance: {
+      startDate: string
+      displayedTitle?: string | null
+      startDateTimeDuration?: {
+        startTime?: string
+        endTime?: string
+      }
+      location?: string | null
+    },
+    courseUrl: string | null,
+  ): Array<{ id: number; value: string | boolean }> {
+    const cf = ZENDESK_TICKET_IDS.customFields
+    return [
+      { id: cf.courseTitle, value: courseTitle },
+      { id: cf.applicantName, value: applicantName },
+      {
+        id: cf.startDate,
+        value: this.formatZendeskStartDateCustomFieldValue(courseInstance),
+      },
+      { id: cf.location, value: courseInstance.location ?? '' },
+      { id: cf.courseUrl, value: courseUrl ?? '' },
+    ]
+  }
+
+  /**
+   * Matches the course section date dropdown label in the application: ISO date
+   * first, then Icelandic calendar date, optional time range, optional instance title.
+   */
+  private formatZendeskStartDateCustomFieldValue(courseInstance: {
+    startDate: string
+    displayedTitle?: string | null
+    startDateTimeDuration?: {
+      startTime?: string
+      endTime?: string
+    }
+  }): string {
+    const ymd = courseInstance.startDate.split('T')[0] ?? ''
+    const dateOnly = parseISO(ymd)
+    const formattedDate = format(dateOnly, 'd. MMMM yyyy', { locale: is })
+
+    let timeRange = ''
+    if (courseInstance.startDateTimeDuration?.startTime) {
+      timeRange = courseInstance.startDateTimeDuration.startTime
+      if (courseInstance.startDateTimeDuration.endTime) {
+        timeRange += ` - ${courseInstance.startDateTimeDuration.endTime}`
+      }
+    }
+
+    const titleSuffix = courseInstance.displayedTitle?.trim()
+      ? `- ${courseInstance.displayedTitle.trim()}`
+      : ''
+
+    return [ymd, formattedDate, timeRange, titleSuffix]
+      .filter((part) => part.length > 0)
+      .join(' ')
   }
 
   private async getPaymentStateParticipantNationalIds(
@@ -327,6 +428,7 @@ export class CoursesService extends BaseTemplateApiService {
             instances: {
               id: string
               startDate: string
+              displayedTitle?: string | null
               startDateTimeDuration?: {
                 startTime?: string
                 endTime?: string

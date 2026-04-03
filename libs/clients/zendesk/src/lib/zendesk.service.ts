@@ -36,7 +36,14 @@ export type SubmitTicketInput = {
   subject?: string
   message: string
   requesterId?: number
+  requester?: {
+    name: string
+    email: string
+  }
   tags?: Array<string>
+  customFields?: Array<UpdateCustomField>
+  brandId?: number
+  ticketFormId?: number
 }
 
 export type User = {
@@ -155,16 +162,26 @@ export class ZendeskService {
     message,
     subject,
     requesterId,
+    requester,
     tags = [],
+    customFields,
+    brandId,
+    ticketFormId,
   }: SubmitTicketInput): Promise<boolean> {
-    const newTicket = JSON.stringify({
-      ticket: {
-        requester_id: requesterId,
-        subject: subject?.trim() ?? '',
-        comment: { body: message ?? '' },
-        tags,
-      },
-    })
+    const ticket: Record<string, unknown> = {
+      subject: subject?.trim() ?? '',
+      comment: { body: message ?? '' },
+      tags,
+    }
+
+    if (requesterId != null) ticket.requester_id = requesterId
+    else if (requester) ticket.requester = requester
+
+    if (customFields?.length) ticket.custom_fields = customFields
+    if (brandId != null) ticket.brand_id = brandId
+    if (ticketFormId != null) ticket.ticket_form_id = ticketFormId
+
+    const newTicket = JSON.stringify({ ticket })
 
     try {
       await axios.post(`${this.api}/tickets.json`, newTicket, this.params)
