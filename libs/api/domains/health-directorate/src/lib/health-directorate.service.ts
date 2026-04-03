@@ -309,6 +309,7 @@ export class HealthDirectorateService {
             ? mapPrescriptionRenewalStatus(item.renewal.status)
             : undefined,
           amountRemaining: item.amountRemainingDisplay,
+          primaryCareClinic: item.primaryCareClinic?.name,
           dispensations: item.dispensations.flatMap((dispensation) => {
             return dispensation.dispensedItems.map((dispensedItem) => {
               return {
