@@ -1,5 +1,7 @@
 import graphqlTypeJson from 'graphql-type-json'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { BLOCKS } from '@contentful/rich-text-types'
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IArticle } from '../generated/contentfulTypes'
@@ -106,54 +108,71 @@ export class Article {
 export const mapArticle = ({
   fields,
   sys,
-}: IArticle): SystemMetadata<Article> => ({
-  typename: 'Article',
-  id: sys.id,
-  title: fields.title ?? '',
-  shortTitle: fields.shortTitle ?? '',
-  slug: (fields.slug ?? '').trim(),
-  intro: fields.intro ?? '',
-  importance: fields.importance ?? 0,
-  body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-  processEntry: fields.processEntry
-    ? mapProcessEntry(fields.processEntry)
-    : null,
-  category: fields.category ? mapArticleCategory(fields.category) : null,
-  otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
-  group: fields.group ? mapArticleGroup(fields.group) : null,
-  otherGroups: (fields.otherGroups ?? []).map(mapArticleGroup),
-  subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
-  otherSubgroups: (fields.otherSubgroups ?? []).map(mapArticleSubgroup),
-  organization: (fields.organization ?? [])
-    .filter(
-      (organization) => organization.fields?.title && organization.fields?.slug,
+}: IArticle): SystemMetadata<Article> => {
+  let intro = fields.intro ?? ''
+  if (!intro && fields.content) {
+    const firstParagraph = fields.content.content?.find(
+      (node) => node.nodeType === BLOCKS.PARAGRAPH,
     )
-    .map(mapOrganization),
-  relatedOrganization: (fields.relatedOrganization ?? [])
-    .filter(
-      (relatedOrganization) =>
-        relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
-    )
-    .map(mapOrganization),
-  responsibleParty: (fields.responsibleParty ?? [])
-    .filter(
-      (responsibleParty) =>
-        responsibleParty.fields?.title && responsibleParty.fields?.slug,
-    )
-    .map(mapOrganization),
-  subArticles: (fields.subArticles ?? [])
-    .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.url)
-    .map(mapSubArticle),
-  relatedArticles: [], // populated by resolver
-  relatedContent: (fields.relatedContent ?? []).map(mapLink),
-  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  showTableOfContents: fields.showTableOfContents ?? false,
-  stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-  processEntryButtonText: fields.processEntryButtonText ?? '',
-  alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
-  activeTranslations: fields.activeTranslations ?? { en: true },
-  signLanguageVideo: fields.signLanguageVideo
-    ? mapEmbeddedVideo(fields.signLanguageVideo)
-    : null,
-  keywords: fields.keywords ?? [],
-})
+    if (firstParagraph)
+      intro = documentToPlainTextString({
+        nodeType: BLOCKS.DOCUMENT,
+        data: {},
+        content: [firstParagraph],
+      })
+  }
+  return {
+    typename: 'Article',
+    id: sys.id,
+    title: fields.title ?? '',
+    shortTitle: fields.shortTitle ?? '',
+    slug: (fields.slug ?? '').trim(),
+    intro,
+    importance: fields.importance ?? 0,
+    body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+    processEntry: fields.processEntry
+      ? mapProcessEntry(fields.processEntry)
+      : null,
+    category: fields.category ? mapArticleCategory(fields.category) : null,
+    otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
+    group: fields.group ? mapArticleGroup(fields.group) : null,
+    otherGroups: (fields.otherGroups ?? []).map(mapArticleGroup),
+    subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
+    otherSubgroups: (fields.otherSubgroups ?? []).map(mapArticleSubgroup),
+    organization: (fields.organization ?? [])
+      .filter(
+        (organization) =>
+          organization.fields?.title && organization.fields?.slug,
+      )
+      .map(mapOrganization),
+    relatedOrganization: (fields.relatedOrganization ?? [])
+      .filter(
+        (relatedOrganization) =>
+          relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
+      )
+      .map(mapOrganization),
+    responsibleParty: (fields.responsibleParty ?? [])
+      .filter(
+        (responsibleParty) =>
+          responsibleParty.fields?.title && responsibleParty.fields?.slug,
+      )
+      .map(mapOrganization),
+    subArticles: (fields.subArticles ?? [])
+      .filter(
+        (subArticle) => subArticle.fields?.title && subArticle.fields?.url,
+      )
+      .map(mapSubArticle),
+    relatedArticles: [], // populated by resolver
+    relatedContent: (fields.relatedContent ?? []).map(mapLink),
+    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+    showTableOfContents: fields.showTableOfContents ?? false,
+    stepper: fields.stepper ? mapStepper(fields.stepper) : null,
+    processEntryButtonText: fields.processEntryButtonText ?? '',
+    alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
+    activeTranslations: fields.activeTranslations ?? { en: true },
+    signLanguageVideo: fields.signLanguageVideo
+      ? mapEmbeddedVideo(fields.signLanguageVideo)
+      : null,
+    keywords: fields.keywords ?? [],
+  }
+}
