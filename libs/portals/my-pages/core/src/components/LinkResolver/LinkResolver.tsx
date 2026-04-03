@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { formatPlausiblePathToParams, isExternalLink } from '../..'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
+import { isExternalLink } from '../../utils/isExternalLink'
 import * as styles from './LinkResolver.css'
 import cn from 'classnames'
 import { servicePortalOutboundLink } from '@island.is/plausible'
