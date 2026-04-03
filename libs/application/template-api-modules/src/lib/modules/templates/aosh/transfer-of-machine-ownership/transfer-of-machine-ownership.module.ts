@@ -6,13 +6,12 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-
-import { ClientsPaymentsModule } from '@island.is/clients/payments'
+import { PaymentModule } from '@island.is/application/api/payment'
 @Module({
   imports: [
     SharedTemplateAPIModule,
     WorkMachinesClientModule,
-    ClientsPaymentsModule,
+    PaymentModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [WorkMachinesClientConfig],
