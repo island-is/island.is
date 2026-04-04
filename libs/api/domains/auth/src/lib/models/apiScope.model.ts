@@ -23,6 +23,12 @@ export class ApiScope {
   @Field(() => Boolean)
   allowsWrite!: boolean
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'URL to redirect to for third party delegation login',
+  })
+  thirdPartyLoginUrl?: string
+
   constructor(apiScope: ApiScope) {
     Object.assign(this, apiScope)
   }
