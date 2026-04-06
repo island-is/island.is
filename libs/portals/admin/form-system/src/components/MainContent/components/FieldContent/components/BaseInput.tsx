@@ -28,7 +28,7 @@ export const BaseInput = () => {
     getTranslation,
     selectStatus,
   } = useContext(ControlContext)
-  const { activeItem, isPublished } = control
+  const { activeItem, form, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
   const selectList = fieldTypesSelectObject()
   const defaultValue = fieldTypes?.find(
@@ -216,9 +216,11 @@ export const BaseInput = () => {
           </Row>
         </>
       )}
+      {/* Required checkbox */}
       {screen?.isMulti &&
         currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX &&
-        currentItem.fieldType !== FieldTypesEnum.FILE && (
+        currentItem.fieldType !== FieldTypesEnum.FILE &&
+        currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
           <Row>
             <Column span="5/10">
               <Checkbox

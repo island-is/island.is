@@ -70,6 +70,9 @@ export const Preview = ({ data, screenOrSection }: Props) => {
         {type === FieldTypesEnum.PROPERTY_NUMBER && (
           <PropertyNumber item={data} />
         )}
+        {type === FieldTypesEnum.PAYMENT_QUANTITY && (
+          <PaymentQuantity item={data} />
+        )}
       </Box>
     </FormProvider>
   )
