@@ -88,8 +88,8 @@ const AppealFiles = () => {
         ? constants.DEFENDER_INDICTMENT_ROUTE
         : constants.DEFENDER_ROUTE
       : isIndictmentCase(workingCase.type)
-        ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-        : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
   const handleNextButtonClick = useCallback(async () => {

@@ -111,8 +111,7 @@ const AppealCaseFilesOverview = () => {
           <SectionHeading
             title="Skjöl kærumáls"
             tooltip={
-              isProsecutionUser(user) &&
-              !isIndictmentCase(workingCase.type)
+              isProsecutionUser(user) && !isIndictmentCase(workingCase.type)
                 ? 'Verjandi sér einungis kæru og greinargerð.'
                 : undefined
             }
