@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseFilesOverview,
   BlueBox,
   Conclusion,
   ConnectedCaseFilesAccordionItem,
@@ -258,6 +259,7 @@ const IndictmentOverview: FC = () => {
                 displayGeneratedPDFs={displayGeneratedPDFs}
               />
             </Box>
+            <AppealCaseFilesOverview />
             <Box component="section">
               <InputPenalties />
             </Box>

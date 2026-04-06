@@ -14,6 +14,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
+  AppealCaseFilesOverview,
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
@@ -290,6 +291,7 @@ const IndictmentOverview: FC = () => {
                 displayGeneratedPDFs={displayGeneratedPDFs}
               />
             </Box>
+            <AppealCaseFilesOverview />
             {canAddFiles && (
               <Box display="flex" justifyContent="flexEnd">
                 <Button

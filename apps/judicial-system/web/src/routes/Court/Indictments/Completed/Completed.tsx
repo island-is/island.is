@@ -8,6 +8,7 @@ import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseFilesOverview,
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
@@ -287,6 +288,7 @@ const Completed: FC = () => {
             <Box component="section">
               <IndictmentCaseFilesList workingCase={workingCase} />
             </Box>
+            <AppealCaseFilesOverview />
             {isRulingOrFine && (
               <Box component="section">
                 <CriminalRecordUpdate

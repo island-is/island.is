@@ -10,6 +10,7 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -110,7 +111,8 @@ const AppealCaseFilesOverview = () => {
           <SectionHeading
             title="Skjöl kærumáls"
             tooltip={
-              isProsecutionUser(user)
+              isProsecutionUser(user) &&
+              !isIndictmentCase(workingCase.type)
                 ? 'Verjandi sér einungis kæru og greinargerð.'
                 : undefined
             }
