@@ -203,6 +203,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
+      appealedByNationalId
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate

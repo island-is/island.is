@@ -197,7 +197,8 @@ const Completed: FC = () => {
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED)
+      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
+      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =

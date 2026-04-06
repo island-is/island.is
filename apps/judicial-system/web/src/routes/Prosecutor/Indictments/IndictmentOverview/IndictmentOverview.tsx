@@ -94,7 +94,8 @@ const IndictmentOverview: FC = () => {
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
       workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED)
+      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
+      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
 
   const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
     Record<string, IndictmentCaseReviewDecision | null | undefined>

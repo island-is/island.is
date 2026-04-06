@@ -131,7 +131,8 @@ const IndictmentOverview: FC = () => {
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
       workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED)
+      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
+      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
