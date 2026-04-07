@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
@@ -19,6 +20,32 @@ import {
   involvedParty,
   typeSelection,
 } from '../lib/messages'
+import { InputFields } from '../lib/types'
+
+const isMinistry = (answers: Record<string, unknown>) => {
+  const title = getValueViaPath<string>(
+    answers,
+    InputFields.advert.involvedPartyTitle,
+  )
+  return !!title && title.toLowerCase().includes('ráðuneyti')
+}
+
+const isNotMinistry = (answers: Record<string, unknown>) => !isMinistry(answers)
+
+const buildSubmitToDraftField = (id: string, condition?: typeof isMinistry) =>
+  buildSubmitField({
+    id,
+    condition,
+    refetchApplicationAfterSubmit: true,
+    actions: [
+      {
+        event: DefaultEvents.SUBMIT,
+        name: general.continue,
+        type: 'primary',
+      },
+    ],
+  })
+
 export const Requirements: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: general.applicationName,
@@ -50,17 +77,29 @@ export const Requirements: Form = buildForm({
               id: 'involvedParty',
               component: 'InvolvedPartyScreen',
             }),
-            buildSubmitField({
-              id: 'toComments',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: general.continue,
-                  type: 'primary',
-                },
-              ],
+            buildSubmitToDraftField('toDraft', isNotMinistry),
+          ],
+        }),
+        // This is here to be able to show submit button on former screen :( :( :(
+        buildMultiField({
+          id: '',
+          children: [],
+        }),
+      ],
+    }),
+    buildSection({
+      id: Routes.ADDITIONAL_PARTIES,
+      title: requirements.additionalParties.label,
+      condition: isMinistry,
+      children: [
+        buildMultiField({
+          id: Routes.ADDITIONAL_PARTIES,
+          children: [
+            buildCustomField({
+              id: 'additionalParties',
+              component: 'AdditionalPartiesScreen',
             }),
+            buildSubmitToDraftField('toDraftFromAdditionalParties'),
           ],
         }),
         // This is here to be able to show submit button on former screen :( :( :(
