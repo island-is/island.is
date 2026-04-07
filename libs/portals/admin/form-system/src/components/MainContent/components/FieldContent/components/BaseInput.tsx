@@ -30,7 +30,7 @@ export const BaseInput = () => {
   } = useContext(ControlContext)
   const { activeItem, form, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
-  const selectList = fieldTypesSelectObject()
+  const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )

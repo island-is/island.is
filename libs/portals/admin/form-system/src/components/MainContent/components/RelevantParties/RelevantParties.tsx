@@ -88,7 +88,7 @@ export const RelevantParties = () => {
           deletedScreens.forEach((screen) => {
             controlDispatch({
               type: 'REMOVE_SCREEN',
-              payload: { id: screen.id, isApplicant: true },
+              payload: { id: screen.id, skipActiveItem: true },
             })
             if (screen && screen.fields) {
               screen.fields.forEach((field: FormSystemField) => {
@@ -98,7 +98,7 @@ export const RelevantParties = () => {
                   )
                   controlDispatch({
                     type: 'REMOVE_FIELD',
-                    payload: { id: field.id, isApplicant: true },
+                    payload: { id: field.id, skipActiveItem: true },
                   })
                 }
               })

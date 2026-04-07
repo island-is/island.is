@@ -67,7 +67,6 @@ export const PaymentField = () => {
           />
         </Column>
       </Row>
-      <Row></Row>
     </>
   )
 }
