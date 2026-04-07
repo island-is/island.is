@@ -124,6 +124,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     ),
     allowedAcr: [defaultAcrValue],
     sso: ClientSso.Enabled,
+    modified: expect.any(String),
   }
 }
 
@@ -357,6 +358,7 @@ describe('MeClientsController with auth', () => {
         allowedAcr: [defaultAcrValue],
         supportedDelegationTypes: [],
         sso: ClientSso.Enabled,
+        modified: expect.any(String),
       })
 
       // Assert - db record
@@ -459,6 +461,7 @@ describe('MeClientsController with auth', () => {
         supportedDelegationTypes: [],
         sso: ClientSso.Enabled,
         allowedAcr: typeSpecificDefaults.allowedAcr ?? [defaultAcrValue],
+        modified: expect.any(String),
       })
 
       // Assert - db record
@@ -590,6 +593,7 @@ describe('MeClientsController with auth', () => {
         allowedAcr: [defaultAcrValue],
         supportedDelegationTypes: [],
         sso: ClientSso.Enabled,
+        modified: expect.any(String),
       })
 
       // Assert - db record
