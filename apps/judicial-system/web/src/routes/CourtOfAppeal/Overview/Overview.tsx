@@ -73,7 +73,7 @@ const CourtOfAppealOverview = () => {
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             <CaseOverviewHeader
               alerts={
-                workingCase.requestAppealRulingNotToBePublished
+                workingCase.appealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
                         message: formatMessage(
