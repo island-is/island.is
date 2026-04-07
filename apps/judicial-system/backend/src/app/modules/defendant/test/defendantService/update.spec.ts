@@ -107,12 +107,12 @@ describe('DefendantService - update', () => {
       defenderEmail: 'defender@example.com',
       defenderPhoneNumber: '5551234',
     } as Defendant
-    const update = {
+    const update: DefenderNullUpdate = {
       defenderNationalId: null,
       defenderName: null,
       defenderEmail: null,
       defenderPhoneNumber: null,
-    } as const satisfies DefenderNullUpdate
+    }
     const defendantUpdate = update as unknown as UpdateDefendantDto
     const updatedDefendant = { ...defendant, ...update } as unknown as Defendant
     let then: Then
