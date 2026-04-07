@@ -17,7 +17,7 @@ interface Props {
 
 export const RegistrationTab = ({ ship, loading }: Props) => {
   const { formatMessage } = useLocale()
-  const renderableEngines = (ship?.engines ?? []).filter((e) => e.name?.value)
+  const renderableEngines = (ship?.engines ?? []).filter((e) => e.name.value)
 
   return (
     <Box marginTop={4}>
