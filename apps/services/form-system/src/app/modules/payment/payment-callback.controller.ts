@@ -8,7 +8,6 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import addMonths from 'date-fns/addMonths'
 import { ApplicationsService } from '../applications/applications.service'
 import { PaymentService } from './payment.service'
 
@@ -34,18 +33,6 @@ export class PaymentCallbackController {
       callback.receptionID,
       applicationId,
     )
-
-    const application = await this.applicationsService.findOneById(
-      applicationId,
-    )
-    if (application) {
-      const oneMonthFromNow = addMonths(new Date(), 1)
-
-      await this.applicationsService.updatePruneAt(
-        applicationId,
-        oneMonthFromNow,
-      )
-    }
   }
 
   /**
@@ -93,20 +80,6 @@ export class PaymentCallbackController {
         callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
       )
-
-      const application = await this.applicationsService.findOneById(
-        callback.paymentFlowMetadata.applicationId,
-      )
-      if (application) {
-        const oneMonthFromNow = addMonths(new Date(), 1)
-        //Applications payment states are default to be pruned in 24 hours.
-        //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
-
-        await this.applicationsService.updatePruneAt(
-          callback.paymentFlowMetadata.applicationId,
-          oneMonthFromNow,
-        )
-      }
     }
   }
 }

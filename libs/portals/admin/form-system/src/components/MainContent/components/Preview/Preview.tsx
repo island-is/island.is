@@ -10,6 +10,7 @@ import {
   m,
   MessageWithLink,
   NationalId,
+  PaymentQuantity,
   PhoneNumber,
   PropertyNumber,
   Radio,

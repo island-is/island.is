@@ -50,17 +50,21 @@ export const Screen = () => {
 
   const [numberOfItems, setNumberOfItems] = useState(1)
 
-  useEffect(() => {
+  const calculatedMaxItems = useMemo(() => {
     if (isMulti && multiMax > 1) {
-      const maxItems = Math.max(
+      return Math.max(
         1,
         ...visibleFields.map((f) => (f.values?.length as number) ?? 1),
       )
-      setNumberOfItems(maxItems)
-    } else {
-      setNumberOfItems(1)
     }
-  }, [currentScreen?.data?.id, isMulti, multiMax, visibleFields])
+    return 1
+  }, [isMulti, multiMax, visibleFields])
+
+  useEffect(() => {
+    setNumberOfItems((prev) =>
+      prev !== calculatedMaxItems ? calculatedMaxItems : prev,
+    )
+  }, [currentScreen?.data?.id, calculatedMaxItems])
 
   const shouldMoveCurrencySumBox =
     numberOfItems > 1 &&

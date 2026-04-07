@@ -17,13 +17,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiBearerAuth,
-  ApiHeader,
-  ApiOkResponse,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger'
 import {
   CreateChargeRequestDto,
   CreateChargeResponseDto,
@@ -33,11 +27,6 @@ import { PaymentService } from './payment.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
-@ApiBearerAuth()
-@ApiHeader({
-  name: 'locale',
-  description: 'Front-end language selected',
-})
 @Controller()
 @CodeOwner(CodeOwners.Advania)
 export class PaymentController {
