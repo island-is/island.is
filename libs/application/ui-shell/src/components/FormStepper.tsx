@@ -13,6 +13,30 @@ import { ExcludesFalse } from '@island.is/application/utils'
 import { formatTextWithLocale } from '@island.is/application/core'
 import { Locale } from '@island.is/shared/types'
 
+const getFirstScreenIndexForSection = (
+  screens: FormScreen[],
+  sectionIndex: number,
+): number | undefined => {
+  const index = screens.findIndex(
+    (s) => s.sectionIndex === sectionIndex && s.isNavigable,
+  )
+  return index >= 0 ? index : undefined
+}
+
+const getFirstScreenIndexForSubSection = (
+  screens: FormScreen[],
+  sectionIndex: number,
+  subSectionIndex: number,
+): number | undefined => {
+  const index = screens.findIndex(
+    (s) =>
+      s.sectionIndex === sectionIndex &&
+      s.subSectionIndex === subSectionIndex &&
+      s.isNavigable,
+  )
+  return index >= 0 ? index : undefined
+}
+
 type Props = {
   form: {
     title: MessageDescriptor | string
@@ -22,6 +46,7 @@ type Props = {
   screens: FormScreen[]
   currentScreen: FormScreen
   application: Application
+  onNavigate?: (screenIndex: number) => void
 }
 
 const FormStepper = ({
@@ -30,6 +55,7 @@ const FormStepper = ({
   screens,
   currentScreen,
   application,
+  onNavigate,
 }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
   const { isMobile } = useIsMobile()
@@ -37,6 +63,7 @@ const FormStepper = ({
   const parseSubsections = (
     children: Array<SectionChildren>,
     isParentActive: boolean,
+    sectionIndex: number,
   ) => {
     if (!children || children.length === 0) {
       return []
@@ -66,6 +93,48 @@ const FormStepper = ({
         )
 
         if (!childText) return null
+
+        const handleSubSectionClick = () => {
+          const screenIndex = getFirstScreenIndexForSubSection(
+            screens,
+            sectionIndex,
+            i,
+          )
+          if (screenIndex !== undefined) {
+            onNavigate?.(screenIndex)
+          }
+        }
+
+        const isClickable = onNavigate && !isChildActive
+
+        if (isClickable) {
+          return (
+            <button
+              type="button"
+              key={`formStepperChild-${i}`}
+              onClick={handleSubSectionClick}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                margin: 0,
+                font: 'inherit',
+                color: 'inherit',
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+              aria-label={childText}
+              tabIndex={0}
+            >
+              <Text
+                variant="medium"
+                fontWeight={isChildActive ? 'semiBold' : 'regular'}
+              >
+                {childText}
+              </Text>
+            </button>
+          )
+        }
 
         return (
           <Text
@@ -106,21 +175,34 @@ const FormStepper = ({
 
             if (!sectionTitle) return null
 
+            const isSectionActive = currentScreen.sectionIndex === i
+
+            const handleSectionClick = onNavigate
+              ? () => {
+                  const screenIndex = getFirstScreenIndexForSection(screens, i)
+                  if (screenIndex !== undefined) {
+                    onNavigate(screenIndex)
+                  }
+                }
+              : undefined
+
             return (
               <Section
                 key={`formStepper-${i}`}
-                isActive={currentScreen.sectionIndex === i}
+                isActive={isSectionActive}
                 section={sectionTitle}
                 sectionIndex={i}
                 subSections={
                   section.children.length > 1
                     ? parseSubsections(
                         section.children,
-                        currentScreen.sectionIndex === i,
+                        isSectionActive,
+                        i,
                       )
                     : undefined
                 }
                 isComplete={currentScreen.sectionIndex > i}
+                onSectionClick={handleSectionClick}
               />
             )
           }),

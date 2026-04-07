@@ -20,6 +20,7 @@ export const Section: FC<
     sectionIndex: number
     isActive?: boolean
     isComplete?: boolean
+    onSectionClick?: () => void
   }>
 > = ({
   theme = types.FormStepperThemes.PURPLE,
@@ -28,6 +29,7 @@ export const Section: FC<
   sectionIndex,
   isActive = false,
   isComplete = false,
+  onSectionClick,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight, width: activeWidth } =
@@ -81,9 +83,26 @@ export const Section: FC<
             [styles.nameWithActiveSubSections]: subSections && isActive,
           })}
         >
-          <Text lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
-            {section}
-          </Text>
+          {onSectionClick && !isActive ? (
+            <button
+              type="button"
+              className={styles.sectionButton}
+              onClick={onSectionClick}
+              aria-label={section}
+              tabIndex={0}
+            >
+              <Text
+                lineHeight="lg"
+                fontWeight={isActive ? 'semiBold' : 'light'}
+              >
+                {section}
+              </Text>
+            </button>
+          ) : (
+            <Text lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
+              {section}
+            </Text>
+          )}
         </Box>
       </Box>
       {isSmallScreen || !subSections ? null : (

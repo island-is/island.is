@@ -13,6 +13,7 @@ export const MainForm: Form = buildForm({
   mode: FormModes.DRAFT,
   logo: AoshLogo,
   renderLastScreenButton: true,
+  allowStepperNavigation: true,
   children: [
     introSection,
     simpleInputsSection,

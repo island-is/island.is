@@ -223,6 +223,13 @@ export const ApplicationReducer = (
     case ActionTypes.GO_TO_SCREEN:
       return goToSpecificScreen(state, action.payload)
 
+    case ActionTypes.GO_TO_SCREEN_INDEX:
+      return {
+        ...state,
+        activeScreen: action.payload,
+        historyReason: 'navigate',
+      }
+
     case ActionTypes.ADD_EXTERNAL_DATA:
       return {
         ...state,
