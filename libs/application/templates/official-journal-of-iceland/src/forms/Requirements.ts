@@ -80,7 +80,6 @@ export const Requirements: Form = buildForm({
             buildSubmitToDraftField('toDraft', isNotMinistry),
           ],
         }),
-        // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
           children: [],
@@ -102,7 +101,6 @@ export const Requirements: Form = buildForm({
             buildSubmitToDraftField('toDraftFromAdditionalParties'),
           ],
         }),
-        // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
           children: [],
