@@ -66,10 +66,6 @@ const isAppealChildKey = (
   ].includes(key)
 }
 
-const isWriteOnlyKey = (key: keyof UpdateCaseInput): boolean => {
-  return ['defendantEventLogDecisions'].includes(key)
-}
-
 const isAppealCaseKey = (
   key: keyof UpdateCaseInput,
 ): key is keyof AppealCaseKeys => {
@@ -117,9 +113,7 @@ const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
 
   let currentValue: unknown
 
-  if (isWriteOnlyKey(theKey)) {
-    return false
-  } else if (isChildKey(theKey)) {
+  if (isChildKey(theKey)) {
     currentValue = workingCase[childof[theKey]]
   } else if (isAppealChildKey(theKey)) {
     currentValue = workingCase.appealCase?.[appealChildof[theKey]]
