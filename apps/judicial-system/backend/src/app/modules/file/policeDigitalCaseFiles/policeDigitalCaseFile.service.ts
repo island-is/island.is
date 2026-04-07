@@ -97,6 +97,20 @@ export class PoliceDigitalCaseFileService {
       }))
   }
 
+  async getTokenUrl(
+    caseId: string,
+    user: User,
+    policeDigitalFileId: string,
+  ): Promise<string> {
+    return this.policeService.getTokenUrl(
+      caseId,
+      user.nationalId,
+      policeDigitalFileId,
+      user,
+      'getPoliceDigitalCaseFileTokenUrl',
+    )
+  }
+
   async updatePoliceDigitalCaseFileOrders(
     caseId: string,
     updates: UpdatePoliceDigitalCaseFileDto[],

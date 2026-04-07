@@ -10,6 +10,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { applyUpdateToCase } from '../../formHelper'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
@@ -217,7 +218,7 @@ const useCase = () => {
             LimitedAccessTransitionCaseMutation
 
           const state = res?.[resultType]?.state
-          const appealState = res?.[resultType]?.appealState
+          const appealState = res?.[resultType]?.appealCase?.appealState
 
           if (!state && !appealState) {
             return false
@@ -313,10 +314,9 @@ const useCase = () => {
         return false
       }
 
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        ...updatesToCase,
-      }))
+      setWorkingCase((prevWorkingCase) =>
+        applyUpdateToCase(prevWorkingCase, updatesToCase),
+      )
 
       if (!workingCase.id) {
         return false

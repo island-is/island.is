@@ -11,22 +11,24 @@
  */
 import { MinistryList } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
+import { Routes } from '../lib/constants'
 
 // ---------------------------------------------------------------------------
 
 /** Shape of the OJOI structured signature in answers */
+type SignatureRecord = {
+  institution?: string
+  signatureDate?: string
+  chairman?: { name?: string }
+  members?: Array<{ name?: string }>
+}
+
 type SignatureAnswers = {
   regular?: {
-    records?: Array<{
-      institution?: string
-      signatureDate?: string
-    }>
+    records?: Array<SignatureRecord>
   }
   committee?: {
-    records?: Array<{
-      institution?: string
-      signatureDate?: string
-    }>
+    records?: Array<SignatureRecord>
   }
 }
 
@@ -89,6 +91,8 @@ export type RegulationWarning = {
   field: string
   message: string
   section?: string
+  route?: string
+  sectionLabel?: string
 }
 
 /**
@@ -106,6 +110,7 @@ export const collectRegulationWarnings = (answers: {
     channels?: Array<{ name?: string; email?: string; phone?: string }>
   }
   signature?: SignatureAnswers
+  misc?: { signatureType?: string }
   regulation?: {
     effectiveDate?: string
     lawChapters?: Array<{ slug: string; name: string }>
@@ -121,6 +126,8 @@ export const collectRegulationWarnings = (answers: {
       field: 'department',
       message: 'Deild vantar',
       section: 'content',
+      route: Routes.REGULATION_CONTENT,
+      sectionLabel: 'Grunnupplýsingar',
     })
   }
 
@@ -129,6 +136,8 @@ export const collectRegulationWarnings = (answers: {
       field: 'type',
       message: 'Tegund vantar',
       section: 'content',
+      route: Routes.REGULATION_CONTENT,
+      sectionLabel: 'Grunnupplýsingar',
     })
   }
 
@@ -137,6 +146,8 @@ export const collectRegulationWarnings = (answers: {
       field: 'title',
       message: 'Titill vantar',
       section: 'content',
+      route: Routes.REGULATION_CONTENT,
+      sectionLabel: 'Grunnupplýsingar',
     })
   }
 
@@ -145,16 +156,83 @@ export const collectRegulationWarnings = (answers: {
       field: 'html',
       message: 'Texti vantar',
       section: 'content',
+      route: Routes.REGULATION_CONTENT,
+      sectionLabel: 'Grunnupplýsingar',
     })
   }
 
-  // Signature / ministry
-  const { ministryName } = getMinistryFromSignature(answers.signature)
-  if (!ministryName) {
+  // Signature validation
+  const signatureType = answers.misc?.signatureType ?? 'regular'
+  const signatureRoute = Routes.SIGNATURE
+  const signatureLabel = 'Undirritun'
+  const records =
+    signatureType === 'committee'
+      ? answers.signature?.committee?.records
+      : answers.signature?.regular?.records
+
+  if (!records || records.length === 0) {
     warnings.push({
-      field: 'signature.institution',
-      message: 'Ráðuneyti vantar (stofnun í undirritun)',
+      field: 'signature',
+      message: 'Undirritun vantar',
       section: 'signature',
+      route: signatureRoute,
+      sectionLabel: signatureLabel,
+    })
+  } else {
+    records.forEach((record, index) => {
+      if (!record.institution) {
+        warnings.push({
+          field: `signature.records[${index}].institution`,
+          message: 'Stofnun/ráðuneyti vantar í undirritun',
+          section: 'signature',
+          route: signatureRoute,
+          sectionLabel: signatureLabel,
+        })
+      }
+
+      if (!record.signatureDate) {
+        warnings.push({
+          field: `signature.records[${index}].signatureDate`,
+          message: 'Dagsetningu vantar í undirritun',
+          section: 'signature',
+          route: signatureRoute,
+          sectionLabel: signatureLabel,
+        })
+      }
+
+      if (signatureType === 'committee') {
+        if (!record.chairman?.name) {
+          warnings.push({
+            field: `signature.records[${index}].chairman`,
+            message: 'Formann vantar í undirritun',
+            section: 'signature',
+            route: signatureRoute,
+            sectionLabel: signatureLabel,
+          })
+        }
+      }
+
+      if (!record.members || record.members.length === 0) {
+        warnings.push({
+          field: `signature.records[${index}].members`,
+          message: 'Undirritaraðila vantar',
+          section: 'signature',
+          route: signatureRoute,
+          sectionLabel: signatureLabel,
+        })
+      } else {
+        record.members.forEach((member, memberIndex) => {
+          if (!member?.name) {
+            warnings.push({
+              field: `signature.records[${index}].members[${memberIndex}]`,
+              message: 'Nafn vantar á undirritaraðila',
+              section: 'signature',
+              route: signatureRoute,
+              sectionLabel: signatureLabel,
+            })
+          }
+        })
+      }
     })
   }
 
@@ -164,6 +242,8 @@ export const collectRegulationWarnings = (answers: {
       field: 'effectiveDate',
       message: 'Gildistökudagur vantar',
       section: 'meta',
+      route: Routes.REGULATION_META,
+      sectionLabel: 'Lýsigögn',
     })
   }
 
@@ -173,8 +253,10 @@ export const collectRegulationWarnings = (answers: {
   ) {
     warnings.push({
       field: 'lawChapters',
-      message: 'Lagakaflar vantar',
+      message: 'Lagakafla vantar',
       section: 'meta',
+      route: Routes.REGULATION_META,
+      sectionLabel: 'Lýsigögn',
     })
   }
 
@@ -182,8 +264,10 @@ export const collectRegulationWarnings = (answers: {
   if (!answers.advert?.requestedDate) {
     warnings.push({
       field: 'requestedDate',
-      message: 'Birtingadagur vantar',
+      message: 'Birtingadag vantar',
       section: 'publishing',
+      route: Routes.REGULATION_PUBLISHING,
+      sectionLabel: 'Óskir um birtingu',
     })
   }
 
@@ -192,6 +276,8 @@ export const collectRegulationWarnings = (answers: {
       field: 'channels',
       message: 'Samskiptaleið vantar',
       section: 'publishing',
+      route: Routes.REGULATION_PUBLISHING,
+      sectionLabel: 'Óskir um birtingu',
     })
   }
 
@@ -206,6 +292,8 @@ export const collectRegulationWarnings = (answers: {
         message:
           'Breytingareglugerð verður í það minnsta að fella eina reglugerð úr gildi eða breyta ákvæðum hennar.',
         section: 'impacts',
+        route: Routes.REGULATION_IMPACTS,
+        sectionLabel: 'Áhrif',
       })
     }
   }
@@ -216,8 +304,10 @@ export const collectRegulationWarnings = (answers: {
       if (!impact.date) {
         warnings.push({
           field: `impacts[${index}].date`,
-          message: `Dagsetning vantar í áhrifafærslu ${index + 1}`,
+          message: `Dagsetningu vantar í áhrifafærslu ${index + 1}`,
           section: 'impacts',
+          route: Routes.REGULATION_IMPACTS,
+          sectionLabel: 'Áhrif',
         })
       }
 
@@ -225,8 +315,10 @@ export const collectRegulationWarnings = (answers: {
         if (!impact.title) {
           warnings.push({
             field: `impacts[${index}].title`,
-            message: `Titill vantar í breytingu ${index + 1}`,
+            message: `Titil vantar í breytingu ${index + 1}`,
             section: 'impacts',
+            route: Routes.REGULATION_IMPACTS,
+            sectionLabel: 'Áhrif',
           })
         }
         if (!impact.text) {
@@ -234,6 +326,8 @@ export const collectRegulationWarnings = (answers: {
             field: `impacts[${index}].text`,
             message: `Texti vantar í breytingu ${index + 1}`,
             section: 'impacts',
+            route: Routes.REGULATION_IMPACTS,
+            sectionLabel: 'Áhrif',
           })
         }
       }

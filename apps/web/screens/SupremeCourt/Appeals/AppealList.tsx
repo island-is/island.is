@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { parseAsInteger, useQueryState } from 'next-usequerystate'
@@ -7,6 +7,7 @@ import { useLazyQuery } from '@apollo/client'
 import {
   AlertMessage,
   Box,
+  Inline,
   LoadingDots,
   Pagination,
   Stack,
@@ -25,6 +26,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -38,6 +40,21 @@ import { GET_NAMESPACE_QUERY } from '../../queries/Namespace'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries/Organization'
 import { GET_SUPREME_COURT_APPEALS_QUERY } from '../../queries/SupremeCourtAppeals'
 import { m } from './translations.strings'
+
+const DateField = ({ label, date }: { label: string; date: string }) => {
+  return (
+    <Inline space={0} flexWrap="wrap" alignY="center">
+      <Box style={{ paddingRight: '3px' }}>
+        <Text variant="medium" fontWeight="light">
+          {label}
+        </Text>
+      </Box>
+      <Text variant="medium" fontWeight="light">
+        {date}
+      </Text>
+    </Inline>
+  )
+}
 
 interface AppealsProps {
   initialData: GetSupremeCourtAppealsQuery['webSupremeCourtAppeals']
@@ -92,6 +109,65 @@ const Appeals: CustomScreen<AppealsProps> = ({
 
   const { formatMessage } = useIntl()
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
+
+  const renderVerdictDate = useCallback(
+    (appeal: typeof appeals['items'][number]) => {
+      if (!appeal || !appeal.verdictDate) return null
+
+      const today = new Date()
+      const isInFuture = today < new Date(appeal.verdictDate)
+      const formattedDate = format(
+        new Date(appeal.verdictDate ?? ''),
+        'd. MMMM yyyy',
+      )
+      if (isInFuture)
+        return (
+          <DateField
+            label={formatMessage(m.listPage.verdictDateInFuturePrefix)}
+            date={formattedDate}
+          />
+        )
+      return (
+        <DateField
+          label={formatMessage(m.listPage.verdictDateInPastSuffix)}
+          date={formattedDate}
+        />
+      )
+    },
+    [format, formatMessage],
+  )
+
+  const renderRegistrationDate = useCallback(
+    (appeal: typeof appeals['items'][number]) => {
+      if (!appeal) return null
+
+      if (appeal.appealPolicyDate)
+        return (
+          <DateField
+            label={formatMessage(m.listPage.appealPolicyDatePrefix)}
+            date={format(
+              new Date(appeal.appealPolicyDate ?? ''),
+              'd. MMMM yyyy',
+            )}
+          />
+        )
+
+      if (appeal.registrationDate)
+        return (
+          <DateField
+            label={formatMessage(m.listPage.registrationDatePrefix)}
+            date={format(
+              new Date(appeal.registrationDate ?? ''),
+              'd. MMMM yyyy',
+            )}
+          />
+        )
+
+      return null
+    },
+    [format, formatMessage],
+  )
 
   return (
     <OrganizationWrapper
@@ -152,23 +228,34 @@ const Appeals: CustomScreen<AppealsProps> = ({
           {appeals && (
             <Stack space={3}>
               <Stack space={3}>
-                {appeals.items.map((item) => (
-                  <Box
-                    key={item.id}
-                    background="white"
-                    borderColor="blue200"
-                    borderWidth="standard"
-                    borderRadius="large"
-                    padding={2}
-                  >
-                    <Stack space={2}>
-                      <Text variant="h3">{item.caseNumber}</Text>
-                      <Text variant="medium" fontWeight="light">
-                        {item.title}
-                      </Text>
-                    </Stack>
-                  </Box>
-                ))}
+                {appeals.items.map((item) => {
+                  return (
+                    <Box
+                      key={item.id}
+                      background="white"
+                      borderColor="blue200"
+                      borderWidth="standard"
+                      borderRadius="large"
+                      padding={2}
+                    >
+                      <Stack space={2}>
+                        <Inline
+                          space={1}
+                          alignY="center"
+                          flexWrap="wrap"
+                          justifyContent="spaceBetween"
+                        >
+                          <Text variant="h3">{item.caseNumber}</Text>
+                          {renderVerdictDate(item)}
+                        </Inline>
+                        <Text variant="medium" fontWeight="light">
+                          {item.title}
+                        </Text>
+                        {renderRegistrationDate(item)}
+                      </Stack>
+                    </Box>
+                  )
+                })}
               </Stack>
               <Pagination
                 page={page}
