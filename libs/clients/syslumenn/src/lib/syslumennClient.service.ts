@@ -15,7 +15,7 @@ import {
   Skilabod,
   SvarSkeyti,
   SyslumennApi,
-  Type,
+  EstateType,
   VedbandayfirlitRegluverkGeneralSvar,
   VedbondTegundAndlags,
   VirkLeyfiGetRequest,
@@ -674,7 +674,7 @@ export class SyslumennService {
 
       const response = await api.adilarMalsUndirritanirGet({
         kennitala: deceasedNationalId,
-        typa: estateType as unknown as Type,
+        typa: estateType as unknown as EstateType,
         audkenni: id,
       })
 
