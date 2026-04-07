@@ -134,7 +134,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ) {
     // Check override, then feature flag, to determine which client to use
     const useNewApi =
-      input.useNewApiOverride ??
+      input.useNewApiOverride === true ||
       (await this.featureFlagClient.getValue(
         Features.useNewVacancyApi,
         false,
@@ -146,6 +146,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
 
     if (useNewApi) {
       // Use new Elfur API (Financial Management Authority)
+      if (input.useNewApiOverride) {
+        this.logger.info('Using Elfur API via override for vacancy list')
+      }
       const vacancies: VacancyResponseDto[] = []
 
       try {
@@ -160,12 +163,6 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         // request parameters inside this loop.
         // eslint-disable-next-line no-constant-condition
         while (true) {
-          if (input.useNewApiOverride) {
-            this.logger.info(
-              'Calling Elfur API via override: v1VacancyGetVacancyListGet',
-              { rowOffset, fetchSize: pageSize },
-            )
-          }
           const page = (await this.elfurApi.v1VacancyGetVacancyListGet({
             rowOffset,
             fetchSize: pageSize,
@@ -357,7 +354,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ) {
     // Check override, then feature flag, to determine which client to use
     const useNewApi =
-      useNewApiOverride ??
+      useNewApiOverride === true ||
       (await this.featureFlagClient.getValue(
         Features.useNewVacancyApi,
         false,
@@ -368,13 +365,12 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
 
     if (useNewApi) {
       // Use new Elfur API (Financial Management Authority)
+      if (useNewApiOverride) {
+        this.logger.info('Using Elfur API via override for vacancy detail', {
+          vacancyId: id,
+        })
+      }
       try {
-        if (useNewApiOverride) {
-          this.logger.info(
-            'Calling Elfur API via override: v1VacancyGetVacancyGet',
-            { vacancyId: id },
-          )
-        }
         const item = (await this.elfurApi.v1VacancyGetVacancyGet({
           vacancyId: id,
         })) as VacancyResponseDto
@@ -488,12 +484,6 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
     const featureFlagUser = this.getFeatureFlagUser(req)
 
-    if (input.useNewApiOverride) {
-      this.logger.info('Resolving vacancy by id via override', {
-        id: input.id,
-      })
-    }
-
     // The prefix of the id determines what service to call
     if (input.id.startsWith(CMS_ID_PREFIX)) {
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
@@ -510,7 +500,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
 
     // If no prefix is present then we determine what service to call depending on the feature flag and id format
     const useNewApi =
-      input.useNewApiOverride ??
+      input.useNewApiOverride === true ||
       (await this.featureFlagClient.getValue(
         Features.useNewVacancyApi,
         false,
