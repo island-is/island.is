@@ -397,6 +397,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-url',
     defaultMessage: 'Invalid URL',
   },
+  errorCorsOriginAlreadyExists: {
+    id: 'ap.ids-admin:error-cors-origin-already-exists',
+    defaultMessage: 'Origin already added',
+  },
+  errorCorsOriginNotAdded: {
+    id: 'ap.ids-admin:error-cors-origin-not-added',
+    defaultMessage:
+      'Press Enter or click the plus button to include this origin',
+  },
   errorPositiveNumber: {
     id: 'ap.ids-admin:error-positive-number',
     defaultMessage: 'Must be a positive number',

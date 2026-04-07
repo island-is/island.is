@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import { Box, Button, Input, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -7,7 +7,6 @@ import { m } from '../../../lib/messages'
 import { ClientFormTypes } from '../EditClient.schema'
 import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface AllowedCorsOriginsProps {
@@ -22,19 +21,11 @@ const AllowedCorsOrigins = ({
     useEnvironmentState<string[]>(allowedCorsOrigins)
   const [newOrigin, setNewOrigin] = useState('')
   const [inputError, setInputError] = useState('')
-  const [addedOrigins, setAddedOrigins] = useState<string[]>([])
-  const [removedOrigins, setRemovedOrigins] = useState<string[]>([])
-  const { actionData } = useClient()
 
-  useEffect(() => {
-    if (
-      actionData?.intent === ClientFormTypes.corsOrigins &&
-      actionData?.data
-    ) {
-      setAddedOrigins([])
-      setRemovedOrigins([])
-    }
-  }, [actionData])
+  const initialSet = useMemo(
+    () => new Set(allowedCorsOrigins),
+    [allowedCorsOrigins],
+  )
 
   const validateOrigin = (origin: string): boolean => {
     try {
@@ -58,24 +49,17 @@ const AllowedCorsOrigins = ({
     }
 
     if (origins.includes(trimmed)) {
-      setInputError(formatMessage(m.errorDefault))
+      setInputError(formatMessage(m.errorCorsOriginAlreadyExists))
       return
     }
 
     setOrigins((prev) => [...prev, trimmed])
-    setAddedOrigins((prev) => [...prev, trimmed])
-    setRemovedOrigins((prev) => prev.filter((o) => o !== trimmed))
     setNewOrigin('')
     setInputError('')
   }
 
   const handleRemove = (origin: string) => {
     setOrigins((prev) => prev.filter((o) => o !== origin))
-    setAddedOrigins((prev) => prev.filter((o) => o !== origin))
-
-    if (!addedOrigins.includes(origin)) {
-      setRemovedOrigins((prev) => [...prev, origin])
-    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -87,16 +71,19 @@ const AllowedCorsOrigins = ({
 
   const hasData = origins.length > 0
 
-  const customValidation = useCallback(
-    () => addedOrigins.length > 0 || removedOrigins.length > 0,
-    [addedOrigins, removedOrigins],
-  )
+  const hasPendingInput = !!newOrigin.trim()
+
+  const customValidation = useCallback(() => {
+    if (origins.length !== initialSet.size) return true
+    return origins.some((o) => !initialSet.has(o))
+  }, [origins, initialSet])
 
   return (
     <FormCard
       title={formatMessage(m.allowedCorsOrigins)}
       description={formatMessage(m.corsDescription)}
       customValidation={customValidation}
+      submitDisabled={hasPendingInput}
       intent={ClientFormTypes.corsOrigins}
       shouldSupportMultiEnvironment={false}
       headerMarginBottom={3}
@@ -114,6 +101,11 @@ const AllowedCorsOrigins = ({
               if (inputError) setInputError('')
             }}
             onKeyDown={handleKeyDown}
+            onBlur={() => {
+              if (newOrigin.trim()) {
+                setInputError(formatMessage(m.errorCorsOriginNotAdded))
+              }
+            }}
             backgroundColor="blue"
             errorMessage={inputError}
             hasError={!!inputError}
