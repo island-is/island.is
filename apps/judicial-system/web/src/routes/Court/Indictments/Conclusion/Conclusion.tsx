@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import {
@@ -10,6 +11,7 @@ import {
   InputFileUpload,
   RadioButton,
   Select,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
@@ -65,7 +67,9 @@ import {
   isNoGeneratedIndictmentCourtRecord,
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
+import { isValidDate } from '@island.is/shared/utils'
 
+import InputDate from '../../../../components/Inputs/InputDate'
 import { CourtCaseNumberInput } from '../../components'
 import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
@@ -167,9 +171,17 @@ const Conclusion: FC = () => {
   const [splitCaseId, setSplitCaseId] = useState<string>()
   const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
     useState<string>()
+  const [conclusionDate, setConclusionDate] = useState<string>()
   const [modalVisible, setModalVisible] = useState<
-    'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
+    | 'SPLIT'
+    | 'CREATE_COURT_CASE_NUMBER'
+    | 'COMPLETING_FOR_SOME'
+    | 'CONFIRM_COMPLETION_FOR_SOME'
   >()
+
+  const activeDefendants = workingCase.defendants?.filter(
+    (defendant) => defendant.indictmentCancelledOrDismissedState === null,
+  )
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -193,11 +205,6 @@ const Conclusion: FC = () => {
         indictmentRulingDecision: null,
         mergeCaseId: null,
         force: true,
-      }
-
-      if (selectedAction === IndictmentDecision.SPLITTING) {
-        setModalVisible('SPLIT')
-        return
       }
 
       switch (selectedAction) {
@@ -225,13 +232,28 @@ const Conclusion: FC = () => {
             }
           }
           break
-        case IndictmentDecision.COMPLETING_FOR_SOME:
+        case IndictmentDecision.COMPLETING_FOR_SOME: {
+          const remainingDefendants =
+            workingCase.defendants?.filter(
+              (d) =>
+                d.indictmentCancelledOrDismissedState === null &&
+                !completingForSomeSelections[d.id],
+            ) ?? []
+
+          const isLastDefendantRemaining = remainingDefendants.length === 1
+
+          if (isLastDefendantRemaining) {
+            update.indictmentDecision = null
+          }
           update.defendantEventLogDecisions = Object.entries(
             completingForSomeSelections,
           ).flatMap(([defendantId, rulingDecision]) =>
             rulingDecision ? [{ defendantId, rulingDecision }] : [],
           )
+
           break
+        }
+
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
           break
@@ -261,12 +283,10 @@ const Conclusion: FC = () => {
           update.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.RULING
         ) {
-          const defendantVerdictsToCreate = workingCase.defendants?.map(
-            (item) => ({
-              defendantId: item.id,
-              isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
-            }),
-          )
+          const defendantVerdictsToCreate = activeDefendants?.map((item) => ({
+            defendantId: item.id,
+            isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
+          }))
 
           promises.push(
             createVerdicts({
@@ -277,7 +297,7 @@ const Conclusion: FC = () => {
         }
 
         promises.push(
-          ...(workingCase.defendants?.map((defendant) =>
+          ...(activeDefendants?.map((defendant) =>
             updateDefendant({
               caseId: workingCase.id,
               defendantId: defendant.id,
@@ -300,19 +320,20 @@ const Conclusion: FC = () => {
       )
     },
     [
+      selectedAction,
+      setAndSendCaseToServer,
+      workingCase,
+      setWorkingCase,
+      postponementReason,
+      selectedCourtSessionType,
       courtDate.date,
       courtDate.location,
-      completingForSomeSelections,
-      createVerdicts,
-      mergeCaseNumber,
-      postponementReason,
-      selectedAction,
-      selectedCourtSessionType,
       selectedDecision,
-      setAndSendCaseToServer,
-      setWorkingCase,
+      mergeCaseNumber,
+      completingForSomeSelections,
+      activeDefendants,
+      createVerdicts,
       updateDefendant,
-      workingCase,
     ],
   )
 
@@ -360,6 +381,12 @@ const Conclusion: FC = () => {
       setMergeCaseNumber(workingCase.mergeCaseNumber)
     }
   }, [workingCase.mergeCaseNumber])
+
+  useEffect(() => {
+    if (modalVisible === undefined) {
+      setConclusionDate(undefined)
+    }
+  }, [modalVisible])
 
   const handleMergeCaseNumberBlur = (value: string) => {
     const validation = validate([[value, ['S-case-number']]])
@@ -504,7 +531,7 @@ const Conclusion: FC = () => {
       value: IndictmentDecision.REDISTRIBUTING,
       label: formatMessage(strings.redistributing),
     },
-    ...(workingCase.defendants && workingCase.defendants.length > 1
+    ...(activeDefendants && activeDefendants.length > 1
       ? [
           {
             id: 'conclusion-splitting',
@@ -734,7 +761,7 @@ const Conclusion: FC = () => {
               <SectionHeading title="Hvern á að kljúfa frá málinu?" />
               <Select
                 name="defendant"
-                options={workingCase.defendants?.map((defendant) => ({
+                options={activeDefendants?.map((defendant) => ({
                   label: defendant.name ?? 'Nafn ekki skráð',
                   value: defendant.id,
                 }))}
@@ -750,7 +777,7 @@ const Conclusion: FC = () => {
                 }
                 isDisabled={workingCase.state === CaseState.CORRECTING}
                 onChange={(option) => {
-                  const defendant = workingCase.defendants?.find(
+                  const defendant = activeDefendants?.find(
                     (defendant) => defendant.id === option?.value,
                   )
                   setSelectedDefendant(defendant ?? null)
@@ -791,49 +818,98 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
-          {selectedAction === IndictmentDecision.COMPLETING &&
-            (selectedDecision === CaseIndictmentRulingDecision.RULING ||
-              selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-              <Box component="section">
-                <SectionHeading
-                  title={formatMessage(
-                    selectedDecision === CaseIndictmentRulingDecision.RULING
-                      ? strings.verdictUploadTitle
-                      : strings.rulingUploadTitle,
-                  )}
-                  required
-                />
-                <InputFileUpload
-                  name="ruling"
-                  files={uploadFiles.filter(
-                    (file) => file.category === CaseFileCategory.RULING,
-                  )}
-                  accept="application/pdf"
-                  title={formatMessage(strings.inputFieldLabel)}
-                  description={formatMessage(core.uploadBoxDescription, {
-                    fileEndings: '.pdf',
-                  })}
-                  buttonLabel={formatMessage(strings.uploadButtonText)}
-                  onChange={(files) => {
-                    handleUpload(
-                      addUploadFiles(files, {
-                        category: CaseFileCategory.RULING,
-                      }),
-                      updateUploadFile,
-                    )
-                  }}
-                  onRemove={(file) => handleRemove(file, removeUploadFile)}
-                  onRetry={(file) => handleRetry(file, updateUploadFile)}
-                  onOpenFile={(file) => onOpenFile(file)}
-                />
-              </Box>
+          {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+            isNonEmptyArray(activeDefendants) && (
+              <>
+                {activeDefendants.map((defendant) => (
+                  <BlueBox
+                    key={`completing-for-some-${defendant.id}`}
+                    className={grid({ gap: 2 })}
+                  >
+                    <SectionHeading
+                      title={defendant.name || ''}
+                      variant="h4"
+                      marginBottom={0}
+                    />
+                    <Select
+                      id={`completing-for-some-${defendant.id}`}
+                      label="Lyktir"
+                      placeholder="Veldu lyktir ef á við"
+                      options={completingForSomeOptions}
+                      value={completingForSomeOptions.find(
+                        (option) =>
+                          option.value ===
+                          completingForSomeSelections[defendant.id],
+                      )}
+                      onChange={(selectedOption) => {
+                        setCompletingForSomeSelections((prevSelections) => ({
+                          ...prevSelections,
+                          [defendant.id]: selectedOption?.value as
+                            | CaseIndictmentRulingDecision
+                            | undefined,
+                        }))
+                      }}
+                      isDisabled={
+                        workingCase.state === CaseState.CORRECTING ||
+                        (!completingForSomeSelections[defendant.id] &&
+                          completingForSomeSelectedCount >=
+                            activeDefendants.length - 1)
+                      }
+                      size="sm"
+                      isClearable
+                    />
+                  </BlueBox>
+                ))}
+              </>
             )}
+          {((selectedAction === IndictmentDecision.COMPLETING &&
+            (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+              selectedDecision === CaseIndictmentRulingDecision.DISMISSAL)) ||
+            (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+              Object.values(completingForSomeSelections).some(
+                (value) => value === CaseIndictmentRulingDecision.DISMISSAL,
+              ))) && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(
+                  selectedAction === IndictmentDecision.COMPLETING &&
+                    selectedDecision === CaseIndictmentRulingDecision.RULING
+                    ? strings.verdictUploadTitle
+                    : strings.rulingUploadTitle,
+                )}
+                required
+              />
+              <InputFileUpload
+                name="ruling"
+                files={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.RULING,
+                )}
+                accept="application/pdf"
+                title={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, {
+                      category: CaseFileCategory.RULING,
+                    }),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+                onOpenFile={(file) => onOpenFile(file)}
+              />
+            </Box>
+          )}
           {selectedAction === IndictmentDecision.COMPLETING &&
             (selectedDecision === CaseIndictmentRulingDecision.FINE ||
               selectedDecision === CaseIndictmentRulingDecision.RULING) &&
-            isNonEmptyArray(workingCase.defendants) && (
+            isNonEmptyArray(activeDefendants) && (
               <Box component="section" className={grid({ gap: 3 })}>
-                {workingCase.defendants.map((defendant) => (
+                {activeDefendants.map((defendant) => (
                   <BlueBox key={defendant.id} className={grid({ gap: 2 })}>
                     <SectionHeading
                       title={defendant.name || ''}
@@ -976,7 +1052,19 @@ const Conclusion: FC = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
+          onNextButtonClick={() => {
+            if (
+              selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
+              selectedAction === IndictmentDecision.SPLITTING
+            ) {
+              setModalVisible(
+                selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                  ? 'COMPLETING_FOR_SOME'
+                  : 'SPLIT',
+              )
+              return
+            }
+
             handleNavigationTo(
               selectedAction === IndictmentDecision.COMPLETING
                 ? INDICTMENTS_SUMMARY_ROUTE
@@ -984,7 +1072,7 @@ const Conclusion: FC = () => {
                 ? getStandardUserDashboardRoute(user)
                 : INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
-          }
+          }}
           nextButtonText={
             selectedAction === IndictmentDecision.COMPLETING
               ? undefined
@@ -1065,6 +1153,102 @@ const Conclusion: FC = () => {
           />
         </Modal>
       )}
+      <AnimatePresence>
+        {modalVisible === 'COMPLETING_FOR_SOME' && (
+          <Modal
+            title="Skrá lyktir á aðila án þess að ljúka máli"
+            text="Lyktir verða skráðar á valda aðila."
+            primaryButton={{
+              text: 'Halda áfram',
+              onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
+              isDisabled: !(
+                conclusionDate &&
+                validate([[conclusionDate, ['date-of-birth']]]).isValid
+              ),
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+            onClose={() => setModalVisible(undefined)}
+          >
+            <Box className={grid({ gap: 3, marginBottom: 3 })}>
+              {workingCase.defendants
+                ?.filter(
+                  (defendant) =>
+                    completingForSomeSelections[defendant.id] !== undefined,
+                )
+                .map((defendant) => (
+                  <Text
+                    key={`${defendant.id}-completing-for-some`}
+                    variant="h4"
+                    as="h4"
+                  >
+                    {`${defendant.name}: `}
+                    <Text as="span">
+                      {
+                        completingForSomeOptions.find(
+                          (option) =>
+                            option.value ===
+                            completingForSomeSelections[defendant.id],
+                        )?.label
+                      }
+                    </Text>
+                  </Text>
+                ))}
+              <InputDate
+                onChange={(date) => setConclusionDate(date)}
+                onBlur={(date) => setConclusionDate(date)}
+              />
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {modalVisible === 'CONFIRM_COMPLETION_FOR_SOME' && (
+          <Modal
+            title="Viltu staðfesta lyktir?"
+            primaryButton={{
+              text: 'Staðfesta',
+              onClick: () =>
+                handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE),
+              icon: 'checkmark',
+              isLoading: isUpdatingCase,
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+            onClose={() => setModalVisible(undefined)}
+          >
+            <Box className={grid({ marginBottom: 3 })}>
+              {workingCase.defendants
+                ?.filter(
+                  (defendant) =>
+                    completingForSomeSelections[defendant.id] !== undefined,
+                )
+                .map((defendant) => (
+                  <Text variant="h4" as="h4">
+                    {`${defendant.name}: `}
+                    <Text as="span">
+                      {
+                        completingForSomeOptions.find(
+                          (option) =>
+                            option.value ===
+                            completingForSomeSelections[defendant.id],
+                        )?.label
+                      }
+                    </Text>
+                  </Text>
+                ))}
+              <Text variant="h4" as="h4">
+                {`Dagsetning lykta: `}
+                <Text as="span">{conclusionDate ?? ''}</Text>
+              </Text>
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }

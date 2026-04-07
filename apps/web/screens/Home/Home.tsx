@@ -7,7 +7,7 @@ import {
   DigitalIcelandLatestNewsSlice,
   LifeEventsSection,
   SearchSection,
-  WatsonChatPanel,
+  WebChat,
 } from '@island.is/web/components'
 import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
@@ -16,10 +16,12 @@ import {
   GetArticleCategoriesQuery,
   GetFrontpageQuery,
   GetNewsQuery,
+  GetWebChatQuery,
   LifeEventPage,
   QueryGetArticleCategoriesArgs,
   QueryGetFrontpageArgs,
   QueryGetNewsArgs,
+  QueryGetWebChatArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -31,16 +33,17 @@ import {
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 
-import { watsonConfig } from './config'
+import { GET_WEB_CHAT } from '../queries/WebChat'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
   page?: GetFrontpageQuery['getFrontpage']
   locale: Locale
+  webChat: GetWebChatQuery['getWebChat']
 }
 
-const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
+const Home: Screen<HomeProps> = ({ categories, news, page, webChat }) => {
   const namespace = JSON.parse(page?.namespace?.fields || '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
@@ -138,11 +141,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           seeMoreLinkVariant="frontpage"
         />
       </Box>
-      {watsonConfig[locale] && (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        <WatsonChatPanel {...watsonConfig[locale]} />
-      )}
+      <WebChat webChat={webChat} />
     </Box>
   )
 }
@@ -193,6 +192,22 @@ Home.getProps = async ({ apolloClient, locale }) => {
     }),
   ])
 
+  let webChat = null
+  if (getFrontpage?.id) {
+    const webChatResponse = await Promise.allSettled([
+      apolloClient.query<GetWebChatQuery, QueryGetWebChatArgs>({
+        query: GET_WEB_CHAT,
+        variables: {
+          input: { displayLocationIds: [getFrontpage.id], lang: locale },
+        },
+      }),
+    ])
+    webChat =
+      webChatResponse?.[0]?.status === 'fulfilled'
+        ? webChatResponse[0].value?.data?.getWebChat
+        : null
+  }
+
   return {
     news:
       news?.map((item) => ({
@@ -206,6 +221,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
     page: getFrontpage,
     showSearchInHeader: false,
     locale: locale as Locale,
+    webChat,
   }
 }
 

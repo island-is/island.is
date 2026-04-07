@@ -27,7 +27,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
       route: 'frestur-lidinn-i-sakamalum',
       title: 'Frestur liðinn',
-      description: 'Áfrýjunarfrestur liðinn.',
+      description: 'Mál sem eru tilbúin til fullnustu.',
       includeCounter: true,
     },
     {

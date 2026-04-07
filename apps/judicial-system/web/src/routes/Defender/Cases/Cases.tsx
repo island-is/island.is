@@ -100,7 +100,7 @@ export const Cases: FC = () => {
         size="md"
         contentBackground="white"
         selected={activeTab}
-        label=""
+        label="Mál"
         onChange={(tabId) => {
           setActiveTab(tabId)
         }}

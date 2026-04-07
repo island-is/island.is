@@ -8,7 +8,7 @@ import {
   LegalEntity,
 } from '@island.is/form-system/ui'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
@@ -38,25 +38,70 @@ export const Applicants = ({ applicantField }: Props) => {
     getValue(applicantField, 'phoneNumber') &&
     getValue(applicantField, 'phoneNumber') !== ''
 
-  useQuery(USER_PROFILE, {
-    fetchPolicy: 'cache-first',
-    skip: hasEmail && hasPhoneNumber,
-    onCompleted: (data) => {
-      const { mobilePhoneNumber, email } = data.getUserProfile
-      if (mobilePhoneNumber && !hasPhoneNumber) {
-        dispatch({
-          type: 'SET_PHONE_NUMBER',
-          payload: { id: applicantField.id, value: mobilePhoneNumber },
-        })
-      }
-      if (email && !hasEmail) {
-        dispatch({
-          type: 'SET_EMAIL',
-          payload: { id: applicantField.id, value: email },
-        })
-      }
+  // Ensures we only hydrate from USER_PROFILE once (so clearing the field later won't re-populate)
+  const [didHydrateFromProfile, setDidHydrateFromProfile] = useState(false)
+
+  // Reset when switching to a different applicant field
+  useEffect(() => {
+    setDidHydrateFromProfile(false)
+  }, [applicantField.id])
+
+  // If both values already exist, permanently disable hydration for this applicant
+  useEffect(() => {
+    if (!didHydrateFromProfile && hasEmail && hasPhoneNumber) {
+      setDidHydrateFromProfile(true)
+    }
+  }, [didHydrateFromProfile, hasEmail, hasPhoneNumber])
+
+  const { data: userProfileData, error: userProfileError } = useQuery(
+    USER_PROFILE,
+    {
+      fetchPolicy: 'cache-first',
+      skip: didHydrateFromProfile || (hasEmail && hasPhoneNumber),
     },
-  })
+  )
+
+  useEffect(() => {
+    if (didHydrateFromProfile) return
+
+    if (userProfileError) {
+      setDidHydrateFromProfile(true)
+      return
+    }
+
+    const profile = userProfileData?.getUserProfile
+    if (!profile) return
+
+    const currentHasEmail =
+      getValue(applicantField, 'email') &&
+      getValue(applicantField, 'email') !== ''
+    const currentHasPhoneNumber =
+      getValue(applicantField, 'phoneNumber') &&
+      getValue(applicantField, 'phoneNumber') !== ''
+
+    const { mobilePhoneNumber, email } = profile
+
+    if (mobilePhoneNumber && !currentHasPhoneNumber) {
+      dispatch({
+        type: 'SET_PHONE_NUMBER',
+        payload: { id: applicantField.id, value: mobilePhoneNumber },
+      })
+    }
+    if (email && !currentHasEmail) {
+      dispatch({
+        type: 'SET_EMAIL',
+        payload: { id: applicantField.id, value: email },
+      })
+    }
+
+    setDidHydrateFromProfile(true)
+  }, [
+    didHydrateFromProfile,
+    userProfileData,
+    userProfileError,
+    applicantField,
+    dispatch,
+  ])
 
   useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId } },

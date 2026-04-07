@@ -1,9 +1,12 @@
-import { FC, useContext, useMemo } from 'react'
+import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
@@ -29,15 +32,19 @@ import {
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
+import * as styles from './IndictmentCaseFilesList.css'
 
 interface Props {
   workingCase: Case
@@ -92,7 +99,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
-const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
+const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
   const { title, files, onOpenFile, shouldRender = true, children } = props
 
   if ((files.length === 0 && !children) || !shouldRender) {
@@ -180,12 +187,34 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
-      canViewRulings:
-        isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewRulings: (() => {
+        if (isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) {
+          return true
+        }
+        if (isDefenceUser(user)) {
+          const myDefendants = workingCase.defendants?.filter(
+            (defendant) =>
+              defendant.defenderNationalId &&
+              normalizeAndFormatNationalId(user?.nationalId).includes(
+                defendant.defenderNationalId,
+              ),
+          )
+          return (
+            isNonEmptyArray(myDefendants) &&
+            areAllDefendantsCancelledOrDismissed(myDefendants)
+          )
+        }
+        return false
+      })(),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [user, workingCase.hasCivilClaims, workingCase.state],
+    [
+      user,
+      workingCase.defendants,
+      workingCase.hasCivilClaims,
+      workingCase.state,
+    ],
   )
 }
 
@@ -277,6 +306,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
+  const hideCourtRecord =
+    isDefenceUser(user) &&
+    areAllDefendantsCancelledOrDismissed(workingCase.defendants)
+
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       workingCase.indictmentRulingDecision,
@@ -284,6 +317,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
     )
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
+
+  const { digitalCaseFiles, openDigitalCaseFileUrl, tokenUrlLoading } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+
+  const showPoliceDigitalCaseFiles =
+    (digitalCaseFiles?.length ?? 0) > 0 && isDistrictCourtUser(user)
 
   return (
     <>
@@ -435,7 +474,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </>
         )}
-        {(showFiles || hasGeneratedCourtRecord) && (
+        {(showFiles ||
+          hasGeneratedCourtRecord ||
+          showPoliceDigitalCaseFiles) && (
           <>
             <FileSection
               title={formatMessage(strings.civilClaimsTitle)}
@@ -443,6 +484,51 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
+            {showPoliceDigitalCaseFiles && (
+              <Box marginBottom={3}>
+                <SectionHeading
+                  title="Rafræn gögn"
+                  marginBottom={1}
+                  heading="h4"
+                  variant="h4"
+                />
+                <Text marginBottom={2}>
+                  Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
+                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
+                </Text>
+                {digitalCaseFiles?.map((file, index) => (
+                  <Box
+                    key={index}
+                    component="button"
+                    type="button"
+                    className={styles.electronicFileRow}
+                    onClick={() =>
+                      openDigitalCaseFileUrl(file.policeDigitalFileId)
+                    }
+                    disabled={tokenUrlLoading}
+                    cursor="pointer"
+                    background="transparent"
+                    width="full"
+                    textAlign="left"
+                  >
+                    <Text
+                      as="span"
+                      color="blue400"
+                      variant="h4"
+                      className={styles.electronicFileLinkContainer}
+                    >
+                      {file.name}
+                    </Text>
+                    <Icon
+                      icon="open"
+                      type="outline"
+                      size="small"
+                      color="blue400"
+                    />
+                  </Box>
+                ))}
+              </Box>
+            )}
             {(filteredFiles.courtRecords.length > 0 ||
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
@@ -456,20 +542,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                {hasGeneratedCourtRecord && (
-                  <PdfButton
-                    caseId={workingCase.id}
-                    connectedCaseParentId={connectedCaseParentId}
-                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                    pdfType="courtRecord"
-                    renderAs="row"
-                    elementId="Þingbók"
+                {hideCourtRecord ? (
+                  <AlertMessage
+                    type="info"
+                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
                   />
+                ) : (
+                  <>
+                    {hasGeneratedCourtRecord && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        connectedCaseParentId={connectedCaseParentId}
+                        title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                        pdfType="courtRecord"
+                        renderAs="row"
+                        elementId="Þingbók"
+                      />
+                    )}
+                    <RenderFiles
+                      caseFiles={filteredFiles.courtRecords}
+                      onOpenFile={onOpen}
+                    />
+                  </>
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.courtRecords}
-                  onOpenFile={onOpen}
-                />
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}

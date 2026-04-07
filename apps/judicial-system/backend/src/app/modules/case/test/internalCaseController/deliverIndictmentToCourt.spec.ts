@@ -13,7 +13,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { createIndictment } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/indictmentPdf')
@@ -178,7 +178,7 @@ describe('InternalCaseController - Deliver indictment to court', () => {
 
       const caseWithNoDefendants = {
         ...theCase,
-        defendants: [],
+        defendants: [] as Defendant[],
       } as Case
 
       const then = await givenWhenThen(caseId, caseWithNoDefendants)

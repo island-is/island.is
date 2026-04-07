@@ -1,6 +1,11 @@
 import { useContext } from 'react'
 
+import { isDefenceUser } from '@island.is/judicial-system/types'
+
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
+import { areAllDefendantsCancelledOrDismissed } from '../../utils/utils'
 import { FormContext } from '../FormProvider/FormProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -17,8 +22,10 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     onProsecutorClick,
   } = props
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const {
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     policeCaseNumbers,
@@ -37,6 +44,14 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     splitCase,
     showItem,
   } = useInfoCardItems()
+
+  const excludedDefendants =
+    isDefenceUser(user) &&
+    areAllDefendantsCancelledOrDismissed(workingCase.defendants)
+      ? []
+      : workingCase.defendants?.filter(
+          (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
+        )
 
   return (
     <InfoCard
@@ -68,7 +83,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           ],
           columns: 2,
         },
-        ...(workingCase.mergedCases && workingCase.mergedCases.length > 0
+        ...(isNonEmptyArray(workingCase.mergedCases)
           ? workingCase.mergedCases.map((mergedCase) => ({
               id: mergedCase.id,
               items: [
@@ -81,11 +96,23 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
               columns: 2,
             }))
           : []),
-        ...(workingCase.splitCases && workingCase.splitCases.length > 0
+        ...(isNonEmptyArray(workingCase.splitCases)
           ? [{ id: 'split-cases-section', items: [splitCases], columns: 2 }]
           : []),
         ...(workingCase.splitCase
           ? [{ id: 'split-case-section', items: [splitCase], columns: 2 }]
+          : []),
+        ...(isNonEmptyArray(excludedDefendants)
+          ? [
+              {
+                id: 'cancelled-and-dismissed-defendants-section',
+                items:
+                  excludedDefendants.map((defendant) =>
+                    cancelledAndDismissedDefendants(defendant),
+                  ) || [],
+                columns: 2,
+              },
+            ]
           : []),
       ]}
     />
