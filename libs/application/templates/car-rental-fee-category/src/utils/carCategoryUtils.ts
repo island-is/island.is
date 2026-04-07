@@ -36,29 +36,21 @@ export const buildCurrentCarMap = (
 }
 
 export const getManualMileageTableRows = (
-  vehicles: ValidVehicle[] | undefined,
-  rates: EntryModel[] | undefined,
+  carMap: CarMap | undefined,
   rateToChangeTo: RateCategory | undefined,
 ): Array<{
   permno: string
   latestMilage: undefined
   currentMilage: number | null
 }> => {
-  if (!vehicles?.length) return []
+  if (!carMap) return []
 
-  const currentCarMap = buildCurrentCarMap(vehicles, rates)
-
-  return vehicles
-    .filter((vehicle) => {
-      if (!vehicle.permno) return false
-
-      const currentCar = currentCarMap[vehicle.permno]
-      if (!currentCar) return false
-
-      if (currentCar.category === rateToChangeTo) return false
+  return Object.entries(carMap)
+    .filter(([, car]) => {
+      if (car.category === rateToChangeTo) return false
 
       if (rateToChangeTo === RateCategory.KMRATE) {
-        const validFromDate = currentCar.activeDayRate?.validFrom
+        const validFromDate = car.activeDayRate?.validFrom
         if (validFromDate && !is15DaysOrMoreFromDate(validFromDate)) {
           return false
         }
@@ -66,10 +58,10 @@ export const getManualMileageTableRows = (
 
       return true
     })
-    .map((vehicle) => ({
-      permno: vehicle.permno as string,
+    .map(([permno, car]) => ({
+      permno,
       latestMilage: undefined,
-      currentMilage: vehicle.mileage,
+      currentMilage: car.mileage,
     }))
 }
 

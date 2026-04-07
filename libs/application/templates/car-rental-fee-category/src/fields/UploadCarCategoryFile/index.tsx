@@ -11,14 +11,12 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { CarCategoryError, CarMap } from '../../utils/types'
 import { RateCategory } from '../../utils/constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
 import { useFormContext } from 'react-hook-form'
 import {
   createErrorExcel,
   downloadFile,
 } from '../../utils/UploadCarCategoryFileUtils'
 import {
-  buildCurrentCarMap,
   getUploadFileType,
   parseUploadFile,
   UploadFileType,
@@ -100,8 +98,7 @@ export const UploadCarCategoryFile = ({
             input: {
               id: application.id,
               dataProviders: [
-                { actionId: 'getCurrentVehicles', order: 0 },
-                { actionId: 'getCurrentVehiclesRateCategory', order: 1 },
+                { actionId: 'getVehicleCarMap', order: 0 },
               ],
             },
             locale,
@@ -172,17 +169,11 @@ export const UploadCarCategoryFile = ({
 
   if (!rateCategory) return
 
-  const currentVehicles = getValueViaPath<ValidVehicle[]>(
-    application.externalData,
-    'getCurrentVehicles.data',
-  )
-
-  const currentRates = getValueViaPath<EntryModel[]>(
-    application.externalData,
-    'getCurrentVehiclesRateCategory.data',
-  )
-
-  const currentCarData = buildCurrentCarMap(currentVehicles, currentRates)
+  const currentCarData =
+    getValueViaPath<CarMap>(
+      application.externalData,
+      'getVehicleCarMap.data',
+    ) ?? {}
 
   const postCarCategories = async (
     file: File,

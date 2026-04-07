@@ -3,16 +3,13 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  RskRentalDayRateClient,
-  EntryModel,
-  ValidVehicle,
-} from '@island.is/clients-rental-day-rate'
+import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
 
 import {
   CarCategoryRecord,
+  CarMap,
   RateCategory,
   UploadSelection,
   buildCurrentCarMap,
@@ -37,38 +34,37 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     return this.rentalDayRateClient.defaultApiWithAuth(auth)
   }
 
-  async getCurrentVehicles({
+  async getVehicleCarMap({
     auth,
-  }: TemplateApiModuleActionProps): Promise<ValidVehicle[]> {
-    try {
-      return await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdEligibleVehiclesGet({
-        entityId: auth.nationalId,
-      })
-    } catch (error) {
-      this.logger.error(
-        'Error getting vehicles with mileage from Skatturinn',
-        error,
-      )
-      throw error
-    }
-  }
+  }: TemplateApiModuleActionProps): Promise<CarMap> {
+    const api = this.rentalsApiWithAuth(auth)
 
-  async getCurrentVehiclesRateCategory({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
-    try {
-      const resp = await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdGet({
-        entityId: auth.nationalId,
-      })
-      return resp
-    } catch (error) {
-      this.logger.error('Error getting current vehicles rate category', error)
-      throw error
-    }
+    const [vehicles, rates] = await Promise.all([
+      api
+        .apiDayRateEntriesEntityIdEligibleVehiclesGet({
+          entityId: auth.nationalId,
+        })
+        .catch((error) => {
+          this.logger.error(
+            'Error getting vehicles with mileage from Skatturinn',
+            error,
+          )
+          throw error
+        }),
+      api
+        .apiDayRateEntriesEntityIdGet({
+          entityId: auth.nationalId,
+        })
+        .catch((error) => {
+          this.logger.error(
+            'Error getting current vehicles rate category from Skatturinn',
+            error,
+          )
+          throw error
+        }),
+    ])
+
+    return buildCurrentCarMap(vehicles, rates)
   }
 
   async postDataToSkatturinn({
@@ -94,17 +90,11 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         400,
       )
     }
-    const currentVehicles = getValueViaPath<ValidVehicle[]>(
-      application.externalData,
-      'getCurrentVehicles.data',
-    )
-
-    const currentRates = getValueViaPath<EntryModel[]>(
-      application.externalData,
-      'getCurrentVehiclesRateCategory.data',
-    )
-
-    const currentCarData = buildCurrentCarMap(currentVehicles, currentRates)
+    const currentCarData =
+      getValueViaPath<CarMap>(
+        application.externalData,
+        'getVehicleCarMap.data',
+      ) ?? {}
 
     let data: CarCategoryRecord[] = []
 

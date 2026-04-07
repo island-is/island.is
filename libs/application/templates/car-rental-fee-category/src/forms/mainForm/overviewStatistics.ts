@@ -4,8 +4,8 @@ import {
   buildStaticTableField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
-import { hasActiveDayRate } from '../../utils/dayRateUtils'
+import { CarMap } from '../../utils/types'
+import { RateCategory } from '../../utils/constants'
 import { m } from '../../lib/messages'
 
 export const overviewStatistics = buildSection({
@@ -19,27 +19,22 @@ export const overviewStatistics = buildSection({
         buildStaticTableField({
           header: [m.overview.header, ''],
           rows: (application) => {
-            const vehicles =
-              getValueViaPath<Array<ValidVehicle>>(
+            const carMap =
+              getValueViaPath<CarMap>(
                 application.externalData,
-                'getCurrentVehicles.data',
-              ) ?? []
+                'getVehicleCarMap.data',
+              ) ?? {}
 
-            const rates =
-              getValueViaPath<Array<EntryModel>>(
-                application.externalData,
-                'getCurrentVehiclesRateCategory.data',
-              ) ?? []
-
-            const dayRates =
-              rates.filter(
-                (x) => x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
-              ).length ?? 0
+            const entries = Object.values(carMap)
+            const total = entries.length
+            const dayRates = entries.filter(
+              (e) => e.category === RateCategory.DAYRATE,
+            ).length
 
             return [
-              [m.overview.registeredCount, vehicles.length.toString()],
+              [m.overview.registeredCount, total.toString()],
               [m.overview.dayRateCount, dayRates.toString()],
-              [m.overview.kmRateCount, (vehicles.length - dayRates).toString()],
+              [m.overview.kmRateCount, (total - dayRates).toString()],
             ]
           },
         }),
