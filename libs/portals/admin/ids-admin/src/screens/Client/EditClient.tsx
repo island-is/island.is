@@ -81,14 +81,16 @@ export const EditClient = () => {
                 </div>
               }
             />
-            <Text variant="small">
-              {formatMessage(m.modified, {
-                date: format(
-                  new Date(client.modified ?? ''),
-                  'dd.MM.yyyy HH:mm',
-                ),
-              })}
-            </Text>
+            {client.modified && (
+              <Text variant="small">
+                {formatMessage(m.modified, {
+                  date: format(
+                    new Date(client.modified),
+                    'dd.MM.yyyy HH:mm',
+                  ),
+                })}
+              </Text>
+            )}
           </div>
         )}
       >
