@@ -48,7 +48,11 @@ export const ListBuilder = () => {
   const { isPublished } = control
   const currentItem = control.activeItem.data as FormSystemField
   const { activeListItem } = control
-  const listItems = currentItem?.list ?? ([] as FormSystemListItem[])
+
+  const EMPTY_LIST: FormSystemListItem[] = []
+
+  const listItems = currentItem?.list ?? EMPTY_LIST
+
   const listItemIds = useMemo(
     () =>
       listItems
@@ -154,8 +158,8 @@ export const ListBuilder = () => {
   }, [])
 
   useEffect(() => {
-    setConnecting(listItems.map(() => false))
-  }, [listItems])
+    setConnecting(Array(listItems.length).fill(false))
+  }, [currentItem.id, listItems.length])
 
   const toggleListItemSelected = (id: string, checked: boolean) => {
     const listItemToUpdate = listItems.find((l) => l?.id === id)

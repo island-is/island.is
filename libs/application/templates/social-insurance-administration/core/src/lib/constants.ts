@@ -201,3 +201,18 @@ export const defaultIncomeTypes = [
     incomeCategory: 'Fjármagnstekjur',
   },
 ]
+
+export const MONTH_NAMES = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+]

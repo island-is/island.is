@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { ApiScopeBaseDTO } from '../../dto/base/api-scope-base.dto'
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
@@ -36,4 +36,18 @@ export class AdminScopeDTO extends ApiScopeBaseDTO {
 
   @ApiProperty({ type: String, example: '@island.is' })
   domainName!: string
+
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs associated with this scope',
+  })
+  categoryIds?: string[]
+
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs associated with this scope',
+  })
+  tagIds?: string[]
 }

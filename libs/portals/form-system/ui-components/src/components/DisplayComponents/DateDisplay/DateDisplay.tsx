@@ -4,14 +4,32 @@ import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
+  valueIndex: number
 }
 
-export const DateDisplay = ({ item, lang = 'is' }: Props) => {
-  const date = (item?.values?.[0]?.json as Record<string, unknown>)?.[
-    'date'
-  ] as Date
-  const { formatDate } = useLocale()
+export const DateDisplay = ({ item, valueIndex }: Props) => {
+  const { formatDate, lang } = useLocale()
+
+  const formatDateValue = (raw: unknown) => {
+    if (raw == null) return ''
+
+    const asDate =
+      raw instanceof Date
+        ? raw
+        : new Date(typeof raw === 'string' ? raw : String(raw))
+
+    if (Number.isNaN(asDate.getTime())) return ''
+
+    return formatDate(asDate, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
+  const raw = item.values?.[valueIndex]
+  const value = formatDateValue(raw?.json?.date)
+
   return (
     <Box
       component="form"
@@ -20,19 +38,13 @@ export const DateDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={1}>
-        <Text as="p" fontWeight="semiBold">
-          {item.name?.[lang]}
-        </Text>
-        <Text fontWeight="light">
-          {' '}
-          {formatDate(date, {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })}
-        </Text>
-      </Stack>
+      <Text as="p" fontWeight="semiBold">
+        {item.name?.[lang]}
+      </Text>
+
+      <Box marginLeft={2}>
+        <Text fontWeight="light">{value}</Text>
+      </Box>
     </Box>
   )
 }

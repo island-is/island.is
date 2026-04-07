@@ -1,0 +1,36 @@
+query GetCustomerChargeType {
+  getCustomerChargeType {
+    chargeType {
+      id
+      name
+    }
+  }
+}
+
+query GetCustomerRecordsPaged($input: GetCustomerRecordsPagedInput!) {
+  financeCustomerRecords(input: $input) {
+    data {
+      createDate
+      createTime
+      valueDate
+      performingOrganization
+      collectingOrganization
+      chargeType
+      itemCode
+      chargeItemSubject
+      periodType
+      period
+      amount
+      category
+      subCategory
+      actionCategory
+      reference
+      referenceToLevy
+      accountReference
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

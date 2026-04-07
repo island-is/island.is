@@ -1237,7 +1237,9 @@ const useSections = (
   }
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
-    const { id, appealRulingDecision, appealState } = workingCase
+    const { id } = workingCase
+    const appealRulingDecision = workingCase.appealCase?.appealRulingDecision
+    const appealState = workingCase.appealCase?.appealState
     const useAppealWithdrawnSections =
       shouldUseAppealWithdrawnRoutes(workingCase)
 
@@ -1415,13 +1417,13 @@ const useSections = (
             : workingCase.state,
         ),
         isActive:
-          (workingCase.appealState === CaseAppealState.WITHDRAWN &&
-            !workingCase.appealReceivedByCourtDate) ||
+          (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+            !workingCase.appealCase?.appealReceivedByCourtDate) ||
           (!workingCase.parentCase &&
             isCompletedCase(workingCase.state) &&
             !workingCase.prosecutorPostponedAppealDate &&
             !workingCase.accusedPostponedAppealDate &&
-            workingCase.appealState !== CaseAppealState.COMPLETED),
+            workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED),
         children: [],
       },
       ...(workingCase.parentCase
@@ -1442,14 +1444,15 @@ const useSections = (
                 isCompletedCase(workingCase.state) &&
                 !workingCase.prosecutorPostponedAppealDate &&
                 !workingCase.accusedPostponedAppealDate &&
-                workingCase.appealState !== CaseAppealState.COMPLETED,
+                workingCase.appealCase?.appealState !==
+                  CaseAppealState.COMPLETED,
               children: [],
             },
           ]
         : []),
-      ...(!workingCase.appealState ||
-      (workingCase.appealState === CaseAppealState.WITHDRAWN &&
-        !workingCase.appealReceivedByCourtDate)
+      ...(!workingCase.appealCase?.appealState ||
+      (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+        !workingCase.appealCase?.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]

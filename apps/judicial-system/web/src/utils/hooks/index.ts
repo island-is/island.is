@@ -23,6 +23,7 @@ export {
 export { default as useSort } from './useSort/useSort'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
+export { useSyncDefendantsFromPolice } from './usePoliceDefendants'
 export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
@@ -40,3 +41,4 @@ export { default as useCourtDocuments } from './useCourtDocuments'
 export { default as useUsers } from './useUsers'
 export { default as useFiledCourtDocuments } from './useFiledCourtDocuments'
 export { default as useDebouncedInput } from './useDebouncedInput'
+export { default as usePoliceDigitalCaseFile } from './usePoliceDigitalCaseFile'

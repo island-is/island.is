@@ -126,6 +126,10 @@ export class ApplicationStatistics {
 
   @ApiPropertyOptional()
   @Expose()
+  institutionNationalId?: string
+
+  @ApiPropertyOptional()
+  @Expose()
   institutionContentfulSlug?: string
 }
 

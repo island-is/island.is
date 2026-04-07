@@ -27,13 +27,13 @@ export class FieldType {
 export const FieldTypes: FieldType[] = [
   {
     id: FieldTypesEnum.TEXTBOX,
-    name: { is: 'Textainnsláttur', en: 'Textbox' },
+    name: { is: 'Textabox', en: 'Textbox' },
     description: { is: 'Notandi slær inn texta', en: 'User enters text' },
     isCommon: true,
   },
   {
     id: FieldTypesEnum.NUMBERBOX,
-    name: { is: 'Tölustafir', en: 'Numbers' },
+    name: { is: 'Tölubox', en: 'Numberbox' },
     description: {
       is: 'Notandi slær inn tölustafi',
       en: 'User enters numbers',
@@ -89,7 +89,7 @@ export const FieldTypes: FieldType[] = [
       is: 'Notandi slær inn heimagistingarnúmer sitt',
       en: 'User enters their homestay number',
     },
-    isCommon: true,
+    isCommon: false,
   },
   {
     id: FieldTypesEnum.HOMESTAY_OVERVIEW,
@@ -98,7 +98,7 @@ export const FieldTypes: FieldType[] = [
       is: 'Notandi fyllir út nýtingaryfirlit fyrir almanaksár',
       en: 'Users fills out their homestay overview for the calendar year',
     },
-    isCommon: true,
+    isCommon: false,
   },
   {
     id: FieldTypesEnum.PROPERTY_NUMBER,

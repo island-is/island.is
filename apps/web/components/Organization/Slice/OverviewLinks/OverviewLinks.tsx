@@ -67,10 +67,16 @@ interface ImageViewProps {
 }
 
 const ImageView = ({ slice }: ImageViewProps) => {
+  const variant = slice.introLinkImageSize === 'Small' ? 'small' : 'default'
   return (
     <Stack space={SLICE_SPACING}>
       {slice.overviewLinks.map((item, index) => (
-        <IntroLinkImageComponent key={index} item={item} id={slice.id} />
+        <IntroLinkImageComponent
+          key={index}
+          item={item}
+          id={slice.id}
+          variant={variant}
+        />
       ))}
     </Stack>
   )
