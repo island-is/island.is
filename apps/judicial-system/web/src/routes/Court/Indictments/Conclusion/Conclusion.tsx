@@ -1104,7 +1104,11 @@ const Conclusion: FC = () => {
                     completingForSomeSelections[defendant.id] !== undefined,
                 )
                 .map((defendant) => (
-                  <Text variant="h4" as="h4">
+                  <Text
+                    key={`${defendant.id}-completing-for-some`}
+                    variant="h4"
+                    as="h4"
+                  >
                     {`${defendant.name}: `}
                     <Text as="span">
                       {
