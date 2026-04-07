@@ -143,4 +143,8 @@ export interface SendSmsOptions {
    * @default 'Island.is'
    */
   from?: string
+  /**
+   * Additional tags to include in metrics
+   */
+  metricTags?: Record<string, string>
 }
