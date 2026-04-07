@@ -852,7 +852,7 @@ const Conclusion: FC = () => {
                         workingCase.state === CaseState.CORRECTING ||
                         (!completingForSomeSelections[defendant.id] &&
                           completingForSomeSelectedCount >=
-                            (workingCase.defendants?.length ?? 0) - 1)
+                            activeDefendants.length - 1)
                       }
                       size="sm"
                       isClearable
