@@ -1,10 +1,11 @@
 import {
   buildAlertMessageField,
-  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTableRepeaterField,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import { ISK } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -18,6 +19,8 @@ import {
   isForeignCurrency,
   isMonthlyIncome,
   isMonthlyOrYearlyIncome,
+  currencyValueModifier,
+  getActiveIncomeRows,
 } from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
@@ -30,10 +33,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { RatioType } from '../../../utils/constants'
-import {
-  getApplicationAnswers,
-  getApplicationExternalData,
-} from '../../../utils/oldAgePensionUtils'
+import { getApplicationExternalData } from '../../../utils/oldAgePensionUtils'
 
 export const incomePlanSubSection = buildSubSection({
   id: 'incomePlanSubSection',
@@ -127,6 +127,11 @@ export const incomePlanSubSection = buildSubSection({
               placeholder:
                 socialInsuranceAdministrationMessage.incomePlan.selectCurrency,
               isSearchable: true,
+              updateValueObj: {
+                valueModifier: (_, activeField) =>
+                  currencyValueModifier(activeField),
+                watchValues: 'incomeType',
+              },
               options: (application, activeField) => {
                 const { currencies } = getApplicationExternalData(
                   application.externalData,
@@ -281,11 +286,12 @@ export const incomePlanSubSection = buildSubSection({
             rows: ['incomeType', 'incomePerYear', 'currency'],
           },
         }),
-        buildHiddenInput({
+        buildHiddenInputWithWatchedValue({
           id: 'incomePlan.shouldShow',
-          defaultValue: (application: Application) => {
-            const { incomePlan } = getApplicationAnswers(application.answers)
-            return incomePlanHasOnlyZeroIncome(incomePlan)
+          watchValue: 'incomePlanTable',
+          valueModifier: (value) => {
+            const tableData = getActiveIncomeRows(value)
+            return incomePlanHasOnlyZeroIncome(tableData)
           },
         }),
         buildAlertMessageField({
@@ -295,10 +301,8 @@ export const incomePlanSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'warning',
           marginTop: 4,
-          condition: (answers) => {
-            const { incomePlan } = getApplicationAnswers(answers)
-            return incomePlanHasOnlyZeroIncome(incomePlan)
-          },
+          condition: (answers) =>
+            getValueViaPath(answers, 'incomePlan.shouldShow') === true,
         }),
         buildRadioField({
           id: 'incomePlan.noOtherIncomeConfirmation',
@@ -307,10 +311,8 @@ export const incomePlanSubSection = buildSubSection({
               .noOtherIncomeConfirmation,
           options: getYesNoOptions(),
           width: 'half',
-          condition: (answers) => {
-            const { incomePlan } = getApplicationAnswers(answers)
-            return incomePlanHasOnlyZeroIncome(incomePlan)
-          },
+          condition: (answers) =>
+            getValueViaPath(answers, 'incomePlan.shouldShow') === true,
         }),
       ],
     }),

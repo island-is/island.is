@@ -71,6 +71,7 @@ import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
+  AppealCase,
   Case,
   CaseArchiveRepositoryService,
   CaseFile,
@@ -123,10 +124,13 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseResentExplanation',
   'crimeScenes',
   'indictmentIntroduction',
-  'appealConclusion',
-  'appealRulingModifiedHistory',
   'indictmentDeniedExplanation',
   'indictmentReturnedExplanation',
+]
+
+const appealCaseEncryptionProperties: (keyof AppealCase)[] = [
+  'appealConclusion',
+  'appealRulingModifiedHistory',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -614,6 +618,7 @@ export class InternalCaseService {
         },
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
+        { model: AppealCase, as: 'appealCase' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -633,6 +638,18 @@ export class InternalCaseService {
       caseEncryptionProperties,
       theCase,
     )
+
+    let appealCaseArchive: { [key: string]: unknown } | undefined
+    if (theCase.appealCase) {
+      const [clearedAppealCaseProperties, archive] =
+        collectEncryptionProperties(
+          appealCaseEncryptionProperties,
+          theCase.appealCase,
+        )
+
+      appealCaseArchive = archive
+      Object.assign(clearedCaseProperties, clearedAppealCaseProperties)
+    }
 
     const defendantsArchive = []
     for (const defendant of theCase.defendants ?? []) {
@@ -693,6 +710,7 @@ export class InternalCaseService {
       {
         archiveJson: JSON.stringify({
           ...caseArchive,
+          appealCase: appealCaseArchive,
           defendants: defendantsArchive,
           caseFiles: caseFilesArchive,
           indictmentCounts: indictmentCountsArchive,
@@ -1169,8 +1187,8 @@ export class InternalCaseService {
       .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        theCase.appealReceivedByCourtDate,
+        theCase.appealCase?.appealCaseNumber,
+        theCase.appealCase?.appealReceivedByCourtDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1191,15 +1209,15 @@ export class InternalCaseService {
       .updateAppealCaseWithAssignedRoles(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        theCase.appealAssistant?.nationalId,
-        theCase.appealAssistant?.name,
-        theCase.appealJudge1?.nationalId,
-        theCase.appealJudge1?.name,
-        theCase.appealJudge2?.nationalId,
-        theCase.appealJudge2?.name,
-        theCase.appealJudge3?.nationalId,
-        theCase.appealJudge3?.name,
+        theCase.appealCase?.appealCaseNumber,
+        theCase.appealCase?.appealAssistant?.nationalId,
+        theCase.appealCase?.appealAssistant?.name,
+        theCase.appealCase?.appealJudge1?.nationalId,
+        theCase.appealCase?.appealJudge1?.name,
+        theCase.appealCase?.appealJudge2?.nationalId,
+        theCase.appealCase?.appealJudge2?.name,
+        theCase.appealCase?.appealJudge3?.nationalId,
+        theCase.appealCase?.appealJudge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1231,9 +1249,9 @@ export class InternalCaseService {
       .updateAppealCaseWithConclusion(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        Boolean(theCase.appealRulingModifiedHistory),
-        theCase.appealRulingDecision,
+        theCase.appealCase?.appealCaseNumber,
+        Boolean(theCase.appealCase?.appealRulingModifiedHistory),
+        theCase.appealCase?.appealRulingDecision,
         appealRulingDate,
       )
       .then(() => ({ delivered: true }))

@@ -39,6 +39,7 @@ import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
 import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
+  AppealCase,
   Case,
   CaseFile,
   CaseRepositoryService,
@@ -97,23 +98,10 @@ export const attributes: (keyof Case)[] = [
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
-  'appealState',
   'accusedAppealDecision',
   'prosecutorAppealDecision',
   'accusedPostponedAppealDate',
   'prosecutorPostponedAppealDate',
-  'prosecutorStatementDate',
-  'defendantStatementDate',
-  'appealCaseNumber',
-  'appealAssistantId',
-  'appealJudge1Id',
-  'appealJudge2Id',
-  'appealJudge3Id',
-  'appealConclusion',
-  'appealRulingDecision',
-  'appealReceivedByCourtDate',
-  'appealRulingModifiedHistory',
-  'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
   'indictmentDecision',
   'indictmentRulingDecision',
@@ -127,14 +115,13 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export interface LimitedAccessUpdateCase
-  extends Pick<
-    Case,
-    | 'accusedPostponedAppealDate'
-    | 'appealState'
-    | 'defendantStatementDate'
-    | 'openedByDefender'
-    | 'appealRulingDecision'
-  > {}
+  extends Pick<Case, 'accusedPostponedAppealDate' | 'openedByDefender'>,
+    Partial<
+      Pick<
+        AppealCase,
+        'appealState' | 'defendantStatementDate' | 'appealRulingDecision'
+      >
+    > {}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -161,28 +148,35 @@ export const include: Includeable[] = [
   },
   {
     model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
     as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+    ],
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
@@ -364,6 +358,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
+    attributes,
     where: { state: completedIndictmentCaseStates },
     include: [
       {
@@ -585,8 +580,8 @@ export class LimitedAccessCaseService {
     const updatedCase = await this.findById(theCase.id, { transaction })
 
     if (
-      updatedCase.defendantStatementDate?.getTime() !==
-      theCase.defendantStatementDate?.getTime()
+      updatedCase.appealCase?.defendantStatementDate?.getTime() !==
+      theCase.appealCase?.defendantStatementDate?.getTime()
     ) {
       addMessagesToQueue({
         type: MessageType.NOTIFICATION,
