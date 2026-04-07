@@ -5,6 +5,7 @@ import {
   ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { PaymentsApi } from '@island.is/clients/payments'
+import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from '@island.is/form-system/enums'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
@@ -15,7 +16,6 @@ import { Value } from '../applications/models/value.model'
 import { PaymentModuleConfig } from './payment.config'
 import { Payment } from './payment.model'
 import { CreateChargeResult } from './types/createChargeResult'
-import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from './types/paymentEnums'
 import { PaymentStatus } from './types/paymentStatus'
 import { BasicChargeItem } from './types/paymentType'
 
