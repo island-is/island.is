@@ -931,16 +931,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     | undefined
 
   /*
-   ** When multiple births is selected and applicant is not using all 'common' rights
-   ** Need this check so we are not returning wrong answer
-   ** Only override if applicant has not explicitly requested personal days
+   ** When multiple births is selected and remaining 'common' rights
+   ** can cover the requested days, no personal transfer is needed.
    */
   if (isRequestingRights === YES && hasMultipleBirths === YES) {
-    if (
-      multipleBirthsRequestDays * 1 !==
-        (multipleBirths - 1) * multipleBirthsDefaultDays &&
-      !(Number(requestValue) > 0)
-    ) {
+    const maxMultipleBirthsDays =
+      (multipleBirths - 1) * multipleBirthsDefaultDays
+    const remainingCommonDays =
+      maxMultipleBirthsDays - multipleBirthsRequestDays * 1
+    if (remainingCommonDays >= Number(requestValue || 0)) {
       isRequestingRights = NO
     }
   }
