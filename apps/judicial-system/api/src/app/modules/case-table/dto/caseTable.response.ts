@@ -66,7 +66,8 @@ export class TagGroupValue {
 
 const CaseTableCellValue = createUnionType({
   name: 'CaseTableCellValue',
-  types: () => [StringValue, StringGroupValue, TagValue, TagGroupValue] as const,
+  types: () =>
+    [StringValue, StringGroupValue, TagValue, TagGroupValue] as const,
   resolveType(value) {
     if ('str' in value) {
       return StringValue
