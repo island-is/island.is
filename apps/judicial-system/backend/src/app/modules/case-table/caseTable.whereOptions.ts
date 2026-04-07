@@ -26,8 +26,8 @@ import {
   publicProsecutionOfficeCasesAccessWhereOptions,
 } from './whereOptions/access'
 import {
-  courtOfAppealsRequestCasesCompletedWhereOptions,
-  courtOfAppealsRequestCasesInProgressWhereOptions,
+  courtOfAppealsCasesCompletedWhereOptions,
+  courtOfAppealsCasesInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
   districtCourtIndictmentsCompletedWhereOptions,
@@ -115,10 +115,10 @@ export const caseTableWhereOptions: Record<
   CaseTableType,
   (user: User) => CaseWhereOptions
 > = {
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
-    courtOfAppealsRequestCasesInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_COMPLETED]:
-    courtOfAppealsRequestCasesCompletedWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS]:
+    courtOfAppealsCasesInProgressWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED]:
+    courtOfAppealsCasesCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
