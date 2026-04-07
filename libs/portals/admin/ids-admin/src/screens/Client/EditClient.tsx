@@ -84,10 +84,7 @@ export const EditClient = () => {
             {client.modified && (
               <Text variant="small">
                 {formatMessage(m.modified, {
-                  date: format(
-                    new Date(client.modified),
-                    'dd.MM.yyyy HH:mm',
-                  ),
+                  date: format(new Date(client.modified), 'dd.MM.yyyy HH:mm'),
                 })}
               </Text>
             )}
