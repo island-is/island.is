@@ -97,9 +97,7 @@ export const UploadCarCategoryFile = ({
           variables: {
             input: {
               id: application.id,
-              dataProviders: [
-                { actionId: 'getVehicleCarMap', order: 0 },
-              ],
+              dataProviders: [{ actionId: 'getVehicleCarMap', order: 0 }],
             },
             locale,
           },

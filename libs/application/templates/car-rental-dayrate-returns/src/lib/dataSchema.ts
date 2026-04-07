@@ -16,9 +16,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   singleOrMultiSelectionRadio: z.nativeEnum(UploadSelection),
   carDayRateUsageFile: z.array(fileSchema).optional(),
-  vehicleDayRateUsageRows: z
-    .array(vehicleDayRateUsageRowSchema)
-    .optional(),
+  vehicleDayRateUsageRows: z.array(vehicleDayRateUsageRowSchema).optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
