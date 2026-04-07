@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from 'react'
+import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
@@ -99,7 +99,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
-const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
+const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
   const { title, files, onOpenFile, shouldRender = true, children } = props
 
   if ((files.length === 0 && !children) || !shouldRender) {

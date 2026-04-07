@@ -817,43 +817,92 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
-          {selectedAction === IndictmentDecision.COMPLETING &&
-            (selectedDecision === CaseIndictmentRulingDecision.RULING ||
-              selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-              <Box component="section">
-                <SectionHeading
-                  title={formatMessage(
-                    selectedDecision === CaseIndictmentRulingDecision.RULING
-                      ? strings.verdictUploadTitle
-                      : strings.rulingUploadTitle,
-                  )}
-                  required
-                />
-                <InputFileUpload
-                  name="ruling"
-                  files={uploadFiles.filter(
-                    (file) => file.category === CaseFileCategory.RULING,
-                  )}
-                  accept="application/pdf"
-                  title={formatMessage(strings.inputFieldLabel)}
-                  description={formatMessage(core.uploadBoxDescription, {
-                    fileEndings: '.pdf',
-                  })}
-                  buttonLabel={formatMessage(strings.uploadButtonText)}
-                  onChange={(files) => {
-                    handleUpload(
-                      addUploadFiles(files, {
-                        category: CaseFileCategory.RULING,
-                      }),
-                      updateUploadFile,
-                    )
-                  }}
-                  onRemove={(file) => handleRemove(file, removeUploadFile)}
-                  onRetry={(file) => handleRetry(file, updateUploadFile)}
-                  onOpenFile={(file) => onOpenFile(file)}
-                />
-              </Box>
+          {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+            isNonEmptyArray(activeDefendants) && (
+              <>
+                {activeDefendants.map((defendant) => (
+                  <BlueBox
+                    key={`completing-for-some-${defendant.id}`}
+                    className={grid({ gap: 2 })}
+                  >
+                    <SectionHeading
+                      title={defendant.name || ''}
+                      variant="h4"
+                      marginBottom={0}
+                    />
+                    <Select
+                      id={`completing-for-some-${defendant.id}`}
+                      label="Lyktir"
+                      placeholder="Veldu lyktir ef á við"
+                      options={completingForSomeOptions}
+                      value={completingForSomeOptions.find(
+                        (option) =>
+                          option.value ===
+                          completingForSomeSelections[defendant.id],
+                      )}
+                      onChange={(selectedOption) => {
+                        setCompletingForSomeSelections((prevSelections) => ({
+                          ...prevSelections,
+                          [defendant.id]: selectedOption?.value as
+                            | CaseIndictmentRulingDecision
+                            | undefined,
+                        }))
+                      }}
+                      isDisabled={
+                        workingCase.state === CaseState.CORRECTING ||
+                        (!completingForSomeSelections[defendant.id] &&
+                          completingForSomeSelectedCount >=
+                            (workingCase.defendants?.length ?? 0) - 1)
+                      }
+                      size="sm"
+                      isClearable
+                    />
+                  </BlueBox>
+                ))}
+              </>
             )}
+          {((selectedAction === IndictmentDecision.COMPLETING &&
+            (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+              selectedDecision === CaseIndictmentRulingDecision.DISMISSAL)) ||
+            (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+              Object.values(completingForSomeSelections).some(
+                (value) => value === CaseIndictmentRulingDecision.DISMISSAL,
+              ))) && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(
+                  selectedAction === IndictmentDecision.COMPLETING &&
+                    selectedDecision === CaseIndictmentRulingDecision.RULING
+                    ? strings.verdictUploadTitle
+                    : strings.rulingUploadTitle,
+                )}
+                required
+              />
+              <InputFileUpload
+                name="ruling"
+                files={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.RULING,
+                )}
+                accept="application/pdf"
+                title={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, {
+                      category: CaseFileCategory.RULING,
+                    }),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+                onOpenFile={(file) => onOpenFile(file)}
+              />
+            </Box>
+          )}
           {selectedAction === IndictmentDecision.COMPLETING &&
             (selectedDecision === CaseIndictmentRulingDecision.FINE ||
               selectedDecision === CaseIndictmentRulingDecision.RULING) &&
@@ -910,80 +959,6 @@ const Conclusion: FC = () => {
                   </BlueBox>
                 ))}
               </Box>
-            )}
-          {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
-            isNonEmptyArray(activeDefendants) && (
-              <>
-                {activeDefendants.map((defendant) => (
-                  <BlueBox
-                    key={`completing-for-some-${defendant.id}`}
-                    className={grid({ gap: 2 })}
-                  >
-                    <SectionHeading
-                      title={defendant.name || ''}
-                      variant="h4"
-                      marginBottom={0}
-                    />
-                    <Select
-                      id={`completing-for-some-${defendant.id}`}
-                      label="Lyktir"
-                      placeholder="Veldu lyktir ef á við"
-                      options={completingForSomeOptions}
-                      value={completingForSomeOptions.find(
-                        (option) =>
-                          option.value ===
-                          completingForSomeSelections[defendant.id],
-                      )}
-                      onChange={(selectedOption) => {
-                        setCompletingForSomeSelections((prevSelections) => ({
-                          ...prevSelections,
-                          [defendant.id]: selectedOption?.value as
-                            | CaseIndictmentRulingDecision
-                            | undefined,
-                        }))
-                      }}
-                      isDisabled={
-                        workingCase.state === CaseState.CORRECTING ||
-                        (!completingForSomeSelections[defendant.id] &&
-                          completingForSomeSelectedCount >=
-                            (workingCase.defendants?.length ?? 0) - 1)
-                      }
-                      size="sm"
-                      isClearable
-                    />
-                  </BlueBox>
-                ))}
-                {Object.values(completingForSomeSelections).some(
-                  (value) => value === CaseIndictmentRulingDecision.DISMISSAL,
-                ) && (
-                  <Box component="section">
-                    <SectionHeading title="Úrskurður" required />
-                    <InputFileUpload
-                      name="ruling"
-                      files={uploadFiles.filter(
-                        (file) => file.category === CaseFileCategory.RULING,
-                      )}
-                      accept="application/pdf"
-                      title={formatMessage(strings.inputFieldLabel)}
-                      description={formatMessage(core.uploadBoxDescription, {
-                        fileEndings: '.pdf',
-                      })}
-                      buttonLabel={formatMessage(strings.uploadButtonText)}
-                      onChange={(files) => {
-                        handleUpload(
-                          addUploadFiles(files, {
-                            category: CaseFileCategory.RULING,
-                          }),
-                          updateUploadFile,
-                        )
-                      }}
-                      onRemove={(file) => handleRemove(file, removeUploadFile)}
-                      onRetry={(file) => handleRetry(file, updateUploadFile)}
-                      onOpenFile={(file) => onOpenFile(file)}
-                    />
-                  </Box>
-                )}
-              </>
             )}
           {selectedAction && workingCase.withCourtSessions && (
             <Box component="section">
