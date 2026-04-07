@@ -174,74 +174,66 @@ export const Screen = () => {
 
   if (loading) return <LoadingScreen ariaLabel="loading" />
 
-  const MultiSet = () => {
-    if (currentScreen) {
-      return (
-        <Box>
-          {Array.from({ length: numberOfItems }).map((_, itemIndex) => (
-            <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
-              {fieldsForMultisetLoop
-                .filter(
-                  (field) =>
-                    field.isPartOfMultiset !== false || itemIndex === 0,
-                )
-                .map((field, fieldIndex) => {
-                  const key = `${field.id ?? 'field'}-${itemIndex}`
-                  const valueIndex =
-                    field.isPartOfMultiset === false ? 0 : itemIndex
+  const multiSetContent = currentScreen ? (
+    <Box>
+      {Array.from({ length: numberOfItems }).map((_, itemIndex) => (
+        <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
+          {fieldsForMultisetLoop
+            .filter(
+              (field) => field.isPartOfMultiset !== false || itemIndex === 0,
+            )
+            .map((field, fieldIndex) => {
+              const key = `${field.id ?? 'field'}-${itemIndex}`
+              const valueIndex =
+                field.isPartOfMultiset === false ? 0 : itemIndex
 
-                  const isRepeatingField = field.isPartOfMultiset !== false
+              const isRepeatingField = field.isPartOfMultiset !== false
 
-                  const showRowGutter =
-                    isRepeatingField &&
-                    numberOfItems > 1 &&
-                    (itemIndex !== 0 ||
-                      anchorFieldIndex === -1 ||
-                      fieldIndex >= anchorFieldIndex)
+              const showRowGutter =
+                isRepeatingField &&
+                numberOfItems > 1 &&
+                (itemIndex !== 0 ||
+                  anchorFieldIndex === -1 ||
+                  fieldIndex >= anchorFieldIndex)
 
-                  let gutterLabel: string | null = null
-                  if (isRepeatingField && numberOfItems > 1) {
-                    if (itemIndex === 0) {
-                      if (anchorFieldIndex === -1) {
-                        if (fieldIndex === 0) gutterLabel = '1.'
-                      } else {
-                        if (fieldIndex === anchorFieldIndex) gutterLabel = '1.'
-                      }
-                    } else {
-                      if (fieldIndex === 0) gutterLabel = `${itemIndex + 1}.`
-                    }
+              let gutterLabel: string | null = null
+              if (isRepeatingField && numberOfItems > 1) {
+                if (itemIndex === 0) {
+                  if (anchorFieldIndex === -1) {
+                    if (fieldIndex === 0) gutterLabel = '1.'
+                  } else {
+                    if (fieldIndex === anchorFieldIndex) gutterLabel = '1.'
                   }
+                } else {
+                  if (fieldIndex === 0) gutterLabel = `${itemIndex + 1}.`
+                }
+              }
 
-                  return (
-                    <Box key={key} display="flex" alignItems="flexStart">
-                      {showRowGutter && (
-                        <Box
-                          marginRight={2}
-                          flexShrink={0}
-                          marginTop={4}
-                          style={{ width: '2ch' }}
-                          display="flex"
-                          justifyContent="flexEnd"
-                        >
-                          {gutterLabel && (
-                            <Text variant="h4">{gutterLabel}</Text>
-                          )}
-                        </Box>
-                      )}
-
-                      <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
-                        <Field field={field} valueIndex={valueIndex} />
-                      </Box>
+              return (
+                <Box key={key} display="flex" alignItems="flexStart">
+                  {showRowGutter && (
+                    <Box
+                      marginRight={2}
+                      flexShrink={0}
+                      marginTop={4}
+                      style={{ width: '2ch' }}
+                      display="flex"
+                      justifyContent="flexEnd"
+                    >
+                      {gutterLabel && <Text variant="h4">{gutterLabel}</Text>}
                     </Box>
-                  )
-                })}
-            </Box>
-          ))}
+                  )}
+
+                  <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
+                    <Field field={field} valueIndex={valueIndex} />
+                  </Box>
+                </Box>
+              )
+            })}
         </Box>
-      )
-    }
-    return null
-  }
+      ))}
+    </Box>
+  ) : null
 
   return (
     <Box
@@ -291,7 +283,7 @@ export const Screen = () => {
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
         {currentSectionType === SectionTypes.PAYMENT && <Payment />}
-        <MultiSet />
+        {multiSetContent}
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
             <Field
