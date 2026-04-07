@@ -52,14 +52,16 @@ const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
 export const getAppealInfo = (theCase: Case): AppealInfo => {
   const {
     rulingDate,
-    appealState,
     accusedAppealDecision,
     prosecutorAppealDecision,
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
-    appealReceivedByCourtDate,
     isCompletedWithoutRuling,
   } = theCase
+
+  const appealState = theCase.appealCase?.appealState
+  const appealReceivedByCourtDate =
+    theCase.appealCase?.appealReceivedByCourtDate
 
   const appealInfo: AppealInfo = {}
 
@@ -135,9 +137,10 @@ const transformRequestCase = (theCase: Case): Case => {
     isAppealGracePeriodExpired: theCase.rulingDate
       ? Date.now() >= new Date(theCase.rulingDate).getTime() + getDays(31)
       : false,
-    isStatementDeadlineExpired: theCase.appealReceivedByCourtDate
+    isStatementDeadlineExpired: theCase.appealCase?.appealReceivedByCourtDate
       ? Date.now() >=
-        new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
+        new Date(theCase.appealCase.appealReceivedByCourtDate).getTime() +
+          getDays(1)
       : false,
     accusedPostponedAppealDate: appealInfo.hasBeenAppealed
       ? theCase.accusedPostponedAppealDate

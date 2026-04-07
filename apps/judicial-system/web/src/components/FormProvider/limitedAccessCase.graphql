@@ -189,7 +189,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
-    appealState
     accusedAppealDecision
     prosecutorAppealDecision
     isAppealDeadlineExpired
@@ -201,13 +200,33 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealedByRole
     appealedDate
     appealDeadline
-    prosecutorStatementDate
-    defendantStatementDate
-    appealReceivedByCourtDate
-    appealConclusion
-    appealRulingDecision
-    appealCaseNumber
-    appealRulingModifiedHistory
+    appealCase {
+      id
+      appealState
+      appealCaseNumber
+      appealReceivedByCourtDate
+      prosecutorStatementDate
+      defendantStatementDate
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealRulingDecision
+      appealConclusion
+      appealRulingModifiedHistory
+    }
     notifications {
       id
       created
@@ -215,22 +234,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       recipients {
         success
       }
-    }
-    appealAssistant {
-      id
-      name
-    }
-    appealJudge1 {
-      id
-      name
-    }
-    appealJudge2 {
-      id
-      name
-    }
-    appealJudge3 {
-      id
-      name
     }
     arraignmentDate {
       date

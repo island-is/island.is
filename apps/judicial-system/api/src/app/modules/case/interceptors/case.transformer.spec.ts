@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import {
   getAppealInfo,
@@ -213,7 +214,7 @@ describe('transformCase', () => {
   describe('isStatementDeadlineExpired', () => {
     it('should be false if the case has not been appealed', () => {
       // Arrange
-      const theCase = { type: CaseType.CUSTODY, appealState: undefined } as Case
+      const theCase = { type: CaseType.CUSTODY } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -228,7 +229,9 @@ describe('transformCase', () => {
       appealReceivedByCourtDate.setDate(appealReceivedByCourtDate.getDate() - 2)
       const theCase = {
         type: CaseType.CUSTODY,
-        appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
+        appealCase: {
+          appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
+        } as AppealCase,
       } as Case
 
       // Act
@@ -247,7 +250,9 @@ describe('transformCase', () => {
       )
       const theCase = {
         type: CaseType.CUSTODY,
-        appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
+        appealCase: {
+          appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
+        } as AppealCase,
       } as Case
 
       // Act
@@ -301,7 +306,9 @@ describe('transformCase', () => {
         type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-        appealState: CaseAppealState.APPEALED,
+        appealCase: {
+          appealState: CaseAppealState.APPEALED,
+        } as AppealCase,
       } as Case
 
       // Act
@@ -319,8 +326,10 @@ describe('transformCase', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
-        appealState: CaseAppealState.RECEIVED,
-        appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
+        appealCase: {
+          appealState: CaseAppealState.RECEIVED,
+          appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
+        } as AppealCase,
       } as Case
 
       // Act
@@ -414,8 +423,10 @@ describe('transformCase', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
-        appealState: CaseAppealState.APPEALED,
         prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        appealCase: {
+          appealState: CaseAppealState.APPEALED,
+        } as AppealCase,
       } as Case
 
       const appealInfo = transformCase(theCase)
@@ -434,8 +445,10 @@ describe('transformCase', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
-        appealState: CaseAppealState.APPEALED,
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        appealCase: {
+          appealState: CaseAppealState.APPEALED,
+        } as AppealCase,
       } as Case
 
       const appealInfo = transformCase(theCase)
@@ -491,8 +504,10 @@ describe('transformCase', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
-        appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
         state: CaseState.RECEIVED,
+        appealCase: {
+          appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
+        } as AppealCase,
       } as Case
 
       const appealInfo = transformCase(theCase)
@@ -513,7 +528,9 @@ describe('transformCase', () => {
           const theCase = {
             type: CaseType.CUSTODY,
             rulingDate: '2022-06-15T19:50:08.033Z',
-            appealState,
+            appealCase: {
+              appealState,
+            } as AppealCase,
           } as Case
 
           const appealInfo = transformCase(theCase)
@@ -546,7 +563,6 @@ describe('getAppealInfo', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate,
-      appealState: undefined,
       accusedAppealDecision: CaseAppealDecision.POSTPONE,
       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
@@ -569,11 +585,13 @@ describe('getAppealInfo', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate,
-      appealState: CaseAppealState.APPEALED,
       accusedAppealDecision: CaseAppealDecision.APPEAL,
       prosecutorAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-      appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
+      appealCase: {
+        appealState: CaseAppealState.APPEALED,
+        appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
+      } as AppealCase,
     } as Case
 
     const appealInfo = getAppealInfo(theCase)
@@ -594,11 +612,13 @@ describe('getAppealInfo', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate: '2022-06-15T19:50:08.033Z',
-      appealState: CaseAppealState.APPEALED,
       accusedAppealDecision: CaseAppealDecision.ACCEPT,
       prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      appealCase: {
+        appealState: CaseAppealState.APPEALED,
+      } as AppealCase,
     } as Case
 
     const appealInfo = getAppealInfo(theCase)
