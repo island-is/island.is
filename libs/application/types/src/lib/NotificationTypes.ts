@@ -78,7 +78,13 @@ interface NotificationKeysMap {
   }
 }
 
-export const NotificationConfig = {
+const defineNotificationConfig = <
+  T extends Record<NotificationType, { templateId: string }>,
+>(
+  config: T,
+) => config
+
+export const NotificationConfig = defineNotificationConfig({
   [NotificationType.System]: { templateId: 'HNIPP.TEST.INBOX.TEMPLATE' },
   [NotificationType.ChildrenResidenceChange]: {
     templateId: 'HNIPP.AS.CRC.ASSIGN.PARENT',
@@ -143,7 +149,7 @@ export const NotificationConfig = {
   [NotificationType.ChangeOperatorOfVehiclePruned]: {
     templateId: 'HNIPP.AS.TA.COV.PRUNED',
   },
-} as const satisfies Record<NotificationType, { templateId: string }>
+} as const)
 
 export type NotificationConfigType = typeof NotificationConfig
 export type NotificationTypeKey = keyof NotificationConfigType
