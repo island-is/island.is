@@ -70,54 +70,10 @@ type Transformer<TResult> = (data: never) => TResult
 const caseTransformer = <TCase>(data: never): TCase => {
   const theCase = data as TCase & {
     dateLogs?: { dateType: DateType; date: string }[]
-    appealCase?: {
-      appealState?: unknown
-      appealCaseNumber?: unknown
-      appealReceivedByCourtDate?: unknown
-      prosecutorStatementDate?: unknown
-      defendantStatementDate?: unknown
-      appealAssistantId?: unknown
-      appealAssistant?: unknown
-      appealJudge1Id?: unknown
-      appealJudge1?: unknown
-      appealJudge2Id?: unknown
-      appealJudge2?: unknown
-      appealJudge3Id?: unknown
-      appealJudge3?: unknown
-      appealRulingDecision?: unknown
-      appealConclusion?: unknown
-      appealRulingModifiedHistory?: unknown
-      requestAppealRulingNotToBePublished?: unknown
-      appealValidToDate?: unknown
-      isAppealCustodyIsolation?: unknown
-      appealIsolationToDate?: unknown
-    }
   }
 
   return {
     ...theCase,
-    appealState: theCase.appealCase?.appealState,
-    appealCaseNumber: theCase.appealCase?.appealCaseNumber,
-    appealReceivedByCourtDate: theCase.appealCase?.appealReceivedByCourtDate,
-    prosecutorStatementDate: theCase.appealCase?.prosecutorStatementDate,
-    defendantStatementDate: theCase.appealCase?.defendantStatementDate,
-    appealAssistantId: theCase.appealCase?.appealAssistantId,
-    appealAssistant: theCase.appealCase?.appealAssistant,
-    appealJudge1Id: theCase.appealCase?.appealJudge1Id,
-    appealJudge1: theCase.appealCase?.appealJudge1,
-    appealJudge2Id: theCase.appealCase?.appealJudge2Id,
-    appealJudge2: theCase.appealCase?.appealJudge2,
-    appealJudge3Id: theCase.appealCase?.appealJudge3Id,
-    appealJudge3: theCase.appealCase?.appealJudge3,
-    appealRulingDecision: theCase.appealCase?.appealRulingDecision,
-    appealConclusion: theCase.appealCase?.appealConclusion,
-    appealRulingModifiedHistory:
-      theCase.appealCase?.appealRulingModifiedHistory,
-    requestAppealRulingNotToBePublished:
-      theCase.appealCase?.requestAppealRulingNotToBePublished,
-    appealValidToDate: theCase.appealCase?.appealValidToDate,
-    isAppealCustodyIsolation: theCase.appealCase?.isAppealCustodyIsolation,
-    appealIsolationToDate: theCase.appealCase?.appealIsolationToDate,
     arraignmentDate: theCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     ),
@@ -511,6 +467,16 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
     return this.get(`case/${caseId}/policeDigitalCaseFiles`)
+  }
+
+  getPoliceDigitalCaseFileTokenUrl(
+    caseId: string,
+    policeDigitalFileId: string,
+  ): Promise<string> {
+    const params = new URLSearchParams({ policeDigitalFileId })
+    return this.get<{ url: string }>(
+      `case/${caseId}/policeDigitalCaseFileTokenUrl?${params.toString()}`,
+    ).then((res) => res.url)
   }
 
   deletePoliceDigitalCaseFile(

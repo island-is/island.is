@@ -41,15 +41,20 @@ export type ReviewWarningsProps = {
         records?: Array<{
           institution?: string
           signatureDate?: string
+          chairman?: { name?: string }
+          members?: Array<{ name?: string }>
         }>
       }
       committee?: {
         records?: Array<{
           institution?: string
           signatureDate?: string
+          chairman?: { name?: string }
+          members?: Array<{ name?: string }>
         }>
       }
     }
+    misc?: { signatureType?: string }
     regulation?: {
       effectiveDate?: string
       lawChapters?: Array<{ slug: string; name: string }>

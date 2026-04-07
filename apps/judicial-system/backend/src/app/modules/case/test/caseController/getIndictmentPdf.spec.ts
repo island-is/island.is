@@ -14,7 +14,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { createIndictment } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 
 jest.mock('../../../../formatters/indictmentPdf')
 
@@ -114,7 +114,7 @@ describe('CaseController - Get indictment pdf', () => {
 
       const caseWithNoDefendants = {
         ...theCase,
-        defendants: [],
+        defendants: [] as Defendant[],
       } as Case
 
       const then = await givenWhenThen(caseWithNoDefendants)
