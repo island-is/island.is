@@ -245,7 +245,7 @@ const indictmentCaseStateMachine: Map<
         }
 
         throw new ForbiddenException(
-          `${actor} cannot appeal an indictment case`,
+          'Current user cannot appeal an indictment case',
         )
       },
     },
@@ -542,7 +542,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           }
 
           throw new ForbiddenException(
-            `${actor} cannot appeal a ${theCase.type} case`,
+            'Current user cannot appeal a ${theCase.type} case',
           )
         },
       },

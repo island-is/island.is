@@ -22,6 +22,7 @@ import {
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
   getIndictmentVerdictAppealDeadlineStatus,
+  getMillisecondsFromDays,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   IndictmentSubtypeMap,
@@ -56,8 +57,6 @@ interface CaseTableCellGenerator<T> {
   includes?: CaseIncludes
   generate: (caseModel: Case, user: TUser) => CaseTableCell<T>
 }
-
-const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
 const getIndictmentCourtDate = (c: Case): Date | undefined => {
   if (c.indictmentDecision) {
@@ -157,7 +156,8 @@ const generateAppealStateTag = (
         if (
           c.appealCase?.appealReceivedByCourtDate &&
           Date.now() >=
-            c.appealCase?.appealReceivedByCourtDate.getTime() + getDays(1)
+            c.appealCase?.appealReceivedByCourtDate.getTime() +
+              getMillisecondsFromDays(1)
         ) {
           return generateCell({ color: 'mint', text: 'Frestir liðnir' }, 'D')
         }

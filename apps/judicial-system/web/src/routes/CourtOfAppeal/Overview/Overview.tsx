@@ -2,17 +2,25 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Accordion, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
+  isIndictmentCase,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
+import {
+  AppealCaseFilesOverview,
   CaseFilesAccordionItem,
   Conclusion,
   conclusion,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
+  IndictmentCaseFilesList,
   InfoCard,
+  InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
   UserContext,
@@ -51,6 +59,10 @@ const CourtOfAppealOverview = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
+  const isIndictment = isIndictmentCase(workingCase.type)
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   return (
     <>
       {appealBanner}
@@ -76,51 +88,78 @@ const CourtOfAppealOverview = () => {
                   : undefined
               }
             />
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                ...(showItem(victims)
-                  ? [
-                      {
-                        id: 'victims-section',
-                        items: [victims],
-                      },
-                    ]
-                  : []),
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    courtCaseNumber,
-                    prosecutorsOffice,
-                    court,
-                    prosecutor(workingCase.type),
-                    judge,
-                    ...(isInvestigationCase(workingCase.type)
-                      ? [caseType]
-                      : []),
-                    ...(workingCase.registrar ? [registrar] : []),
-                  ],
-                  columns: 2,
-                },
-              ]}
-            />
-            {user ? (
-              <CaseFilesAccordionItem
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                user={user}
+            {isIndictment ? (
+              <InfoCardClosedIndictment />
+            ) : (
+              <InfoCard
+                sections={[
+                  {
+                    id: 'defendants-section',
+                    items: [defendants({ caseType: workingCase.type })],
+                  },
+                  ...(showItem(victims)
+                    ? [
+                        {
+                          id: 'victims-section',
+                          items: [victims],
+                        },
+                      ]
+                    : []),
+                  {
+                    id: 'case-info-section',
+                    items: [
+                      policeCaseNumbers,
+                      courtCaseNumber,
+                      prosecutorsOffice,
+                      court,
+                      prosecutor(workingCase.type),
+                      judge,
+                      ...(isInvestigationCase(workingCase.type)
+                        ? [caseType]
+                        : []),
+                      ...(workingCase.registrar ? [registrar] : []),
+                    ],
+                    columns: 2,
+                  },
+                ]}
               />
-            ) : null}
-            <Conclusion
-              title={formatMessage(conclusion.title)}
-              conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
-            />
-            <CaseFilesOverview />
+            )}
+            {isIndictment ? (
+              <>
+                <AppealCaseFilesOverview />
+                {hasMergeCases && (
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    {workingCase.mergedCases?.map((mergedCase) => (
+                      <Box key={mergedCase.id}>
+                        <ConnectedCaseFilesAccordionItem
+                          connectedCaseParentId={workingCase.id}
+                          connectedCase={mergedCase}
+                        />
+                      </Box>
+                    ))}
+                  </Accordion>
+                )}
+                <Box component="section">
+                  <IndictmentCaseFilesList workingCase={workingCase} />
+                </Box>
+              </>
+            ) : (
+              <>
+                {user ? (
+                  <CaseFilesAccordionItem
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    user={user}
+                  />
+                ) : null}
+                <Conclusion
+                  title={formatMessage(conclusion.title)}
+                  conclusionText={workingCase.conclusion}
+                  judgeName={workingCase.judge?.name}
+                />
+                <CaseFilesOverview />
+              </>
+            )}
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
