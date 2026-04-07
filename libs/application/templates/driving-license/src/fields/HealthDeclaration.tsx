@@ -4,6 +4,8 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { BE } from '../lib/constants'
+import { needsHealthCertificateCondition } from '../lib/utils/formUtils'
 import { useFormContext } from 'react-hook-form'
 
 interface PropTypes extends FieldBaseProps {
@@ -19,6 +21,27 @@ const HealthDeclaration = ({
   const props = field.props as { title?: string; label: string }
 
   const { setValue, getValues } = useFormContext()
+
+  const clearHealthCertificateIfNotNeeded = (value: string) => {
+    if (getValueViaPath(application.answers, 'applicationFor') !== BE) {
+      return
+    }
+
+    // Build answers snapshot with the just-changed value so we don't
+    // read stale form state for the current field
+    const formValues = getValues()
+    const currentAnswers = {
+      ...formValues,
+      healthDeclaration: {
+        ...formValues.healthDeclaration,
+        [field.id.replace('healthDeclaration.', '')]: value,
+      },
+    }
+
+    if (!needsHealthCertificateCondition(YES)(currentAnswers, application.externalData)) {
+      setValue('healthCertificate', undefined)
+    }
+  }
 
   const checkForVisionMismatch = (value: string) => {
     if (
@@ -88,6 +111,7 @@ const HealthDeclaration = ({
           ]}
           onSelect={(value) => {
             checkForVisionMismatch(value)
+            clearHealthCertificateIfNotNeeded(value)
           }}
         />
       </Box>
