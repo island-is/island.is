@@ -38,7 +38,12 @@ const HealthDeclaration = ({
       },
     }
 
-    if (!needsHealthCertificateCondition(YES)(currentAnswers, application.externalData)) {
+    if (
+      !needsHealthCertificateCondition(YES)(
+        currentAnswers,
+        application.externalData,
+      )
+    ) {
       setValue('healthCertificate', undefined)
     }
   }
