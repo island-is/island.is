@@ -247,7 +247,6 @@ export class ClientsService extends MultiEnvironmentService {
             //exclude the uris
             postLogoutRedirectUris: [],
             redirectUris: [],
-            
           },
         }),
     )
