@@ -1,12 +1,7 @@
-import { EntryModel } from '@island.is/clients-rental-day-rate'
+import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
 import { isDayRateEntryActive, is15DaysOrMoreFromDate } from './dayRateUtils'
 import { RateCategory } from './constants'
-import {
-  CarCategoryError,
-  CarCategoryRecord,
-  CarMap,
-  CurrentVehicleWithMilage,
-} from './types'
+import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { parseFileToCarCategory } from './UploadCarCategoryFileUtils'
 
 export type UploadFileType = 'csv' | 'xlsx'
@@ -16,7 +11,7 @@ export type ParseUploadResult =
   | { ok: false; errors: CarCategoryError[]; reason: 'errors' | 'no-data' }
 
 export const buildCurrentCarMap = (
-  vehicles: CurrentVehicleWithMilage[] | undefined,
+  vehicles: ValidVehicle[] | undefined,
   rates: EntryModel[] | undefined,
   currentDate: Date = new Date(),
 ): CarMap => {
@@ -31,7 +26,7 @@ export const buildCurrentCarMap = (
     )
 
     acc[vehicle.permno] = {
-      milage: vehicle.milage ?? 0,
+      mileage: vehicle.mileage,
       category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
       activeDayRate,
     }
@@ -41,7 +36,7 @@ export const buildCurrentCarMap = (
 }
 
 export const getManualMileageTableRows = (
-  vehicles: CurrentVehicleWithMilage[] | undefined,
+  vehicles: ValidVehicle[] | undefined,
   rates: EntryModel[] | undefined,
   rateToChangeTo: RateCategory | undefined,
 ): Array<{
@@ -74,7 +69,7 @@ export const getManualMileageTableRows = (
     .map((vehicle) => ({
       permno: vehicle.permno as string,
       latestMilage: undefined,
-      currentMilage: vehicle.milage ?? null,
+      currentMilage: vehicle.mileage,
     }))
 }
 

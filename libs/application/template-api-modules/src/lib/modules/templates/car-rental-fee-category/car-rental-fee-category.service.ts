@@ -3,14 +3,16 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
+import {
+  RskRentalDayRateClient,
+  EntryModel,
+  ValidVehicle,
+} from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
 
 import {
   CarCategoryRecord,
-  CurrentVehicleWithMilage,
   RateCategory,
   UploadSelection,
   buildCurrentCarMap,
@@ -37,21 +39,16 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
   async getCurrentVehicles({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
+  }: TemplateApiModuleActionProps): Promise<ValidVehicle[]> {
     try {
-      const vehicles = await this.rentalsApiWithAuth(
+      return await this.rentalsApiWithAuth(
         auth,
       ).apiDayRateEntriesEntityIdEligibleVehiclesGet({
         entityId: auth.nationalId,
       })
-
-      return vehicles.map((v) => ({
-        permno: v.permno,
-        milage: v.mileage,
-      }))
     } catch (error) {
       this.logger.error(
-        'Error getting vehicles with milage from Skatturinn',
+        'Error getting vehicles with mileage from Skatturinn',
         error,
       )
       throw error
@@ -97,7 +94,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         400,
       )
     }
-    const currentVehicles = getValueViaPath<CurrentVehicleWithMilage[]>(
+    const currentVehicles = getValueViaPath<ValidVehicle[]>(
       application.externalData,
       'getCurrentVehicles.data',
     )
@@ -150,7 +147,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
             return null
           }
 
-          if (newMilage < currentCar.milage) {
+          if (newMilage < currentCar.mileage) {
             invalidRows.push(permno)
             return null
           }
@@ -165,7 +162,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
           return {
             vehicleId: permno,
-            oldMileage: currentCar.milage,
+            oldMileage: currentCar.mileage,
             newMilage,
             rateCategory: rateToChangeTo as string,
           }

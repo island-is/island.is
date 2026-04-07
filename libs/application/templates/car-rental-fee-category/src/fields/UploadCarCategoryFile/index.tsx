@@ -8,14 +8,10 @@ import {
 import { Dispatch, useEffect, useRef, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  CarCategoryError,
-  CurrentVehicleWithMilage,
-  CarMap,
-} from '../../utils/types'
+import { CarCategoryError, CarMap } from '../../utils/types'
 import { RateCategory } from '../../utils/constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
+import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
 import { useFormContext } from 'react-hook-form'
 import {
   createErrorExcel,
@@ -176,7 +172,7 @@ export const UploadCarCategoryFile = ({
 
   if (!rateCategory) return
 
-  const currentVehicles = getValueViaPath<CurrentVehicleWithMilage[]>(
+  const currentVehicles = getValueViaPath<ValidVehicle[]>(
     application.externalData,
     'getCurrentVehicles.data',
   )

@@ -4,8 +4,7 @@ import {
   buildStaticTableField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
-import { CurrentVehicleWithMilage } from '../../utils/types'
+import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
 import { hasActiveDayRate } from '../../utils/dayRateUtils'
 import { m } from '../../lib/messages'
 
@@ -21,7 +20,7 @@ export const overviewStatistics = buildSection({
           header: [m.overview.header, ''],
           rows: (application) => {
             const vehicles =
-              getValueViaPath<Array<CurrentVehicleWithMilage>>(
+              getValueViaPath<Array<ValidVehicle>>(
                 application.externalData,
                 'getCurrentVehicles.data',
               ) ?? []
