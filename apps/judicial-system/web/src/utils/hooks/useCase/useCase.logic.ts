@@ -4,6 +4,7 @@ import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
 
 import {
+  AppealCase,
   Case,
   UpdateCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -15,12 +16,27 @@ type ChildKeys = Pick<
   | 'sharedWithProsecutorsOfficeId'
   | 'registrarId'
   | 'judgeId'
-  | 'appealAssistantId'
-  | 'appealJudge1Id'
-  | 'appealJudge2Id'
-  | 'appealJudge3Id'
   | 'indictmentReviewerId'
   | 'mergeCaseId'
+>
+
+type AppealChildKeys = Pick<
+  UpdateCaseInput,
+  'appealAssistantId' | 'appealJudge1Id' | 'appealJudge2Id' | 'appealJudge3Id'
+>
+
+type AppealCaseKeys = Pick<
+  UpdateCaseInput,
+  | 'appealCaseNumber'
+  | 'appealConclusion'
+  | 'appealIsolationToDate'
+  | 'appealRulingDecision'
+  | 'appealRulingModifiedHistory'
+  | 'appealValidToDate'
+  | 'defendantStatementDate'
+  | 'isAppealCustodyIsolation'
+  | 'prosecutorStatementDate'
+  | 'requestAppealRulingNotToBePublished'
 >
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
@@ -34,12 +50,36 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'sharedWithProsecutorsOfficeId',
     'registrarId',
     'judgeId',
+    'indictmentReviewerId',
+    'mergeCaseId',
+  ].includes(key)
+}
+
+const isAppealChildKey = (
+  key: keyof UpdateCaseInput,
+): key is keyof AppealChildKeys => {
+  return [
     'appealAssistantId',
     'appealJudge1Id',
     'appealJudge2Id',
     'appealJudge3Id',
-    'indictmentReviewerId',
-    'mergeCaseId',
+  ].includes(key)
+}
+
+const isAppealCaseKey = (
+  key: keyof UpdateCaseInput,
+): key is keyof AppealCaseKeys => {
+  return [
+    'appealCaseNumber',
+    'appealConclusion',
+    'appealIsolationToDate',
+    'appealRulingDecision',
+    'appealRulingModifiedHistory',
+    'appealValidToDate',
+    'defendantStatementDate',
+    'isAppealCustodyIsolation',
+    'prosecutorStatementDate',
+    'requestAppealRulingNotToBePublished',
   ].includes(key)
 }
 
@@ -49,12 +89,17 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
   registrarId: 'registrar',
   judgeId: 'judge',
+  indictmentReviewerId: 'indictmentReviewer',
+  mergeCaseId: 'mergeCase',
+}
+
+const appealChildof: {
+  [Property in keyof AppealChildKeys]-?: keyof AppealCase
+} = {
   appealAssistantId: 'appealAssistant',
   appealJudge1Id: 'appealJudge1',
   appealJudge2Id: 'appealJudge2',
   appealJudge3Id: 'appealJudge3',
-  indictmentReviewerId: 'indictmentReviewer',
-  mergeCaseId: 'mergeCase',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {
@@ -66,11 +111,19 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
   const theKey = key as keyof UpdateCaseInput
 
-  if (
-    isChildKey(theKey) // check if key is f.example `judgeId`
-      ? isNil(workingCase[childof[theKey]])
-      : isNil(workingCase[theKey])
-  ) {
+  let currentValue: unknown
+
+  if (isChildKey(theKey)) {
+    currentValue = workingCase[childof[theKey]]
+  } else if (isAppealChildKey(theKey)) {
+    currentValue = workingCase.appealCase?.[appealChildof[theKey]]
+  } else if (isAppealCaseKey(theKey)) {
+    currentValue = workingCase.appealCase?.[theKey]
+  } else {
+    currentValue = workingCase[theKey]
+  }
+
+  if (isNil(currentValue)) {
     return value === undefined
   }
 
