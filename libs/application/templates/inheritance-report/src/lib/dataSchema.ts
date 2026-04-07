@@ -82,11 +82,11 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
               return true
             }
             if (withShare && typeof share === 'string') {
-              const num = parseInt(share, 10)
+              const num = parseFloat(share)
 
               const value = isNaN(num) ? 0 : num
 
-              return value > 0 && value <= 100
+              return value >= 0.01 && value <= 100
             }
 
             return true
