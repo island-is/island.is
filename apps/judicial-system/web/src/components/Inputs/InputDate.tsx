@@ -24,11 +24,9 @@ const InputDate: FC<InputProps> = ({
   ) => {
     const inputValidator = validate([[evt.target.value, ['date-of-birth']]])
 
-    if (inputValidator.isValid) {
+    if (inputValidator.isValid || (!required && !evt.target.value)) {
       setErrorMessage(undefined)
-      onBlur(inputValue)
-    } else if (!required && !evt.target.value) {
-      onBlur(inputValue)
+      onBlur(evt.target.value)
     } else {
       setErrorMessage(inputValidator.errorMessage)
     }
