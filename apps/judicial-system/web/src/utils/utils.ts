@@ -128,12 +128,12 @@ export const getDefendantPleaText = (
 
 export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
   return (
-    theCase.appealState === CaseAppealState.WITHDRAWN &&
-    (!theCase.appealAssistant ||
-      !theCase.appealCaseNumber ||
-      !theCase.appealJudge1 ||
-      !theCase.appealJudge2 ||
-      !theCase.appealJudge3)
+    theCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+    (!theCase.appealCase?.appealAssistant ||
+      !theCase.appealCase?.appealCaseNumber ||
+      !theCase.appealCase?.appealJudge1 ||
+      !theCase.appealCase?.appealJudge2 ||
+      !theCase.appealCase?.appealJudge3)
   )
 }
 

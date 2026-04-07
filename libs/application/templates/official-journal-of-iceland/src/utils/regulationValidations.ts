@@ -16,18 +16,19 @@ import { Routes } from '../lib/constants'
 // ---------------------------------------------------------------------------
 
 /** Shape of the OJOI structured signature in answers */
+type SignatureRecord = {
+  institution?: string
+  signatureDate?: string
+  chairman?: { name?: string }
+  members?: Array<{ name?: string }>
+}
+
 type SignatureAnswers = {
   regular?: {
-    records?: Array<{
-      institution?: string
-      signatureDate?: string
-    }>
+    records?: Array<SignatureRecord>
   }
   committee?: {
-    records?: Array<{
-      institution?: string
-      signatureDate?: string
-    }>
+    records?: Array<SignatureRecord>
   }
 }
 
@@ -109,6 +110,7 @@ export const collectRegulationWarnings = (answers: {
     channels?: Array<{ name?: string; email?: string; phone?: string }>
   }
   signature?: SignatureAnswers
+  misc?: { signatureType?: string }
   regulation?: {
     effectiveDate?: string
     lawChapters?: Array<{ slug: string; name: string }>
@@ -159,15 +161,78 @@ export const collectRegulationWarnings = (answers: {
     })
   }
 
-  // Signature / ministry
-  const { ministryName } = getMinistryFromSignature(answers.signature)
-  if (!ministryName) {
+  // Signature validation
+  const signatureType = answers.misc?.signatureType ?? 'regular'
+  const signatureRoute = Routes.SIGNATURE
+  const signatureLabel = 'Undirritun'
+  const records =
+    signatureType === 'committee'
+      ? answers.signature?.committee?.records
+      : answers.signature?.regular?.records
+
+  if (!records || records.length === 0) {
     warnings.push({
-      field: 'signature.institution',
-      message: 'Ráðuneyti vantar (stofnun í undirritun)',
+      field: 'signature',
+      message: 'Undirritun vantar',
       section: 'signature',
-      route: Routes.REGULATION_CONTENT,
-      sectionLabel: 'Grunnupplýsingar',
+      route: signatureRoute,
+      sectionLabel: signatureLabel,
+    })
+  } else {
+    records.forEach((record, index) => {
+      if (!record.institution) {
+        warnings.push({
+          field: `signature.records[${index}].institution`,
+          message: 'Stofnun/ráðuneyti vantar í undirritun',
+          section: 'signature',
+          route: signatureRoute,
+          sectionLabel: signatureLabel,
+        })
+      }
+
+      if (!record.signatureDate) {
+        warnings.push({
+          field: `signature.records[${index}].signatureDate`,
+          message: 'Dagsetningu vantar í undirritun',
+          section: 'signature',
+          route: signatureRoute,
+          sectionLabel: signatureLabel,
+        })
+      }
+
+      if (signatureType === 'committee') {
+        if (!record.chairman?.name) {
+          warnings.push({
+            field: `signature.records[${index}].chairman`,
+            message: 'Formann vantar í undirritun',
+            section: 'signature',
+            route: signatureRoute,
+            sectionLabel: signatureLabel,
+          })
+        }
+      }
+
+      if (!record.members || record.members.length === 0) {
+        warnings.push({
+          field: `signature.records[${index}].members`,
+          message: 'Undirritaraðila vantar',
+          section: 'signature',
+          route: signatureRoute,
+          sectionLabel: signatureLabel,
+        })
+      } else {
+        record.members.forEach((member, memberIndex) => {
+          if (!member?.name) {
+            warnings.push({
+              field: `signature.records[${index}].members[${memberIndex}]`,
+              message: 'Nafn vantar á undirritaraðila',
+              section: 'signature',
+              route: signatureRoute,
+              sectionLabel: signatureLabel,
+            })
+          }
+        })
+      }
     })
   }
 
