@@ -12,6 +12,15 @@ class Item {
 
   @Field(() => String)
   caseNumber!: string
+
+  @Field(() => Date, { nullable: true })
+  appealPolicyDate?: Date | null
+
+  @Field(() => Date, { nullable: true })
+  registrationDate?: Date | null
+
+  @Field(() => Date, { nullable: true })
+  verdictDate?: Date | null
 }
 
 @ObjectType('WebSupremeCourtAppealsResponse')
