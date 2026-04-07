@@ -98,23 +98,10 @@ export const attributes: (keyof Case)[] = [
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
-  'appealState',
   'accusedAppealDecision',
   'prosecutorAppealDecision',
   'accusedPostponedAppealDate',
   'prosecutorPostponedAppealDate',
-  'prosecutorStatementDate',
-  'defendantStatementDate',
-  'appealCaseNumber',
-  'appealAssistantId',
-  'appealJudge1Id',
-  'appealJudge2Id',
-  'appealJudge3Id',
-  'appealConclusion',
-  'appealRulingDecision',
-  'appealReceivedByCourtDate',
-  'appealRulingModifiedHistory',
-  'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
   'indictmentDecision',
   'indictmentRulingDecision',
@@ -128,14 +115,13 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export interface LimitedAccessUpdateCase
-  extends Pick<
-    Case,
-    | 'accusedPostponedAppealDate'
-    | 'appealState'
-    | 'defendantStatementDate'
-    | 'openedByDefender'
-    | 'appealRulingDecision'
-  > {}
+  extends Pick<Case, 'accusedPostponedAppealDate' | 'openedByDefender'>,
+    Partial<
+      Pick<
+        AppealCase,
+        'appealState' | 'defendantStatementDate' | 'appealRulingDecision'
+      >
+    > {}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -158,26 +144,6 @@ export const include: Includeable[] = [
   {
     model: User,
     as: 'courtRecordSignatory',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -392,6 +358,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
+    attributes,
     where: { state: completedIndictmentCaseStates },
     include: [
       {

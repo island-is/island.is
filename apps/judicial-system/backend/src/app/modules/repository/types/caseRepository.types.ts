@@ -92,26 +92,6 @@ export const caseInclude: Includeable[] = [
   },
   {
     model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
     as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
   },
@@ -435,93 +415,98 @@ interface UpdateDateLog {
 
 export interface UpdateCase
   extends Pick<
-    Case,
-    | 'indictmentSubtypes'
-    | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
-    | 'isHeightenedSecurityLevel'
-    | 'courtId'
-    | 'leadInvestigator'
-    | 'arrestDate'
-    | 'requestedCourtDate'
-    | 'translator'
-    | 'requestedValidToDate'
-    | 'demands'
-    | 'lawsBroken'
-    | 'legalBasis'
-    | 'legalProvisions'
-    | 'requestedCustodyRestrictions'
-    | 'requestedOtherRestrictions'
-    | 'caseFacts'
-    | 'legalArguments'
-    | 'requestProsecutorOnlySession'
-    | 'prosecutorOnlySessionRequest'
-    | 'comments'
-    | 'caseFilesComments'
-    | 'prosecutorId'
-    | 'sharedWithProsecutorsOfficeId'
-    | 'sessionArrangements'
-    | 'courtLocation'
-    | 'courtStartDate'
-    | 'courtEndTime'
-    | 'isClosedCourtHidden'
-    | 'courtAttendees'
-    | 'prosecutorDemands'
-    | 'courtDocuments'
-    | 'sessionBookings'
-    | 'courtCaseFacts'
-    | 'introduction'
-    | 'courtLegalArguments'
-    | 'ruling'
-    | 'decision'
-    | 'validToDate'
-    | 'isCustodyIsolation'
-    | 'isolationToDate'
-    | 'conclusion'
-    | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
-    | 'accusedPostponedAppealDate'
-    | 'prosecutorPostponedAppealDate'
-    | 'caseModifiedExplanation'
-    | 'rulingModifiedHistory'
-    | 'caseResentExplanation'
-    | 'crimeScenes'
-    | 'indictmentIntroduction'
-    | 'requestDriversLicenseSuspension'
-    | 'creatingProsecutorId'
-    | 'appealState'
-    | 'prosecutorStatementDate'
-    | 'appealReceivedByCourtDate'
-    | 'appealCaseNumber'
-    | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
-    | 'appealConclusion'
-    | 'appealRulingDecision'
-    | 'appealRulingModifiedHistory'
-    | 'defendantStatementDate'
-    | 'requestAppealRulingNotToBePublished'
-    | 'requestSharedWithDefender'
-    | 'appealValidToDate'
-    | 'isAppealCustodyIsolation'
-    | 'appealIsolationToDate'
-    | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
-    | 'indictmentDecision'
-    | 'courtSessionType'
-    | 'mergeCaseId'
-    | 'mergeCaseNumber'
-    | 'isCompletedWithoutRuling'
-    | 'hasCivilClaims'
-    | 'isArchived'
-  > {
+      Case,
+      | 'indictmentSubtypes'
+      | 'description'
+      | 'defenderName'
+      | 'defenderNationalId'
+      | 'defenderEmail'
+      | 'defenderPhoneNumber'
+      | 'isHeightenedSecurityLevel'
+      | 'courtId'
+      | 'leadInvestigator'
+      | 'arrestDate'
+      | 'requestedCourtDate'
+      | 'translator'
+      | 'requestedValidToDate'
+      | 'demands'
+      | 'lawsBroken'
+      | 'legalBasis'
+      | 'legalProvisions'
+      | 'requestedCustodyRestrictions'
+      | 'requestedOtherRestrictions'
+      | 'caseFacts'
+      | 'legalArguments'
+      | 'requestProsecutorOnlySession'
+      | 'prosecutorOnlySessionRequest'
+      | 'comments'
+      | 'caseFilesComments'
+      | 'prosecutorId'
+      | 'sharedWithProsecutorsOfficeId'
+      | 'sessionArrangements'
+      | 'courtLocation'
+      | 'courtStartDate'
+      | 'courtEndTime'
+      | 'isClosedCourtHidden'
+      | 'courtAttendees'
+      | 'prosecutorDemands'
+      | 'courtDocuments'
+      | 'sessionBookings'
+      | 'courtCaseFacts'
+      | 'introduction'
+      | 'courtLegalArguments'
+      | 'ruling'
+      | 'decision'
+      | 'validToDate'
+      | 'isCustodyIsolation'
+      | 'isolationToDate'
+      | 'conclusion'
+      | 'endOfSessionBookings'
+      | 'accusedAppealDecision'
+      | 'accusedAppealAnnouncement'
+      | 'prosecutorAppealDecision'
+      | 'prosecutorAppealAnnouncement'
+      | 'accusedPostponedAppealDate'
+      | 'prosecutorPostponedAppealDate'
+      | 'caseModifiedExplanation'
+      | 'rulingModifiedHistory'
+      | 'caseResentExplanation'
+      | 'crimeScenes'
+      | 'indictmentIntroduction'
+      | 'requestDriversLicenseSuspension'
+      | 'creatingProsecutorId'
+      | 'requestSharedWithDefender'
+      | 'indictmentRulingDecision'
+      | 'indictmentReviewerId'
+      | 'indictmentDecision'
+      | 'courtSessionType'
+      | 'mergeCaseId'
+      | 'mergeCaseNumber'
+      | 'isCompletedWithoutRuling'
+      | 'hasCivilClaims'
+      | 'isArchived'
+    >,
+    Partial<
+      Pick<
+        AppealCase,
+        | 'appealState'
+        | 'prosecutorStatementDate'
+        | 'defendantStatementDate'
+        | 'appealReceivedByCourtDate'
+        | 'appealCaseNumber'
+        | 'appealAssistantId'
+        | 'appealJudge1Id'
+        | 'appealJudge2Id'
+        | 'appealJudge3Id'
+        | 'appealConclusion'
+        | 'appealRulingDecision'
+        | 'appealRulingModifiedHistory'
+        | 'requestAppealRulingNotToBePublished'
+        | 'appealValidToDate'
+        | 'isAppealCustodyIsolation'
+        | 'appealIsolationToDate'
+      >
+    > {
   type?: CaseType
   state?: CaseState
   policeCaseNumbers?: string[]

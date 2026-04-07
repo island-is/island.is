@@ -88,21 +88,24 @@ const useAppealAlertBanner = (
   let child: ReactElement | null = null
 
   const {
-    prosecutorStatementDate,
-    defendantStatementDate,
+    appealCase,
     statementDeadline,
     hasBeenAppealed,
     appealedByRole,
     appealedDate,
     canBeAppealed,
     appealDeadline,
-    appealState,
     isAppealDeadlineExpired,
-    appealReceivedByCourtDate,
     isStatementDeadlineExpired,
-    appealRulingDecision,
     sharedWithProsecutorsOffice,
   } = workingCase
+  const {
+    appealState,
+    prosecutorStatementDate,
+    defendantStatementDate,
+    appealReceivedByCourtDate,
+    appealRulingDecision,
+  } = appealCase ?? {}
 
   const isSharedWithProsecutor =
     isProsecutionUser(user) &&

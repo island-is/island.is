@@ -16,6 +16,8 @@ import {
   NationalRegistryV3UserApi,
   UserProfileApi,
   QualityPhotoApi,
+  QualityPhotoAndSignatureApi,
+  AllPhotosFromThjodskraApi,
   TeachersApi,
   ExistingApplicationApi,
   InstitutionNationalIds,
@@ -129,6 +131,8 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 }),
                 DrivingAssessmentApi,
                 QualityPhotoApi,
+                QualityPhotoAndSignatureApi,
+                AllPhotosFromThjodskraApi,
                 ExistingApplicationApi.configure({
                   params: {
                     states: [States.PAYMENT, States.DRAFT],
