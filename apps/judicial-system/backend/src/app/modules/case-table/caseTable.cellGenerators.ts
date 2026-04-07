@@ -483,6 +483,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       // TODO: find a better place for id - it is not used in this cell generator
       // and there is no guarantee that this column will be included in all tables
       attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+      includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
@@ -490,15 +491,30 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       return generateCell()
     }
 
+    const activeDefendants = c.defendants.filter(
+      (defendant) =>
+        !DefendantEventLog.getEventLogByEventType(
+          [
+            DefendantEventType.INDICTMENT_CANCELLED,
+            DefendantEventType.INDICTMENT_DISMISSED,
+          ],
+          defendant.eventLogs,
+        ),
+    )
+
+    if (activeDefendants.length === 0) {
+      return generateCell()
+    }
+
     const strList = [
-      c.defendants[0].name ?? '',
-      c.defendants.length === 1
-        ? c.defendants[0].noNationalId
-          ? c.defendants[0].nationalId
-            ? `fd. ${c.defendants[0].nationalId}`
+      activeDefendants[0].name ?? '',
+      activeDefendants.length === 1
+        ? activeDefendants[0].noNationalId
+          ? activeDefendants[0].nationalId
+            ? `fd. ${activeDefendants[0].nationalId}`
             : ''
-          : `kt. ${formatNationalId(c.defendants[0].nationalId)}`
-        : `+ ${c.defendants.length - 1}`,
+          : `kt. ${formatNationalId(activeDefendants[0].nationalId)}`
+        : `+ ${activeDefendants.length - 1}`,
     ]
 
     return generateCell({ strList }, strList.join(''))
