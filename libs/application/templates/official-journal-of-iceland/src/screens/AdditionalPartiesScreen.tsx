@@ -17,6 +17,31 @@ type AdditionalParty = {
   nationalId: string
 }
 
+type InvolvedParty = Omit<AdditionalParty, 'nationalId'> & {
+  nationalId?: string | null
+}
+
+const isMinistry = (title: string) => title.toLowerCase().includes('ráðuneyti')
+
+const isSelectableAdditionalParty = (
+  party: InvolvedParty,
+  currentInvolvedPartyId?: string,
+): party is AdditionalParty =>
+  party.id !== currentInvolvedPartyId &&
+  isMinistry(party.title) &&
+  typeof party.nationalId === 'string' &&
+  party.nationalId.length > 0
+
+const toAdditionalPartyOption = (party: AdditionalParty) => ({
+  label: party.title,
+  value: {
+    id: party.id,
+    title: party.title,
+    slug: party.slug,
+    nationalId: party.nationalId,
+  },
+})
+
 export const AdditionalPartiesScreen = ({
   application,
   setSubmitButtonDisabled,
@@ -58,34 +83,25 @@ export const AdditionalPartiesScreen = ({
     [application.answers.additionalParties, watchedAdditionalParties],
   )
 
-  const additionalPartyOptions = useMemo(
-    () =>
-      involvedParties
-        ?.filter((party) => party.id !== currentInvolvedPartyId)
-        .filter(
-          (party): party is AdditionalParty =>
-            typeof party.nationalId === 'string' && party.nationalId.length > 0,
-        )
-        .map((party) => ({
-          label: party.title,
-          value: {
-            id: party.id,
-            title: party.title,
-            slug: party.slug,
-            nationalId: party.nationalId,
-          },
-        })) ?? [],
-    [currentInvolvedPartyId, involvedParties],
-  )
+  const additionalPartyOptions = useMemo(() => {
+    if (!involvedParties) {
+      return []
+    }
+
+    return involvedParties
+      .filter((party) =>
+        isSelectableAdditionalParty(party, currentInvolvedPartyId),
+      )
+      .map(toAdditionalPartyOption)
+  }, [currentInvolvedPartyId, involvedParties])
 
   const selectedAdditionalPartyOptions = useMemo(
     () =>
       currentAdditionalParties
-        .filter((party) => party.id !== currentInvolvedPartyId)
-        .map((party) => ({
-          label: party.title,
-          value: party,
-        })),
+        .filter((party) =>
+          isSelectableAdditionalParty(party, currentInvolvedPartyId),
+        )
+        .map(toAdditionalPartyOption),
     [currentAdditionalParties, currentInvolvedPartyId],
   )
 
