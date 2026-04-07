@@ -8,6 +8,7 @@ export const InputFields = {
   },
   [Routes.TYPE_SELECTION]: {
     applicationType: 'applicationType',
+    reader: 'reader',
   },
   [Routes.ADVERT]: {
     department: 'advert.department',

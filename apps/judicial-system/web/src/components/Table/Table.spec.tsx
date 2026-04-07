@@ -47,26 +47,24 @@ describe('Table', () => {
     const thead = [
       {
         title: 'Title',
-        sortBy: 'indictmentAppealDeadline' as sortableTableColumn,
+        sortBy: 'courtDate' as sortableTableColumn,
       },
     ]
 
     const data: CaseListEntry[] = [
       {
-        created: '2021-01-01T00:00:00Z',
         id: faker.datatype.uuid(),
-        indictmentAppealDeadline: '2021-01-01T00:00:00Z',
+        courtDate: '2021-01-01T00:00:00Z',
       },
       {
-        created: '2021-01-02T00:00:00Z',
         id: faker.datatype.uuid(),
-        indictmentAppealDeadline: '2021-01-02T00:00:00Z',
+        courtDate: '2021-01-02T00:00:00Z',
       },
     ]
 
     const columns = [
       {
-        cell: (row: CaseListEntry) => <p>{row.indictmentAppealDeadline}</p>,
+        cell: (row: CaseListEntry) => <p>{row.courtDate}</p>,
       },
     ]
 
@@ -78,7 +76,7 @@ describe('Table', () => {
       </IntlProviderWrapper>,
     )
 
-    await clickButtonByTestId('indictmentAppealDeadlineSortButton')
+    await clickButtonByTestId('courtDateSortButton')
 
     const tableRows = await screen.findAllByTestId('tableRow')
 
@@ -86,7 +84,7 @@ describe('Table', () => {
     expect(tableRows[0]).toHaveTextContent('2021-01-01T00:00:00Z')
     expect(tableRows[1]).toHaveTextContent('2021-01-02T00:00:00Z')
 
-    await clickButtonByTestId('indictmentAppealDeadlineSortButton')
+    await clickButtonByTestId('courtDateSortButton')
 
     // The second click sorts by descending order, so the first row should be the one with the latest date
     const tableRows2 = await screen.findAllByTestId('tableRow')
@@ -104,12 +102,10 @@ describe('Table', () => {
 
     const data: CaseListEntry[] = [
       {
-        created: '2021-01-01T00:00:00Z',
         id: faker.datatype.uuid(),
         defendants: [{ id: '', nationalId: 'string', name: 'Jon Harring Sr.' }],
       },
       {
-        created: '2021-01-02T00:00:00Z',
         id: faker.datatype.uuid(),
         defendants: [{ id: '', nationalId: 'string', name: 'Bono Stingsson' }],
       },
@@ -154,12 +150,10 @@ describe('Table', () => {
 
     const data: CaseListEntry[] = [
       {
-        created: '2021-01-01T00:00:00Z',
         id: faker.datatype.uuid(),
         state: CaseState.DRAFT,
       },
       {
-        created: '2021-01-02T00:00:00Z',
         id: faker.datatype.uuid(),
         state: CaseState.SUBMITTED,
       },
