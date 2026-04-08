@@ -61,6 +61,7 @@ export * from './lib/Drawer/Drawer'
 export * from './lib/ProblemTemplate/ProblemTemplate'
 export * from './lib/ProblemTemplate/ProblemTemplate.css'
 export * from './lib/InfoCardGrid'
+export * from './lib/FlowStepper'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'

@@ -55,6 +55,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
   | 'isAcquittedByPublicProsecutionOffice'
+  | 'defendantHasRequestedAppeal'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -459,10 +460,6 @@ export class VerdictService {
         verdict,
       ),
     })
-
-    if (!createdDocument) {
-      return { delivered: false }
-    }
 
     // update existing verdict with the external document id returned from the police
     await this.updateVerdict(

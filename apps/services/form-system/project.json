@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
-  "tags": ["scope:nest"],
+  "tags": ["scope:form-system-api"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",

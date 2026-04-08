@@ -64,14 +64,16 @@ import {
   publicProsecutionIndictmentsReviewedWhereOptions,
 } from './whereOptions/publicProsecution'
 import {
-  publicProsecutionOfficeAcquittedIndictmentsWhereOptions,
+  publicProsecutionOfficeIndictmentsAcquittedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   publicProsecutionOfficeIndictmentsInReviewWhereOptions,
   publicProsecutionOfficeIndictmentsNewWhereOptions,
+  publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
   publicProsecutionOfficeIndictmentsReviewedWhereOptions,
   publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
 } from './whereOptions/publicProsecutionOffice'
+import { CaseWhereOptions } from './caseTable.types'
 
 export const userAccessWhereOptions = (user: User): WhereOptions => {
   if (isCourtOfAppealsUser(user)) {
@@ -111,7 +113,7 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
 
 export const caseTableWhereOptions: Record<
   CaseTableType,
-  (user: User) => WhereOptions
+  (user: User) => CaseWhereOptions
 > = {
   [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
     courtOfAppealsRequestCasesInProgressWhereOptions,
@@ -157,8 +159,10 @@ export const caseTableWhereOptions: Record<
     publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]:
     publicProsecutionOfficeIndictmentsAppealedWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS]:
-    publicProsecutionOfficeAcquittedIndictmentsWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED]:
+    publicProsecutionOfficeIndictmentsAcquittedWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL]:
+    publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]:
     prosecutionRequestCasesInProgressWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]:

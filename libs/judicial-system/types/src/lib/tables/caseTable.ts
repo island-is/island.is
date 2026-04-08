@@ -36,11 +36,12 @@ import {
   publicProsecutionIndictmentsReviewed,
 } from './caseTables/prosecution'
 import {
-  publicProsecutionOfficeAcquittedIndictments,
+  publicProsecutionOfficeIndictmentsAcquitted,
   publicProsecutionOfficeIndictmentsAppealed,
   publicProsecutionOfficeIndictmentsAppealPeriodExpired,
   publicProsecutionOfficeIndictmentsInReview,
   publicProsecutionOfficeIndictmentsNew,
+  publicProsecutionOfficeIndictmentsRequestedAppeal,
   publicProsecutionOfficeIndictmentsReviewed,
   publicProsecutionOfficeIndictmentsSentToPrisonAdmin,
 } from './caseTables/publicProsecutionOffice'
@@ -94,11 +95,13 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
     publicProsecutionOfficeIndictmentsSentToPrisonAdmin,
   PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED:
     publicProsecutionOfficeIndictmentsAppealed,
+  PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED:
+    publicProsecutionOfficeIndictmentsAcquitted,
+  PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL:
+    publicProsecutionOfficeIndictmentsRequestedAppeal,
   PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW:
     publicProsecutionIndictmentsInReview,
   PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED: publicProsecutionIndictmentsReviewed,
-  PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS:
-    publicProsecutionOfficeAcquittedIndictments,
   PROSECUTION_REQUEST_CASES_IN_PROGRESS: prosecutionRequestCasesInProgress,
   PROSECUTION_REQUEST_CASES_ACTIVE: prosecutionRequestCasesActive,
   PROSECUTION_REQUEST_CASES_APPEALED: prosecutionRequestCasesAppealed,

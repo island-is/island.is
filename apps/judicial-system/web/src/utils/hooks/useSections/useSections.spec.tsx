@@ -110,8 +110,11 @@ describe('useSections getSections', () => {
       id: faker.datatype.uuid(),
       state: CaseState.ACCEPTED,
       policeCaseNumbers: [],
-      appealState: CaseAppealState.COMPLETED,
-      appealRulingDecision: CaseAppealRulingDecision.REMAND,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: CaseAppealState.COMPLETED,
+        appealRulingDecision: CaseAppealRulingDecision.REMAND,
+      },
     }
 
     expect(result.current.getSections(c, u)).toStrictEqual([

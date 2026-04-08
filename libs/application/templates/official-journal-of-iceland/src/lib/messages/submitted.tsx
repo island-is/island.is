@@ -29,6 +29,11 @@ export const submitted = {
       defaultMessage: 'Endurhlaða',
       description: 'Reload button text',
     },
+    resubmit: {
+      id: 'ojoi.application:submitted.buttons.resubmit',
+      defaultMessage: 'Reyna aftur',
+      description: 'Resubmit button text when initial submission failed',
+    },
   }),
   errors: defineMessages({
     caseErrorTitle: {

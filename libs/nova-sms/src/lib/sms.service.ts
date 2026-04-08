@@ -4,6 +4,7 @@ import {
   createEnhancedFetch,
   type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { DogStatsD } from '@island.is/infra-metrics'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
@@ -48,6 +49,7 @@ export class NovaError extends Error {
 @Injectable()
 export class SmsService {
   private readonly fetch: EnhancedFetchAPI
+  private readonly metrics = new DogStatsD({ prefix: 'nova-sms.' })
 
   constructor(
     @Inject(smsModuleConfig.KEY)
@@ -138,6 +140,8 @@ export class SmsService {
           response.status,
         )
       }
+
+      this.metrics.increment('sent', 1, options?.metricTags)
 
       // Map to simplified result
       return this.mapToSendResult(data)

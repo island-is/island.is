@@ -144,7 +144,7 @@ export interface SendSmsOptions {
    */
   from?: string
   /**
-   * SMS payer identifier — used to look up payer-specific Nova credentials
+   * Additional tags to include in metrics
    */
-  payer?: string
+  metricTags?: Record<string, string>
 }

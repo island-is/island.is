@@ -2,12 +2,7 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import type { User } from '@island.is/judicial-system/types'
-import {
-  CaseTableType,
-  IndictmentCaseReviewDecision,
-  InstitutionType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 
 import { CaseRepositoryService } from '../repository'
 import { CaseTableService } from './caseTable.service'
@@ -19,23 +14,15 @@ const prosecutionUser = (id: string): User =>
     institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
   } as User)
 
-const publicProsecutionOfficeUser = (id: string): User =>
-  ({
-    id,
-    role: UserRole.PUBLIC_PROSECUTOR_STAFF,
-    institution: {
-      id: 'public-prosecutors-office-id',
-      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-    },
-  } as User)
-
 describe('CaseTableService', () => {
   let service: CaseTableService
   let mockFindAll: jest.Mock
+  let mockFindOne: jest.Mock
   let mockEscape: jest.Mock
 
   beforeEach(async () => {
     mockFindAll = jest.fn()
+    mockFindOne = jest.fn()
     mockEscape = jest.fn((value: string) => `'${value.replace(/'/g, "''")}'`)
 
     const sequelizeToken = getConnectionToken()
@@ -45,7 +32,7 @@ describe('CaseTableService', () => {
         CaseTableService,
         {
           provide: CaseRepositoryService,
-          useValue: { findAll: mockFindAll },
+          useValue: { findAll: mockFindAll, findOne: mockFindOne },
         },
         {
           provide: sequelizeToken,
@@ -55,143 +42,6 @@ describe('CaseTableService', () => {
     }).compile()
 
     service = module.get(CaseTableService)
-  })
-
-  describe('getCaseTableRows', () => {
-    it('calls findAll with where from caseTableWhereOptions for the given type and user', async () => {
-      mockFindAll.mockResolvedValue([])
-
-      const user = prosecutionUser('user-1')
-      const type = CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS
-
-      await service.getCaseTableRows(type, user)
-
-      expect(mockFindAll).toHaveBeenCalledTimes(1)
-      const call = mockFindAll.mock.calls[0][0]
-      expect(call).toHaveProperty('where')
-      expect(call).toHaveProperty('attributes')
-      expect(call).toHaveProperty('include')
-    })
-
-    it('returns rowCount and rows from repository result', async () => {
-      const user = prosecutionUser('user-1')
-      const type = CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS
-
-      const mockCase = {
-        id: 'case-1',
-        type: 'CUSTODY',
-        state: 'DRAFT',
-        policeCaseNumbers: [],
-        defendants: [],
-        toJSON: function () {
-          return { ...this, toJSON: undefined }
-        },
-      }
-
-      mockFindAll.mockResolvedValue([mockCase])
-
-      const result = await service.getCaseTableRows(type, user)
-
-      expect(result.rowCount).toBe(1)
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0]).toMatchObject({
-        caseId: 'case-1',
-        isMyCase: expect.any(Boolean),
-        actionOnRowClick: expect.any(String),
-        contextMenuActions: expect.any(Array),
-        cells: expect.any(Array),
-      })
-    })
-
-    describe('public prosecution office defendant filtering', () => {
-      const buildMockIndictmentCase = () => ({
-        id: 'case-1',
-        type: 'INDICTMENT',
-        state: 'ACCEPTED',
-        policeCaseNumbers: ['007-2026'],
-        defendants: [
-          {
-            id: 'def-accept-not-acquitted',
-            indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-            verdicts: [{ isAcquittedByPublicProsecutionOffice: false }],
-          },
-          {
-            id: 'def-appeal-not-acquitted',
-            indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
-            verdicts: [{ isAcquittedByPublicProsecutionOffice: false }],
-          },
-          {
-            id: 'def-accept-acquitted',
-            indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-            verdicts: [{ isAcquittedByPublicProsecutionOffice: true }],
-          },
-        ],
-        toJSON: function () {
-          return { ...this, toJSON: undefined }
-        },
-      })
-
-      it('keeps only acquitted defendants on acquitted indictments table', async () => {
-        const user = publicProsecutionOfficeUser('user-ppo-1')
-        mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
-
-        const result = await service.getCaseTableRows(
-          CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS,
-          user,
-        )
-
-        expect(result.rowCount).toBe(1)
-        expect(result.rows[0].defendantIds).toEqual(['def-accept-acquitted'])
-      })
-
-      it('keeps only non-acquitted defendants for non-reviewed tables', async () => {
-        const user = publicProsecutionOfficeUser('user-ppo-2')
-        mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
-
-        const result = await service.getCaseTableRows(
-          CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW,
-          user,
-        )
-
-        expect(result.rowCount).toBe(2)
-        expect(result.rows.map((r) => r.defendantIds?.[0])).toEqual(
-          expect.arrayContaining([
-            'def-accept-not-acquitted',
-            'def-appeal-not-acquitted',
-          ]),
-        )
-      })
-
-      it('keeps only ACCEPT and non-acquitted defendants on reviewed table', async () => {
-        const user = publicProsecutionOfficeUser('user-ppo-3')
-        mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
-
-        const result = await service.getCaseTableRows(
-          CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
-          user,
-        )
-
-        expect(result.rowCount).toBe(1)
-        expect(result.rows[0].defendantIds).toEqual([
-          'def-accept-not-acquitted',
-        ])
-      })
-
-      it('keeps only APPEAL and non-acquitted defendants on appealed table', async () => {
-        const user = publicProsecutionOfficeUser('user-ppo-4')
-        mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
-
-        const result = await service.getCaseTableRows(
-          CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED,
-          user,
-        )
-
-        expect(result.rowCount).toBe(1)
-        expect(result.rows[0].defendantIds).toEqual([
-          'def-appeal-not-acquitted',
-        ])
-      })
-    })
   })
 
   describe('searchCases', () => {
@@ -233,7 +83,8 @@ describe('CaseTableService', () => {
             key
           ]),
       }
-      mockFindAll.mockResolvedValue([mockCase])
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
 
       const result = await service.searchCases('456', user)
 
@@ -241,6 +92,7 @@ describe('CaseTableService', () => {
       expect(result.rows[0].caseId).toBe('case-1')
       expect(result.rows[0].matchedField).toBe('policeCaseNumbers')
       expect(result.rows[0].matchedValue).toBe('456-2024')
+      expect(result.rows[0].caseTableTypes).toEqual([])
     })
 
     it('sorts exact matches before partial matches', async () => {
@@ -273,7 +125,8 @@ describe('CaseTableService', () => {
             ]),
         },
       ]
-      mockFindAll.mockResolvedValue(mockCases)
+      mockFindAll.mockResolvedValueOnce(mockCases)
+      mockFindAll.mockResolvedValue([])
 
       const result = await service.searchCases('123-2024', user)
 
@@ -285,6 +138,50 @@ describe('CaseTableService', () => {
         (r) => r.matchedValue === '123-2024' && r.caseId === 'case-2',
       )
       expect(exactIndex).toBeLessThan(partialIndex)
+    })
+  })
+
+  describe('getCaseTableTypesForCases', () => {
+    it('returns empty map for empty caseIds', async () => {
+      const user = prosecutionUser('user-1')
+
+      const result = await service.getCaseTableTypesForCases([], user)
+
+      expect(result.size).toBe(0)
+      expect(mockFindAll).not.toHaveBeenCalled()
+    })
+
+    it('returns case id to table types map', async () => {
+      const user = prosecutionUser('user-1')
+      mockFindAll
+        .mockResolvedValueOnce([{ id: 'case-1' }])
+        .mockResolvedValueOnce([{ id: 'case-1' }, { id: 'case-2' }])
+        .mockResolvedValue([])
+
+      const result = await service.getCaseTableTypesForCases(
+        ['case-1', 'case-2'],
+        user,
+      )
+
+      expect(result.get('case-1')).toEqual(
+        expect.arrayContaining([expect.any(String), expect.any(String)]),
+      )
+      expect(result.get('case-2')).toEqual([expect.any(String)])
+    })
+  })
+
+  describe('getCaseTableMembership', () => {
+    it('returns case table types for case (access enforced by controller guards)', async () => {
+      mockFindAll
+        .mockResolvedValueOnce([{ id: 'case-1' }])
+        .mockResolvedValue([])
+
+      const result = await service.getCaseTableMembership(
+        'case-1',
+        prosecutionUser('user-1'),
+      )
+
+      expect(result).toEqual([expect.any(String)])
     })
   })
 })

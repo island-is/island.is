@@ -15,10 +15,12 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetDrugCertificatesQuery } from './Medicine.generated'
 import { useNavigate } from 'react-router-dom'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  useHealthPlausibleSwap()
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (

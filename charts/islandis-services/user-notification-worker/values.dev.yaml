@@ -18,7 +18,6 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'user-notification-worker'
 args:
-  - '--no-experimental-fetch'
   - 'main.cjs'
   - '--job=worker'
 command:
@@ -71,6 +70,7 @@ grantNamespaces:
   - 'islandis'
   - 'identity-server-delegation'
   - 'application-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -140,11 +140,11 @@ secrets:
   IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-  NOVA_LANDLAEKNIR_PASSWORD: '/k8s/user-notification/NOVA_LANDLAEKNIR_PASSWORD'
-  NOVA_LANDLAEKNIR_USERNAME: '/k8s/user-notification/NOVA_LANDLAEKNIR_USERNAME'
-  NOVA_PASSWORD: '/k8s/user-notification/NOVA_PASSWORD'
-  NOVA_URL: '/k8s/user-notification/NOVA_URL'
-  NOVA_USERNAME: '/k8s/user-notification/NOVA_USERNAME'
+  NOVA_LANDLAEKNIR_PASSWORD: '/k8s/NOVA_LANDLAEKNIR_PASSWORD'
+  NOVA_LANDLAEKNIR_USERNAME: '/k8s/NOVA_LANDLAEKNIR_USERNAME'
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD'
+  NOVA_URL: '/k8s/NOVA_URL'
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

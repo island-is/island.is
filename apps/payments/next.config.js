@@ -14,7 +14,7 @@ const {
   CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
-  NEXT_PUBLIC_ALLOW_APPLE_PAY,
+  ALLOW_APPLE_PAY,
 } = process.env
 
 const apiPath = '/api'
@@ -27,7 +27,17 @@ const nextConfig = {
   nx: {
     svgr: false,
   },
-  webpack: (config, options) => {
+  webpack: (config, { dev }) => {
+    // Workaround for Firefox "unterminated comment" when loading vanilla-extract
+    // global.css (gzip+base64 in magic comments). Shorten those comments in dev
+    // so Firefox's parser doesn't choke (Firefox-only, dev-only bug).
+    if (dev) {
+      config.optimization = config.optimization || {}
+      config.optimization.moduleIds = 'deterministic'
+      config.output = config.output || {}
+      config.output.pathinfo = false
+      config.plugins = config.plugins || []
+    }
     return config
   },
   serverRuntimeConfig: {
@@ -42,12 +52,9 @@ const nextConfig = {
     graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
     basepath: BASEPATH,
+    allowApplePay: ALLOW_APPLE_PAY || 'false',
   },
   basePath: `${BASEPATH}`,
-  env: {
-    API_MOCKS: process.env.API_MOCKS || '',
-    NEXT_PUBLIC_ALLOW_APPLE_PAY: NEXT_PUBLIC_ALLOW_APPLE_PAY || 'false',
-  },
 }
 
 const plugins = [

@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
+
+import { METRICS_PREFIX } from '../utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { SmsService } from '@island.is/nova-sms'
@@ -20,8 +23,17 @@ export type SmsQueueMessage = {
   smsPayer?: string
 }
 
+/**
+ * Normalize a phone number to E.164 format by stripping hyphens/spaces.
+ * e.g. "+354-1234567" → "+3541234567"
+ */
+const normalizePhoneNumber = (phoneNumber: string): string =>
+  phoneNumber.replace(/[\s-]/g, '')
+
 @Injectable()
 export class SmsWorkerService {
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
+
   constructor(
     private readonly smsService: SmsService,
 
@@ -48,11 +60,40 @@ export class SmsWorkerService {
 
       this.logger.info('SMS worker received message', { messageId })
 
-      await this.smsService.sendSms(mobilePhoneNumber, smsContent, {
-        payer: smsPayer,
-      })
+      const normalizedNumber = normalizePhoneNumber(mobilePhoneNumber)
 
-      this.logger.info('SMS notification sent', { messageId })
+      const result = await this.smsService.sendSms(
+        normalizedNumber,
+        smsContent,
+        {
+          metricTags: smsPayer ? { payer: smsPayer } : undefined,
+        },
+      )
+
+      const msg = result.messages[0]
+      if (!msg) {
+        this.logger.error('SMS response contained no messages', { messageId })
+        throw new Error(
+          `SMS delivery failed for ${messageId}: no messages in response`,
+        )
+      }
+      if (msg.error) {
+        this.logger.error('SMS message-level error from Nova', {
+          messageId,
+          status: msg.status,
+          errorDetails: msg.errorDetails,
+        })
+        throw new Error(
+          `SMS delivery failed for ${messageId}: ${
+            msg.errorDetails ?? msg.status
+          }`,
+        )
+      }
+
+      this.logger.info('SMS notification sent', {
+        messageId,
+        status: msg?.status,
+      })
 
       if (userNotificationId) {
         try {
@@ -60,7 +101,11 @@ export class SmsWorkerService {
             userNotificationId,
             actorNotificationId,
             channel: NotificationChannel.Sms,
-            sentTo: mobilePhoneNumber,
+            sentTo: normalizedNumber,
+          })
+          this.metrics.increment('notification.delivery', 1, {
+            channel: 'sms',
+            delivery_type: actorNotificationId ? 'delegation' : 'direct',
           })
         } catch (error) {
           this.logger.error('Error writing SMS delivery record to db', {

@@ -66,13 +66,14 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=1382 --enable-source-maps -r dd-trace/init'
   NOVA_SENDER_NAME: 'Island Staging'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
   RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
   REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+  REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SERVERSIDE_FEATURES_ON: ''
   SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
   SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
@@ -100,6 +101,7 @@ env:
   XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
   XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
   XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
+  XROAD_FINANCES_V3_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
   XROAD_FJS_BANKINFO_PATH: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1'
   XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
@@ -161,6 +163,7 @@ grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -179,6 +182,18 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'application-payment-callback-xrd.internal.staging01.devland.is'
+      - 'application-callback-xrd.internal.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-internal'
+        namespace: 'envoy-gateway-internal'
+    rules:
+      - matches:
+          - pathPrefix: '/application-payment'
+          - pathPrefix: '/applications'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
 ingress:
@@ -234,10 +249,10 @@ replicaCount:
 resources:
   limits:
     cpu: '600m'
-    memory: '1024Mi'
+    memory: '1536Mi'
   requests:
     cpu: '200m'
-    memory: '512Mi'
+    memory: '768Mi'
 secrets:
   ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
   ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
@@ -269,6 +284,10 @@ secrets:
   NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
   NOVA_URL: '/k8s/NOVA_URL_V1'
   NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
+  REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+  REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+  REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+  REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
   SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'

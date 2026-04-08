@@ -3,6 +3,10 @@ mutation vehicleBulkMileagePostFile($input: PostVehicleBulkMileageFileInput!) {
     requestId
     errorMessage
     errorCode
+    origin {
+      code
+      name
+    }
   }
 }
 

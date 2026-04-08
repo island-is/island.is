@@ -121,7 +121,7 @@ export const userNotificationServiceSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db()
     .command('node')
-    .args('--no-experimental-fetch', 'main.cjs')
+    .args('main.cjs')
     .redis()
     .env(getEnv(services))
     .secrets({
@@ -131,6 +131,9 @@ export const userNotificationServiceSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
@@ -195,7 +198,7 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.cjs', '--job=worker')
+    .args('main.cjs', '--job=worker')
     .db()
     .migrations()
     .redis()
@@ -230,11 +233,11 @@ export const userNotificationWorkerSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
-      NOVA_USERNAME: `/k8s/${serviceName}/NOVA_USERNAME`,
-      NOVA_PASSWORD: `/k8s/${serviceName}/NOVA_PASSWORD`,
-      NOVA_URL: `/k8s/${serviceName}/NOVA_URL`,
-      NOVA_LANDLAEKNIR_USERNAME: `/k8s/${serviceName}/NOVA_LANDLAEKNIR_USERNAME`,
-      NOVA_LANDLAEKNIR_PASSWORD: `/k8s/${serviceName}/NOVA_LANDLAEKNIR_PASSWORD`,
+      NOVA_LANDLAEKNIR_USERNAME: `/k8s/NOVA_LANDLAEKNIR_USERNAME`,
+      NOVA_LANDLAEKNIR_PASSWORD: `/k8s/NOVA_LANDLAEKNIR_PASSWORD`,
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
@@ -249,7 +252,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .serviceAccount(serviceCleanupWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.cjs', '--job=cleanup')
+    .args('main.cjs', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
     .extraAttributes({
@@ -268,12 +271,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db({ name: 'user-notification' })
     .command('node')
-    .args(
-      '--no-experimental-fetch',
-      'main.cjs',
-      '--job=worker',
-      '--isBirthdayWorker',
-    )
+    .args('main.cjs', '--job=worker', '--isBirthdayWorker')
     .redis()
     .env({ ...getEnv(services) })
     .secrets({
@@ -283,6 +281,9 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .resources({
       limits: {

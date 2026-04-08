@@ -20,7 +20,6 @@ export const SimpleInfoCard = ({
         flexDirection="row"
         justifyContent="spaceBetween"
         marginBottom={3}
-        role="heading"
       >
         <Text variant="eyebrow" color={eyebrowColor}>
           {eyebrow}
