@@ -40,7 +40,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
+
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
@@ -122,7 +122,7 @@ const AppealToCourtOfAppeals = () => {
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
         <PageTitle previousUrl={previousUrl}>
-          {formatMessage(strings.title)}
+          Kæra til Landsréttar
         </PageTitle>
         <Box component="section" marginBottom={5}>
           <Text variant="h2" as="h2">
@@ -133,10 +133,7 @@ const AppealToCourtOfAppeals = () => {
           )}
         </Box>
         <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.appealBriefTitle)}
-            required
-          />
+          <SectionHeading title="Kæra" required />
           <InputFileUpload
             name="appealBrief"
             files={uploadFiles.filter(
@@ -161,15 +158,12 @@ const AppealToCourtOfAppeals = () => {
           component="section"
           marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
-          <SectionHeading
-            title={formatMessage(strings.appealCaseFilesTitle)}
-            marginBottom={1}
-          />
+          <SectionHeading title="Gögn" marginBottom={1} />
           <Text marginBottom={3} whiteSpace="pre">
-            {formatMessage(strings.appealCaseFilesSubtitle)}
+            {'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.'}
             {'\n'}
             {!isDefenceUser(user) &&
-              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
+              'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
@@ -199,11 +193,7 @@ const AppealToCourtOfAppeals = () => {
         <FormFooter
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
-          nextButtonText={formatMessage(
-            someFilesError
-              ? strings.uploadFailedNextButtonText
-              : strings.nextButtonText,
-          )}
+          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda kæru'}
           nextIsDisabled={
             !uploadFiles.find((file) => file.category === appealBriefType) ||
             isTransitioningCase
@@ -215,8 +205,8 @@ const AppealToCourtOfAppeals = () => {
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (
         <Modal
-          title={formatMessage(strings.appealSentModalTitle)}
-          text={formatMessage(strings.appealSentModalText)}
+          title="Kæra hefur verið send viðkomandi héraðsdómstól"
+          text="Tilkynning um móttöku kæru verður send á aðila máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
             onClick: () => router.push(previousUrl),

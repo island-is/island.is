@@ -10,7 +10,6 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isDefenceUser,
   isIndictmentCase,
@@ -31,10 +30,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseFileCategory,
   NotificationType,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -42,8 +39,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import { strings } from './AppealCaseFiles.strings'
+import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealFiles = () => {
   const { workingCase } = useContext(FormContext)
@@ -132,9 +128,7 @@ const AppealFiles = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>
-          {formatMessage(strings.title)}
-        </PageTitle>
+        <PageTitle previousUrl={previousUrl}>Gögn</PageTitle>
         <Box marginBottom={7}>
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
@@ -142,18 +136,7 @@ const AppealFiles = () => {
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (
             <Text variant="h5" as="h5">
-              {workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.APPEAL ||
-              workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-                ? formatMessage(strings.appealActorInCourt, {
-                    appealedByProsecutor:
-                      workingCase.appealedByRole === UserRole.PROSECUTOR,
-                  })
-                : formatMessage(strings.appealActorAndDate, {
-                    appealedByProsecutor:
-                      workingCase.appealedByRole === UserRole.PROSECUTOR,
-                    date: formatDate(workingCase.appealedDate, 'PPPp'),
-                  })}
+              {getAppealActorText(workingCase)}
             </Text>
           )}
         </Box>
@@ -161,15 +144,14 @@ const AppealFiles = () => {
           component="section"
           marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
-          <SectionHeading
-            title={formatMessage(strings.appealCaseFilesTitle)}
-            marginBottom={1}
-          />
+          <SectionHeading title="Gögn" marginBottom={1} />
           <Text marginBottom={3} whiteSpace="pre">
-            {formatMessage(strings.appealCaseFilesSubtitle)}
+            {
+              'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.'
+            }
             {'\n'}
             {!isDefenceUser(user) &&
-              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
+              'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
@@ -201,11 +183,7 @@ const AppealFiles = () => {
         <FormFooter
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
-          nextButtonText={formatMessage(
-            someFilesError
-              ? strings.uploadFailedNextButtonText
-              : strings.nextButtonText,
-          )}
+          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda gögn'}
           nextIsLoading={!allFilesDoneOrError}
           nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
@@ -213,10 +191,8 @@ const AppealFiles = () => {
       </FormContentContainer>
       {visibleModal === true && (
         <Modal
-          title={formatMessage(strings.appealCaseFilesUpdatedModalTitle)}
-          text={formatMessage(strings.appealCaseFilesUpdatedModalText, {
-            isDefenceUser: isDefenceUser(user),
-          })}
+          title="Gögn hafa verið send Landsrétti"
+          text="Tilkynning hefur verið send Landsrétti og aðilum máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
             onClick: () => router.push(previousUrl),

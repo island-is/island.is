@@ -6,6 +6,7 @@ import {
 import { isProsecutionUser } from '@island.is/judicial-system/types'
 import {
   Case,
+  CaseAppealDecision,
   CaseAppealState,
   CaseCustodyRestrictions,
   CivilClaimant,
@@ -15,6 +16,7 @@ import {
   Notification,
   NotificationType,
   User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mapStringToGender = (gender?: string | null): Gender | undefined =>
@@ -197,6 +199,107 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       ) &&
       civilClaimant.spokespersonIsLawyer,
   )
+
+/**
+ * Returns a human-readable description of who appealed and when.
+ *
+ * Examples:
+ * - "Sækjandi kærði í þinghaldi"
+ * - "Kært af sækjanda 1. apríl 2026 kl. 10:00"
+ * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
+ * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
+ */
+export const getAppealActorText = (
+  workingCase: {
+    prosecutorAppealDecision?: CaseAppealDecision | null
+    accusedAppealDecision?: CaseAppealDecision | null
+    appealedByRole?: UserRole | null
+    appealedDate?: string | null
+    appealCase?: { appealedByNationalId?: string | null } | null
+    defendants?: Defendant[] | null
+    civilClaimants?: CivilClaimant[] | null
+  },
+): string => {
+  const appealedInCourt =
+    workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+    workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+
+  if (appealedInCourt) {
+    return workingCase.appealedByRole === UserRole.PROSECUTOR
+      ? 'Sækjandi kærði í þinghaldi'
+      : 'Varnaraðili kærði í þinghaldi'
+  }
+
+  const dateStr = formatDate(workingCase.appealedDate, 'PPPp')
+
+  if (workingCase.appealedByRole === UserRole.PROSECUTOR) {
+    return `Kært af sækjanda ${dateStr}`
+  }
+
+  const party = getAppealingPartyInfo(
+    workingCase.appealCase?.appealedByNationalId,
+    workingCase,
+  )
+
+  return party
+    ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+    : `Kært af verjanda ${dateStr}`
+}
+
+/**
+ * Given an appealedByNationalId, find the appealing party among confirmed
+ * defenders and civil claimant spokespersons.
+ *
+ * Search order: confirmed defenders first, then confirmed civil claimant
+ * spokespersons.
+ *
+ * Returns the role label and name, or undefined if not found.
+ */
+export const getAppealingPartyInfo = (
+  appealedByNationalId?: string | null,
+  workingCase?: {
+    defendants?: Defendant[] | null
+    civilClaimants?: CivilClaimant[] | null
+  },
+): { role: string; name: string } | undefined => {
+  if (!appealedByNationalId || !workingCase) {
+    return undefined
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(appealedByNationalId)
+
+  // Check confirmed defenders first
+  const defender = workingCase.defendants?.find(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizedId.includes(defendant.defenderNationalId),
+  )
+
+  if (defender) {
+    return { role: 'Verjandi', name: defender.defenderName ?? '' }
+  }
+
+  // Then check confirmed civil claimant spokespersons
+  const civilClaimant = workingCase.civilClaimants?.find(
+    (cc) =>
+      cc.hasSpokesperson &&
+      cc.isSpokespersonConfirmed &&
+      cc.spokespersonNationalId &&
+      normalizedId.includes(cc.spokespersonNationalId),
+  )
+
+  if (civilClaimant) {
+    return {
+      role: civilClaimant.spokespersonIsLawyer
+        ? 'Lögmaður'
+        : 'Réttargæslumaður',
+      name: civilClaimant.spokespersonName ?? '',
+    }
+  }
+
+  return undefined
+}
 
 // Use the gender of the single defendant if there is only one,
 // otherwise default to male
