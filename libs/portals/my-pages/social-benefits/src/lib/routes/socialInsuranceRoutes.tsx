@@ -65,14 +65,14 @@ export const socialInsuranceRoutes = (userInfo: BffUser): PortalRoute[] => [
     name: m.personalTaxCredit,
     path: SocialInsuranceMaintenancePaths.SocialInsurancePersonalTaxCredit,
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-    key: 'MyPagesTRPersonalTaxCredit',
+    key: 'TRPersonalTaxCredit',
     element: <PersonalTaxCredit />,
   },
   {
     name: m.paymentTypesOverview,
     path: SocialInsuranceMaintenancePaths.SocialInsurancePaymentTypesOverview,
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-    key: 'MyPagesTRPaymentTypesOverview',
+    key: 'TRPaymentTypesOverview',
     element: <PaymentTypes />,
   },
 ]

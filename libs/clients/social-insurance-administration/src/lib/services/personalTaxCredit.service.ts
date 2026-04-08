@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   PersonalTaxCreditApi,
@@ -53,10 +54,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<TrWebApiServicesCommonClientsModelsGetTaxCardsReturn | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardsGet()
-      .catch((error) => {
-        if (error?.status === 404) return null
-        throw error
-      })
+      .catch(handle404)
   }
 
   async getTaxCardMonthsAndYears(
@@ -64,10 +62,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<TrWebApiServicesCommonClientsModelsYearWithMonthsDto[] | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsGet()
-      .catch((error) => {
-        if (error?.status === 404) return null
-        throw error
-      })
+      .catch(handle404)
   }
 
   async getSpouseDeceasedTaxAllowanceValidMonthsAndYears(

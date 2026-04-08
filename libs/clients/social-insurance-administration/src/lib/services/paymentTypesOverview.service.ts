@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   PaymentTypesOverviewApi,
@@ -24,10 +25,7 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   > {
     return this.paymentTypesOverviewApiWithAuth(user)
       .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet({})
-      .catch((error) => {
-        if (error?.status === 404) return null
-        throw error
-      })
+      .catch(handle404)
   }
 
   async getChildBenefitsInformation(
@@ -38,9 +36,6 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   > {
     return this.paymentTypesOverviewApiWithAuth(user)
       .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet({})
-      .catch((error) => {
-        if (error?.status === 404) return null
-        throw error
-      })
+      .catch(handle404)
   }
 }

@@ -1,13 +1,14 @@
-query GetPaymentTypesOverview {
-  socialInsurancePaymentTypesOverview {
-    paymentTypes {
-      paymentType
-      dateFrom
-      dateTo
-    }
-    childBenefits {
-      name
-      nationalId
-    }
+query GetPaymentTypes {
+  socialInsurancePaymentTypes {
+    name
+    dateFrom
+    dateTo
+  }
+}
+
+query GetChildBenefits {
+  socialInsuranceChildBenefits {
+    name
+    nationalId
   }
 }

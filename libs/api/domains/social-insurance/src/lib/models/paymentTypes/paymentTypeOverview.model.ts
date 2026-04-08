@@ -1,13 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsurancePaymentTypeOverview')
 export class PaymentTypeOverview {
-  @Field()
-  paymentType!: string
+  @Field({ nullable: true })
+  name?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   dateFrom?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   dateTo?: Date
 }

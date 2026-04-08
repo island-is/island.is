@@ -23,7 +23,7 @@ import { SocialInsuranceService } from '../socialInsurance.service'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
-@FeatureFlag(Features.isServicePortalMyPagesTRPersonalTaxCreditPageEnabled)
+@FeatureFlag(Features.isServicePortalTRPersonalTaxCreditPageEnabled)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 export class PersonalTaxCreditResolver {
   constructor(private readonly service: SocialInsuranceService) {}

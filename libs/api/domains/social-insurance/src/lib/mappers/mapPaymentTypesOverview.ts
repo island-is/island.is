@@ -8,7 +8,7 @@ import { PaymentTypeOverview } from '../models/paymentTypes/paymentTypeOverview.
 export const mapPaymentTypeOverview = (
   row: TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn,
 ): PaymentTypeOverview => ({
-  paymentType: row.paymentType ?? '',
+  name: row.paymentType ?? undefined,
   dateFrom: row.dateFrom ? new Date(row.dateFrom) : undefined,
   dateTo: row.dateTo ? new Date(row.dateTo) : undefined,
 })
@@ -16,6 +16,6 @@ export const mapPaymentTypeOverview = (
 export const mapChildBenefitInformation = (
   row: TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn,
 ): ChildBenefitInformation => ({
-  name: row.name ?? '',
+  name: row.name ?? undefined,
   nationalId: row.nationalId ?? undefined,
 })

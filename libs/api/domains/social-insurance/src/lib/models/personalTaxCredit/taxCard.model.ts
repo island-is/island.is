@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { YearWithMonths } from './taxCardMonthsAndYears.model'
 
 @ObjectType('SocialInsuranceTaxCardSummary')
@@ -6,14 +6,14 @@ export class TaxCardSummary {
   @Field(() => Number)
   percentage!: number
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validFrom?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validTo?: Date
 
-  @Field()
-  taxCardType!: string
+  @Field({ nullable: true })
+  type?: string
 }
 
 @ObjectType('SocialInsurancePersonalTaxCredit')

@@ -55,10 +55,10 @@ export const PersonalTaxCreditTable = ({
         </T.Head>
         <T.Body>
           {taxCards.map((card) => (
-            <T.Row key={`${card.taxCardType}-${card.validFrom}`}>
+            <T.Row key={`${card.type}-${card.validFrom}`}>
               <T.Data>
-                {card.taxCardType && taxCardTypeMessageMap[card.taxCardType]
-                  ? formatMessage(taxCardTypeMessageMap[card.taxCardType])
+                {card.type && taxCardTypeMessageMap[card.type]
+                  ? formatMessage(taxCardTypeMessageMap[card.type])
                   : '-'}
               </T.Data>
               <T.Data>

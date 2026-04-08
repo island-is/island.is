@@ -14,25 +14,37 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { PaymentTypesOverviewResult } from '../models/paymentTypes/paymentTypesOverviewResult.model'
+import { PaymentTypeOverview } from '../models/paymentTypes/paymentTypeOverview.model'
+import { ChildBenefitInformation } from '../models/paymentTypes/childBenefitInformation.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
-@FeatureFlag(Features.isServicePortalMyPagesTRPaymentTypesOverviewPageEnabled)
+@FeatureFlag(Features.isServicePortalTRPaymentTypesOverviewPageEnabled)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 export class PaymentTypesOverviewResolver {
   constructor(private readonly service: SocialInsuranceService) {}
 
-  @Query(() => PaymentTypesOverviewResult, {
-    name: 'socialInsurancePaymentTypesOverview',
+  @Query(() => [PaymentTypeOverview], {
+    name: 'socialInsurancePaymentTypes',
     nullable: true,
   })
   @Audit()
-  getPaymentTypesOverview(
+  getPaymentTypes(
     @CurrentUser() user: User,
-  ): Promise<PaymentTypesOverviewResult | null> {
-    return this.service.getPaymentTypesOverview(user)
+  ): Promise<PaymentTypeOverview[] | null> {
+    return this.service.getPaymentTypes(user)
+  }
+
+  @Query(() => [ChildBenefitInformation], {
+    name: 'socialInsuranceChildBenefits',
+    nullable: true,
+  })
+  @Audit()
+  getChildBenefits(
+    @CurrentUser() user: User,
+  ): Promise<ChildBenefitInformation[] | null> {
+    return this.service.getChildBenefits(user)
   }
 }

@@ -46,7 +46,8 @@ import {
   mapChildBenefitInformation,
   mapPaymentTypeOverview,
 } from './mappers/mapPaymentTypesOverview'
-import { PaymentTypesOverviewResult } from './models/paymentTypes/paymentTypesOverviewResult.model'
+import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
+import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -276,7 +277,7 @@ export class SocialInsuranceService {
         ...tc,
         validFrom: tc.validFrom ?? undefined,
         validTo: tc.validTo ?? undefined,
-        taxCardType: tc.taxCardType ?? '',
+        type: tc.taxCardType ?? undefined,
         percentage: tc.percentage ?? 0,
       })),
       canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
@@ -309,25 +310,21 @@ export class SocialInsuranceService {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async getPaymentTypesOverview(
+  async getPaymentTypes(
     user: User,
-  ): Promise<PaymentTypesOverviewResult | null> {
-    try {
-      const [paymentTypes, childBenefits] = await Promise.all([
-        this.paymentTypesOverviewClient.getPaymentTypesOverview(user),
-        this.paymentTypesOverviewClient.getChildBenefitsInformation(user),
-      ])
-      if (!paymentTypes && !childBenefits) return null
-      return {
-        paymentTypes: paymentTypes?.map(mapPaymentTypeOverview),
-        childBenefits: childBenefits?.map(mapChildBenefitInformation),
-      }
-    } catch (error) {
-      this.logger.warn('Payment types overview fetch failed', {
-        category: LOG_CATEGORY,
-        error,
-      })
-      throw error
-    }
+  ): Promise<PaymentTypeOverview[] | null> {
+    const data = await this.paymentTypesOverviewClient
+      .getPaymentTypesOverview(user)
+      .catch(handle404)
+    return data ? data.map(mapPaymentTypeOverview) : null
+  }
+
+  async getChildBenefits(
+    user: User,
+  ): Promise<ChildBenefitInformation[] | null> {
+    const data = await this.paymentTypesOverviewClient
+      .getChildBenefitsInformation(user)
+      .catch(handle404)
+    return data ? data.map(mapChildBenefitInformation) : null
   }
 }
