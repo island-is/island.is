@@ -141,7 +141,11 @@ export class SmsService {
         )
       }
 
-      this.metrics.increment('sent', 1, options?.metricTags)
+      this.metrics.increment(
+        'sent',
+        1,
+        options?.payer ? { payer: options.payer } : undefined,
+      )
 
       // Map to simplified result
       return this.mapToSendResult(data)
