@@ -595,8 +595,7 @@ export const m = defineMessages({
   },
   permissionApplicationsDescription: {
     id: 'ap.ids-admin:permission-applications-description',
-    defaultMessage:
-      'Applications that are currently using this permission.',
+    defaultMessage: 'Applications that are currently using this permission.',
   },
   permissionApplicationsEmpty: {
     id: 'ap.ids-admin:permission-applications-empty',
