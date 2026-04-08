@@ -81,10 +81,13 @@ export const EditClient = () => {
                 </div>
               }
             />
-            {client.modified && (
+            {selectedEnvironment.modified && (
               <Text variant="small">
                 {formatMessage(m.modified, {
-                  date: format(new Date(client.modified), 'dd.MM.yyyy HH:mm'),
+                  date: format(
+                    new Date(selectedEnvironment.modified),
+                    'dd.MM.yyyy HH:mm',
+                  ),
                 })}
               </Text>
             )}

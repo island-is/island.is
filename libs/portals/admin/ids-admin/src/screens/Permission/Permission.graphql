@@ -32,6 +32,8 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
   # Categories and Tags
   categoryIds
   tagIds
+
+  modified
 }
 
 query AuthAdminScope($input: ScopeInput!) {

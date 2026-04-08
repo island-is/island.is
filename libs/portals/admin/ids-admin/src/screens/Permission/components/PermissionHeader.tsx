@@ -21,10 +21,13 @@ export const PermissionHeader = () => {
         availableEnvironments={permission.availableEnvironments}
         onChange={onEnvironmentChange}
       />
-      {permission.modified && (
+      {selectedPermission.modified && (
         <Text variant="small">
           {formatMessage(m.modified, {
-            date: format(new Date(permission.modified), 'dd.MM.yyyy HH:mm'),
+            date: format(
+              new Date(selectedPermission.modified),
+              'dd.MM.yyyy HH:mm',
+            ),
           })}
         </Text>
       )}
