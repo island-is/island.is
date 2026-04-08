@@ -38,6 +38,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-general-mandate',
     defaultMessage: 'Allsherjarumboð',
   },
+  delegationTypeGeneralMandateOutgoing: {
+    id: 'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
+    defaultMessage: 'Allsherjarumboð þú hefur veitt öðrum',
+  },
+  delegationTypeGeneralMandateIncoming: {
+    id: 'sp.access-control-delegations:delegation-type-general-mandate-incoming',
+    defaultMessage: 'Allsherjarumboð sem þú hefur fengið',
+  },
   delegationTypeProcurationHolder: {
     id: 'sp.access-control-delegations:delegation-type-procuration-holder',
     defaultMessage: 'Prókúra',
@@ -439,6 +447,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:filter-clear',
     defaultMessage: 'Hreinsa síu',
   },
+  filterTags: {
+    id: 'sp.access-control-delegations:filter-tags',
+    defaultMessage: 'Tags',
+  },
+  filterDomains: {
+    id: 'sp.access-control-delegations:filter-domains',
+    defaultMessage: 'Stofnanir',
+  },
   filterOpen: {
     id: 'sp.access-control-delegations:filter-open',
     defaultMessage: 'Opna síu',
@@ -550,6 +566,10 @@ export const m = defineMessages({
   headerName: {
     id: 'sp.access-control-delegations:header-name',
     defaultMessage: 'Nafn',
+  },
+  headerCompanyName: {
+    id: 'sp.access-control-delegations:header-company-name',
+    defaultMessage: 'Heiti',
   },
   headerDomain: {
     id: 'sp.access-control-delegations:header-domain',
