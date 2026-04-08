@@ -5,7 +5,11 @@ import {
 } from '@island.is/api/schema'
 import { Box, Input, Tag } from '@island.is/island-ui/core'
 import type { Row } from '@island.is/portals/my-pages/core'
-import { Table, createColumnHelper, formatDate } from '@island.is/portals/my-pages/core'
+import {
+  Table,
+  createColumnHelper,
+  formatDate,
+} from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { shipsMessages } from '../../../../lib/messages'
 import { CertificateExpandedRow } from './CertificateExpandedRow'
