@@ -17,6 +17,7 @@ import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import {
   getAppealInfo,
+  getIndictmentDismissalAppealInfo,
   getIndictmentInfo,
   transformCase,
 } from './case.transformer'
@@ -805,5 +806,221 @@ describe('getIndictmentInfo', () => {
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
+  })
+})
+
+describe('getIndictmentDismissalAppealInfo', () => {
+  it('should return empty appeal info when ruling decision is not DISMISSAL', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getIndictmentDismissalAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({})
+  })
+
+  it('should return empty appeal info when no ruling date', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+    } as Case
+
+    const appealInfo = getIndictmentDismissalAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({})
+  })
+
+  it('should return canBeAppealed true when case has not been appealed', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getIndictmentDismissalAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: true,
+      canProsecutorAppeal: true,
+      canDefenderAppeal: true,
+      hasBeenAppealed: false,
+      appealDeadline: '2022-06-18T19:50:08.033Z',
+    })
+  })
+
+  it('should return hasBeenAppealed true and appealedByRole PROSECUTOR when prosecutor appealed', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+      appealCase: {
+        appealState: CaseAppealState.APPEALED,
+      },
+    } as Case
+
+    const appealInfo = getIndictmentDismissalAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: false,
+      canProsecutorAppeal: false,
+      canDefenderAppeal: false,
+      hasBeenAppealed: true,
+      appealedByRole: UserRole.PROSECUTOR,
+      appealedDate: '2022-06-16T10:00:00.000Z',
+      appealDeadline: '2022-06-18T19:50:08.033Z',
+    })
+  })
+
+  it('should return hasBeenAppealed true and appealedByRole DEFENDER when defender appealed', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      accusedPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+      appealCase: {
+        appealState: CaseAppealState.APPEALED,
+      },
+    } as Case
+
+    const appealInfo = getIndictmentDismissalAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: false,
+      canProsecutorAppeal: false,
+      canDefenderAppeal: false,
+      hasBeenAppealed: true,
+      appealedByRole: UserRole.DEFENDER,
+      appealedDate: '2022-06-16T10:00:00.000Z',
+      appealDeadline: '2022-06-18T19:50:08.033Z',
+    })
+  })
+
+  it('should return statementDeadline when appeal has been received by court', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+      appealCase: {
+        appealState: CaseAppealState.RECEIVED,
+        appealReceivedByCourtDate: '2022-06-17T12:00:00.000Z',
+      },
+    } as Case
+
+    const appealInfo = getIndictmentDismissalAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: false,
+      canProsecutorAppeal: false,
+      canDefenderAppeal: false,
+      hasBeenAppealed: true,
+      appealedByRole: UserRole.PROSECUTOR,
+      appealedDate: '2022-06-16T10:00:00.000Z',
+      appealDeadline: '2022-06-18T19:50:08.033Z',
+      statementDeadline: '2022-06-18T12:00:00.000Z',
+    })
+  })
+})
+
+describe('transformCase for indictment dismissal appeals', () => {
+  it('should include dismissal appeal info for indictment DISMISSAL cases', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const res = transformCase(theCase)
+
+    expect(res.canBeAppealed).toBe(true)
+    expect(res.hasBeenAppealed).toBe(false)
+    expect(res.appealDeadline).toBe('2022-06-18T19:50:08.033Z')
+    expect(res.isAppealDeadlineExpired).toBe(true) // date is in the past
+    expect(res.isStatementDeadlineExpired).toBe(false)
+  })
+
+  it('should not include appeal info for indictment RULING cases', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const res = transformCase(theCase)
+
+    expect(res.canBeAppealed).toBeUndefined()
+    expect(res.hasBeenAppealed).toBeUndefined()
+    expect(res.appealDeadline).toBeUndefined()
+    expect(res.isAppealDeadlineExpired).toBe(false)
+  })
+
+  it('should set isAppealDeadlineExpired false when deadline is in the future', () => {
+    const rulingDate = new Date()
+    rulingDate.setSeconds(rulingDate.getSeconds() + 100)
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: rulingDate.toISOString(),
+    } as Case
+
+    const res = transformCase(theCase)
+
+    expect(res.isAppealDeadlineExpired).toBe(false)
+  })
+
+  it('should set isStatementDeadlineExpired true when past statement deadline', () => {
+    const appealReceivedByCourtDate = new Date()
+    appealReceivedByCourtDate.setDate(appealReceivedByCourtDate.getDate() - 2)
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+      appealCase: {
+        appealState: CaseAppealState.RECEIVED,
+        appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
+      },
+    } as Case
+
+    const res = transformCase(theCase)
+
+    expect(res.isStatementDeadlineExpired).toBe(true)
+  })
+
+  it('should clean accusedPostponedAppealDate and prosecutorPostponedAppealDate when not appealed', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      accusedPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+      prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+    } as Case
+
+    const res = transformCase(theCase)
+
+    expect(res.accusedPostponedAppealDate).toBeUndefined()
+    expect(res.prosecutorPostponedAppealDate).toBeUndefined()
+  })
+
+  it('should preserve appeal dates when case has been appealed', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
+      appealCase: {
+        appealState: CaseAppealState.APPEALED,
+      },
+    } as Case
+
+    const res = transformCase(theCase)
+
+    expect(res.prosecutorPostponedAppealDate).toBe('2022-06-16T10:00:00.000Z')
+    expect(res.hasBeenAppealed).toBe(true)
+    expect(res.appealedByRole).toBe(UserRole.PROSECUTOR)
   })
 })
