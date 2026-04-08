@@ -118,6 +118,8 @@ export class CoursesService extends BaseTemplateApiService {
           name,
           email,
         },
+        brandId: ZENDESK_TICKET_IDS.brandId,
+        ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
         tags: [this.coursesConfig.zendeskEnvTag, courseInstance.id],
         customFields: [
           {
