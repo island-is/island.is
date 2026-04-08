@@ -33,7 +33,8 @@ export const serviceErrors = {
     },
     summary: {
       id: 'rsk.crdr.application:serviceErrors.requestToSkatturinnFailed.summary',
-      defaultMessage: 'Something went wrong when posting car data to skatturinn',
+      defaultMessage:
+        'Something went wrong when posting car data to skatturinn',
       description: 'Summary for failed request to Skatturinn',
     },
   }),
