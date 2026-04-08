@@ -1,5 +1,109 @@
 import { defineMessages } from 'react-intl'
 
+export const serviceErrors = {
+  missingDayRateEntry: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.title',
+      defaultMessage: 'Missing day rate entry',
+      description: 'Title for missing day rate entry id error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.summary',
+      defaultMessage: 'No dayRateEntryId for vehicle {vehicleId}',
+      description: 'Summary for missing day rate entry id error',
+    },
+  }),
+  badRequest: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.badRequest.title',
+      defaultMessage: 'Bad request',
+      description: 'Title for bad request error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.badRequest.summary',
+      defaultMessage: 'Invalid input.',
+      description: 'Summary for bad request error',
+    },
+  }),
+  requestToSkatturinnFailed: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.requestToSkatturinnFailed.title',
+      defaultMessage: 'Request to skatturinn failed',
+      description: 'Title for failed request to Skatturinn',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.requestToSkatturinnFailed.summary',
+      defaultMessage: 'Something went wrong when posting car data to skatturinn',
+      description: 'Summary for failed request to Skatturinn',
+    },
+  }),
+  missingManualEntries: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.missingManualEntries.title',
+      defaultMessage: 'Missing manual entries',
+      description: 'Title for missing manual entries error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.missingManualEntries.summary',
+      defaultMessage: 'No vehicle day rate usage entries found',
+      description: 'Summary for missing manual entries error',
+    },
+  }),
+  invalidData: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.invalidData.title',
+      defaultMessage: 'Invalid data',
+      description: 'Title for invalid data error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.invalidData.summary',
+      defaultMessage: 'Invalid data found',
+      description: 'Summary for invalid data error',
+    },
+    summaryWithDetails: {
+      id: 'rsk.crdr.application:serviceErrors.invalidData.summaryWithDetails',
+      defaultMessage: 'Invalid data found:\n{details}',
+      description: 'Detailed summary for invalid data error',
+    },
+  }),
+  noValidEntriesFound: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.noValidEntriesFound.title',
+      defaultMessage: 'Invalid data',
+      description: 'Title for no valid entries found error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.noValidEntriesFound.summary',
+      defaultMessage: 'No valid entries found',
+      description: 'Summary for no valid entries found error',
+    },
+  }),
+  missingFile: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.missingFile.title',
+      defaultMessage: 'Missing file',
+      description: 'Title for missing file error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.missingFile.summary',
+      defaultMessage: 'No uploaded file found',
+      description: 'Summary for missing file error',
+    },
+  }),
+  invalidFileType: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.invalidFileType.title',
+      defaultMessage: 'Invalid file type',
+      description: 'Title for invalid file type error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.invalidFileType.summary',
+      defaultMessage: 'Only .csv or .xlsx are supported',
+      description: 'Summary for invalid file type error',
+    },
+  }),
+}
+
 export const m = {
   application: defineMessages({
     name: {

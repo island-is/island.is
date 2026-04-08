@@ -12,6 +12,7 @@ import {
   CarUsageRecord,
   DayRateRecord,
   getUploadFileType,
+  messages,
   parseUploadFile,
   UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
@@ -119,13 +120,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         })
         .filter((entry): entry is DayRateRecord => entry !== null)
 
-      this.logger.info('RSK day-rate response count', {
-        responseCount: resp.length,
-      })
-      this.logger.info('Computed previous-period entries', {
-        entryCount: entries.length,
-      })
-
       return entries
     } catch (error) {
       this.logger.error('Error getting previous period day rate entries', error)
@@ -180,8 +174,13 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         if (!dayRateEntryId) {
           throw new TemplateApiError(
             {
-              title: 'Missing day rate entry',
-              summary: `No dayRateEntryId for vehicle ${record.vehicleId}`,
+              title: messages.serviceErrors.missingDayRateEntry.title,
+              summary: {
+                ...messages.serviceErrors.missingDayRateEntry.summary,
+                values: {
+                  vehicleId: record.vehicleId,
+                },
+              },
             },
             400,
           )
@@ -215,8 +214,11 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
         throw new TemplateApiError(
           {
-            title: error.title ?? error.statusText ?? 'Bad request',
-            summary: bodySummary ?? 'Invalid input.',
+            title:
+              error.title ??
+              error.statusText ??
+              messages.serviceErrors.badRequest.title,
+            summary: bodySummary ?? messages.serviceErrors.badRequest.summary,
           },
           error.status,
         )
@@ -224,8 +226,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Request to skatturinn failed',
-          summary: 'Something went wrong when posting car data to skatturinn',
+          title: messages.serviceErrors.requestToSkatturinnFailed.title,
+          summary: messages.serviceErrors.requestToSkatturinnFailed.summary,
         },
         isSkatturinnError(error) ? error.status ?? 500 : 500,
       )
@@ -248,8 +250,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     if (tableRows.length === 0) {
       throw new TemplateApiError(
         {
-          title: 'Missing manual entries',
-          summary: 'No vehicle day rate usage entries found',
+          title: messages.serviceErrors.missingManualEntries.title,
+          summary: messages.serviceErrors.missingManualEntries.summary,
         },
         400,
       )
@@ -290,8 +292,15 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Invalid data',
-          summary: errorSummary || 'Invalid data found',
+          title: messages.serviceErrors.invalidData.title,
+          summary: errorSummary
+            ? {
+                ...messages.serviceErrors.invalidData.summaryWithDetails,
+                values: {
+                  details: errorSummary,
+                },
+              }
+            : messages.serviceErrors.invalidData.summary,
         },
         400,
       )
@@ -299,7 +308,10 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
     if (records.length === 0) {
       throw new TemplateApiError(
-        { title: 'Invalid data', summary: 'No valid entries found' },
+        {
+          title: messages.serviceErrors.noValidEntriesFound.title,
+          summary: messages.serviceErrors.noValidEntriesFound.summary,
+        },
         400,
       )
     }
@@ -316,7 +328,10 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     ])
     if (!attachment?.fileContent) {
       throw new TemplateApiError(
-        { title: 'Missing file', summary: 'No uploaded file found' },
+        {
+          title: messages.serviceErrors.missingFile.title,
+          summary: messages.serviceErrors.missingFile.summary,
+        },
         400,
       )
     }
@@ -325,8 +340,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     if (!fileType) {
       throw new TemplateApiError(
         {
-          title: 'Invalid file type',
-          summary: 'Only .csv or .xlsx are supported',
+          title: messages.serviceErrors.invalidFileType.title,
+          summary: messages.serviceErrors.invalidFileType.summary,
         },
         400,
       )
@@ -342,7 +357,10 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     if (!parsed.ok) {
       if (parsed.reason === 'no-data') {
         throw new TemplateApiError(
-          { title: 'Invalid data', summary: 'Invalid data found' },
+          {
+            title: messages.serviceErrors.invalidData.title,
+            summary: messages.serviceErrors.invalidData.summary,
+          },
           400,
         )
       }
@@ -360,8 +378,15 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Invalid data',
-          summary: errorSummary || 'Invalid data found',
+          title: messages.serviceErrors.invalidData.title,
+          summary: errorSummary
+            ? {
+                ...messages.serviceErrors.invalidData.summaryWithDetails,
+                values: {
+                  details: errorSummary,
+                },
+              }
+            : messages.serviceErrors.invalidData.summary,
         },
         400,
       )
