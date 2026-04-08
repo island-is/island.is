@@ -926,22 +926,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
         ) as YesOrNo)
   let isRequestingRights = isRequestingRightsSecondary
 
-  /*
-   ** When multiple births is selected and applicant is not using all 'common' rights
-   ** Need this check so we are not returning wrong answer
-   */
-  if (isRequestingRights === YES && hasMultipleBirths === YES) {
-    if (
-      multipleBirthsRequestDays * 1 !==
-      (multipleBirths - 1) * multipleBirthsDefaultDays
-    ) {
-      isRequestingRights = NO
-    }
-  }
-
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
     | undefined
+
+  /*
+   ** When multiple births is selected and remaining 'common' rights
+   ** can cover the requested days, no personal transfer is needed.
+   */
+  if (isRequestingRights === YES && hasMultipleBirths === YES) {
+    const maxMultipleBirthsDays =
+      (multipleBirths - 1) * multipleBirthsDefaultDays
+    const remainingCommonDays =
+      maxMultipleBirthsDays - multipleBirthsRequestDays * 1
+    if (remainingCommonDays >= Number(requestValue || 0)) {
+      isRequestingRights = NO
+    }
+  }
 
   const requestDays = getOrFallback(
     isRequestingRights === YES
