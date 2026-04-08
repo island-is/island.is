@@ -346,12 +346,12 @@ describe('ScopeService', () => {
       expect(
         mockAdminDevApi.meScopeClientsControllerFindAllRaw,
       ).toBeCalledTimes(1)
-      expect(
-        mockAdminDevApi.meScopeClientsControllerFindAllRaw,
-      ).toBeCalledWith({
-        tenantId: TENANT_ID,
-        scopeName,
-      })
+      expect(mockAdminDevApi.meScopeClientsControllerFindAllRaw).toBeCalledWith(
+        {
+          tenantId: TENANT_ID,
+          scopeName,
+        },
+      )
       expect(
         mockAdminStagingApi.meScopeClientsControllerFindAllRaw,
       ).not.toBeCalled()
