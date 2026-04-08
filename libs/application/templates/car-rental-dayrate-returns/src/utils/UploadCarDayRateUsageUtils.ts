@@ -1,10 +1,6 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
-import {
-  CarUsageError,
-  CarUsageRecord,
-  DayRateRecord,
-} from './types'
+import { CarUsageError, CarUsageRecord, DayRateRecord } from './types'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
