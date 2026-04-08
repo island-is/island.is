@@ -45,7 +45,12 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     applicationsNavigation,
     {
       ...delegationsNavigationNew,
-      children: [...delegationsNavigationChildrenNew],
+      children: [
+        ...delegationsNavigationChildrenNew,
+        sessionsNavigation,
+        consentNavigation,
+        restrictionsNavigation,
+      ],
     },
     {
       ...delegationsNavigation,
