@@ -170,6 +170,13 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
+  test(props: TemplateApiModuleActionProps) {
+    return {
+      id: 1337,
+      message: 'This seems to work...',
+    }
+  }
+
   async submitApplication() {
     // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))

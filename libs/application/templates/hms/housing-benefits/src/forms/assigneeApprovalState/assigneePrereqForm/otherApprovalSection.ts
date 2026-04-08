@@ -25,10 +25,6 @@ export const otherApprovalSection = buildSection({
         buildCheckboxField({
           id: (application, user) =>
             nationalIdPreface(application, user, 'confirmRead'),
-          condition: (answers) => {
-            console.log('answers: ', answers)
-            return true
-          },
           options: [
             {
               label: m.assigneeApproval.prereqConfirmRead,

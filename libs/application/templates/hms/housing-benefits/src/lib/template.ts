@@ -26,6 +26,7 @@ import {
   NationalRegistryApi,
   PersonalTaxReturnApi,
   RentalAgreementsApi,
+  testApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import * as kennitala from 'kennitala'
@@ -166,7 +167,7 @@ const template: ApplicationTemplate<
                 ).then((module) => Promise.resolve(module.AssigneePrereqForm)),
               write: 'all',
               read: 'all',
-              api: [NationalRegistryApi, PersonalTaxReturnApi],
+              api: [NationalRegistryApi, PersonalTaxReturnApi, testApi],
             },
             {
               id: Roles.UNSIGNED_DRAFT_ASSIGNEE,

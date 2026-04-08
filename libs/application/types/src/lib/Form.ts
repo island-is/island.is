@@ -178,7 +178,7 @@ export interface ExternalDataProvider extends FormItem {
 }
 
 export interface DataProviderItem {
-  readonly id: string
+  readonly id?: string | ((application: Application, user: BffUser) => string)
   readonly action?: string
   readonly order?: number
   readonly title?: FormText
@@ -188,7 +188,7 @@ export interface DataProviderItem {
 }
 
 export interface DataProviderBuilderItem {
-  id?: string
+  id?: string | ((application: Application, user: BffUser) => string)
   type?: string //TODO REMOVE THIS
   title?: FormText
   subTitle?: FormText
@@ -197,7 +197,9 @@ export interface DataProviderBuilderItem {
   provider?: Provider
 }
 export interface Provider {
-  externalDataId?: string
+  externalDataId?:
+    | string
+    | ((application: Application, user: BffUser) => string)
   actionId: string
   action: string
   order?: number

@@ -1027,8 +1027,11 @@ export class ApplicationController {
       )
 
       for (const api of onDeleteActions) {
-        const result =
-          deletingApplication.externalData[api.externalDataId || api.action]
+        const resolvedId = api.resolveExternalDataId(
+          deletingApplication,
+          user.nationalId,
+        )
+        const result = deletingApplication.externalData[resolvedId]
 
         this.logger.debug(
           `Performing action ${api.action} on ${JSON.stringify(

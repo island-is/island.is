@@ -286,6 +286,8 @@ const FormExternalDataProvider: FC<
           verifyExternalData(
             getExternalDataFromResponse(response.data),
             providers,
+            application,
+            user,
           )
         ) {
           return [true, null]
@@ -333,26 +335,38 @@ const FormExternalDataProvider: FC<
         )}
       </Box>
       <Box marginBottom={5}>
-        {dataProviders.map((provider) => (
-          <ProviderItem
-            application={application}
-            provider={provider}
-            key={provider.id}
-            suppressProviderError={suppressProviderErrors}
-            dataProviderResult={externalData[provider.id]}
-          />
-        ))}
-        {otherPermissions &&
-          otherPermissions.map((permission) => (
-            <PermissionItem
+        {dataProviders.map((provider) => {
+          const providerId = provider.id
+            ? resolveFieldId({ id: provider.id }, application, user)
+            : undefined
+
+          return (
+            <ProviderItem
               application={application}
-              permission={permission}
-              key={permission.id}
+              provider={provider}
+              key={providerId}
+              suppressProviderError={suppressProviderErrors}
+              dataProviderResult={externalData[providerId ?? '']}
             />
-          ))}
+          )
+        })}
+        {otherPermissions &&
+          otherPermissions.map((permission) => {
+            const permissionId = permission.id
+              ? resolveFieldId({ id: permission.id }, application, user)
+              : undefined
+
+            return (
+              <PermissionItem
+                application={application}
+                permission={permission}
+                key={permissionId}
+              />
+            )
+          })}
       </Box>
       <Controller
-        name={`${id}`}
+        name={resolvedId ?? ''}
         defaultValue={getValueViaPath(formValue, resolvedId ?? '', false)}
         rules={{ required: true }}
         render={({ field: { onChange, value } }) => {
@@ -371,7 +385,7 @@ const FormExternalDataProvider: FC<
                 hasError={error !== undefined}
                 backgroundColor="blue"
                 dataTestId="agree-to-data-providers"
-                name={`${id}`}
+                name={resolvedId ?? ''}
                 label={
                   <Markdown>
                     {checkboxLabel

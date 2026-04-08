@@ -23,10 +23,15 @@ import { BffUser } from '@island.is/shared/types'
 export const verifyExternalData = (
   externalData: ExternalData,
   dataProviders: DataProviderItem[],
+  application: Application,
+  user?: BffUser,
 ): boolean => {
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
-    const dataProviderResult = externalData[id]
+    const resolvedId = id
+      ? resolveFieldId({ id }, application, user)
+      : undefined
+    const dataProviderResult = externalData[resolvedId ?? '']
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
       return false
     }

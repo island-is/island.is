@@ -2,6 +2,7 @@ import {
   defineTemplateApi,
   NationalRegistryV3UserApi,
 } from '@island.is/application/types'
+import { nationalIdPreface } from '../utils/assigneeUtils'
 
 export { IdentityApi } from '@island.is/application/types'
 
@@ -22,4 +23,11 @@ export const HouseholdMembersApi = defineTemplateApi({
 export const PersonalTaxReturnApi = defineTemplateApi({
   action: 'getPersonalTaxReturn',
   order: 4,
+})
+
+export const testApi = defineTemplateApi({
+  action: 'test',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'test'),
+  order: 5,
 })
