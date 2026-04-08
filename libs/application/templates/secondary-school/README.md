@@ -33,7 +33,7 @@ Users fill in personal information, school selection and additional information.
 
 * Name, national ID and address are fetched from the national registry
 * Email and phone number are fetched from the user profile, if either of these are missing the user is blocked from moving forward until they add the missing information to their user profile. If the user is applying on behalf of someone else using delegation they can manually enter phone and email.
-* If the current period allows freshman applications (as per externalData.applicationPeriodInfo.data.allowFreshmanApplication) is true the user can select if they are a freshman or general applicant, if the user is pre-flagged as a freshman by MMS (as per externalData.studentInfo.data.isFreshman) this step is skipped and they are automatically considered a freshman applicant.
+* If the current period allows freshman applications (as per externalData.applicationPeriodInfo.data.allowFreshmanApplication) the user can select if they are a freshman or general applicant, if the user is pre-flagged as a freshman by MMS (as per externalData.studentInfo.data.isFreshman) this step is skipped and they are automatically considered a freshman applicant.
   * This is since the MMS data on primary school graduates isn't complete, for example it will not have data on applicants graduating primary school abroad.
 
 #### Contact Information
@@ -44,14 +44,17 @@ Users fill in personal information, school selection and additional information.
 #### School and track (program) selection
 
 * Freshmen need to select at least 2 schools and can also add a third. For each school they must select a track (braut) they want to apply for as well as a backup track (braut til vara).
-  * The only exception to this is if the user selects a specialNeeds track (starfsbraut), this info is fetched via dynamic query to GetSecondarySchoolProgramsBySchoolId, if the user selects a specialNeeds track any further school and track selection is optional.
+  * If the user selects a specialNeeds track (starfsbraut), which is noted in the dynamic query to GetSecondarySchoolProgramsBySchoolId, any further school and track selection is optional.
+  * If only one school is open for applications the requirement to select a 2nd school is omitted. Same if a school only offers a single track, then there is no requirement to select a second track.
 * General applicants need to select at least 1 school with an option to select a second school. For each school they must select a track, there is no option of a backup track.
 * If a user selects a specialNeeds track they get an alertMessage informing them that a track they've chosen is intended for students who require special assistance in their studies. This is to ensure that applicants are aware of the special needs track and don't accidentally select it without understanding the implications, as this could lead to their application being rejected by MMS.
 * Some tracks have a programApplicationMessage, if this is present it will be shown in an alertMessage under the track selection dropdown.
   * This *should* only be used for tracks that require special extra information such as athletic or music tracks that require information about applicants' extracurricular activities in those areas.
-* For every school applicants can optionally select a third language as well as a nordic language if they have a background in a language other than Danish.
+* For every school, applicants can optionally select a third language as well as a nordic language if they have a background in a language other than Danish.
   * List of third and nordic languages are fetched from MMS and found in externalData.schools.data
-* Schools can add an option for applicants to request a dormitory, this is controlled by the hasDormitory field in the school data fetched from MMS.
+  * Some schools require the selection of a third language, this is found in externalData.schools.data in the requiresThirdLanguage property.
+  * //TODO: texti um pósta
+* Schools can add an option for applicants to request a dormitory, this is controlled by the allowRequestDormitory field in the school data fetched from MMS.
 
 #### Additional information
 
@@ -73,24 +76,40 @@ Once MMS starts processing an application they send a 'REVIEW_STARTED' event to 
 
 ### In Review (from edit)
 
-Essentially identical to the In Review state, only difference is this state indicates an application was in the edit state when MMS processing started. Note that if a user did not submit their edits to MMS before MMS began their processing those edits are not considered during the processing.
+Essentially identical to the In Review state, only difference is this state indicates an application was in the edit state when MMS processing started. Note that if a user did not submit their edits to MMS before MMS began their processing those edits are not considered during the processing and the user will see the answers from answers.copy in the overview section.
 
 ### Completed
 
 Once MMS finishes their processing of an application they send a REVIEW_COMPLETED event to the application system, at this point the application is considered completed and no further actions can be taken.
+MMS can also send a REVIEW_COMPLETED event for an application in submitted/edit state without sending a REVIEW_STARTED event.
 
 ### Dismissed
 
 If MMS considers an application invalid for whatever reason (usually the applicant obviously applied for the wrong school/track) they can dismiss the application. Once an application has been dismissed it is no longer considered active and the applicant can create a new application from scratch.
+
+## Application specifics
+
+### Users & Delegations
+Most applicants are children who are about to finish primary school, their legal guardians can apply on their behalf as well as access and edit their application.
+User can grant others a delegation to apply on their behalf, in which case they get full access to view and edit the application.
+
+### Application period and deadlines
+MMS defines the active application period which has an end date and review start date (which can differ for freshmen and general applicants) as well as whether or not the application period concerns freshman. All of this information is found in externalData.applicationPeriodInfo.data.
+As stated in the pre-requisites section users can only have 1 active application at MMS per application period, MMS is responsible for making sure this behavior is consistent across different application periods and what is considered an "active application".
+Once the application period ends MMS should send a REVIEW_STARTED event for all applications that are still in submitted or edit state, triggering a state change.
+
+### Emails and notifications
+When an application is deleted or submitted the application system sends an email to the applicant and listed legal guardians (as per answers.custodians).
+Once an application has been processed at MMS they will send the results of the application to the applicant's pósthólf. This process is outside the scope of the application system, applicants will see no information about the result of their application in the application system.
 
 ## External Services
 
 ### MMS 
 
 - [Swagger](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/island-is/island.is/refs/heads/main/libs/clients/secondary-school/src/clientConfig.json)
-- [Client](https://github.com/island-is/island.is/blob/main/libs/clients/secondary-school/src/lib/secondarySchoolClient.service.ts)
+  - [Client](https://github.com/island-is/island.is/blob/main/libs/clients/secondary-school/src/lib/secondarySchoolClient.service.ts)
 
-Used to fetch student info (including if the applicant has an active application already, if true the user is stopped from moving beyond pre-requsites), submit application and edit application
+Used to fetch student info, school and track information as well as to submit applications.
 
 ### User Profile
 
@@ -105,7 +124,10 @@ Used to fetch base information about the applicant, as well as information about
 - [Service](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/shared/api/national-registry/national-registry.service.ts)
 
 ## Testing
-Any fake user should be able to submit an application, but applicants under the age of 18 have special handling to add their Legal Guardians as contacts. Furthermore, MMS has pre-flagged some users as Freshmen so those users skip the Freshman/General Applicant choice.
+Any fake user should be able to submit an application, but applicants under the age of 18 have special handling to add their Legal Guardians as contacts. 
+Furthermore, MMS has pre-flagged some users as Freshmen so those users skip the Freshman/General Applicant choice.
+
+Note that this test data could be outdated.
 
 - Birta Hlín ÞÍ Lulic (160-1430)
   - Marked as freshman
@@ -113,7 +135,7 @@ Any fake user should be able to submit an application, but applicants under the 
     - Elmar ÞÍ Þórarinsson (070-1429)
     - Viktoría Ösp ÞÍ Sveinsdóttir (190-1419)
 - María Sól ÞÍ Torp (220-1499)
-  - Marked as fresman
+  - Marked as freshman
 
 ## Localization
 
