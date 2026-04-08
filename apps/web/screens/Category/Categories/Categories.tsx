@@ -12,7 +12,6 @@ import {
   GridContainer,
   GridRow,
   Inline,
-  Link,
   RadioButton,
   Stack,
   Text,
@@ -170,10 +169,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
             <Box paddingBottom={[3, 3, 6]}>
               <GridRow>
                 {items.map(
-                  (
-                    { title, description, slug, __typename: typename },
-                    index,
-                  ) => {
+                  ({ title, description, slug, __typename: typename }) => {
                     const href = linkResolver(typename as LinkType, [slug]).href
                     return (
                       <GridColumn
@@ -208,16 +204,14 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                             )}
                           </Box>
                           <Box paddingTop={2} className={styles.cardLink}>
-                            <Link href={href} skipTab>
-                              <Button
-                                variant="text"
-                                as="span"
-                                icon="arrowForward"
-                                size="small"
-                              >
-                                {n('viewCategoryLink', 'Skoða þjónustuflokk')}
-                              </Button>
-                            </Link>
+                            <Button
+                              variant="text"
+                              as="span"
+                              icon="arrowForward"
+                              size="small"
+                            >
+                              {n('viewCategoryLink', 'Skoða þjónustuflokk')}
+                            </Button>
                           </Box>
                         </FocusableBox>
                       </GridColumn>
