@@ -95,7 +95,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   const { activeLocale } = useI18n()
 
   useContentfulId(organization?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('servicewebcontact')
 
   const organizationNamespace = useMemo(
     () => JSON.parse(organization?.namespace?.fields || '{}'),

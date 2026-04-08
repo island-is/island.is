@@ -31,7 +31,6 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
