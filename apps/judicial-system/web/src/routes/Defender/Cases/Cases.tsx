@@ -1,13 +1,15 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Tabs } from '@island.is/island-ui/core'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CasesLayout,
   PageHeader,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -21,6 +23,7 @@ import * as styles from './Cases.css'
 
 export const Cases: FC = () => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
   const availableTabs = ['active', 'completed']
 
@@ -46,15 +49,35 @@ export const Cases: FC = () => {
       return [[], []]
     }
 
+    const allDefenderDefendantsAreCancelledOrDismissed =
+      (defenderNationalId?: string | null, defendants?: typeof cases[number]['defendants']) => {
+        const defenderDefendants =
+          defendants?.filter(
+            (defendant) =>
+              defendant.defenderNationalId &&
+              normalizeAndFormatNationalId(defenderNationalId).includes(
+                defendant.defenderNationalId,
+              ),
+          ) ?? []
+
+        return (
+          defenderDefendants.length > 0 &&
+          defenderDefendants.every(
+            (defendant) => defendant.indictmentCancelledOrDismissedState != null,
+          )
+        )
+      }
+
     return partition(
       cases,
       (c) =>
         !(
           isCompletedCase(c.state) ||
-          c.state === CaseState.WAITING_FOR_CANCELLATION
+          c.state === CaseState.WAITING_FOR_CANCELLATION ||
+          allDefenderDefendantsAreCancelledOrDismissed(user?.nationalId, c.defendants)
         ),
     )
-  }, [cases])
+  }, [cases, user?.nationalId])
 
   const {
     filteredCases: activeFilteredCases,

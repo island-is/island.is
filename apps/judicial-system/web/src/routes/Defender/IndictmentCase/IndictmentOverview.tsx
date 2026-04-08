@@ -112,13 +112,6 @@ const IndictmentOverview: FC = () => {
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const caseIsClosed = isCompletedCase(workingCase.state)
-
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
-
-  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
   const myDefendants = workingCase.defendants?.filter(
     (defendant) =>
@@ -127,6 +120,16 @@ const IndictmentOverview: FC = () => {
         defendant.defenderNationalId,
       ),
   )
+
+  const caseIsClosed =
+    isCompletedCase(workingCase.state) ||
+    areAllDefendantsCancelledOrDismissed(myDefendants)
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
+  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
   const canAddFiles =
     !caseIsClosed &&
@@ -217,7 +220,8 @@ const IndictmentOverview: FC = () => {
             latestDate?.date &&
             workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
             workingCase.indictmentDecision !==
-              IndictmentDecision.REDISTRIBUTING && (
+              IndictmentDecision.REDISTRIBUTING &&
+            caseIsClosed === false && (
               <Box component="section">
                 <IndictmentCaseScheduledCard
                   court={workingCase.court}

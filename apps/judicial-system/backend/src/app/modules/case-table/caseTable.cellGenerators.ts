@@ -278,15 +278,12 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'mint', text: 'Dómtekið' }, 'E')
       case IndictmentDecision.REDISTRIBUTING:
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
-      case IndictmentDecision.COMPLETING_FOR_SOME:
-      case IndictmentDecision.SPLITTING:
+      default:
         return courtDate
           ? allServed
             ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
             : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
-      default:
-        return generateCell({ color: 'white', text: 'Óþekkt' }, 'N') // Should not happen
     }
   }
 
