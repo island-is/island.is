@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import {
+  AlertMessage,
   Box,
   Button,
   SkeletonLoader,
@@ -26,7 +27,7 @@ export const PermissionApplications = () => {
   const { selectedEnvironment } = useEnvironment()
   const navigate = useNavigate()
 
-  const { data, loading } = useGetScopeClientsQuery({
+  const { data, loading, error } = useGetScopeClientsQuery({
     variables: {
       input: {
         tenantId: tenant ?? '',
@@ -37,7 +38,7 @@ export const PermissionApplications = () => {
     skip: !tenant,
   })
 
-  const clients = data?.authAdminScopeClients ?? []
+  const clients = error ? [] : data?.authAdminScopeClients ?? []
 
   return (
     <Box
@@ -52,7 +53,12 @@ export const PermissionApplications = () => {
         {formatMessage(m.clients)}
       </Text>
       <Text>{formatMessage(m.permissionApplicationsDescription)}</Text>
-      {loading ? (
+      {error ? (
+        <AlertMessage
+          message={formatMessage(m.errorLoadingData)}
+          type="error"
+        />
+      ) : loading ? (
         <SkeletonLoader height={120} />
       ) : clients.length === 0 ? (
         <Box
