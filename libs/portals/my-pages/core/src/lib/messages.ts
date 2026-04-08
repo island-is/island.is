@@ -1613,6 +1613,14 @@ export const m = defineMessages({
     id: 'service.portal:work-machine-detail',
     defaultMessage: 'Nánar um vinnuvél',
   },
+  myShips: {
+    id: 'service.portal:my-ships',
+    defaultMessage: 'Mín skip',
+  },
+  myShipsIntro: {
+    id: 'service.portal:my-ships-intro',
+    defaultMessage: 'Hér getur þú skoðað upplýsingar um skip í þinni eigu',
+  },
   health: {
     id: 'service.portal:health',
     defaultMessage: 'Heilsa',
@@ -1688,6 +1696,10 @@ export const m = defineMessages({
   vehiclesTooltip: {
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
+  },
+  shipsTooltip: {
+    id: 'service.portal:ships-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um skip.',
   },
   drivingLessonTooltip: {
     id: 'service.portal:driving-lessons-tooltip',
