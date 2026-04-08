@@ -43,10 +43,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<TrWebApiServicesCommonClientsModelsYearWithMonthsDto[] | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsWhenDiscontinuingGet()
-      .catch((error) => {
-        if (error?.status === 404 || error?.status === 400) return null
-        throw error
-      })
+      .catch(handle404)
   }
 
   async getTaxCards(
@@ -70,10 +67,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<TrWebApiServicesCommonClientsModelsSpousalTaxCardUsageYearMonthResult | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditSpouseDeceasedTaxAllowanceValidMonthsAndYearsGet()
-      .catch((error) => {
-        if (error?.status === 404 || error?.status === 400) return null
-        throw error
-      })
+      .catch(handle404)
   }
 
   async setTaxCardAllowance(
