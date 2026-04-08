@@ -505,6 +505,7 @@ export interface UpdateCase
         | 'appealValidToDate'
         | 'isAppealCustodyIsolation'
         | 'appealIsolationToDate'
+        | 'appealedByNationalId'
       >
     > {
   type?: CaseType
