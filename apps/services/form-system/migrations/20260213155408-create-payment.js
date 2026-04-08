@@ -50,6 +50,7 @@ module.exports = {
           },
           application_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
               model: 'application',

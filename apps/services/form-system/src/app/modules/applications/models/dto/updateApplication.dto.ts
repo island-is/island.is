@@ -16,9 +16,4 @@ export class UpdateApplicationDto {
   @IsOptional()
   @ApiPropertyOptional({ type: [String] })
   completed?: string[]
-
-  @Type(() => Date)
-  @IsOptional()
-  @ApiPropertyOptional({ type: Date })
-  pruneAt?: Date
 }

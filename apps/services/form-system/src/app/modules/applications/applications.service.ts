@@ -246,15 +246,7 @@ export class ApplicationsService {
       application.dependencies = updateApplicationDto.dependencies
     }
 
-    if (updateApplicationDto.pruneAt) {
-      application.pruneAt = updateApplicationDto.pruneAt
-    }
-
     await application.save()
-  }
-
-  async findOneById(applicationId: string): Promise<Application | null> {
-    return this.applicationModel.findByPk(applicationId)
   }
 
   async getSlugFromId(applicationId: string): Promise<string> {

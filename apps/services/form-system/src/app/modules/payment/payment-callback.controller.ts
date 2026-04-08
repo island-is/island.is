@@ -8,16 +8,12 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { ApplicationsService } from '../applications/applications.service'
 import { PaymentService } from './payment.service'
 
 @ApiTags('payment-callback')
 @Controller()
 export class PaymentCallbackController {
-  constructor(
-    private readonly paymentService: PaymentService,
-    private readonly applicationsService: ApplicationsService,
-  ) {}
+  constructor(private readonly paymentService: PaymentService) {}
 
   @Post('application-payment/:applicationId/:id')
   async paymentApproved(

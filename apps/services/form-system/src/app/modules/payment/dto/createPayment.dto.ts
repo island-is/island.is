@@ -4,6 +4,7 @@ import {
   IsDate,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
 } from 'class-validator'
 
@@ -14,15 +15,18 @@ export class CreatePaymentDto {
 
   @IsBoolean()
   @ApiProperty()
+  @IsOptional()
   readonly fulfilled?: boolean
 
   @IsString()
   @ApiProperty()
+  @IsOptional()
   readonly user4?: string
 
   @IsObject()
   @ApiProperty()
-  definition?: string
+  @IsOptional()
+  definition?: object
 
   @IsNumber()
   @ApiProperty()
@@ -30,5 +34,6 @@ export class CreatePaymentDto {
 
   @IsDate()
   @ApiProperty()
+  @IsOptional()
   readonly expires_at?: Date
 }
