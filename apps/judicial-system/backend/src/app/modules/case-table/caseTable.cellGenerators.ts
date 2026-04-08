@@ -278,12 +278,15 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'mint', text: 'Dómtekið' }, 'E')
       case IndictmentDecision.REDISTRIBUTING:
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
-      default:
+      case IndictmentDecision.COMPLETING_FOR_SOME:
+      case IndictmentDecision.SPLITTING:
         return courtDate
           ? allServed
             ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
             : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
+      default:
+        return generateCell({ color: 'white', text: 'Óþekkt' }, 'N') // Should not happen
     }
   }
 
@@ -308,7 +311,7 @@ const generateIndictmentCaseStateTag = (
     case CaseState.WAITING_FOR_CANCELLATION:
       return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
-      return generateCell({ color: 'white', text: 'Óþekkt' }, 'N')
+      return generateCell({ color: 'white', text: 'Óþekkt' }, 'N') // Should not happen
   }
 }
 

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
@@ -16,6 +17,7 @@ import {
   ContextMenuItem,
   IconButton,
 } from '@island.is/judicial-system-web/src/components'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 
 import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
@@ -86,6 +88,7 @@ const Table: FC<TableProps> = (props) => {
   const { isTransitioningCase } = useCase()
   const { width } = useViewport()
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
   const handleCaseClick = (theCase: CaseListEntry) => {
     if (!onClick?.(theCase)) {
@@ -145,8 +148,31 @@ const Table: FC<TableProps> = (props) => {
       column: keyof CaseListEntry,
     ) => {
       switch (column) {
-        case 'defendants':
-          return entry.defendants?.[0]?.name ?? ''
+        case 'defendants': {
+          const defenderDefendants = entry.defendants?.filter(
+            (defendant) =>
+              defendant.defenderNationalId &&
+              normalizeAndFormatNationalId(user?.nationalId).includes(
+                defendant.defenderNationalId,
+              ),
+          )
+
+          const allDefenderDefendantsAreCancelledOrDismissed =
+            Boolean(defenderDefendants?.length) &&
+            defenderDefendants?.every(
+              (defendant) =>
+                defendant.indictmentCancelledOrDismissedState != null,
+            )
+
+          const visibleDefendants = allDefenderDefendantsAreCancelledOrDismissed
+            ? defenderDefendants
+            : entry.defendants?.filter(
+                (defendant) =>
+                  defendant.indictmentCancelledOrDismissedState == null,
+              )
+
+          return visibleDefendants?.[0]?.name ?? ''
+        }
         case 'courtCaseNumber':
           return entry.courtCaseNumber ?? ''
         case 'state':
