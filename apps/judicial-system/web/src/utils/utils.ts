@@ -209,17 +209,15 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
  * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
  */
-export const getAppealActorText = (
-  workingCase: {
-    prosecutorAppealDecision?: CaseAppealDecision | null
-    accusedAppealDecision?: CaseAppealDecision | null
-    appealedByRole?: UserRole | null
-    appealedDate?: string | null
-    appealCase?: { appealedByNationalId?: string | null } | null
-    defendants?: Defendant[] | null
-    civilClaimants?: CivilClaimant[] | null
-  },
-): string => {
+export const getAppealActorText = (workingCase: {
+  prosecutorAppealDecision?: CaseAppealDecision | null
+  accusedAppealDecision?: CaseAppealDecision | null
+  appealedByRole?: UserRole | null
+  appealedDate?: string | null
+  appealCase?: { appealedByNationalId?: string | null } | null
+  defendants?: Defendant[] | null
+  civilClaimants?: CivilClaimant[] | null
+}): string => {
   const appealedInCourt =
     workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
     workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL

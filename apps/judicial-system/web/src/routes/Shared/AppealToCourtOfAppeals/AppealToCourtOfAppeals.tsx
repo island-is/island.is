@@ -40,8 +40,6 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-
-
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -121,9 +119,7 @@ const AppealToCourtOfAppeals = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>
-          Kæra til Landsréttar
-        </PageTitle>
+        <PageTitle previousUrl={previousUrl}>Kæra til Landsréttar</PageTitle>
         <Box component="section" marginBottom={5}>
           <Text variant="h2" as="h2">
             {`Mál nr. ${workingCase.courtCaseNumber}`}
@@ -160,7 +156,9 @@ const AppealToCourtOfAppeals = () => {
         >
           <SectionHeading title="Gögn" marginBottom={1} />
           <Text marginBottom={3} whiteSpace="pre">
-            {'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.'}
+            {
+              'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.'
+            }
             {'\n'}
             {!isDefenceUser(user) &&
               'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
