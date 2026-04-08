@@ -89,9 +89,11 @@ const LabelHost = styled.View<{ color: LabelColor; fullWidth?: boolean }>`
 `
 
 const LabelText = styled(Typography)<{
-  color: LabelColor
+  color: LabelColor;
+  fullWidth?: boolean;
 }>`
   color: ${dynamicColor(getTextColor, true)};
+  ${({ fullWidth }) => fullWidth && 'flex: 1'};
 `
 
 export function Label({
@@ -114,7 +116,7 @@ export function Label({
   return (
     <LabelHost color={color} fullWidth={fullWidth}>
       {iconElement}
-      <LabelText variant={'eyebrow'} color={color}>
+      <LabelText variant={'eyebrow'} color={color} fullWidth={fullWidth}>
         {children}
       </LabelText>
     </LabelHost>

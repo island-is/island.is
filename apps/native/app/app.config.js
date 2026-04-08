@@ -73,6 +73,7 @@ export default ({ config }) => {
         },
       ],
       './plugins/with-island-app',
+      'expo-datadog'
     ],
   }
 }

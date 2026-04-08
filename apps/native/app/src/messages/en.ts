@@ -494,7 +494,7 @@ export const en: TranslatedMessages = {
   // vehicle links
   'vehicle.links.ownerLookup': 'Vehicle registry lookup',
   'vehicle.links.vehicleHistory': 'Vehicle history',
-  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.reportOwnerChange': 'Report ownership change',
   'vehicle.links.returnCertificate': 'Return certificate',
   'vehicle.links.nameConfidentiality':
     'Name confidentiality in vehicle registry',

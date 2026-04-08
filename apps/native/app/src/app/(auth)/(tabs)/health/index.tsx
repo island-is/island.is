@@ -650,6 +650,7 @@ export default function HealthOverviewScreen() {
                       })
                     : ''
                 }
+                fullWidthWarning
               />
             </InputRow>
           </>

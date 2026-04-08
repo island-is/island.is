@@ -107,6 +107,8 @@ export default function VehicleDetailScreen() {
           networkStatus={res.networkStatus}
           options={{
             title: title ?? data?.vehiclesDetail?.basicInfo?.model ?? '',
+            headerBackButtonDisplayMode: 'minimal',
+            headerBackTitle: '',
             headerRightItems: [
               {
                 type: 'custom',
