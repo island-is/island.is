@@ -1,6 +1,5 @@
 /**
- * Builds a single-line address from Þjóðskrá-style fields.
- * Icelandic convention: "{gata og númer}, {póstnúmer} {staður}" (e.g. "Aðalgata 1, 101 Reykjavík").
+ * Builds a string in the format "{gata og númer}, {póstnúmer} {staður}" (e.g. "Gervigata 2, 100 Garðabær").
  */
 type NationalRegistryAddressFields = {
   street?: { nominative?: string }
