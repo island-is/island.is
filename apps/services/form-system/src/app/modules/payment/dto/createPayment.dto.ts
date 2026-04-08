@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
   IsDate,
@@ -14,12 +14,12 @@ export class CreatePaymentDto {
   readonly application_id!: string
 
   @IsBoolean()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   readonly fulfilled?: boolean
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   readonly user4?: string
 
@@ -33,7 +33,7 @@ export class CreatePaymentDto {
   readonly amount!: number
 
   @IsDate()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   readonly expires_at?: Date
 }
