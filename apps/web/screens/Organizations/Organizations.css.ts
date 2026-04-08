@@ -16,6 +16,12 @@ export const filterBar = style({
   flexWrap: 'wrap',
   rowGap: 24,
   columnGap: 16,
+  '@media': {
+    [mobileMediaQuery]: {
+      flexDirection: 'column',
+      alignItems: 'stretch',
+    },
+  },
 })
 
 export const searchContainer = style({
@@ -23,28 +29,19 @@ export const searchContainer = style({
   maxWidth: '100%',
   '@media': {
     [mobileMediaQuery]: {
-      flex: '1 1 0',
-      width: 'auto',
+      width: '100%',
     },
   },
 })
 
-export const radioGroup = style({
+export const tagList = style({
   display: 'flex',
-  alignItems: 'center',
-  gap: 16,
+  flexWrap: 'wrap',
+  gap: 12,
   marginLeft: 'auto',
   '@media': {
     [mobileMediaQuery]: {
-      order: 3,
-      width: '100%',
-      justifyContent: 'space-between',
       marginLeft: 0,
     },
   },
-})
-
-export const filterButton = style({
-  flexShrink: 0,
-  flexGrow: 0,
 })
