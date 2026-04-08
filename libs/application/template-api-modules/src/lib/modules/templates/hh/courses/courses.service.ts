@@ -67,6 +67,13 @@ export class CoursesService extends BaseTemplateApiService {
     }
   }
 
+  async getMockNationalRegistryUser({ auth }: TemplateApiModuleActionProps) {
+    return {
+      nationalId: auth.nationalId,
+      fullName: 'Mock User',
+    }
+  }
+
   async submitApplication({
     application,
     auth,
@@ -133,7 +140,7 @@ export class CoursesService extends BaseTemplateApiService {
       }
 
       await this.zendeskService.submitTicket({
-        subject: this.coursesConfig.applicationEmailSubject,
+        subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
         message,
         requesterId: zendeskUser.id,
         tags,
@@ -244,10 +251,13 @@ export class CoursesService extends BaseTemplateApiService {
   private async getZendeskParticipantNationalIds(
     courseInstanceId: string,
   ): Promise<Set<string>> {
-    const query = this.buildZendeskTicketSearchQuery(courseInstanceId)
+    const queries = this.buildZendeskTicketSearchQueries(courseInstanceId)
     let tickets
     try {
-      tickets = await this.zendeskService.searchTickets(query)
+      const ticketSearchResults = await Promise.all(
+        queries.map((query) => this.zendeskService.searchTickets(query)),
+      )
+      tickets = this.dedupeZendeskTickets(ticketSearchResults.flat())
     } catch (error) {
       this.logger.warn(
         'Failed to search Zendesk tickets for participant availability check',
@@ -291,6 +301,30 @@ export class CoursesService extends BaseTemplateApiService {
     const instanceTag = this.buildZendeskInstanceTag(courseInstanceId)
     const envTag = this.coursesConfig.zendeskEnvTag
     return `type:ticket tags:"${product}" tags:"${instanceTag}" tags:"${envTag}"`
+  }
+
+  private buildZendeskTicketSearchQueries(courseInstanceId: string): string[] {
+    const envTag = this.coursesConfig.zendeskEnvTag
+    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
+
+    return [
+      this.buildZendeskTicketSearchQuery(courseInstanceId),
+      `type:ticket subject:"${subject}" tags:"${envTag}"`,
+    ]
+  }
+
+  private dedupeZendeskTickets(
+    tickets: Array<{ id: string; description?: string }>,
+  ): Array<{ id: string; description?: string }> {
+    const uniqueTicketsById = new Map<
+      string,
+      { id: string; description?: string }
+    >()
+    for (const ticket of tickets) {
+      uniqueTicketsById.set(ticket.id, ticket)
+    }
+
+    return [...uniqueTicketsById.values()]
   }
 
   private buildZendeskCustomFields(

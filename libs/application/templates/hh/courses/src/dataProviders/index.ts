@@ -12,6 +12,11 @@ export const HhCoursesSelectedChargeItemApi = defineTemplateApi({
   externalDataId: 'hhCoursesSelectedChargeItem',
 })
 
+export const HhCoursesMockNationalRegistryApi = defineTemplateApi({
+  action: 'getMockNationalRegistryUser',
+  externalDataId: 'nationalRegistry',
+})
+
 export const HhCoursesParticipantAvailabilityApi = defineTemplateApi({
   action: ApiActions.checkParticipantAvailability,
   externalDataId: 'hhCoursesParticipantAvailability',

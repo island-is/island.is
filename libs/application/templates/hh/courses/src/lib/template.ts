@@ -20,10 +20,11 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
+import { UserProfileApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
 import {
+  HhCoursesMockNationalRegistryApi,
   HhCoursesSelectedChargeItemApi,
   HhCoursesParticipantAvailabilityApi,
 } from '../dataProviders'
@@ -89,7 +90,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                NationalRegistryUserApi,
+                HhCoursesMockNationalRegistryApi,
                 HealthCenterApi,
                 HhCoursesSelectedChargeItemApi,
               ],

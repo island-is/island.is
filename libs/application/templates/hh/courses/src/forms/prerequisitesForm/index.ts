@@ -12,7 +12,7 @@ import {
   HealthCenterApi,
 } from '@island.is/application/types'
 import { HeilsugaeslaHofudborgarsvaedisinsLogo } from '@island.is/application/assets/institution-logos'
-import { NationalRegistryUserApi, UserProfileApi } from '../../dataProviders'
+import { HhCoursesMockNationalRegistryApi, UserProfileApi } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -30,7 +30,7 @@ export const Prerequisites = buildForm({
           title: m.general.shorterApplicationTitle,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: HhCoursesMockNationalRegistryApi,
               title: m.prerequisites.nationalRegistryTitle,
               subTitle: m.prerequisites.nationalRegistrySubTitle,
             }),
