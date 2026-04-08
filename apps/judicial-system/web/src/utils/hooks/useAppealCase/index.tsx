@@ -15,7 +15,7 @@ import {
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
   FormContext,
@@ -23,18 +23,15 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseTransition,
   InstitutionType,
   NotificationType,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { hasSentNotification } from '../../utils'
+import { getAppealActorText, hasSentNotification } from '../../utils'
 import useCase from '../useCase'
-import { strings } from './useAppealCase.strings'
 import * as styles from './useAppealCase.css'
 
 const renderLinkButton = (text: string, href: string) => {
@@ -115,8 +112,6 @@ const useAppealCase = () => {
     appealCase,
     statementDeadline,
     hasBeenAppealed,
-    appealedByRole,
-    appealedDate,
     canBeAppealed,
     appealDeadline,
     isAppealDeadlineExpired,
@@ -146,10 +141,8 @@ const useAppealCase = () => {
 
   // WITHDRAWN APPEAL BANNER IS HANDLED HERE:
   if (appealState === CaseAppealState.WITHDRAWN) {
-    title = formatMessage(strings.statementTitle)
-    description = formatMessage(strings.appealWithdrawnDescription, {
-      appealWithdrawnDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
-    })
+    title = 'Úrskurður kærður'
+    description = 'Afturkallað'
   }
 
   // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
@@ -158,45 +151,43 @@ const useAppealCase = () => {
     isSharedWithProsecutor
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
-      title = formatMessage(strings.appealCompletedTitle, {
-        appealedDate: formatDate(appealCompletedDate, 'PPP'),
-      })
+      title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
-      title = formatMessage(strings.statementTitle)
-      description = formatMessage(strings.statementDeadlineDescription, {
-        isStatementDeadlineExpired: isStatementDeadlineExpired || false,
-        statementDeadline: formatDate(statementDeadline, 'PPPp'),
-      })
+      title = 'Úrskurður kærður'
+      description = `Frestur til að skila greinargerð ${
+        isStatementDeadlineExpired ? 'rann' : 'rennur'
+      } út ${formatDate(statementDeadline, 'PPPp')}`
     }
   }
 
   // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
   else if (appealState === CaseAppealState.RECEIVED) {
-    title = formatMessage(strings.statementTitle)
-    description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
-      statementDeadline: formatDate(statementDeadline, 'PPPp'),
-    })
+    title = 'Úrskurður kærður'
+    description = `Frestur til að skila greinargerð ${
+      isStatementDeadlineExpired ? 'rann' : 'rennur'
+    } út ${formatDate(statementDeadline, 'PPPp')}`
     // if the current user has already sent a statement, we don't want to display
     // the link to send a statement, instead we want to display the date it was sent
     if (hasCurrentUserSentStatement) {
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
-          {formatMessage(strings.statementSentDescription, {
-            statementSentDate: isProsecutionUser(user)
-              ? formatDate(prosecutorStatementDate, 'PPPp')
-              : formatDate(defendantStatementDate, 'PPPp'),
-          })}
+          {`Greinargerð send ${formatDate(
+            isProsecutionUser(user)
+              ? prosecutorStatementDate
+              : defendantStatementDate,
+            'PPPp',
+          )}`}
         </Text>
       )
     } else if (isDistrictCourtUser(user)) {
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
-          {formatMessage(strings.appealReceivedNotificationSent, {
-            appealReceivedDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
-          })}
+          {`Tilkynning um móttöku send ${formatDate(
+            appealReceivedByCourtDate,
+            'PPPp',
+          )}`}
         </Text>
       )
     } else {
@@ -206,11 +197,11 @@ const useAppealCase = () => {
           size="small"
           onClick={() => setAppealModalVisible('ConfirmStatementAfterDeadline')}
         >
-          {formatMessage(strings.statementLinkText)}
+          Senda greinargerð
         </Button>
       ) : (
         renderLinkButton(
-          formatMessage(strings.statementLinkText),
+          'Senda greinargerð',
           isDefenceUser(user)
             ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
             : `${STATEMENT_ROUTE}/${workingCase.id}`,
@@ -218,37 +209,27 @@ const useAppealCase = () => {
       )
     }
   } else if (appealState === CaseAppealState.COMPLETED) {
-    title = formatMessage(strings.appealCompletedTitle, {
-      appealedDate: formatDate(appealCompletedDate, 'PPP'),
-    })
+    title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }
-  // When case has been appealed by prosecuor or defender
+  // When case has been appealed by prosecutor or defender
   else if (hasBeenAppealed) {
-    title = formatMessage(strings.statementTitle)
-    description =
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-        ? formatMessage(strings.appealedInCourtStatementDescription, {
-            appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
-          })
-        : formatMessage(strings.statementDescription, {
-            appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
-            appealDate: formatDate(appealedDate, 'PPPp'),
-          })
+    title = 'Úrskurður kærður'
+    description = getAppealActorText(workingCase)
     if (isProsecutionUser(user) || isDefenceUser(user)) {
       child = hasCurrentUserSentStatement
         ? (child = (
             <Text variant="small" color="mint800" fontWeight="semiBold">
-              {formatMessage(strings.statementSentDescription, {
-                statementSentDate: isProsecutionUser(user)
-                  ? formatDate(prosecutorStatementDate, 'PPPp')
-                  : formatDate(defendantStatementDate, 'PPPp'),
-              })}
+              {`Greinargerð send ${formatDate(
+                isProsecutionUser(user)
+                  ? prosecutorStatementDate
+                  : defendantStatementDate,
+                'PPPp',
+              )}`}
             </Text>
           ))
         : renderLinkButton(
-            formatMessage(strings.statementLinkText),
+            'Senda greinargerð',
             `${
               isDefenceUser(user) ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
             }/${workingCase.id}`,
@@ -261,10 +242,10 @@ const useAppealCase = () => {
             size="small"
             onClick={handleReceivedTransition}
           >
-            {`${formatMessage(strings.appealReceivedNotificationLinkText)} `}
+            {'Senda tilkynningu um kæru til Landsréttar'}
           </Button>
           <span className={styles.tooltipContainer}>
-            <Tooltip text={formatMessage(strings.notifyCOATooltip)} />
+            <Tooltip text="Tilkynning um móttöku kæru og frest til að skila greinargerð sendist á Landsrétt og aðila málsins" />
           </span>
         </Box>
       )
@@ -272,21 +253,20 @@ const useAppealCase = () => {
   }
   // When case can be appealed
   else if (canBeAppealed) {
-    title = formatMessage(strings.appealDeadlineTitle, {
-      appealDeadline: formatDate(appealDeadline, 'PPPp'),
-      isAppealDeadlineExpired: isAppealDeadlineExpired,
-    })
+    title = `Kærufrestur ${
+      isAppealDeadlineExpired ? 'rann' : 'rennur'
+    } út ${formatDate(appealDeadline, 'PPPp')}`
     child = isAppealDeadlineExpired ? (
       <Button
         variant="text"
         size="small"
         onClick={() => setAppealModalVisible('ConfirmAppealAfterDeadline')}
       >
-        {formatMessage(strings.appealLinkText)}
+        Senda inn kæru
       </Button>
     ) : (
       renderLinkButton(
-        formatMessage(strings.appealLinkText),
+        'Senda inn kæru',
         `${isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
           workingCase.id
         }`,
@@ -327,7 +307,7 @@ const useAppealCase = () => {
       {appealModalVisible === 'AppealReceived' && (
         <Modal
           title="Tilkynningar sendar á málsaðila"
-          text="Kæra hefur borist Landsrétti. Sækjandi og verjandi hafa fengið tilkynningu um frest til að skila greinargerð."
+          text="Kæra hefur borist Landsrétti. Aðilar máls hafa fengið tilkynningu um frest til að skila greinargerð."
           primaryButton={{
             text: 'Loka glugga',
             onClick: () => setAppealModalVisible(undefined),
