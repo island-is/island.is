@@ -122,15 +122,20 @@ export const subSectionSummary = buildSubSection({
             return (drivingAssessment.data as StudentAssessment).teacherName
           },
         }),
+        // Health cert section — non-BE flows: show "bring along" checkbox
         buildDividerField({
-          condition: needsHealthCertificateCondition(YES),
+          condition: (answers, externalData) =>
+            answers.applicationFor !== BE &&
+            needsHealthCertificateCondition(YES)(answers, externalData),
         }),
         buildDescriptionField({
           id: 'bringalong',
           title: m.overviewBringAlongTitle,
           titleVariant: 'h4',
           description: '',
-          condition: needsHealthCertificateCondition(YES),
+          condition: (answers, externalData) =>
+            answers.applicationFor !== BE &&
+            needsHealthCertificateCondition(YES)(answers, externalData),
         }),
         buildCheckboxField({
           id: 'certificate',
@@ -143,7 +148,28 @@ export const subSectionSummary = buildSubSection({
               label: m.overviewBringCertificateData,
             },
           ],
-          condition: needsHealthCertificateCondition(YES),
+          condition: (answers, externalData) =>
+            answers.applicationFor !== BE &&
+            needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
+        // Health cert section — BE flow: show uploaded file info
+        buildDividerField({
+          condition: (answers, externalData) =>
+            answers.applicationFor === BE &&
+            needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
+        buildKeyValueField({
+          label: m.overviewHealthCertificateUploaded,
+          condition: (answers, externalData) =>
+            answers.applicationFor === BE &&
+            needsHealthCertificateCondition(YES)(answers, externalData),
+          value: ({ answers }) => {
+            const files = getValueViaPath<Array<{ name: string }>>(
+              answers,
+              'healthCertificate',
+            )
+            return files?.map((f) => f.name).join(', ') ?? ''
+          },
         }),
         buildDividerField({}),
         buildKeyValueField({

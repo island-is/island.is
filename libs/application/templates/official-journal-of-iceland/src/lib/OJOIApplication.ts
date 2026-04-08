@@ -33,6 +33,7 @@ export enum ApplicationStates {
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  READER = 'reader',
 }
 
 const getApplicationName = (application: Application) => {
@@ -50,18 +51,6 @@ const getApplicationName = (application: Application) => {
 
   if (!title || !type) {
     return general.applicationName
-  }
-
-  const applicationType = getValueViaPath<string>(
-    application.answers,
-    'applicationType',
-  )
-
-  if (applicationType === 'amending_regulation') {
-    return `${type} (breytingareglugerð) ${title}`
-  }
-  if (applicationType === 'base_regulation') {
-    return `${type} (stofnreglugerð) ${title}`
   }
 
   return `${type} ${title}`
@@ -100,10 +89,18 @@ const OJOITemplate: ApplicationTemplate<
     actions: {
       assignToInstitution: assign((context) => {
         const { application } = context
+        const assignees: string[] = [InstitutionNationalIds.DOMSMALA_RADUNEYTID]
 
-        set(application, 'assignees', [
-          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-        ])
+        const readerNationalId = getValueViaPath<string>(
+          application.answers as Record<string, unknown>,
+          'reader.nationalId',
+        )
+
+        if (readerNationalId && !assignees.includes(readerNationalId)) {
+          assignees.push(readerNationalId)
+        }
+
+        set(application, 'assignees', assignees)
 
         return context
       }),
@@ -176,6 +173,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Draft').then((val) =>
+                  Promise.resolve(val.Draft),
+                ),
+            },
           ],
         },
         on: {
@@ -226,6 +232,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/DraftRetry').then((val) =>
+                  Promise.resolve(val.DraftRetry),
+                ),
+            },
           ],
         },
         on: {
@@ -240,6 +255,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
@@ -247,15 +263,15 @@ const OJOITemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(90),
           onEntry: [
             defineTemplateApi({
+              action: TemplateApiActions.syncRegulationDraft,
+              shouldPersistToExternalData: false,
+              throwOnError: true,
+            }),
+            defineTemplateApi({
               action: TemplateApiActions.postApplication,
               shouldPersistToExternalData: true,
               externalDataId: 'successfullyPosted',
-              throwOnError: false,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.syncRegulationDraft,
-              shouldPersistToExternalData: false,
-              throwOnError: false,
+              throwOnError: true,
             }),
           ],
           actionCard: {
@@ -280,6 +296,15 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+            },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Submitted').then((val) =>
+                  Promise.resolve(val.Submitted),
+                ),
             },
           ],
         },
@@ -324,6 +349,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Complete').then((val) =>
+                  Promise.resolve(val.Complete),
+                ),
+            },
           ],
         },
       },
@@ -354,6 +388,15 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.READER,
+              shouldBeListedForRole: true,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+            },
           ],
         },
       },
@@ -363,9 +406,20 @@ const OJOITemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
+    const readerNationalId = getValueViaPath<string>(
+      application.answers as Record<string, unknown>,
+      'reader.nationalId',
+    )
+
+    if (readerNationalId === id) {
+      return Roles.READER
+    }
+
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
+
     return undefined
   },
 }

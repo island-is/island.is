@@ -19704,12 +19704,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/opossum@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@types/opossum@npm:4.1.1"
+"@types/opossum@npm:8.1.9":
+  version: 8.1.9
+  resolution: "@types/opossum@npm:8.1.9"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10/f15aa59768bf2a1940ad806a10d622cfae1fd8fcf5f4caf0f8813046d3917f383d0b43e20fa82430a6c4c55020984c9d5a1137a1925666ecce926a832b550b20
+  checksum: 10/7eef9d5cafd8bb13dce0ca0edb2ff04cb77fc5045ee893b728ae69458580b7daf51e2ed53b9e52ab0e7c857d3b4692224bcffa73bfc2a61f50c03e22ffc32246
   languageName: node
   linkType: hard
 
@@ -35976,7 +35976,7 @@ __metadata:
     "@types/memoizee": "npm:0.4.5"
     "@types/node": "npm:20.15.0"
     "@types/nodemailer": "npm:6.4.1"
-    "@types/opossum": "npm:4.1.1"
+    "@types/opossum": "npm:8.1.9"
     "@types/passport-jwt": "npm:3.0.8"
     "@types/pdfkit": "npm:0.11.2"
     "@types/pg": "npm:8.6.4"
@@ -36148,7 +36148,7 @@ __metadata:
     nx: "npm:21.2.2"
     oidc-client-ts: "npm:2.4.0"
     openapi3-ts: "npm:2.0.0"
-    opossum: "npm:6.1.0"
+    opossum: "npm:9.0.0"
     passport: "npm:0.6.0"
     passport-jwt: "npm:4.0.1"
     pdf-lib: "npm:1.17.1"
@@ -43232,10 +43232,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opossum@npm:6.1.0":
-  version: 6.1.0
-  resolution: "opossum@npm:6.1.0"
-  checksum: 10/f03f63ae1f174de58ac31dc63b32b02594530dda128d8cc553b6cc263f0097d19b7d391768beaec2406038236ebcbedd0891b615bff6dadce4c541a030f55d4f
+"opossum@npm:9.0.0":
+  version: 9.0.0
+  resolution: "opossum@npm:9.0.0"
+  checksum: 10/df455f27c5e5e117c4f402b701954686637b4799e8800b1ae53651a913cd4ef367a7b64dc36064a39ce999ec5a820bdc36413075a7dffadd4d26def5b3cc846a
   languageName: node
   linkType: hard
 
