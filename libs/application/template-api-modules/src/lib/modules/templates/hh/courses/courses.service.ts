@@ -247,7 +247,7 @@ export class CoursesService extends BaseTemplateApiService {
   ): Promise<Set<string>> {
     const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
     const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
-    const newQuery = `type:ticket tags:"$"${this.coursesConfig.zendeskEnvTag} ${courseInstanceId}"`
+    const newQuery = `type:ticket tags:"${this.coursesConfig.zendeskEnvTag} ${courseInstanceId}"`
     const tickets: Ticket[] = []
     try {
       const [backwardsCompatibleTickets, newTickets] = await Promise.all([

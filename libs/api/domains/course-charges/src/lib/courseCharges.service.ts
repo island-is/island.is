@@ -115,7 +115,7 @@ export class CourseChargesService {
     const subject = `${zendeskSubjectPrefix} - ${courseInstanceId}`
 
     const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
-    const newQuery = `type:ticket tags:"$"${this.courseChargesConfig.zendeskEnvTag} ${courseInstanceId}"`
+    const newQuery = `type:ticket tags:"${this.courseChargesConfig.zendeskEnvTag} ${courseInstanceId}"`
     const baseUrl = `https://${zendeskSubdomain}.zendesk.com/api/v2`
     const credentials = Buffer.from(
       `${zendeskEmail}/token:${zendeskToken}`,
