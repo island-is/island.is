@@ -3,12 +3,12 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   ApolloProviderWrapper,
   IntlProviderWrapper,

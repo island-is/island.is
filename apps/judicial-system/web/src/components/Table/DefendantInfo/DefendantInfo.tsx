@@ -5,8 +5,8 @@ import {
   formatDOB,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './DefendantInfo.css'
 
