@@ -10,4 +10,5 @@ export const restrictionsNavigation: PortalNavigationItem = {
 export const restrictionsNavigationNew: PortalNavigationItem = {
   name: m.restrictions,
   path: Paths.RestrictionsNew,
+  description: m.restrictions,
 }

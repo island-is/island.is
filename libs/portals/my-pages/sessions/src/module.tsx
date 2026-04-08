@@ -5,7 +5,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 
 import { SessionsPaths } from './lib/paths'
-import { Features } from '@island.is/feature-flags'
+import { Features } from '@island.is/react/feature-flags'
 
 const allowedScopes: string[] = [ApiScope.internal, ApiScope.internalProcuring]
 

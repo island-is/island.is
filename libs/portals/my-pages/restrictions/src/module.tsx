@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
+import { Features } from '@island.is/react/feature-flags'
 import { PortalModule } from '@island.is/portals/core'
 
 import { m } from './lib/messages'
