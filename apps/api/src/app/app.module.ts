@@ -76,6 +76,8 @@ import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
+import { OpenDataModule } from '@island.is/api/domains/open-data'
+import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import {
@@ -189,6 +191,7 @@ import { SignatureCollectionModule } from '@island.is/api/domains/signature-coll
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
@@ -380,6 +383,8 @@ const environment = getConfig
     SeminarsModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,
+    OpenDataModule,
+    OneSystemsRulingsModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
@@ -434,6 +439,7 @@ const environment = getConfig
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
+        FinanceClientV3Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,

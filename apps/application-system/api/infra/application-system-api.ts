@@ -187,6 +187,7 @@ export const serviceSetup = (services: {
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
   paymentsApi: ServiceBuilder<'services-payments'>
+  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -372,6 +373,9 @@ export const serviceSetup = (services: {
         staging: 'Island Staging',
         prod: 'Island.is',
       },
+      REGULATIONS_ADMIN_URL: ref(
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
+      ),
     })
     .xroad(
       Base,
@@ -471,6 +475,13 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
       ZENDESK_CONTACT_FORM_EMAIL:
         '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
+      REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
+      REGULATIONS_FILE_UPLOAD_KEY_DRAFT:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT',
+      REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
+      REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
     })
     .db()
     .migrations()

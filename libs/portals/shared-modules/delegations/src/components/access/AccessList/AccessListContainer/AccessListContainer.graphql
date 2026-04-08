@@ -2,6 +2,7 @@ fragment AuthApiScope on AuthApiScope {
   name
   displayName
   description
+  allowsWrite
 }
 
 query AuthScopeTree($input: AuthApiScopesInput!) {

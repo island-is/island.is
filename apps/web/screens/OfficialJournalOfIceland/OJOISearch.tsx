@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 
-import { useTypes } from '@island.is/application/templates/official-journal-of-iceland'
+import { useTypes } from '@island.is/application/templates/official-journal-of-iceland/hooks'
 import {
   AlertMessage,
   Box,

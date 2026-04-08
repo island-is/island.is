@@ -175,26 +175,53 @@ export class OrganizationPageResolver {
     lang: string,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
   ): { nodeTrail: SitemapTreeNode[]; node: SitemapTreeNode | null } {
-    for (const node of root?.childNodes ?? []) {
-      if (this.getNodeSlug(node, lang, entryMap) === slug)
-        return { nodeTrail: [], node }
-      if (node.type === SitemapTreeNodeType.CATEGORY) {
-        for (const child of node?.childNodes ?? []) {
-          if (this.getNodeSlug(child, lang, entryMap) === slug)
-            return { nodeTrail: [node], node: child }
-          if (child.type === SitemapTreeNodeType.CATEGORY) {
-            for (const grandchild of child?.childNodes ?? []) {
-              if (this.getNodeSlug(grandchild, lang, entryMap) === slug)
-                return { nodeTrail: [node, child], node: grandchild }
+    let bestMatch: {
+      nodeTrail: SitemapTreeNode[]
+      node: SitemapTreeNode | null
+      rank: number
+    } = {
+      nodeTrail: [],
+      node: null,
+      rank: -1,
+    }
+
+    const getMatchRank = (node: SitemapTreeNode) => {
+      if (
+        node.type === SitemapTreeNodeType.ENTRY &&
+        node.primaryLocation === true
+      ) {
+        return 2
+      }
+
+      return 0
+    }
+
+    const visitNodes = (nodes: SitemapTreeNode[], trail: SitemapTreeNode[]) => {
+      for (const node of nodes) {
+        if (this.getNodeSlug(node, lang, entryMap) === slug) {
+          const rank = getMatchRank(node)
+          if (rank > bestMatch.rank) {
+            bestMatch = {
+              nodeTrail: trail,
+              node,
+              rank,
             }
+            if (rank === 2) return
           }
+        }
+
+        if (node.childNodes.length > 0) {
+          visitNodes(node.childNodes, [...trail, node])
+          if (bestMatch.rank === 2) return
         }
       }
     }
 
+    visitNodes(root?.childNodes ?? [], [])
+
     return {
-      nodeTrail: [],
-      node: null,
+      nodeTrail: bestMatch.nodeTrail,
+      node: bestMatch.node,
     }
   }
 

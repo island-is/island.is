@@ -47,6 +47,11 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       'hasBorderAbove',
     ),
     linkData: mapLocalesToFieldApis([sdk.locales.default], sdk, 'linkData'),
+    introLinkImageSize: mapLocalesToFieldApis(
+      [sdk.locales.default],
+      sdk,
+      'introLinkImageSize',
+    ),
   }
 }
 
@@ -254,6 +259,16 @@ export const OverviewLinksEditor = () => {
           fieldID="displayedTitle"
           localeToFieldMapping={localeToFieldMapping}
           sdk={sdk}
+        />
+      )}
+
+      {linkData.variant === LinkDataVariant.IntroLinkImage && (
+        <ContentfulField
+          displayName="Size"
+          fieldID="introLinkImageSize"
+          localeToFieldMapping={localeToFieldMapping}
+          sdk={sdk}
+          widgetId="dropdown"
         />
       )}
 

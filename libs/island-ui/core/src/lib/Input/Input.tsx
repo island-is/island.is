@@ -235,6 +235,7 @@ export const Input = forwardRef(
               loading={!!loading}
               hasError={hasError}
               hasLabel={hasLabel}
+              disabled={!!disabled}
             />
           )}
         </Box>
@@ -247,12 +248,23 @@ export const Input = forwardRef(
 )
 
 const AsideIcons: FC<AsideProps> = (props) => {
-  const { icon, buttons = [], size, loading, hasError, hasLabel } = props
+  const {
+    icon,
+    buttons = [],
+    size,
+    loading,
+    hasError,
+    hasLabel,
+    disabled,
+  } = props
   const displayedIcon: InputIcon | undefined = hasError
     ? { name: 'warning' }
     : icon
 
-  const renderIcon = (item: InputIcon) => (
+  const renderIcon = (item: {
+    name: InputIcon['name']
+    type?: InputIcon['type']
+  }) => (
     <Icon
       icon={item.name}
       type={item.type}
@@ -267,13 +279,33 @@ const AsideIcons: FC<AsideProps> = (props) => {
       {loading ? (
         <Box className={styles.spinner} flexShrink={0} borderRadius="full" />
       ) : displayedIcon ? (
-        <div
-          className={styles.iconWrapper({ size })}
-          key={displayedIcon.name}
-          aria-hidden
-        >
-          {renderIcon(displayedIcon)}
-        </div>
+        displayedIcon.onClick ? (
+          <button
+            type="button"
+            className={styles.iconWrapper({ size })}
+            key={displayedIcon.name}
+            onClick={displayedIcon.onClick}
+            onMouseDown={(e) => e.nativeEvent.stopPropagation()}
+            aria-label={displayedIcon.ariaLabel || displayedIcon.name}
+            disabled={disabled}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: disabled ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {renderIcon(displayedIcon)}
+          </button>
+        ) : (
+          <div
+            className={styles.iconWrapper({ size })}
+            key={displayedIcon.name}
+            aria-hidden
+          >
+            {renderIcon(displayedIcon)}
+          </div>
+        )
       ) : null}
 
       {buttons.map((item) => {

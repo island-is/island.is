@@ -4,12 +4,11 @@ import {
   AlertMessage,
   Box,
   Button,
-  Divider,
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
@@ -39,11 +38,14 @@ export const Screen = () => {
   const multiMax = currentScreen?.data?.multiMax ?? 1
   const isMulti = currentScreen?.data?.isMulti ?? false
 
-  const visibleFields =
-    currentScreen?.data?.fields?.filter(
-      (field): field is NonNullable<typeof field> =>
-        field != null && !field.isHidden,
-    ) ?? []
+  const visibleFields = useMemo(
+    () =>
+      currentScreen?.data?.fields?.filter(
+        (field): field is NonNullable<typeof field> =>
+          field != null && !field.isHidden,
+      ) ?? [],
+    [currentScreen?.data?.fields],
+  )
 
   const [numberOfItems, setNumberOfItems] = useState(1)
 
@@ -57,7 +59,7 @@ export const Screen = () => {
     } else {
       setNumberOfItems(1)
     }
-  }, [currentScreen?.data?.id, currentScreen?.data?.fields, isMulti, multiMax])
+  }, [currentScreen?.data?.id, isMulti, multiMax, visibleFields])
 
   const shouldMoveCurrencySumBox =
     numberOfItems > 1 &&
@@ -87,6 +89,11 @@ export const Screen = () => {
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
+  )
+
+  const anchorFieldIndex = useMemo(
+    () => fieldsForMultisetLoop.findIndex((f) => f.isPartOfMultiset !== false),
+    [fieldsForMultisetLoop],
   )
 
   const shouldPopulateScreen = async () => {
@@ -130,12 +137,17 @@ export const Screen = () => {
     }
   }
 
+  const screenId = currentScreen?.data?.id
+
+  const shouldPopulateScreenRef = useRef(shouldPopulateScreen)
+  shouldPopulateScreenRef.current = shouldPopulateScreen
+
   useEffect(() => {
     const populateScreen = async () => {
-      await shouldPopulateScreen()
+      await shouldPopulateScreenRef.current()
     }
-    populateScreen()
-  }, [currentScreen?.data?.id])
+    void populateScreen()
+  }, [screenId])
 
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)
@@ -188,14 +200,17 @@ export const Screen = () => {
             currentSectionType !== SectionTypes.PARTIES &&
             screenTitle}
         </Text>
+
         {currentSectionType === SectionTypes.PREMISES && (
           <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
         )}
+
         {currentSectionType === SectionTypes.PARTIES && (
           <Applicants
             applicantField={currentScreen?.data?.fields?.[0] as FormSystemField}
           />
         )}
+
         {currentSectionType === SectionTypes.SUMMARY &&
           !!state.application.hasSummaryScreen &&
           !currentSection?.data?.isHidden && <Summary state={state} />}
@@ -204,30 +219,65 @@ export const Screen = () => {
 
         {currentScreen &&
           Array.from({ length: numberOfItems }).map((_, itemIndex) => (
-            <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
-              {itemIndex > 0 && (
-                <Box marginBottom={2} marginTop={6}>
-                  <Text variant="h2">{itemIndex + 1}.</Text>
-                  <Divider />
-                </Box>
-              )}
-
+            <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
               {fieldsForMultisetLoop
                 .filter(
                   (field) =>
                     field.isPartOfMultiset !== false || itemIndex === 0,
                 )
-                .map((field) => (
-                  <Field
-                    field={field}
-                    valueIndex={
-                      field.isPartOfMultiset === false ? 0 : itemIndex
+                .map((field, fieldIndex) => {
+                  const key = `${field.id ?? 'field'}-${itemIndex}`
+                  const valueIndex =
+                    field.isPartOfMultiset === false ? 0 : itemIndex
+
+                  const isRepeatingField = field.isPartOfMultiset !== false
+
+                  const showRowGutter =
+                    isRepeatingField &&
+                    numberOfItems > 1 &&
+                    (itemIndex !== 0 ||
+                      anchorFieldIndex === -1 ||
+                      fieldIndex >= anchorFieldIndex)
+
+                  let gutterLabel: string | null = null
+                  if (isRepeatingField && numberOfItems > 1) {
+                    if (itemIndex === 0) {
+                      if (anchorFieldIndex === -1) {
+                        if (fieldIndex === 0) gutterLabel = '1.'
+                      } else {
+                        if (fieldIndex === anchorFieldIndex) gutterLabel = '1.'
+                      }
+                    } else {
+                      if (fieldIndex === 0) gutterLabel = `${itemIndex + 1}.`
                     }
-                    key={`${field.id ?? 'field'}-${itemIndex}`}
-                  />
-                ))}
+                  }
+
+                  return (
+                    <Box key={key} display="flex" alignItems="flexStart">
+                      {showRowGutter && (
+                        <Box
+                          marginRight={2}
+                          flexShrink={0}
+                          marginTop={4}
+                          style={{ width: '2ch' }}
+                          display="flex"
+                          justifyContent="flexEnd"
+                        >
+                          {gutterLabel && (
+                            <Text variant="h4">{gutterLabel}</Text>
+                          )}
+                        </Box>
+                      )}
+
+                      <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
+                        <Field field={field} valueIndex={valueIndex} />
+                      </Box>
+                    </Box>
+                  )
+                })}
             </Box>
           ))}
+
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
             <Field
@@ -237,6 +287,7 @@ export const Screen = () => {
             />
           </Box>
         )}
+
         {isMulti && multiMax > 1 && (
           <Box display="flex" justifyContent="flexEnd">
             <Box marginRight={2}>

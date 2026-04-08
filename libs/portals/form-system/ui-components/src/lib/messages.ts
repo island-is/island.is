@@ -556,6 +556,11 @@ export const m = defineMessages({
     defaultMessage: 'Krafist',
     description: 'Required',
   },
+  select: {
+    id: 'form.system:select',
+    defaultMessage: 'Veldu',
+    description: 'Select an option',
+  },
   email: {
     id: 'form.system:email',
     defaultMessage: 'Netfang',
@@ -1196,5 +1201,12 @@ export const m = defineMessages({
     id: 'form.system:application-lifetime',
     defaultMessage: 'Líftími umsókna',
     description: 'Application lifetime',
+  },
+  maxSizeInMb: {
+    id: 'form.system:max-size-in-mb',
+    defaultMessage:
+      'Ein eða fleiri skrár eru of stórar. Hámarksstærð er {maxSizeInMb} MB.',
+    description:
+      'One or more files are too large. Max size is {maxSizeInMb} MB.',
   },
 })

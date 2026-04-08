@@ -4,12 +4,11 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
 export const incomePlanInstructionsSubSection = buildSubSection({
   id: 'incomePlanInstructionsSubSection',
   title:
-    medicalAndRehabilitationPaymentsFormMessage.generalInformation
+    socialInsuranceAdministrationMessage.incomePlan
       .incomePlanInstructionsSubSectionTitle,
   children: [
     buildMultiField({
