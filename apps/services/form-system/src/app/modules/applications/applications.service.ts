@@ -262,18 +262,12 @@ export class ApplicationsService {
         `Form with id '${application.formId}' not found`,
       )
     }
-    return form.slug || ''
-  }
-
-  async updatePruneAt(id: string, pruneAt: Date): Promise<void> {
-    const application = await this.applicationModel.findByPk(id)
-
-    if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
+    if (!form.slug) {
+      throw new NotFoundException(
+        `Slug for form with id '${form.id}' not found`,
+      )
     }
-
-    application.pruneAt = pruneAt
-    await application.save()
+    return form.slug
   }
 
   async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
