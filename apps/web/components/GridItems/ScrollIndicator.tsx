@@ -97,6 +97,7 @@ export const ScrollIndicator = ({
       >
         {[...Array(numPages)].map((_, index) => (
           <button
+            type="button"
             key={index}
             className={cn(styles.dot, {
               [styles.dotActive]: activePage === index,
