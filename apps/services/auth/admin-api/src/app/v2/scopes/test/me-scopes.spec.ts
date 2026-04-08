@@ -441,6 +441,7 @@ const patchExpectedOutput = {
   showInDiscoveryDocument: true,
   supportedDelegationTypes: [],
   tagIds: [],
+  thirdPartyLoginUrl: '',
   ...inputPatch,
 }
 
@@ -726,6 +727,7 @@ describe('MeScopesController', () => {
             requiresConfirmation: false,
             showInDiscoveryDocument: true,
             tagIds: [],
+            thirdPartyLoginUrl: '',
           })
 
           // Assert - db record
