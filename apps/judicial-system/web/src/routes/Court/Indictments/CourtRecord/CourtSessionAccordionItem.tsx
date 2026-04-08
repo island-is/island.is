@@ -31,6 +31,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   applyDativeCaseToCourtName,
+  formatDate,
   formatDOB,
   getRoleTitleFromCaseFileCategory,
   getWordByGender,
@@ -125,6 +126,18 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
     CourtSessionClosedLegalBasis._2008_88_10_G,
   ],
 ]
+
+const getCourtSessionFallbackStartDate = (
+  courtSession: Pick<CourtSessionResponse, 'startDate'>,
+  workingCase: {
+    courtDate?: { date?: string | null } | null
+    arraignmentDate?: { date?: string | null } | null
+  },
+): string | undefined =>
+  courtSession.startDate ??
+  workingCase.courtDate?.date ??
+  workingCase.arraignmentDate?.date ??
+  undefined
 
 const CourtSessionLabel = forwardRef(
   (props: CourtSessionLabelProps, ref: ForwardedRef<HTMLDivElement>) => {
@@ -296,10 +309,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     const now = formatDateForServer(new Date())
     const startDate =
-      courtSession.startDate ??
-      workingCase.courtDate?.date ??
-      workingCase.arraignmentDate?.date ??
-      now
+      getCourtSessionFallbackStartDate(courtSession, workingCase) ?? now
     const judgeId = courtSession.judgeId ?? workingCase.judge?.id
     const location =
       courtSession.location ??
@@ -314,15 +324,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       { startDate, judgeId, location, attendees, endDate },
       { persist: true },
     )
-  }, [
-    courtSession,
-    workingCase.judge?.id,
-    workingCase.courtDate?.date,
-    workingCase.arraignmentDate?.date,
-    workingCase.court?.name,
-    getInitialAttendees,
-    patchSession,
-  ])
+  }, [courtSession, workingCase, getInitialAttendees, patchSession])
 
   // Initialize when the case is up to date and the accordion item is expanded
   useOnceOn(isCaseUpToDate, () => setReadyForInitialization(true))
@@ -707,6 +709,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const isLastCourtSession = index + 1 === workingCase.courtSessions?.length
 
+  const accordionTitle = useMemo(() => {
+    const dateLabel = formatDate(
+      getCourtSessionFallbackStartDate(courtSession, workingCase),
+    )
+    return dateLabel
+      ? `Þinghald ${index + 1} - ${dateLabel}`
+      : `Þinghald ${index + 1}`
+  }, [courtSession, workingCase, index])
+
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -727,7 +738,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         id={`courtRecordAccordionItem-${courtSession.id}`}
         label={
           <CourtSessionLabel
-            label={`Þinghald ${index + 1}`}
+            label={accordionTitle}
             ref={ref}
             isConfirmed={courtSession.isConfirmed}
           />
@@ -765,11 +776,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     name="courtStartDate"
                     datepickerLabel="Dagsetning þinghalds"
                     timeLabel="Þinghald hófst (kk:mm)"
-                    selectedDate={
-                      courtSession.startDate ??
-                      workingCase.courtDate?.date ??
-                      workingCase.arraignmentDate?.date
-                    }
+                    selectedDate={getCourtSessionFallbackStartDate(
+                      courtSession,
+                      workingCase,
+                    )}
                     onChange={(date: Date | undefined, valid: boolean) => {
                       if (date && valid) {
                         patchSession(

@@ -3,6 +3,7 @@ import cn from 'classnames'
 import {
   Tooltip as AriaTooltip,
   TooltipAnchor,
+  TooltipArrow,
   TooltipProvider,
 } from '@ariakit/react'
 import * as styles from './ToolTip.css'
@@ -108,7 +109,9 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
           })}
         >
           {(variant === 'light' || variant === 'white') && (
-            <ArrowIcon placement={placement} variant={variant} />
+            <TooltipArrow>
+              <ArrowIcon placement={placement} variant={variant} />
+            </TooltipArrow>
           )}
           {text}
         </div>

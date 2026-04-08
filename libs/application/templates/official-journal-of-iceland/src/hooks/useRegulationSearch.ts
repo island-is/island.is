@@ -47,7 +47,7 @@ export const useRegulationSearch = () => {
     }
     executeSearch({
       variables: {
-        input: { q: query, iA: false, iR: false },
+        input: { q: query, iA: false, iR: true },
       },
     })
   }

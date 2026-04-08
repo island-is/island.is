@@ -41,6 +41,14 @@ components:
           type: string
           format: date-time
           nullable: true
+        appealPolicyDate:
+          type: string
+          format: date-time
+          nullable: true
+        registrationDate:
+          type: string
+          format: date-time
+          nullable: true
         publishDate:
           type: string
           format: date-time
@@ -192,7 +200,6 @@ components:
           type: integer
           default: 10
           description: Results per page
-
   responses:
     InputError:
       description: Input error
