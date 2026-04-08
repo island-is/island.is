@@ -47,6 +47,19 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.CHECKBOX:
         keys = ['isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.PAYMENT:
+        keys = [
+          'chargeItemCode',
+          'chargeItemName',
+          'chargeType',
+          'performingOrgID',
+          'priceAmount',
+          'paymentQuantityId',
+        ]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.PAYMENT_QUANTITY:
+        keys = ['minValue', 'maxValue', 'isDropdown']
+        return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)
     }
