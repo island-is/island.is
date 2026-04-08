@@ -249,9 +249,9 @@ const useVerdictListState = (props: VerdictsListProps) => {
       [QueryParam.DISTRICT_COURTS]: parseAsArrayOf(parseAsString)
         .withOptions({ clearOnDefault: true })
         .withDefault([]),
-      [QueryParam.KEYWORD]: parseAsString
+      [QueryParam.KEYWORD]: parseAsArrayOf(parseAsString)
         .withOptions({ clearOnDefault: true })
-        .withDefault(''),
+        .withDefault([]),
       [QueryParam.CASE_CONTACT]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
@@ -316,7 +316,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
 
   const convertQueryParamsToInput = useCallback(
     (queryParams: typeof queryState, page: number): WebVerdictsInput => {
-      const keyword = queryParams[QueryParam.KEYWORD]
+      const keywords = queryParams[QueryParam.KEYWORD]
       const laws = normalizeLawReference(queryParams[QueryParam.LAWS])
       return {
         page,
@@ -326,7 +326,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
             ? queryParams[QueryParam.DISTRICT_COURTS].join(',')
             : extractCourtLevelFromState(queryParams[QueryParam.COURT]),
         caseNumber: queryParams[QueryParam.CASE_NUMBER],
-        keywords: keyword ? [keyword] : null,
+        keywords: keywords?.length ? keywords : null,
         caseCategories: queryParams[QueryParam.CASE_CATEGORIES],
         caseTypes: queryParams[QueryParam.CASE_TYPES],
         laws: laws ? [laws] : null,
@@ -446,8 +446,8 @@ interface KeywordSelectProps {
     label: string
     value: string
   }[]
-  value: { label: string; value: string } | undefined
-  onChange: (_: { label: string; value: string } | undefined) => void
+  value: ReadonlyArray<{ label: string; value: string }>
+  onChange: (_: ReadonlyArray<{ label: string; value: string }>) => void
   clearStateButtonText?: string
 }
 
@@ -480,9 +480,9 @@ const KeywordSelect = ({
         size="sm"
         options={keywordOptions}
         value={state}
-        onChange={(option) => {
-          if (option) setState(option)
-        }}
+        onChange={setState}
+        isMulti={true}
+        isClearable={false}
         placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
       />
       {Boolean(clearStateButtonText) && (
@@ -492,7 +492,7 @@ const KeywordSelect = ({
             icon="reload"
             size="small"
             onClick={() => {
-              setState(undefined)
+              setState([])
               setRenderKey((key) => key + 1)
             }}
           >
@@ -666,16 +666,21 @@ const Filters = ({
             }}
             iconVariant="small"
             labelVariant="h5"
-            labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
+            labelColor={
+              queryState[QueryParam.KEYWORD]?.length ? 'blue400' : undefined
+            }
           >
             <KeywordSelect
               key={renderKey}
               keywordOptions={keywordOptions}
-              value={keywordOptions.find(
-                (option) => option.value === queryState[QueryParam.KEYWORD],
+              value={keywordOptions.filter((option) =>
+                queryState[QueryParam.KEYWORD]?.includes(option.value),
               )}
-              onChange={(option) => {
-                updateQueryState(QueryParam.KEYWORD, option?.value ?? null)
+              onChange={(options) => {
+                updateQueryState(
+                  QueryParam.KEYWORD,
+                  options.map((option) => option.value),
+                )
               }}
               clearStateButtonText={formatMessage(m.listPage.clearFilter)}
             />
@@ -929,16 +934,26 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       })
     }
 
-    if (queryState[QueryParam.KEYWORD]) {
-      tags.push({
-        label: `${formatMessage(m.listPage.keywordAccordionLabel)}: ${
-          queryState[QueryParam.KEYWORD]
-        }`,
-        onClick: () => {
-          updateQueryState(QueryParam.KEYWORD, null)
-          updateRenderKey()
-        },
-      })
+    if (queryState[QueryParam.KEYWORD]?.length > 0) {
+      for (const keyword of queryState[QueryParam.KEYWORD]) {
+        tags.push({
+          label: `${formatMessage(
+            m.listPage.keywordAccordionLabel,
+          )}: ${keyword}`,
+          onClick: () => {
+            updateQueryState(QueryParam.KEYWORD, (previousState) => {
+              const previousKeywords = previousState[QueryParam.KEYWORD] ?? []
+              return {
+                ...previousState,
+                [QueryParam.KEYWORD]: previousKeywords.filter(
+                  (previousKeyword) => previousKeyword !== keyword,
+                ),
+              }
+            })
+            updateRenderKey()
+          },
+        })
+      }
     }
 
     if (queryState[QueryParam.CASE_CONTACT]) {
