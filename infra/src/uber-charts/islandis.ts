@@ -17,8 +17,10 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 
 // Payments
 import { serviceSetup as paymentsWebSetup } from '../../../apps/payments/infra/payments'
-import { serviceSetup as paymentsServiceSetup } from '../../../apps/services/payments/infra/payments'
-import { serviceSetupForWorker as paymentsServiceWorkerSetup } from '../../../apps/services/payments/infra/payments'
+import {
+  serviceSetup as paymentsServiceSetup,
+  serviceSetupForWorker as paymentsServiceWorkerSetup,
+} from '../../../apps/services/payments/infra/payments'
 
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
@@ -27,13 +29,13 @@ import { serviceSetup as bffServicePortalServiceSetup } from '../../../apps/serv
 import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
-import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 import {
-  workerSetup as cmsImporterSetup,
   energyFundImportSetup as cmsImporterEnergyFundImportSetup,
   fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
+  workerSetup as cmsImporterSetup,
   webSitemapImportSetup as cmsImporterWebSitemapImportSetup,
 } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
+import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
@@ -48,10 +50,10 @@ import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-ac
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 
 import {
+  userNotificationBirthdayWorkerSetup,
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
-  userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -73,12 +75,14 @@ import {
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
 
+import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
+import {
+  serviceSetup as formSystemApiSetup,
+  workerSetup as formSystemWorkerSetup,
+} from '../../../apps/services/form-system/infra/form-system'
+import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
-import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
-import { workerSetup as formSystemWorkerSetup } from '../../../apps/services/form-system/infra/form-system'
-import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
-import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -125,7 +129,9 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const formSystemApi = formSystemApiSetup()
+const formSystemApi = formSystemApiSetup({
+  paymentsApi: paymentsService,
+})
 const formSystemWorker = formSystemWorkerSetup()
 const formSystemWeb = formSystemWebSetup()
 
