@@ -7,3 +7,7 @@ export const restrictionsNavigation: PortalNavigationItem = {
   path: Paths.Restrictions,
   description: m.restrictions,
 }
+export const restrictionsNavigationNew: PortalNavigationItem = {
+  name: m.restrictions,
+  path: Paths.RestrictionsNew,
+}

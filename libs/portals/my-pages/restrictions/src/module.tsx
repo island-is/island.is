@@ -19,11 +19,20 @@ export const restrictionsModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes(args) {
+  async routes(args) {
+    const { userInfo, featureFlagClient } = args
+    const useNewRoute = await featureFlagClient.getValue(
+      Features.useNewDelegationSystem,
+      false,
+      {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      },
+    )
     return [
       {
         name: m.restrictions,
-        path: Paths.Restrictions,
+        path: useNewRoute ? Paths.RestrictionsNew : Paths.Restrictions,
         loader: restrictionsLoader(args),
         action: restrictionsAction(args),
         element: <Restrictions />,
