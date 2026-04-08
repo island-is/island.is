@@ -257,16 +257,21 @@ export enum CaseTransition {
 }
 
 export enum IndictmentCaseTransition {
+  APPEAL = CaseTransition.APPEAL,
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
   COMPLETE = CaseTransition.COMPLETE,
+  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
+  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REOPEN = CaseTransition.REOPEN,
+  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
+  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 export enum RequestCaseTransition {
