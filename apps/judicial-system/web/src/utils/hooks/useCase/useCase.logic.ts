@@ -113,7 +113,9 @@ const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
 
   let currentValue: unknown
 
-  if (isChildKey(theKey)) {
+  if (theKey === 'defendantEventLogDecisions') {
+    return false
+  } else if (isChildKey(theKey)) {
     currentValue = workingCase[childof[theKey]]
   } else if (isAppealChildKey(theKey)) {
     currentValue = workingCase.appealCase?.[appealChildof[theKey]]
