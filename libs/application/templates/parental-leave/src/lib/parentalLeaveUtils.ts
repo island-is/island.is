@@ -945,9 +945,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   }
 
   const requestDays = getOrFallback(
-    isRequestingRights === YES || isRequestingRightsSecondary === YES
-      ? YES
-      : NO,
+    isRequestingRights === YES
+      ? isRequestingRights
+      : isRequestingRightsSecondary,
     requestValue,
   )
 
