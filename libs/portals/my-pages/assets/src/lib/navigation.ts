@@ -110,6 +110,18 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.myShips,
+      description: m.myShipsIntro,
+      path: AssetsPaths.AssetsShips,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsShipDetail,
+        },
+      ],
+    },
+    {
       name: m.workMachines,
       description: m.workMachinesIntro,
       searchTags: [s.assetsWorkMachines, s.assetsMachines],

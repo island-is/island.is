@@ -37,6 +37,7 @@ type Transition = (
 
 interface IndictmentCaseRule {
   fromStates: IndictmentCaseState[]
+  fromAppealStates: (CaseAppealState | undefined)[]
   transition: Transition
 }
 
@@ -54,6 +55,7 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
     {
       fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase) => ({
         ...update,
         state: CaseState.WAITING_FOR_CONFIRMATION,
@@ -65,6 +67,7 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.DENY_INDICTMENT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase) => ({
         ...update,
         state: CaseState.DRAFT,
@@ -75,6 +78,7 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.SUBMIT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase) => ({
         ...update,
         state: CaseState.SUBMITTED,
@@ -83,9 +87,21 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.RECEIVE,
+    {
+      fromStates: [IndictmentCaseState.SUBMITTED],
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        state: CaseState.RECEIVED,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.MOVE,
     {
       fromStates: [IndictmentCaseState.RECEIVED],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase) => ({
         ...update,
         courtCaseNumber: null,
@@ -99,6 +115,7 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase, theCase: Case) => {
         if (update.indictmentDecision ?? theCase.indictmentDecision) {
           throw new ForbiddenException(
@@ -111,19 +128,10 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
-    IndictmentCaseTransition.RECEIVE,
-    {
-      fromStates: [IndictmentCaseState.SUBMITTED],
-      transition: (update: UpdateCase) => ({
-        ...update,
-        state: CaseState.RECEIVED,
-      }),
-    },
-  ],
-  [
     IndictmentCaseTransition.RETURN_INDICTMENT,
     {
       fromStates: [IndictmentCaseState.RECEIVED],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase) => ({
         ...update,
         state: CaseState.DRAFT,
@@ -140,6 +148,7 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.RECEIVED,
         IndictmentCaseState.CORRECTING,
       ],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase, theCase: Case) => ({
         ...update,
         // Shouldn't ever happen since court end time should always be set
@@ -156,6 +165,7 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.DRAFT,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
       ],
+      fromAppealStates: [undefined],
       transition: (update: UpdateCase) => ({
         ...update,
         state: CaseState.DELETED,
@@ -166,6 +176,13 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.REOPEN,
     {
       fromStates: [IndictmentCaseState.COMPLETED],
+      fromAppealStates: [
+        undefined,
+        CaseAppealState.APPEALED,
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
+      ],
       transition: (update: UpdateCase, theCase: Case) => {
         if (
           theCase.indictmentRulingDecision ===
@@ -181,6 +198,123 @@ const indictmentCaseStateMachine: Map<
           state: CaseState.CORRECTING,
           courtRecordHash: null,
         }
+      },
+    },
+  ],
+  [
+    IndictmentCaseTransition.APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase, theCase: Case, actor: Actor) => {
+        if (
+          theCase.indictmentRulingDecision !==
+          CaseIndictmentRulingDecision.DISMISSAL
+        ) {
+          throw new ForbiddenException(
+            'Only dismissed indictment cases can be appealed',
+          )
+        }
+
+        if (actor === 'Prosecution') {
+          return {
+            ...update,
+            appealState: CaseAppealState.APPEALED,
+            prosecutorPostponedAppealDate:
+              update.prosecutorPostponedAppealDate ?? nowFactory(),
+          }
+        }
+
+        if (actor === 'Defence') {
+          return {
+            ...update,
+            appealState: CaseAppealState.APPEALED,
+            accusedPostponedAppealDate:
+              update.accusedPostponedAppealDate ?? nowFactory(),
+          }
+        }
+
+        throw new ForbiddenException(
+          `${actor} cannot appeal an indictment case`,
+        )
+      },
+    },
+  ],
+  [
+    IndictmentCaseTransition.RECEIVE_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.APPEALED],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        appealState: CaseAppealState.RECEIVED,
+        appealReceivedByCourtDate: nowFactory(),
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.COMPLETE_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        appealState: CaseAppealState.COMPLETED,
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.REOPEN_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.COMPLETED],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        appealState: CaseAppealState.RECEIVED,
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.WITHDRAW_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+      transition: (update: UpdateCase, theCase: Case) => {
+        // We only want to set the appeal ruling decision if the
+        // case has already been received.
+        // Otherwise the court of appeals never knew of the appeal in
+        // the first place so it remains withdrawn without a decision.
+        if (
+          !(
+            update.appealRulingDecision ??
+            theCase.appealCase?.appealRulingDecision
+          ) &&
+          (update.appealState ?? theCase.appealCase?.appealState) ===
+            CaseAppealState.RECEIVED
+        ) {
+          return {
+            ...update,
+            appealState: CaseAppealState.WITHDRAWN,
+            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+          }
+        }
+
+        return { ...update, appealState: CaseAppealState.WITHDRAWN }
       },
     },
   ],
@@ -537,6 +671,8 @@ const transitionIndictmentCase = (
   actor: Actor,
 ): UpdateCase => {
   const currentState = update.state ?? theCase.state
+  const currentAppealState =
+    update.appealState ?? theCase.appealCase?.appealState
 
   if (
     !isIndictmentCaseTransition(transition) ||
@@ -549,9 +685,14 @@ const transitionIndictmentCase = (
 
   const rule = indictmentCaseStateMachine.get(transition)
 
-  if (!rule?.fromStates.some((state) => state === currentState)) {
+  if (
+    !rule?.fromStates.some((state) => state === currentState) ||
+    !rule?.fromAppealStates.some(
+      (appealState) => appealState === (currentAppealState ?? undefined),
+    )
+  ) {
     throw new ForbiddenException(
-      `The transition ${transition} cannot be applied to an indictment case in state ${currentState}`,
+      `The transition ${transition} cannot be applied to an indictment case in state ${currentState} and appeal state ${currentAppealState}`,
     )
   }
 
