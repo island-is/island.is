@@ -10,7 +10,7 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { ZendeskService } from '@island.is/clients/zendesk'
+import { type Ticket, ZendeskService } from '@island.is/clients/zendesk'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
@@ -246,10 +246,20 @@ export class CoursesService extends BaseTemplateApiService {
     courseInstanceId: string,
   ): Promise<Set<string>> {
     const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
-    const query = `type:ticket subject:"${subject}"`
-    let tickets
+    const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
+    const newQuery = `type:ticket tags:"$"${this.coursesConfig.zendeskEnvTag} ${courseInstanceId}"`
+    const tickets: Ticket[] = []
     try {
-      tickets = await this.zendeskService.searchTickets(query)
+      const [backwardsCompatibleTickets, newTickets] = await Promise.all([
+        this.zendeskService.searchTickets(backwardsCompatibleQuery),
+        this.zendeskService.searchTickets(newQuery),
+      ])
+
+      const ticketMap = new Map<string, Ticket>()
+      for (const ticket of backwardsCompatibleTickets)
+        ticketMap.set(ticket.id, ticket)
+      for (const ticket of newTickets) ticketMap.set(ticket.id, ticket)
+      for (const ticket of ticketMap.values()) tickets.push(ticket)
     } catch (error) {
       this.logger.warn(
         'Failed to search Zendesk tickets for participant availability check',

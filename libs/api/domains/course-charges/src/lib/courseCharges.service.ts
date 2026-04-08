@@ -113,39 +113,46 @@ export class CourseChargesService {
     } = this.courseChargesConfig
 
     const subject = `${zendeskSubjectPrefix} - ${courseInstanceId}`
-    const query = `type:ticket subject:"${subject}"`
+
+    const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
+    const newQuery = `type:ticket tags:"$"${this.courseChargesConfig.zendeskEnvTag} ${courseInstanceId}"`
     const baseUrl = `https://${zendeskSubdomain}.zendesk.com/api/v2`
     const credentials = Buffer.from(
       `${zendeskEmail}/token:${zendeskToken}`,
     ).toString('base64')
 
     const nationalIds = new Set<string>()
-    let url:
-      | string
-      | null = `${baseUrl}/search.json?per_page=10&query=${encodeURIComponent(
-      query,
-    )}`
 
-    while (url) {
-      const response = await this.fetch(url, {
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          Accept: 'application/json',
-        },
-      })
-      const data: {
-        results: Array<{ description?: string }>
-        next_page?: string | null
-      } = await response.json()
-      for (const ticket of data.results) {
-        if (!ticket.description) continue
-        const matches = ticket.description.matchAll(NATIONAL_ID_REGEX)
-        for (const match of matches) {
-          nationalIds.add(match[1])
+    const fetchTickets = async (query: string) => {
+      let url:
+        | string
+        | null = `${baseUrl}/search.json?per_page=10&query=${encodeURIComponent(
+        query,
+      )}`
+
+      while (url) {
+        const response = await this.fetch(url, {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+            Accept: 'application/json',
+          },
+        })
+        const data: {
+          results: Array<{ description?: string }>
+          next_page?: string | null
+        } = await response.json()
+        for (const ticket of data.results) {
+          if (!ticket.description) continue
+          const matches = ticket.description.matchAll(NATIONAL_ID_REGEX)
+          for (const match of matches) {
+            nationalIds.add(match[1])
+          }
         }
+        url = data.next_page ?? null
       }
-      url = data.next_page ?? null
     }
+
+    await Promise.all([backwardsCompatibleQuery, newQuery].map(fetchTickets))
 
     return nationalIds.size
   }
