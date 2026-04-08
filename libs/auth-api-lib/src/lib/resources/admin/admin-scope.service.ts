@@ -17,8 +17,11 @@ import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { ApiScopeCategory } from '../models/api-scope-category.model'
 import { ApiScopeTag } from '../models/api-scope-tag.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
+import { AdminScopeClientDto } from './dto/admin-scope-client.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
 import { NoContentException } from '@island.is/nest/problem'
+import { ClientAllowedScope } from '../../clients/models/client-allowed-scope.model'
+import { Client } from '../../clients/models/client.model'
 import {
   AdminPatchScopeDto,
   superUserScopeFields,
@@ -50,10 +53,61 @@ export class AdminScopeService {
     private readonly apiScopeCategory: typeof ApiScopeCategory,
     @InjectModel(ApiScopeTag)
     private readonly apiScopeTag: typeof ApiScopeTag,
+    @InjectModel(ClientAllowedScope)
+    private readonly clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(Client)
+    private readonly clientModel: typeof Client,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
   ) {}
+
+  async findClientsByScopeName({
+    scopeName,
+    tenantId,
+  }: {
+    scopeName: string
+    tenantId: string
+  }): Promise<AdminScopeClientDto[]> {
+    const allowedScopes = await this.clientAllowedScope.findAll({
+      where: { scopeName },
+      include: [
+        {
+          model: Client,
+          where: {
+            domainName: tenantId,
+            enabled: true,
+          },
+          required: true,
+        },
+      ],
+    })
+
+    const clients = allowedScopes
+      .map((row) => (row as ClientAllowedScope & { client: Client }).client)
+      .filter(isDefined)
+
+    if (clients.length === 0) {
+      return []
+    }
+
+    const translationMap = await this.translationService.findTranslationMap(
+      'client',
+      clients.map((c) => c.clientId),
+    )
+
+    return clients
+      .sort((a, b) => a.clientId.localeCompare(b.clientId))
+      .map((client) => ({
+        clientId: client.clientId,
+        clientType: client.clientType,
+        displayName: this.adminTranslationService.createTranslatedValueDTOs({
+          key: 'clientName',
+          defaultValueIS: client.clientName ?? '',
+          translations: translationMap.get(client.clientId),
+        }),
+      }))
+  }
 
   async findAllByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({

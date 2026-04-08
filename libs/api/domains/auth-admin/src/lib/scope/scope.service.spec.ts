@@ -93,6 +93,9 @@ const createMockAdminApi = (
   meScopesControllerFindByTenantIdAndScopeNameRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse(findByNameData)),
+  meScopeClientsControllerFindAllRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse([])),
 })
 
 const mockAdminDevApi = createMockAdminApi(

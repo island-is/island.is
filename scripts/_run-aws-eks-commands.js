@@ -134,7 +134,7 @@ async function mkRunCommand({
     builder ?? containerer,
     `run`,
     `--rm`,
-    `--name ${service}`,
+    `--name ${service}-ids`,
     `-e AWS_ACCESS_KEY_ID="${credentials.accessKeyId}"`,
     `-e AWS_SECRET_ACCESS_KEY="${credentials.secretAccessKey}"`,
     `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,

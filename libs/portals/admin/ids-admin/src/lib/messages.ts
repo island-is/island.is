@@ -593,6 +593,23 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-modal-no-scopes',
     defaultMessage: 'No scopes available',
   },
+  permissionApplicationsDescription: {
+    id: 'ap.ids-admin:permission-applications-description',
+    defaultMessage:
+      'Applications that are currently using this permission.',
+  },
+  permissionApplicationsEmpty: {
+    id: 'ap.ids-admin:permission-applications-empty',
+    defaultMessage: 'No applications are using this permission.',
+  },
+  permissionApplicationsName: {
+    id: 'ap.ids-admin:permission-applications-name',
+    defaultMessage: 'Application',
+  },
+  permissionApplicationsType: {
+    id: 'ap.ids-admin:permission-applications-type',
+    defaultMessage: 'Type',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
