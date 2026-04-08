@@ -33,7 +33,8 @@ export const serviceErrors = {
     },
     summary: {
       id: 'rsk.crdr.application:serviceErrors.requestToSkatturinnFailed.summary',
-      defaultMessage: 'Something went wrong when posting car data to skatturinn',
+      defaultMessage:
+        'Something went wrong when posting car data to skatturinn',
       description: 'Summary for failed request to Skatturinn',
     },
   }),
@@ -315,9 +316,9 @@ export const m = {
       description: 'Bulk upload description',
     },
     stepsMessage: {
-      id: 'rsk.crdr.application:multi.upload.steps#markdown',
+      id: 'rsk.crdr.application:multi.upload.steps',
       defaultMessage:
-        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan',
+        '1. Sækir sniðmátið \n2. Gerir viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan',
       description: 'Bulk upload help steps',
     },
     templateButton: {
