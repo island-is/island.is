@@ -24,7 +24,7 @@ export class CreatePaymentDto {
   readonly user4?: string
 
   @IsObject()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   definition?: object
 
