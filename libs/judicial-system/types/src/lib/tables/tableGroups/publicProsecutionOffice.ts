@@ -27,7 +27,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
       route: 'frestur-lidinn-i-sakamalum',
       title: 'Frestur liðinn',
-      description: 'Áfrýjunarfrestur liðinn.',
+      description: 'Mál sem eru tilbúin til fullnustu.',
       includeCounter: true,
     },
     {
@@ -44,7 +44,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       includeCounter: true,
     },
     {
-      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS,
+      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED,
       route: 'syknudomar',
       title: 'Sýknudómar',
       description: 'Yfirlesnir sýknudómar.',

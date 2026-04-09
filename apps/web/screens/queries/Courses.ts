@@ -53,6 +53,7 @@ export const GET_COURSE_BY_ID_QUERY = gql`
         id
         title
         courseListPageId
+        showPlaceholderTextIfNoCourseInstances
         description {
           ...AllSlices
         }

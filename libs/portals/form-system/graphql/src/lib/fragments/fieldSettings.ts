@@ -33,6 +33,15 @@ export const FieldSettingsFragment = gql`
     zendeskCustomFieldId
     applicantType
     hasDescription
+    isPhoneRequired
+    isEmailRequired
+    chargeItemCode
+    chargeItemName
+    chargeType
+    performingOrgID
+    priceAmount
+    isDropdown
+    paymentQuantityId
   }
   ${ListItemFragment}
   ${LanguageFields}

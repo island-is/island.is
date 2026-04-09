@@ -461,10 +461,6 @@ export class VerdictService {
       ),
     })
 
-    if (!createdDocument) {
-      return { delivered: false }
-    }
-
     // update existing verdict with the external document id returned from the police
     await this.updateVerdict(
       verdict,

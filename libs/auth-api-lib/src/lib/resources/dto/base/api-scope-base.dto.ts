@@ -132,4 +132,38 @@ export class ApiScopeBaseDTO {
     example: false,
   })
   readonly isAccessControlled?: boolean
+
+  @IsBoolean()
+  @ApiProperty({
+    example: false,
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  readonly allowsWrite!: boolean
+
+  @IsBoolean()
+  @ApiProperty({
+    example: false,
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  readonly requiresConfirmation!: boolean
+
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    type: [String],
+    example: ['2OoQq3F7rTAzrSJbRwE8QM'],
+    description: 'List of category IDs from CMS',
+  })
+  readonly categoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    type: [String],
+    example: ['3pPlWq9G2rBzsSKcTyF9RN'],
+    description: 'List of tag IDs (life events) from CMS',
+  })
+  readonly tagIds?: string[]
 }

@@ -17,11 +17,11 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
-import { PoliceDigitalCaseFilesQueryInput } from './dto/policeDigitalCaseFiles.input'
+import { PoliceDefendantsQueryInput } from './dto/policeDefendants.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
-import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
+import { PoliceDefendant } from './models/policeDefendant.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -51,22 +51,22 @@ export class PoliceResolver {
     )
   }
 
-  @Query(() => [PoliceDigitalCaseFile], { nullable: true })
-  policeDigitalCaseFiles(
-    @Args('input', { type: () => PoliceDigitalCaseFilesQueryInput })
-    input: PoliceDigitalCaseFilesQueryInput,
+  @Query(() => [PoliceDefendant], { nullable: true })
+  policeDefendants(
+    @Args('input', { type: () => PoliceDefendantsQueryInput })
+    input: PoliceDefendantsQueryInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<PoliceDigitalCaseFile[]> {
+  ): Promise<PoliceDefendant[]> {
     this.logger.debug(
-      `Getting all police digital case files for case ${input.caseId}`,
+      `Getting defendants for case ${input.caseId} from police API`,
     )
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.GET_POLICE_DIGITAL_CASE_FILES,
-      backendService.getPoliceDigitalCaseFiles(input.caseId),
+      AuditedAction.GET_POLICE_DEFENDANTS,
+      backendService.getPoliceDefendants(input.caseId),
       input.caseId,
     )
   }

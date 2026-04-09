@@ -881,15 +881,13 @@ export const m = defineMessages({
   healthRemarksTitle: {
     id: 'dl.application:healthRemarksTitle',
     defaultMessage: 'Athugið',
-    description:
-      'Alert message title for health remarks on temporary driving license',
+    description: 'Alert message title for health remarks on driving license',
   },
   healthRemarksDescription: {
-    id: 'dl.application:healthRemarksDescription',
+    id: 'dl.application:healthRemarksDescriptionV2',
     defaultMessage:
-      'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
-    description:
-      'Alert message for health remarks on temporary driving license',
+      'Ef tákntala vegna heilsufars er skráð á núverandi ökuskírteini, skal ávallt skila læknisvottorði jafnvel þótt öllum heilbrigðisspurningum sé svarað neitandi í þessari umsókn. Tákntölur eru m.a. notaðar fyrir gleraugu/sjónleiðréttingu, sérútbúin ökutæki o.fl.',
+    description: 'Alert message for health remarks on driving license',
   },
   phoneNumberTitle: {
     id: 'dl.application:phoneNumberTitle',
@@ -1068,6 +1066,72 @@ export const m = defineMessages({
     defaultMessage: 'Þú verður að velja að minnsta kosti einn valmöguleika',
     description: 'You must select at least one option',
   },
+  photoSelectionTitle: {
+    id: 'dl.application:photoSelection.title',
+    defaultMessage: 'Mynd í ökuskírteini',
+    description: 'Photo selection section title',
+  },
+  photoSelectionDescription: {
+    id: 'dl.application:photoSelection.description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um þær myndir sem hægt er að nota í ökuskírteinið.',
+    description: 'Photo selection section description',
+  },
+  usePassportImage: {
+    id: 'dl.application:photoSelection.usePassportImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og skilríkjaskrá í ökuskírteinið',
+    description: 'Use photo from national registry',
+  },
+  useDriversLicenseImage: {
+    id: 'dl.application:photoSelection.useDriversLicenseImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
+    description: 'Use photo from driving license registry',
+  },
+  useFakeImage: {
+    id: 'dl.application:photoSelection.useFakeImage',
+    defaultMessage: 'Ég staðfesti að nota fakeData mynd',
+    description: 'Use fake photo for testing',
+  },
+  healthCertificateTitle: {
+    id: 'dl.application:healthCertificate.title',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health certificate title',
+  },
+  healthCertificateDescription: {
+    id: 'dl.application:healthCertificate.description',
+    defaultMessage:
+      'Þú þarft að hlaða inn læknisvottorði vegna heilbrigðisyfirlýsingar.',
+    description: 'Health certificate upload description',
+  },
+  healthCertificateUploadHeader: {
+    id: 'dl.application:healthCertificate.uploadHeader',
+    defaultMessage: 'Dragðu læknisvottorð hingað til að hlaða upp',
+    description: 'Health certificate upload header',
+  },
+  healthCertificateUploadDescription: {
+    id: 'dl.application:healthCertificate.uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
+    description: 'Health certificate upload format description',
+  },
+  healthCertificateUploadButtonLabel: {
+    id: 'dl.application:healthCertificate.uploadButtonLabel',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Health certificate upload button label',
+  },
+  overviewHealthCertificateUploaded: {
+    id: 'dl.application:overview.healthCertificateUploaded',
+    defaultMessage: 'Læknisvottorð hlaðið upp',
+    description: 'Uploaded health certificate',
+  },
+  healthCertificateRequired: {
+    id: 'dl.application:validation.healthCertificateRequired',
+    defaultMessage: 'Þú þarft að hlaða upp læknisvottorði til að halda áfram.',
+    description:
+      'Validation error when health certificate upload is required but missing',
+  },
 })
 
 export const requirementsMessages = defineMessages({
@@ -1164,11 +1228,10 @@ export const requirementsMessages = defineMessages({
   },
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoDescription: {
-    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescription',
+    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescriptionV2',
     defaultMessage:
-      'Ef ekki er til gæðavottuð mynd, þarf umsækjandi að mæta í sitt sýslumanns embætti með nýja mynd og leggja inn umsókn á staðnum',
-    description:
-      'requirement unmet api returned false for an unspecified reason',
+      'Ef hvorki er hægt að nota mynd sem uppfyllir skilyrði úr skilríkjaskrá né ökutækjaskrá, verður þú að koma með passamynd á ljósmyndapappír (4,5 cm x 3,5 cm) til næsta sýslumannsembættis og skila inn umsókn á staðnum. Ef fyrra ökuskírteini var gefið út fyrir júlí 2013 þarf að uppfæra myndina.',
+    description: 'BE quality photo requirement description',
   },
   noExtendedDrivingLicenseTitle: {
     id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',

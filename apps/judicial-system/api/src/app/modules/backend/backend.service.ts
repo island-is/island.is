@@ -43,6 +43,7 @@ import {
 import {
   CaseFile,
   DeleteFileResponse,
+  PoliceDigitalCaseFile,
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
@@ -54,7 +55,7 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
-  PoliceDigitalCaseFile,
+  PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
@@ -460,8 +461,38 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeFiles`)
   }
 
+  getPoliceDefendants(caseId: string): Promise<PoliceDefendant[]> {
+    return this.get(`case/${caseId}/policeDefendants`)
+  }
+
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
-    return this.get(`case/${caseId}/policeDigitalFiles`)
+    return this.get(`case/${caseId}/policeDigitalCaseFiles`)
+  }
+
+  getPoliceDigitalCaseFileTokenUrl(
+    caseId: string,
+    policeDigitalFileId: string,
+  ): Promise<string> {
+    const params = new URLSearchParams({ policeDigitalFileId })
+    return this.get<{ url: string }>(
+      `case/${caseId}/policeDigitalCaseFileTokenUrl?${params.toString()}`,
+    ).then((res) => res.url)
+  }
+
+  deletePoliceDigitalCaseFile(
+    caseId: string,
+    fileId: string,
+  ): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/policeDigitalCaseFile/${fileId}`)
+  }
+
+  updatePoliceDigitalCaseFiles(
+    caseId: string,
+    updates: unknown[],
+  ): Promise<void> {
+    return this.patch(`case/${caseId}/policeDigitalCaseFiles`, {
+      files: updates,
+    })
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {

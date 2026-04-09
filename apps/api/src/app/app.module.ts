@@ -77,6 +77,8 @@ import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
+import { OpenDataModule } from '@island.is/api/domains/open-data'
+import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import {
@@ -153,8 +155,9 @@ import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
-import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { ShipRegistryClientV2Config } from '@island.is/clients/ship-registry-v2'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
@@ -190,6 +193,7 @@ import { SignatureCollectionModule } from '@island.is/api/domains/signature-coll
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
@@ -383,6 +387,8 @@ const environment = getConfig
     SeminarsModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,
+    OpenDataModule,
+    OneSystemsRulingsModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
@@ -409,6 +415,8 @@ const environment = getConfig
         PCardClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
+        ShipRegistryClientV2Config,
+        ShipRegistryClientConfig,
         NationalRegistryV3ClientConfig,
         PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
@@ -438,6 +446,7 @@ const environment = getConfig
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
+        FinanceClientV3Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,
@@ -484,7 +493,6 @@ const environment = getConfig
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,
-        ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,

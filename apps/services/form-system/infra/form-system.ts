@@ -1,5 +1,7 @@
 import {
   CodeOwners,
+  json,
+  ref,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
@@ -12,7 +14,9 @@ import {
 const serviceName = 'services-form-system-api'
 const workerName = `${serviceName}-worker`
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+export const serviceSetup = (services: {
+  paymentsApi: ServiceBuilder<'services-payments'>
+}): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
@@ -44,6 +48,32 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
+      CLIENT_LOCATION_ORIGIN: {
+        dev: 'https://beta.dev01.devland.is/form',
+        staging: 'https://beta.staging01.devland.is/form',
+        prod: 'https://island.is/form',
+        local: 'http://localhost:4200/form',
+      },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${serviceName}.${
+            ctx.featureDeploymentName
+              ? `${ctx.featureDeploymentName}`
+              : serviceName
+          }.svc.cluster.local`,
+      ),
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -78,7 +108,11 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('islandis', 'nginx-ingress-external')
+    .grantNamespaces(
+      'islandis',
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+    )
 
 export const workerSetup = (): ServiceBuilder<typeof workerName> =>
   service(workerName)
