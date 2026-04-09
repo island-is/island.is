@@ -135,13 +135,7 @@ const Tenants = () => {
                   </Box>
                   <Box
                     display="flex"
-                    flexDirection={[
-                      'column',
-                      'column',
-                      'row',
-                      'row',
-                      'row',
-                    ]}
+                    flexDirection={['column', 'column', 'row', 'row', 'row']}
                     alignItems="flexEnd"
                     justifyContent="flexEnd"
                   >
