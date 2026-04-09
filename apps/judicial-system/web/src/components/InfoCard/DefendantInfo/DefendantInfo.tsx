@@ -11,8 +11,8 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  isPublicProsecutionOfficeUser,
   CaseIndictmentRulingDecision,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
