@@ -304,10 +304,10 @@ function PaymentPage({
                 <LinkV2
                   href={
                     isInvoicePending
-                      ? (paymentFlow.invoiceReturnUrl ??
+                      ? paymentFlow.invoiceReturnUrl ??
                         paymentFlow.returnUrl ??
-                        'https://island.is')
-                      : (paymentFlow.returnUrl ?? 'https://island.is')
+                        'https://island.is'
+                      : paymentFlow.returnUrl ?? 'https://island.is'
                   }
                 >
                   <Button fluid unfocusable>
