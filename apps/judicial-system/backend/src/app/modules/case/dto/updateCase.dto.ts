@@ -57,6 +57,12 @@ class UpdateCaseDefendantEventLogDecisionDto {
   @ApiPropertyOptional({ type: String })
   readonly defendantId!: string
 
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly rulingDate?: Date
+
   @IsEnum(CaseIndictmentRulingDecision)
   @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
   readonly rulingDecision!: CaseIndictmentRulingDecision

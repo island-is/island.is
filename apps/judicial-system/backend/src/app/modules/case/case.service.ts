@@ -1928,7 +1928,8 @@ export class CaseService {
       (theCase.defendants ?? []).map((d) => d.id),
     )
 
-    const eventUpdates = decisions.map(({ defendantId, rulingDecision }) => {
+    const eventUpdates = decisions.map(
+      ({ defendantId, rulingDecision, rulingDate }) => {
       if (!caseDefendantIds.has(defendantId)) {
         throw new BadRequestException(
           `Defendant ${defendantId} does not belong to case ${theCase.id}`,
@@ -1944,25 +1945,38 @@ export class CaseService {
         )
       }
 
-      return {
-        defendantId,
-        eventType:
-          rulingDecision === CaseIndictmentRulingDecision.DISMISSAL
-            ? DefendantEventType.INDICTMENT_DISMISSED
-            : DefendantEventType.INDICTMENT_CANCELLED,
-      }
-    })
+        return {
+          defendantId,
+          rulingDate,
+          eventType:
+            rulingDecision === CaseIndictmentRulingDecision.DISMISSAL
+              ? DefendantEventType.INDICTMENT_DISMISSED
+              : DefendantEventType.INDICTMENT_CANCELLED,
+        }
+      },
+    )
 
     await Promise.all(
-      eventUpdates.map(({ defendantId, eventType }) =>
-        this.defendantEventLogRepositoryService.createWithUser(
+      eventUpdates.map(({ defendantId, eventType, rulingDate }) => {
+        if (!rulingDate) {
+          return this.defendantEventLogRepositoryService.createWithUser(
+            eventType,
+            theCase.id,
+            defendantId,
+            user,
+            transaction,
+          )
+        }
+
+        return this.defendantEventLogRepositoryService.createWithUser(
           eventType,
           theCase.id,
           defendantId,
           user,
           transaction,
-        ),
-      ),
+          rulingDate,
+        )
+      }),
     )
   }
 

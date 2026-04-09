@@ -67,7 +67,6 @@ import {
   isNoGeneratedIndictmentCourtRecord,
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { isValidDate } from '@island.is/shared/utils'
 
 import InputDate from '../../../../components/Inputs/InputDate'
 import { CourtCaseNumberInput } from '../../components'
@@ -233,6 +232,14 @@ const Conclusion: FC = () => {
           }
           break
         case IndictmentDecision.COMPLETING_FOR_SOME: {
+          const parsedConclusionDate = conclusionDate
+            ? new Date(
+                Number(conclusionDate.split('.')[2]),
+                Number(conclusionDate.split('.')[1]) - 1,
+                Number(conclusionDate.split('.')[0]),
+              )
+            : undefined
+
           const remainingDefendants =
             workingCase.defendants?.filter(
               (d) =>
@@ -248,7 +255,19 @@ const Conclusion: FC = () => {
           update.defendantEventLogDecisions = Object.entries(
             completingForSomeSelections,
           ).flatMap(([defendantId, rulingDecision]) =>
-            rulingDecision ? [{ defendantId, rulingDecision }] : [],
+            rulingDecision
+              ? [
+                  {
+                    defendantId,
+                    rulingDecision,
+                    ...(parsedConclusionDate
+                      ? {
+                          rulingDate: formatDateForServer(parsedConclusionDate),
+                        }
+                      : {}),
+                  },
+                ]
+              : [],
           )
 
           break
@@ -331,6 +350,7 @@ const Conclusion: FC = () => {
       selectedDecision,
       mergeCaseNumber,
       completingForSomeSelections,
+      conclusionDate,
       activeDefendants,
       createVerdicts,
       updateDefendant,

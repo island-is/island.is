@@ -416,6 +416,7 @@ interface UpdateDateLog {
 
 export interface UpdateCaseDefendantEventLogDecision {
   defendantId: string
+  rulingDate?: Date
   rulingDecision: CaseIndictmentRulingDecision
 }
 

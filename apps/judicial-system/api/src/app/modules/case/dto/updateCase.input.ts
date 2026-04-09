@@ -51,6 +51,11 @@ class UpdateCaseDefendantEventLogDecisionInput {
   readonly defendantId!: string
 
   @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly rulingDate?: string
+
+  @Allow()
   @Field(() => CaseIndictmentRulingDecision)
   readonly rulingDecision!: CaseIndictmentRulingDecision
 }
