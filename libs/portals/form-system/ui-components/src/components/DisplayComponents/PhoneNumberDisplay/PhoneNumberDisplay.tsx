@@ -1,7 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Text, Stack } from '@island.is/island-ui/core'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 interface Props {
   item: FormSystemField
