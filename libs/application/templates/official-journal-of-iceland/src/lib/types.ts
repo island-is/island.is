@@ -5,6 +5,7 @@ import { partialSchema } from './dataSchema'
 export const InputFields = {
   [Routes.REQUIREMENTS]: {
     approveExternalData: 'requirements.approveExternalData',
+    additionalParties: 'additionalParties',
   },
   [Routes.TYPE_SELECTION]: {
     applicationType: 'applicationType',

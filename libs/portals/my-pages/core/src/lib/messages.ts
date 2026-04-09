@@ -1055,12 +1055,10 @@ export const m = defineMessages({
     id: 'service.portal:accessDenied',
     defaultMessage: 'Ekki með aðgang',
   },
-
   accessNeeded: {
     id: 'service.portal:access-needed',
     defaultMessage: 'Umboð vantar',
   },
-
   accessNeededText: {
     id: 'service.portal:access-needed-text',
     defaultMessage: 'Umboð vantar',
@@ -1600,6 +1598,14 @@ export const m = defineMessages({
     id: 'service.portal:work-machine-detail',
     defaultMessage: 'Nánar um vinnuvél',
   },
+  myShips: {
+    id: 'service.portal:my-ships',
+    defaultMessage: 'Mín skip',
+  },
+  myShipsIntro: {
+    id: 'service.portal:my-ships-intro',
+    defaultMessage: 'Hér getur þú skoðað upplýsingar um skip í þinni eigu',
+  },
   health: {
     id: 'service.portal:health',
     defaultMessage: 'Heilsa',
@@ -1675,6 +1681,10 @@ export const m = defineMessages({
   vehiclesTooltip: {
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
+  },
+  shipsTooltip: {
+    id: 'service.portal:ships-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um skip.',
   },
   drivingLessonTooltip: {
     id: 'service.portal:driving-lessons-tooltip',
@@ -1818,6 +1828,10 @@ export const m = defineMessages({
   socialInsuranceMaintenance: {
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
+  },
+  socialSecurity: {
+    id: 'service.portal:socialSecurity',
+    defaultMessage: 'Almannatryggingar',
   },
   socialInsuranceMaintenanceIntro: {
     id: 'service.portal:social-insurance-maintenance-intro',

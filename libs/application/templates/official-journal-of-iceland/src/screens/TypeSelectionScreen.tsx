@@ -71,6 +71,18 @@ export const TypeSelectionScreen = ({
     setSubmitButtonDisabled && setSubmitButtonDisabled(!selected)
   }, [selected, setSubmitButtonDisabled])
 
+  // Auto-select 'ad' when the regulations feature flag is off
+  const autoSelectedRef = useRef(false)
+  useEffect(() => {
+    if (!regulationsEnabled && !autoSelectedRef.current) {
+      autoSelectedRef.current = true
+      if (selected !== ApplicationTypes.AD) {
+        handleSelect(ApplicationTypes.AD)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regulationsEnabled])
+
   const autoSelectRegulationType = async (answers: Record<string, unknown>) => {
     const departmentB = departments?.find((d) => d.slug === DEPARTMENT_B)
     if (!departmentB) return answers
@@ -167,6 +179,13 @@ export const TypeSelectionScreen = ({
       : allOptions.filter((o) => o.value === ApplicationTypes.AD)
   }, [regulationsEnabled, f])
 
+  // Lock the type selection once the user has progressed past this screen
+  // (i.e. downstream data like department or a regulation draft exists).
+  const hasDownstreamData = !!(
+    getValueViaPath(application.answers, InputFields.advert.department) ||
+    getValueViaPath(application.answers, 'regulation.draftId')
+  )
+
   return (
     <FormScreen
       title={f(typeSelection.general.title)}
@@ -181,8 +200,13 @@ export const TypeSelectionScreen = ({
               borderColor={selected === option.value ? 'blue300' : 'blue200'}
               borderWidth="standard"
               padding={3}
-              cursor="pointer"
-              onClick={() => handleSelect(option.value)}
+              cursor={hasDownstreamData ? undefined : 'pointer'}
+              opacity={hasDownstreamData && selected !== option.value ? 0.5 : 1}
+              onClick={() => {
+                if (!hasDownstreamData) {
+                  handleSelect(option.value)
+                }
+              }}
             >
               <RadioButton
                 id={`applicationType-${option.value}`}
@@ -190,6 +214,7 @@ export const TypeSelectionScreen = ({
                 label={option.label}
                 value={option.value}
                 checked={selected === option.value}
+                disabled={hasDownstreamData}
                 large
               />
               <Box marginTop={1} paddingLeft={4}>
