@@ -1,8 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ValueDto } from '../../modules/applications/models/dto/value.dto'
 import { FieldSettings } from '../fieldSettings/fieldSettings.model'
 import { LanguageType } from '../languageType.model'
-import { ValueDto } from '../../modules/applications/models/dto/value.dto'
 
 export class FieldType {
   @ApiProperty()
@@ -219,5 +219,14 @@ export const FieldTypes: FieldType[] = [
       en: 'User enters national Id that we look up in all databases',
     },
     isCommon: false,
+  },
+  {
+    id: FieldTypesEnum.PAYMENT_QUANTITY,
+    name: { is: 'Greiðslu magn', en: 'Payment quantity' },
+    description: {
+      is: 'Notandi slær inn magn sem tengist greiðslu',
+      en: 'User enters quantity related to a payment',
+    },
+    isCommon: true,
   },
 ]

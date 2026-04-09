@@ -35,6 +35,13 @@ export const FieldSettingsFragment = gql`
     hasDescription
     isPhoneRequired
     isEmailRequired
+    chargeItemCode
+    chargeItemName
+    chargeType
+    performingOrgID
+    priceAmount
+    isDropdown
+    paymentQuantityId
   }
   ${ListItemFragment}
   ${LanguageFields}
