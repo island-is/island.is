@@ -31,6 +31,7 @@ import {
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
+const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
 
 type RichTextPayload = {
   __typename: 'Html'
@@ -53,6 +54,7 @@ type VerdictByIdResponse =
   | {
       item: {
         richText: RichTextPayload
+        htmlString: string
         title: string
         court: string
         verdictDate?: Date | null
@@ -85,8 +87,16 @@ const convertHtmlToContentfulRichText = async (
       return frame.tag === 'table'
     },
   })
-  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
-  const richText = await richTextFromMarkdown(markdown)
+  const htmlWithBreakSentinel = sanitizedHtml.replace(
+    /<br\s*\/?>/gi,
+    VERDICT_BR_SENTINEL,
+  )
+  const markdown = NodeHtmlMarkdown.translate(htmlWithBreakSentinel)
+  const markdownWithBreakSentinel = markdown.replaceAll(
+    VERDICT_BR_SENTINEL,
+    '<br />',
+  )
+  const richText = await richTextFromMarkdown(markdownWithBreakSentinel)
   return {
     __typename: 'Html',
     document: richText,
