@@ -505,6 +505,7 @@ export interface UpdateCase
         | 'appealValidToDate'
         | 'isAppealCustodyIsolation'
         | 'appealIsolationToDate'
+        | 'appealedByNationalId'
       >
     > {
   type?: CaseType
@@ -548,6 +549,7 @@ export const appealCaseFields: (keyof UpdateAppealCase)[] = [
   'appealValidToDate',
   'isAppealCustodyIsolation',
   'appealIsolationToDate',
+  'appealedByNationalId',
 ]
 
 export interface UpdateAppealCase
@@ -569,4 +571,5 @@ export interface UpdateAppealCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
+    | 'appealedByNationalId'
   > {}
