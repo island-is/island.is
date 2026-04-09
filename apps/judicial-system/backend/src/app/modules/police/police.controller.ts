@@ -125,7 +125,13 @@ export class PoliceController {
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting info for police case ${caseId}`)
 
-    return this.policeService.getPoliceCaseInfo(theCase.id, user)
+    return this.policeService.getPoliceCaseInfo(
+      theCase.id,
+      user,
+      theCase.defendants
+        ?.map((defendant) => defendant.nationalId)
+        .filter((nationalId): nationalId is string => nationalId !== undefined),
+    )
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

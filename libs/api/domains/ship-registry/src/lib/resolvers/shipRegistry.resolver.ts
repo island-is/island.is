@@ -1,10 +1,9 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ShipRegistryClientService } from '@island.is/clients/ship-registry'
-import { ShipSearch } from './models/ship-search.model'
-import { ShipSearchInput } from './dto/ship-search.input'
+import { ShipSearch } from '../models/ship-search.model'
+import { ShipSearchInput } from '../dto/ship-search.input'
 
-// Added opid field to ShipSearch model
-@Resolver()
+@Resolver(() => ShipSearch)
 export class ShipRegistryResolver {
   constructor(private readonly service: ShipRegistryClientService) {}
 

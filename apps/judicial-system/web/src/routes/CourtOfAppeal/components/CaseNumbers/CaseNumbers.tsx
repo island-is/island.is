@@ -6,7 +6,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components'
 const CaseNumbers: FC = () => {
   const { workingCase } = useContext(FormContext)
 
-  if (!workingCase.appealCaseNumber) {
+  if (!workingCase.appealCase?.appealCaseNumber) {
     return (
       <Text as="h3" variant="default" fontWeight="semiBold" marginBottom={1}>
         Málsnr. Héraðsdóms {workingCase.courtCaseNumber}
@@ -17,7 +17,7 @@ const CaseNumbers: FC = () => {
   return (
     <Box marginBottom={7}>
       <Text as="h2" variant="h2">
-        Mál nr. {workingCase.appealCaseNumber}
+        Mál nr. {workingCase.appealCase?.appealCaseNumber}
       </Text>
       <Text as="h3" variant="default" fontWeight="semiBold">
         Málsnr. Héraðsdóms {workingCase.courtCaseNumber}
