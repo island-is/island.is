@@ -163,7 +163,7 @@ export class CaseNotificationService extends BaseNotificationService {
   private getIndictmentAppealDefenceRecipients(
     theCase: Case,
     excludeNationalId?: string,
-  ): { name?: string; email?: string; nationalId?: string }[] {
+  ) {
     const recipients: {
       name?: string
       email?: string
@@ -3415,7 +3415,9 @@ export class CaseNotificationService extends BaseNotificationService {
         ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
         : undefined
       const defenderHtml = this.formatMessage(
-        notifications.caseAppealCompleted.body,
+        isReopened
+          ? notifications.caseAppealResent.body
+          : notifications.caseAppealCompleted.body,
         {
           userHasAccessToRVG: Boolean(defenderUrl),
           courtCaseNumber: theCase.courtCaseNumber,
