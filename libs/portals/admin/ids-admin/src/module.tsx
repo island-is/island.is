@@ -36,6 +36,16 @@ const CreatePermission = lazy(() =>
   import('./screens/Permission/CreatePermission/CreatePermission'),
 )
 
+// Admin Controls
+const AdminControls = lazy(() =>
+  import('./screens/AdminControls/AdminControls'),
+)
+const ApiScopeUsers = lazy(() =>
+  import('./screens/AdminControls/ApiScopeUsers'),
+)
+const GrantTypes = lazy(() => import('./screens/AdminControls/GrantTypes'))
+const IdpProviders = lazy(() => import('./screens/AdminControls/IdpProviders'))
+
 const allowedScopes: string[] = [
   AdminPortalScope.idsAdmin,
   AdminPortalScope.idsAdminSuperUser,
@@ -52,22 +62,76 @@ export const idsAdminModule: PortalModule = {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
   routes(props) {
+    const isSuperUser = props.userInfo.scopes.includes(
+      AdminPortalScope.idsAdminSuperUser,
+    )
+
     return [
       {
         name: m.idsAdmin,
         path: IDSAdminPaths.IDSAdmin,
         element: <IDSAdmin />,
         children: [
-          {
-            name: m.idsAdmin,
-            path: IDSAdminPaths.IDSAdmin,
-            element: <Tenants />,
-            loader: tenantsLoader(props),
-            navHide: true,
-            handle: {
-              backPath: IDSAdminPaths.IDSAdmin,
-            },
-          },
+          ...(isSuperUser
+            ? [
+                {
+                  name: m.adminControls,
+                  path: IDSAdminPaths.IDSAdmin,
+                  element: <AdminControls />,
+                  navHide: true,
+                  handle: {
+                    backPath: IDSAdminPaths.IDSAdmin,
+                  },
+                  children: [
+                    {
+                      name: m.idsAdmin,
+                      path: '',
+                      element: <Tenants />,
+                      loader: tenantsLoader(props),
+                      navHide: true,
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.apiScopeUsers,
+                      path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+                      element: <ApiScopeUsers />,
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.grantTypes,
+                      path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+                      element: <GrantTypes />,
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.idpProviders,
+                      path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+                      element: <IdpProviders />,
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                  ],
+                },
+              ]
+            : [
+                {
+                  name: m.idsAdmin,
+                  path: IDSAdminPaths.IDSAdmin,
+                  element: <Tenants />,
+                  loader: tenantsLoader(props),
+                  navHide: true,
+                  handle: {
+                    backPath: IDSAdminPaths.IDSAdmin,
+                  },
+                },
+              ]),
           {
             name: m.tenants,
             path: '',

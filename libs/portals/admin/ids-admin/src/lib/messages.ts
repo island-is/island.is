@@ -915,6 +915,22 @@ export const m = defineMessages({
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
   },
+  adminControls: {
+    id: 'ap.ids-admin:admin-controls',
+    defaultMessage: 'Admin Controls',
+  },
+  apiScopeUsers: {
+    id: 'ap.ids-admin:api-scope-users',
+    defaultMessage: 'API Scope Users',
+  },
+  grantTypes: {
+    id: 'ap.ids-admin:grant-types',
+    defaultMessage: 'Grant Types',
+  },
+  idpProviders: {
+    id: 'ap.ids-admin:idp-providers',
+    defaultMessage: 'IDP Providers',
+  },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',
     defaultMessage: 'Client ID already exists',
