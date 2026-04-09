@@ -11,7 +11,11 @@ import {
   getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isDefenceUser, isRequestCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+  isRequestCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
@@ -21,7 +25,6 @@ import {
   Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
@@ -60,8 +63,7 @@ const useInfoCardItems = () => {
     displayOpenCaseReference?: boolean
   }): Item => {
     const defendants = workingCase.defendants?.filter((defendant) =>
-      isDefenceUser(user) &&
-      areAllDefendantsCancelledOrDismissed(workingCase.defendants)
+      isDefenceUser(user) && isCompletedCase(workingCase.state)
         ? true
         : defendant.indictmentCancelledOrDismissedState === null,
     )

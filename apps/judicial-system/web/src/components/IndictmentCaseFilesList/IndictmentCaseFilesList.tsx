@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
-import {
-  formatDate,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
@@ -38,7 +35,6 @@ import {
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { areAllDefendantsCancelledOrDismissed } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -187,34 +183,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
-      canViewRulings: (() => {
-        if (isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) {
-          return true
-        }
-        if (isDefenceUser(user)) {
-          const myDefendants = workingCase.defendants?.filter(
-            (defendant) =>
-              defendant.defenderNationalId &&
-              normalizeAndFormatNationalId(user?.nationalId).includes(
-                defendant.defenderNationalId,
-              ),
-          )
-          return (
-            isNonEmptyArray(myDefendants) &&
-            areAllDefendantsCancelledOrDismissed(myDefendants)
-          )
-        }
-        return false
-      })(),
+      canViewRulings:
+        isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
-    [
-      user,
-      workingCase.defendants,
-      workingCase.hasCivilClaims,
-      workingCase.state,
-    ],
+    [user, workingCase.hasCivilClaims, workingCase.state],
   )
 }
 
@@ -307,8 +281,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
   const hideCourtRecord =
-    isDefenceUser(user) &&
-    areAllDefendantsCancelledOrDismissed(workingCase.defendants)
+    isDefenceUser(user) && isCompletedCase(workingCase.state)
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(

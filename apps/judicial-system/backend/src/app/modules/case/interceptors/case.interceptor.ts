@@ -12,10 +12,12 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseState,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
   isDefenceUser,
+  isIndictmentCase,
   isPrisonSystemUser,
   isProsecutionUser,
   isRequestCase,
@@ -166,7 +168,11 @@ const transformCaseRepresentatives = (theCase: Case) => {
 const getDefenceUserDefendants = (
   theCase: Case,
   user: User,
-): Defendant[] | undefined => {
+): {
+  defendants: Defendant[] | undefined
+  allCancelledOrDismissed: boolean
+  latestCancelledOrDismissedDate: Date | undefined
+} => {
   const myDefendants = theCase.defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
@@ -177,10 +183,14 @@ const getDefenceUserDefendants = (
   )
 
   if (!myDefendants?.length) {
-    return theCase.defendants
+    return {
+      defendants: theCase.defendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
   }
 
-  const allCancelledOrDismissed = myDefendants.every((defendant) =>
+  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
     DefendantEventLog.getEventLogByEventType(
       [
         DefendantEventType.INDICTMENT_CANCELLED,
@@ -190,20 +200,55 @@ const getDefenceUserDefendants = (
     ),
   )
 
-  return allCancelledOrDismissed ? myDefendants : theCase.defendants
+  const allCancelledOrDismissed = cancelledOrDismissedEventLogs.every(Boolean)
+
+  const latestCancelledOrDismissedDate = allCancelledOrDismissed
+    ? cancelledOrDismissedEventLogs.reduce<Date | undefined>((latest, log) => {
+        if (!log) return latest
+        return !latest || log.created > latest ? log.created : latest
+      }, undefined)
+    : undefined
+
+  return {
+    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  }
 }
 
 const transformCase = (
   theCase: Case,
   user: User | undefined,
 ): Record<string, unknown> => {
+  const isDefence = Boolean(user && isDefenceUser(user))
+  const {
+    defendants: transformedDefendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  } = isDefence && user
+    ? getDefenceUserDefendants(theCase, user)
+    : {
+        defendants: theCase.defendants,
+        allCancelledOrDismissed: false,
+        latestCancelledOrDismissedDate: undefined,
+      }
+
+  const stateOverride =
+    isDefence &&
+    isIndictmentCase(theCase.type) &&
+    allCancelledOrDismissed &&
+    theCase.state !== CaseState.COMPLETED
+      ? {
+          state: CaseState.COMPLETED,
+          rulingDate: latestCancelledOrDismissedDate,
+        }
+      : {}
+
   return {
     ...theCase.toJSON(),
+    ...stateOverride,
     defendants: transformDefendants({
-      defendants:
-        user && isDefenceUser(user)
-          ? getDefenceUserDefendants(theCase, user)
-          : theCase.defendants,
+      defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),

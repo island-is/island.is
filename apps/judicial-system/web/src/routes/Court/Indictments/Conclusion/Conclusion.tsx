@@ -19,6 +19,7 @@ import {
   INDICTMENTS_COURT_RECORD_ROUTE,
   INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
@@ -897,7 +898,9 @@ const Conclusion: FC = () => {
                     ? strings.verdictUploadTitle
                     : strings.rulingUploadTitle,
                 )}
-                required
+                required={
+                  selectedAction !== IndictmentDecision.COMPLETING_FOR_SOME
+                }
               />
               <InputFileUpload
                 name="ruling"
@@ -1145,6 +1148,7 @@ const Conclusion: FC = () => {
               <InputDate
                 onChange={(date) => setConclusionDate(date)}
                 onBlur={(date) => setConclusionDate(date)}
+                defaultValue={formatDate(new Date())}
               />
             </Box>
           </Modal>

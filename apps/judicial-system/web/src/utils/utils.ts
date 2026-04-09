@@ -161,16 +161,6 @@ export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
       ),
   )
 
-export const areAllDefendantsCancelledOrDismissed = (
-  defendants?: Defendant[] | null,
-) =>
-  Boolean(
-    defendants?.length &&
-      defendants.every(
-        (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
-      ),
-  )
-
 export const isCaseDefendantDefender = (
   user?: User,
   workingCase?: { defendants?: Defendant[] | null },

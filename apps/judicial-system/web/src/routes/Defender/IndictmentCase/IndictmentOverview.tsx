@@ -5,10 +5,7 @@ import { useRouter } from 'next/router'
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  formatDate,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRulingOrDismissalCase,
@@ -49,7 +46,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
-  areAllDefendantsCancelledOrDismissed,
   isCaseCivilClaimantSpokesperson,
   isCaseDefendantDefender,
   shouldDisplayGeneratedPdfFiles,
@@ -113,17 +109,7 @@ const IndictmentOverview: FC = () => {
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
-  const myDefendants = workingCase.defendants?.filter(
-    (defendant) =>
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(user?.nationalId).includes(
-        defendant.defenderNationalId,
-      ),
-  )
-
-  const caseIsClosed =
-    isCompletedCase(workingCase.state) ||
-    areAllDefendantsCancelledOrDismissed(myDefendants)
+  const caseIsClosed = isCompletedCase(workingCase.state)
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
@@ -133,7 +119,6 @@ const IndictmentOverview: FC = () => {
 
   const canAddFiles =
     !caseIsClosed &&
-    !areAllDefendantsCancelledOrDismissed(myDefendants) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT &&
     (isCaseDefendantDefender(user, workingCase) ||
