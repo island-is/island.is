@@ -1209,4 +1209,11 @@ export const m = defineMessages({
     description:
       'One or more files are too large. Max size is {maxSizeInMb} MB.',
   },
+  translationNeededError: {
+    id: 'form.system:translation-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
+    description:
+      'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
 })
