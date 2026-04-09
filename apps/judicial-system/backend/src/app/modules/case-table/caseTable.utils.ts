@@ -22,6 +22,10 @@ const getIsMyCaseAttributes = (user: User): string[] => {
     return ['creatingProsecutorId', 'prosecutorId']
   }
 
+  if (isDistrictCourtUser(user)) {
+    return ['judgeId', 'registrarId']
+  }
+
   return []
 }
 
