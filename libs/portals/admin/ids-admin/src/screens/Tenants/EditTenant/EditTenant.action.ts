@@ -96,8 +96,13 @@ export const editTenantAction: WrappedActionFn =
         return globalErrorResponse
       }
 
+      const updatedTenant = response.data?.updateAuthAdminTenant
+      if (!updatedTenant) {
+        return globalErrorResponse
+      }
+
       return {
-        data: response.data?.updateAuthAdminTenant ?? null,
+        data: updatedTenant,
         errors: null,
         globalError: false,
         intent,

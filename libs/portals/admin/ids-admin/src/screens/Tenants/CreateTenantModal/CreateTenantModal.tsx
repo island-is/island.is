@@ -134,11 +134,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
         }),
       )
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : formatMessage(m.createTenantError)
-      setGlobalError(message)
+      setGlobalError(formatMessage(m.createTenantError))
       toast.error(formatMessage(m.createTenantError))
     }
   }
@@ -160,7 +156,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
                 <Input
                   name="name"
                   label={formatMessage(m.tenantName)}
-                  placeholder="@mitt.lén"
+                  placeholder={formatMessage(m.tenantNamePlaceholder)}
                   size="sm"
                   backgroundColor="blue"
                   value={values.name}

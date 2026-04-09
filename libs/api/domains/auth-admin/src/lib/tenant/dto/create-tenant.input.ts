@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
+import { ArrayMinSize } from 'class-validator'
 
 import { Environment } from '@island.is/shared/types'
 
@@ -23,5 +24,6 @@ export class CreateTenantInput {
   contactEmail?: string
 
   @Field(() => [Environment], { nullable: false })
+  @ArrayMinSize(1)
   environments!: Environment[]
 }
