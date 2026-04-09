@@ -199,6 +199,8 @@ export class CaseNotificationService extends BaseNotificationService {
     if (theCase.civilClaimants) {
       for (const civilClaimant of theCase.civilClaimants) {
         if (
+          civilClaimant.isSpokespersonConfirmed &&
+          civilClaimant.hasSpokesperson &&
           civilClaimant.spokespersonEmail &&
           !seen.has(civilClaimant.spokespersonEmail)
         ) {
