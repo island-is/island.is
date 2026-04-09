@@ -39,7 +39,10 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  getAppealActorText,
+  getDefenceUserPartyIds,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealFiles = () => {
   const { workingCase } = useContext(FormContext)
@@ -48,6 +51,10 @@ const AppealFiles = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    user,
+    workingCase,
+  )
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -56,7 +63,11 @@ const AppealFiles = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles()
-  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(
+    workingCase.id,
+    defendantId,
+    civilClaimantId,
+  )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
@@ -173,7 +184,7 @@ const AppealFiles = () => {
             onOpenFile={(file) => onOpenFile(file)}
           />
         </Box>
-        {isProsecutionUser(user) && (
+        {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
           <Box component="section" marginBottom={10}>
             <RequestAppealRulingNotToBePublishedCheckbox />
           </Box>

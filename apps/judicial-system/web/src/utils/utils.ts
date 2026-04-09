@@ -3,7 +3,10 @@ import {
   formatDate,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isProsecutionUser } from '@island.is/judicial-system/types'
+import {
+  isIndictmentCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import {
   Case,
   CaseAppealDecision,
@@ -199,6 +202,52 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       ) &&
       civilClaimant.spokespersonIsLawyer,
   )
+
+/**
+ * For indictment cases, returns the defendant ID or civil claimant ID
+ * that the current defence user represents. Used to associate uploaded
+ * appeal files with the correct party.
+ *
+ * Resolution order:
+ * 1. First matching defendant (by defenderNationalId)
+ * 2. First matching civil claimant (by spokespersonNationalId)
+ * 3. Empty object (prosecutor or no match)
+ */
+export const getDefenceUserPartyIds = (
+  user?: User,
+  workingCase?: {
+    type?: string | null
+    defendants?: Defendant[] | null
+    civilClaimants?: CivilClaimant[] | null
+  },
+): { defendantId?: string; civilClaimantId?: string } => {
+  if (!user || !workingCase || !isIndictmentCase(workingCase.type)) {
+    return {}
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+  const defendant = workingCase.defendants?.find(
+    (d) =>
+      d.defenderNationalId && normalizedId.includes(d.defenderNationalId),
+  )
+
+  if (defendant) {
+    return { defendantId: defendant.id }
+  }
+
+  const civilClaimant = workingCase.civilClaimants?.find(
+    (cc) =>
+      cc.spokespersonNationalId &&
+      normalizedId.includes(cc.spokespersonNationalId),
+  )
+
+  if (civilClaimant) {
+    return { civilClaimantId: civilClaimant.id }
+  }
+
+  return {}
+}
 
 /**
  * Returns a human-readable description of who appealed and when.

@@ -36,7 +36,10 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  getAppealActorText,
+  getDefenceUserPartyIds,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
@@ -46,6 +49,10 @@ const Statement = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    user,
+    workingCase,
+  )
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -59,7 +66,11 @@ const Statement = () => {
     caseId: workingCase.id,
   })
 
-  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(
+    workingCase.id,
+    defendantId,
+    civilClaimantId,
+  )
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -198,7 +209,7 @@ const Statement = () => {
                 disabled={!allFilesDoneOrError}
               />
             </Box>
-            {isProsecutionUser(user) && (
+            {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
               <Box component="section" marginBottom={10}>
                 <RequestAppealRulingNotToBePublishedCheckbox />
               </Box>
