@@ -156,19 +156,28 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
         }),
       )
 
-      await this.regulationsAdminClient.updateById(
+      const updateBody = {
+        draftingStatus: 'shipped' as const,
+        title: answers?.advert?.title ?? '',
+        text: decodeBase64(answers?.advert?.html ?? ''),
+        appendixes,
+        draftingNotes: '', // Already in DB from drafting phase
+        ministry: ministryName || undefined,
+        signatureDate: signatureDate || undefined,
+      }
+
+      this.logger.info('Syncing regulation draft to regulations-admin', {
+        category: LOG_CATEGORY,
+        applicationId: application.id,
         draftId,
-        {
-          draftingStatus: 'shipped',
-          title: answers?.advert?.title ?? '',
-          text: decodeBase64(answers?.advert?.html ?? ''),
-          appendixes,
-          draftingNotes: '', // Already in DB from drafting phase
-          ministry: ministryName || undefined,
-          signatureDate: signatureDate || undefined,
-        },
-        auth,
-      )
+        signatureDate: signatureDate ?? '<undefined>',
+        ministry: ministryName ?? '<undefined>',
+        titleLength: updateBody.title.length,
+        textLength: updateBody.text.length,
+        appendixCount: appendixes.length,
+      })
+
+      await this.regulationsAdminClient.updateById(draftId, updateBody, auth)
 
       this.logger.info('Successfully synced regulation draft', {
         category: LOG_CATEGORY,
