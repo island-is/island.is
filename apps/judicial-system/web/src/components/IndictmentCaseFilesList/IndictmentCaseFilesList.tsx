@@ -29,7 +29,6 @@ import {
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
@@ -281,7 +280,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
   const hideCourtRecord =
-    isDefenceUser(user) && isCompletedCase(workingCase.state)
+    isDefenceUser(user) &&
+    Boolean(
+      workingCase.defendants?.length &&
+        workingCase.defendants.every(
+          (d) => d.indictmentCancelledOrDismissedState !== null,
+        ),
+    )
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
