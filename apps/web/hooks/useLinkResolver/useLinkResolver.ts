@@ -39,6 +39,10 @@ export const routesTemplate = {
     is: '/s/[organization]/vidburdir',
     en: '/en/o/[organization]/events',
   },
+  annualreports: {
+    is: '/s/[organization]/arsskyrslur',
+    en: '/en/o/[organization]/annual-reports',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
@@ -154,6 +158,10 @@ export const routesTemplate = {
   event: {
     is: '/s/[organization]/vidburdir/[slug]',
     en: '/en/o/[organization]/events/[slug]',
+  },
+  annualreportchapter: {
+    is: '/s/[organization]/arsskyrslur/[slug]',
+    en: '/en/o/[organization]/annual-reports/[slug]',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',

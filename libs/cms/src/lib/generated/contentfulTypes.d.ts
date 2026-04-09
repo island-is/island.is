@@ -217,6 +217,12 @@ export interface IAnnualReportFields {
 
   /** Organization Page */
   organizationPage: IOrganizationPage
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Chapters */
+  chapters: IAnnualReportChapter[]
 }
 
 /** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
@@ -231,6 +237,41 @@ export interface IAnnualReport extends Entry<IAnnualReportFields> {
     contentType: {
       sys: {
         id: 'annualReport'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnnualReportChapterFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
+
+  /** Content */
+  content: Document
+}
+
+export interface IAnnualReportChapter
+  extends Entry<IAnnualReportChapterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'annualReportChapter'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -5687,6 +5728,7 @@ export type CONTENT_TYPE =
   | 'anchorPage'
   | 'anchorPageList'
   | 'annualReport'
+  | 'annualReportChapter'
   | 'appUri'
   | 'article'
   | 'articleCategory'
