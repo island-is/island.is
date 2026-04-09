@@ -146,26 +146,38 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
       const { ministryName, signatureDate } =
         getMinistryFromSignature(signature)
 
+      const decodeBase64 = (value: string): string =>
+        value ? Buffer.from(value, 'base64').toString('utf-8') : ''
+
       const appendixes = (answers?.advert?.additions ?? []).map(
-        (a: { title?: string; html?: string }) => ({
+        (a: { title?: string; content?: string; html?: string }) => ({
           title: a.title ?? '',
-          text: a.html ?? '',
+          text: decodeBase64(a.content ?? a.html ?? ''),
         }),
       )
 
-      await this.regulationsAdminClient.updateById(
+      const updateBody = {
+        draftingStatus: 'shipped' as const,
+        title: answers?.advert?.title ?? '',
+        text: decodeBase64(answers?.advert?.html ?? ''),
+        appendixes,
+        draftingNotes: '', // Already in DB from drafting phase
+        ministry: ministryName || undefined,
+        signatureDate: signatureDate || undefined,
+      }
+
+      this.logger.info('Syncing regulation draft to regulations-admin', {
+        category: LOG_CATEGORY,
+        applicationId: application.id,
         draftId,
-        {
-          draftingStatus: 'shipped',
-          title: answers?.advert?.title ?? '',
-          text: answers?.advert?.html ?? '',
-          appendixes,
-          draftingNotes: '', // Already in DB from drafting phase
-          ministry: ministryName,
-          signatureDate: signatureDate,
-        },
-        auth,
-      )
+        signatureDate: signatureDate ?? '<undefined>',
+        ministry: ministryName ?? '<undefined>',
+        titleLength: updateBody.title.length,
+        textLength: updateBody.text.length,
+        appendixCount: appendixes.length,
+      })
+
+      await this.regulationsAdminClient.updateById(draftId, updateBody, auth)
 
       this.logger.info('Successfully synced regulation draft', {
         category: LOG_CATEGORY,
