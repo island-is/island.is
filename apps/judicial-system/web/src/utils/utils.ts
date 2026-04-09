@@ -228,8 +228,7 @@ export const getDefenceUserPartyIds = (
   const normalizedId = normalizeAndFormatNationalId(user.nationalId)
 
   const defendant = workingCase.defendants?.find(
-    (d) =>
-      d.defenderNationalId && normalizedId.includes(d.defenderNationalId),
+    (d) => d.defenderNationalId && normalizedId.includes(d.defenderNationalId),
   )
 
   if (defendant) {
