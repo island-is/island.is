@@ -2,7 +2,7 @@ import { FC, Fragment, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -13,15 +13,13 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
-  AppealCaseFilesOverview,
   Conclusion,
-  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
@@ -31,7 +29,6 @@ import {
   PageLayout,
   PageTitle,
   serviceAnnouncementsStrings,
-  useIndictmentsLawsBroken,
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
@@ -108,15 +105,10 @@ const IndictmentOverview: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const { appealBanner, appealModals } = useAppealCase()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
-
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
@@ -261,37 +253,9 @@ const IndictmentOverview: FC = () => {
                   judgeName={workingCase.judge?.name}
                 />
               )}
-            {(hasLawsBroken || hasMergeCases) && (
-              <Box>
-                {/* 
-            NOTE: Temporarily hidden while list of laws broken is not complete in
-            indictment cases
-            
-            {hasLawsBroken && (
-              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )} */}
-                {hasMergeCases && (
-                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {workingCase.mergedCases?.map((mergedCase) => (
-                      <Box key={mergedCase.id}>
-                        <ConnectedCaseFilesAccordionItem
-                          connectedCaseParentId={workingCase.id}
-                          connectedCase={mergedCase}
-                          displayGeneratedPDFs={displayGeneratedPDFs}
-                        />
-                      </Box>
-                    ))}
-                  </Accordion>
-                )}
-              </Box>
-            )}
-            <Box component="section">
-              <IndictmentCaseFilesList
-                workingCase={workingCase}
-                displayGeneratedPDFs={displayGeneratedPDFs}
-              />
-            </Box>
-            <AppealCaseFilesOverview />
+            <AllIndictmentCaseFiles
+              displayGeneratedPDFs={displayGeneratedPDFs}
+            />
             {canAddFiles && (
               <Box display="flex" justifyContent="flexEnd">
                 <Button

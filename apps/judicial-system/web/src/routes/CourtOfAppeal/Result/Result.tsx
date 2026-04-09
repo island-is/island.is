@@ -1,22 +1,20 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
+import { AlertMessage } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
-  AppealCaseFilesOverview,
+  AllIndictmentCaseFiles,
   CaseFilesAccordionItem,
   Conclusion,
   conclusion,
-  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
   InfoCard,
   InfoCardClosedIndictment,
   MarkdownWrapper,
@@ -62,8 +60,6 @@ const CourtOfAppealResult = () => {
   } = useInfoCardItems()
 
   const isIndictment = isIndictmentCase(workingCase.type)
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <>
@@ -150,22 +146,7 @@ const CourtOfAppealResult = () => {
                   title={formatMessage(conclusion.appealTitle)}
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
-                <AppealCaseFilesOverview />
-                {hasMergeCases && (
-                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {workingCase.mergedCases?.map((mergedCase) => (
-                      <Box key={mergedCase.id}>
-                        <ConnectedCaseFilesAccordionItem
-                          connectedCaseParentId={workingCase.id}
-                          connectedCase={mergedCase}
-                        />
-                      </Box>
-                    ))}
-                  </Accordion>
-                )}
-                <Box component="section">
-                  <IndictmentCaseFilesList workingCase={workingCase} />
-                </Box>
+                <AllIndictmentCaseFiles />
               </>
             ) : (
               <>

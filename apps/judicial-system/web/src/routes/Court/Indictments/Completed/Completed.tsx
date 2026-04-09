@@ -3,19 +3,17 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  AppealCaseFilesOverview,
+  AllIndictmentCaseFiles,
   Conclusion,
-  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
   MarkdownWrapper,
@@ -26,7 +24,6 @@ import {
   ReopenModal,
   RulingInput,
   SectionHeading,
-  useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
@@ -66,7 +63,6 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const { appealBanner, appealModals } = useAppealCase()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -201,10 +197,6 @@ const Completed: FC = () => {
       workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
       workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
 
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
-
   return (
     <>
       {shouldDisplayAppealBanner && appealBanner}
@@ -262,33 +254,7 @@ const Completed: FC = () => {
                 judgeName={workingCase.judge?.name}
               />
             )}
-            {(hasLawsBroken || hasMergeCases) && (
-              <>
-                {/*
-            NOTE: Temporarily hidden while list of laws broken is not complete in
-            indictment cases
-            
-            {hasLawsBroken && (
-              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )} */}
-                {hasMergeCases && (
-                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {workingCase.mergedCases?.map((mergedCase) => (
-                      <Box key={mergedCase.id}>
-                        <ConnectedCaseFilesAccordionItem
-                          connectedCaseParentId={workingCase.id}
-                          connectedCase={mergedCase}
-                        />
-                      </Box>
-                    ))}
-                  </Accordion>
-                )}
-              </>
-            )}
-            <Box component="section">
-              <IndictmentCaseFilesList workingCase={workingCase} />
-            </Box>
-            <AppealCaseFilesOverview />
+            <AllIndictmentCaseFiles />
             {isRulingOrFine && (
               <Box component="section">
                 <CriminalRecordUpdate
