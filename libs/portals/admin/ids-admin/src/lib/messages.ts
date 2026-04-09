@@ -1170,6 +1170,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-name',
     defaultMessage: 'Name',
   },
+  tenantNamePlaceholder: {
+    id: 'ap.ids-admin:tenant-name-placeholder',
+    defaultMessage: '@mitt.lén',
+  },
   tenantNameHelper: {
     id: 'ap.ids-admin:tenant-name-helper',
     defaultMessage:

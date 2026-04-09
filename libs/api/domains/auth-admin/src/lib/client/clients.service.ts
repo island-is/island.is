@@ -365,7 +365,7 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    return results.some(Boolean)
+    return results.every(Boolean)
   }
 
   async revokeSecret(

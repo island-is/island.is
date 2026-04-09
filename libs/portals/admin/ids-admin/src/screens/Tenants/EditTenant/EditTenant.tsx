@@ -36,13 +36,15 @@ export const EditTenant = () => {
   // tenant currently exists in. When true, the FormCard shows the "synced"
   // badge; when false, the user can pick a source env from the dropdown and
   // sync this section from there.
-  const basicInfoInSync = checkEnvironmentsSync(tenant.environments, [
-    'nationalId',
-    'displayName',
-    'description',
-    'organisationLogoKey',
-    'contactEmail',
-  ])
+  const basicInfoInSync =
+    tenant.environments.length > 0 &&
+    checkEnvironmentsSync(tenant.environments, [
+      'nationalId',
+      'displayName',
+      'description',
+      'organisationLogoKey',
+      'contactEmail',
+    ])
 
   return (
     <EnvironmentProvider

@@ -12,7 +12,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Client } from '../clients/models/client.model'
 import { AdminCreateTenantDto } from './dto/admin-create-tenant.dto'
 import { AdminPatchTenantDto } from './dto/admin-patch-tenant.dto'
-import { TenantDto } from './dto/tenant.dto'
+import { AdminTenantDto, TenantDto } from './dto/tenant.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
@@ -34,7 +34,7 @@ export class TenantsService {
     private readonly apiScopeGroupModel: typeof ApiScopeGroup,
   ) {}
 
-  async findAllByUser(user: User): Promise<TenantDto[]> {
+  async findAllByUser(user: User): Promise<AdminTenantDto[]> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const tenants = await this.domainModel.findAll({

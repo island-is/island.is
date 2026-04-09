@@ -17,7 +17,9 @@ export class TenantDto {
     example: 'island@example.is',
   })
   contactEmail?: string
+}
 
+export class AdminTenantDto extends TenantDto {
   @ApiPropertyOptional({ example: '0123456789' })
   nationalId?: string
 }
