@@ -39,6 +39,12 @@ export const idsAdminNav: PortalNavigationItem = {
       ],
     },
     {
+      name: m.settings,
+      path: IDSAdminPaths.IDSAdminTenantEdit,
+      description: m.idsAdmin,
+      activeIfExact: true,
+    },
+    {
       name: m.documentation,
       description: m.documentationDescription,
       path: IDSAdminExternalPaths.Docs,

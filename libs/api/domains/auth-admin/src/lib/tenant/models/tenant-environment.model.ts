@@ -20,4 +20,18 @@ export class TenantEnvironment {
 
   @Field(() => [TranslatedValue])
   displayName!: TranslatedValue[]
+
+  // Per-environment admin fields. Nullable so the slim list query stays
+  // backward compatible – they are only populated by the admin details query.
+  @Field({ nullable: true })
+  nationalId?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organisationLogoKey?: string
+
+  @Field({ nullable: true })
+  contactEmail?: string
 }

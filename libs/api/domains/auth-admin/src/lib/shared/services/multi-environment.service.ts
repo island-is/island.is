@@ -57,6 +57,27 @@ export abstract class MultiEnvironmentService {
   }
 
   /**
+   * Returns true when the admin api client for the given environment has
+   * been configured (and is therefore actually reachable). Use this from
+   * subclasses that need to distinguish "real environment that succeeded"
+   * from "unconfigured environment whose `makeRequest` returns null without
+   * throwing" — otherwise success-if-any style aggregation can report a
+   * false positive when only one environment is configured and it fails.
+   */
+  protected isEnvironmentConfigured(environment: Environment): boolean {
+    switch (environment) {
+      case Environment.Development:
+        return Boolean(this.adminDevApi)
+      case Environment.Staging:
+        return Boolean(this.adminStagingApi)
+      case Environment.Production:
+        return Boolean(this.adminProdApi)
+      default:
+        return false
+    }
+  }
+
+  /**
    * Request wrapper that handles 204 responses.
    * Needs to be passed the Raw functions from the openapi codegen
    */

@@ -26,6 +26,14 @@ type NavChildren = NavChildrenBase & {
 interface PortalNavigationProps {
   navigation: PortalNavigationItem
   title?: string
+  /**
+   * When provided, the sidebar title is rendered as a link to this path.
+   * Navigation happens via react-router so no full page reload.
+   */
+  titleLink?: {
+    href: string
+    active?: boolean
+  }
 }
 
 const findActiveNav = (
@@ -41,6 +49,7 @@ const findActiveNav = (
 export function PortalNavigation({
   navigation,
   title = '',
+  titleLink,
 }: PortalNavigationProps) {
   const { formatMessage } = useLocale()
   const nav = useNavigation(navigation)
@@ -79,11 +88,19 @@ export function PortalNavigation({
   return (
     <Navigation
       title={title ?? formatMessage(nav.name)}
+      titleLink={titleLink}
       baseId={'navigation'}
       isMenuDialog={!lg}
       activeItemTitle={activeNav ? formatMessage(activeNav.name) : undefined}
       renderLink={(link, item) => {
-        const href = item?.href ?? ''
+        // For child nav items, `item` is provided. For the titleLink the
+        // Navigation component does not pass an `item`, so we fall back to
+        // the href from the link element itself.
+        const href =
+          item?.href ??
+          (link.props && typeof link.props.href === 'string'
+            ? link.props.href
+            : '')
         if (href && link.type === FocusableBox) {
           return cloneElement(link, {
             component: Link,

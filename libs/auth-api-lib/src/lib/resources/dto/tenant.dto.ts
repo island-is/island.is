@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 
@@ -17,4 +17,7 @@ export class TenantDto {
     example: 'island@example.is',
   })
   contactEmail?: string
+
+  @ApiPropertyOptional({ example: '0123456789' })
+  nationalId?: string
 }

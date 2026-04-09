@@ -333,33 +333,39 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    const targets = environments.map((env) => ({
-      environment: env,
-      success: true,
-    }))
+    // Only count environments that are actually configured — otherwise
+    // `makeRequest` silently resolves to `null` for unconfigured envs and
+    // the old `if (!response)` check both a) marked successful configured
+    // envs as failures (handle204 returns null on 204 / undefined on 200
+    // void) and b) marked unconfigured envs as fake successes. In a
+    // single-env local setup that meant a successful archive looked like
+    // a failure in the UI.
+    const configuredEnvironments = environments.filter((environment) =>
+      this.isEnvironmentConfigured(environment),
+    )
 
-    await Promise.all(
-      targets.map(async (target) => {
-        const response = await this.makeRequest(
-          user,
-          target.environment,
-          (api) =>
+    if (configuredEnvironments.length === 0) {
+      return false
+    }
+
+    const results = await Promise.all(
+      configuredEnvironments.map(async (environment) => {
+        try {
+          await this.makeRequest(user, environment, (api) =>
             api.meClientsControllerDeleteRaw({
               tenantId: input.tenantId,
               clientId: input.clientId,
             }),
-        ).catch((error) => {
-          target.success = false
-          this.handleError(error, target.environment)
-        })
-
-        if (!response) {
-          target.success = false
+          )
+          return true
+        } catch (error) {
+          this.handleError(error as Error, environment)
+          return false
         }
       }),
     )
 
-    return targets.some((target) => target.success)
+    return results.some(Boolean)
   }
 
   async revokeSecret(
