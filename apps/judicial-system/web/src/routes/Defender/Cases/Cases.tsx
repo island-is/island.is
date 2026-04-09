@@ -49,24 +49,26 @@ export const Cases: FC = () => {
       return [[], []]
     }
 
-    const allDefenderDefendantsAreCancelledOrDismissed =
-      (defenderNationalId?: string | null, defendants?: typeof cases[number]['defendants']) => {
-        const defenderDefendants =
-          defendants?.filter(
-            (defendant) =>
-              defendant.defenderNationalId &&
-              normalizeAndFormatNationalId(defenderNationalId).includes(
-                defendant.defenderNationalId,
-              ),
-          ) ?? []
+    const allDefenderDefendantsAreCancelledOrDismissed = (
+      defenderNationalId?: string | null,
+      defendants?: typeof cases[number]['defendants'],
+    ) => {
+      const defenderDefendants =
+        defendants?.filter(
+          (defendant) =>
+            defendant.defenderNationalId &&
+            normalizeAndFormatNationalId(defenderNationalId).includes(
+              defendant.defenderNationalId,
+            ),
+        ) ?? []
 
-        return (
-          defenderDefendants.length > 0 &&
-          defenderDefendants.every(
-            (defendant) => defendant.indictmentCancelledOrDismissedState != null,
-          )
+      return (
+        defenderDefendants.length > 0 &&
+        defenderDefendants.every(
+          (defendant) => defendant.indictmentCancelledOrDismissedState != null,
         )
-      }
+      )
+    }
 
     return partition(
       cases,
@@ -74,7 +76,10 @@ export const Cases: FC = () => {
         !(
           isCompletedCase(c.state) ||
           c.state === CaseState.WAITING_FOR_CANCELLATION ||
-          allDefenderDefendantsAreCancelledOrDismissed(user?.nationalId, c.defendants)
+          allDefenderDefendantsAreCancelledOrDismissed(
+            user?.nationalId,
+            c.defendants,
+          )
         ),
     )
   }, [cases, user?.nationalId])
