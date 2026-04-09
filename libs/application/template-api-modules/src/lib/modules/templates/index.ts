@@ -1,3 +1,6 @@
+
+import { DeRegisterUnemploymentBenefitsModule } from './vmst-actions/de-register-unemployment-benefits/de-register-unemployment-benefits.module'
+import { DeRegisterUnemploymentBenefitsService } from './vmst-actions/de-register-unemployment-benefits/de-register-unemployment-benefits.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
 import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
@@ -276,7 +279,8 @@ export const modules = [
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
   CoursesModule,
-]
+  DeRegisterUnemploymentBenefitsModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -370,4 +374,5 @@ export const services = [
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
   CoursesService,
-]
+  DeRegisterUnemploymentBenefitsService,
+            ]
