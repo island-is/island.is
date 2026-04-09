@@ -2527,6 +2527,9 @@ export class CaseNotificationService extends BaseNotificationService {
           notifications.caseAppealedToCourtOfAppeals.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
+            court: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             courtCaseNumber: theCase.courtCaseNumber,
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
