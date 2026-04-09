@@ -302,7 +302,6 @@ air-discount-scheme-web:
 api:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -454,6 +453,7 @@ api:
     XROAD_SECONDARY_SCHOOL_PATH: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
     XROAD_SHIP_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1'
+    XROAD_SHIP_REGISTRY_V2_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Skutan-Gov-V1'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
@@ -1787,7 +1787,6 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -3283,6 +3282,7 @@ services-documents:
 services-form-system-api:
   enabled: true
   env:
+    CLIENT_LOCATION_ORIGIN: 'https://island.is/form'
     CODE_OWNER: 'Advania'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -3300,6 +3300,9 @@ services-form-system-api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+    PAYMENT_API_CALLBACK_URL: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
@@ -4513,7 +4516,6 @@ skilavottord-ws:
     name: 'skilavottord-ws'
 user-notification:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -4661,7 +4663,6 @@ user-notification:
     name: 'user-notification'
 user-notification-birthday-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
@@ -4774,7 +4775,6 @@ user-notification-birthday-worker:
     name: 'user-notification-birthday-worker'
 user-notification-cleanup-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=cleanup'
   command:
@@ -4870,7 +4870,6 @@ user-notification-cleanup-worker:
     name: 'user-notification-cleanup-worker'
 user-notification-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=worker'
   command:
@@ -5103,7 +5102,6 @@ web:
     name: 'web'
 xroad-collector:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
