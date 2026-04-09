@@ -2527,6 +2527,9 @@ export class CaseNotificationService extends BaseNotificationService {
           notifications.caseAppealedToCourtOfAppeals.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
+            court: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             courtCaseNumber: theCase.courtCaseNumber,
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
@@ -3178,9 +3181,7 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       for (const recipient of defenceRecipients) {
-        const defenderUrl = recipient.nationalId
-          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
-          : undefined
+        const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
         const defenderHtml = this.formatMessage(
           notifications.caseAppealCaseFilesUpdated.body,
           {
@@ -3208,9 +3209,7 @@ export class CaseNotificationService extends BaseNotificationService {
         this.getIndictmentAppealDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
-        const defenderUrl = recipient.nationalId
-          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
-          : undefined
+        const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
         const defenderHtml = this.formatMessage(
           notifications.caseAppealCaseFilesUpdated.body,
           {
