@@ -54,7 +54,6 @@ type VerdictByIdResponse =
   | {
       item: {
         richText: RichTextPayload
-        htmlString: string
         title: string
         court: string
         verdictDate?: Date | null
