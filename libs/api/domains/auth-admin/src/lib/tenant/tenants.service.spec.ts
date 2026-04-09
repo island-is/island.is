@@ -346,7 +346,9 @@ describe('TenantsService', () => {
       })
 
       expect(result).toBe(false)
-      expect(deleteMockDevApi.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(
+        deleteMockDevApi.meTenantsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
     })
 
     it('returns true when the only configured environment succeeds', async () => {
@@ -368,7 +370,9 @@ describe('TenantsService', () => {
       })
 
       expect(result).toBe(true)
-      expect(deleteMockDevApi.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(
+        deleteMockDevApi.meTenantsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
     })
 
     it('returns true across multiple environments when at least one succeeds', async () => {
@@ -400,7 +404,9 @@ describe('TenantsService', () => {
       })
 
       expect(result).toBe(true)
-      expect(deleteMockDevApi.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(
+        deleteMockDevApi.meTenantsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(stagingMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
     })
 
@@ -433,7 +439,9 @@ describe('TenantsService', () => {
       })
 
       expect(result).toBe(false)
-      expect(deleteMockDevApi.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(
+        deleteMockDevApi.meTenantsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(stagingMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
     })
   })

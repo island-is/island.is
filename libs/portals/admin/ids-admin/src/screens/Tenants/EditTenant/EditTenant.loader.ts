@@ -15,7 +15,8 @@ export type EditTenantLoaderResult = NonNullable<
   TenantDetailsQuery['authAdminTenantDetails']
 >
 
-export type EditTenantEnvironment = EditTenantLoaderResult['environments'][number]
+export type EditTenantEnvironment =
+  EditTenantLoaderResult['environments'][number]
 
 export const editTenantLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async ({ params }) => {

@@ -417,9 +417,7 @@ describe('MeTenantsController', () => {
       })
 
       it('GET /:tenantId/admin-details should be forbidden', async () => {
-        const res = await server.get(
-          '/v2/me/tenants/any-tenant/admin-details',
-        )
+        const res = await server.get('/v2/me/tenants/any-tenant/admin-details')
 
         expect(res.status).toBe(403)
       })

@@ -69,7 +69,10 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
       const next = prev.environments.includes(env)
         ? prev.environments.filter((e) => e !== env)
         : [...prev.environments, env]
-      return { ...prev, environments: next as CreateTenantFormValues['environments'] }
+      return {
+        ...prev,
+        environments: next as CreateTenantFormValues['environments'],
+      }
     })
     setErrors((prev) => ({ ...prev, environments: undefined }))
   }
@@ -109,7 +112,8 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
 
       const createdIn =
         response.data?.createAuthAdminTenant?.map((t) => t.environment) ?? []
-      const partiallyCreated = createdIn.length !== result.data.environments.length
+      const partiallyCreated =
+        createdIn.length !== result.data.environments.length
 
       if (createdIn.length === 0) {
         setGlobalError(formatMessage(m.createTenantError))

@@ -31,11 +31,7 @@ export const editTenantSchema = {
       displayName: safeText,
       description: safeText,
       organisationLogoKey: z.string().min(1, 'errorOrgLogoKey'),
-      contactEmail: z
-        .string()
-        .email('errorEmail')
-        .or(z.literal(''))
-        .optional(),
+      contactEmail: z.string().email('errorEmail').or(z.literal('')).optional(),
     })
     .merge(defaultEnvironmentSchema),
 }

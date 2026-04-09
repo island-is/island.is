@@ -281,10 +281,7 @@ export class TenantsService extends MultiEnvironmentService {
     }
   }
 
-  async deleteTenant(
-    user: User,
-    input: DeleteTenantInput,
-  ): Promise<boolean> {
+  async deleteTenant(user: User, input: DeleteTenantInput): Promise<boolean> {
     // "Success-if-any" across environments. We must filter to environments
     // that are actually configured — otherwise `makeRequest` silently
     // resolves to `null` (without throwing) for unconfigured envs and the
