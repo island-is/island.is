@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
 import format from 'date-fns/format'
+import icelandicLocale from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
 import {
   ApplicationTypes,
   type ApplicationWithAttachments,
@@ -8,14 +10,18 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { ZendeskService } from '@island.is/clients/zendesk'
+import { type Ticket, ZendeskService } from '@island.is/clients/zendesk'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
-import { COURSE_LIST_PAGE_SLUG_MAP, GET_COURSE_BY_ID_QUERY } from './constants'
+import {
+  COURSE_LIST_PAGE_SLUG_MAP,
+  GET_COURSE_BY_ID_QUERY,
+  ZENDESK_TICKET_IDS,
+} from './constants'
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
@@ -105,21 +111,41 @@ export class CoursesService extends BaseTemplateApiService {
         healthcenter,
       )
 
-      await this.sharedTemplateApiService.sendEmail(
-        (_props) => ({
-          to: this.coursesConfig.applicationRecipientEmail,
-          from: {
-            name: this.coursesConfig.applicationSenderName,
-            address: this.coursesConfig.applicationSenderEmail,
+      const success = await this.zendeskService.submitTicket({
+        message,
+        subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
+        requester: {
+          name,
+          email,
+        },
+        brandId: ZENDESK_TICKET_IDS.brandId,
+        ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
+        tags: [this.coursesConfig.zendeskEnvTag, courseInstance.id],
+        customFields: [
+          {
+            id: ZENDESK_TICKET_IDS.customFields.courseTitle,
+            value: course.title,
           },
-          subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
-          text: message,
-          replyTo: email,
-        }),
-        application,
-      )
+          {
+            id: ZENDESK_TICKET_IDS.customFields.applicantName,
+            value: name,
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.startDate,
+            value: this.formatCourseInstanceDate(courseInstance),
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.location,
+            value: courseInstance.location ?? '',
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.courseUrl,
+            value: courseUrl ?? '',
+          },
+        ],
+      })
 
-      return { success: true }
+      return { success }
     } catch (error) {
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
@@ -222,10 +248,20 @@ export class CoursesService extends BaseTemplateApiService {
     courseInstanceId: string,
   ): Promise<Set<string>> {
     const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
-    const query = `type:ticket subject:"${subject}"`
-    let tickets
+    const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
+    const newQuery = `type:ticket tags:"${this.coursesConfig.zendeskEnvTag} ${courseInstanceId}"`
+    const tickets: Ticket[] = []
     try {
-      tickets = await this.zendeskService.searchTickets(query)
+      const [backwardsCompatibleTickets, newTickets] = await Promise.all([
+        this.zendeskService.searchTickets(backwardsCompatibleQuery),
+        this.zendeskService.searchTickets(newQuery),
+      ])
+
+      const ticketMap = new Map<string, Ticket>()
+      for (const ticket of backwardsCompatibleTickets)
+        ticketMap.set(ticket.id, ticket)
+      for (const ticket of newTickets) ticketMap.set(ticket.id, ticket)
+      for (const ticket of ticketMap.values()) tickets.push(ticket)
     } catch (error) {
       this.logger.warn(
         'Failed to search Zendesk tickets for participant availability check',
@@ -492,5 +528,36 @@ export class CoursesService extends BaseTemplateApiService {
     })
 
     return message
+  }
+
+  private formatCourseInstanceDate(courseInstance: {
+    startDate: string
+    displayedTitle?: string | null
+    startDateTimeDuration?: {
+      startTime?: string
+      endTime?: string
+    }
+  }): string {
+    const ymd = courseInstance.startDate.split('T')[0] ?? ''
+    const dateOnly = parseISO(ymd)
+    const formattedDate = format(dateOnly, 'd. MMMM yyyy', {
+      locale: icelandicLocale,
+    })
+
+    let timeRange = ''
+    if (courseInstance.startDateTimeDuration?.startTime) {
+      timeRange = courseInstance.startDateTimeDuration.startTime
+      if (courseInstance.startDateTimeDuration.endTime) {
+        timeRange += ` - ${courseInstance.startDateTimeDuration.endTime}`
+      }
+    }
+
+    const titleSuffix = courseInstance.displayedTitle?.trim()
+      ? courseInstance.displayedTitle.trim()
+      : ''
+
+    return [formattedDate, timeRange, titleSuffix]
+      .filter((part) => part.length > 0)
+      .join(' ')
   }
 }

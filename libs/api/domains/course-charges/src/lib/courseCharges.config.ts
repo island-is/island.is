@@ -10,6 +10,7 @@ const schema = z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
   }),
+  zendeskEnvTag: z.string(),
 })
 
 export const CourseChargesConfig = defineConfig({
@@ -24,5 +25,6 @@ export const CourseChargesConfig = defineConfig({
       nodes: env.requiredJSON('APOLLO_CACHE_REDIS_NODES', []),
       ssl: env.optionalJSON('APOLLO_CACHE_REDIS_SSL', false) ?? true,
     },
+    zendeskEnvTag: env.required('HH_COURSES_ZENDESK_ENV_TAG'),
   }),
 })
