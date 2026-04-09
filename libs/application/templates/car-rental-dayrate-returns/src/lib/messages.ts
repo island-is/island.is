@@ -316,9 +316,9 @@ export const m = {
       description: 'Bulk upload description',
     },
     stepsMessage: {
-      id: 'rsk.crdr.application:multi.upload.steps',
+      id: 'rsk.crdr.application:multi.upload.steps#markdown',
       defaultMessage:
-        '1. Sækir sniðmátið \n2. Gerir viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan',
+        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan',
       description: 'Bulk upload help steps',
     },
     templateButton: {
