@@ -30,6 +30,7 @@ import {
   CaseRepositoryService,
   CaseString,
   DateLog,
+  PoliceDigitalCaseFileRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
@@ -56,6 +57,7 @@ jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -85,6 +87,7 @@ export const createTestingCaseModule = async () => {
       SubpoenaService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      PoliceDigitalCaseFileRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -166,6 +169,11 @@ export const createTestingCaseModule = async () => {
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
+  const policeDigitalCaseFileRepositoryService =
+    caseModule.get<PoliceDigitalCaseFileRepositoryService>(
+      PoliceDigitalCaseFileRepositoryService,
+    )
+
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
@@ -220,6 +228,7 @@ export const createTestingCaseModule = async () => {
     indictmentCountService,
     caseRepositoryService,
     caseArchiveRepositoryService,
+    policeDigitalCaseFileRepositoryService,
     logger,
     sequelize,
     dateLogModel,

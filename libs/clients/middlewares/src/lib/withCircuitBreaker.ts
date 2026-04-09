@@ -31,6 +31,8 @@ export function withCircuitBreaker({
     // We want to use our own timeout logic so we can disable the circuit
     // breaker while still supporting timeouts.
     timeout: false as unknown as number,
+    // Skip snapshot events to reduce runtime memory usage.
+    enableSnapshots: false,
     ...opossum,
     errorFilter,
   })

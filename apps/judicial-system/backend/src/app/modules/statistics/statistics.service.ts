@@ -3,7 +3,6 @@ import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
-import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -29,6 +28,7 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import {
+  AppealCase,
   Case,
   CaseRepositoryService,
   DateLog,
@@ -378,6 +378,11 @@ export class StatisticsService {
           order: [['created', 'DESC']],
           separate: true,
         },
+        {
+          model: AppealCase,
+          as: 'appealCase',
+          required: false,
+        },
       ],
     })
 
@@ -566,6 +571,7 @@ export class StatisticsService {
             { key: 'caseTypeDescriptor', header: 'Tegund máls' },
             { key: 'subtypeDescriptor', header: 'Sakarefni' },
             { key: 'origin', header: 'Stofnað í' },
+            { key: 'prosecutorId', header: 'Ákærandi' },
             { key: 'defendantId', header: 'Varnaraðili' },
             { key: 'serviceStatusDescriptor', header: 'Birting' },
             { key: 'rulingDecisionDescriptor', header: 'Lyktir' },

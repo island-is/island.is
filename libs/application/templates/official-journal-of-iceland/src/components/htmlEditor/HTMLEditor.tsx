@@ -3,6 +3,7 @@ import { Editor, EditorFileUploader } from '@dmr.is/regulations-tools/Editor'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
+import { isImpact as isImpactClass } from './EditorInput.css'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
@@ -17,6 +18,10 @@ type Props = {
   readOnly?: boolean
   controller?: boolean
   fileUploader: EditorFileUploader
+  /** Base text for diff highlighting in impact editing mode */
+  baseText?: HTMLText
+  /** When true, enables impact-specific editor styling/behavior */
+  isImpact?: boolean
 }
 
 export const HTMLEditor = ({
@@ -30,6 +35,8 @@ export const HTMLEditor = ({
   readOnly = false,
   controller = true,
   fileUploader,
+  baseText,
+  isImpact,
 }: Props) => {
   const [initialValue, setInitalValue] = useState(value)
   const valueRef = useRef(() => value)
@@ -60,9 +67,9 @@ export const HTMLEditor = ({
           <Stack space={[2, 2, 3]}>
             {title && <Text variant="h5">{title}</Text>}
             <Box
-              className={editorWrapper({
-                error: !!error,
-              })}
+              className={`${editorWrapper({ error: !!error })}${
+                isImpact ? ` ${isImpactClass}` : ''
+              }`}
             >
               <Editor
                 readOnly={readOnly}
@@ -73,6 +80,8 @@ export const HTMLEditor = ({
                 fileUploader={fileUploader}
                 valueRef={valueRef}
                 classes={classes}
+                baseText={baseText}
+                isImpact={isImpact}
                 onChange={() => {
                   onChange && onChange(valueRef.current())
                 }}
@@ -95,9 +104,9 @@ export const HTMLEditor = ({
         </Text>
       )}
       <Box
-        className={editorWrapper({
-          error: !!error,
-        })}
+        className={`${editorWrapper({ error: !!error })}${
+          isImpact ? ` ${isImpactClass}` : ''
+        }`}
       >
         <Editor
           readOnly={readOnly}
@@ -107,6 +116,8 @@ export const HTMLEditor = ({
           fileUploader={fileUploader}
           valueRef={valueRef}
           classes={classes}
+          baseText={baseText}
+          isImpact={isImpact}
           onChange={() => {
             handleChange(valueRef.current())
           }}

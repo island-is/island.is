@@ -594,6 +594,7 @@ export class NotificationsWorkerService {
         template: formattedTemplate,
         isEnglish: locale === 'en',
       }),
+      smsPayer: formattedTemplate.smsPayer,
     }
   }
 

@@ -24,6 +24,7 @@ import { CaseFilterOptionType } from './types'
 import {
   ALL_DISTRICT_COURTS,
   COURT_OF_APPEAL,
+  RETRIAL_COURT,
   SUPREME_COURT,
 } from './constants'
 
@@ -339,20 +340,29 @@ export class VerdictsClientService {
 
   async getCaseFilterOptionsPerCourt() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-    const [courtOfAppealResponse, supremeCourtResponse, districtCourtResponse] =
-      await Promise.allSettled([
-        goproVerdictApi.getCaseTypesV2({
-          requestData: {
-            courts: [COURT_OF_APPEAL],
-          },
-        }),
-        this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
-        goproVerdictApi.getCaseTypesV2({
-          requestData: {
-            courts: ALL_DISTRICT_COURTS,
-          },
-        }),
-      ])
+    const [
+      courtOfAppealResponse,
+      supremeCourtResponse,
+      districtCourtResponse,
+      retrialCourtResponse,
+    ] = await Promise.allSettled([
+      goproVerdictApi.getCaseTypesV2({
+        requestData: {
+          courts: [COURT_OF_APPEAL],
+        },
+      }),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+      goproVerdictApi.getCaseTypesV2({
+        requestData: {
+          courts: ALL_DISTRICT_COURTS,
+        },
+      }),
+      goproVerdictApi.getCaseTypesV2({
+        requestData: {
+          courts: [RETRIAL_COURT],
+        },
+      }),
+    ])
 
     const mapOfAll = new Map<string, CaseFilterOptionType>()
 
@@ -380,6 +390,14 @@ export class VerdictsClientService {
           districtCourtSet.add(caseType.label)
         }
 
+    const retrialCourtSet = new Set<string>()
+    if (retrialCourtResponse.status === 'fulfilled')
+      for (const caseType of retrialCourtResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
+          retrialCourtSet.add(caseType.label)
+        }
+
     const courtOfAppealOptions = Array.from(courtOfAppealSet).map((label) => ({
       label,
       typeOfOption: CaseFilterOptionType.CaseType,
@@ -395,6 +413,11 @@ export class VerdictsClientService {
       typeOfOption: CaseFilterOptionType.CaseType,
     }))
     districtCourtOptions.sort(sortAlpha('label'))
+    const retrialCourtOptions = Array.from(retrialCourtSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseType,
+    }))
+    retrialCourtOptions.sort(sortAlpha('label'))
 
     const allOptions = Array.from(mapOfAll, ([label, typeOfOption]) => ({
       label,
@@ -411,6 +434,9 @@ export class VerdictsClientService {
       },
       districtCourt: {
         options: districtCourtOptions,
+      },
+      retrialCourt: {
+        options: retrialCourtOptions,
       },
       all: {
         options: allOptions,
@@ -742,6 +768,9 @@ export class VerdictsClientService {
           id: item.id as string,
           title: item.title as string,
           caseNumber: item.caseNumber as string,
+          appealPolicyDate: item.appealPolicyDate,
+          registrationDate: item.registrationDate,
+          verdictDate: item.verdictDate,
         })),
       input,
     }
@@ -761,6 +790,7 @@ export class VerdictsClientService {
 
     const mapOfAll = new Map<string, { id: string; label: string }>()
 
+    const courtOfAppealSet = new Set<string>()
     const courtOfAppealItems: Array<{ id: string; label: string }> = []
     if (courtOfAppealResponse.status === 'fulfilled')
       for (const scheduleType of courtOfAppealResponse.value.items ?? [])
@@ -770,11 +800,15 @@ export class VerdictsClientService {
           if (!mapOfAll.has(scheduleType.label)) {
             mapOfAll.set(scheduleType.label, item)
           }
-          courtOfAppealItems.push(item)
+          if (!courtOfAppealSet.has(scheduleType.label)) {
+            courtOfAppealSet.add(scheduleType.label)
+            courtOfAppealItems.push(item)
+          }
         }
 
     const supremeCourtItems: Array<{ id: string; label: string }> = []
 
+    const districtCourtSet = new Set<string>()
     const districtCourtItems: Array<{ id: string; label: string }> = []
     if (districtCourtResponse.status === 'fulfilled')
       for (const scheduleType of districtCourtResponse.value.items ?? [])
@@ -784,7 +818,10 @@ export class VerdictsClientService {
           if (!mapOfAll.has(scheduleType.label)) {
             mapOfAll.set(scheduleType.label, item)
           }
-          districtCourtItems.push(item)
+          if (!districtCourtSet.has(scheduleType.label)) {
+            districtCourtSet.add(scheduleType.label)
+            districtCourtItems.push(item)
+          }
         }
 
     courtOfAppealItems.sort(sortAlpha('label'))

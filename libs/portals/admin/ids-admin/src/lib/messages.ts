@@ -776,9 +776,73 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  securityAndCapabilities: {
+    id: 'ap.ids-admin:security-and-capabilities',
+    defaultMessage: 'Security & Capabilities',
+  },
+  allowsWrite: {
+    id: 'ap.ids-admin:allows-write',
+    defaultMessage: 'Read/Write Access',
+  },
+  allowsWriteDescription: {
+    id: 'ap.ids-admin:allows-write-description',
+    defaultMessage:
+      'When enabled, this permission grants both read and write access. When disabled, only read access is granted.',
+  },
+  requiresConfirmation: {
+    id: 'ap.ids-admin:requires-confirmation',
+    defaultMessage: 'Step-up Authentication Required',
+  },
+  requiresConfirmationDescription: {
+    id: 'ap.ids-admin:requires-confirmation-description',
+    defaultMessage:
+      'When enabled, users must provide additional authentication (tvöfalt samþykki) to access sensitive information with this permission.',
+  },
   accessControl: {
     id: 'ap.ids-admin:access-control',
     defaultMessage: 'Access control',
+  },
+  categoriesAndTags: {
+    id: 'ap.ids-admin:categories-and-tags',
+    defaultMessage: 'Categories and Tags',
+  },
+  categories: {
+    id: 'ap.ids-admin:categories',
+    defaultMessage: 'Service categories',
+  },
+  categoriesDescription: {
+    id: 'ap.ids-admin:categories-description',
+    defaultMessage:
+      'Select which service categories this permission belongs to. These help users find relevant permissions when creating delegations.',
+  },
+  tags: {
+    id: 'ap.ids-admin:tags',
+    defaultMessage: 'Tags',
+  },
+  tagsDescription: {
+    id: 'ap.ids-admin:tags-description',
+    defaultMessage:
+      'Select which tags this permission is relevant for. This helps users understand when they might need this permission.',
+  },
+  noCategories: {
+    id: 'ap.ids-admin:no-categories',
+    defaultMessage: 'No categories available',
+  },
+  selectCategoriesPlaceholder: {
+    id: 'ap.ids-admin:select-categories-placeholder',
+    defaultMessage: 'Select categories',
+  },
+  noTags: {
+    id: 'ap.ids-admin:no-tags',
+    defaultMessage: 'No tags available',
+  },
+  selectTagsPlaceholder: {
+    id: 'ap.ids-admin:select-tags-placeholder',
+    defaultMessage: 'Select tags',
+  },
+  loading: {
+    id: 'ap.ids-admin:loading',
+    defaultMessage: 'Loading...',
   },
   icelandic: {
     id: 'ap.ids-admin:icelandic',

@@ -8,4 +8,7 @@ export class IcelandicGovernmentInstitutionVacancyByIdInput {
 
   @Field(() => VacancyLanguageEnum, { nullable: true })
   language?: VacancyLanguageEnum
+
+  @Field(() => Boolean, { nullable: true })
+  useNewApiOverride?: boolean
 }

@@ -1,4 +1,9 @@
+import { isCompany } from 'kennitala'
+
+import { DogStatsD } from '@island.is/infra-metrics'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
+
+import { METRICS_PREFIX } from './utils'
 import {
   Body,
   Controller,
@@ -33,6 +38,8 @@ import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
 @Controller('notifications')
 @ApiTags('notifications')
 export class NotificationsController {
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationsService: NotificationsService,
@@ -152,6 +159,12 @@ export class NotificationsController {
     }
 
     const id = await this.queue.add(sanitizedBody)
+
+    this.metrics.increment('notification.created', 1, {
+      templateId: body.templateId,
+      recipient_type: isCompany(body.recipient) ? 'company' : 'individual',
+    })
+
     const flattenedArgs: Record<string, string> = {}
     for (const arg of validArgs) {
       flattenedArgs[arg.key] = arg.value

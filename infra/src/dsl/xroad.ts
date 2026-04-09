@@ -222,6 +222,11 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
     },
+    XROAD_FINANCES_V3_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3',
+      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3',
+    },
     XROAD_HMS_LOANS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
@@ -880,6 +885,11 @@ export const ShipRegistry = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
+    },
+    XROAD_SHIP_REGISTRY_V2_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Skutan-Gov-V1',
     },
   },
 })

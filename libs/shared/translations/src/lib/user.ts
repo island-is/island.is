@@ -59,4 +59,17 @@ export const userMessages = defineMessages({
     description: 'Birtist í lista af umboðum við hlið þess sem er í notkun.',
     defaultMessage: `Valið`,
   },
+
+  delegationBannerText: {
+    id: 'global:delegationBannerText',
+    description:
+      'Banner text shown below the header when logged in via delegation',
+    defaultMessage: 'Innskráning með umboði: {name}',
+  },
+
+  exitDelegation: {
+    id: 'global:exitDelegation',
+    description: 'Button label to exit delegation mode',
+    defaultMessage: 'Hætta í umboði',
+  },
 })

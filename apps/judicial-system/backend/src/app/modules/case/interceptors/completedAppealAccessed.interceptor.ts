@@ -34,7 +34,7 @@ export class CompletedAppealAccessedInterceptor implements NestInterceptor {
     return next.handle().pipe(
       mergeMap(async (data) => {
         if (
-          data.appealState === CaseAppealState.COMPLETED &&
+          data.appealCase?.appealState === CaseAppealState.COMPLETED &&
           (isProsecutionUser(user) ||
             isDefenceUser(user) ||
             isPrisonStaffUser(user))

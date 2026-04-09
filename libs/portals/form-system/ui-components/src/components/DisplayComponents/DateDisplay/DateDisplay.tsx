@@ -4,16 +4,11 @@ import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
+  valueIndex: number
 }
 
-export const DateDisplay = ({ item, lang = 'is' }: Props) => {
-  const { formatDate } = useLocale()
-
-  const values = (item.values ?? []).filter((v): v is NonNullable<typeof v> =>
-    Boolean(v),
-  )
-  const showIndex = values.length > 1
+export const DateDisplay = ({ item, valueIndex }: Props) => {
+  const { formatDate, lang } = useLocale()
 
   const formatDateValue = (raw: unknown) => {
     if (raw == null) return ''
@@ -32,6 +27,9 @@ export const DateDisplay = ({ item, lang = 'is' }: Props) => {
     })
   }
 
+  const raw = item.values?.[valueIndex]
+  const value = formatDateValue(raw?.json?.date)
+
   return (
     <Box
       component="form"
@@ -40,36 +38,13 @@ export const DateDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={0}>
-        <Text as="p" fontWeight="semiBold">
-          {item.name?.[lang]}
-        </Text>
+      <Text as="p" fontWeight="semiBold">
+        {item.name?.[lang]}
+      </Text>
 
-        {values.map((valueDto, index) => {
-          const json = valueDto.json as
-            | Record<string, unknown>
-            | null
-            | undefined
-          const rawDate = json?.date
-
-          return (
-            <Box key={`${valueDto.id ?? item.id}-${index}`} marginLeft={2}>
-              {showIndex && (
-                <Text fontWeight="medium">
-                  {`${index + 1}:`}
-                  {'\u00A0\u00A0\u00A0'}
-                  <Text as="span" fontWeight="light">
-                    {formatDateValue(rawDate)}
-                  </Text>
-                </Text>
-              )}
-              {!showIndex && (
-                <Text fontWeight="light">{formatDateValue(rawDate)}</Text>
-              )}
-            </Box>
-          )
-        })}
-      </Stack>
+      <Box marginLeft={2}>
+        <Text fontWeight="light">{value}</Text>
+      </Box>
     </Box>
   )
 }
