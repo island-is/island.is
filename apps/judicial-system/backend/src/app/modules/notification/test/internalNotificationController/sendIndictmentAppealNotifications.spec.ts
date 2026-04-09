@@ -3,14 +3,12 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseType,
-  getStatementDeadline,
   InstitutionType,
   User,
   UserRole,
@@ -52,6 +50,8 @@ const defendants = [
 
 const civilClaimants = [
   {
+    hasSpokesperson: true,
+    isSpokespersonConfirmed: true,
     spokespersonName: 'Spokesperson One',
     spokespersonEmail: 'spokesperson1@omnitrix.is',
     spokespersonNationalId: spokespersonNationalId,
