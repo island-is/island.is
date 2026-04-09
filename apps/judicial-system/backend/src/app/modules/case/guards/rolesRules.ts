@@ -2,6 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
   CaseType,
+  isIndictmentCase,
   isPrisonAdminUser,
   User,
   UserRole,
@@ -275,19 +276,28 @@ export const defenderTransitionRule: RolesRule = {
   dtoFieldValues: [CaseTransition.APPEAL, CaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => {
     const dto: TransitionCaseDto = request.body
+    const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     // Deny if something is missing - should never happen
-    if (!dto || !theCase) {
+    if (!dto || !user || !theCase) {
       return false
     }
 
     // Deny withdrawal if defender did not appeal the case
-    if (
-      dto.transition === CaseTransition.WITHDRAW_APPEAL &&
-      !theCase.accusedPostponedAppealDate
-    ) {
-      return false
+    if (dto.transition === CaseTransition.WITHDRAW_APPEAL) {
+      if (!theCase.accusedPostponedAppealDate) {
+        return false
+      }
+
+      // For indictment cases, only the specific defender who appealed can withdraw
+      if (
+        isIndictmentCase(theCase.type) &&
+        (!theCase.appealCase?.appealedByNationalId ||
+          theCase.appealCase?.appealedByNationalId !== user.nationalId)
+      ) {
+        return false
+      }
     }
 
     return true

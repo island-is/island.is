@@ -57,7 +57,7 @@ export const useWithdrawAppealMenuOption = () => {
     // For indictment cases, only the specific defender who appealed can withdraw
     if (isIndictmentCase(caseEntry.type)) {
       return (
-        Boolean(userNationalId) &&
+        Boolean(caseEntry.appealedByNationalId) &&
         caseEntry.appealedByNationalId === userNationalId
       )
     }
