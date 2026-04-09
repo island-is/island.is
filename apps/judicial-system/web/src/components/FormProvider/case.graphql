@@ -273,7 +273,6 @@ query Case($input: CaseQueryInput!) {
       defendantId
     }
     isAppealDeadlineExpired
-    isAppealGracePeriodExpired
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
