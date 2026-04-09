@@ -19,3 +19,8 @@ export enum RateCategory {
   DAYRATE = 'Daggjald',
   KMRATE = 'Kilometragjald',
 }
+
+export enum UploadSelection {
+  MULTI = 'multiSelection',
+  SINGLE = 'singleSelection',
+}
