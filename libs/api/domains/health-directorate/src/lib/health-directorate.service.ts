@@ -69,8 +69,10 @@ export class HealthDirectorateService {
 
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
-    const data: OrganDonorDto | null =
-      await this.healthApi.getOrganDonation(auth, locale)
+    const data: OrganDonorDto | null = await this.healthApi.getOrganDonation(
+      auth,
+      locale,
+    )
     if (data === null) {
       return null
     }
