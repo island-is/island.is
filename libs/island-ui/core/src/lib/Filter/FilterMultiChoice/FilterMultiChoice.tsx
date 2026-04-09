@@ -91,11 +91,17 @@ export const FilterMultiChoice: FC<
   const renderCategoryFilters = (category: FilterCategory) => {
     const query = searchQueries[category.id] ?? ''
     const visibleFilters = category.searchPlaceholder
-      ? category.filters.filter((f) =>
-          typeof f.label === 'string'
-            ? f.label.toLowerCase().includes(query.toLowerCase())
-            : true,
-        )
+      ? category.filters.filter((f) => {
+          const labelStr =
+            typeof f.label === 'string'
+              ? f.label
+              : React.isValidElement(f.label) &&
+                  typeof (f.label.props as { children?: unknown }).children ===
+                    'string'
+                ? ((f.label.props as { children: string }).children as string)
+                : ''
+          return labelStr.toLowerCase().includes(query.toLowerCase())
+        })
       : category.filters
 
     return (

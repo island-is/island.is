@@ -5,7 +5,7 @@ import { LandRegistryEntry } from './landRegistryEntry.model'
 @ObjectType()
 export class FarmerLand {
   @Field(() => ID)
-  id!: number
+  id!: string
 
   @Field()
   name!: string

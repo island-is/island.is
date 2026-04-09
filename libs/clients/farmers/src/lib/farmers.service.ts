@@ -38,7 +38,7 @@ export class FarmersClientService {
       dataOr404Null(viewFarms({ path: { farmId } })),
     )
 
-    return response ?? null
+    return response
   }
 
   /**

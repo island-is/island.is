@@ -59,7 +59,7 @@ export class FarmersResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => FarmerLandSubsidiesInput })
     input: FarmerLandSubsidiesInput,
-  ): Promise<FarmerLandSubsidiesCollection> {
+  ): Promise<FarmerLandSubsidiesCollection | null> {
     return this.farmersService.getSubsidies(
       user,
       input.farmId,
@@ -77,15 +77,15 @@ export class FarmersResolver {
   async resolveBeneficiaries(
     @CurrentUser() user: User,
     @Parent() land: FarmerLand,
-  ): Promise<LandBeneficiary[]> {
-    return this.farmersService.getBeneficiaries(user, String(land.id))
+  ): Promise<LandBeneficiary[] | null> {
+    return this.farmersService.getBeneficiaries(user, land.id)
   }
 
   @ResolveField('landRegistry', () => [LandRegistryEntry], { nullable: true })
   async resolveLandRegistry(
     @CurrentUser() user: User,
     @Parent() land: FarmerLand,
-  ): Promise<LandRegistryEntry[]> {
-    return this.farmersService.getLandRegistry(user, String(land.id))
+  ): Promise<LandRegistryEntry[] | null> {
+    return this.farmersService.getLandRegistry(user, land.id)
   }
 }

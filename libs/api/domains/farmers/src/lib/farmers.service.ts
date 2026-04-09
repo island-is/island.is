@@ -26,9 +26,10 @@ export class FarmersService {
 
   async getList(user: User): Promise<LandsCollection> {
     const data = await this.farmersClientService.getFarmsCollection(user)
+    const mapped = mapToFarmerLandCollection(data)
     return {
-      data: mapToFarmerLandCollection(data),
-      totalCount: data.length,
+      data: mapped,
+      totalCount: mapped.length,
       pageInfo: { hasNextPage: false },
     }
   }
