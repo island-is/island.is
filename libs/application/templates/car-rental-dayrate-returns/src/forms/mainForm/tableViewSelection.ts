@@ -5,9 +5,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { getManualMileageTableRows } from '../../utils/carCategoryUtils'
-import { RateCategory, UploadSelection } from '../../utils/constants'
-import { CarMap } from '../../utils/types'
+import { getDayRateTableRows } from '../../utils/dayRateTableUtils'
+import { UploadSelection } from '../../utils/constants'
+import { DayRateRecord } from '../../utils/types'
 
 export const tableViewSelectionSection = buildSection({
   condition: (answers) => {
@@ -25,18 +25,14 @@ export const tableViewSelectionSection = buildSection({
       title: m.tableView.multiTitle,
       children: [
         buildPaginatedSearchableTableField({
-          id: 'vehicleLatestMilageRows',
+          id: 'vehicleDayRateUsageRows',
           doesNotRequireAnswer: true,
           rowIdKey: 'permno',
           rows: (application) => {
-            return getManualMileageTableRows(
-              getValueViaPath<CarMap>(
+            return getDayRateTableRows(
+              getValueViaPath<DayRateRecord[]>(
                 application.externalData,
-                'getVehicleCarMap.data',
-              ),
-              getValueViaPath<RateCategory>(
-                application.answers,
-                'categorySelectionRadio',
+                'getPreviousPeriodDayRateReturns.data',
               ),
             )
           },
@@ -46,12 +42,15 @@ export const tableViewSelectionSection = buildSection({
               label: m.tableView.tableHeaderPermno,
             },
             {
-              key: 'latestMilage',
-              label: m.tableView.tableHeaderMileage,
+              key: 'prevPeriodTotalDays',
+              label: m.tableView.tableHeaderTotalDays,
+            },
+            {
+              key: 'prevPeriodUsage',
+              label: m.tableView.tableHeaderUsedDays,
               editable: true,
               inputType: 'number',
               min: 0,
-              placeholderKey: 'currentMilage',
             },
           ],
           searchLabel: m.tableView.searchLabel,
