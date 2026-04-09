@@ -547,13 +547,53 @@ const Filters = ({
     }))
   }, [keywords])
 
-  const selectedCaseFilterOptions = useMemo(() => {
-    if (selectedCourtLevel === 'retrialCourt') {
-      const retrialCourtOptions = caseFilterOptions.retrialCourt
-      return retrialCourtOptions ?? { options: [] }
+  const caseFilterOptionsByCourt = useMemo(() => {
+    const courtConfig = [
+      {
+        id: 'districtCourt',
+        label: formatMessage(m.listPage.showDistrictCourts),
+      },
+      {
+        id: 'courtOfAppeal',
+        label: formatMessage(m.listPage.showCourtOfAppeal),
+      },
+      {
+        id: 'supremeCourt',
+        label: formatMessage(m.listPage.showSupremeCourt),
+      },
+      {
+        id: 'retrialCourt',
+        label: formatMessage(m.listPage.showRetrialCourt),
+      },
+    ] as const
+
+    if (selectedCourtLevel === 'all') {
+      return courtConfig
+        .map(({ id, label }) => ({
+          id,
+          label,
+          options: caseFilterOptions[id]?.options ?? [],
+        }))
+        .filter(({ options }) => options.length > 0)
     }
-    return caseFilterOptions[selectedCourtLevel]
-  }, [caseFilterOptions, selectedCourtLevel])
+
+    const selectedCourtConfig = courtConfig.find(
+      (court) => court.id === selectedCourtLevel,
+    )
+    const selectedOptions = caseFilterOptions[selectedCourtLevel]?.options ?? []
+
+    if (!selectedCourtConfig || selectedOptions.length === 0) {
+      return []
+    }
+
+    return [
+      {
+        id: selectedCourtConfig.id,
+        label: selectedCourtConfig.label,
+        options: selectedOptions,
+      },
+    ]
+  }, [caseFilterOptions, formatMessage, selectedCourtLevel])
 
   const handleToggle = useCallback((expanded: boolean, itemId: string) => {
     if (!expanded) {
@@ -724,48 +764,58 @@ const Filters = ({
             }
           >
             <Stack space={2}>
-              <Stack space={2} key={renderKey}>
-                {selectedCaseFilterOptions.options.map(
-                  ({ label, typeOfOption }) => {
-                    const queryParamKey =
-                      typeOfOption ===
-                      WebVerdictCaseFilterOptionType.CaseCategory
-                        ? QueryParam.CASE_CATEGORIES
-                        : QueryParam.CASE_TYPES
-                    return (
-                      <DebouncedCheckbox
-                        debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                        key={label}
-                        checked={Boolean(
-                          queryState[queryParamKey]?.includes(label),
-                        )}
-                        label={label}
-                        value={label}
-                        onChange={(checked) => {
-                          updateQueryState(queryParamKey, (previousState) => {
-                            let updatedValues = [
-                              ...(previousState[queryParamKey] ?? []),
-                            ]
-                            if (checked) {
-                              updatedValues.push(label)
-                            } else {
-                              updatedValues = updatedValues.filter(
-                                (value) => value !== label,
+              <Stack space={3} key={renderKey}>
+                {caseFilterOptionsByCourt.map((courtGroup) => (
+                  <Stack key={courtGroup.id} space={2}>
+                    {selectedCourtLevel === 'all' && (
+                      <Text variant="eyebrow">{courtGroup.label}</Text>
+                    )}
+                    <Stack space={2}>
+                      {courtGroup.options.map(({ label, typeOfOption }) => {
+                        const queryParamKey =
+                          typeOfOption ===
+                          WebVerdictCaseFilterOptionType.CaseCategory
+                            ? QueryParam.CASE_CATEGORIES
+                            : QueryParam.CASE_TYPES
+                        return (
+                          <DebouncedCheckbox
+                            debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                            key={`${courtGroup.id}-${label}`}
+                            checked={Boolean(
+                              queryState[queryParamKey]?.includes(label),
+                            )}
+                            label={label}
+                            value={label}
+                            onChange={(checked) => {
+                              updateQueryState(
+                                queryParamKey,
+                                (previousState) => {
+                                  let updatedValues = [
+                                    ...(previousState[queryParamKey] ?? []),
+                                  ]
+                                  if (checked) {
+                                    updatedValues.push(label)
+                                  } else {
+                                    updatedValues = updatedValues.filter(
+                                      (value) => value !== label,
+                                    )
+                                  }
+                                  return {
+                                    ...previousState,
+                                    [queryParamKey]:
+                                      updatedValues.length === 0
+                                        ? null
+                                        : updatedValues,
+                                  }
+                                },
                               )
-                            }
-                            return {
-                              ...previousState,
-                              [queryParamKey]:
-                                updatedValues.length === 0
-                                  ? null
-                                  : updatedValues,
-                            }
-                          })
-                        }}
-                      />
-                    )
-                  },
-                )}
+                            }}
+                          />
+                        )
+                      })}
+                    </Stack>
+                  </Stack>
+                ))}
               </Stack>
               <Box display="flex" justifyContent="flexEnd">
                 <Button
