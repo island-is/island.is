@@ -1,0 +1,16 @@
+query GetApplicationsOverview {
+  vmstApplicationsOverview {
+    unemploymentApplication {
+      applicationId
+      statusId
+      statusName
+      isVisible
+    }
+    activationGrant {
+      applicationId
+      statusId
+      statusName
+      isVisible
+    }
+  }
+}

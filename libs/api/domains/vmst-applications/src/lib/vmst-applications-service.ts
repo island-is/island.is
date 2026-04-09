@@ -4,6 +4,8 @@ import {
   VmstUnemploymentClientService,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
+  GaldurXRoadAPIModelsResolveApplicantResponse,
+  GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
@@ -92,5 +94,17 @@ export class VMSTApplicationsService {
     auth: User,
   ): Promise<GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse> {
     return this.vmstUnemploymentService.getApplicationOverview(auth)
+  }
+
+  async resolveApplicant(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
+    return this.vmstUnemploymentService.resolveApplicant(auth)
+  }
+
+  async getApplicationsOverview(
+    applicantId: string,
+  ): Promise<GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse> {
+    return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
   }
 }

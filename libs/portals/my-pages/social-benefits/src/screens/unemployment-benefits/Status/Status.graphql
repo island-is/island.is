@@ -5,7 +5,15 @@ query getUnemploymentApplicationOverview {
     applicationStatusId
     applicationStatusName
     dataRequested
-    rows {
+    availableActions {
+      canContact
+      canSubmitDocuments
+      canReportWork
+      canReportTravel
+      canUnregister
+      canConfirmJobSearch
+    }
+    overviewItems {
       key
       label
       value

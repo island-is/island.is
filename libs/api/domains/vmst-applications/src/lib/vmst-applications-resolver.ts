@@ -8,6 +8,7 @@ import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput
 import {
   ValidationUnemploymentApplication,
   UnemploymentApplicationOverview,
+  VmstApplicationsOverview,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 
@@ -70,5 +71,21 @@ export class VMSTApplicationsResolver {
   @Audit()
   async getApplicationOverview(@CurrentUser() auth: User) {
     return this.vmstApplicationsService.getApplicationOverview(auth)
+  }
+
+  @Query(() => VmstApplicationsOverview, {
+    name: 'vmstApplicationsOverview',
+  })
+  @Audit()
+  async getApplicationsOverview(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    if (!applicantId) {
+      throw new Error('Could not resolve applicant')
+    }
+
+    return this.vmstApplicationsService.getApplicationsOverview(applicantId)
   }
 }

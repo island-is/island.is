@@ -65,4 +65,17 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:statusDataMissing',
     defaultMessage: 'Vantar gögn',
   },
+  jobSearchConfirmationHeading: {
+    id: 'sp.social-benefits-unemployment:jobSearchConfirmationHeading',
+    defaultMessage: 'Staðfesta atvinnuleit',
+  },
+  jobSearchConfirmationText: {
+    id: 'sp.social-benefits-unemployment:jobSearchConfirmationText',
+    defaultMessage:
+      'Mikilvægt er að staðfesta atvinnuleit mánaðarlega til að halda bótarétti. Staðfestingartímabil er frá 20.–25. hvers mánaðar.',
+  },
+  jobSearchConfirmationCta: {
+    id: 'sp.social-benefits-unemployment:jobSearchConfirmationCta',
+    defaultMessage: 'Staðfesta hér',
+  },
 })

@@ -3,14 +3,16 @@ import { GetUnemploymentApplicationOverviewQuery } from './Status.generated'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
+import { applicationStatusColorMap } from '../../../lib/utils/vmstApplicationStatusColorMap'
 
-type OverviewRow = NonNullable<
-  GetUnemploymentApplicationOverviewQuery['vmstApplicationsUnemploymentApplicationOverview']['rows']
+type OverviewItem = NonNullable<
+  GetUnemploymentApplicationOverviewQuery['vmstApplicationsUnemploymentApplicationOverview']['overviewItems']
 >[number]
 
 interface OverviewTableProps {
-  rows: OverviewRow[]
+  overviewItems: OverviewItem[]
   applicationStatusName?: string | null
+  applicationStatusId?: string | null
   dataRequested?: boolean | null
 }
 
@@ -30,16 +32,20 @@ const getJobSearchConfirmationDateRange = (): string => {
 const getRowTag = (
   key: string | null | undefined,
   applicationStatusName?: string | null,
+  applicationStatusId?: string | null,
 ): (() => React.ReactNode) | undefined => {
   switch (key) {
-    case 'application-status':
-      return applicationStatusName
-        ? () => (
-            <Tag variant="mint" outlined disabled>
-              {applicationStatusName}
-            </Tag>
-          )
-        : undefined
+    case 'application-status': {
+      if (!applicationStatusName) return undefined
+      const tagVariant =
+        applicationStatusColorMap[applicationStatusId?.toUpperCase() ?? ''] ??
+        'mint'
+      return () => (
+        <Tag variant={tagVariant} outlined disabled>
+          {applicationStatusName}
+        </Tag>
+      )
+    }
     case 'last-job-search-confirmation-date':
       return () => (
         <Tag variant="blue" outlined disabled>
@@ -52,24 +58,36 @@ const getRowTag = (
 }
 
 export const OverviewTable = ({
-  rows,
+  overviewItems,
   applicationStatusName,
+  applicationStatusId,
   dataRequested,
 }: OverviewTableProps) => {
   const { formatMessage } = useLocale()
   return (
     <Box paddingTop={4}>
       <Stack space={0}>
-        {rows.map((row, index) => (
-          <Box key={row.key ?? index}>
-            <UserInfoLine
-              label={row.label ?? ''}
-              content={row.value ?? '-'}
-              renderEnd={getRowTag(row.key, applicationStatusName)}
-            />
-            <Divider />
-          </Box>
-        ))}
+        {overviewItems.map((item, index) => {
+          const tag = getRowTag(
+            item.key,
+            applicationStatusName,
+            applicationStatusId,
+          )
+          return (
+            <Box key={item.key ?? index}>
+              <UserInfoLine
+                label={item.label ?? ''}
+                content={item.value ?? '-'}
+                renderEnd={tag}
+                {...(!tag && {
+                  valueColumnSpan: ['1/1', '7/12', '1/1', '1/1', '7/12'],
+                  editColumnSpan: ['0', '0', '0', '0', '0'],
+                })}
+              />
+              <Divider />
+            </Box>
+          )
+        })}
         {dataRequested && (
           <>
             <UserInfoLine

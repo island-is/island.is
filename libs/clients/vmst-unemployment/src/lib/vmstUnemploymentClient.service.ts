@@ -2,6 +2,8 @@ import {
   ActivationGrantApi,
   ActivationGrantCreateActivationGrantRequest,
   ActivationGrantValidateBankInformationRequest,
+  ApplicantApi,
+  ApplicationApi,
   AttachmentApi,
   AttachmentCreateAttachmentRequest,
   AuthApi,
@@ -15,6 +17,8 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
+  GaldurXRoadAPIModelsResolveApplicantResponse,
+  GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -25,7 +29,12 @@ import { VmstUnemploymentClientConfig } from './vmstUnemploymentClient.config'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
-type VmstApis = UnemploymentApplicationApi | ActivationGrantApi | AttachmentApi
+type VmstApis =
+  | UnemploymentApplicationApi
+  | ActivationGrantApi
+  | AttachmentApi
+  | ApplicantApi
+  | ApplicationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -217,5 +226,37 @@ export class VmstUnemploymentClientService {
     return await api.unemploymentApplicationCreateUnemploymentApplication(
       request,
     )
+  }
+
+  async resolveApplicant(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantResolve({
+      galdurXRoadAPIModelsResolveApplicantRequest: {
+        ssn: auth.nationalId,
+      },
+    })
+  }
+
+  async getApplicationsOverview(
+    applicantId: string,
+  ): Promise<GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse> {
+    const api = await this.createApiClient(
+      ApplicationApi,
+      'clients-vmst-unemployment',
+      'Application API auth failed',
+    )
+
+    return await api.applicationOverview({
+      galdurXRoadAPIModelsApplicationGetApplicationsOverviewRequest: {
+        applicantId,
+      },
+    })
   }
 }

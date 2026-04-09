@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('VmstOverviewRow')
-export class VmstOverviewRow {
+@ObjectType('VmstOverviewItem')
+export class VmstOverviewItem {
   @Field(() => String, { nullable: true })
   key?: string
 
@@ -10,6 +10,27 @@ export class VmstOverviewRow {
 
   @Field(() => String, { nullable: true })
   value?: string
+}
+
+@ObjectType('VmstAvailableActions')
+export class VmstAvailableActions {
+  @Field(() => Boolean, { nullable: true })
+  canContact?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  canSubmitDocuments?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  canReportWork?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  canReportTravel?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  canUnregister?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  canConfirmJobSearch?: boolean
 }
 
 @ObjectType('UnemploymentApplicationOverview')
@@ -29,6 +50,9 @@ export class UnemploymentApplicationOverview {
   @Field(() => Boolean, { nullable: true })
   dataRequested?: boolean
 
-  @Field(() => [VmstOverviewRow], { nullable: true })
-  rows?: VmstOverviewRow[]
+  @Field(() => VmstAvailableActions, { nullable: true })
+  availableActions?: VmstAvailableActions
+
+  @Field(() => [VmstOverviewItem], { nullable: true })
+  overviewItems?: VmstOverviewItem[]
 }
