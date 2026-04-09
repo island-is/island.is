@@ -71,6 +71,18 @@ export const TypeSelectionScreen = ({
     setSubmitButtonDisabled && setSubmitButtonDisabled(!selected)
   }, [selected, setSubmitButtonDisabled])
 
+  // Auto-select 'ad' when the regulations feature flag is off
+  const autoSelectedRef = useRef(false)
+  useEffect(() => {
+    if (!regulationsEnabled && !autoSelectedRef.current) {
+      autoSelectedRef.current = true
+      if (selected !== ApplicationTypes.AD) {
+        handleSelect(ApplicationTypes.AD)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regulationsEnabled])
+
   const autoSelectRegulationType = async (answers: Record<string, unknown>) => {
     const departmentB = departments?.find((d) => d.slug === DEPARTMENT_B)
     if (!departmentB) return answers

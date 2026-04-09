@@ -64,7 +64,6 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
     if (!applicationType || applicationType === 'ad') {
       return true
     }
-
     try {
       const regulationType =
         applicationType === 'base_regulation' ? 'base' : 'amending'
@@ -86,11 +85,9 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
         })
 
         if (!draft) {
-          this.logger.error('Failed to create regulation draft', {
-            category: LOG_CATEGORY,
-            applicationId: application.id,
-          })
-          return false
+          throw new Error(
+            `Failed to create regulation draft for application ${application.id}`,
+          )
         }
 
         draftId =
