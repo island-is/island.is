@@ -33,7 +33,6 @@ export enum ApplicationStates {
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
-  READER = 'reader',
 }
 
 const getApplicationName = (application: Application) => {
@@ -91,14 +90,17 @@ const OJOITemplate: ApplicationTemplate<
         const { application } = context
         const assignees: string[] = [InstitutionNationalIds.DOMSMALA_RADUNEYTID]
 
-        const readerNationalId = getValueViaPath<string>(
-          application.answers as Record<string, unknown>,
-          'reader.nationalId',
-        )
+        const additionalParties =
+          getValueViaPath<Array<{ nationalId?: string }>>(
+            application.answers as Record<string, unknown>,
+            InputFields.requirements.additionalParties,
+          ) ?? []
 
-        if (readerNationalId && !assignees.includes(readerNationalId)) {
-          assignees.push(readerNationalId)
-        }
+        additionalParties.forEach(({ nationalId }) => {
+          if (nationalId && !assignees.includes(nationalId)) {
+            assignees.push(nationalId)
+          }
+        })
 
         set(application, 'assignees', assignees)
 
@@ -173,15 +175,6 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.READER,
-              shouldBeListedForRole: true,
-              read: 'all',
-              formLoader: () =>
-                import('../forms/Draft').then((val) =>
-                  Promise.resolve(val.Draft),
-                ),
-            },
           ],
         },
         on: {
@@ -231,15 +224,6 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
-            },
-            {
-              id: Roles.READER,
-              shouldBeListedForRole: true,
-              read: 'all',
-              formLoader: () =>
-                import('../forms/DraftRetry').then((val) =>
-                  Promise.resolve(val.DraftRetry),
-                ),
             },
           ],
         },
@@ -297,15 +281,6 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.READER,
-              shouldBeListedForRole: true,
-              read: 'all',
-              formLoader: () =>
-                import('../forms/Submitted').then((val) =>
-                  Promise.resolve(val.Submitted),
-                ),
-            },
           ],
         },
         on: {
@@ -349,15 +324,6 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.READER,
-              shouldBeListedForRole: true,
-              read: 'all',
-              formLoader: () =>
-                import('../forms/Complete').then((val) =>
-                  Promise.resolve(val.Complete),
-                ),
-            },
           ],
         },
       },
@@ -388,15 +354,6 @@ const OJOITemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.READER,
-              shouldBeListedForRole: true,
-              read: 'all',
-              formLoader: () =>
-                import('../forms/Rejected').then((val) =>
-                  Promise.resolve(val.Rejected),
-                ),
-            },
           ],
         },
       },
@@ -407,17 +364,11 @@ const OJOITemplate: ApplicationTemplate<
       return Roles.APPLICANT
     }
 
-    const readerNationalId = getValueViaPath<string>(
-      application.answers as Record<string, unknown>,
-      'reader.nationalId',
-    )
-
-    if (readerNationalId === id) {
-      return Roles.READER
-    }
-
     if (application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
+      if (id === InstitutionNationalIds.DOMSMALA_RADUNEYTID) {
+        return Roles.ASSIGNEE
+      }
+      return Roles.APPLICANT
     }
 
     return undefined
