@@ -58,10 +58,16 @@ export const Table = <TData extends object>({
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
 
-  // Clear stale collapsing rows when data changes (e.g. on pagination reload)
+  // Clear stale collapsing rows when data changes (e.g. on pagination reload).
+  // Also clear expanded state when renderExpandedRow is used without a stable
+  // getRowId, since TanStack uses index-based row IDs by default and those
+  // become stale/mismatched after a data update.
   useEffect(() => {
     setCollapsingRows(new Set())
-  }, [data])
+    if (renderExpandedRow && !getRowId) {
+      setExpanded({})
+    }
+  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const columns = useMemo<ColumnDef<TData>[]>(() => {
     if (!renderExpandedRow) return providedColumns
