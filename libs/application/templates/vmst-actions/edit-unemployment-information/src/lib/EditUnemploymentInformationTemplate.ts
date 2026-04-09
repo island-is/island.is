@@ -19,30 +19,20 @@ import {
 } from '@island.is/application/core'
 import { UnemploymentApi } from '../dataProviders'
 import { ApiActions } from '../shared/constants'
+import { application as applicationMessages } from './messages'
 
 const EditUnemploymentInformationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION, // TODO: Change to the correct type
+  type: ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION,
   name: 'edit-unemployment-information template',
-  codeOwner: CodeOwners.Origo, // TODO: Change to the correct code owner
-  institution: 'VMST', // TODO
+  codeOwner: CodeOwners.Origo,
+  institution: applicationMessages.institutionName,
   translationNamespaces:
-    ApplicationConfigurations.EditUnemploymentInformation.translation, // TODO: Change to the correct translation namespace
+    ApplicationConfigurations.EditUnemploymentInformation.translation,
   dataSchema: editUnemploymentInfoDataSchema,
-  // Note: only use this if any data should remain after pruning for better visibility in the admin portal
-  // adminDataConfig: {
-  //   whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
-  //   answers: [
-  //     {
-  //       key: 'pickVehicle.plate',
-  //       isListed: true,
-  //       label: 'Bílnúmer',
-  //     },
-  //   ],
-  // },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

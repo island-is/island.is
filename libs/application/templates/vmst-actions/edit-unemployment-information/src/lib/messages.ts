@@ -16,6 +16,11 @@ export const application = defineMessages({
     defaultMessage: 'Hér eru þær upplýsingar sem hægt er að breyta.',
     description: `Page description`,
   },
+  institutionName: {
+    id: 'vmst.eui.application:institutionName',
+    defaultMessage: 'Vinnumálastofnun',
+    description: `Institution's name`,
+  },
   addressTitle: {
     id: 'vmst.eui.application:addressTitle',
     defaultMessage: 'Dvalarstaður',
@@ -261,5 +266,46 @@ export const application = defineMessages({
     id: 'vmst.eui.application:bankAccountValidationErrorTitle',
     defaultMessage: 'Vinsamlegast athugið',
     description: 'Title for invalid input in account information',
+  },
+  dataProviderVmstTitle: {
+    id: 'vmst.eui.application:dataProviderVmstTitle',
+    defaultMessage: 'Vinnumálastofnun',
+    description: 'Name of the data provider for vmst',
+  },
+  dataProviderVmstDescription: {
+    id: 'vmst.eui.application:dataProviderVmstDescription',
+    defaultMessage: 'Gögn sótt til Vinnumálastofnunar',
+    description: 'Description of the data provider for vmst',
+  },
+  externalDataPageTitle: {
+    id: 'vmst.eui.application:externalDataPageTitle',
+    defaultMessage: 'Gagnaöflun',
+    description: 'external data provider page title',
+  },
+  externalDataCheckboxLabel: {
+    id: 'vmst.eui.application:externalDataCheckboxLabel',
+    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+    description: 'I understand',
+  },
+  submitButton: {
+    id: 'vmst.eui.application:submitButton',
+    defaultMessage: 'Vista breytingar og staðfesta',
+    description: 'Submit button label',
+  },
+  completedFormAlertTitle: {
+    id: 'vmst.eui.application:completedFormAlertTitle',
+    defaultMessage: 'Breytingar þínar hafa verið vistaðar',
+    description: 'Title for alert when form is completed',
+  },
+  completedFormDescriptionFieldTitle: {
+    id: 'vmst.eui.application:completedFormDescriptionFieldTitle',
+    defaultMessage: 'Er eitthvað óljóst?',
+    description: 'Title for description field when form is completed',
+  },
+  completedFormDescriptionFieldDescription: {
+    id: 'vmst.eui.application:completedFormDescriptionFieldDescription#markdown',
+    defaultMessage:
+      'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar',
+    description: 'Description for description field when form is completed',
   },
 })

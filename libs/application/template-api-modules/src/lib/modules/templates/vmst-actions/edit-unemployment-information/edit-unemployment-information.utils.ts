@@ -10,16 +10,17 @@ import {
   LicenseInAnswers,
   LanguagesInAnswers,
   BankAccountInAnswers,
+  OtherAddressInAnswers,
 } from '@island.is/application/templates/vmst-actions/edit-unemployment-information'
 
 export const generateAnswers = (
   answers: FormValue,
   externalData: ExternalData,
 ): GaldurExternalDomainRequestsUpdateApplicantRequest => {
-  console.log('answers', answers)
-  const otherAddress = getValueViaPath(answers, 'otherAddress') as string
-
-  const otherPostcode = getValueViaPath<string>(answers, 'otherPostcode')
+  const otherAddress = getValueViaPath<OtherAddressInAnswers>(
+    answers,
+    'otherAddress',
+  )
 
   const password = getValueViaPath<string>(answers, 'password')
 
@@ -51,8 +52,8 @@ export const generateAnswers = (
   const euresAgreement = getValueViaPath<YesOrNoEnum>(answers, 'euresAgreement')
 
   return {
-    currentAddress: otherAddress,
-    currentPostCodeId: otherPostcode,
+    currentAddress: otherAddress?.otherAddress,
+    currentPostCodeId: otherAddress?.otherPostcode,
     passCode: password,
     bankAccount: {
       bankId: bankLedgerValues?.bankId ?? '',

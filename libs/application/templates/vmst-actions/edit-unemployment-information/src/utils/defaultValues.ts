@@ -11,10 +11,10 @@ import { getBankLedgerValues } from './getBankLedgerValues'
 const APP_PATH = 'currentApplicationInformation.data.currentApplication'
 
 export const getOtherAddressDefault = (externalData: ExternalData) =>
-  getValueViaPath<string>(externalData, `${APP_PATH}.otherAddress`) ?? ''
+  getValueViaPath<string>(externalData, `${APP_PATH}.currentAddress`) ?? ''
 
 export const getOtherPostcodeDefault = (externalData: ExternalData) =>
-  getValueViaPath<string>(externalData, `${APP_PATH}.otherPostcode`) ?? ''
+  getValueViaPath<string>(externalData, `${APP_PATH}.currentPostCodeId`) ?? ''
 
 export const getPasswordDefault = (externalData: ExternalData) =>
   getValueViaPath<string>(externalData, `${APP_PATH}.passCode`) ?? ''

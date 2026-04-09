@@ -39,12 +39,12 @@ export const MainForm = buildForm({
         }),
         buildSubmitField({
           id: 'submit',
-          title: 'todo submit',
+          title: applicationMessages.submitButton,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: 'TODO submit',
+              name: applicationMessages.submitButton,
               type: 'primary',
             },
           ],

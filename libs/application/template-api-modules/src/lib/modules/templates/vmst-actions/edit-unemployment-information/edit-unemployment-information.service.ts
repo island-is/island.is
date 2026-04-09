@@ -20,8 +20,6 @@ interface ApplicationInformationWithSupportData {
 @Injectable()
 export class EditUnemploymentInformationService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION)

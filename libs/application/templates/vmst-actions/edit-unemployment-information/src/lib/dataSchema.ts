@@ -65,7 +65,7 @@ export const bankAccountSchema = z.object({
   accountNumber: z.string(),
 })
 
-const otherAddressSchema = z
+export const otherAddressSchema = z
   .object({
     otherAddress: z.string().optional(),
     otherPostcode: z.string().optional(),

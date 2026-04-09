@@ -9,6 +9,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { UnemploymentApi } from '../../dataProviders'
+import { application as applicationMessages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -17,16 +18,17 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: applicationMessages.externalDataPageTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: applicationMessages.externalDataPageTitle,
+          checkboxLabel: applicationMessages.externalDataCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
               provider: UnemploymentApi,
-              title: 'current application TODO',
-              subTitle: 'current TODO',
+              title: applicationMessages.dataProviderVmstTitle,
+              subTitle: applicationMessages.dataProviderVmstDescription,
             }),
           ],
           submitField: buildSubmitField({
