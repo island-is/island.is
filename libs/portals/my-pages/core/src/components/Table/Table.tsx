@@ -346,6 +346,7 @@ export const Table = <TData extends object>({
   )
 }
 
+//reexport for package types for simpler imports
 export default Table
 export type {
   ColumnDef,
