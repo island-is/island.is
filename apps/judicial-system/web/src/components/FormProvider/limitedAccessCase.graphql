@@ -428,6 +428,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         submittedBy
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
       policeCaseNumbers
       indictmentSubtypes

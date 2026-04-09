@@ -166,10 +166,7 @@ export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
       ),
   )
 
-export const isCaseDefendantDefender = (
-  user?: User,
-  workingCase?: { defendants?: Defendant[] | null },
-) =>
+export const isCaseDefendantDefender = (user?: User, workingCase?: Case) =>
   workingCase?.defendants?.some(
     (defendant) =>
       defendant?.defenderNationalId &&
@@ -180,7 +177,7 @@ export const isCaseDefendantDefender = (
 
 export const isCaseCivilClaimantSpokesperson = (
   user?: User,
-  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+  workingCase?: Case,
 ) =>
   workingCase?.civilClaimants?.some(
     (civilClaimant) =>
@@ -192,7 +189,7 @@ export const isCaseCivilClaimantSpokesperson = (
 
 export const isCaseCivilClaimantLegalSpokesperson = (
   user?: User,
-  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+  workingCase?: Case,
 ) =>
   workingCase?.civilClaimants?.some(
     (civilClaimant) =>
@@ -215,11 +212,7 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  */
 export const getDefenceUserPartyIds = (
   user?: User,
-  workingCase?: {
-    type?: string | null
-    defendants?: Defendant[] | null
-    civilClaimants?: CivilClaimant[] | null
-  },
+  workingCase?: Case,
 ): { defendantId?: string; civilClaimantId?: string } => {
   if (!user || !workingCase || !isIndictmentCase(workingCase.type)) {
     return {}
@@ -257,15 +250,7 @@ export const getDefenceUserPartyIds = (
  * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
  * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
  */
-export const getAppealActorText = (workingCase: {
-  prosecutorAppealDecision?: CaseAppealDecision | null
-  accusedAppealDecision?: CaseAppealDecision | null
-  appealedByRole?: UserRole | null
-  appealedDate?: string | null
-  appealCase?: { appealedByNationalId?: string | null } | null
-  defendants?: Defendant[] | null
-  civilClaimants?: CivilClaimant[] | null
-}): string => {
+export const getAppealActorText = (workingCase: Case): string => {
   const appealedInCourt =
     workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
     workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
@@ -303,10 +288,7 @@ export const getAppealActorText = (workingCase: {
  */
 export const getAppealingPartyInfo = (
   appealedByNationalId?: string | null,
-  workingCase?: {
-    defendants?: Defendant[] | null
-    civilClaimants?: CivilClaimant[] | null
-  },
+  workingCase?: Case,
 ): { role: string; name: string } | undefined => {
   if (!appealedByNationalId || !workingCase) {
     return undefined
