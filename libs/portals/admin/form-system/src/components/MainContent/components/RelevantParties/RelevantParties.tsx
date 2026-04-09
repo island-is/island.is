@@ -1,16 +1,16 @@
-import { useContext, useState } from 'react'
-import { ControlContext } from '../../../../context/ControlContext'
-import { Stack, Text } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
+import { FormSystemField } from '@island.is/api/schema'
 import {
   CREATE_APPLICANT,
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
-import { removeTypename } from '../../../../lib/utils/removeTypename'
+import { Stack, Text } from '@island.is/island-ui/core'
+import { useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../context/ControlContext'
 import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
+import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { PartyType } from './components/PartyType'
 
 export const RelevantParties = () => {
@@ -60,7 +60,7 @@ export const RelevantParties = () => {
                   setApplicantFields((prev) => [...prev, field])
                   controlDispatch({
                     type: 'ADD_FIELD',
-                    payload: { field, isApplicant: true },
+                    payload: { field, skipActiveItem: true },
                   })
                 }
               })
@@ -88,7 +88,7 @@ export const RelevantParties = () => {
           deletedScreens.forEach((screen) => {
             controlDispatch({
               type: 'REMOVE_SCREEN',
-              payload: { id: screen.id, isApplicant: true },
+              payload: { id: screen.id, skipActiveItem: true },
             })
             if (screen && screen.fields) {
               screen.fields.forEach((field: FormSystemField) => {
@@ -98,7 +98,7 @@ export const RelevantParties = () => {
                   )
                   controlDispatch({
                     type: 'REMOVE_FIELD',
-                    payload: { id: field.id, isApplicant: true },
+                    payload: { id: field.id, skipActiveItem: true },
                   })
                 }
               })

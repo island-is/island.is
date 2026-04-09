@@ -72,6 +72,7 @@ const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
+const RETRIAL_COURT_TAG = 'Endurupptokudomur'
 
 const DISTRICT_COURT_TAGS = [
   {
@@ -108,30 +109,24 @@ const DISTRICT_COURT_TAGS = [
   },
 ]
 
-const mapCourtToTopLevelCourt = (
-  court: string,
-): 'all' | 'courtOfAppeal' | 'supremeCourt' | 'districtCourt' => {
+const mapCourtToTopLevelCourt = (court: string) => {
   if (!court || court === ALL_COURTS_TAG) return 'all'
   if (court === DEFAULT_DISTRICT_COURT_TAG || court.startsWith('hd-'))
     return 'districtCourt'
   if (court === 'Hæstiréttur') return 'supremeCourt'
   if (court === 'landsrettur') return 'courtOfAppeal'
+  if (court === RETRIAL_COURT_TAG) return 'retrialCourt'
   return 'all'
 }
 
 const shouldResetCaseFiltersOnCourtChange = (
   previousCourt: string,
   nextCourt: string,
-  retrialCourtOptionValue: string,
 ) => {
   const topLevel = mapCourtToTopLevelCourt(nextCourt)
   const previousTopLevel = mapCourtToTopLevelCourt(previousCourt)
 
-  return (
-    (topLevel !== previousTopLevel && topLevel !== 'all') ||
-    nextCourt === retrialCourtOptionValue ||
-    previousCourt === retrialCourtOptionValue
-  )
+  return topLevel !== previousTopLevel && topLevel !== 'all'
 }
 
 enum QueryParam {
@@ -156,8 +151,6 @@ interface VerdictsListProps {
   }
   keywords: WebVerdictKeyword[]
   caseFilterOptions: GetVerdictCaseFilterOptionsPerCourtQuery['webVerdictCaseFilterOptionsPerCourt']
-  showRetrialCourtOption: boolean
-  retrialCourtOptionValue: string
 }
 
 const normalizeLawReference = (input: string): string => {
@@ -249,9 +242,9 @@ const useVerdictListState = (props: VerdictsListProps) => {
       [QueryParam.DISTRICT_COURTS]: parseAsArrayOf(parseAsString)
         .withOptions({ clearOnDefault: true })
         .withDefault([]),
-      [QueryParam.KEYWORD]: parseAsString
+      [QueryParam.KEYWORD]: parseAsArrayOf(parseAsString)
         .withOptions({ clearOnDefault: true })
-        .withDefault(''),
+        .withDefault([]),
       [QueryParam.CASE_CONTACT]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
@@ -316,7 +309,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
 
   const convertQueryParamsToInput = useCallback(
     (queryParams: typeof queryState, page: number): WebVerdictsInput => {
-      const keyword = queryParams[QueryParam.KEYWORD]
+      const keywords = queryParams[QueryParam.KEYWORD]
       const laws = normalizeLawReference(queryParams[QueryParam.LAWS])
       return {
         page,
@@ -326,7 +319,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
             ? queryParams[QueryParam.DISTRICT_COURTS].join(',')
             : extractCourtLevelFromState(queryParams[QueryParam.COURT]),
         caseNumber: queryParams[QueryParam.CASE_NUMBER],
-        keywords: keyword ? [keyword] : null,
+        keywords: keywords?.length ? keywords : null,
         caseCategories: queryParams[QueryParam.CASE_CATEGORIES],
         caseTypes: queryParams[QueryParam.CASE_TYPES],
         laws: laws ? [laws] : null,
@@ -446,8 +439,8 @@ interface KeywordSelectProps {
     label: string
     value: string
   }[]
-  value: { label: string; value: string } | undefined
-  onChange: (_: { label: string; value: string } | undefined) => void
+  value: ReadonlyArray<{ label: string; value: string }>
+  onChange: (_: ReadonlyArray<{ label: string; value: string }>) => void
   clearStateButtonText?: string
 }
 
@@ -480,9 +473,9 @@ const KeywordSelect = ({
         size="sm"
         options={keywordOptions}
         value={state}
-        onChange={(option) => {
-          if (option) setState(option)
-        }}
+        onChange={setState}
+        isMulti={true}
+        isClearable={false}
         placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
       />
       {Boolean(clearStateButtonText) && (
@@ -492,7 +485,7 @@ const KeywordSelect = ({
             icon="reload"
             size="small"
             onClick={() => {
-              setState(undefined)
+              setState([])
               setRenderKey((key) => key + 1)
             }}
           >
@@ -522,8 +515,12 @@ interface FiltersProps {
   renderKey: string | number
   updateRenderKey: () => void
   whiteBackground?: boolean
-  selectedCourtLevel: 'all' | 'courtOfAppeal' | 'supremeCourt' | 'districtCourt'
-  isRetrialCourt?: boolean
+  selectedCourtLevel:
+    | 'all'
+    | 'courtOfAppeal'
+    | 'supremeCourt'
+    | 'districtCourt'
+    | 'retrialCourt'
 }
 
 const Filters = ({
@@ -536,7 +533,6 @@ const Filters = ({
   updateRenderKey,
   whiteBackground = false,
   selectedCourtLevel,
-  isRetrialCourt = false,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const [expandedItemIds, setExpandedItemIds] = useState<string[]>(
@@ -544,21 +540,60 @@ const Filters = ({
   )
   const [openFiltersToggle, setOpenFiltersToggle] = useState(!startExpanded)
 
-  useEffect(() => {
-    // When switching to Endurupptökudómur we want the "Málategundir" section
-    // completely gone (including its expanded state).
-    if (!isRetrialCourt) return
-    setExpandedItemIds((prev) =>
-      prev.filter((id) => id !== FILTER_ACCORDION_ITEM_IDS[4]),
-    )
-  }, [isRetrialCourt])
-
   const keywordOptions = useMemo(() => {
     return keywords.map((keyword) => ({
       label: keyword.label,
       value: keyword.label,
     }))
   }, [keywords])
+
+  const caseFilterOptionsByCourt = useMemo(() => {
+    const courtConfig = [
+      {
+        id: 'districtCourt',
+        label: formatMessage(m.listPage.showDistrictCourts),
+      },
+      {
+        id: 'courtOfAppeal',
+        label: formatMessage(m.listPage.showCourtOfAppeal),
+      },
+      {
+        id: 'supremeCourt',
+        label: formatMessage(m.listPage.showSupremeCourt),
+      },
+      {
+        id: 'retrialCourt',
+        label: formatMessage(m.listPage.showRetrialCourt),
+      },
+    ] as const
+
+    if (selectedCourtLevel === 'all') {
+      return courtConfig
+        .map(({ id, label }) => ({
+          id,
+          label,
+          options: caseFilterOptions[id]?.options ?? [],
+        }))
+        .filter(({ options }) => options.length > 0)
+    }
+
+    const selectedCourtConfig = courtConfig.find(
+      (court) => court.id === selectedCourtLevel,
+    )
+    const selectedOptions = caseFilterOptions[selectedCourtLevel]?.options ?? []
+
+    if (!selectedCourtConfig || selectedOptions.length === 0) {
+      return []
+    }
+
+    return [
+      {
+        id: selectedCourtConfig.id,
+        label: selectedCourtConfig.label,
+        options: selectedOptions,
+      },
+    ]
+  }, [caseFilterOptions, formatMessage, selectedCourtLevel])
 
   const handleToggle = useCallback((expanded: boolean, itemId: string) => {
     if (!expanded) {
@@ -646,6 +681,7 @@ const Filters = ({
               <DebouncedInput
                 key={renderKey}
                 label={formatMessage(m.listPage.lawsInputLabel)}
+                tooltip={formatMessage(m.listPage.lawsInputTooltip)}
                 name="laws-input"
                 onChange={(value) => {
                   updateQueryState(QueryParam.LAWS, value)
@@ -666,16 +702,21 @@ const Filters = ({
             }}
             iconVariant="small"
             labelVariant="h5"
-            labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
+            labelColor={
+              queryState[QueryParam.KEYWORD]?.length ? 'blue400' : undefined
+            }
           >
             <KeywordSelect
               key={renderKey}
               keywordOptions={keywordOptions}
-              value={keywordOptions.find(
-                (option) => option.value === queryState[QueryParam.KEYWORD],
+              value={keywordOptions.filter((option) =>
+                queryState[QueryParam.KEYWORD]?.includes(option.value),
               )}
-              onChange={(option) => {
-                updateQueryState(QueryParam.KEYWORD, option?.value ?? null)
+              onChange={(options) => {
+                updateQueryState(
+                  QueryParam.KEYWORD,
+                  options.map((option) => option.value),
+                )
               }}
               clearStateButtonText={formatMessage(m.listPage.clearFilter)}
             />
@@ -707,83 +748,91 @@ const Filters = ({
             />
           </AccordionItem>
 
-          {!isRetrialCourt && (
-            <AccordionItem
-              id={FILTER_ACCORDION_ITEM_IDS[4]}
-              label={formatMessage(m.listPage.caseTypeAccordionLabel)}
-              expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
-              onToggle={(expanded) => {
-                handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
-              }}
-              iconVariant="small"
-              labelVariant="h5"
-              labelColor={
-                queryState[QueryParam.CASE_TYPES] ||
-                queryState[QueryParam.CASE_CATEGORIES]
-                  ? 'blue400'
-                  : undefined
-              }
-            >
-              <Stack space={2}>
-                <Stack space={2} key={renderKey}>
-                  {caseFilterOptions[selectedCourtLevel].options.map(
-                    ({ label, typeOfOption }) => {
-                      const queryParamKey =
-                        typeOfOption ===
-                        WebVerdictCaseFilterOptionType.CaseCategory
-                          ? QueryParam.CASE_CATEGORIES
-                          : QueryParam.CASE_TYPES
-                      return (
-                        <DebouncedCheckbox
-                          debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                          key={label}
-                          checked={Boolean(
-                            queryState[queryParamKey]?.includes(label),
-                          )}
-                          label={label}
-                          value={label}
-                          onChange={(checked) => {
-                            updateQueryState(queryParamKey, (previousState) => {
-                              let updatedValues = [
-                                ...(previousState[queryParamKey] ?? []),
-                              ]
-                              if (checked) {
-                                updatedValues.push(label)
-                              } else {
-                                updatedValues = updatedValues.filter(
-                                  (value) => value !== label,
-                                )
-                              }
-                              return {
-                                ...previousState,
-                                [queryParamKey]:
-                                  updatedValues.length === 0
-                                    ? null
-                                    : updatedValues,
-                              }
-                            })
-                          }}
-                        />
-                      )
-                    },
-                  )}
-                </Stack>
-                <Box display="flex" justifyContent="flexEnd">
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={() => {
-                      updateQueryState(QueryParam.CASE_TYPES, [])
-                      updateRenderKey()
-                    }}
-                  >
-                    {formatMessage(m.listPage.clearFilter)}
-                  </Button>
-                </Box>
+          <AccordionItem
+            id={FILTER_ACCORDION_ITEM_IDS[4]}
+            label={formatMessage(m.listPage.caseTypeAccordionLabel)}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
+            onToggle={(expanded) => {
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
+            }}
+            iconVariant="small"
+            labelVariant="h5"
+            labelColor={
+              queryState[QueryParam.CASE_TYPES] ||
+              queryState[QueryParam.CASE_CATEGORIES]
+                ? 'blue400'
+                : undefined
+            }
+          >
+            <Stack space={2}>
+              <Stack space={3} key={renderKey}>
+                {caseFilterOptionsByCourt.map((courtGroup) => (
+                  <Stack key={courtGroup.id} space={2}>
+                    {selectedCourtLevel === 'all' && (
+                      <Text variant="eyebrow">{courtGroup.label}</Text>
+                    )}
+                    <Stack space={2}>
+                      {courtGroup.options.map(({ label, typeOfOption }) => {
+                        const queryParamKey =
+                          typeOfOption ===
+                          WebVerdictCaseFilterOptionType.CaseCategory
+                            ? QueryParam.CASE_CATEGORIES
+                            : QueryParam.CASE_TYPES
+                        return (
+                          <DebouncedCheckbox
+                            debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                            key={`${courtGroup.id}-${label}`}
+                            checked={Boolean(
+                              queryState[queryParamKey]?.includes(label),
+                            )}
+                            label={label}
+                            value={label}
+                            onChange={(checked) => {
+                              updateQueryState(
+                                queryParamKey,
+                                (previousState) => {
+                                  let updatedValues = [
+                                    ...(previousState[queryParamKey] ?? []),
+                                  ]
+                                  if (checked) {
+                                    updatedValues.push(label)
+                                  } else {
+                                    updatedValues = updatedValues.filter(
+                                      (value) => value !== label,
+                                    )
+                                  }
+                                  return {
+                                    ...previousState,
+                                    [queryParamKey]:
+                                      updatedValues.length === 0
+                                        ? null
+                                        : updatedValues,
+                                  }
+                                },
+                              )
+                            }}
+                          />
+                        )
+                      })}
+                    </Stack>
+                  </Stack>
+                ))}
               </Stack>
-            </AccordionItem>
-          )}
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    updateQueryState(QueryParam.CASE_TYPES, [])
+                    updateRenderKey()
+                  }}
+                >
+                  {formatMessage(m.listPage.clearFilter)}
+                </Button>
+              </Box>
+            </Stack>
+          </AccordionItem>
 
           <AccordionItem
             id={FILTER_ACCORDION_ITEM_IDS[5]}
@@ -860,13 +909,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     renderKey,
     updateRenderKey,
   } = useVerdictListState(props)
-  const {
-    customPageData,
-    keywords,
-    showRetrialCourtOption,
-    retrialCourtOptionValue,
-    caseFilterOptions,
-  } = props
+  const { customPageData, keywords, caseFilterOptions } = props
 
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
@@ -891,17 +934,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         label: formatMessage(m.listPage.showSupremeCourt),
         value: 'Hæstiréttur',
       },
+      {
+        label: formatMessage(m.listPage.showRetrialCourt),
+        value: RETRIAL_COURT_TAG,
+      },
     ]
 
-    if (showRetrialCourtOption) {
-      tags.push({
-        label: formatMessage(m.listPage.showRetrialCourt),
-        value: retrialCourtOptionValue,
-      })
-    }
-
     return tags
-  }, [formatMessage, showRetrialCourtOption, retrialCourtOptionValue])
+  }, [formatMessage])
 
   const filterTags = useMemo(() => {
     const tags: { label: string; onClick: () => void }[] = []
@@ -929,16 +969,26 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       })
     }
 
-    if (queryState[QueryParam.KEYWORD]) {
-      tags.push({
-        label: `${formatMessage(m.listPage.keywordAccordionLabel)}: ${
-          queryState[QueryParam.KEYWORD]
-        }`,
-        onClick: () => {
-          updateQueryState(QueryParam.KEYWORD, null)
-          updateRenderKey()
-        },
-      })
+    if (queryState[QueryParam.KEYWORD]?.length > 0) {
+      for (const keyword of queryState[QueryParam.KEYWORD]) {
+        tags.push({
+          label: `${formatMessage(
+            m.listPage.keywordAccordionLabel,
+          )}: ${keyword}`,
+          onClick: () => {
+            updateQueryState(QueryParam.KEYWORD, (previousState) => {
+              const previousKeywords = previousState[QueryParam.KEYWORD] ?? []
+              return {
+                ...previousState,
+                [QueryParam.KEYWORD]: previousKeywords.filter(
+                  (previousKeyword) => previousKeyword !== keyword,
+                ),
+              }
+            })
+            updateRenderKey()
+          },
+        })
+      }
     }
 
     if (queryState[QueryParam.CASE_CONTACT]) {
@@ -1121,7 +1171,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           shouldResetCaseFiltersOnCourtChange(
                             queryState[QueryParam.COURT],
                             option.value,
-                            retrialCourtOptionValue,
                           )
                         ) {
                           updateQueryState(QueryParam.CASE_CATEGORIES, null)
@@ -1159,7 +1208,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                               shouldResetCaseFiltersOnCourtChange(
                                 queryState[QueryParam.COURT],
                                 tag.value,
-                                retrialCourtOptionValue,
                               )
                             ) {
                               updateQueryState(QueryParam.CASE_CATEGORIES, null)
@@ -1356,9 +1404,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   selectedCourtLevel={mapCourtToTopLevelCourt(
                     queryState[QueryParam.COURT],
                   )}
-                  isRetrialCourt={
-                    queryState[QueryParam.COURT] === retrialCourtOptionValue
-                  }
                   renderKey={renderKey}
                   startExpanded={true}
                   caseFilterOptions={caseFilterOptions}
@@ -1434,10 +1479,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         selectedCourtLevel={mapCourtToTopLevelCourt(
                           queryState[QueryParam.COURT],
                         )}
-                        isRetrialCourt={
-                          queryState[QueryParam.COURT] ===
-                          retrialCourtOptionValue
-                        }
                         renderKey={renderKey}
                         updateRenderKey={updateRenderKey}
                         caseFilterOptions={caseFilterOptions}
@@ -1632,11 +1673,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
       caseFilterOptionsPerCourtResponse.data
         .webVerdictCaseFilterOptionsPerCourt,
     keywords: keywordsResponse.data.webVerdictKeywords.keywords,
-    showRetrialCourtOption:
-      customPageData?.configJson?.showRetrialCourtOption ?? false,
-    retrialCourtOptionValue:
-      customPageData?.configJson?.retrialCourtOptionValue ??
-      'Endurupptökudómur',
   }
 }
 
