@@ -29,7 +29,7 @@ export const assigneeApproval = defineMessages({
   },
   nationalRegistrySubTitle: {
     id: 'hb.application:assigneeApproval.nationalRegistrySubTitle',
-    defaultMessage: 'Upplýsingar frá þjóðskrá',
+    defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang',
     description: 'National registry sub title',
   },
   confirmRead: {
@@ -64,5 +64,15 @@ export const assigneeApproval = defineMessages({
     id: 'hb.application:assigneeApproval.prereqContinueButton',
     defaultMessage: 'Halda áfram',
     description: 'Submit after assignee prerequisites (stays in same state)',
+  },
+  taxTitle: {
+    id: 'hb.application:assigneeApproval.taxTitle',
+    defaultMessage: 'Skatturinn',
+    description: 'Tax title',
+  },
+  taxSubtitle: {
+    id: 'hb.application:assigneeApproval.taxSubtitle',
+    defaultMessage: 'Upplýsingar um skattframtalsskil',
+    description: 'Tax subtitle',
   },
 })

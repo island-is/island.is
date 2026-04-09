@@ -4,9 +4,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   UserProfileApi,
@@ -22,19 +20,21 @@ import {
 } from '@island.is/application/core'
 import * as m from './messages'
 import {
+  AssigneeUserProfileApi,
+  AssigneePersonalTaxReturnApi,
   HouseholdMembersApi,
   NationalRegistryApi,
   PersonalTaxReturnApi,
   RentalAgreementsApi,
-  testApi,
+  AssigneeNationalRegistryApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import * as kennitala from 'kennitala'
 import {
   getAssigneeNationalIds,
-  hasAssigneeCompletedPrereq,
   needsHouseholdMemberApproval,
 } from '../utils/assigneeUtils'
+import { mapUserToRole } from '../utils/mapUserToRole'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 
 const template: ApplicationTemplate<
@@ -167,7 +167,14 @@ const template: ApplicationTemplate<
                 ).then((module) => Promise.resolve(module.AssigneePrereqForm)),
               write: 'all',
               read: 'all',
-              api: [NationalRegistryApi, PersonalTaxReturnApi, testApi],
+              api: [
+                NationalRegistryApi,
+                PersonalTaxReturnApi,
+                AssigneeNationalRegistryApi,
+                AssigneePersonalTaxReturnApi,
+                AssigneeUserProfileApi,
+                UserProfileApi,
+              ],
             },
             {
               id: Roles.UNSIGNED_DRAFT_ASSIGNEE,
@@ -177,6 +184,7 @@ const template: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
+              api: [AssigneeNationalRegistryApi],
             },
             {
               id: Roles.SIGNED_ASSIGNEE,
@@ -413,53 +421,7 @@ const template: ApplicationTemplate<
       }),
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    const normalizedNationalId = kennitala.isValid(nationalId)
-      ? kennitala.sanitize(nationalId)
-      : nationalId
-    if (
-      normalizedNationalId ===
-        kennitala.sanitize(
-          InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-        ) ||
-      normalizedNationalId === kennitala.sanitize('0101304929') // Gervimaður Bretland, only for testing
-    ) {
-      return Roles.INSTITUTION
-    }
-
-    if (
-      nationalId === application.applicant ||
-      normalizedNationalId ===
-        (kennitala.isValid(application.applicant)
-          ? kennitala.sanitize(application.applicant)
-          : application.applicant)
-    ) {
-      return Roles.APPLICANT
-    }
-
-    const assignees = application.assignees ?? []
-    if (!assignees.includes(normalizedNationalId)) {
-      return undefined
-    }
-
-    const signed = (application.answers?.householdMemberApprovals ??
-      []) as string[]
-    const hasSigned = signed.some(
-      (id) =>
-        (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
-        normalizedNationalId,
-    )
-    if (hasSigned) {
-      return Roles.SIGNED_ASSIGNEE
-    }
-    if (hasAssigneeCompletedPrereq(application, normalizedNationalId)) {
-      return Roles.UNSIGNED_DRAFT_ASSIGNEE
-    }
-    return Roles.UNSIGNED_PREREQ_ASSIGNEE
-  },
+  mapUserToRole,
 }
 
 export default template

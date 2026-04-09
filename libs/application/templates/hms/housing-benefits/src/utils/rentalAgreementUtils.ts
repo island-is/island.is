@@ -82,6 +82,49 @@ export const doesAddressMatchRentalContract = (
 }
 
 /**
+ * Checks if the assignee's National Registry address matches the selected rental contract address.
+ * Assignee data is stored under dynamic keys: `<nationalId>.assigneeNationalRegistry`.
+ */
+export const doesAssigneeAddressMatchRentalContract = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  let assigneeAddress: {
+    streetAddress?: string | null
+    postalCode?: string | null
+  } | null = null
+  for (const [key, value] of Object.entries(externalData)) {
+    if (key.endsWith('.assigneeNationalRegistry') && value?.data) {
+      assigneeAddress =
+        ((value.data as Record<string, unknown>)?.address as {
+          streetAddress?: string | null
+          postalCode?: string | null
+        }) ?? null
+      break
+    }
+  }
+
+  const contract = getSelectedContract(answers, externalData)
+  const contractProperty = contract?.contractProperty?.[0]
+
+  if (!assigneeAddress || !contractProperty) {
+    return false
+  }
+
+  const registryStreet = normalizeForComparison(assigneeAddress?.streetAddress)
+  const registryPostalCode = normalizeForComparison(assigneeAddress?.postalCode)
+  const contractStreet = normalizeForComparison(
+    contractProperty.streetAndHouseNumber,
+  )
+  const contractPostalCode = normalizeForComparison(contractProperty.postalCode)
+
+  return (
+    registryStreet === contractStreet &&
+    registryPostalCode === contractPostalCode
+  )
+}
+
+/**
  * Gets rental agreements that qualify for housing benefits.
  * Filtering (applicant as tenant, unbound or 3+ months left) is done by the API.
  */

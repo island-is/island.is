@@ -6,8 +6,11 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
-import { PersonalTaxReturnApi, testApi } from '../../../dataProviders'
-import { NationalRegistryApi } from '../../../dataProviders'
+import {
+  AssigneeUserProfileApi,
+  AssigneeNationalRegistryApi,
+  AssigneePersonalTaxReturnApi,
+} from '../../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
 
@@ -25,30 +28,29 @@ export const externalDataSection = buildSection({
       id: (application, user) =>
         nationalIdPreface(application, user, 'approveExternalData'),
       title: m.assigneeApproval.title,
-      subTitle: m.assigneeApproval.externalDataSubTitle,
       checkboxLabel: m.assigneeApproval.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
           id: (application, user) =>
-            nationalIdPreface(application, user, 'test'),
-          provider: testApi,
-          title: 'Test',
-          subTitle: 'Test',
+            nationalIdPreface(application, user, 'assigneeUserProfile'),
+          provider: AssigneeUserProfileApi,
+          title: m.prereqMessages.userProfileTitle,
+          subTitle: m.prereqMessages.userProfileSubtitle,
         }),
-        // buildDataProviderItem({
-        //   id: (application, user) =>
-        //     nationalIdPreface(application, user, 'nationalRegistry'),
-        //   provider: NationalRegistryApi,
-        //   title: m.assigneeApproval.nationalRegistryTitle,
-        //   subTitle: m.assigneeApproval.nationalRegistrySubTitle,
-        // }),
-        // buildDataProviderItem({
-        //   id: (application, user) =>
-        //     nationalIdPreface(application, user, 'taxExternalData'),
-        //   provider: PersonalTaxReturnApi,
-        //   title: m.prereqMessages.taxTitle,
-        //   subTitle: m.prereqMessages.taxSubtitle,
-        // }),
+        buildDataProviderItem({
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'assigneeNationalRegistry'),
+          provider: AssigneeNationalRegistryApi,
+          title: m.assigneeApproval.nationalRegistryTitle,
+          subTitle: m.assigneeApproval.nationalRegistrySubTitle,
+        }),
+        buildDataProviderItem({
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'assigneeTaxReturn'),
+          provider: AssigneePersonalTaxReturnApi,
+          title: m.assigneeApproval.taxTitle,
+          subTitle: m.assigneeApproval.taxSubtitle,
+        }),
       ],
       submitField: buildSubmitField({
         id: 'submit',

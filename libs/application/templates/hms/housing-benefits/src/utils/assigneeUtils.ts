@@ -182,3 +182,33 @@ export const nationalIdPreface = (
     : nationalId
   return `${normalized}.${fieldKey}`
 }
+
+/**
+ * Finds the current assignee's national registry data from externalData.
+ * External data is stored under dynamic keys: `<nationalId>.assigneeNationalRegistry`.
+ */
+export const getAssigneeNationalRegistryData = (
+  application: Application,
+): Record<string, unknown> | null => {
+  for (const [key, value] of Object.entries(application.externalData)) {
+    if (key.endsWith('.assigneeNationalRegistry') && value?.data) {
+      return value.data as Record<string, unknown>
+    }
+  }
+  return null
+}
+
+/**
+ * Finds the current assignee's user profile data from externalData.
+ * External data is stored under dynamic keys: `<nationalId>.assigneeUserProfile`.
+ */
+export const getAssigneeUserProfileData = (
+  application: Application,
+): Record<string, unknown> | null => {
+  for (const [key, value] of Object.entries(application.externalData)) {
+    if (key.endsWith('.assigneeUserProfile') && value?.data) {
+      return value.data as Record<string, unknown>
+    }
+  }
+  return null
+}

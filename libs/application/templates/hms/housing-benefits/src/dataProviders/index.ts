@@ -25,9 +25,22 @@ export const PersonalTaxReturnApi = defineTemplateApi({
   order: 4,
 })
 
-export const testApi = defineTemplateApi({
-  action: 'test',
+// Assignee dataproviders with dynamic ids
+export const AssigneeNationalRegistryApi = defineTemplateApi({
+  action: 'assigneeNationalRegistry',
   externalDataId: (application, user) =>
-    nationalIdPreface(application, user, 'test'),
-  order: 5,
+    nationalIdPreface(application, user, 'assigneeNationalRegistry'),
+})
+
+export const AssigneeUserProfileApi = defineTemplateApi({
+  action: 'userProfile',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeUserProfile'),
+  namespace: 'UserProfile',
+})
+
+export const AssigneePersonalTaxReturnApi = defineTemplateApi({
+  action: 'getAssigneePersonalTaxReturn',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeTaxReturn'),
 })

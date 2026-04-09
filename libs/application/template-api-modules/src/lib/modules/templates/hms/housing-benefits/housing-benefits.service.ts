@@ -39,7 +39,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
   private homeApiWithAuth(auth: Auth) {
     return this.homeApi.withMiddleware(new AuthMiddleware(auth))
   }
-
   async getRentalAgreements({
     application,
     auth,
@@ -148,6 +147,10 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
+  async getAssigneePersonalTaxReturn(props: TemplateApiModuleActionProps) {
+    return this.getPersonalTaxReturn(props)
+  }
+
   async getHouseholdMembers(props: TemplateApiModuleActionProps) {
     try {
       const cohabitants =
@@ -170,10 +173,30 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
-  test(props: TemplateApiModuleActionProps) {
-    return {
-      id: 1337,
-      message: 'This seems to work...',
+  async assigneeNationalRegistry({ auth }: TemplateApiModuleActionProps) {
+    try {
+      const individual = await this.nationalRegistryV3Service.getIndividual(
+        auth.nationalId,
+        auth,
+      )
+
+      if (!individual) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+            summary: coreErrorMessages.failedDataProvider,
+          },
+          404,
+        )
+      }
+
+      return individual
+    } catch (e) {
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      this.logger.error('Failed to fetch individual from National Registry:', e)
+      throw new TemplateApiError(e, 500)
     }
   }
 
