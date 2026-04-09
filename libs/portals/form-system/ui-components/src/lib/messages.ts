@@ -1215,6 +1215,7 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
   minAmount: {
     id: 'form.system:min-amount',
     defaultMessage: 'Magn má ekki vera lægra en {minAmount}',
