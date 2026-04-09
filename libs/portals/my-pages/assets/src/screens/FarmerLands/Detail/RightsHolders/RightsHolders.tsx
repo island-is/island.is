@@ -24,7 +24,9 @@ interface Props {
 const formatDateRange = (from?: string | null, to?: string | null): string => {
   const start = from ? new Date(from).toLocaleDateString('is-IS') : ''
   const end = to ? new Date(to).toLocaleDateString('is-IS') : ''
-  return start ? `${start} - ${end}` : ''
+  if (!start) return ''
+  if (!end) return start
+  return `${start} - ${end}`
 }
 
 export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
@@ -89,8 +91,8 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
           </T.Row>
         </T.Head>
         <T.Body>
-          {payments.map((p: FarmerLandBeneficiaryPayment) => (
-            <T.Row key={p.categoryId}>
+          {payments.map((p: FarmerLandBeneficiaryPayment, i) => (
+            <T.Row key={`${p.categoryId}-${i}`}>
               <T.Data box={{ background: 'white' }}>
                 <Text variant="small">{p.category}</Text>
               </T.Data>

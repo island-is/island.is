@@ -39,6 +39,8 @@ export const FarmerLandsTable = <T extends object>({
 
     const expanderColumn: Column<T> = {
       id: 'expander',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...({ disableSortBy: true } as any),
       Header: () => null,
       Cell: ({ row }: { row: Row<T> }) => (
         <Box
@@ -93,7 +95,7 @@ export const FarmerLandsTable = <T extends object>({
       desc: boolean
     }>
     onSortChange(sortBy)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any
   }, [(tableInstance.state as any).sortBy, onSortChange])
 
   if (error) {
@@ -126,6 +128,7 @@ export const FarmerLandsTable = <T extends object>({
                         color="blue400"
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         icon={
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (column as any).isSortedDesc ? 'caretDown' : 'caretUp'
                         }
                         size="small"

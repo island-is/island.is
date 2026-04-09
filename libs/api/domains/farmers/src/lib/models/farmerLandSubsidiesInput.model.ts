@@ -1,5 +1,5 @@
 import { Field, ID, InputType, Int } from '@nestjs/graphql'
-import { IsEnum, IsOptional } from 'class-validator'
+import { IsEnum, IsInt, IsOptional } from 'class-validator'
 import {
   FarmerLandSubsidyOrderDirection,
   FarmerLandSubsidyOrderField,
@@ -37,6 +37,7 @@ export class FarmerLandSubsidiesInput {
       'Filter by payment category ID. Options available in filterOptions.',
   })
   @IsOptional()
+  @IsInt()
   paymentCategoryId?: number
 
   @Field({

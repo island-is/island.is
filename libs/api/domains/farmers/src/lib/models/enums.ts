@@ -7,8 +7,8 @@ export enum FarmerLandSubsidyOrderField {
 }
 
 export enum FarmerLandSubsidyOrderDirection {
-  Ascending = 'Ascending',
-  Descending = 'Descending',
+  Ascending = 'ascending',
+  Descending = 'descending',
 }
 
 registerEnumType(FarmerLandSubsidyOrderField, {

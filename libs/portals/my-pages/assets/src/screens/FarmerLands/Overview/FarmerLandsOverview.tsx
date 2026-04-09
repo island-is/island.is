@@ -70,8 +70,15 @@ export const FarmerLandsOverview = () => {
       {!loading && !error && farmerLands.length === 0 && (
         <Problem
           type="no_data"
-          title={formatMessage(fm.noFarmerLandsTitle)}
-          message={formatMessage(cm.noDataFoundDetail)}
+          title={formatMessage(
+            search ? cm.noSearchResults : fm.noFarmerLandsTitle,
+          )}
+          message={formatMessage(
+            search
+              ? cm.noSearchResultsText
+              : cm.noDataFoundDetail,
+            search ? { arg: search } : undefined,
+          )}
           imgSrc="./assets/images/coffee.svg"
           titleSize="h3"
           noBorder={false}
@@ -81,6 +88,7 @@ export const FarmerLandsOverview = () => {
         {!error &&
           farmerLands.map((land) => (
             <ActionCard
+              key={land.id}
               heading={land.name ?? ''}
               headingVariant="h4"
               text={formatMessage(fm.farmNumber, {
