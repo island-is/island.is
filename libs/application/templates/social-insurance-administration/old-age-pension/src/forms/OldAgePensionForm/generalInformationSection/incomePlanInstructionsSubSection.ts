@@ -14,13 +14,15 @@ export const incomePlanInstructionsSubSection = buildSubSection({
     buildMultiField({
       id: 'incomePlanInstructions',
       title: socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+      description:
+        socialInsuranceAdministrationMessage.incomePlanInstructions.title,
       children: [
         buildDescriptionField({
           id: 'instructions',
-          title: '',
           description:
             socialInsuranceAdministrationMessage.incomePlanInstructions
-              .descriptionInstructions,
+              .instructions,
+          space: 0,
         }),
       ],
     }),
