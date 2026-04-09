@@ -1930,20 +1930,20 @@ export class CaseService {
 
     const eventUpdates = decisions.map(
       ({ defendantId, rulingDecision, rulingDate }) => {
-      if (!caseDefendantIds.has(defendantId)) {
-        throw new BadRequestException(
-          `Defendant ${defendantId} does not belong to case ${theCase.id}`,
-        )
-      }
+        if (!caseDefendantIds.has(defendantId)) {
+          throw new BadRequestException(
+            `Defendant ${defendantId} does not belong to case ${theCase.id}`,
+          )
+        }
 
-      if (
-        rulingDecision !== CaseIndictmentRulingDecision.DISMISSAL &&
-        rulingDecision !== CaseIndictmentRulingDecision.CANCELLATION
-      ) {
-        throw new BadRequestException(
-          `Unsupported defendant ruling decision ${rulingDecision} for case ${theCase.id}`,
-        )
-      }
+        if (
+          rulingDecision !== CaseIndictmentRulingDecision.DISMISSAL &&
+          rulingDecision !== CaseIndictmentRulingDecision.CANCELLATION
+        ) {
+          throw new BadRequestException(
+            `Unsupported defendant ruling decision ${rulingDecision} for case ${theCase.id}`,
+          )
+        }
 
         return {
           defendantId,
