@@ -2,7 +2,7 @@ import type { WrappedLoaderFn } from '@island.is/portals/core'
 import {
   GetServicePortalPageDocument,
   GetServicePortalPageQuery,
-} from './queries/ServicePortalPage.generated'
+} from '@island.is/portals/core'
 
 export type AccessControlLoaderResponse =
   GetServicePortalPageQuery['getServicePortalPage']

@@ -1055,12 +1055,10 @@ export const m = defineMessages({
     id: 'service.portal:accessDenied',
     defaultMessage: 'Ekki með aðgang',
   },
-
   accessNeeded: {
     id: 'service.portal:access-needed',
     defaultMessage: 'Umboð vantar',
   },
-
   accessNeededText: {
     id: 'service.portal:access-needed-text',
     defaultMessage: 'Umboð vantar',
