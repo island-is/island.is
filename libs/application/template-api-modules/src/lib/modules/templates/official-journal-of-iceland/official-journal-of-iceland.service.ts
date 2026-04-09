@@ -146,10 +146,13 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
       const { ministryName, signatureDate } =
         getMinistryFromSignature(signature)
 
+      const decodeBase64 = (value: string): string =>
+        value ? Buffer.from(value, 'base64').toString('utf-8') : ''
+
       const appendixes = (answers?.advert?.additions ?? []).map(
-        (a: { title?: string; html?: string }) => ({
+        (a: { title?: string; content?: string; html?: string }) => ({
           title: a.title ?? '',
-          text: a.html ?? '',
+          text: decodeBase64(a.content ?? a.html ?? ''),
         }),
       )
 
@@ -158,11 +161,11 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
         {
           draftingStatus: 'shipped',
           title: answers?.advert?.title ?? '',
-          text: answers?.advert?.html ?? '',
+          text: decodeBase64(answers?.advert?.html ?? ''),
           appendixes,
           draftingNotes: '', // Already in DB from drafting phase
-          ministry: ministryName,
-          signatureDate: signatureDate,
+          ministry: ministryName || undefined,
+          signatureDate: signatureDate || undefined,
         },
         auth,
       )

@@ -250,6 +250,7 @@ const OJOITemplate: ApplicationTemplate<
               action: TemplateApiActions.syncRegulationDraft,
               shouldPersistToExternalData: false,
               throwOnError: true,
+              externalDataId: 'syncRegulationDraft',
               order: 0,
             }),
             defineTemplateApi({
