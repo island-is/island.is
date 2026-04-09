@@ -681,6 +681,7 @@ const Filters = ({
               <DebouncedInput
                 key={renderKey}
                 label={formatMessage(m.listPage.lawsInputLabel)}
+                tooltip={formatMessage(m.listPage.lawsInputTooltip)}
                 name="laws-input"
                 onChange={(value) => {
                   updateQueryState(QueryParam.LAWS, value)
