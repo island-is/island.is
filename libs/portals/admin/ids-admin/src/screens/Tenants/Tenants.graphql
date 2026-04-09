@@ -2,6 +2,7 @@ query Tenants {
   authAdminTenants {
     data {
       id
+      nationalId
       availableEnvironments
       defaultEnvironment {
         id
@@ -14,4 +15,66 @@ query Tenants {
       }
     }
   }
+}
+
+query TenantDetails($id: String!) {
+  authAdminTenantDetails(id: $id) {
+    id
+    nationalId
+    availableEnvironments
+    defaultEnvironment {
+      id
+      name
+      environment
+      displayName {
+        locale
+        value
+      }
+    }
+    environments {
+      environment
+      name
+      nationalId
+      description
+      organisationLogoKey
+      contactEmail
+      displayName {
+        locale
+        value
+      }
+    }
+  }
+}
+
+mutation CreateTenant($input: CreateAuthAdminTenantInput!) {
+  createAuthAdminTenant(input: $input) {
+    name
+    environment
+  }
+}
+
+mutation UpdateTenant($input: UpdateAuthAdminTenantInput!) {
+  updateAuthAdminTenant(input: $input) {
+    environment
+    name
+    nationalId
+    description
+    organisationLogoKey
+    contactEmail
+    displayName {
+      locale
+      value
+    }
+  }
+}
+
+mutation PublishTenant($input: AuthAdminPublishTenantInput!) {
+  publishAuthAdminTenant(input: $input) {
+    environment
+    name
+  }
+}
+
+mutation DeleteTenant($input: DeleteAuthAdminTenantInput!) {
+  deleteAuthAdminTenant(input: $input)
 }

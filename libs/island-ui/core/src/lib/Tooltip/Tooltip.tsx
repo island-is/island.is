@@ -95,7 +95,15 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
-      <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
+      <ReakitTooltip
+        {...tooltip}
+        unstable_portal={renderInPortal}
+        // ModalBase's backdrop sits at z-index 10000 and, because the tooltip
+        // portal is appended to <body> without its own z-index, it otherwise
+        // paints behind any open modal/dialog. Bump it above the modal so
+        // tooltips stay visible when used inside modal content.
+        style={{ zIndex: 10001 }}
+      >
         <div
           className={cn(styles.tooltip, {
             [styles.fullWidth]: fullWidth,
