@@ -1,6 +1,9 @@
 import { useContext } from 'react'
 
-import { isCompletedCase, isDefenceUser } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { FormContext } from '../FormProvider/FormProvider'
