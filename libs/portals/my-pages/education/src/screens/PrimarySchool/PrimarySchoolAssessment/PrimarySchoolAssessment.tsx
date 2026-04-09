@@ -43,12 +43,13 @@ export const PrimarySchoolAssessment = () => {
           />
         </Box>
       )}
-      {!loading && !error && assessmentHistory.length > 1 && (
+      {!loading && !error && (
         <Accordion dividerOnTop={false} dividerOnBottom={false}>
           {assessmentHistory.map((assessment) => {
             if (!assessment.id) return null
             return (
               <AccordionItem
+                startExpanded={assessmentHistory.length === 1}
                 key={assessment.id}
                 id={assessment.id}
                 label={assessment.name ?? ''}
@@ -58,9 +59,6 @@ export const PrimarySchoolAssessment = () => {
             )
           })}
         </Accordion>
-      )}
-      {!loading && !error && assessmentHistory.length === 1 && (
-        <AssessmentTable results={assessmentHistory[0]?.resultHistory ?? []} />
       )}
     </IntroWrapperV2>
   )
