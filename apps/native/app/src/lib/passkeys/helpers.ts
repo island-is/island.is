@@ -9,19 +9,6 @@ import {
   AuthPasskeyRegistrationOptions,
 } from '../../graphql/types/schema'
 
-/**
- * Pad with '=' until it's a multiple of four
- * (4 - (85 % 4 = 1) = 3) % 4 = 3 padding
- * (4 - (86 % 4 = 2) = 2) % 4 = 2 padding
- * (4 - (87 % 4 = 3) = 1) % 4 = 1 padding
- * (4 - (88 % 4 = 0) = 4) % 4 = 0 padding
- */
-export const padChallenge = (challenge: string) => {
-  const padLength = (4 - (challenge.length % 4)) % 4
-  const paddedChallenge = challenge.padEnd(challenge.length + padLength, '=')
-  return paddedChallenge
-}
-
 export const convertRegisterResultsToBase64Url = (
   result: PasskeyCreateResult,
 ) => {
@@ -68,30 +55,44 @@ export const convertAuthenticationResultsToBase64Url = (
 export const formatAuthenticationOptions = (
   options: AuthPasskeyAuthenticationOptions,
 ): PasskeyGetRequest => {
-  // @todo migration
-  // Need to map correctly to spec
   return {
-    ...options,
-    challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
-  } as PasskeyGetRequest;
+    challenge: options.challenge,
+    rpId: options.rpId,
+    timeout: options.timeout || undefined,
+    userVerification: options.userVerification || undefined,
+    allowCredentials: options.allowCredentials?.map((cred) => ({
+      id: cred.id,
+      type: cred.type,
+      transports: cred.transports || undefined,
+    })),
+  } as PasskeyGetRequest
 }
 
 export const formatRegisterOptions = (
   options: AuthPasskeyRegistrationOptions,
 ): PasskeyCreateRequest => {
-  // @todo migration
-  // Need to map correctly to spec
-  return {
-    ...options,
-    challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
+  const result = {
+    challenge: options.challenge,
     rp: {
       id: options.rp.id!, // Already validated before entering this function
       name: options.rp.name,
     },
+    user: {
+      id: options.user.id,
+      name: options.user.name,
+      displayName: options.user.displayName,
+    },
+    pubKeyCredParams: options.pubKeyCredParams.map((p) => ({
+      alg: p.alg,
+      type: p.type,
+    })),
     attestation: options.attestation || undefined,
     timeout: options.timeout || undefined,
-    extensions: options.extensions || undefined,
-    excludeCredentials: options.excludeCredentials || undefined,
+    excludeCredentials: options.excludeCredentials?.map((cred) => ({
+      id: cred.id,
+      type: cred.type,
+      transports: cred.transports || undefined,
+    })),
     authenticatorSelection: options.authenticatorSelection
       ? {
           residentKey: options.authenticatorSelection.residentKey || undefined,
@@ -101,15 +102,12 @@ export const formatRegisterOptions = (
             options.authenticatorSelection.userVerification || undefined,
         }
       : undefined,
-  } as PasskeyCreateRequest;
+  } as PasskeyCreateRequest
+  return result
 }
 
 export const convertBase64StringToBase64Url = (base64String: string) => {
   return base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
-export const convertBase64UrlToBase64String = (base64Url: string) => {
-  return base64Url.replace(/-/g, '+').replace(/_/g, '/')
 }
 
 const MY_PAGES_PATH = '/minarsidur'

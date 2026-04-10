@@ -1,9 +1,7 @@
 import { Passkey, PasskeyCreateResult } from 'react-native-passkey'
 import {
-  convertBase64UrlToBase64String,
   convertRegisterResultsToBase64Url,
   formatRegisterOptions,
-  padChallenge,
 } from './helpers'
 import {
   useGetPasskeyRegistrationOptionsLazyQuery,
@@ -59,11 +57,7 @@ export const useRegisterPasskey = () => {
           preferencesStore.setState({ hasCreatedPasskey: true })
           return true
         }
-        console.error(
-          'Passkey registration not verified',
-          verifyRegisterResponse,
-        )
-        throw new Error('Register: Error registering passkey')
+        throw new Error('Register: Error verifying passkey registration')
       } catch (error: any) {
         // User cancelled the register flow, swallow the error
         if (
@@ -74,8 +68,11 @@ export const useRegisterPasskey = () => {
         ) {
           return false
         }
-        console.error('Error registering passkey:', error)
-        throw new Error('Register: Error registering passkey')
+        throw new Error(
+          'Register: Error registering passkey (' +
+            (error?.message ?? 'Unknown error') +
+            ')',
+        )
       }
     }
     return false

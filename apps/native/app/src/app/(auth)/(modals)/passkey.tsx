@@ -3,7 +3,6 @@ import { useIntl, FormattedMessage } from 'react-intl'
 import {
   View,
   Image,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
   TouchableOpacity,
@@ -26,6 +25,7 @@ import {
 import { useBrowser } from '@/hooks/use-browser'
 import { addPasskeyAsLoginHint } from '@/lib/passkeys/helpers'
 import { testIDs } from '@/utils/test-ids'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Text = styled.View<{ isSmallDevice: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -112,7 +112,7 @@ export default function PasskeyScreen() {
         onClosePress={() => router.back()}
         style={{ marginHorizontal: 16 }}
       />
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
         <Host isSmallDevice={isSmallDevice}>
           <Image
             source={logo}

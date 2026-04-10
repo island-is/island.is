@@ -13,7 +13,7 @@ import * as WebBrowser from 'expo-web-browser'
 export const openAndSuppressBrowser = async (url: string) => {
   suppressLockScreen()
   try {
-    await WebBrowser.dismissBrowser().catch((e) => void 0)
+    await WebBrowser.dismissBrowser()?.catch((e) => void 0)
     await WebBrowser.openBrowserAsync(url, {
       presentationStyle: WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
     })
