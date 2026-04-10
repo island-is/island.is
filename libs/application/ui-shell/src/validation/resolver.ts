@@ -1,5 +1,10 @@
-import { validateAnswers } from '@island.is/application/core'
 import {
+  shouldShowFormItem,
+  validateAnswers,
+} from '@island.is/application/core'
+import {
+  AccordionField,
+  Application,
   Field,
   FieldTypes,
   FormNode,
@@ -7,15 +12,47 @@ import {
 } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form'
-import { ResolverContext } from '../types'
+import { FieldDef, ResolverContext } from '../types'
 import { getAccordionChildFieldIds } from '../utils'
 
-const getFormNodeFieldIds = (formNode: FormNode) => {
+const getFormNodeFieldIds = (
+  formNode: FormNode,
+  application?: Application,
+) => {
   const children = formNode?.children ?? []
-  const directIds = children.filter((x) => x.id).map((x) => x.id as string)
-  const nestedIds = children
+
+  const visibleChildren = children.filter(
+    (x) => (x as FieldDef).isNavigable !== false,
+  )
+
+  const directIds = visibleChildren
+    .filter((x) => x.id)
+    .map((x) => x.id as string)
+
+  const nestedIds = visibleChildren
     .filter((x): x is Field => 'type' in x && x.type === FieldTypes.ACCORDION)
-    .flatMap((x) => getAccordionChildFieldIds(x))
+    .flatMap((accordion) => {
+      if (!application) return getAccordionChildFieldIds(accordion)
+
+      const acc = accordion as AccordionField
+      const items =
+        typeof acc.accordionItems === 'function' ? [] : acc.accordionItems
+      return items.flatMap((item) =>
+        item.children
+          ? item.children
+              .filter((child) =>
+                shouldShowFormItem(
+                  child,
+                  application.answers,
+                  application.externalData,
+                  null,
+                ),
+              )
+              .map((child) => child.id)
+          : [],
+      )
+    })
+
   return [...directIds, ...nestedIds]
 }
 
@@ -43,7 +80,10 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
     dataSchema: context.dataSchema,
     answers: formValue,
     isFullSchemaValidation: false,
-    currentScreenFields: getFormNodeFieldIds(context.formNode),
+    currentScreenFields: getFormNodeFieldIds(
+      context.formNode,
+      context.application,
+    ),
     formatMessage,
   })
 
