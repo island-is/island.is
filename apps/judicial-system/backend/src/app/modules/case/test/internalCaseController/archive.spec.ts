@@ -9,6 +9,7 @@ import { DefendantService } from '../../../defendant'
 import { FileService } from '../../../file'
 import { IndictmentCountService } from '../../../indictment-count'
 import {
+  AppealCase,
   CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
@@ -113,6 +114,10 @@ describe('InternalCaseController - Archive', () => {
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
+      appealCase: {
+        appealConclusion: 'original_appeal_conclusion',
+        appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
+      },
       defendants: [
         {
           id: defendantId1,
@@ -155,8 +160,6 @@ describe('InternalCaseController - Archive', () => {
           legalArguments: 'original_legal_arguments2',
         },
       ],
-      appealConclusion: 'original_appeal_conclusion',
-      appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
       indictmentDeniedExplanation: 'original_indictment_denied_explanation',
       indictmentReturnedExplanation: 'original_indictment_returned_explanation',
       isArchived: false,
@@ -192,10 +195,12 @@ describe('InternalCaseController - Archive', () => {
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
-      appealConclusion: 'original_appeal_conclusion',
-      appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
       indictmentDeniedExplanation: 'original_indictment_denied_explanation',
       indictmentReturnedExplanation: 'original_indictment_returned_explanation',
+      appealCase: {
+        appealConclusion: 'original_appeal_conclusion',
+        appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
+      },
       defendants: [
         {
           nationalId: 'original_nationalId1',
@@ -266,6 +271,7 @@ describe('InternalCaseController - Archive', () => {
           },
           { model: CaseFile, as: 'caseFiles' },
           { model: CaseString, as: 'caseStrings' },
+          { model: AppealCase, as: 'appealCase' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],

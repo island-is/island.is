@@ -32,6 +32,14 @@ Imports building data from FSRE, and creates/updates in the CMS a collection of 
 yarn nx run services-cms-importer:fsre-buildings-import
 ```
 
+### Web Sitemap
+
+Generates a sitemap.xml file in S3 (that gets forwarded to https://island.is/sitemap.xml) by fetching entries from the CMS
+
+```bash
+yarn nx run services-cms-importer:web-sitemap
+```
+
 ## Architecture
 
 - **main.ts** - Entry point that handles job routing based on command-line arguments

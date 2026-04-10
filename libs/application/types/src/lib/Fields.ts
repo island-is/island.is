@@ -1010,6 +1010,7 @@ export type PaginatedSearchableTableHeader = {
   editable?: boolean
   inputType?: 'text' | 'number'
   min?: number
+  placeholderKey?: string
 }
 
 export interface PaginatedSearchableTableField extends BaseField {

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
+import type { Document } from '@contentful/rich-text-types'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 import isUrl from 'is-url'
@@ -23,21 +24,78 @@ import { CaseFilterOptionType } from './types'
 import {
   ALL_DISTRICT_COURTS,
   COURT_OF_APPEAL,
+  RETRIAL_COURT,
   SUPREME_COURT,
 } from './constants'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
+const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
 
-const convertHtmlToContentfulRichText = async (html: string, id: string) => {
+type RichTextPayload = {
+  __typename: 'Html'
+  document: Document
+  id: string
+}
+
+type VerdictByIdResponse =
+  | {
+      item: {
+        pdfString: string
+        title: string
+        court: string
+        verdictDate?: Date | null
+        caseNumber: string
+        keywords: string[]
+        presentings: string
+      }
+    }
+  | {
+      item: {
+        richText: RichTextPayload
+        title: string
+        court: string
+        verdictDate?: Date | null
+        caseNumber: string
+        keywords: string[]
+        presentings: string
+        resolutionLink: string
+      }
+    }
+
+type SupremeCourtCaseByIdResponse = {
+  item: {
+    id: string
+    title: string
+    caseNumber: string
+    date: Date
+    presentings: string
+    keywords: string[]
+    richText: RichTextPayload
+    resolutionLink: string
+  }
+}
+
+const convertHtmlToContentfulRichText = async (
+  html: string,
+  id: string,
+): Promise<RichTextPayload> => {
   const sanitizedHtml = sanitizeHtml(html, {
     exclusiveFilter(frame) {
       return frame.tag === 'table'
     },
   })
-  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
-  const richText = await richTextFromMarkdown(markdown)
+  const htmlWithBreakSentinel = sanitizedHtml.replace(
+    /<br\s*\/?>/gi,
+    VERDICT_BR_SENTINEL,
+  )
+  const markdown = NodeHtmlMarkdown.translate(htmlWithBreakSentinel)
+  const markdownWithBreakSentinel = markdown.replaceAll(
+    VERDICT_BR_SENTINEL,
+    '<br />',
+  )
+  const richText = await richTextFromMarkdown(markdownWithBreakSentinel)
   return {
     __typename: 'Html',
     document: richText,
@@ -241,7 +299,7 @@ export class VerdictsClientService {
     }
   }
 
-  async getSingleVerdictById(id: string) {
+  async getSingleVerdictById(id: string): Promise<VerdictByIdResponse | null> {
     if (id.startsWith(GOPRO_ID_PREFIX)) {
       const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
       const response = await goproVerdictApi.getVerdictV2({
@@ -291,20 +349,29 @@ export class VerdictsClientService {
 
   async getCaseFilterOptionsPerCourt() {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
-    const [courtOfAppealResponse, supremeCourtResponse, districtCourtResponse] =
-      await Promise.allSettled([
-        goproVerdictApi.getCaseTypesV2({
-          requestData: {
-            courts: [COURT_OF_APPEAL],
-          },
-        }),
-        this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
-        goproVerdictApi.getCaseTypesV2({
-          requestData: {
-            courts: ALL_DISTRICT_COURTS,
-          },
-        }),
-      ])
+    const [
+      courtOfAppealResponse,
+      supremeCourtResponse,
+      districtCourtResponse,
+      retrialCourtResponse,
+    ] = await Promise.allSettled([
+      goproVerdictApi.getCaseTypesV2({
+        requestData: {
+          courts: [COURT_OF_APPEAL],
+        },
+      }),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+      goproVerdictApi.getCaseTypesV2({
+        requestData: {
+          courts: ALL_DISTRICT_COURTS,
+        },
+      }),
+      goproVerdictApi.getCaseTypesV2({
+        requestData: {
+          courts: [RETRIAL_COURT],
+        },
+      }),
+    ])
 
     const mapOfAll = new Map<string, CaseFilterOptionType>()
 
@@ -332,6 +399,14 @@ export class VerdictsClientService {
           districtCourtSet.add(caseType.label)
         }
 
+    const retrialCourtSet = new Set<string>()
+    if (retrialCourtResponse.status === 'fulfilled')
+      for (const caseType of retrialCourtResponse.value.items ?? [])
+        if (caseType.label) {
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
+          retrialCourtSet.add(caseType.label)
+        }
+
     const courtOfAppealOptions = Array.from(courtOfAppealSet).map((label) => ({
       label,
       typeOfOption: CaseFilterOptionType.CaseType,
@@ -347,6 +422,11 @@ export class VerdictsClientService {
       typeOfOption: CaseFilterOptionType.CaseType,
     }))
     districtCourtOptions.sort(sortAlpha('label'))
+    const retrialCourtOptions = Array.from(retrialCourtSet).map((label) => ({
+      label,
+      typeOfOption: CaseFilterOptionType.CaseType,
+    }))
+    retrialCourtOptions.sort(sortAlpha('label'))
 
     const allOptions = Array.from(mapOfAll, ([label, typeOfOption]) => ({
       label,
@@ -363,6 +443,9 @@ export class VerdictsClientService {
       },
       districtCourt: {
         options: districtCourtOptions,
+      },
+      retrialCourt: {
+        options: retrialCourtOptions,
       },
       all: {
         options: allOptions,
@@ -640,7 +723,9 @@ export class VerdictsClientService {
     }
   }
 
-  async getSupremeCourtDeterminationById(id: string) {
+  async getSupremeCourtDeterminationById(
+    id: string,
+  ): Promise<SupremeCourtCaseByIdResponse | null> {
     const response =
       await this.supremeCourtApi.apiV2VerdictGetDeterminationIdGet({
         id,
@@ -673,6 +758,33 @@ export class VerdictsClientService {
       },
     }
   }
+
+  async getSupremeCourtAppeals(input: { page: number }) {
+    const response = await this.supremeCourtApi.apiV2VerdictGetAppealsGet({
+      page: input.page ?? 1,
+      limit: 10,
+      orderBy: 'caseNumber DESC',
+    })
+
+    return {
+      total: Number(response.total ?? 0),
+      items: (response.items ?? [])
+        .filter(
+          (item) =>
+            Boolean(item.id) && Boolean(item.title) && Boolean(item.caseNumber),
+        )
+        .map((item) => ({
+          id: item.id as string,
+          title: item.title as string,
+          caseNumber: item.caseNumber as string,
+          appealPolicyDate: item.appealPolicyDate,
+          registrationDate: item.registrationDate,
+          verdictDate: item.verdictDate,
+        })),
+      input,
+    }
+  }
+
   async getScheduleTypes() {
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
     const [courtOfAppealResponse, districtCourtResponse] =
@@ -687,6 +799,7 @@ export class VerdictsClientService {
 
     const mapOfAll = new Map<string, { id: string; label: string }>()
 
+    const courtOfAppealSet = new Set<string>()
     const courtOfAppealItems: Array<{ id: string; label: string }> = []
     if (courtOfAppealResponse.status === 'fulfilled')
       for (const scheduleType of courtOfAppealResponse.value.items ?? [])
@@ -696,11 +809,15 @@ export class VerdictsClientService {
           if (!mapOfAll.has(scheduleType.label)) {
             mapOfAll.set(scheduleType.label, item)
           }
-          courtOfAppealItems.push(item)
+          if (!courtOfAppealSet.has(scheduleType.label)) {
+            courtOfAppealSet.add(scheduleType.label)
+            courtOfAppealItems.push(item)
+          }
         }
 
     const supremeCourtItems: Array<{ id: string; label: string }> = []
 
+    const districtCourtSet = new Set<string>()
     const districtCourtItems: Array<{ id: string; label: string }> = []
     if (districtCourtResponse.status === 'fulfilled')
       for (const scheduleType of districtCourtResponse.value.items ?? [])
@@ -710,7 +827,10 @@ export class VerdictsClientService {
           if (!mapOfAll.has(scheduleType.label)) {
             mapOfAll.set(scheduleType.label, item)
           }
-          districtCourtItems.push(item)
+          if (!districtCourtSet.has(scheduleType.label)) {
+            districtCourtSet.add(scheduleType.label)
+            districtCourtItems.push(item)
+          }
         }
 
     courtOfAppealItems.sort(sortAlpha('label'))

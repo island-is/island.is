@@ -21,7 +21,7 @@ const createRoutes = ({ routes, childRoute }: CreateRoutes): RouteObject[] => {
           path: route.path,
           element: (
             <Box paddingY={1}>
-              <AccessDenied />
+              <AccessDenied route={route} />
             </Box>
           ),
         }

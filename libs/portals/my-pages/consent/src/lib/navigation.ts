@@ -7,3 +7,7 @@ export const consentNavigation: PortalNavigationItem = {
   name: m.consent,
   path: ConsentPaths.Consent,
 }
+export const consentNavigationNew: PortalNavigationItem = {
+  name: m.consent,
+  path: ConsentPaths.ConsentNew,
+}

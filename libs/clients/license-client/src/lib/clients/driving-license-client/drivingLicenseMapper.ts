@@ -1,6 +1,6 @@
 import {
   CategoryDto,
-  DriverLicenseDto as DriversLicense,
+  DrivingLicenseV4V5Dto as DriversLicense,
   RemarkCode,
 } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
@@ -31,11 +31,11 @@ const mapRemarks = (
 }
 
 const mapCategoryToRight = (
-  category: CategoryDto,
+  category: Partial<CategoryDto>,
   remarks?: Array<RemarkCode> | null,
 ) => {
-  let right = `Réttindaflokkur ${category.nr}, ${
-    category.categoryName
+  let right = `Réttindaflokkur ${category.nr ?? ''}, ${
+    category.categoryName ?? ''
   }\n  - Gildir til ${
     category.dateTo ? format(category.dateTo, 'dd-MM-yyyy') : ''
   }\n`
@@ -51,7 +51,7 @@ const mapCategoryToRight = (
 }
 
 const formatRights = (
-  categories: Array<CategoryDto> | null,
+  categories: Array<Partial<CategoryDto>> | null,
   remarks?: Array<RemarkCode> | null,
 ) => {
   if (!categories) {

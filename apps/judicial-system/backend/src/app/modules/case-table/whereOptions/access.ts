@@ -17,7 +17,7 @@ import {
 
 import {
   buildEventLogExistsCondition,
-  buildIsSentToPrisonExistsCondition,
+  buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
 // Court of appeals access
@@ -28,13 +28,14 @@ export const courtOfAppealsRequestCasesAccessWhereOptions = {
   state: completedRequestCaseStates,
   [Op.or]: [
     {
-      appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+      '$appealCase.appeal_state$': [
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ],
     },
     {
-      [Op.and]: [
-        { appeal_state: CaseAppealState.WITHDRAWN },
-        { appeal_received_by_court_date: { [Op.not]: null } },
-      ],
+      '$appealCase.appeal_state$': CaseAppealState.WITHDRAWN,
+      '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
   ],
 }
@@ -107,7 +108,7 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
+  [Op.and]: [buildIsSentToPrisonAdminExistsCondition(true)],
 }
 
 export const prisonAdminCasesAccessWhereOptions = () => ({

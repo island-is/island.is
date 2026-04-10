@@ -1,3 +1,16 @@
+import { User } from '@island.is/auth-nest-tools'
+import {
+  ApplicantTypesEnum,
+  ApplicationEvents,
+  ApplicationStatus,
+  FieldTypesEnum,
+  FormStatus,
+  NotificationCommands,
+  SectionTypes,
+} from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Locale } from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
   ConflictException,
@@ -7,54 +20,41 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
+import * as kennitala from 'kennitala'
 import { Op, QueryTypes } from 'sequelize'
-import { Application } from './models/application.model'
-import { ApplicationDto } from './models/dto/application.dto'
-import { Form } from '../forms/models/form.model'
-import { Section } from '../sections/models/section.model'
-import { ListItem } from '../listItems/models/listItem.model'
-import { Field } from '../fields/models/field.model'
-import { Screen } from '../screens/models/screen.model'
-import { ApplicationMapper } from './models/application.mapper'
-import { Value } from './models/value.model'
+import { Sequelize } from 'sequelize-typescript'
+import { calculatePruneAt } from '../../../utils/calculatePruneAt'
+import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
+import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import {
-  ApplicationStatus,
-  ApplicationEvents,
-  FieldTypesEnum,
-  ApplicantTypesEnum,
-  NotificationCommands,
-} from '@island.is/form-system/shared'
-import { Organization } from '../organizations/models/organization.model'
-import { ServiceManager } from '../services/service.manager'
-import { ApplicationEvent } from './models/applicationEvent.model'
-import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { User } from '@island.is/auth-nest-tools'
+import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
-import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { Form } from '../forms/models/form.model'
+import { ListItem } from '../listItems/models/listItem.model'
+import { Organization } from '../organizations/models/organization.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { Option } from '../../dataTypes/option.model'
-import { FormStatus } from '@island.is/form-system/shared'
-import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import { SectionTypes } from '@island.is/form-system/shared'
-import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
-import { AuthDelegationType } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
-import type { Locale } from '@island.is/shared/types'
-import { calculatePruneAt } from '../../../utils/calculatePruneAt'
+import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
-import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
-import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { Section } from '../sections/models/section.model'
 import { NotifyService } from '../services/notify.service'
-import { NotificationDto } from './models/dto/notification.dto'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { ServiceManager } from '../services/service.manager'
+import { ApplicationMapper } from './models/application.mapper'
+import { Application } from './models/application.model'
+import { ApplicationEvent } from './models/applicationEvent.model'
+import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
+import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
 import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
-import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
-import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
+import { ApplicationDto } from './models/dto/application.dto'
+import { ApplicationResponseDto } from './models/dto/application.response.dto'
+import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
+import { NotificationDto } from './models/dto/notification.dto'
+import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
+import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
 
 @Injectable()
@@ -247,6 +247,27 @@ export class ApplicationsService {
     }
 
     await application.save()
+  }
+
+  async getSlugFromId(applicationId: string): Promise<string> {
+    const application = await this.applicationModel.findByPk(applicationId)
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(application.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+    if (!form.slug) {
+      throw new NotFoundException(
+        `Slug for form with id '${form.id}' not found`,
+      )
+    }
+    return form.slug
   }
 
   async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
@@ -937,58 +958,60 @@ export class ApplicationsService {
         const filteredScreenDto = { ...currentScreen, fields: filteredFields }
 
         await Promise.all(
-          (filteredScreenDto.fields ?? []).map(async (field) => {
-            if (field.isPartOfMultiset) {
-              await this.valueModel.destroy({
-                where: {
-                  fieldId: field.id,
-                  applicationId,
-                },
-                transaction,
-              })
+          (filteredScreenDto.fields ?? [])
+            .filter((field) => field.fieldType !== FieldTypesEnum.FILE)
+            .map(async (field) => {
+              if (field.isPartOfMultiset) {
+                await this.valueModel.destroy({
+                  where: {
+                    fieldId: field.id,
+                    applicationId,
+                  },
+                  transaction,
+                })
 
-              await Promise.all(
-                (field.values ?? []).map((value, index) =>
-                  this.valueModel.create(
-                    {
-                      fieldId: field.id,
-                      fieldType: field.fieldType,
-                      applicationId,
-                      order: index,
-                      json: value.json,
-                    } as Value,
-                    { transaction },
-                  ),
-                ),
-              )
-            } else {
-              await Promise.all(
-                (field.values ?? [])
-                  .filter((v) => v?.json !== undefined)
-                  .map((value) =>
-                    this.valueModel.update(
+                await Promise.all(
+                  (field.values ?? []).map((value, index) =>
+                    this.valueModel.create(
                       {
-                        // Merge existing jsonb with the new payload as jsonb
-                        // COALESCE guards against "json" being NULL
-                        json: this.sequelize.literal(
-                          `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
-                            JSON.stringify(value.json),
-                          )}::jsonb`,
-                        ),
-                      },
-                      {
-                        where: {
-                          id: value.id,
-                          applicationId,
-                          fieldId: field.id,
-                        },
-                        transaction,
-                      },
+                        fieldId: field.id,
+                        fieldType: field.fieldType,
+                        applicationId,
+                        order: index,
+                        json: value.json,
+                      } as Value,
+                      { transaction },
                     ),
                   ),
-              )
-            }
-          }),
+                )
+              } else {
+                await Promise.all(
+                  (field.values ?? [])
+                    .filter((v) => v?.json !== undefined)
+                    .map((value) =>
+                      this.valueModel.update(
+                        {
+                          // Merge existing jsonb with the new payload as jsonb
+                          // COALESCE guards against "json" being NULL
+                          json: this.sequelize.literal(
+                            `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
+                              JSON.stringify(value.json),
+                            )}::jsonb`,
+                          ),
+                        },
+                        {
+                          where: {
+                            id: value.id,
+                            applicationId,
+                            fieldId: field.id,
+                          },
+                          transaction,
+                        },
+                      ),
+                    ),
+                )
+              }
+            }),
         )
       }
     })
@@ -1441,6 +1464,9 @@ export class ApplicationsService {
     `
     }
 
+    const fromDate = new Date(new Date(startDate).setHours(0, 0, 0, 0))
+    const toDate = new Date(new Date(endDate).setHours(23, 59, 59, 999))
+
     const query = `
     SELECT
       a.form_id AS "formId",
@@ -1452,7 +1478,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.modified BETWEEN :startDate AND :endDate
+    WHERE a.modified >= :startDate AND a.modified <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;
@@ -1460,8 +1486,8 @@ export class ApplicationsService {
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
       replacements: {
-        startDate,
-        endDate,
+        startDate: fromDate,
+        endDate: toDate,
         ...(institutionNationalId ? { institutionNationalId } : {}),
       },
       type: QueryTypes.SELECT,

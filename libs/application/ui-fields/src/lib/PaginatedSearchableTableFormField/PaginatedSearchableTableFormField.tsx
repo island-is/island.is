@@ -332,6 +332,10 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                     const value =
                       rowWithChanges?.[header.key] ?? row[header.key] ?? ''
                     if (header.editable) {
+                      const placeholder = header.placeholderKey
+                        ? String(row[header.placeholderKey] ?? '')
+                        : undefined
+
                       return (
                         <T.Data key={header.key}>
                           <Input
@@ -342,6 +346,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                             size="xs"
                             backgroundColor="white"
                             value={String(value)}
+                            placeholder={placeholder}
                             onChange={handleEditableCellChange(
                               row,
                               header.key,

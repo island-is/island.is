@@ -406,15 +406,7 @@ export class InternalCaseController {
     )
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard([
-      ...restrictionCases,
-      ...investigationCases,
-      ...indictmentCases,
-    ]),
-    CaseCompletedGuard,
-  )
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post(
     `case/:caseId/${
       messageEndpoint[
@@ -534,7 +526,11 @@ export class InternalCaseController {
 
   @UseGuards(
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseCompletedGuard,
   )
   @Post(
@@ -563,7 +559,11 @@ export class InternalCaseController {
 
   @UseGuards(
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseCompletedGuard,
   )
   @Post(
@@ -592,7 +592,11 @@ export class InternalCaseController {
 
   @UseGuards(
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseCompletedGuard,
   )
   @Post(
@@ -791,7 +795,11 @@ export class InternalCaseController {
 
   @UseGuards(
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseCompletedGuard,
   )
   @Post(
