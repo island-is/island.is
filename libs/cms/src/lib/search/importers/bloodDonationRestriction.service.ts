@@ -76,6 +76,7 @@ export class BloodDonationRestrictionSyncService
             const keywords = mapped.keywordsText
               .split(',')
               .map((keyword) => keyword.trim())
+              .filter(Boolean)
             for (const keyword of keywords)
               tags.push({
                 key: keyword,
