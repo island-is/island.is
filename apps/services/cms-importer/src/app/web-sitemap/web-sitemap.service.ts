@@ -79,8 +79,14 @@ export class WebSitemapService {
     )
   }
 
-  private isRateLimitError = (error: { code?: number; status?: number }) =>
-    error?.code === 429 || error?.status === 429
+  private isRateLimitError = (error: {
+    code?: number
+    status?: number
+    response?: { status?: number }
+  }) =>
+    error?.code === 429 ||
+    error?.status === 429 ||
+    error?.response?.status === 429
 
   private wait = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms))
@@ -98,7 +104,9 @@ export class WebSitemapService {
         return result
       } catch (error) {
         if (
-          !this.isRateLimitError(error as { code?: number; status?: number }) ||
+          !this.isRateLimitError(
+            error as { code?: number; status?: number; response?: { status?: number } },
+          ) ||
           attempt === WebSitemapService.MAX_RETRIES
         )
           throw error
