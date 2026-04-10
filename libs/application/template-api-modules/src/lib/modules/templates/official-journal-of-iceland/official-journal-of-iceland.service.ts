@@ -44,5 +44,4 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
       return false
     }
   }
-
 }
