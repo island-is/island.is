@@ -165,10 +165,7 @@ export const EditTenant = () => {
           </FormCard>
 
           {tenant.id && (
-            <TenantDangerZone
-              tenantId={tenant.id}
-              displayName={displayName}
-            />
+            <TenantDangerZone tenantId={tenant.id} displayName={displayName} />
           )}
         </Stack>
       </StickyLayout>
