@@ -79,6 +79,7 @@ export class FileService {
             }
 
             await value.save({ transaction })
+
             this.logger.info(
               `✅ Updated field ${fieldId} with new S3 key ${key}`,
             )
@@ -101,6 +102,32 @@ export class FileService {
     }
 
     this.logger.info(`Upload job added to queue for key ${sourceKey}`)
+  }
+
+  async getFile(key: string): Promise<string | undefined> {
+    if (!key) {
+      throw new Error('Key and valueId must be provided for fetching file')
+    }
+
+    const bucket = this.config.bucket
+    if (!bucket) {
+      throw new Error('S3 bucket not configured')
+    }
+
+    const s3Uri = `s3://${bucket}/${key}`
+
+    this.logger.info(`Fetching file ${s3Uri}`)
+
+    try {
+      const fileContent = await this.s3Service.getFileContent(
+        { bucket, key },
+        'base64',
+      )
+      return fileContent
+    } catch (error) {
+      this.logger.error(`Error fetching fileContent ${s3Uri}`, error)
+      return undefined
+    }
   }
 
   async deleteFile(
