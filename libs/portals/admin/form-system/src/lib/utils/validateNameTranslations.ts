@@ -24,7 +24,6 @@ const FIELDS_TO_CHECK = [
   'buttonText',
   'waitingText',
   'organizationDisplayName',
-  'organizationName',
   'formName',
 ]
 
