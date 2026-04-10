@@ -129,9 +129,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       if (e instanceof Error && e.name === 'FetchError') {
         const err = e as unknown as FetchError
 
-        if (
-          err.problem?.title === 'INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY'
-        ) {
+        if (err.problem?.title === 'INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY') {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.failedDataProviderSubmit,

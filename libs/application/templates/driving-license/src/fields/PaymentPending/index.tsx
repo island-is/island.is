@@ -111,9 +111,7 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
 
     return (
       <PaymentError
-        title={formatMessage(
-          errorReason?.title ?? m.submitErrorTitle,
-        )}
+        title={formatMessage(errorReason?.title ?? m.submitErrorTitle)}
         errorMessage={formatMessage(
           errorReason?.summary ?? m.submitErrorMessage,
         )}
