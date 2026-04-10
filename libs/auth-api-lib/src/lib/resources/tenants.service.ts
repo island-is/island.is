@@ -4,6 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize, UniqueConstraintError } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -24,6 +25,7 @@ import { Domain } from './models/domain.model'
 @Injectable()
 export class TenantsService {
   constructor(
+    private readonly sequelize: Sequelize,
     @InjectModel(Domain)
     private readonly domainModel: typeof Domain,
     @InjectModel(Client)
@@ -111,7 +113,14 @@ export class TenantsService {
       throw new ConflictException(`Tenant "${dto.name}" already exists`)
     }
 
-    return this.domainModel.create({ ...dto })
+    try {
+      return await this.domainModel.create({ ...dto })
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException(`Tenant "${dto.name}" already exists`)
+      }
+      throw error
+    }
   }
 
   async update(name: string, dto: AdminPatchTenantDto): Promise<Domain> {
@@ -129,27 +138,34 @@ export class TenantsService {
   }
 
   async delete(name: string): Promise<void> {
-    const existing = await this.domainModel.findOne({
-      where: { name },
-      attributes: ['name'],
+    await this.sequelize.transaction(async (transaction) => {
+      const existing = await this.domainModel.findOne({
+        where: { name },
+        attributes: ['name'],
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!existing) {
+        throw new NoContentException()
+      }
+
+      const [clientCount, scopeCount, scopeGroupCount] = await Promise.all([
+        this.clientModel.count({ where: { domainName: name }, transaction }),
+        this.apiScopeModel.count({ where: { domainName: name }, transaction }),
+        this.apiScopeGroupModel.count({
+          where: { domainName: name },
+          transaction,
+        }),
+      ])
+
+      if (clientCount + scopeCount + scopeGroupCount > 0) {
+        throw new BadRequestException(
+          `Cannot delete tenant "${name}": it still has ${clientCount} client(s), ${scopeCount} scope(s) and ${scopeGroupCount} scope group(s) referencing it.`,
+        )
+      }
+
+      await this.domainModel.destroy({ where: { name }, transaction })
     })
-
-    if (!existing) {
-      throw new NoContentException()
-    }
-
-    const [clientCount, scopeCount, scopeGroupCount] = await Promise.all([
-      this.clientModel.count({ where: { domainName: name } }),
-      this.apiScopeModel.count({ where: { domainName: name } }),
-      this.apiScopeGroupModel.count({ where: { domainName: name } }),
-    ])
-
-    if (clientCount + scopeCount + scopeGroupCount > 0) {
-      throw new BadRequestException(
-        `Cannot delete tenant "${name}": it still has ${clientCount} client(s), ${scopeCount} scope(s) and ${scopeGroupCount} scope group(s) referencing it.`,
-      )
-    }
-
-    await this.domainModel.destroy({ where: { name } })
   }
 }

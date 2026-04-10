@@ -89,8 +89,7 @@ export const PublishTenant = () => {
       revalidate()
       onClose()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, revalidate])
+  }, [data, revalidate, changeEnvironment, onClose])
 
   useEffect(() => {
     if (publishError) {
