@@ -82,7 +82,7 @@ export const webSitemapImportSetup =
       .command('node')
       .args('main.cjs', '--job', 'web-sitemap')
       .extraAttributes({
-        dev: { schedule: '0 * * * *' },
-        staging: { schedule: '0 * * * *' },
-        prod: { schedule: '0 * * * *' },
+        dev: { schedule: '0 0 * * *' },
+        staging: { schedule: '0 0 * * 0' },
+        prod: { schedule: '0 */2 * * *' },
       })
