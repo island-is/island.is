@@ -24,13 +24,13 @@ export const accordionSubsection = buildSubSection({
         buildDescriptionField({
           id: 'accordionSectionDescription',
           description:
-            'Take care when using fields within a accordion item, as they will not be visible outside of the accordion item. This can create really bad UX.',
+            'Take care when using fields within an accordion item, as they are not visible outside the expanded item. This can create poor UX.',
           marginBottom: 4,
         }),
         buildDescriptionField({
           id: 'accordionSectionDescription2',
           description:
-            'The best usecase for accordion with fields is where everything is optional and the user only has to open some of the accordion items. For example while editing or updating something something.',
+            'A good use case for accordions with fields is when everything is optional and users only need to open some items, for example while editing or updating existing data.',
           marginBottom: 4,
         }),
         buildAccordionField({
