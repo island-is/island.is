@@ -2,7 +2,7 @@ import React, { FC, useEffect, useRef } from 'react'
 import {
   coreErrorMessages,
   coreMessages,
-  getErrorReasonIfPresent,
+  isProviderErrorReason,
 } from '@island.is/application/core'
 import {
   Application,
@@ -94,17 +94,19 @@ export const PaymentPending: FC<
   if (submitError) {
     const problem = findProblemInApolloError(submitError)
     const errorReason =
-      problem && 'errorReason' in problem
-        ? getErrorReasonIfPresent(problem.errorReason)
+      problem &&
+      'errorReason' in problem &&
+      isProviderErrorReason(problem.errorReason)
+        ? problem.errorReason
         : null
 
-    const errorTitle = errorReason?.title
+    const errorTitle = errorReason
       ? typeof errorReason.title === 'string'
         ? errorReason.title
         : msg(errorReason.title)
       : msg(coreErrorMessages.paymentSubmitFailed)
 
-    const errorMessage = errorReason?.summary
+    const errorMessage = errorReason
       ? typeof errorReason.summary === 'string'
         ? errorReason.summary
         : msg(errorReason.summary)
