@@ -114,19 +114,13 @@ export class FileService {
       throw new Error('S3 bucket not configured')
     }
 
-    // const s3Uri = `s3://${bucket}/${key}`
-
     this.logger.info(`Fetching file ${key}`)
 
     try {
-      const fileContent = await this.s3Service.getFileContent(
-        { bucket, key },
-        'base64',
-      )
-      return fileContent
+      return await this.s3Service.getFileContent({ bucket, key }, 'base64')
     } catch (error) {
-      this.logger.error(`Error fetching fileContent ${key}`, error)
-      return undefined
+      this.logger.error('Error fetching file content from S3', error)
+      throw error
     }
   }
 
@@ -166,7 +160,7 @@ export class FileService {
         this.logger.warn(`Value with id ${valueId} not found`)
       }
     } catch (error) {
-      this.logger.error(`Error deleting file ${key}`, error)
+      this.logger.error('Error deleting file from S3', error)
       throw error
     }
   }
