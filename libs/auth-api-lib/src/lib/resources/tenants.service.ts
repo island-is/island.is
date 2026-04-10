@@ -13,7 +13,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Client } from '../clients/models/client.model'
 import { AdminCreateTenantDto } from './dto/admin-create-tenant.dto'
 import { AdminPatchTenantDto } from './dto/admin-patch-tenant.dto'
-import { AdminTenantDto, TenantDto } from './dto/tenant.dto'
+import { TenantDto } from './dto/tenant.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
@@ -35,7 +35,7 @@ export class TenantsService {
     private readonly apiScopeGroupModel: typeof ApiScopeGroup,
   ) {}
 
-  async findAllByUser(user: User): Promise<AdminTenantDto[]> {
+  async findAllByUser(user: User): Promise<TenantDto[]> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const tenants = await this.domainModel.findAll({
@@ -59,7 +59,7 @@ export class TenantsService {
   async findById(id: string): Promise<TenantDto> {
     const tenant = await this.domainModel.findOne({
       where: { name: id },
-      attributes: ['name', 'displayName', 'contactEmail'],
+      attributes: ['name', 'displayName', 'contactEmail', 'nationalId'],
     })
 
     if (!tenant) {
@@ -70,6 +70,7 @@ export class TenantsService {
       name: tenant.name,
       displayName: [{ locale: 'is', value: tenant.displayName }],
       contactEmail: tenant.contactEmail,
+      nationalId: tenant.nationalId,
     }
   }
 
