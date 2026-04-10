@@ -519,7 +519,6 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
   arraignmentDate?: UpdateDateLog
