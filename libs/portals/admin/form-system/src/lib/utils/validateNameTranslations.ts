@@ -13,6 +13,21 @@ const isRecord = (value: unknown): value is UnknownRecord => {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
 
+const FIELDS_TO_CHECK = [
+  'name',
+  'description',
+  'title',
+  'confirmationHeader',
+  'confirmationText',
+  'additionalInfo',
+  'label',
+  'buttonText',
+  'waitingText',
+  'organizationDisplayName',
+  'organizationName',
+  'formName',
+]
+
 export const hasEnglishForAllNameFields = (root: unknown): boolean => {
   const stack: unknown[] = [root]
   const visited = new WeakSet<object>()
@@ -39,13 +54,27 @@ export const hasEnglishForAllNameFields = (root: unknown): boolean => {
     const record = current as UnknownRecord
 
     for (const [key, value] of Object.entries(record)) {
-      if (key === 'name' && isRecord(value)) {
-        const lang = value as LanguageValue
-        const isValue = toTrimmedString(lang.is)
-        const enValue = toTrimmedString(lang.en)
+      if (FIELDS_TO_CHECK.includes(key)) {
+        if (isRecord(value)) {
+          const lang = value as LanguageValue
+          const isValue = toTrimmedString(lang.is)
+          const enValue = toTrimmedString(lang.en)
 
-        if (isValue.length > 0 && enValue.length === 0) {
-          return false
+          if (isValue.length > 0 && enValue.length === 0) {
+            return false
+          }
+        } else if (Array.isArray(value)) {
+          for (const item of value) {
+            if (isRecord(item)) {
+              const lang = item as LanguageValue
+              const isValue = toTrimmedString(lang.is)
+              const enValue = toTrimmedString(lang.en)
+
+              if (isValue.length > 0 && enValue.length === 0) {
+                return false
+              }
+            }
+          }
         }
       }
 
