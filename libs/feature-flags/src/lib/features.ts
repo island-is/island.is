@@ -55,6 +55,8 @@ export enum Features {
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
+  isServicePortalMyPagesTRPaymentTypesOverviewPageEnabled = 'isServicePortalMyPagesTRPaymentTypesOverviewPageEnabled',
+  isServicePortalMyPagesTRPersonalTaxCreditPageEnabled = 'isServicePortalMyPagesTRPersonalTaxCreditPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
