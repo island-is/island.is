@@ -139,13 +139,16 @@ export class ApplicationsXRoadService {
     }
 
     const fileContent = await this.fileService.getFile(id)
+    if (fileContent == null) {
+      throw new NotFoundException(`File with id ${id} not found`)
+    }
 
     const file = new FileResponseDto()
     file.id = id
-    file.file = fileContent ?? ''
+    file.file = fileContent
     file.filename = this.displayNameFromS3Key(id)
     file.fileType = this.fileTypeFromS3Key(id)
-    file.size = Buffer.byteLength(fileContent ?? '', 'base64')
+    file.size = Buffer.byteLength(fileContent, 'base64')
     return file
   }
 

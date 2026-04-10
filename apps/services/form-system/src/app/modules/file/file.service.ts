@@ -144,13 +144,11 @@ export class FileService {
       throw new Error('S3 bucket not configured')
     }
 
-    const s3Uri = `s3://${bucket}/${key}`
-
-    this.logger.info(`Deleting file ${s3Uri} for valueId ${valueId}`)
+    this.logger.info(`Deleting file ${key} for valueId ${valueId}`)
 
     try {
       await this.s3Service.deleteObject({ bucket, key })
-      this.logger.info(`Successfully deleted file ${s3Uri}`)
+      this.logger.info(`Successfully deleted file ${key}`)
 
       // Update the Value to remove the S3 key reference
       const value = await this.valueModel.findByPk(valueId, { transaction })
@@ -168,7 +166,7 @@ export class FileService {
         this.logger.warn(`Value with id ${valueId} not found`)
       }
     } catch (error) {
-      this.logger.error(`Error deleting file ${s3Uri}`, error)
+      this.logger.error(`Error deleting file ${key}`, error)
       throw error
     }
   }

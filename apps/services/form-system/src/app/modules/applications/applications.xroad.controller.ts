@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Req, VERSION_NEUTRAL } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  Req,
+  VERSION_NEUTRAL,
+} from '@nestjs/common'
 import type { Request } from 'express'
 import {
   ApiHeader,
@@ -18,6 +25,35 @@ export class ApplicationsXRoadController {
     private readonly applicationsXRoadService: ApplicationsXRoadService,
   ) {}
 
+  private getValidatedXRoadClient(req: Request): string {
+    const xRoadClientHeader = req.headers['x-road-client']
+
+    if (typeof xRoadClientHeader === 'undefined') {
+      throw new BadRequestException('Missing required header: X-Road-Client')
+    }
+
+    if (Array.isArray(xRoadClientHeader)) {
+      throw new BadRequestException(
+        'Invalid X-Road-Client header: must be a single string',
+      )
+    }
+
+    if (typeof xRoadClientHeader !== 'string') {
+      throw new BadRequestException(
+        'Invalid X-Road-Client header: must be a string',
+      )
+    }
+
+    const xRoadClient = xRoadClientHeader.trim()
+    if (!xRoadClient) {
+      throw new BadRequestException(
+        'Invalid X-Road-Client header: must be non-empty',
+      )
+    }
+
+    return xRoadClient
+  }
+
   @ApiOperation({ summary: 'Get application by id via X-Road' })
   @ApiOkResponse({
     type: ApplicationXroadDto,
@@ -34,11 +70,8 @@ export class ApplicationsXRoadController {
     @Param('id') id: string,
     @Req() req: Request,
   ): Promise<ApplicationXroadDto> {
-    const xRoadClient = req.headers['x-road-client']
-    return await this.applicationsXRoadService.getApplication(
-      id,
-      xRoadClient as string,
-    )
+    const xRoadClient = this.getValidatedXRoadClient(req)
+    return await this.applicationsXRoadService.getApplication(id, xRoadClient)
   }
 
   @ApiOperation({ summary: 'Get file by id via X-Road' })
@@ -54,10 +87,7 @@ export class ApplicationsXRoadController {
     @Param('id') id: string,
     @Req() req: Request,
   ): Promise<FileResponseDto> {
-    const xRoadClient = req.headers['x-road-client']
-    return await this.applicationsXRoadService.getFile(
-      id,
-      xRoadClient as string,
-    )
+    const xRoadClient = this.getValidatedXRoadClient(req)
+    return await this.applicationsXRoadService.getFile(id, xRoadClient)
   }
 }
