@@ -18,6 +18,14 @@ const IncomePlanDetail = lazy(() =>
   import('../../screens/social-insurance/IncomePlanDetail/IncomePlanDetail'),
 )
 
+const PersonalTaxCredit = lazy(() =>
+  import('../../screens/social-insurance/PersonalTaxCredit/PersonalTaxCredit'),
+)
+
+const PaymentTypes = lazy(() =>
+  import('../../screens/social-insurance/PaymentTypes/PaymentTypes'),
+)
+
 export const socialInsuranceRoutes = (userInfo: BffUser): PortalRoute[] => [
   // Section redirect: /framfaersla/almannatryggingar → /framfaersla/almannatryggingar/greidsluaetlun
   {
@@ -52,5 +60,19 @@ export const socialInsuranceRoutes = (userInfo: BffUser): PortalRoute[] => [
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
     key: 'SocialInsuranceIncomePlan',
     element: <IncomePlanDetail />,
+  },
+  {
+    name: m.personalTaxCredit,
+    path: SocialInsuranceMaintenancePaths.SocialInsurancePersonalTaxCredit,
+    enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
+    key: 'TRPersonalTaxCredit',
+    element: <PersonalTaxCredit />,
+  },
+  {
+    name: m.paymentTypesOverview,
+    path: SocialInsuranceMaintenancePaths.SocialInsurancePaymentTypesOverview,
+    enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
+    key: 'TRPaymentTypesOverview',
+    element: <PaymentTypes />,
   },
 ]
