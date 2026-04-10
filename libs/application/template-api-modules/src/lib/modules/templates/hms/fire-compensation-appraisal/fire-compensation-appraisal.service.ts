@@ -296,7 +296,9 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       }
     } catch (e) {
       this.logger.error(
-        'Failed to send notification to all involved:',
+        `Failed to send notification to all involved: ${
+          e instanceof TemplateApiError ? e.problem : e.message
+        }`,
         e.message,
       )
       // Dont throw error since this happens when the application has already been sent
@@ -347,13 +349,22 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           })
           .catch((e) => {
             // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
-            this.logger.error(`Failed to upload attachment: ${e}`)
+            this.logger.error(
+              `Failed to upload attachment: ${
+                e instanceof TemplateApiError ? e.problem : e.message
+              }`,
+            )
           })
       }
 
       return res
     } catch (e) {
-      this.logger.error('Failed to submit application:', e.message)
+      this.logger.error(
+        `Failed to submit application: ${
+          e instanceof TemplateApiError ? e.problem : e.message
+        }`,
+        e,
+      )
       throw new TemplateApiError(e, 500)
     }
   }
