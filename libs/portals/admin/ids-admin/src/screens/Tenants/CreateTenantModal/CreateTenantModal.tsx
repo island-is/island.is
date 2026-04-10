@@ -62,6 +62,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setValues((prev) => ({ ...prev, [field]: e.target.value }))
       setErrors((prev) => ({ ...prev, [field]: undefined }))
+      setGlobalError(null)
     }
 
   const toggleEnvironment = (env: AuthAdminEnvironment) => {
@@ -75,6 +76,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
       }
     })
     setErrors((prev) => ({ ...prev, environments: undefined }))
+    setGlobalError(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -311,6 +311,14 @@ export class TenantsService extends MultiEnvironmentService {
       }),
     )
 
+    const successes = results.filter(Boolean).length
+    const failures = results.length - successes
+    if (successes > 0 && failures > 0) {
+      this.logger.warn(
+        `Partial delete for tenant ${input.tenantId}: succeeded in ${successes} env(s), failed in ${failures}`,
+      )
+    }
+
     return results.some(Boolean)
   }
 }

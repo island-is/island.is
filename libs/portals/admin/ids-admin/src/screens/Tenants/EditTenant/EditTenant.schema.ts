@@ -1,16 +1,15 @@
-import * as kennitala from 'kennitala'
 import { z } from 'zod'
 
 import { defaultEnvironmentSchema } from '../../../utils/schemas'
+import {
+  contactEmailSchema,
+  nationalIdSchema,
+  safeTextSchema,
+} from '../tenantValidation'
 
 export enum TenantFormTypes {
   basicInfo = 'basicInfo',
 }
-
-const safeText = z
-  .string()
-  .min(1, 'errorUnsafeChars')
-  .regex(/^[^<>%$]+$/, 'errorUnsafeChars')
 
 // Schema for the basic info section of the tenant edit page. Merged with
 // `defaultEnvironmentSchema` so the form can round-trip the currently
@@ -22,16 +21,11 @@ const safeText = z
 export const editTenantSchema = {
   [TenantFormTypes.basicInfo]: z
     .object({
-      nationalId: z
-        .string()
-        .min(1, 'errorNationalId')
-        .refine((value) => value.length === 10 && kennitala.isValid(value), {
-          message: 'errorNationalId',
-        }),
-      displayName: safeText,
-      description: safeText,
+      nationalId: nationalIdSchema,
+      displayName: safeTextSchema,
+      description: safeTextSchema,
       organisationLogoKey: z.string().min(1, 'errorOrgLogoKey'),
-      contactEmail: z.string().email('errorEmail').or(z.literal('')).optional(),
+      contactEmail: contactEmailSchema,
     })
     .merge(defaultEnvironmentSchema),
 }

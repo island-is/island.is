@@ -1,28 +1,23 @@
-import * as kennitala from 'kennitala'
 import { z } from 'zod'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
-const safeText = z
-  .string()
-  .min(1, 'errorUnsafeChars')
-  .regex(/^[^<>%$]+$/, 'errorUnsafeChars')
+import {
+  contactEmailSchema,
+  nationalIdSchema,
+  safeTextSchema,
+} from '../tenantValidation'
 
 export const createTenantSchema = z.object({
   name: z
     .string()
     .min(1, 'errorTenantName')
     .regex(/^@[a-z0-9_.-]+$/, 'errorTenantName'),
-  nationalId: z
-    .string()
-    .min(1, 'errorNationalId')
-    .refine((value) => value.length === 10 && kennitala.isValid(value), {
-      message: 'errorNationalId',
-    }),
-  displayName: safeText,
-  description: safeText,
+  nationalId: nationalIdSchema,
+  displayName: safeTextSchema,
+  description: safeTextSchema,
   organisationLogoKey: z.string().min(1, 'errorOrgLogoKey'),
-  contactEmail: z.string().email('errorEmail').or(z.literal('')).optional(),
+  contactEmail: contactEmailSchema,
   environments: z
     .array(z.nativeEnum(AuthAdminEnvironment))
     .nonempty('errorEnvironment'),

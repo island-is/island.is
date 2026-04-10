@@ -9,7 +9,7 @@ import {
 import * as styles from './Tooltip.css'
 import { Icon } from '../IconRC/Icon'
 import { Size } from '../IconRC/types'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
 
@@ -98,11 +98,7 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
       <ReakitTooltip
         {...tooltip}
         unstable_portal={renderInPortal}
-        // ModalBase's backdrop sits at z-index 10000 and, because the tooltip
-        // portal is appended to <body> without its own z-index, it otherwise
-        // paints behind any open modal/dialog. Bump it above the modal so
-        // tooltips stay visible when used inside modal content.
-        style={{ zIndex: 10001 }}
+        style={{ zIndex: theme.zIndex.aboveModalBackdrop }}
       >
         <div
           className={cn(styles.tooltip, {
