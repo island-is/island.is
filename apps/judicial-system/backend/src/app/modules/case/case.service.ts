@@ -1221,7 +1221,7 @@ export class CaseService {
       }
     }
 
-    // Applies to request cases and indictment dismissal appeals
+    // Applies to appealed cases
     if (
       updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
     ) {
@@ -1243,7 +1243,7 @@ export class CaseService {
       }
     }
 
-    // Applies to request cases and indictment dismissal appeals
+    // Applies to appealed cases
     if (
       updatedCase.appealCase?.prosecutorStatementDate?.getTime() !==
       theCase.appealCase?.prosecutorStatementDate?.getTime()
@@ -1339,7 +1339,7 @@ export class CaseService {
       }
     }
 
-    // This only applies to restriction cases
+    // This applies to appealed cases
     if (updatedCase.appealCase?.appealCaseNumber) {
       if (
         updatedCase.appealCase?.appealCaseNumber !==
@@ -1358,7 +1358,7 @@ export class CaseService {
           updatedCase.appealCase?.appealJudge3Id !==
             theCase.appealCase?.appealJudge3Id)
       ) {
-        // New appeal court
+        // New appeal court assignments
         this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
       }
     }
