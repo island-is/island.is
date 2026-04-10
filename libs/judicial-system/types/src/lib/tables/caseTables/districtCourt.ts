@@ -119,7 +119,7 @@ const districtCourtIndictmentsAppealedColumnKeys: CaseTableColumnKey[] = [
 ]
 
 export const districtCourtIndictmentsAppealed: CaseTable = {
-  title: 'Kærur sakamála til Landsréttar',
+  title: 'Kærur til Landsréttar í sakamálum',
   hasMyCasesFilter: true,
   columnKeys: districtCourtIndictmentsAppealedColumnKeys,
   columns: pickColumns(districtCourtIndictmentsAppealedColumnKeys),
