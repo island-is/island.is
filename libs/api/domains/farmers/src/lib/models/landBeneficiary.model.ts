@@ -12,7 +12,10 @@ export class LandBeneficiary {
   @Field({ nullable: true })
   bankInfo?: string
 
-  @Field({ nullable: true, description: 'ÍSAT industry classification code for the beneficiary' })
+  @Field({
+    nullable: true,
+    description: 'ÍSAT industry classification code for the beneficiary',
+  })
   isat?: string
 
   @Field({ nullable: true, description: 'Virðisaukaskattur' })
