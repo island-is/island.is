@@ -314,6 +314,7 @@ export class MeDelegationsService {
         nationalId: nationalId ?? '',
         name: personName,
         type: firstDelegation.type,
+        subjectId: firstDelegation.subjectId ?? null,
         totalScopeCount: allScopes.length,
         scopes: allScopes,
         createdAt: firstDelegation.createdAt ?? null,

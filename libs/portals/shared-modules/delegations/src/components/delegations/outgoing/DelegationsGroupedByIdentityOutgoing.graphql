@@ -1,8 +1,9 @@
-fragment AuthApiScope on AuthApiScope {
+fragment AuthApiScopeOutgoing on AuthApiScope {
   name
   displayName
   description
   allowsWrite
+  thirdPartyLoginUrl
 }
 
 query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
@@ -10,6 +11,7 @@ query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
     nationalId
     name
     type
+    subjectId
     totalScopeCount
     scopes {
       id
@@ -25,7 +27,7 @@ query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
         organisationLogoUrl
       }
       apiScope(lang: $lang) {
-        ...AuthApiScope
+        ...AuthApiScopeOutgoing
         group {
           name
           displayName
