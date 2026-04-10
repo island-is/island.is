@@ -107,28 +107,31 @@ export const Subsidies = ({ farmId }: Props) => {
         paymentDate: FarmerLandSubsidyOrderField.PaymentDate,
         contract: FarmerLandSubsidyOrderField.Contract,
       }
-      if (sortBy.length === 0) {
-        setFilters({
-          ...filters,
-          orderField: undefined,
-          orderDirection: undefined,
-          cursor: undefined,
-        })
-      } else {
-        const field = fieldMap[sortBy[0].id]
-        if (field) {
-          setFilters({
-            ...filters,
+      setFilters((prev) => {
+        if (sortBy.length === 0) {
+          return {
+            ...prev,
+            orderField: undefined,
+            orderDirection: undefined,
             cursor: undefined,
-            orderField: field,
-            orderDirection: sortBy[0].desc
-              ? FarmerLandSubsidyOrderDirection.Descending
-              : FarmerLandSubsidyOrderDirection.Ascending,
-          })
+          }
         }
-      }
+
+        const field = fieldMap[sortBy[0].id]
+        if (!field) {
+          return prev
+        }
+
+        return {
+          ...prev,
+          cursor: undefined,
+          orderField: field,
+          orderDirection: sortBy[0].desc
+            ? FarmerLandSubsidyOrderDirection.Descending
+            : FarmerLandSubsidyOrderDirection.Ascending,
+        }
+      })
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 

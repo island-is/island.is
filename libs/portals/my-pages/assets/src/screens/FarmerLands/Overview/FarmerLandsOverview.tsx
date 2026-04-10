@@ -84,27 +84,30 @@ export const FarmerLandsOverview = () => {
       )}
       <Stack space={4}>
         {!error &&
-          farmerLands.map((land) => (
-            <ActionCard
-              key={land.id}
-              heading={land.name ?? ''}
-              headingVariant="h4"
-              text={formatMessage(fm.farmNumber, {
-                arg: land.id,
-              })}
-              cta={{
-                label: formatMessage(m.viewDetail),
-                variant: 'text',
-                onClick: () =>
-                  navigate(
-                    AssetsPaths.AssetsFarmerLandDetail.replace(
-                      ':id',
-                      land.id ?? '',
+          farmerLands.map((land) => {
+            if (!land.id) return null
+            return (
+              <ActionCard
+                key={land.id}
+                heading={land.name ?? ''}
+                headingVariant="h4"
+                text={formatMessage(fm.farmNumber, {
+                  arg: land.id,
+                })}
+                cta={{
+                  label: formatMessage(m.viewDetail),
+                  variant: 'text',
+                  onClick: () =>
+                    navigate(
+                      AssetsPaths.AssetsFarmerLandDetail.replace(
+                        ':id',
+                        land.id ?? '',
+                      ),
                     ),
-                  ),
-              }}
-            />
-          ))}
+                }}
+              />
+            )
+          })}
       </Stack>
     </IntroWrapperV2>
   )
