@@ -59,11 +59,15 @@ export const AccordionFormField = ({
                   style={{ overflow: 'visible' }}
                   marginTop={hasContent ? 2 : 0}
                 >
-                  {item.children!.map((childField) => (
-                    <Box key={childField.id} marginBottom={2}>
-                      {renderField?.(childField)}
-                    </Box>
-                  ))}
+                  {item.children!.map((childField) => {
+                    const rendered = renderField?.(childField)
+                    if (!rendered) return null
+                    return (
+                      <Box key={childField.id} marginBottom={2}>
+                        {rendered}
+                      </Box>
+                    )
+                  })}
                 </Box>
               )}
             </AccordionItem>
