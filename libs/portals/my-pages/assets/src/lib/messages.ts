@@ -278,18 +278,6 @@ export const farmerLandsMessages = defineMessages({
     defaultMessage: 'Næsta síða',
   },
   // Subsidies columns
-  subsidyDate: {
-    id: 'sp.farmer-lands:subsidy-date',
-    defaultMessage: 'Dagsetning',
-  },
-  subsidyContract: {
-    id: 'sp.farmer-lands:subsidy-contract',
-    defaultMessage: 'Samningur',
-  },
-  subsidyCategory: {
-    id: 'sp.farmer-lands:subsidy-category',
-    defaultMessage: 'Tegund',
-  },
   subsidyGrossAmount: {
     id: 'sp.farmer-lands:subsidy-gross-amount',
     defaultMessage: 'Upphæð',
@@ -301,14 +289,6 @@ export const farmerLandsMessages = defineMessages({
   subsidyNetPaid: {
     id: 'sp.farmer-lands:subsidy-net-paid',
     defaultMessage: 'Útborgað',
-  },
-  subsidyName: {
-    id: 'sp.farmer-lands:subsidy-name',
-    defaultMessage: 'Nafn',
-  },
-  subsidyNationalId: {
-    id: 'sp.farmer-lands:subsidy-national-id',
-    defaultMessage: 'Kennitala',
   },
   subsidyUnits: {
     id: 'sp.farmer-lands:subsidy-units',

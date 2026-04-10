@@ -74,12 +74,10 @@ export const FarmerLandsOverview = () => {
             search ? cm.noSearchResults : fm.noFarmerLandsTitle,
           )}
           message={formatMessage(
-            search
-              ? cm.noSearchResultsText
-              : cm.noDataFoundDetail,
+            search ? cm.noSearchResultsText : cm.noDataFoundDetail,
             search ? { arg: search } : undefined,
           )}
-          imgSrc="./assets/images/coffee.svg"
+          imgSrc="./assets/images/movingTruck.svg"
           titleSize="h3"
           noBorder={false}
         />

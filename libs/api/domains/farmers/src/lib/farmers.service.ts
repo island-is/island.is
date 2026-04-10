@@ -12,13 +12,11 @@ import {
 } from './mapper'
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidiesCollection } from './models/farmerLandSubsidiesCollection.model'
-import {
-  FarmerLandSubsidyOrderDirection,
-  FarmerLandSubsidyOrderField,
-} from './models/enums'
+import { FarmerLandSubsidyOrderDirection } from './models/enums'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
 import { LandsCollection } from './models/farmerLandsCollection.model'
+import { FarmerLandSubsidiesInput } from './dto/farmerLandSubsidies.input.model'
 
 @Injectable()
 export class FarmersService {
@@ -36,7 +34,7 @@ export class FarmersService {
 
   async getLand(user: User, id: string): Promise<FarmerLand | null> {
     const farm = await this.farmersClientService.getFarm(user, id)
-    return farm ? mapToFarmerLand(farm) ?? null : null
+    return farm ? mapToFarmerLand(farm) : null
   }
 
   async getBeneficiaries(
@@ -60,15 +58,19 @@ export class FarmersService {
 
   async getSubsidies(
     user: User,
-    farmId: string,
-    cursor?: string,
-    orderField?: FarmerLandSubsidyOrderField,
-    orderDirection?: FarmerLandSubsidyOrderDirection,
-    paymentCategoryId?: number,
-    contractId?: string,
-    dateFrom?: Date,
-    dateTo?: Date,
+    input: FarmerLandSubsidiesInput,
   ): Promise<FarmerLandSubsidiesCollection> {
+    const {
+      farmId,
+      cursor,
+      orderField,
+      orderDirection,
+      paymentCategoryId,
+      contractId,
+      dateFrom,
+      dateTo,
+    } = input
+
     const order = orderField
       ? `${
           orderDirection === FarmerLandSubsidyOrderDirection.Descending
@@ -89,7 +91,7 @@ export class FarmersService {
     )
     return {
       data: (response?.data ?? [])
-        .map((p) => mapToFarmerLandSubsidy(p, farmId))
+        .map((p) => mapToFarmerLandSubsidy(p))
         .filter(isDefined),
       totalCount: response?.total ?? 0,
       pageInfo: {

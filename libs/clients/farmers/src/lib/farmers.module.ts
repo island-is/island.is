@@ -6,7 +6,6 @@ import { client } from '../../gen/fetch/client.gen'
 import { createQuerySerializer } from '../../gen/fetch/client/utils.gen'
 import { FarmersClientConfig } from './farmers.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Module({
   providers: [FarmersClientService],

@@ -58,7 +58,7 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
       },
       {
         Header: formatMessage(fm.vatNumber),
-        accessor: 'vskNumberDisplayString',
+        accessor: 'vatNumber',
         sortType: 'basic',
       },
     ],
