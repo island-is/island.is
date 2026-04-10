@@ -34,8 +34,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
+import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './caseFile.model'
-import { CasePoliceCaseNumberAssignment } from './casePoliceCaseNumberAssignment.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { CourtDocument } from './courtDocument.model'
@@ -694,12 +694,12 @@ export class Case extends Model {
   @ApiPropertyOptional({ type: () => CaseFile, isArray: true })
   caseFiles?: CaseFile[]
 
-  @HasMany(() => CasePoliceCaseNumberAssignment, 'caseId')
+  @HasMany(() => CaseDefendantPoliceCaseNumber, 'caseId')
   @ApiPropertyOptional({
-    type: () => CasePoliceCaseNumberAssignment,
+    type: () => CaseDefendantPoliceCaseNumber,
     isArray: true,
   })
-  policeCaseNumberAssignments?: CasePoliceCaseNumberAssignment[]
+  caseDefendantPoliceCaseNumbers?: CaseDefendantPoliceCaseNumber[]
 
   /**********
    * The explanation given for a modification of a case's validTo or isolationTo dates

@@ -6,8 +6,8 @@ import { ConfigModule } from '@island.is/nest/config'
 import { AppealCase } from './models/appealCase.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './models/caseFile.model'
-import { CasePoliceCaseNumberAssignment } from './models/casePoliceCaseNumberAssignment.model'
 import { CaseString } from './models/caseString.model'
 import { CourtDocument } from './models/courtDocument.model'
 import { CourtSession } from './models/courtSession.model'
@@ -23,7 +23,7 @@ import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
-import { CasePoliceCaseNumberAssignmentRepositoryService } from './services/casePoliceCaseNumberAssignment.repository.service'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
@@ -42,7 +42,7 @@ import { repositoryModuleConfig } from './repository.config'
       Case,
       CaseArchive,
       CaseFile,
-      CasePoliceCaseNumberAssignment,
+      CaseDefendantPoliceCaseNumber,
       CaseString,
       CourtDocument,
       CourtSession,
@@ -62,7 +62,7 @@ import { repositoryModuleConfig } from './repository.config'
   ],
   providers: [
     CaseArchiveRepositoryService,
-    CasePoliceCaseNumberAssignmentRepositoryService,
+    CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
     CourtDocumentRepositoryService,
@@ -75,7 +75,7 @@ import { repositoryModuleConfig } from './repository.config'
   ],
   exports: [
     CaseArchiveRepositoryService,
-    CasePoliceCaseNumberAssignmentRepositoryService,
+    CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
     CourtDocumentRepositoryService,

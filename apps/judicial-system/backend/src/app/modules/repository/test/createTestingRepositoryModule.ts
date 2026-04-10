@@ -15,7 +15,7 @@ import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import { CasePoliceCaseNumberAssignmentRepositoryService } from '../services/casePoliceCaseNumberAssignment.repository.service'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 
 const mockModel = () => ({
@@ -54,7 +54,7 @@ export const createTestingRepositoryModule = async () => {
       { provide: getModelToken(CaseFile), useValue: mockModel() },
       { provide: getModelToken(AppealCase), useValue: mockModel() },
       {
-        provide: CasePoliceCaseNumberAssignmentRepositoryService,
+        provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
           replaceUnassignedFromPoliceCaseNumbersArray: jest
             .fn()

@@ -5,17 +5,17 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CasePoliceCaseNumberAssignment } from '../models/casePoliceCaseNumberAssignment.model'
+import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 
 interface ReplaceUnassignedOptions {
   transaction: Transaction
 }
 
 @Injectable()
-export class CasePoliceCaseNumberAssignmentRepositoryService {
+export class CaseDefendantPoliceCaseNumberRepositoryService {
   constructor(
-    @InjectModel(CasePoliceCaseNumberAssignment)
-    private readonly model: typeof CasePoliceCaseNumberAssignment,
+    @InjectModel(CaseDefendantPoliceCaseNumber)
+    private readonly model: typeof CaseDefendantPoliceCaseNumber,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -32,7 +32,7 @@ export class CasePoliceCaseNumberAssignmentRepositoryService {
 
     try {
       this.logger.debug(
-        `Replacing unassigned police case number assignments for case ${caseId}`,
+        `Replacing unassigned case–defendant–police case number rows for case ${caseId}`,
       )
 
       await this.model.destroy({
@@ -56,11 +56,11 @@ export class CasePoliceCaseNumberAssignmentRepositoryService {
       )
 
       this.logger.debug(
-        `Replaced unassigned police case number assignments for case ${caseId} (${distinct.length} numbers)`,
+        `Replaced unassigned police case number rows for case ${caseId} (${distinct.length} numbers)`,
       )
     } catch (error) {
       this.logger.error(
-        `Error replacing unassigned police case number assignments for case ${caseId}`,
+        `Error replacing unassigned police case number rows for case ${caseId}`,
         { error },
       )
 
@@ -92,7 +92,7 @@ export class CasePoliceCaseNumberAssignmentRepositoryService {
       )
     } catch (error) {
       this.logger.error(
-        `Error moving police case number assignments for defendant ${defendantId} to case ${toCaseId}`,
+        `Error moving police case number rows for defendant ${defendantId} to case ${toCaseId}`,
         { error },
       )
 

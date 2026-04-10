@@ -15,10 +15,10 @@ import { Case } from './case.model'
 import { Defendant } from './defendant.model'
 
 @Table({
-  tableName: 'case_police_case_number_assignment',
+  tableName: 'case_defendant_police_case_number',
   timestamps: true,
 })
-export class CasePoliceCaseNumberAssignment extends Model {
+export class CaseDefendantPoliceCaseNumber extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

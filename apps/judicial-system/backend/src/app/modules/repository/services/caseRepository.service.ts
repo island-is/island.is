@@ -44,8 +44,7 @@ import {
   UpdateAppealCase,
   UpdateCase,
 } from '../types/caseRepository.types'
-
-import { CasePoliceCaseNumberAssignmentRepositoryService } from './casePoliceCaseNumberAssignment.repository.service'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -126,7 +125,7 @@ export class CaseRepositoryService {
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @InjectModel(AppealCase)
     private readonly appealCaseModel: typeof AppealCase,
-    private readonly casePoliceCaseNumberAssignmentRepositoryService: CasePoliceCaseNumberAssignmentRepositoryService,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -384,7 +383,7 @@ export class CaseRepositoryService {
         })
       }
 
-      await this.casePoliceCaseNumberAssignmentRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+      await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         result.id,
         result.policeCaseNumbers ?? [],
         { transaction: options.transaction },
@@ -470,7 +469,7 @@ export class CaseRepositoryService {
 
       const { id: splitCaseId } = result
 
-      await this.casePoliceCaseNumberAssignmentRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+      await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         splitCaseId,
         result.policeCaseNumbers ?? [],
         { transaction },
@@ -684,7 +683,7 @@ export class CaseRepositoryService {
 
       await Promise.all(promises)
 
-      await this.casePoliceCaseNumberAssignmentRepositoryService.moveAssignedRowsToCaseForDefendant(
+      await this.caseDefendantPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant(
         caseId,
         splitCaseId,
         defendantId,
@@ -777,7 +776,7 @@ export class CaseRepositoryService {
       }
 
       if (Object.hasOwn(data as object, 'policeCaseNumbers')) {
-        await this.casePoliceCaseNumberAssignmentRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+        await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
           caseId,
           updatedCase.policeCaseNumbers ?? [],
           { transaction: options.transaction },

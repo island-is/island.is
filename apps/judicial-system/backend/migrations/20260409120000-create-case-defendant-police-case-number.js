@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface
         .createTable(
-          'case_police_case_number_assignment',
+          'case_defendant_police_case_number',
           {
             id: {
               type: Sequelize.UUID,
@@ -45,8 +45,8 @@ module.exports = {
         .then(() =>
           queryInterface.sequelize.query(
             `
-            CREATE UNIQUE INDEX case_police_case_number_assignment_case_id_police_unassigned_uniq
-            ON case_police_case_number_assignment (case_id, police_case_number)
+            CREATE UNIQUE INDEX case_def_police_cnum_unassigned_uniq
+            ON case_defendant_police_case_number (case_id, police_case_number)
             WHERE defendant_id IS NULL
             `,
             { transaction },
@@ -55,8 +55,8 @@ module.exports = {
         .then(() =>
           queryInterface.sequelize.query(
             `
-            CREATE UNIQUE INDEX case_police_case_number_assignment_case_defendant_police_assigned_uniq
-            ON case_police_case_number_assignment (case_id, defendant_id, police_case_number)
+            CREATE UNIQUE INDEX case_def_police_cnum_assigned_uniq
+            ON case_defendant_police_case_number (case_id, defendant_id, police_case_number)
             WHERE defendant_id IS NOT NULL
             `,
             { transaction },
@@ -64,20 +64,20 @@ module.exports = {
         )
         .then(() =>
           queryInterface.addIndex(
-            'case_police_case_number_assignment',
+            'case_defendant_police_case_number',
             ['case_id'],
             {
-              name: 'case_police_case_number_assignment_case_id_idx',
+              name: 'case_def_police_cnum_case_id_idx',
               transaction,
             },
           ),
         )
         .then(() =>
           queryInterface.addIndex(
-            'case_police_case_number_assignment',
+            'case_defendant_police_case_number',
             ['defendant_id'],
             {
-              name: 'case_police_case_number_assignment_defendant_id_idx',
+              name: 'case_def_police_cnum_defendant_id_idx',
               transaction,
             },
           ),
@@ -85,7 +85,7 @@ module.exports = {
         .then(() =>
           queryInterface.sequelize.query(
             `
-            INSERT INTO case_police_case_number_assignment (
+            INSERT INTO case_defendant_police_case_number (
               id,
               created,
               modified,
@@ -116,7 +116,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.dropTable('case_police_case_number_assignment', {
+      queryInterface.dropTable('case_defendant_police_case_number', {
         transaction,
       }),
     )
