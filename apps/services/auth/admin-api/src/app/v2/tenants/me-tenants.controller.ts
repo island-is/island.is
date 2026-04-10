@@ -14,7 +14,6 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
   AdminCreateTenantDto,
   AdminPatchTenantDto,
-  AdminTenantDto,
   Domain,
   MeTenantGuard,
   TenantDto,
@@ -51,12 +50,12 @@ export class MeTenantsController {
   @Scopes(...idsAdminScopes)
   @Documentation({
     description: 'Get all tenants for the current user.',
-    response: { status: 200, type: [AdminTenantDto] },
+    response: { status: 200, type: [TenantDto] },
   })
-  @Audit<AdminTenantDto[]>({
+  @Audit<TenantDto[]>({
     resources: (tenants) => tenants.map((tenant) => tenant.name),
   })
-  findAll(@CurrentUser() user: User): Promise<AdminTenantDto[]> {
+  findAll(@CurrentUser() user: User): Promise<TenantDto[]> {
     return this.tenantsService.findAllByUser(user)
   }
 
