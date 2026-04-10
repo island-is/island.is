@@ -40,7 +40,13 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
         transaction,
       })
 
-      const distinct = [...new Set(policeCaseNumbers.filter(Boolean))]
+      const distinct = [
+        ...new Set(
+          policeCaseNumbers
+            .map((policeCaseNumber) => policeCaseNumber.trim())
+            .filter((policeCaseNumber) => policeCaseNumber.length > 0),
+        ),
+      ]
 
       if (distinct.length === 0) {
         return

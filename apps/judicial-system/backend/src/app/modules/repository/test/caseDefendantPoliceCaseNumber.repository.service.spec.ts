@@ -74,10 +74,10 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       )
     })
 
-    it('does not bulkCreate when all numbers are empty after filtering', async () => {
+    it('does not bulkCreate when every entry is empty or whitespace-only after trim', async () => {
       await service.replaceUnassignedFromPoliceCaseNumbersArray(
         'case-id-1',
-        [],
+        ['', '   ', '\t'],
         { transaction },
       )
 
