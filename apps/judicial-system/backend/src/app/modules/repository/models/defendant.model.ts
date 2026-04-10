@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CasePoliceCaseNumberAssignment } from './casePoliceCaseNumberAssignment.model'
 import { DefendantEventLog } from './defendantEventLog.model'
 import { Subpoena } from './subpoena.model'
 import { Verdict } from './verdict.model'
@@ -186,6 +187,13 @@ export class Defendant extends Model {
   @HasMany(() => Subpoena, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Subpoena, isArray: true })
   subpoenas?: Subpoena[]
+
+  @HasMany(() => CasePoliceCaseNumberAssignment, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({
+    type: () => CasePoliceCaseNumberAssignment,
+    isArray: true,
+  })
+  policeCaseNumberAssignments?: CasePoliceCaseNumberAssignment[]
 
   @Column({
     type: DataType.ENUM,

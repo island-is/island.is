@@ -1,0 +1,102 @@
+import { Op, Transaction } from 'sequelize'
+
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { CasePoliceCaseNumberAssignment } from '../models/casePoliceCaseNumberAssignment.model'
+
+interface ReplaceUnassignedOptions {
+  transaction: Transaction
+}
+
+@Injectable()
+export class CasePoliceCaseNumberAssignmentRepositoryService {
+  constructor(
+    @InjectModel(CasePoliceCaseNumberAssignment)
+    private readonly model: typeof CasePoliceCaseNumberAssignment,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
+
+  /**
+   * Replaces only rows with defendant_id NULL for this case (PR 1: array-derived links).
+   * Rows with a defendant_id set are left unchanged for future PRs.
+   */
+  async replaceUnassignedFromPoliceCaseNumbersArray(
+    caseId: string,
+    policeCaseNumbers: string[],
+    options: ReplaceUnassignedOptions,
+  ): Promise<void> {
+    const { transaction } = options
+
+    try {
+      this.logger.debug(
+        `Replacing unassigned police case number assignments for case ${caseId}`,
+      )
+
+      await this.model.destroy({
+        where: { caseId, defendantId: { [Op.is]: null } },
+        transaction,
+      })
+
+      const distinct = [...new Set(policeCaseNumbers.filter(Boolean))]
+
+      if (distinct.length === 0) {
+        return
+      }
+
+      await this.model.bulkCreate(
+        distinct.map((policeCaseNumber) => ({
+          caseId,
+          defendantId: null,
+          policeCaseNumber,
+        })),
+        { transaction },
+      )
+
+      this.logger.debug(
+        `Replaced unassigned police case number assignments for case ${caseId} (${distinct.length} numbers)`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error replacing unassigned police case number assignments for case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * When a defendant is split to a new case, move attributed links to the new case_id.
+   */
+  async moveAssignedRowsToCaseForDefendant(
+    fromCaseId: string,
+    toCaseId: string,
+    defendantId: string,
+    options: ReplaceUnassignedOptions,
+  ): Promise<void> {
+    const { transaction } = options
+
+    try {
+      await this.model.update(
+        { caseId: toCaseId },
+        {
+          where: {
+            caseId: fromCaseId,
+            defendantId,
+          },
+          transaction,
+        },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error moving police case number assignments for defendant ${defendantId} to case ${toCaseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+}

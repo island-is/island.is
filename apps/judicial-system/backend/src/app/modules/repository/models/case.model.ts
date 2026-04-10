@@ -35,6 +35,7 @@ import {
 
 import { AppealCase } from './appealCase.model'
 import { CaseFile } from './caseFile.model'
+import { CasePoliceCaseNumberAssignment } from './casePoliceCaseNumberAssignment.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { CourtDocument } from './courtDocument.model'
@@ -692,6 +693,13 @@ export class Case extends Model {
   @HasMany(() => CaseFile, 'caseId')
   @ApiPropertyOptional({ type: () => CaseFile, isArray: true })
   caseFiles?: CaseFile[]
+
+  @HasMany(() => CasePoliceCaseNumberAssignment, 'caseId')
+  @ApiPropertyOptional({
+    type: () => CasePoliceCaseNumberAssignment,
+    isArray: true,
+  })
+  policeCaseNumberAssignments?: CasePoliceCaseNumberAssignment[]
 
   /**********
    * The explanation given for a modification of a case's validTo or isolationTo dates

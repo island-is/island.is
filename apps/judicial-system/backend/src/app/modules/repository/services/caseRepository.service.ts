@@ -45,6 +45,8 @@ import {
   UpdateCase,
 } from '../types/caseRepository.types'
 
+import { CasePoliceCaseNumberAssignmentRepositoryService } from './casePoliceCaseNumberAssignment.repository.service'
+
 interface FindByIdOptions {
   transaction?: Transaction
   include?: FindOptions['include']
@@ -124,6 +126,7 @@ export class CaseRepositoryService {
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @InjectModel(AppealCase)
     private readonly appealCaseModel: typeof AppealCase,
+    private readonly casePoliceCaseNumberAssignmentRepositoryService: CasePoliceCaseNumberAssignmentRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -381,6 +384,12 @@ export class CaseRepositoryService {
         })
       }
 
+      await this.casePoliceCaseNumberAssignmentRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+        result.id,
+        result.policeCaseNumbers ?? [],
+        { transaction: options.transaction },
+      )
+
       return result
     } catch (error) {
       this.logger.error('Error creating a new case with data:', {
@@ -460,6 +469,12 @@ export class CaseRepositoryService {
       )
 
       const { id: splitCaseId } = result
+
+      await this.casePoliceCaseNumberAssignmentRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+        splitCaseId,
+        result.policeCaseNumbers ?? [],
+        { transaction },
+      )
 
       // Create a promise collection to await later
       const promises: Promise<unknown>[] = []
@@ -669,6 +684,13 @@ export class CaseRepositoryService {
 
       await Promise.all(promises)
 
+      await this.casePoliceCaseNumberAssignmentRepositoryService.moveAssignedRowsToCaseForDefendant(
+        caseId,
+        splitCaseId,
+        defendantId,
+        { transaction },
+      )
+
       this.logger.debug(
         `Split defendant ${defendantId} from case ${caseId} into a new case ${result.id}`,
       )
@@ -752,6 +774,14 @@ export class CaseRepositoryService {
         await this.upsertAppealCase(caseId, appealData as UpdateAppealCase, {
           transaction: options.transaction,
         })
+      }
+
+      if (Object.hasOwn(data as object, 'policeCaseNumbers')) {
+        await this.casePoliceCaseNumberAssignmentRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+          caseId,
+          updatedCase.policeCaseNumbers ?? [],
+          { transaction: options.transaction },
+        )
       }
 
       return updatedCase
