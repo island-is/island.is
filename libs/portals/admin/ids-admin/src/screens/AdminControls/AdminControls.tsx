@@ -11,7 +11,7 @@ const AdminControls = () => {
 
   return (
     <Layout
-      navTitle={formatMessage(m.adminControls)}
+      navTitle={formatMessage(m.idsAdmin)}
       navItems={idsAdminControlsNav}
     >
       <Outlet />

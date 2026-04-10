@@ -55,28 +55,42 @@ export const idsAdminNav: PortalNavigationItem = {
 }
 
 export const idsAdminControlsNav: PortalNavigationItem = {
-  name: m.adminControls,
-  path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
-  description: m.adminControls,
+  name: m.idsAdmin,
+  path: IDSAdminPaths.IDSAdmin,
+  description: m.idsAdmin,
   activeIfExact: true,
   children: [
     {
-      name: m.apiScopeUsers,
+      name: m.domains,
+      path: IDSAdminPaths.IDSAdmin,
+      description: m.idsAdmin,
+      activeIfExact: true,
+    },
+    {
+      name: m.adminControls,
       path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
-      description: m.adminControls,
+      description: m.idsAdmin,
       activeIfExact: true,
-    },
-    {
-      name: m.grantTypes,
-      path: IDSAdminPaths.IDSAdminControlsGrantTypes,
-      description: m.adminControls,
-      activeIfExact: true,
-    },
-    {
-      name: m.idpProviders,
-      path: IDSAdminPaths.IDSAdminControlsIdpProviders,
-      description: m.adminControls,
-      activeIfExact: true,
+      children: [
+        {
+          name: m.apiScopeUsers,
+          path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.grantTypes,
+          path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.idpProviders,
+          path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+      ],
     },
   ],
 }

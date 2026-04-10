@@ -915,6 +915,10 @@ export const m = defineMessages({
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
   },
+  domains: {
+    id: 'ap.ids-admin:domains',
+    defaultMessage: 'Domains',
+  },
   adminControls: {
     id: 'ap.ids-admin:admin-controls',
     defaultMessage: 'Admin Controls',
