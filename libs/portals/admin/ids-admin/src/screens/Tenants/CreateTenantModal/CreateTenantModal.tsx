@@ -31,7 +31,7 @@ import {
 
 type FieldErrors = Partial<Record<keyof CreateTenantFormValues, string>>
 
-type CreateTenantModalProps = {
+export type CreateTenantModalProps = {
   onClose: () => void
   onCreated: () => void
 }
@@ -56,6 +56,11 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
   const [globalError, setGlobalError] = useState<string | null>(null)
 
   const [createTenant, { loading }] = useCreateTenantMutation()
+
+  const handleClose = () => {
+    if (loading) return
+    onClose()
+  }
 
   const onChange =
     (field: Exclude<keyof CreateTenantFormValues, 'environments'>) =>
@@ -112,8 +117,9 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
         },
       })
 
-      const createdIn =
-        response.data?.createAuthAdminTenant?.map((t) => t.environment) ?? []
+      const createdTenants = response.data?.createAuthAdminTenant ?? []
+      const createdIn = createdTenants.map((t) => t.environment)
+      const tenantName = createdTenants[0]?.name ?? result.data.name
       const partiallyCreated =
         createdIn.length !== result.data.environments.length
 
@@ -132,7 +138,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
       navigate(
         replaceParams({
           href: IDSAdminPaths.IDSAdminClients,
-          params: { tenant: result.data.name },
+          params: { tenant: tenantName },
         }),
       )
     } catch (error) {
@@ -147,7 +153,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
       isVisible
       label={formatMessage(m.createTenant)}
       title={formatMessage(m.createTenant)}
-      onClose={onClose}
+      onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Box paddingTop={2}>
@@ -272,10 +278,15 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
             {globalError && <AlertMessage type="error" message={globalError} />}
 
             <Box display="flex" justifyContent="spaceBetween">
-              <Button onClick={onClose} variant="ghost" type="button">
+              <Button
+                onClick={handleClose}
+                variant="ghost"
+                type="button"
+                disabled={loading}
+              >
                 {formatMessage(m.cancel)}
               </Button>
-              <Button type="submit" loading={loading}>
+              <Button type="submit" loading={loading} disabled={loading}>
                 {formatMessage(m.create)}
               </Button>
             </Box>

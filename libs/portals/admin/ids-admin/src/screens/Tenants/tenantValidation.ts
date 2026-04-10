@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const safeTextSchema = z
   .string()
-  .min(1, 'errorUnsafeChars')
+  .min(1, 'errorRequired')
   .regex(/^[^<>%$]+$/, 'errorUnsafeChars')
 
 export const nationalIdSchema = z

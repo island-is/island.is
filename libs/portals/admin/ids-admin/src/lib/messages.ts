@@ -1236,6 +1236,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-org-logo-key',
     defaultMessage: 'Organisation logo key is required',
   },
+  errorRequired: {
+    id: 'ap.ids-admin:error-required',
+    defaultMessage: 'This field is required',
+  },
   errorUnsafeChars: {
     id: 'ap.ids-admin:error-unsafe-chars',
     defaultMessage: 'Contains invalid characters',
