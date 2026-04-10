@@ -37,7 +37,7 @@ import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import {
   hasLocalResidence,
   hasResidenceHistory,
@@ -55,7 +55,7 @@ export class DrivingLicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly drivingLicenseApi: DrivingLicenseApi,
-    private nationalRegistryXRoadService: NationalRegistryXRoadService,
+    private nationalRegistryV3: NationalRegistryV3ApplicationsClientService,
   ) {}
 
   async getDrivingLicense(token: string): Promise<DriversLicense | null> {
@@ -267,12 +267,12 @@ export class DrivingLicenseService {
         token,
       })
 
-    const residenceHistory =
-      await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-        nationalId,
-      )
+    const residenceHistory = await this.nationalRegistryV3.getResidenceHistory(
+      nationalId,
+      user,
+    )
 
-    const residence = mapResidence(residenceHistory)
+    const residence = mapResidence(residenceHistory ?? [])
     const residenceTime = computeCountryResidence(residence)
     const localRecidencyHistory = hasResidenceHistory(residence)
     const localRecidency = hasLocalResidence(residence)
@@ -445,6 +445,7 @@ export class DrivingLicenseService {
     stolenOrLost: boolean
     pickUpLicense: boolean
     imageBiometricsId: string | null
+    signatureBiometricsId: string | null
   }): Promise<number> {
     const {
       districtId,
@@ -452,6 +453,7 @@ export class DrivingLicenseService {
       stolenOrLost,
       pickUpLicense,
       imageBiometricsId,
+      signatureBiometricsId,
     } = params
     return await this.drivingLicenseApi.postApplicationNewCollaborative({
       districtId,
@@ -459,6 +461,7 @@ export class DrivingLicenseService {
       token,
       pickUpLicense,
       imageBiometricsId,
+      signatureBiometricsId,
     })
   }
 
@@ -548,6 +551,10 @@ export class DrivingLicenseService {
       instructorSSN: input.instructorSSN,
       email: input.studentEmail,
       phoneNumber: input.primaryPhoneNumber,
+      contentList: input.contentList,
+      photoBiometricsId: input.photoBiometricsId,
+      signatureBiometricsId: input.signatureBiometricsId,
+      healthDeclarationModel: input.healthDeclarationModel,
     })
 
     return {

@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationDto } from '../applications/models/dto/notification.dto'
+import { LoginResponseDto } from './models/login.response.dto'
+import { BodyRequestDto } from './models/body.request.dto'
 
 @Injectable()
 export class NotifyService {
@@ -29,25 +32,33 @@ export class NotifyService {
   private readonly xroadClient = this.xRoadConfig.xRoadClient
 
   async sendNotification(
-    applicationDto: ApplicationDto,
+    notificationDto: NotificationDto,
     url: string,
-  ): Promise<boolean> {
+  ): Promise<NotificationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
     }
-    let accessToken: string | null = null
+    let accessToken = ''
+    let audkenni = ''
     try {
-      accessToken = await this.getAccessToken(url)
+      const loginResponse = await this.getAccessToken(url)
+      accessToken = loginResponse.accessToken
+      audkenni = loginResponse.audkenni
     } catch (error) {
       this.logger.error(
-        `Error acquiring access token for application ${applicationDto.id}: ${error}`,
+        `Error acquiring login tokens for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { operationSuccessful: false }
     }
 
-    const xRoadPath = `${this.xroadBase}/r1/${url}`
+    const notificationRequest: BodyRequestDto = {
+      notification: notificationDto,
+      ...(audkenni ? { audkenni } : {}),
+    }
+
+    const xRoadPath = `${this.xroadBase}${url}`
 
     try {
       const response = await this.enhancedFetch(xRoadPath, {
@@ -57,37 +68,38 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify({
-          applicationId: applicationDto.id,
-          applicationType: applicationDto.slug,
-        }),
+        body: JSON.stringify(notificationRequest),
       })
 
       if (!response.ok) {
         this.logger.error(
-          `Non-OK response for application ${applicationDto.id}`,
+          `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return false
+        return { operationSuccessful: false }
       }
+      const responseData = await response.json()
+      const externalSystemResponse: NotificationResponseDto = {
+        operationSuccessful: responseData.success === true,
+        screen: responseData.screen,
+      }
+      return externalSystemResponse
     } catch (error) {
       this.logger.error(
-        `Error sending notification for application ${applicationDto.id}: ${error}`,
+        `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { operationSuccessful: false }
     }
-
-    return true
   }
 
-  private async getAccessToken(url: string): Promise<string | null> {
+  private async getAccessToken(url: string): Promise<LoginResponseDto> {
     if (url.toLowerCase().includes('syslumenn-protected')) {
-      return await this.getSyslumennAccessToken('syslumenn-protected')
+      return await this.getSyslumennLogin('syslumenn-protected')
     }
 
-    return null
+    return { accessToken: '', audkenni: '' }
   }
 
-  private async getSyslumennAccessToken(org: string): Promise<string> {
+  private async getSyslumennLogin(org: string): Promise<LoginResponseDto> {
     const env = this.getEnv(org)
 
     if (!env) {
@@ -96,7 +108,7 @@ export class NotifyService {
       )
     }
 
-    const loginUrl = `${this.xroadBase}/r1/${env}/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
+    const loginUrl = `${this.xroadBase}${env}/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
 
     try {
       const response = await this.enhancedFetch(loginUrl, {
@@ -120,10 +132,19 @@ export class NotifyService {
       }
 
       const data = await response.json()
-      if (!data?.accessToken) {
-        throw new Error('Syslumenn login response missing accessToken')
+
+      if (!data?.accessToken || !data?.audkenni) {
+        throw new Error(
+          'Syslumenn login response missing accessToken or audkenni',
+        )
       }
-      return data.accessToken
+
+      const loginResponse: LoginResponseDto = {
+        accessToken: data.accessToken,
+        audkenni: data.audkenni,
+      }
+
+      return loginResponse
     } catch (error) {
       this.logger.error(`Error during Syslumenn login: ${error}`)
       throw error
@@ -136,9 +157,9 @@ export class NotifyService {
     const isStaging = this.xroadBase.includes('staging01')
 
     if (org === 'syslumenn-protected') {
-      if (isDev) return 'IS-DEV/GOV/10016'
-      if (isStaging) return 'IS-TEST/GOV/10016'
-      return 'IS/GOV/5512201410'
+      if (isDev) return '/r1/IS-DEV/GOV/10016'
+      if (isStaging) return '/r1/IS-TEST/GOV/10016'
+      return '/r1/IS/GOV/5512201410'
     }
 
     return ''

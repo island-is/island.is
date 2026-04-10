@@ -7,15 +7,14 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerDeleteApplicationRequest,
-  ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
-  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,
@@ -26,6 +25,8 @@ import {
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -70,20 +71,6 @@ export class ApplicationsService {
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
-    return response as ApplicationResponse
-  }
-
-  async getApplications(
-    auth: User,
-    input: ApplicationsInput,
-  ): Promise<ApplicationResponse> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAllByOrganization(
-        input as ApplicationsControllerFindAllByOrganizationRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get applications'),
-      )
     return response as ApplicationResponse
   }
 
@@ -137,6 +124,20 @@ export class ApplicationsService {
     await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
+  }
+
+  async notifyExternalSystem(
+    auth: User,
+    input: NotificationInput,
+  ): Promise<NotificationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerNotify({
+        notificationDto: input,
+      } as ApplicationsControllerNotifyRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to notify external system'),
+      )
+    return response as NotificationResponse
   }
 
   async deleteApplication(auth: User, input: string): Promise<void> {

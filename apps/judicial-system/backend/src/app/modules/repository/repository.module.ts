@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ConfigModule } from '@island.is/nest/config'
 
+import { AppealCase } from './models/appealCase.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseFile } from './models/caseFile.model'
@@ -15,6 +16,8 @@ import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { InstitutionContact } from './models/institutionContact.model'
+import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
@@ -24,6 +27,8 @@ import { CourtDocumentRepositoryService } from './services/courtDocumentReposito
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
+import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
 import { repositoryModuleConfig } from './repository.config'
@@ -31,6 +36,7 @@ import { repositoryModuleConfig } from './repository.config'
 @Module({
   imports: [
     SequelizeModule.forFeature([
+      AppealCase,
       Case,
       CaseArchive,
       CaseFile,
@@ -43,6 +49,8 @@ import { repositoryModuleConfig } from './repository.config'
       DefendantEventLog,
       EventLog,
       IndictmentCount,
+      InstitutionContact,
+      PoliceDigitalCaseFile,
       Subpoena,
       Verdict,
       Victim,
@@ -56,6 +64,8 @@ import { repositoryModuleConfig } from './repository.config'
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    InstitutionContactRepositoryService,
+    PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
@@ -66,6 +76,7 @@ import { repositoryModuleConfig } from './repository.config'
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],

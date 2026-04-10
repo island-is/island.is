@@ -1,15 +1,17 @@
 import { User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import {
-  IncomePlanStatus as IncomeStatus,
-  SocialInsuranceAdministrationClientService,
-  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
+  SocialInsuranceAdministrationDisabilityPensionService,
+  SocialInsuranceAdministrationGeneralService,
+  SocialInsuranceAdministrationIncomePlanService,
+  SocialInsuranceAdministrationPaymentPlanService,
+  SocialInsuranceAdministrationPaymentTypesOverviewService,
+  SocialInsuranceAdministrationPensionCalculatorService,
+  SocialInsuranceAdministrationPersonalTaxCreditService,
+  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebContractsExternalServicePortalBaseCertificate,
-  TrWebContractsExternalServicePortalConfirmationOfIllHealth,
-  TrWebContractsExternalServicePortalConfirmationOfPendingResolution,
-  TrWebContractsExternalServicePortalConfirmedTreatment,
-  TrWebContractsExternalServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
@@ -25,29 +27,44 @@ import { IncomePlan } from './models/income/incomePlan.model'
 import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
+import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
-import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
+import { LOG_CATEGORY } from './socialInsurance.type'
 import {
   getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
+  toYearWithMonths,
 } from './utils'
 import { Locale } from '@island.is/shared/types'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
+import { parseIncomePlanStatus } from './mappers/parseIncomePlanStatus'
+import {
+  mapChildBenefitInformation,
+  mapPaymentTypeOverview,
+} from './mappers/mapPaymentTypesOverview'
+import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
+import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
 
 @Injectable()
 export class SocialInsuranceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly socialInsuranceApi: SocialInsuranceAdministrationClientService,
     private readonly cmsElasticService: CmsElasticsearchService,
+    private readonly generalService: SocialInsuranceAdministrationGeneralService,
+    private readonly disabilityPensionService: SocialInsuranceAdministrationDisabilityPensionService,
+    private readonly pensionCalculatorService: SocialInsuranceAdministrationPensionCalculatorService,
+    private readonly incomePlanService: SocialInsuranceAdministrationIncomePlanService,
+    private readonly paymentService: SocialInsuranceAdministrationPaymentPlanService,
+    private readonly personalTaxCreditClient: SocialInsuranceAdministrationPersonalTaxCreditService,
+    private readonly paymentTypesOverviewClient: SocialInsuranceAdministrationPaymentTypesOverviewService,
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
-    const payments = await this.socialInsuranceApi
+    const payments = await this.paymentService
       .getPayments(user)
       .catch(handle404)
 
@@ -67,7 +84,7 @@ export class SocialInsuranceService {
   }
 
   async getPaymentPlan(user: User): Promise<PaymentPlan | undefined> {
-    const paymentPlan = await this.socialInsuranceApi
+    const paymentPlan = await this.paymentService
       .getPaymentPlan(user)
       .catch(handle404)
 
@@ -140,7 +157,7 @@ export class SocialInsuranceService {
   }
 
   async getIncomePlan(user: User): Promise<IncomePlan | undefined> {
-    const data = await this.socialInsuranceApi.getLatestIncomePlan(user)
+    const data = await this.incomePlanService.getLatestIncomePlan(user)
 
     if (!data?.registrationDate || !data?.status || !data.incomeTypeLines) {
       this.logger.info('Income plan incomplete, returning', {
@@ -176,7 +193,7 @@ export class SocialInsuranceService {
 
     return {
       registrationDate: data.registrationDate,
-      status: this.parseIncomePlanStatus(data.status),
+      status: parseIncomePlanStatus(data.status),
       incomeCategories,
     }
   }
@@ -184,7 +201,7 @@ export class SocialInsuranceService {
   async getIncomePlanChangeEligibility(
     user: User,
   ): Promise<IncomePlanEligbility> {
-    const data = await this.socialInsuranceApi.getIsEligible(user, 'incomeplan')
+    const data = await this.incomePlanService.isUserEligibleForIncomePlan(user)
 
     return {
       isEligible: data.isEligible ?? undefined,
@@ -201,9 +218,8 @@ export class SocialInsuranceService {
     })
 
     const mappedInput = mapPensionCalculationInput(input, pageData)
-    const calculation = await this.socialInsuranceApi.getPensionCalculation(
-      mappedInput,
-    )
+    const calculation =
+      await this.pensionCalculatorService.getPensionCalculation(mappedInput)
 
     const groups = groupPensionCalculationItems(calculation, pageData)
     const highlightedItems = getPensionCalculationHighlightedItems(
@@ -221,114 +237,92 @@ export class SocialInsuranceService {
     user: User,
     input: TemporaryCalculationInput,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
-    return await this.socialInsuranceApi.getTemporaryCalculations(user, input)
-  }
-
-  parseIncomePlanStatus = (status: IncomeStatus): IncomePlanStatus => {
-    switch (status) {
-      case 'Accepted':
-        return IncomePlanStatus.ACCEPTED
-      case 'InProgress':
-        return IncomePlanStatus.IN_PROGRESS
-      case 'Cancelled':
-        return IncomePlanStatus.CANCELLED
-      default:
-        return IncomePlanStatus.UNKNOWN
-    }
-  }
-
-  getUnions(user: User) {
-    return this.socialInsuranceApi.getUnions(user)
-  }
-
-  async getRehabilitationPlan(
-    user: User,
-  ): Promise<TrWebContractsExternalServicePortalRehabilitationPlan> {
-    return await this.socialInsuranceApi.getRehabilitationPlan(user)
-  }
-
-  async getCertificateForSicknessAndRehabilitation(
-    user: User,
-  ): Promise<TrWebContractsExternalServicePortalBaseCertificate> {
-    return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
-      user,
-    )
+    return await this.incomePlanService.getTemporaryCalculations(user, input)
   }
 
   async getDisabilityPensionCertificate(
     user: User,
     locale: Locale,
   ): Promise<DisabilityPensionCertificate | null> {
-    const data = await this.socialInsuranceApi
+    const data = await this.disabilityPensionService
       .getCertificateForDisabilityPension(user)
       .catch(handle404)
     return data ? mapDisabilityPensionCertificate(data, locale) : null
   }
 
-  async getConfirmedTreatment(
-    user: User,
-  ): Promise<TrWebContractsExternalServicePortalConfirmedTreatment> {
-    return await this.socialInsuranceApi.getConfirmedTreatment(user)
-  }
-
-  async getConfirmationOfPendingResolution(
-    user: User,
-  ): Promise<TrWebContractsExternalServicePortalConfirmationOfPendingResolution> {
-    return await this.socialInsuranceApi.getConfirmationOfPendingResolution(
-      user,
-    )
-  }
-
-  async getConfirmationOfIllHealth(
-    user: User,
-  ): Promise<TrWebContractsExternalServicePortalConfirmationOfIllHealth> {
-    return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
-  }
-
   async getCountries(user: User, locale: Locale) {
-    const data =
-      (await this.socialInsuranceApi.getCountries(user, { locale })) ?? []
+    const data = (await this.generalService.getCountries(user, locale)) ?? []
     return data.map((data) => ({
       code: data.value,
       name: data.label,
     }))
   }
 
-  async getCurrencies(user: User): Promise<Array<string>> {
-    return await this.socialInsuranceApi.getCurrencies(user)
+  async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
+    const taxCardsResult = await this.personalTaxCreditClient.getTaxCards(user)
+
+    const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
+      ? undefined
+      : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
+
+    const discontinuingMonthsAndYears =
+      taxCardsResult?.canDiscontinuePersonalAllowance
+        ? await this.personalTaxCreditClient.getTaxCardMonthsAndYearsWhenDiscontinuing(
+            user,
+          )
+        : undefined
+
+    return {
+      taxCards: taxCardsResult?.taxCards?.map((tc) => ({
+        ...tc,
+        validFrom: tc.validFrom ?? undefined,
+        validTo: tc.validTo ?? undefined,
+        type: tc.taxCardType ?? undefined,
+        percentage: tc.percentage ?? 0,
+      })),
+      canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
+      canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
+      registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
+      discontinuingMonthsAndYears: toYearWithMonths(
+        discontinuingMonthsAndYears,
+      ),
+    }
   }
 
-  async getEducationalInstitutions(
+  async setTaxCardAllowance(
     user: User,
-  ): Promise<
-    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
-  > {
-    return await this.socialInsuranceApi.getEducationalInstitutions(user)
+    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setTaxCardAllowance(user, input)
   }
 
-  async getLanguages(user: User, locale: Locale) {
-    return await this.socialInsuranceApi.getLanguages(user, { locale })
+  async editTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.editTaxCardAllowance(user, input)
   }
 
-  async getMaritalStatuses(user: User) {
-    return await this.socialInsuranceApi.getMaritalStatuses(user)
+  async discontinueTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async getEmploymentStatusesWithLocale(user: User, locale: Locale) {
-    return await this.socialInsuranceApi.getEmploymentStatusesWithLocale(user, {
-      locale,
-    })
+  async getPaymentTypes(user: User): Promise<PaymentTypeOverview[] | null> {
+    const data = await this.paymentTypesOverviewClient
+      .getPaymentTypesOverview(user)
+      .catch(handle404)
+    return data ? data.map(mapPaymentTypeOverview) : null
   }
 
-  async getProfessions(user: User) {
-    return await this.socialInsuranceApi.getProfessionsInDto(user)
-  }
-
-  async getResidenceTypes(user: User) {
-    return await this.socialInsuranceApi.getResidenceTypes(user)
-  }
-
-  async getProfessionActivities(user: User) {
-    return await this.socialInsuranceApi.getProfessionActivitiesInDto(user)
+  async getChildBenefits(
+    user: User,
+  ): Promise<ChildBenefitInformation[] | null> {
+    const data = await this.paymentTypesOverviewClient
+      .getChildBenefitsInformation(user)
+      .catch(handle404)
+    return data ? data.map(mapChildBenefitInformation) : null
   }
 }

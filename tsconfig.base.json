@@ -187,6 +187,12 @@
       "@island.is/api/domains/official-journal-of-iceland-application": [
         "libs/api/domains/official-journal-of-iceland-application/src/index.ts"
       ],
+      "@island.is/api/domains/one-systems-rulings": [
+        "libs/api/domains/one-systems-rulings/src/index.ts"
+      ],
+      "@island.is/api/domains/open-data": [
+        "libs/api/domains/open-data/src/index.ts"
+      ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
       ],
@@ -314,9 +320,6 @@
       ],
       "@island.is/application/templates/activation-allowance": [
         "libs/application/templates/activation-allowance/src/index.ts"
-      ],
-      "@island.is/application/templates/alcohol-tax-redemption": [
-        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
@@ -527,6 +530,9 @@
       ],
       "@island.is/application/templates/official-journal-of-iceland": [
         "libs/application/templates/official-journal-of-iceland/src/index.ts"
+      ],
+      "@island.is/application/templates/official-journal-of-iceland/hooks": [
+        "libs/application/templates/official-journal-of-iceland/src/hooks/useTypes.ts"
       ],
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
@@ -860,6 +866,10 @@
       "@island.is/clients/official-journal-of-iceland/application": [
         "libs/clients/official-journal-of-iceland/application/src/index.ts"
       ],
+      "@island.is/clients/one-systems-complaints-committee-rulings": [
+        "libs/clients/one-systems/complaints-committee-rulings/src/index.ts"
+      ],
+      "@island.is/clients/open-data": ["libs/clients/open-data/src/index.ts"],
       "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
@@ -893,6 +903,9 @@
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
+      ],
+      "@island.is/clients/ship-registry-v2": [
+        "libs/clients/ship-registry-v2/src/index.ts"
       ],
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"
@@ -1091,6 +1104,7 @@
       ],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
+      "@island.is/matomo": ["libs/matomo/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
@@ -1246,8 +1260,8 @@
       "@island.is/portals/my-pages/signature-collection": [
         "libs/portals/my-pages/signature-collection/src/index.ts"
       ],
-      "@island.is/portals/my-pages/social-insurance-maintenance": [
-        "libs/portals/my-pages/social-insurance-maintenance/src/index.ts"
+      "@island.is/portals/my-pages/social-benefits": [
+        "libs/portals/my-pages/social-benefits/src/index.ts"
       ],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
@@ -1311,6 +1325,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
+      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true

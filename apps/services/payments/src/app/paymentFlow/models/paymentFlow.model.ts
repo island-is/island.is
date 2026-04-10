@@ -16,8 +16,11 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
 import { PaymentFlowEvent } from './paymentFlowEvent.model'
+import { PaymentFulfillment } from './paymentFulfillment.model'
+import { PaymentWorkerEvent } from './paymentWorkerEvent.model'
 
 @Table({
   tableName: 'payment_flow_charge',
@@ -153,6 +156,15 @@ export class PaymentFlow extends Model<
   @HasOne(() => FjsCharge, 'paymentFlowId')
   fjsCharge?: FjsCharge
 
+  @HasMany(() => CardPaymentDetails, 'paymentFlowId')
+  cardPaymentDetails?: CardPaymentDetails[]
+
+  @HasMany(() => PaymentFulfillment, 'paymentFlowId')
+  paymentFulfillments?: PaymentFulfillment[]
+
+  @HasMany(() => PaymentWorkerEvent, 'paymentFlowId')
+  workerEvents?: PaymentWorkerEvent[]
+
   @ApiProperty({ type: [String] })
   @Column({
     type: DataType.ARRAY(DataType.STRING),
@@ -232,6 +244,15 @@ export class PaymentFlow extends Model<
     field: 'charge_item_subject_id',
   })
   chargeItemSubjectId?: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
 
   @CreatedAt
   @Column({

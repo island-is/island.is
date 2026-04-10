@@ -86,7 +86,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
+    .args('--tls-min-v1.0', 'main.cjs')
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -313,6 +313,22 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
       ),
@@ -322,8 +338,25 @@ export const serviceSetup = (services: {
         prod: 'island.is',
       },
       ENVIRONMENT: ref((h) => h.env.type),
+      HH_COURSES_ZENDESK_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
+      HH_COURSES_ZENDESK_ENV_TAG: {
+        dev: 'hh_env_dev',
+        staging: 'hh_env_staging',
+        prod: 'hh_env_prod',
+      },
     })
     .secrets({
+      HH_ZENDESK_SUBDOMAIN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
+      HH_ZENDESK_EMAIL:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
+      HH_ZENDESK_TOKEN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
@@ -346,6 +379,10 @@ export const serviceSetup = (services: {
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
       POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH',
+      COMPLAINTS_COMMITTEE_RULINGS_API_KEY:
+        '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_KEY',
+      COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH:
+        '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH',
       DOCUMENT_PROVIDER_CLIENTID:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID',
       DOCUMENT_PROVIDER_CLIENT_SECRET:
@@ -550,7 +587,7 @@ export const serviceSetup = (services: {
       timeoutSeconds: 5,
     })
     .resources({
-      limits: { cpu: '1200m', memory: '2500Mi' },
+      limits: { cpu: '3000m', memory: '2500Mi' },
       requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
@@ -569,5 +606,6 @@ export const serviceSetup = (services: {
       'portals-my-pages',
       'services-payments',
       'payments',
+      'contentful-apps',
     )
 }

@@ -53,13 +53,20 @@ describe('CaseController - Get case files record pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, caseController } = await createTestingCaseModule()
+    const {
+      awsS3Service,
+      policeDigitalCaseFileRepositoryService,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockawsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockFindAll =
+      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (policeCaseNumber: string) => {
       const then = {} as Then
@@ -95,6 +102,7 @@ describe('CaseController - Get case files record pdf', () => {
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
         policeCaseNumber,
+        expect.any(Array),
         expect.any(Array),
         expect.any(Function),
       )

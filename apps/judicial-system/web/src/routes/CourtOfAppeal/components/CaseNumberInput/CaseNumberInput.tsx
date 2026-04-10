@@ -22,7 +22,7 @@ const CaseNumberInput: FC = () => {
     <Input
       name="appealCaseNumber"
       label={formatMessage(strings.caseNumberLabel)}
-      value={workingCase.appealCaseNumber ?? ''}
+      value={workingCase.appealCase?.appealCaseNumber ?? ''}
       placeholder={formatMessage(strings.caseNumberPlaceholder, {
         year: new Date().getFullYear(),
       })}

@@ -45,7 +45,7 @@ export const options: Record<BackgroundVariations, Options> = {
   },
 
   hms: {
-    textMode: 'dark',
+    textMode: 'light',
   },
 
   default: {
@@ -71,32 +71,6 @@ enum Organization {
 
   /** Skatturinn */
   SKATTURINN = '4yJlHgCMTqpgRSj4p6LuBQ',
-}
-
-export const watsonConfig: Record<
-  Locale,
-  Record<string, WatsonChatPanelProps>
-> = {
-  is: {
-    [Organization.DIGITAL_ICELAND]: {
-      integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-  },
-  en: {
-    [Organization.DIGITAL_ICELAND]: {
-      integrationID: '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-  },
 }
 
 export default options

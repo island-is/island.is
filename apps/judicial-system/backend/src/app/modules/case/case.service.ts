@@ -45,7 +45,6 @@ import {
   CaseTransition,
   CaseType,
   CourtDocumentType,
-  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -74,9 +73,10 @@ import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
-import { FileService } from '../file'
+import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
+  AppealCase,
   Case,
   caseInclude,
   CaseRepositoryService,
@@ -201,6 +201,7 @@ export const caseListInclude: Includeable[] = [
     where: { eventType: eventTypes },
     separate: true,
   },
+  { model: AppealCase, as: 'appealCase', required: false },
 ]
 
 @Injectable()
@@ -218,6 +219,7 @@ export class CaseService {
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
@@ -429,6 +431,15 @@ export class CaseService {
           transaction,
         )
       }
+    }
+
+    // Delete police digital case files connected to removed police case numbers
+    for (const policeCaseNumber of removedPoliceCaseNumbers) {
+      await this.policeDigitalCaseFileService.deleteAllForPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+        transaction,
+      )
     }
 
     // Add a single indictment count for each added police case numbers
@@ -1207,26 +1218,32 @@ export class CaseService {
       }
     }
 
-    // This only applies to restriction cases
-    if (updatedCase.appealState !== theCase.appealState) {
-      if (updatedCase.appealState === CaseAppealState.APPEALED) {
+    // Applies to appealed cases
+    if (
+      updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
+    ) {
+      if (updatedCase.appealCase?.appealState === CaseAppealState.APPEALED) {
         this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (
-        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
-        updatedCase.appealState === CaseAppealState.RECEIVED
+        theCase.appealCase?.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealCase?.appealState === CaseAppealState.RECEIVED
       ) {
         this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
+      } else if (
+        updatedCase.appealCase?.appealState === CaseAppealState.COMPLETED
+      ) {
         this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.WITHDRAWN) {
+      } else if (
+        updatedCase.appealCase?.appealState === CaseAppealState.WITHDRAWN
+      ) {
         this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
 
-    // This only applies to restriction cases
+    // Applies to appealed cases
     if (
-      updatedCase.prosecutorStatementDate?.getTime() !==
-      theCase.prosecutorStatementDate?.getTime()
+      updatedCase.appealCase?.prosecutorStatementDate?.getTime() !==
+      theCase.appealCase?.prosecutorStatementDate?.getTime()
     ) {
       this.addMessagesForAppealStatementToQueue(updatedCase, user)
     }
@@ -1319,19 +1336,26 @@ export class CaseService {
       }
     }
 
-    // This only applies to restriction cases
-    if (updatedCase.appealCaseNumber) {
-      if (updatedCase.appealCaseNumber !== theCase.appealCaseNumber) {
+    // This applies to appealed cases
+    if (updatedCase.appealCase?.appealCaseNumber) {
+      if (
+        updatedCase.appealCase?.appealCaseNumber !==
+        theCase.appealCase?.appealCaseNumber
+      ) {
         // New appeal case number
         this.addMessagesForNewAppealCaseNumberToQueue(updatedCase, user)
       } else if (
         this.allAppealRolesAssigned(updatedCase) &&
-        (updatedCase.appealAssistantId !== theCase.appealAssistantId ||
-          updatedCase.appealJudge1Id !== theCase.appealJudge1Id ||
-          updatedCase.appealJudge2Id !== theCase.appealJudge2Id ||
-          updatedCase.appealJudge3Id !== theCase.appealJudge3Id)
+        (updatedCase.appealCase?.appealAssistantId !==
+          theCase.appealCase?.appealAssistantId ||
+          updatedCase.appealCase?.appealJudge1Id !==
+            theCase.appealCase?.appealJudge1Id ||
+          updatedCase.appealCase?.appealJudge2Id !==
+            theCase.appealCase?.appealJudge2Id ||
+          updatedCase.appealCase?.appealJudge3Id !==
+            theCase.appealCase?.appealJudge3Id)
       ) {
-        // New appeal court
+        // New appeal court assignments
         this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
       }
     }
@@ -1376,10 +1400,10 @@ export class CaseService {
 
   private allAppealRolesAssigned(updatedCase: Case) {
     return (
-      updatedCase.appealAssistantId &&
-      updatedCase.appealJudge1Id &&
-      updatedCase.appealJudge2Id &&
-      updatedCase.appealJudge3Id
+      updatedCase.appealCase?.appealAssistantId &&
+      updatedCase.appealCase?.appealJudge1Id &&
+      updatedCase.appealCase?.appealJudge2Id &&
+      updatedCase.appealCase?.appealJudge3Id
     )
   }
 
@@ -1600,27 +1624,22 @@ export class CaseService {
       if (updateCaseString !== undefined) {
         const stringType = caseStringTypes[caseStringKey]
 
-        const caseString = await this.caseStringModel.findOne({
-          where: { caseId: theCase.id, stringType },
-          transaction,
-        })
-
-        if (caseString) {
-          if (updateCaseString === null) {
-            await this.caseStringModel.destroy({
-              where: { caseId: theCase.id, stringType },
+        if (updateCaseString === null) {
+          await this.caseStringModel.destroy({
+            where: { caseId: theCase.id, stringType },
+            transaction,
+          })
+        } else {
+          await this.caseStringModel.upsert(
+            {
+              caseId: theCase.id,
+              stringType,
+              value: updateCaseString,
+            },
+            {
+              conflictFields: ['case_id', 'string_type'],
               transaction,
-            })
-          } else {
-            await this.caseStringModel.update(
-              { value: updateCaseString },
-              { where: { caseId: theCase.id, stringType }, transaction },
-            )
-          }
-        } else if (updateCaseString !== null) {
-          await this.caseStringModel.create(
-            { caseId: theCase.id, stringType, value: updateCaseString },
-            { transaction },
+            },
           )
         }
 
@@ -1994,7 +2013,7 @@ export class CaseService {
     }
 
     // Handle court document creation on submitting an indictment case to court
-    if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
+    if (shouldCreateCourtDocuments) {
       await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 

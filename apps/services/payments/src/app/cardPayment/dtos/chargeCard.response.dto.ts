@@ -1,34 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsObject, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
-class CardInformation {
-  @ApiProperty({
-    description: 'Card scheme (for example Visa or MasterCard)',
-    type: String,
-  })
-  @IsString()
-  cardScheme!: string
-
-  @ApiProperty({ description: 'Issuing country of the card', type: String })
-  @IsString()
-  issuingCountry!: string
-
-  @ApiProperty({ description: 'Card usage description', type: String })
-  @IsString()
-  cardUsage!: string
-
-  @ApiProperty({ description: 'Card category', type: String })
-  @IsString()
-  cardCategory!: string
-
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: String })
-  @IsString()
-  outOfScaScope!: string
-
-  @ApiProperty({ description: 'Card product category', type: String })
-  @IsString()
-  cardProductCategory!: string
-}
+import { CardInformation } from './CardInformation.dto'
 
 export class ChargeCardResponse {
   @ApiProperty({ description: 'Acquirer reference number', type: String })
@@ -70,9 +43,13 @@ export class ChargeCardResponse {
   @IsString()
   responseCode!: string
 
-  @ApiProperty({ description: 'Description of the response', type: String })
+  @ApiPropertyOptional({
+    description: 'Description of the response',
+    type: String,
+  })
   @IsString()
-  responseDescription!: string
+  @IsOptional()
+  responseDescription?: string
 
   @ApiProperty({ description: 'Response time of the charge', type: String })
   @IsString()

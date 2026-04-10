@@ -12,6 +12,11 @@ import { IconProps } from '@island.is/island-ui/core'
 import { BffUser } from '@island.is/shared/types'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 
+export type PortalRouteDisabledReason =
+  | 'default'
+  | 'notAvailableForActors'
+  | 'notMinor'
+
 /**
  * A navigational item used by the service portal
  */
@@ -40,9 +45,22 @@ export interface PortalNavigationItem {
   breadcrumbHide?: boolean
 
   /**
+   * Dashboard shortcut configuration.
+   * Only use for nested items, not top level modules.
+   */
+  customShortcut?: {
+    name: MessageDescriptor
+    description: MessageDescriptor
+  }
+
+  /**
    * Indicates if the user has access to the navigation item
    */
   enabled?: boolean
+  /**
+   * Reason why the navigation item is disabled, when enabled is false
+   */
+  disabledReason?: PortalRouteDisabledReason
   /**
    * Subscribes to - get updates from badge context
    */
@@ -124,6 +142,17 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
    * Indicates if the user has access to the route
    */
   enabled?: boolean
+  /**
+   * Reason why the route is disabled, when enabled is false.
+   * If omitted, the reason is computed automatically from the user's delegation context.
+   */
+  disabledReason?: PortalRouteDisabledReason
+  /**
+   * Mark this route as never accessible in any delegated context (electronic delegation / umboð).
+   * When set to true and the user is acting as a delegate, disabledReason will be
+   * automatically set to 'notAvailableForActors'.
+   */
+  notAvailableForActors?: boolean
   /**
    * Hides navigation item from navigation
    */

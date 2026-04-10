@@ -7,20 +7,22 @@ import {
   FieldTypesEnum,
   FileUploadDisplay,
   NationalIdDisplay,
+  PhoneNumberDisplay,
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 
 interface Props {
   field: FormSystemField
+  valueIndex?: number
 }
 
 const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.BANK_ACCOUNT]: DefaultDisplay,
   [FieldTypesEnum.ISK_NUMBERBOX]: DefaultDisplay,
+  [FieldTypesEnum.ISK_SUMBOX]: DefaultDisplay,
   [FieldTypesEnum.EMAIL]: DefaultDisplay,
   [FieldTypesEnum.NATIONAL_ID]: NationalIdDisplay,
-  [FieldTypesEnum.PHONE_NUMBER]: DefaultDisplay,
+  [FieldTypesEnum.PHONE_NUMBER]: PhoneNumberDisplay,
   [FieldTypesEnum.TEXTBOX]: DefaultDisplay,
   [FieldTypesEnum.NUMBERBOX]: DefaultDisplay,
   [FieldTypesEnum.TIME_INPUT]: DefaultDisplay,
@@ -32,13 +34,13 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.RADIO_BUTTONS]: DefaultDisplay,
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
   [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
+  [FieldTypesEnum.PAYMENT_QUANTITY]: DefaultDisplay,
 } as const
 
-export const Display = ({ field }: Props) => {
-  const { lang } = useLocale()
+export const Display = ({ field, valueIndex = 0 }: Props) => {
   const fieldItems = {
     item: field,
-    lang,
+    valueIndex,
   }
 
   const FieldComponent =

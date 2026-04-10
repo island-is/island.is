@@ -17,7 +17,7 @@ import {
   shouldShowExpectedEndDate,
   shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
-  shouldShowReasonForApplicationAndNewSchoolPages,
+  shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -206,6 +206,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     alternativeSpecialEducationDepartment,
     currentSchoolId,
+    hasCurrentSchool,
     currentNursery,
     applyForPreferredSchool,
     payerName,
@@ -274,7 +275,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         relationTypeId: relative.relation,
       })),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-        ? { defaultOrganizationId: primaryOrgId || currentSchoolId }
+        ? {
+            defaultOrganizationId:
+              primaryOrgId ||
+              (hasCurrentSchool === YES ? currentSchoolId : undefined),
+          }
         : applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && {
             defaultOrganizationId: currentNursery,
           }),
@@ -293,14 +298,19 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      ...(shouldShowPage(
-        application.answers,
-        application.externalData,
-        ApplicationFeatureKey.SOCIAL_INFO,
-      ) &&
-        !isSpecialEducation && {
-          requestingMeeting: requestingMeeting === YES,
-        }),
+      //Business logic override as applicationConfig isn't ready on MMS side
+      //Should be removed when applicationConfig is ready
+
+      // ...(shouldShowPage(
+      //   application.answers,
+      //   application.externalData,
+      //   ApplicationFeatureKey.SOCIAL_INFO,
+      // ) &&
+      //   !isSpecialEducation && {
+      //     requestingMeeting: requestingMeeting === YES,
+      //   }),
+      requestingMeeting: requestingMeeting === YES,
+
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -315,7 +325,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               : undefined,
           }),
       }),
-      ...(shouldShowReasonForApplicationAndNewSchoolPages(
+      ...(shouldShowReasonForApplicationPage(
         application.answers,
         application.externalData,
       ) && {
@@ -341,15 +351,20 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      ...(shouldShowPage(
-        application.answers,
-        application.externalData,
-        ApplicationFeatureKey.SOCIAL_INFO,
-      ) && {
-        social: isSpecialEducation
-          ? getSpecialEducationSocialProfile(application)
-          : getSocialProfile(application),
-      }),
+      //Business logic override as applicationConfig isn't ready on MMS side
+      //Should be removed when applicationConfig is ready
+
+      // ...(shouldShowPage(
+      //   application.answers,
+      //   application.externalData,
+      //   ApplicationFeatureKey.SOCIAL_INFO,
+      // ) && {
+      //   social: isSpecialEducation
+      //     ? getSpecialEducationSocialProfile(application)
+      //     : getSocialProfile(application),
+      // }),
+      social: getSocialProfile(application),
+
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,

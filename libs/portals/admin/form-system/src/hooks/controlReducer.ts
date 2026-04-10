@@ -12,11 +12,12 @@ import {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
 import {
   removeAllDependencies,
   removeParentDependency,
 } from '../lib/utils/dependencyHelper'
+import { FILE_TYPE_MAP } from '../lib/utils/fileTypes'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { removeTypename } from '../lib/utils/removeTypename'
 
@@ -45,14 +46,14 @@ type ScreenActions =
       type: 'ADD_SCREEN'
       payload: { screen: FormSystemScreen; isApplicant?: boolean }
     }
-  | { type: 'REMOVE_SCREEN'; payload: { id: string; isApplicant?: boolean } }
+  | { type: 'REMOVE_SCREEN'; payload: { id: string; skipActiveItem?: boolean } }
 
 type FieldActions =
   | {
       type: 'ADD_FIELD'
-      payload: { field: FormSystemField; isApplicant?: boolean }
+      payload: { field: FormSystemField; skipActiveItem?: boolean }
     }
-  | { type: 'REMOVE_FIELD'; payload: { id: string; isApplicant?: boolean } }
+  | { type: 'REMOVE_FIELD'; payload: { id: string; skipActiveItem?: boolean } }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -62,11 +63,22 @@ type FieldActions =
       }
     }
   | {
+      type: 'ADD_PAYMENT_FIELD'
+      payload: {
+        field: FormSystemField
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
       type: 'CHANGE_DESCRIPTION'
       payload: { lang: 'en' | 'is'; newValue: string }
     }
   | {
       type: 'CHANGE_IS_REQUIRED'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
+  | {
+      type: 'CHANGE_IS_PART_OF_MULTI'
       payload: { update: (updatedActiveItem?: ActiveItem) => void }
     }
 
@@ -136,7 +148,8 @@ type ChangeActions =
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
-  | { type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE'; payload: { value: number } }
+  | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
+  | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
@@ -160,7 +173,28 @@ type ChangeActions =
       }
     }
   | {
-      type: 'TOGGLE_MULTI_SET'
+      type: 'TOGGLE_IS_MULTI'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'CHANGE_MULTI_MAX'
+      payload: {
+        value: number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_VALIDATE'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_POPULATE'
       payload: {
         checked: boolean
         update: (updatedActiveItem?: ActiveItem) => void
@@ -181,6 +215,18 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_ZENDESK_INTERNAL'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_VALIDATE'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_POPULATE'
       payload: {
         value: boolean
       }
@@ -216,6 +262,14 @@ type InputSettingsActions =
         property: 'isLarge' | 'hasDescription'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_APPLICANT_FIELD_SETTINGS'
+      payload: {
+        field: FormSystemField
+        property: 'isPhoneRequired' | 'isEmailRequired'
+        value: boolean
       }
     }
   | {
@@ -292,6 +346,26 @@ type InputSettingsActions =
         update?: (updatedActiveItem?: ActiveItem) => void
       }
     }
+  | {
+      type: 'SET_PAYMENT_SETTINGS'
+      payload: {
+        field: FormSystemField
+        chargeItemCode?: string
+        chargeItemName?: string
+        chargeType?: string
+        performingOrgID?: string
+        priceAmount?: number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_PAYMENT_QUANTITY_SETTINGS'
+      payload: {
+        paymentField: FormSystemField
+        paymentQuantityId: string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
 
 export type ControlAction =
   | ActiveItemActions
@@ -307,6 +381,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
+  isPublished: boolean
 }
 
 export const controlReducer = (
@@ -386,7 +461,7 @@ export const controlReducer = (
       const newScreens = state.form.screens?.filter(
         (screen) => screen?.id !== action.payload.id,
       )
-      if (action.payload.isApplicant) {
+      if (action.payload.skipActiveItem) {
         return {
           ...state,
           form: {
@@ -414,7 +489,7 @@ export const controlReducer = (
 
     // Fields
     case 'ADD_FIELD': {
-      if (action.payload.isApplicant) {
+      if (action.payload.skipActiveItem) {
         return {
           ...state,
           form: {
@@ -436,10 +511,30 @@ export const controlReducer = (
       }
     }
     case 'REMOVE_FIELD': {
-      const newFields = state.form.fields?.filter(
+      let newFields = state.form.fields?.filter(
         (field) => field?.id !== action.payload.id,
       )
-      if (action.payload.isApplicant) {
+      const removedField = state.form.fields?.find(
+        (field) => field?.id === action.payload.id,
+      )
+      if (removedField?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
+        newFields = newFields?.map((field) => {
+          if (
+            field?.fieldType === FieldTypesEnum.PAYMENT &&
+            field.fieldSettings?.paymentQuantityId === removedField.id
+          ) {
+            return {
+              ...field,
+              fieldSettings: {
+                ...field.fieldSettings,
+                paymentQuantityId: undefined,
+              },
+            }
+          }
+          return field
+        })
+      }
+      if (action.payload.skipActiveItem) {
         return {
           ...state,
           form: {
@@ -462,8 +557,8 @@ export const controlReducer = (
           ...form,
           dependencies: removeAllDependencies(
             (form?.dependencies ?? []).filter(
-              (dep) => dep !== null && dep !== undefined,
-            ) as FormSystemDependency[],
+              (dep): dep is FormSystemDependency => dep != null,
+            ),
             currentItem,
           ),
           fields: newFields,
@@ -481,6 +576,27 @@ export const controlReducer = (
           fieldSettings: removeTypename(fieldSettings),
         },
       }
+      let newFields = fields?.map((field) =>
+        field?.id === currentData?.id ? newActive.data : field,
+      )
+
+      if (currentData.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
+        newFields = form.fields?.map((field) => {
+          if (
+            field?.fieldType === FieldTypesEnum.PAYMENT &&
+            field.fieldSettings?.paymentQuantityId === currentData.id
+          ) {
+            return {
+              ...field,
+              fieldSettings: {
+                ...field.fieldSettings,
+                paymentQuantityId: undefined,
+              },
+            }
+          }
+          return field
+        })
+      }
 
       update(newActive)
       return {
@@ -494,9 +610,7 @@ export const controlReducer = (
             ) as FormSystemDependency[],
             currentData,
           ),
-          fields: fields?.map((f) =>
-            f?.id === activeItem.data?.id ? newActive.data : f,
-          ),
+          fields: newFields,
         },
       }
     }
@@ -532,6 +646,28 @@ export const controlReducer = (
         data: {
           ...currentData,
           isRequired: !currentData?.isRequired,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          fields: fields?.map((i) =>
+            i?.id === currentData?.id ? newActive.data : i,
+          ),
+        },
+      }
+    }
+
+    case 'CHANGE_IS_PART_OF_MULTI': {
+      const currentData = activeItem.data as FormSystemField
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isPartOfMultiset: !currentData?.isPartOfMultiset,
         },
       }
       action.payload.update(newActive)
@@ -681,12 +817,21 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE': {
+    case 'CHANGE_DRAFT_DAYS_TO_LIVE': {
       return {
         ...state,
         form: {
           ...form,
-          daysUntilApplicationPrune: action.payload.value,
+          draftDaysToLive: action.payload.value,
+        },
+      }
+    }
+    case 'CHANGE_SUBMISSION_DAYS_TO_LIVE': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          submissionDaysToLive: action.payload.value,
         },
       }
     }
@@ -739,11 +884,41 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_SUBMISSION_URL': {
+      const nextUrl = action.payload.value
+
+      // Only force these flags when switching to Zendesk
+      const nextFields =
+        nextUrl === 'zendesk'
+          ? (fields ?? []).map((field) => {
+              if (!field) return field
+              if (field.fieldType !== 'APPLICANT') return field
+
+              const fs = field.fieldSettings as
+                | Record<string, unknown>
+                | null
+                | undefined
+
+              // “has keys then set both to true” => require both to be present (not null/undefined)
+              const hasPhone = fs?.['isPhoneRequired'] != null
+              const hasEmail = fs?.['isEmailRequired'] != null
+              if (!hasPhone || !hasEmail) return field
+
+              return {
+                ...field,
+                fieldSettings: {
+                  ...(field.fieldSettings ?? {}),
+                  isEmailRequired: true,
+                },
+              }
+            })
+          : fields
+
       const updatedState = {
         ...state,
         form: {
           ...form,
-          submissionServiceUrl: action.payload.value,
+          submissionServiceUrl: nextUrl,
+          fields: nextFields,
         },
       }
       return updatedState
@@ -754,6 +929,26 @@ export const controlReducer = (
         form: {
           ...form,
           zendeskInternal: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_VALIDATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          useValidate: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_POPULATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          usePopulate: action.payload.value,
         },
       }
       return updatedState
@@ -775,59 +970,170 @@ export const controlReducer = (
     // If parent exists and child exists, remove it from the array and also remove the dependency object if the array is empty
     case 'TOGGLE_DEPENDENCY': {
       const { activeId, itemId, update } = action.payload
+
       const dependency = form.dependencies?.find(
         (dep) => dep?.parentProp === activeId,
       )
-      const parentExists = dependency !== undefined
-      const childExists = dependency?.childProps?.includes(itemId) ?? false
+
       let updatedDependencies = form.dependencies ?? []
-      if (parentExists) {
-        if (childExists) {
-          const updatedChildProps = dependency?.childProps?.filter(
-            (child) => child !== itemId,
-          )
-          if ((updatedChildProps?.length ?? 0) > 0) {
-            updatedDependencies = updatedDependencies.map((dep) =>
-              dep?.parentProp === activeId
-                ? { ...dep, childProps: updatedChildProps }
-                : dep,
+
+      const fields = form.fields ?? []
+
+      const selectedField = fields.find((field) => field?.id === itemId)
+
+      const idsToToggle = [itemId]
+
+      if (
+        selectedField?.fieldType === FieldTypesEnum.PAYMENT &&
+        selectedField.fieldSettings?.paymentQuantityId
+      ) {
+        idsToToggle.push(selectedField.fieldSettings.paymentQuantityId)
+      }
+
+      const toggleChildForParent = (
+        dependencies: typeof updatedDependencies,
+        parentId: string,
+        childId: string,
+      ) => {
+        const parentDependency = dependencies.find(
+          (dep) => dep?.parentProp === parentId,
+        )
+
+        const parentExists = parentDependency !== undefined
+        const childExists =
+          parentDependency?.childProps?.includes(childId) ?? false
+
+        if (parentExists) {
+          if (childExists) {
+            const updatedChildProps = parentDependency?.childProps?.filter(
+              (child) => child !== childId,
             )
-          } else {
-            updatedDependencies = updatedDependencies.filter(
-              (dep) => dep?.parentProp !== activeId,
-            )
+
+            if ((updatedChildProps?.length ?? 0) > 0) {
+              return dependencies.map((dep) =>
+                dep?.parentProp === parentId
+                  ? { ...dep, childProps: updatedChildProps }
+                  : dep,
+              )
+            }
+
+            return dependencies.filter((dep) => dep?.parentProp !== parentId)
           }
-        } else {
-          updatedDependencies = updatedDependencies.map((dep) =>
-            dep?.parentProp === activeId
-              ? { ...dep, childProps: [...(dep.childProps ?? []), itemId] }
+
+          return dependencies.map((dep) =>
+            dep?.parentProp === parentId
+              ? {
+                  ...dep,
+                  childProps: [
+                    ...new Set([...(dep.childProps ?? []), childId]),
+                  ],
+                }
               : dep,
           )
         }
-      } else {
-        updatedDependencies = [
-          ...updatedDependencies,
-          { parentProp: activeId, childProps: [itemId], isSelected: false },
+
+        return [
+          ...dependencies,
+          {
+            parentProp: parentId,
+            childProps: [childId],
+            isSelected: false,
+          },
         ]
       }
+
+      updatedDependencies = idsToToggle.reduce(
+        (deps, id) => toggleChildForParent(deps, activeId, id),
+        updatedDependencies,
+      )
+
       const updatedForm = {
         ...form,
         dependencies: updatedDependencies,
       }
+
       update(updatedForm)
+
       return {
         ...state,
         form: updatedForm,
       }
     }
 
-    case 'TOGGLE_MULTI_SET': {
+    case 'TOGGLE_IS_MULTI': {
+      const currentData = activeItem.data as FormSystemScreen
+
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isMulti: action.payload.checked,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'CHANGE_MULTI_MAX': {
       const currentData = activeItem.data as FormSystemScreen
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
-          multiset: action.payload.checked ? 1 : 0,
+          multiMax: action.payload.value,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_VALIDATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldValidate: action.payload.checked ? true : false,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_POPULATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldPopulate: action.payload.checked ? true : false,
         },
       }
       action.payload.update(newActive)
@@ -897,13 +1203,42 @@ export const controlReducer = (
       const { property, checked, value, update } = action.payload
 
       const updateFileTypesArray = (): string => {
-        const newFileTypes = field.fieldSettings?.fileTypes?.split(',') ?? []
-        if (checked) {
-          return [...newFileTypes, value as string].toString()
-        } else {
-          return newFileTypes.filter((type) => type !== value).toString()
+        const allExt = Object.keys(FILE_TYPE_MAP).filter((k) => k !== '*')
+        const nextValue = String(value ?? '').trim()
+
+        const existingList = (field.fieldSettings?.fileTypes ?? '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter((t) => t.length > 0)
+
+        const hadStar = existingList.includes('*')
+
+        // Toggle "*"
+        if (nextValue === '*') {
+          return checked ? ['*', ...allExt].join(',') : ''
         }
+
+        // Selected set: if "*" was selected, treat all extensions as selected
+        const selected = new Set<string>(
+          hadStar ? allExt : existingList.filter((t) => t !== '*'),
+        )
+
+        if (checked) {
+          selected.add(nextValue)
+        } else {
+          selected.delete(nextValue)
+        }
+
+        // If after the toggle everything is selected, include "*"
+        const nowAllSelected = allExt.every((ext) => selected.has(ext))
+        if (nowAllSelected) {
+          return ['*', ...allExt].join(',')
+        }
+
+        // Partial selection: do NOT include "*"
+        return allExt.filter((ext) => selected.has(ext)).join(',')
       }
+
       const newField = {
         ...field,
         fieldSettings: {
@@ -946,6 +1281,23 @@ export const controlReducer = (
           type: 'Field',
           data: newField,
         },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_APPLICANT_FIELD_SETTINGS': {
+      const { field, property, value } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...field?.fieldSettings,
+          [property]: value,
+        },
+      }
+      return {
+        ...state,
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
@@ -997,6 +1349,63 @@ export const controlReducer = (
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_PAYMENT_SETTINGS': {
+      const {
+        chargeItemCode,
+        chargeItemName,
+        chargeType,
+        performingOrgID,
+        priceAmount,
+        update,
+        field,
+      } = action.payload
+
+      const newField = {
+        ...field,
+        name: {
+          is: chargeItemName,
+          en: chargeItemName,
+        },
+        fieldSettings: {
+          ...field.fieldSettings,
+          chargeItemCode,
+          chargeItemName,
+          chargeType,
+          performingOrgID,
+          priceAmount,
+        },
+      }
+      update({ type: 'Field', data: newField })
+      return {
+        ...state,
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_PAYMENT_QUANTITY_SETTINGS': {
+      const { paymentField, paymentQuantityId, update } = action.payload
+      const hasPaymentQuantity =
+        paymentField.fieldSettings?.paymentQuantityId === paymentQuantityId
+      const newField = {
+        ...paymentField,
+        fieldSettings: {
+          ...paymentField.fieldSettings,
+          paymentQuantityId: hasPaymentQuantity ? undefined : paymentQuantityId,
+        },
+      }
+      update({ type: 'Field', data: newField })
+      return {
+        ...state,
+        form: {
+          ...form,
+          fields: fields?.map((i) =>
+            i?.id === paymentField.id ? newField : i,
+          ),
         },
       }
     }
@@ -1311,10 +1720,12 @@ export const controlReducer = (
     }
     case 'REMOVE_LIST_DEPENDENCIES': {
       const { field, update } = action.payload
+      const safeDependencies = (form?.dependencies ?? []).filter(
+        (dep): dep is FormSystemDependency => dep != null,
+      )
+
       const updatedDependencies = removeParentDependency(
-        (form?.dependencies ?? []).filter(
-          (dep) => dep !== null && dep !== undefined,
-        ) as FormSystemDependency[],
+        safeDependencies,
         field,
       )
       const updatedForm = {

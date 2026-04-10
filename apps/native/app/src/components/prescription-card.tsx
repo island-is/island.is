@@ -61,20 +61,23 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       label: 'health.prescriptions.drug',
     },
     {
+      data: prescription.strength || undefined,
+      label: 'health.prescriptions.strength',
+    },
+    {
+      data: prescription.indication || undefined,
+      label: 'health.prescriptions.indication',
+    },
+    {
       data: prescription.type,
       label: 'health.prescriptions.type',
     },
     {
-      data: prescription.indication,
-      label: 'health.prescriptions.indication',
+      data: prescription.form || undefined,
+      label: 'health.prescriptions.form',
     },
     {
-      data: prescription.quantity
-        ? intl.formatMessage(
-            { id: 'health.prescriptions.quantityUnit' },
-            { quantity: prescription.quantity },
-          )
-        : undefined,
+      data: prescription.totalPrescribedAmount || undefined,
       label: 'health.prescriptions.quantity',
     },
     {

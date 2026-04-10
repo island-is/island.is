@@ -1,13 +1,12 @@
 import { useRouter } from 'next/router'
 
+import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import {
-  Box,
-  InfoCardGrid,
-  Stack,
-  TagVariant,
-  Text,
-} from '@island.is/island-ui/core'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+  ActionCategoryCard,
+  getThemeConfig,
+  OrganizationWrapper,
+} from '@island.is/web/components'
 import type {
   ChargeItemCodeByCourseIdItem,
   Course,
@@ -30,6 +29,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { GET_NAMESPACE_QUERY } from '../../queries'
 import {
   GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
+  GET_COURSE_AVAILABILITY_QUERY,
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_LIST_PAGE_BY_ID_QUERY,
 } from '../../queries/Courses'
@@ -56,6 +56,7 @@ export interface CourseDetailsProps {
   namespace: Record<string, string>
   courseListPage: Query['getCourseListPageById']
   chargeItems: ChargeItemCodeByCourseIdItem[]
+  fullyBookedInstanceIds: string[]
 }
 
 const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
@@ -64,6 +65,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   namespace,
   courseListPage,
   chargeItems,
+  fullyBookedInstanceIds,
 }) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -72,6 +74,65 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   const { format } = useDateUtils()
 
   const chargeItemMap = new Map(chargeItems.map((item) => [item.code, item]))
+  const fullyBookedSet = new Set(fullyBookedInstanceIds)
+  const instanceCards = course.instances.map((instance) => {
+    const title = instance.displayedTitle?.trim() || course.title
+    const startDateLabel = `${n(
+      'courseInstanceStartDatePrefix',
+      activeLocale === 'is' ? 'Hefst' : 'Starts',
+    )} ${format(new Date(instance.startDate), 'do MMMM yyyy')}`
+
+    let startDateTimeDuration = ''
+    if (instance.startDateTimeDuration?.startTime) {
+      startDateTimeDuration = instance.startDateTimeDuration.startTime
+      if (instance.startDateTimeDuration.endTime) {
+        startDateTimeDuration += ` ${n(
+          'timeDurationSeparator',
+          activeLocale === 'is' ? 'til' : '-',
+        )} ${instance.startDateTimeDuration.endTime}`
+      }
+    }
+
+    let priceLabel: string | undefined
+    if (instance.chargeItemCode) {
+      const chargeItem = chargeItemMap.get(instance.chargeItemCode)
+      if (chargeItem) {
+        priceLabel =
+          chargeItem.priceAmount > 0
+            ? `${n(
+                'courseInstancePricePrefix',
+                activeLocale === 'is' ? 'Verð' : 'Price',
+              )}: ${formatCurrency(chargeItem.priceAmount)}`
+            : n(
+                'courseInstanceFreeLabel',
+                activeLocale === 'is' ? 'Ókeypis' : 'Free',
+              )
+      }
+    }
+
+    const selection = encodeURIComponent(
+      JSON.stringify({
+        courseId: course.id,
+        courseInstanceId: instance.id,
+      }),
+    )
+
+    const registrationHref = `/umsoknir/hh-namskeid?selection=${selection}`
+
+    const isFullyBooked = fullyBookedSet.has(instance.id)
+
+    return {
+      id: instance.id,
+      title,
+      description: instance.description ?? '',
+      location: instance.location ?? '',
+      startDateLabel,
+      startDateTimeDuration,
+      priceLabel,
+      registrationHref,
+      isFullyBooked,
+    }
+  })
 
   return (
     <OrganizationWrapper
@@ -111,101 +172,115 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
           {course.title}
         </Text>
         <Box>{webRichText(course.description)}</Box>
-        {course.instances.length > 0 && (
-          <Stack space={3}>
-            <Text variant="h2" as="h2">
-              {n(
-                'courseInstancesLabel',
-                activeLocale === 'is'
-                  ? 'Skráning á næstu námskeið'
-                  : 'Registration for upcoming courses',
-              )}
-            </Text>
-            <InfoCardGrid
-              variant="detailed"
-              columns={1}
-              cardsBorder="standard"
-              cards={course.instances.map((instance) => {
-                const detailLines = [
-                  {
-                    icon: 'calendar',
-                    text: `${n(
-                      'courseInstanceStartDatePrefix',
-                      activeLocale === 'is' ? 'Hefst' : 'Starts',
-                    )} ${format(new Date(instance.startDate), 'do MMMM yyyy')}`,
-                  },
-                ]
-
-                let startDateTimeDuration = ''
-                if (instance.startDateTimeDuration?.startTime) {
-                  startDateTimeDuration =
-                    instance.startDateTimeDuration.startTime
-                  if (instance.startDateTimeDuration.endTime) {
-                    startDateTimeDuration += ` ${n(
-                      'timeDurationSeparator',
-                      activeLocale === 'is' ? 'til' : '-',
-                    )} ${instance.startDateTimeDuration.endTime}`
-                  }
-                }
-
-                if (startDateTimeDuration) {
-                  detailLines.push({
-                    icon: 'time',
-                    text: startDateTimeDuration,
-                  })
-                }
-
-                if (instance.location) {
-                  detailLines.push({
-                    icon: 'location',
-                    text: instance.location,
-                  })
-                }
-
-                if (instance.chargeItemCode) {
-                  const chargeItem = chargeItemMap.get(instance.chargeItemCode)
-                  if (chargeItem) {
-                    const priceLabel =
-                      chargeItem.priceAmount > 0
-                        ? `${n(
-                            'courseInstancePricePrefix',
-                            activeLocale === 'is' ? 'Verð' : 'Price',
-                          )}: ${formatCurrency(chargeItem.priceAmount)}`
-                        : n(
-                            'courseInstanceFreeLabel',
-                            activeLocale === 'is' ? 'Ókeypis' : 'Free',
+        <Stack space={3}>
+          <Text variant="h2" as="h2">
+            {n(
+              'courseInstancesLabel',
+              activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
+            )}
+          </Text>
+          {course.instances.length === 0 &&
+            course.showPlaceholderTextIfNoCourseInstances && (
+              <Text>
+                {n(
+                  'courseInstancesNoUpcomingLabel',
+                  activeLocale === 'is'
+                    ? 'Engin námskeið í skráningu eins og er.'
+                    : 'No courses currently available for registration.',
+                )}
+              </Text>
+            )}
+          {course.instances.length > 0 && (
+            <Stack space={3}>
+              {instanceCards.map((instance) => (
+                <ActionCategoryCard
+                  key={instance.id}
+                  heading={instance.title}
+                  text={instance.description}
+                  href={instance.isFullyBooked ? '' : instance.registrationHref}
+                  colorScheme="blue"
+                  stackWidth={theme.breakpoints.sm}
+                  autoStack={true}
+                  sidePanelConfig={{
+                    paddingLeft: [0, 0, 0, 0, 5],
+                    paddingTop: [3, 3, 3, 3, 0],
+                    items: [
+                      {
+                        icon: (
+                          <Icon
+                            icon="calendar"
+                            type="outline"
+                            color="blue400"
+                          />
+                        ),
+                        title: instance.startDateLabel,
+                      },
+                      ...(instance.startDateTimeDuration
+                        ? [
+                            {
+                              icon: (
+                                <Icon
+                                  icon="time"
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ),
+                              title: instance.startDateTimeDuration,
+                            },
+                          ]
+                        : []),
+                      ...(instance.location
+                        ? [
+                            {
+                              icon: (
+                                <Icon
+                                  icon="location"
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ),
+                              title: instance.location,
+                            },
+                          ]
+                        : []),
+                      ...(instance.priceLabel
+                        ? [
+                            {
+                              icon: (
+                                <Icon
+                                  icon="wallet"
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ),
+                              title: instance.priceLabel,
+                            },
+                          ]
+                        : []),
+                    ],
+                    cta: {
+                      href: instance.registrationHref,
+                      disabled: instance.isFullyBooked,
+                      label: instance.isFullyBooked
+                        ? n(
+                            'courseInstanceFullyBookedButtonLabel',
+                            activeLocale === 'is'
+                              ? 'Fullbókað'
+                              : 'Fully booked',
                           )
-                    detailLines.push({
-                      icon: 'wallet',
-                      text: priceLabel,
-                    })
-                  }
-                }
-
-                const tags: { label: string; variant: TagVariant }[] = []
-
-                const title = instance.displayedTitle?.trim() || course.title
-
-                return {
-                  id: instance.id,
-                  title,
-                  description: instance.description,
-                  eyebrow: '',
-                  link: {
-                    label: title,
-                    href: `/umsoknir/hh-namskeid?selection=${JSON.stringify({
-                      courseId: course.id,
-                      courseInstanceId: instance.id,
-                    })}`,
-                    openInNewTab: true,
-                  },
-                  detailLines,
-                  tags,
-                }
-              })}
-            />
-          </Stack>
-        )}
+                        : n(
+                            'courseInstanceRegistrationButtonLabel',
+                            activeLocale === 'is' ? 'Skráning' : 'Registration',
+                          ),
+                      variant: 'primary',
+                      size: 'medium',
+                    },
+                  }}
+                />
+              ))}
+            </Stack>
+          )}
+        </Stack>
       </Stack>
     </OrganizationWrapper>
   )
@@ -233,6 +308,7 @@ CourseDetails.getProps = async ({
     },
     courseListPage,
     chargeItemsResponse,
+    availabilityResponse,
   ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
@@ -277,6 +353,20 @@ CourseDetails.getProps = async ({
         },
       })
       .catch(() => null),
+    apolloClient
+      .query<{
+        getCourseAvailability: {
+          instances: Array<{ id: string; isFullyBooked: boolean | null }>
+        }
+      }>({
+        query: GET_COURSE_AVAILABILITY_QUERY,
+        variables: {
+          input: {
+            courseId,
+          },
+        },
+      })
+      .catch(() => null),
   ])
 
   if (!getCourseById?.course) {
@@ -293,6 +383,12 @@ CourseDetails.getProps = async ({
     )
   }
 
+  const fullyBookedInstanceIds = (
+    availabilityResponse?.data?.getCourseAvailability?.instances ?? []
+  )
+    .filter((instance) => instance.isFullyBooked === true)
+    .map((instance) => instance.id)
+
   return {
     organizationPage,
     course: getCourseById.course,
@@ -300,6 +396,7 @@ CourseDetails.getProps = async ({
     courseListPage: courseListPage.data?.getCourseListPageById,
     chargeItems:
       chargeItemsResponse?.data?.getChargeItemCodesByCourseId?.items ?? [],
+    fullyBookedInstanceIds,
     languageToggleHrefOverride: {
       is: getCourseById.activeLocales?.is ? languageToggleHrefOverride?.is : '',
       en: getCourseById.activeLocales?.en ? languageToggleHrefOverride?.en : '',

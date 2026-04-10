@@ -69,8 +69,14 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         // Municipal
         {
+          customShortcut: {
+            name: m.signatureCollectionMunicipalLists,
+            description:
+              m.signatureCollectionMunicipalListsNavigationDescription,
+          },
           name: m.signatureCollectionMunicipalLists,
           path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+          icon: { icon: 'document' },
           children: [
             {
               name: m.viewSignatureList,
@@ -132,7 +138,7 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.MyContracts,
       children: [
         {
-          name: m.contract,
+          name: m.contracts,
           navHide: true,
           searchHide: true,
           path: InformationPaths.MyContractsDetail,

@@ -635,6 +635,11 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionMunicipalLists',
     defaultMessage: 'Sveitarstjórnarkosningar',
   },
+  signatureCollectionMunicipalListsNavigationDescription: {
+    id: 'service.portal:signatureCollectionMunicipalListsNavigationDescription',
+    defaultMessage:
+      'Hér sérðu framboð sem hægt er að mæla með í þínu sveitarfélagi fyrir sveitarstjórnarkosningar 2026',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar',
@@ -1050,12 +1055,10 @@ export const m = defineMessages({
     id: 'service.portal:accessDenied',
     defaultMessage: 'Ekki með aðgang',
   },
-
   accessNeeded: {
     id: 'service.portal:access-needed',
     defaultMessage: 'Umboð vantar',
   },
-
   accessNeededText: {
     id: 'service.portal:access-needed-text',
     defaultMessage: 'Umboð vantar',
@@ -1595,6 +1598,14 @@ export const m = defineMessages({
     id: 'service.portal:work-machine-detail',
     defaultMessage: 'Nánar um vinnuvél',
   },
+  myShips: {
+    id: 'service.portal:my-ships',
+    defaultMessage: 'Mín skip',
+  },
+  myShipsIntro: {
+    id: 'service.portal:my-ships-intro',
+    defaultMessage: 'Hér getur þú skoðað upplýsingar um skip í þinni eigu',
+  },
   health: {
     id: 'service.portal:health',
     defaultMessage: 'Heilsa',
@@ -1670,6 +1681,10 @@ export const m = defineMessages({
   vehiclesTooltip: {
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
+  },
+  shipsTooltip: {
+    id: 'service.portal:ships-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um skip.',
   },
   drivingLessonTooltip: {
     id: 'service.portal:driving-lessons-tooltip',
@@ -1814,6 +1829,10 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
+  socialSecurity: {
+    id: 'service.portal:socialSecurity',
+    defaultMessage: 'Almannatryggingar',
+  },
   socialInsuranceMaintenanceIntro: {
     id: 'service.portal:social-insurance-maintenance-intro',
     defaultMessage: 'Yfirlit yfir greiðslur frá almannatryggingum',
@@ -1839,6 +1858,23 @@ export const m = defineMessages({
   paymentPlan: {
     id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
+  },
+  personalTaxCredit: {
+    id: 'service.portal:personal-tax-credit',
+    defaultMessage: 'Persónuafsláttur',
+  },
+  personalTaxCreditDescription: {
+    id: 'service.portal:personal-tax-credit-description',
+    defaultMessage: 'Persónuafsláttur er 72.492. á mánuði á árinu 2026.',
+  },
+  paymentTypesOverview: {
+    id: 'service.portal:payment-types-overview',
+    defaultMessage: 'Greiðslutegundir',
+  },
+  paymentTypesOverviewDescription: {
+    id: 'service.portal:payment-types-overview-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
   },
   paymentsReasoning: {
     id: 'service.portal:payments-reasoning',

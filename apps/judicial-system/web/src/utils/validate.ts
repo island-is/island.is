@@ -23,6 +23,7 @@ import {
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { isNonEmptyArray } from './arrayHelpers'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -60,7 +61,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'national-id':
       return {
-        regex: /^\d{6}(-?\d{4})?$/,
+        regex: /^\d{6}-?\d{4}$/,
         errorMessage: 'Dæmi: 000000-0000',
       }
     case 'date-of-birth':
@@ -241,6 +242,7 @@ export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
           !workingCase.indictmentSubtypes[n] ||
           workingCase.indictmentSubtypes[n].length === 0,
       ) &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       validate([
         [workingCase.type, ['empty']],
@@ -280,9 +282,12 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  const defendantsAreValid = workingCase.defendants?.every(
-    (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
-  )
+  const hasAtLeastOneDefendant = (workingCase.defendants?.length ?? 0) > 0
+  const defendantsAreValid =
+    hasAtLeastOneDefendant &&
+    workingCase.defendants?.every(
+      (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
+    )
 
   const hasCivilClaimSelected =
     workingCase.hasCivilClaims !== null &&
@@ -526,10 +531,15 @@ export const isSubpoenaStepValid = (
   const defendants = updatedDefendants || workingCase.defendants
 
   const validateDefendants = (defendants?: Defendant[] | null) => {
-    return defendants?.every((defendant) =>
-      defendant.isAlternativeService
-        ? defendant.alternativeServiceDescription
-        : defendant.subpoenaType,
+    const hasAtLeastOneDefendant = (defendants?.length ?? 0) > 0
+    return (
+      hasAtLeastOneDefendant &&
+      (defendants?.every((defendant) =>
+        defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : defendant.subpoenaType,
+      ) ??
+        false)
     )
   }
 
@@ -542,8 +552,10 @@ export const isSubpoenaStepValid = (
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
+  const hasAtLeastOneDefendant = isNonEmptyArray(workingCase.defendants)
   const defendantsAreValid = () =>
-    workingCase.defendants?.every((defendant) => {
+    hasAtLeastOneDefendant &&
+    (workingCase.defendants?.every((defendant) => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
@@ -555,7 +567,8 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
           [defendant.defenderPhoneNumber, ['phonenumber']],
         ]).isValid
       )
-    })
+    }) ??
+      false)
 
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
@@ -667,13 +680,16 @@ export const isAdminUserFormValid = (user: User): boolean => {
 
 export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   return Boolean(
-    (workingCase.appealState === CaseAppealState.WITHDRAWN ||
-      (workingCase.appealJudge1 &&
-        workingCase.appealJudge2 &&
-        workingCase.appealJudge3 &&
-        workingCase.appealAssistant)) &&
+    (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN ||
+      (workingCase.appealCase?.appealJudge1 &&
+        workingCase.appealCase?.appealJudge2 &&
+        workingCase.appealCase?.appealJudge3 &&
+        workingCase.appealCase?.appealAssistant)) &&
       validate([
-        [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+        [
+          workingCase.appealCase?.appealCaseNumber,
+          ['empty', 'appeal-case-number-format'],
+        ],
       ]).isValid,
   )
 }
@@ -682,17 +698,18 @@ export const isCourtOfAppealRulingStepFieldsValid = (
   workingCase: Case,
 ): boolean => {
   return Boolean(
-    workingCase.appealRulingDecision &&
-      (workingCase.appealRulingDecision ===
+    workingCase.appealCase?.appealRulingDecision &&
+      (workingCase.appealCase?.appealRulingDecision ===
         CaseAppealRulingDecision.DISCONTINUED ||
-        validate([[workingCase.appealConclusion, ['empty']]]).isValid),
+        validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
+          .isValid),
   )
 }
 
 export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
   return Boolean(
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-      (workingCase.appealRulingDecision ===
+      (workingCase.appealCase?.appealRulingDecision ===
         CaseAppealRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,
@@ -704,7 +721,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
   return validate([
-    [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+    [
+      workingCase.appealCase?.appealCaseNumber,
+      ['empty', 'appeal-case-number-format'],
+    ],
   ]).isValid
 }
 

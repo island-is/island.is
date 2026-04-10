@@ -191,10 +191,6 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
-  'homeBanner.vehicleMileage.title': 'Register mileage',
-  'homeBanner.vehicleMileage.description':
-    'Register the mileage of your vehicles',
-  'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
   // home options
@@ -952,8 +948,10 @@ export const en: TranslatedMessages = {
   'health.prescriptions.description':
     'Here you can find an overview of your prescriptions and medication certificates.',
   'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.strength': 'Strength',
+  'health.prescriptions.indication': 'Used for',
   'health.prescriptions.type': 'Type',
-  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Prescribed amount',
   'health.prescriptions.dosageInstructions': 'Dosage instructions',
   'health.prescriptions.issueDate': 'Issue date',
