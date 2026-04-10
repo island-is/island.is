@@ -15,10 +15,7 @@ import { ResolverError, ResolverResult } from 'react-hook-form'
 import { FieldDef, ResolverContext } from '../types'
 import { getAccordionChildFieldIds } from '../utils'
 
-const getFormNodeFieldIds = (
-  formNode: FormNode,
-  application?: Application,
-) => {
+const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
   const children = formNode?.children ?? []
 
   const visibleChildren = children.filter(
