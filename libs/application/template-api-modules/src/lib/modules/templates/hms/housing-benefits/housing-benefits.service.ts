@@ -190,6 +190,21 @@ export class HousingBenefitsService extends BaseTemplateApiService {
         )
       }
 
+      // only for dev, remove this before merging
+      if (auth.nationalId === '0101302399') {
+        return {
+          ...individual,
+          address: {
+            ...individual.address,
+            city: 'Reykjavík',
+            locality: 'Reykjavík',
+            municipalityCode: '0000',
+            postalCode: '112',
+            streetAddress: 'Funafold 31',
+          },
+        }
+      }
+
       return individual
     } catch (e) {
       if (e instanceof TemplateApiError) {

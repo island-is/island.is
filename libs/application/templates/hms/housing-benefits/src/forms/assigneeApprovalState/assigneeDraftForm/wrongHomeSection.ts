@@ -11,6 +11,10 @@ import * as m from '../../../lib/messages'
 import { shouldShowRefetchNationalRegistrySection } from '../../../utils/conditions'
 
 export const wrongHomeSection = buildSection({
+  condition: (answers) => {
+    console.log('answers: ', answers)
+    return true
+  },
   id: 'wrongHomeSection',
   title: m.assigneeDraft.wrongHomeTitle,
   children: [
@@ -32,6 +36,12 @@ export const wrongHomeSection = buildSection({
         buildImageField({
           id: 'wrongHome.image',
           image: HandShake,
+          marginBottom: 4,
+        }),
+        buildDescriptionField({
+          id: 'wrongHome.shouldRefetchNationalRegistryDescription',
+          description: m.assigneeDraft.wrongHomeDescription4,
+          marginBottom: 6,
         }),
         buildCheckboxField({
           id: 'wrongHome.addressUpdated',
@@ -42,6 +52,27 @@ export const wrongHomeSection = buildSection({
               label: m.assigneeDraft.wrongHomeCheckboxLabel,
             },
           ],
+          clearOnChange: (application) => {
+            const answers = application.answers as Record<string, any>
+            const signed = (answers.householdMemberApprovals ?? []) as string[]
+            const suffixes = [
+              'assigneeInfo.name',
+              'assigneeInfo.nationalId',
+              'assigneeInfo.address',
+              'assigneeInfo.postalCode',
+              'assigneeInfo.city',
+              'assigneeInfo.email',
+              'assigneeInfo.phoneNumber',
+            ]
+
+            const paths: string[] = []
+            for (const topKey of Object.keys(answers)) {
+              if (answers[topKey]?.assigneeInfo && !signed.includes(topKey)) {
+                suffixes.forEach((s) => paths.push(`${topKey}.${s}`))
+              }
+            }
+            return paths
+          },
         }),
         buildHiddenInput({
           id: 'wrongHome.shouldRefetchNationalRegistry',

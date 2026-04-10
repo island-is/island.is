@@ -34,6 +34,12 @@ export const assigneeDraft = defineMessages({
       'Lögheimilisskráningu má breyta á heimasíðu Þjóðskrár, nánari upplýsingar má nálgast [hér](https://island.is/flytja-logheimili).',
     description: 'Assignee draft wrong home description 3',
   },
+  wrongHomeDescription4: {
+    id: 'hb.application:assigneeDraft.wrongHomeDescription4',
+    defaultMessage:
+      'Þegar lögheimilsskráning hefur verið uppfærð má halda áfram með umsóknina og sækja uppfærð gögn.',
+    description: 'Assignee draft wrong home description 4',
+  },
   wrongHomeCheckboxLabel: {
     id: 'hb.application:assigneeDraft.wrongHomeCheckboxLabel',
     defaultMessage:
