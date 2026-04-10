@@ -1011,7 +1011,12 @@ const indictmentRulingDecision: CaseTableCellGenerator<
       includes: { verdicts: { attributes: ['isDefaultJudgement'] } },
     },
     appealCase: {
-      attributes: ['appealState', 'appealRulingDecision'],
+      attributes: [
+        'appealState',
+        'appealCaseNumber',
+        'appealReceivedByCourtDate',
+        'appealRulingDecision',
+      ],
     },
   },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagGroupValue> =>
