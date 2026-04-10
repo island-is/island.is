@@ -3,7 +3,6 @@ import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { dataOr404Null } from '@island.is/clients/middlewares'
 import {
   AssetOwner,
-  BeneficiaryWrapper,
   Farm,
   PaginatedPayments,
   viewFarms,
@@ -12,6 +11,10 @@ import {
   listFarms,
   searchPayments,
 } from '../../gen/fetch'
+import {
+  MappedBeneficiaryWrapper,
+  mapBeneficiaryPayment,
+} from './farmers.types'
 
 @Injectable()
 export class FarmersClientService {
@@ -47,7 +50,7 @@ export class FarmersClientService {
   public getFarmBeneficiaries = async (
     user: User,
     farmId: string,
-  ): Promise<BeneficiaryWrapper[]> => {
+  ): Promise<MappedBeneficiaryWrapper[]> => {
     const response = await withAuthContext(user, () =>
       dataOr404Null(listBeneficiaries({ path: { farmId } })),
     )
@@ -56,7 +59,10 @@ export class FarmersClientService {
       return []
     }
 
-    return response.data
+    return response.data.map((wrapper) => ({
+      ...wrapper,
+      list: (wrapper.list ?? []).map(mapBeneficiaryPayment),
+    }))
   }
 
   /**

@@ -7,7 +7,7 @@ query FarmerLandDetail($id: ID!) {
       nationalId
       bankInfo
       isat
-      vskNumberDisplayString
+      vatNumber
       payments {
         categoryId
         category

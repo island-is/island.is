@@ -4,6 +4,7 @@ import {
   Farm,
   Payment,
   PaginatedPayments,
+  MappedBeneficiaryWrapper,
 } from '@island.is/clients/farmers'
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidy } from './models/farmerLandSubsidy.model'
@@ -17,32 +18,36 @@ export const mapToFarmerLandCollection = (farmlands: Farm[]): FarmerLand[] => {
   return farmlands.map(mapToFarmerLand).filter(isDefined)
 }
 
-export const mapToFarmerLand = (farm: Farm): FarmerLand | undefined => {
+export const mapToFarmerLand = (farm: Farm): FarmerLand | null => {
   if (!farm.farmId || !farm.farmName) {
-    return undefined
+    return null
   }
 
   return {
-    id: farm.farmId,
+    id: farm.farmId.toString(),
     name: farm.farmName,
   }
 }
 
 export const mapToLandBeneficiaryPayment = (
-  p: NonNullable<BeneficiaryWrapper['list']>[number],
-): LandBeneficiaryPayment => ({
-  categoryId: p.paymentCategoryId ?? 0,
-  category: p.paymentCategory ?? undefined,
-  share: p.share ? parseFloat(p.share) : undefined,
-  blocked: p.paymentStop?.toLowerCase() === 'já',
-  operating: p.operating?.toLowerCase() === 'í rekstri',
-  dateFrom: p.from ?? undefined,
-  dateTo: p.to ?? undefined,
-})
+  p: NonNullable<MappedBeneficiaryWrapper['list']>[number],
+): LandBeneficiaryPayment | undefined => {
+  if (!p.paymentCategoryId) {
+    return undefined
+  }
+  return {
+    categoryId: p.paymentCategoryId,
+    category: p.paymentCategory ?? undefined,
+    share: p.share ? parseFloat(p.share) : undefined,
+    blocked: p.blocked,
+    operating: p.operating,
+    dateFrom: p.from ?? undefined,
+    dateTo: p.to ?? undefined,
+  }
+}
 
 export const mapToFarmerLandSubsidy = (
   p: Payment,
-  farmId: string,
 ): FarmerLandSubsidy | undefined => {
   if (!p.id) return undefined
   return {
@@ -69,24 +74,19 @@ export const mapToFilterOptions = (
   return {
     contracts: (filterOptions.contracts ?? []).flatMap((c) =>
       c.contractId && c.contractName
-        ? [{ contractId: c.contractId, contractName: c.contractName }]
+        ? [{ id: c.contractId, name: c.contractName }]
         : [],
     ),
     paymentCategories: (filterOptions.paymentCategories ?? []).flatMap((pc) =>
       pc.paymentCategoryId != null && pc.paymentCategoryName
-        ? [
-            {
-              paymentCategoryId: pc.paymentCategoryId,
-              paymentCategoryName: pc.paymentCategoryName,
-            },
-          ]
+        ? [{ id: pc.paymentCategoryId, name: pc.paymentCategoryName }]
         : [],
     ),
   }
 }
 
 export const mapToLandBeneficiary = (
-  wrapper: BeneficiaryWrapper,
+  wrapper: MappedBeneficiaryWrapper,
 ): LandBeneficiary | undefined => {
   const name = wrapper.details?.beneficiaryName
   if (!name) return undefined
@@ -95,8 +95,10 @@ export const mapToLandBeneficiary = (
     nationalId: wrapper.details?.beneficiaryNationalId ?? undefined,
     bankInfo: wrapper.details?.beneficiaryBankInfo ?? undefined,
     isat: wrapper.details?.beneficiaryIsat ?? undefined,
-    vskNumberDisplayString: wrapper.details?.beneficiaryVsk ?? undefined,
-    payments: (wrapper.list ?? []).map(mapToLandBeneficiaryPayment),
+    vatNumber: wrapper.details?.beneficiaryVsk ?? undefined,
+    payments: (wrapper.list ?? [])
+      .map(mapToLandBeneficiaryPayment)
+      .filter(isDefined),
   }
 }
 
@@ -110,10 +112,15 @@ export const mapToLandRegistryEntry = (
     id,
     name,
     nationalId: owner.details?.nationalId ?? undefined,
-    properties: (owner.list ?? []).map((a) => ({
-      ownershipType: a.ownerType ?? undefined,
-      usage: a.usage ?? undefined,
-      share: a.share ? parseFloat(a.share) : undefined,
-    })),
+    properties: (owner.list ?? [])
+      .map((a) => {
+        if (!a.ownerType && !a.usage && a.share == null) return undefined
+        return {
+          ownershipType: a.ownerType ?? undefined,
+          usage: a.usage ?? undefined,
+          share: a.share ? parseFloat(a.share) : undefined,
+        }
+      })
+      .filter(isDefined),
   }
 }

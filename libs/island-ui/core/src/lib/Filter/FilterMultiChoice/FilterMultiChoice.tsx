@@ -57,6 +57,15 @@ export interface FilterMultiChoiceProps {
   onClear: (categoryId: string) => void
 }
 
+const getLabelString = (label: string | ReactNode): string => {
+  if (typeof label === 'string') return label
+  if (React.isValidElement(label)) {
+    const children = (label.props as { children?: unknown }).children
+    if (typeof children === 'string') return children
+  }
+  return ''
+}
+
 export const FilterMultiChoice: FC<
   React.PropsWithChildren<FilterMultiChoiceProps>
 > = ({
@@ -91,17 +100,9 @@ export const FilterMultiChoice: FC<
   const renderCategoryFilters = (category: FilterCategory) => {
     const query = searchQueries[category.id] ?? ''
     const visibleFilters = category.searchPlaceholder
-      ? category.filters.filter((f) => {
-          const labelStr =
-            typeof f.label === 'string'
-              ? f.label
-              : React.isValidElement(f.label) &&
-                  typeof (f.label.props as { children?: unknown }).children ===
-                    'string'
-                ? ((f.label.props as { children: string }).children as string)
-                : ''
-          return labelStr.toLowerCase().includes(query.toLowerCase())
-        })
+      ? category.filters.filter((f) =>
+          getLabelString(f.label).toLowerCase().includes(query.toLowerCase()),
+        )
       : category.filters
 
     return (

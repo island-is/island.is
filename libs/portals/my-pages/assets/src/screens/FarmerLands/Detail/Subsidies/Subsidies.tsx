@@ -2,7 +2,11 @@ import { useCallback, useMemo, useState } from 'react'
 import { Column, Row } from 'react-table'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, formatNationalId } from '@island.is/portals/my-pages/core'
+import {
+  m,
+  formatNationalId,
+  amountFormat,
+} from '@island.is/portals/my-pages/core'
 import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
 import { SubsidiesFilter } from './SubsidiesFilter'
 import { farmerLandsMessages as fm } from '../../../../lib/messages'
@@ -17,11 +21,14 @@ interface Props {
   farmId: string
 }
 
-const formatISK = (value?: number | null): string => {
-  if (value == null) return ''
-
-  const formattedValue = new Intl.NumberFormat('is-IS').format(value)
-  return `${formattedValue} kr.`
+type SubsidiesState = {
+  cursor?: string
+  contractId?: string
+  paymentCategoryId?: number
+  dateFrom?: Date
+  dateTo?: Date
+  orderField?: FarmerLandSubsidyOrderField
+  orderDirection?: FarmerLandSubsidyOrderDirection
 }
 
 const DetailCell = ({
@@ -59,31 +66,14 @@ const DetailRow = ({ children }: { children: React.ReactNode }) => (
 
 export const Subsidies = ({ farmId }: Props) => {
   const { formatMessage } = useLocale()
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
-  const [contractId, setContractId] = useState<string | undefined>(undefined)
-  const [paymentCategoryId, setPaymentCategoryId] = useState<
-    number | undefined
-  >(undefined)
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
-  const [orderField, setOrderField] = useState<
-    FarmerLandSubsidyOrderField | undefined
-  >(undefined)
-  const [orderDirection, setOrderDirection] = useState<
-    FarmerLandSubsidyOrderDirection | undefined
-  >(undefined)
+
+  const [filters, setFilters] = useState<SubsidiesState>({})
 
   const { data, previousData, loading, error } = useFarmerLandSubsidiesQuery({
     variables: {
       input: {
         farmId,
-        cursor,
-        contractId,
-        paymentCategoryId,
-        dateFrom,
-        dateTo,
-        orderField,
-        orderDirection,
+        ...filters,
       },
     },
   })
@@ -96,8 +86,8 @@ export const Subsidies = ({ farmId }: Props) => {
   const contractItems = useMemo(
     () =>
       (filterOptions?.contracts ?? []).map((c) => ({
-        value: c.contractId,
-        label: c.contractName,
+        value: c.id,
+        label: c.name,
       })),
     [filterOptions?.contracts],
   )
@@ -105,8 +95,8 @@ export const Subsidies = ({ farmId }: Props) => {
   const categoryItems = useMemo(
     () =>
       (filterOptions?.paymentCategories ?? []).map((pc) => ({
-        value: String(pc.paymentCategoryId),
-        label: pc.paymentCategoryName,
+        value: String(pc.id),
+        label: pc.name,
       })),
     [filterOptions?.paymentCategories],
   )
@@ -118,59 +108,65 @@ export const Subsidies = ({ farmId }: Props) => {
         contract: FarmerLandSubsidyOrderField.Contract,
       }
       if (sortBy.length === 0) {
-        setOrderField(undefined)
-        setOrderDirection(undefined)
+        setFilters({
+          ...filters,
+          orderField: undefined,
+          orderDirection: undefined,
+          cursor: undefined,
+        })
       } else {
         const field = fieldMap[sortBy[0].id]
         if (field) {
-          setOrderField(field)
-          setOrderDirection(
-            sortBy[0].desc
+          setFilters({
+            ...filters,
+            cursor: undefined,
+            orderField: field,
+            orderDirection: sortBy[0].desc
               ? FarmerLandSubsidyOrderDirection.Descending
               : FarmerLandSubsidyOrderDirection.Ascending,
-          )
+          })
         }
       }
-      setCursor(undefined)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 
   const filterCount = [
-    contractId,
-    paymentCategoryId,
-    dateFrom ?? dateTo,
+    filters.contractId,
+    filters.paymentCategoryId,
+    filters.dateFrom ?? filters.dateTo,
   ].filter((v) => v != null).length
 
   const columns = useMemo<Column<FarmerLandSubsidy>[]>(
     () => [
       {
-        Header: formatMessage(fm.subsidyDate),
+        Header: formatMessage(m.date),
         accessor: 'paymentDate',
         Cell: ({ value }) =>
           value ? new Date(value).toLocaleDateString('is-IS') : '',
       },
       {
-        Header: formatMessage(fm.subsidyContract),
+        Header: formatMessage(m.contract),
         accessor: 'contract',
       },
       {
         Header: formatMessage(fm.subsidyGrossAmount),
         accessor: 'grossAmount',
         disableSortBy: true,
-        Cell: ({ value }) => formatISK(value),
+        Cell: ({ value }) => amountFormat(value),
       },
       {
         Header: formatMessage(fm.subsidyOffset),
         accessor: 'offset',
         disableSortBy: true,
-        Cell: ({ value }) => formatISK(value ?? 0),
+        Cell: ({ value }) => amountFormat(value ?? 0),
       },
       {
         Header: formatMessage(fm.subsidyNetPaid),
         accessor: 'netPaid',
         disableSortBy: true,
-        Cell: ({ value }) => formatISK(value),
+        Cell: ({ value }) => amountFormat(value),
       },
     ],
     [formatMessage],
@@ -180,11 +176,11 @@ export const Subsidies = ({ farmId }: Props) => {
     <>
       <DetailRow>
         <DetailCell label white>
-          {formatMessage(fm.subsidyName)}
+          {formatMessage(m.name)}
         </DetailCell>
         <DetailCell white>{row.original.name}</DetailCell>
         <DetailCell label white gap>
-          {formatMessage(fm.subsidyNationalId)}
+          {formatMessage(m.natreg)}
         </DetailCell>
         <DetailCell white>
           {formatNationalId(row.original.nationalId ?? '')}
@@ -198,11 +194,11 @@ export const Subsidies = ({ farmId }: Props) => {
         <DetailCell label gap>
           {formatMessage(fm.subsidyUnitPrice)}
         </DetailCell>
-        <DetailCell>{formatISK(row.original.unitPrice)}</DetailCell>
+        <DetailCell>{amountFormat(row.original.unitPrice)}</DetailCell>
       </DetailRow>
       <DetailRow>
         <DetailCell label white>
-          {formatMessage(fm.subsidyCategory)}
+          {formatMessage(m.type)}
         </DetailCell>
         <DetailCell white span={3}>
           {row.original.paymentCategory}
@@ -215,35 +211,36 @@ export const Subsidies = ({ farmId }: Props) => {
     <Box marginTop={4}>
       <Box marginBottom={3}>
         <SubsidiesFilter
-          contractId={contractId}
-          paymentCategoryId={paymentCategoryId}
-          dateFrom={dateFrom}
-          dateTo={dateTo}
+          contractId={filters.contractId}
+          paymentCategoryId={filters.paymentCategoryId}
+          dateFrom={filters.dateFrom}
+          dateTo={filters.dateTo}
           filterCount={filterCount}
           contractItems={contractItems}
           categoryItems={categoryItems}
           onContractChange={(value) => {
-            setContractId(value)
-            setCursor(undefined)
+            setFilters({
+              ...filters,
+              contractId: value,
+              cursor: undefined,
+            })
           }}
           onCategoryChange={(value) => {
-            setPaymentCategoryId(value)
-            setCursor(undefined)
+            setFilters({
+              ...filters,
+              paymentCategoryId: value,
+              cursor: undefined,
+            })
           }}
           onDateChange={(start, end) => {
-            setDateFrom(start)
-            setDateTo(end)
-            setCursor(undefined)
+            setFilters({
+              ...filters,
+              dateFrom: start,
+              dateTo: end,
+              cursor: undefined,
+            })
           }}
-          onClear={() => {
-            setContractId(undefined)
-            setPaymentCategoryId(undefined)
-            setDateFrom(undefined)
-            setDateTo(undefined)
-            setCursor(undefined)
-            setOrderField(undefined)
-            setOrderDirection(undefined)
-          }}
+          onClear={() => setFilters({})}
         />
       </Box>
       <FarmerLandsTable
@@ -264,7 +261,12 @@ export const Subsidies = ({ farmId }: Props) => {
             icon="arrowBack"
             iconType="outline"
             disabled={!pageInfo?.hasPreviousPage}
-            onClick={() => setCursor(pageInfo?.startCursor ?? undefined)}
+            onClick={() =>
+              setFilters({
+                ...filters,
+                cursor: pageInfo?.startCursor ?? undefined,
+              })
+            }
           >
             {formatMessage(fm.subsidyPrevPage)}
           </Button>
@@ -273,7 +275,12 @@ export const Subsidies = ({ farmId }: Props) => {
             icon="arrowForward"
             iconType="outline"
             disabled={!pageInfo?.hasNextPage}
-            onClick={() => setCursor(pageInfo?.endCursor ?? undefined)}
+            onClick={() =>
+              setFilters({
+                ...filters,
+                cursor: pageInfo?.endCursor ?? undefined,
+              })
+            }
           >
             {formatMessage(fm.subsidyNextPage)}
           </Button>

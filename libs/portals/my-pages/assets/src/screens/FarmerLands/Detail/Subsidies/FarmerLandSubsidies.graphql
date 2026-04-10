@@ -22,12 +22,12 @@ query FarmerLandSubsidies($input: FarmerLandSubsidiesInput!) {
     }
     filterOptions {
       contracts {
-        contractId
-        contractName
+        id
+        name
       }
       paymentCategories {
-        paymentCategoryId
-        paymentCategoryName
+        id
+        name
       }
     }
   }

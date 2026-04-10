@@ -12,11 +12,11 @@ export class LandBeneficiary {
   @Field({ nullable: true })
   bankInfo?: string
 
-  @Field({ nullable: true, description: 'Icelandic employment field category' })
+  @Field({ nullable: true, description: 'ÍSAT industry classification code for the beneficiary' })
   isat?: string
 
-  @Field({ nullable: true })
-  vskNumberDisplayString?: string
+  @Field({ nullable: true, description: 'Virðisaukaskattur' })
+  vatNumber?: string
 
   @Field(() => [LandBeneficiaryPayment], { nullable: true })
   payments?: LandBeneficiaryPayment[]

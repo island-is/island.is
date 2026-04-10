@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional } from 'class-validator'
 import {
   FarmerLandSubsidyOrderDirection,
   FarmerLandSubsidyOrderField,
-} from './enums'
+} from '../models/enums'
 
 @InputType()
 export class FarmerLandSubsidiesInput {

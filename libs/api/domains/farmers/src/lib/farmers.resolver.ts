@@ -6,7 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { FarmerLandSubsidiesInput } from './models/farmerLandSubsidiesInput.model'
+import { FarmerLandSubsidiesInput } from './dto/farmerLandSubsidies.input.model'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   IdsUserGuard,
@@ -60,17 +60,7 @@ export class FarmersResolver {
     @Args('input', { type: () => FarmerLandSubsidiesInput })
     input: FarmerLandSubsidiesInput,
   ): Promise<FarmerLandSubsidiesCollection | null> {
-    return this.farmersService.getSubsidies(
-      user,
-      input.farmId,
-      input.cursor,
-      input.orderField,
-      input.orderDirection,
-      input.paymentCategoryId,
-      input.contractId,
-      input.dateFrom,
-      input.dateTo,
-    )
+    return this.farmersService.getSubsidies(user, input)
   }
 
   @ResolveField('beneficiaries', () => [LandBeneficiary], { nullable: true })

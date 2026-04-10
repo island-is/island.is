@@ -3,7 +3,6 @@ import {
   AccordionItem,
   Box,
   DatePicker,
-  Divider,
   Filter,
   FilterMultiChoice,
 } from '@island.is/island-ui/core'
@@ -89,7 +88,7 @@ export const SubsidiesFilter = ({
         categories={[
           {
             id: 'contract',
-            label: formatMessage(fm.subsidyContract),
+            label: formatMessage(m.contract),
             selected: contractId ? [contractId] : [],
             filters: contractItems,
             singleOption: true,
@@ -97,7 +96,7 @@ export const SubsidiesFilter = ({
           },
           {
             id: 'category',
-            label: formatMessage(fm.subsidyCategory),
+            label: formatMessage(m.type),
             selected:
               paymentCategoryId != null ? [String(paymentCategoryId)] : [],
             filters: categoryItems,
