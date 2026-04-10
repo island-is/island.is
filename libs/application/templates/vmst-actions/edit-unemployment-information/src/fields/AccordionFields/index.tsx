@@ -75,7 +75,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   setBeforeSubmitCallback?.(async () => {
     setInvalidError(false)
-
+    setErrors([])
     const bankOptions =
       getValueViaPath<Array<GaldurDomainModelsSettingsBanksBankDTO>>(
         externalData,
@@ -268,7 +268,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
               <InputController
                 id="otherAddress.otherAddress"
-                name="otherAddress"
+                name="otherAddress.otherAddress"
                 label={formatMessage(applicationMessages.addressLabel)}
                 backgroundColor="blue"
                 defaultValue={otherAddressDefault}
@@ -277,7 +277,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
               <SelectController
                 id="otherAddress.otherPostcode"
-                name="otherPostcode"
+                name="otherAddress.otherPostcode"
                 label={formatMessage(applicationMessages.postCodeLabel)}
                 options={postcodeOptions}
                 backgroundColor="blue"

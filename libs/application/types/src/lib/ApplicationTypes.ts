@@ -509,6 +509,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
     slug: 'breyta-upplysingum-atvinnuleysisbaetur',
-    translation: ['vmst.ub.application', 'uiForms.application'],
+    translation: ['vmst.eui.application', 'uiForms.application'],
   },
 }

@@ -18,7 +18,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { UnemploymentApi } from '../dataProviders'
-import { ApiActions } from '../shared/constants'
+import { ApiActions } from '../utils/constants'
 import { application as applicationMessages } from './messages'
 
 const EditUnemploymentInformationTemplate: ApplicationTemplate<
@@ -27,7 +27,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION,
-  name: 'edit-unemployment-information template',
+  name: applicationMessages.applicationName,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
   translationNamespaces:

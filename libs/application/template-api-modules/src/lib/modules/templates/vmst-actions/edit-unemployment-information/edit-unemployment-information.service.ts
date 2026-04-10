@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   VmstUnemploymentClientService,
@@ -28,16 +26,13 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
   async getEmptyApplication({
     auth,
   }: TemplateApiModuleActionProps): Promise<ApplicationInformationWithSupportData> {
-    const results =
-      await this.vmstUnemploymentClientService.getCurrentApplicationForActions(
-        auth,
-      )
-
-    const supportData =
-      await this.vmstUnemploymentClientService.getCurrentApplicationSupportDataForActions()
+    const [currentApplication, supportData] = await Promise.all([
+      this.vmstUnemploymentClientService.getCurrentApplicationForActions(auth),
+      this.vmstUnemploymentClientService.getCurrentApplicationSupportDataForActions(),
+    ])
 
     return {
-      currentApplication: results,
+      currentApplication,
       supportData,
     }
   }

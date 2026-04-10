@@ -21,6 +21,11 @@ export const application = defineMessages({
     defaultMessage: 'Vinnumálastofnun',
     description: `Institution's name`,
   },
+  applicationName: {
+    id: 'vmst.eui.application:applicationName',
+    defaultMessage: 'Breyta upplýsingum um atvinnuleysisbætur',
+    description: `Application's name`,
+  },
   addressTitle: {
     id: 'vmst.eui.application:addressTitle',
     defaultMessage: 'Dvalarstaður',
@@ -248,7 +253,7 @@ export const application = defineMessages({
   },
   ledgerValidationError: {
     id: 'vmst.eui.application:ledgerValidationError',
-    defaultMessage: 'Höfuðboók er ógild',
+    defaultMessage: 'Höfuðbók er ógild',
     description: 'Error message when ledger validation fails',
   },
   accountNumberValidationError: {

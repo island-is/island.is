@@ -68,7 +68,7 @@ export const generateAnswers = (
         educationProgramId: x.levelOfStudy,
         educationDegreeId: x.degree,
         educationSubjectId: x.courseOfStudy,
-        yearFinished: parseInt(x.endDate || ''),
+        yearFinished: x.endDate ? parseInt(x.endDate) : undefined,
       }
     }),
     drivingLicenses:

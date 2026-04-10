@@ -10,11 +10,13 @@ import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { UnemploymentApi } from '../../dataProviders'
 import { application as applicationMessages } from '../../lib/messages'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
+  logo: DirectorateOfLabourLogo,
   children: [
     buildSection({
       id: 'conditions',
