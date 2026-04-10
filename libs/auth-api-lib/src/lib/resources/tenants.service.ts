@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize, UniqueConstraintError } from 'sequelize'
+import { UniqueConstraintError } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -25,7 +25,6 @@ import { Domain } from './models/domain.model'
 @Injectable()
 export class TenantsService {
   constructor(
-    private readonly sequelize: Sequelize,
     @InjectModel(Domain)
     private readonly domainModel: typeof Domain,
     @InjectModel(Client)
@@ -138,7 +137,7 @@ export class TenantsService {
   }
 
   async delete(name: string): Promise<void> {
-    await this.sequelize.transaction(async (transaction) => {
+    await this.domainModel.sequelize!.transaction(async (transaction) => {
       const existing = await this.domainModel.findOne({
         where: { name },
         attributes: ['name'],
