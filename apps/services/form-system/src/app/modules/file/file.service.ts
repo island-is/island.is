@@ -114,9 +114,9 @@ export class FileService {
       throw new Error('S3 bucket not configured')
     }
 
-    const s3Uri = `s3://${bucket}/${key}`
+    // const s3Uri = `s3://${bucket}/${key}`
 
-    this.logger.info(`Fetching file ${s3Uri}`)
+    this.logger.info(`Fetching file ${key}`)
 
     try {
       const fileContent = await this.s3Service.getFileContent(
@@ -125,7 +125,7 @@ export class FileService {
       )
       return fileContent
     } catch (error) {
-      this.logger.error(`Error fetching fileContent ${s3Uri}`, error)
+      this.logger.error(`Error fetching fileContent ${key}`, error)
       return undefined
     }
   }

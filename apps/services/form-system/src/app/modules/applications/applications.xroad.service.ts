@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
@@ -170,7 +171,9 @@ export class ApplicationsXRoadService {
 
   private getXroadMemberCode(xRoadClient: string): string {
     const parts = (xRoadClient ?? '').trim().split('/').filter(Boolean)
-    if (parts.length < 4) return 'invalid-client-id'
-    return parts[2] ?? 'invalid-client-id'
+    if (parts.length < 4 || !parts[2]) {
+      throw new BadRequestException('Invalid X-Road-Client header format')
+    }
+    return parts[2]
   }
 }
