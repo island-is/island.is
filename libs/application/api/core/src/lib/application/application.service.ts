@@ -44,7 +44,9 @@ const applicationByNationalId = (id: string, nationalId?: string) => ({
           ...(kennitala.isValid(nationalId)
             ? [
                 {
-                  assignees: { [Op.contains]: [kennitala.sanitize(nationalId)] },
+                  assignees: {
+                    [Op.contains]: [kennitala.sanitize(nationalId)],
+                  },
                 },
               ]
             : []),

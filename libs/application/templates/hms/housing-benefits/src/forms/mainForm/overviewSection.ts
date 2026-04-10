@@ -63,7 +63,9 @@ export const overviewSection = buildSection({
           title: m.draftMessages.incomeSection.title,
           backId: 'incomeMultiField',
           condition: (answers) => {
-            if (getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES) {
+            if (
+              getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES
+            ) {
               return false
             }
             const emptyExternal = {} as ExternalData

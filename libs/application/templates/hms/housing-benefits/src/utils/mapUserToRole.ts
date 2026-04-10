@@ -68,8 +68,10 @@ export const mapUserToRole = (
   }
 
   const signed =
-    getValueViaPath<string[]>(application.answers, 'householdMemberApprovals') ??
-    []
+    getValueViaPath<string[]>(
+      application.answers,
+      'householdMemberApprovals',
+    ) ?? []
   const hasSigned = signed.some(
     (id) =>
       (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===

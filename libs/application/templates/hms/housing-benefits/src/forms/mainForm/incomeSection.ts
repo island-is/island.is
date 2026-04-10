@@ -18,17 +18,21 @@ const incomeOtherIncomeYes = (answers: FormValue) =>
 
 const contractorIncomeSelected = (answers: FormValue) =>
   incomeOtherIncomeYes(answers) &&
-  (getValueViaPath<string[]>(answers, 'incomeContractorCheckbox') ?? []).includes(
-    YES,
-  )
+  (
+    getValueViaPath<string[]>(answers, 'incomeContractorCheckbox') ?? []
+  ).includes(YES)
 
 const foreignIncomeSelected = (answers: FormValue) =>
   incomeOtherIncomeYes(answers) &&
-  (getValueViaPath<string[]>(answers, 'incomeForeignCheckbox') ?? []).includes(YES)
+  (getValueViaPath<string[]>(answers, 'incomeForeignCheckbox') ?? []).includes(
+    YES,
+  )
 
 const otherIncomeSelected = (answers: FormValue) =>
   incomeOtherIncomeYes(answers) &&
-  (getValueViaPath<string[]>(answers, 'incomeOtherCheckbox') ?? []).includes(YES)
+  (getValueViaPath<string[]>(answers, 'incomeOtherCheckbox') ?? []).includes(
+    YES,
+  )
 
 const incomeRadioClearChildren = [
   'incomeContractorCheckbox',
@@ -79,7 +83,10 @@ export const incomeSection = buildSection({
         buildCheckboxField({
           id: 'incomeContractorCheckbox',
           condition: incomeOtherIncomeYes,
-          clearOnChange: ['incomeContractorDescription', 'incomeContractorFiles'],
+          clearOnChange: [
+            'incomeContractorDescription',
+            'incomeContractorFiles',
+          ],
           options: [
             {
               value: YES,
@@ -155,7 +162,8 @@ export const incomeSection = buildSection({
         buildTextField({
           id: 'incomeOtherDescription',
           title: m.draftMessages.incomeSection.otherDescriptionTitle,
-          description: m.draftMessages.incomeSection.otherDescriptionDescription,
+          description:
+            m.draftMessages.incomeSection.otherDescriptionDescription,
           variant: 'textarea',
           rows: 4,
           marginBottom: 2,

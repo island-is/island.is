@@ -3,10 +3,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import {
-  Application,
-  FormatMessage,
-} from '@island.is/application/types'
+import { Application, FormatMessage } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import * as m from '../../lib/messages'
 import { buildExtraDataSummaryMarkdown } from './shared'

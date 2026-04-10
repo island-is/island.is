@@ -138,16 +138,11 @@ const baseSchema = z.object({
       confirmRead: z.array(z.string()).optional(),
     })
     .optional(),
-  approveOrReject: z
-    .enum(['approve', 'reject', 'requestExtraData'])
-    .optional(),
+  approveOrReject: z.enum(['approve', 'reject', 'requestExtraData']).optional(),
   approveOrRejectReason: z.string().optional(),
   // clearOnChange on approveOrReject sets this to ""; normalize away
   institutionRequestedDocuments: z
-    .union([
-      z.array(z.enum(institutionRequestedDocumentTypes)),
-      z.literal(''),
-    ])
+    .union([z.array(z.enum(institutionRequestedDocumentTypes)), z.literal('')])
     .optional()
     .transform((v) => (v === '' ? undefined : v)),
   institutionMessageToApplicant: z.string().optional(),
@@ -357,7 +352,9 @@ export const dataSchema = baseSchema
     const att = data.extraDataAttachments
     if (!att) return
 
-    const requireFiles = (key: (typeof institutionRequestedDocumentTypes)[number]) => {
+    const requireFiles = (
+      key: typeof institutionRequestedDocumentTypes[number],
+    ) => {
       if (!requested.includes(key)) return
       const files = att[key]
       if (!Array.isArray(files) || files.length === 0) {
@@ -406,7 +403,8 @@ export const dataSchema = baseSchema
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [...c.descPath],
-          params: m.draftMessages.incomeSection.validationCategoryDescriptionRequired,
+          params:
+            m.draftMessages.incomeSection.validationCategoryDescriptionRequired,
         })
       }
       if (!Array.isArray(c.files) || c.files.length === 0) {

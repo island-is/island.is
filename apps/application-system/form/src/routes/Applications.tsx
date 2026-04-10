@@ -100,14 +100,16 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
-  const [createApplicationMutation, { error: createError, loading: createLoading }] =
-    useMutation(CREATE_APPLICATION, {
-      onCompleted({ createApplication }) {
-        if (slug) {
-          navigate(`../${slug}/${createApplication.id}`)
-        }
-      },
-    })
+  const [
+    createApplicationMutation,
+    { error: createError, loading: createLoading },
+  ] = useMutation(CREATE_APPLICATION, {
+    onCompleted({ createApplication }) {
+      if (slug) {
+        navigate(`../${slug}/${createApplication.id}`)
+      }
+    },
+  })
 
   const createApplication = () => {
     createApplicationMutation({

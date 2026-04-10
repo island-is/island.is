@@ -46,8 +46,8 @@ const populateError = (
       element.path && element.path.length > 0
         ? element.path
         : aggregatePath != null && aggregatePath.length > 0
-          ? aggregatePath
-          : []
+        ? aggregatePath
+        : []
 
     if (
       currentScreenFields &&

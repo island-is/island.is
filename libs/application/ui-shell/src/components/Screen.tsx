@@ -279,10 +279,14 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       if (submitField.placement === 'screen') {
-        const submitAnswerKey = resolveFieldId(submitField, {
-          ...application,
-          answers: finalAnswers,
-        }, user)
+        const submitAnswerKey = resolveFieldId(
+          submitField,
+          {
+            ...application,
+            answers: finalAnswers,
+          },
+          user,
+        )
         event = (finalAnswers[submitAnswerKey] as string) ?? 'SUBMIT'
       } else {
         if (submitField.actions.length === 1) {
