@@ -719,6 +719,13 @@ export const m = defineMessages({
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
+  instructorDoesNotHaveBECategory: {
+    id: 'dl.application:instructorDoesNotHaveBECategory',
+    defaultMessage:
+      'Ökukennari er ekki með BE réttindi á ökuskírteini sínu. Vinsamlegast veldu annan ökukennara.',
+    description:
+      'Error message when selected driving instructor does not have BE category on their license',
+  },
   informationTitle: {
     id: 'dl.application:informationTitle',
     defaultMessage: 'Upplýsingar',
