@@ -268,29 +268,12 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   conclusionScreen: defineMessages({
-    title: {
-      id: 'oap.application:conclusionScreen.expandableDescriptionField.title',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next',
-    },
     alertMessage: {
       id: 'oap.application:conclusionScreen.alertMessage',
       defaultMessage:
         'Umsókn um ellilífeyri hefur verið send til Tryggingastofnunar',
       description:
         'An application for old age pension has been sent to the Social Insurance Administration',
-    },
-    bulletList: {
-      id: `oap.application:conclusionScreen.bulletList#markdown`,
-      defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef ekki búið nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til elllífeyris. Vinnslutími umsókna um ellilífeyri er fjórar til sex vikur.\n* **Þú gætir átt rétt á:**\n\t* Heimilisuppbót\n\t* Barnalífeyri\n\t* Uppbót á lífeyri\n\t* Ellilífeyri vegna EES.`,
-      description: 'BulletList',
-    },
-    nextStepsText: {
-      id: 'oap.application:conclusionScreen.nextStepsText',
-      defaultMessage:
-        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til ellilífeyris.',
-      description:
-        'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
     },
     expandableIntro: {
       id: 'oap.application:conclusionScreen.expandableIntro#markdown',
