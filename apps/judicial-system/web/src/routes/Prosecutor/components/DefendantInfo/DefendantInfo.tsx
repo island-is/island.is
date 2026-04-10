@@ -38,9 +38,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 /**
- * Skip national registry lookup for LÖKE-synced defendants.
+ * Skip national registry lookup for police system synced defendants.
  */
-const skipNationalRegistryForLokeDefendant = (
+const skipNationalRegistryForPoliceSystemDefendant = (
   origin: CaseOrigin | null | undefined,
   caseId: string | null | undefined,
   defendant: Defendant,
@@ -71,7 +71,7 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
-  const skipNationalRegistry = skipNationalRegistryForLokeDefendant(
+  const skipNationalRegistry = skipNationalRegistryForPoliceSystemDefendant(
     workingCase.origin,
     workingCase.id,
     defendant,
