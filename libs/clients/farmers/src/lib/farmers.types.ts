@@ -14,14 +14,17 @@ export type MappedBeneficiaryWrapper = Omit<BeneficiaryWrapper, 'list'> & {
 
 export const mapBeneficiaryPayment = (
   p: BeneficiaryPaymentType,
-): MappedBeneficiaryPaymentType => ({
-  ...p,
-  blocked:
-    p.paymentStop !== undefined
-      ? p.paymentStop.toLowerCase() === 'já'
-      : undefined,
-  operating:
-    p.operating !== undefined
-      ? p.operating.toLowerCase() === 'í rekstri'
-      : undefined,
-})
+): MappedBeneficiaryPaymentType => {
+  const { paymentStop, operating, ...rest } = p
+  return {
+    ...rest,
+    blocked:
+      paymentStop !== undefined
+        ? paymentStop.toLowerCase() === 'já'
+        : undefined,
+    operating:
+      operating !== undefined
+        ? operating.toLowerCase() === 'í rekstri'
+        : undefined,
+  }
+}
