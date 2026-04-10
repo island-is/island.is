@@ -84,5 +84,5 @@ export const webSitemapImportSetup =
       .extraAttributes({
         dev: { schedule: '0 0 * * *' },
         staging: { schedule: '0 0 * * 0' },
-        prod: { schedule: '0 */2 * * *' },
+        prod: { schedule: '0 */3 * * *' },
       })

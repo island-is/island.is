@@ -104,13 +104,7 @@ export class WebSitemapService {
         return result
       } catch (error) {
         if (
-          !this.isRateLimitError(
-            error as {
-              code?: number
-              status?: number
-              response?: { status?: number }
-            },
-          ) ||
+          !this.isRateLimitError(error) ||
           attempt === WebSitemapService.MAX_RETRIES
         )
           throw error
@@ -162,6 +156,7 @@ export class WebSitemapService {
         pageIndex = response.nextPageIndex
         urls.push(...response.urls)
         if (urls.length >= maxUrlsPerFile) await flushSitemapUrlsToFile()
+        await this.wait(100)
       }
     }
 
