@@ -1,7 +1,11 @@
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { COPY_FORM, UPDATE_FORM_STATUS } from '@island.is/form-system/graphql'
+import {
+  COPY_FORM,
+  GET_FORM,
+  UPDATE_FORM_STATUS,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -22,6 +26,7 @@ import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
+import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
 
@@ -69,6 +74,7 @@ export const TableRow = ({
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
+  const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
 
   const handleToggle = () => setIsOpen((prev) => !prev)
 
@@ -121,6 +127,14 @@ export const TableRow = ({
     const publish = {
       title: formatMessage(m.publish),
       onClick: async () => {
+        const { data: formData } = await getForm({
+          variables: { input: { id } },
+        })
+        const form = formData?.formSystemForm?.form
+        if (!form || !hasEnglishForAllNameFields(form)) {
+          window.alert(formatMessage(m.translationNeededError))
+          return
+        }
         try {
           await updateFormStatus({
             variables: {
