@@ -216,6 +216,7 @@ export default function PasskeyScreen() {
               } catch (error) {
                 setIsLoading(false)
                 clearLockScreenSuppression()
+                console.error('Error in Passkey registration/authentication flow:', error)
                 if (
                   error instanceof Error &&
                   error.message.startsWith('Register')
@@ -224,7 +225,7 @@ export default function PasskeyScreen() {
                     intl.formatMessage({ id: 'passkeys.errorRegistering' }),
                     intl.formatMessage({
                       id: 'passkeys.errorRegisteringMessage',
-                    }),
+                    }) + '\n\n' + (error.message ?? ''),
                   )
                   return
                 }
