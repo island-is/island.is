@@ -105,7 +105,11 @@ export class WebSitemapService {
       } catch (error) {
         if (
           !this.isRateLimitError(
-            error as { code?: number; status?: number; response?: { status?: number } },
+            error as {
+              code?: number
+              status?: number
+              response?: { status?: number }
+            },
           ) ||
           attempt === WebSitemapService.MAX_RETRIES
         )
