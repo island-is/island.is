@@ -3,7 +3,10 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { ApiScopeUser, SequelizeConfigService } from '@island.is/auth-api-lib'
-import { createCurrentUser, createNationalId } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
@@ -127,13 +130,11 @@ describe('MeApiScopeUsersController', () => {
       it('should create a new API scope user', async () => {
         const nationalId = createNationalId('person')
 
-        const response = await server
-          .post('/v2/me/api-scope-users')
-          .send({
-            nationalId,
-            name: 'New User',
-            email: 'new@test.is',
-          })
+        const response = await server.post('/v2/me/api-scope-users').send({
+          nationalId,
+          name: 'New User',
+          email: 'new@test.is',
+        })
 
         expect(response.status).toEqual(201)
         expect(response.body).toMatchObject({

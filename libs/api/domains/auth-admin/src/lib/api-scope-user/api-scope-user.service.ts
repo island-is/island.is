@@ -82,7 +82,7 @@ interface ApiScopeUsersApi {
 export class ApiScopeUserService extends MultiEnvironmentService {
   private typedRequest<T>(
     user: User,
-    environment: (typeof environments)[number],
+    environment: typeof environments[number],
     request: (api: ApiScopeUsersApi) => Promise<ApiResponse<T>>,
   ) {
     return this.makeRequest(
