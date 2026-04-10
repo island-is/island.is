@@ -10,10 +10,7 @@ const AdminControls = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <Layout
-      navTitle={formatMessage(m.idsAdmin)}
-      navItems={idsAdminControlsNav}
-    >
+    <Layout navTitle={formatMessage(m.idsAdmin)} navItems={idsAdminControlsNav}>
       <Outlet />
     </Layout>
   )
