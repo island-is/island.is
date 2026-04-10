@@ -46,10 +46,6 @@ const FormField: FC<
 }) => {
   const [allFields] = useFields()
 
-  if (!field.isNavigable) {
-    return null
-  }
-
   const error = getErrorViaPath(errors, field.id)
 
   const renderField = useCallback(
@@ -97,6 +93,10 @@ const FormField: FC<
       answerQuestions,
     ],
   )
+
+  if (!field.isNavigable) {
+    return null
+  }
 
   const fieldProps: FieldBaseProps = {
     application,
