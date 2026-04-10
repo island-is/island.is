@@ -5,37 +5,42 @@ import {
   buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
-  buildSection,
   buildSelectField,
+  buildSubSection,
   buildTableRepeaterField,
   buildTextField,
 } from '@island.is/application/core'
 
-export const accordionSection = buildSection({
-  condition: (answers) => {
-    console.log('answers: ', answers)
-    return true
-  },
+export const accordionSubsection = buildSubSection({
   id: 'accordionSection',
   title: 'Accordion',
   children: [
     buildMultiField({
       id: 'accordionMultiField',
       title: 'Accordion with input fields',
+      description:
+        'Accordion items can contain static text, interactive form fields, or both.',
       children: [
         buildDescriptionField({
           id: 'accordionSectionDescription',
           description:
-            'Accordion items can contain static text, interactive form fields, or both.',
+            'Take care when using fields within a accordion item, as they will not be visible outside of the accordion item. This can create really bad UX.',
+          marginBottom: 4,
+        }),
+        buildDescriptionField({
+          id: 'accordionSectionDescription2',
+          description:
+            'The best usecase for accordion with fields is where everything is optional and the user only has to open some of the accordion items. For example while editing or updating something something.',
+          marginBottom: 4,
         }),
         buildAccordionField({
           id: 'accordionDemo',
           title: 'Accordion demo',
           accordionItems: [
             {
-              itemTitle: 'Text only (backwards compatible)',
+              itemTitle: 'Text only',
               itemContent:
-                'This accordion item uses the original text-only format. It renders as Markdown and supports **bold**, *italic*, and other formatting.',
+                'This accordion item uses the text-only format. It renders as Markdown and supports **bold**, *italic*, and other formatting.',
             },
             {
               itemTitle: 'With input fields',
