@@ -1,9 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react'
-import {
-  coreErrorMessages,
-  coreMessages,
-  isProviderErrorReason,
-} from '@island.is/application/core'
+import { coreErrorMessages, coreMessages } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
@@ -19,7 +15,6 @@ import {
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, isComingFromRedirect } from './util'
 import { useSearchParams } from 'react-router-dom'
-import { findProblemInApolloError } from '@island.is/shared/problem'
 
 export interface PaymentPendingProps {
   application: Application
@@ -92,26 +87,6 @@ export const PaymentPending: FC<
   }
 
   if (submitError) {
-    const problem = findProblemInApolloError(submitError)
-    const errorReason =
-      problem &&
-      'errorReason' in problem &&
-      isProviderErrorReason(problem.errorReason)
-        ? problem.errorReason
-        : null
-
-    const errorTitle = errorReason
-      ? typeof errorReason.title === 'string'
-        ? errorReason.title
-        : msg(errorReason.title)
-      : msg(coreErrorMessages.paymentSubmitFailed)
-
-    const errorMessage = errorReason
-      ? typeof errorReason.summary === 'string'
-        ? errorReason.summary
-        : msg(errorReason.summary)
-      : msg(coreErrorMessages.paymentSubmitFailedDescription)
-
     return (
       <Box>
         <Box
@@ -126,8 +101,8 @@ export const PaymentPending: FC<
         >
           <AlertMessage
             type="error"
-            title={errorTitle}
-            message={errorMessage}
+            title={msg(coreErrorMessages.paymentSubmitFailed)}
+            message={msg(coreErrorMessages.paymentSubmitFailedDescription)}
           />
         </Box>
         <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
