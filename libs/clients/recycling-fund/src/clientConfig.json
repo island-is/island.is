@@ -1,0 +1,356 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/liveness": {
+      "get": {
+        "operationId": "InfraController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Liveness" }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "InfraController_version",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Version" }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/health/check": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/skilavottord/api/xroad/health": {
+      "get": {
+        "operationId": "XRoadController_health",
+        "summary": "Health check for X-Road connectivity testing",
+        "parameters": [],
+        "responses": { "200": { "description": "Service is healthy" } },
+        "tags": ["X-Road"]
+      }
+    },
+    "/app/skilavottord/api/xroad/vehicle-owner": {
+      "post": {
+        "operationId": "XRoadController_createVehicleOwner",
+        "summary": "Create or find a vehicle owner",
+        "parameters": [
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "description": "X-Road client subsystem identifier",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateXRoadVehicleOwnerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vehicle owner created or already exists" },
+          "400": { "description": "Validation error" },
+          "403": {
+            "description": "Missing or unauthorized X-Road-Client header"
+          }
+        },
+        "tags": ["X-Road"]
+      }
+    },
+    "/app/skilavottord/api/xroad/vehicle": {
+      "post": {
+        "operationId": "XRoadController_createVehicle",
+        "summary": "Create or update a vehicle record",
+        "parameters": [
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "description": "X-Road client subsystem identifier",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateXRoadVehicleDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vehicle created or updated" },
+          "400": { "description": "Validation error" },
+          "403": {
+            "description": "Missing or unauthorized X-Road-Client header"
+          }
+        },
+        "tags": ["X-Road"]
+      }
+    },
+    "/app/skilavottord/api/xroad/recycling-request": {
+      "post": {
+        "operationId": "XRoadController_createRecyclingRequest",
+        "summary": "Create a recycling request (pendingRecycle or cancelled)",
+        "parameters": [
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "description": "X-Road client subsystem identifier",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateXRoadRecyclingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Request created successfully" },
+          "400": {
+            "description": "Validation error or business rule violation"
+          },
+          "403": {
+            "description": "Missing or unauthorized X-Road-Client header"
+          }
+        },
+        "tags": ["X-Road"]
+      }
+    }
+  },
+  "info": {
+    "title": "Skilavottord API",
+    "description": "X-Road provider endpoints for skilavottord",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "Liveness": {
+        "type": "object",
+        "properties": { "ok": { "type": "boolean" } },
+        "required": ["ok"]
+      },
+      "Version": {
+        "type": "object",
+        "properties": { "version": { "type": "string" } },
+        "required": ["version"]
+      },
+      "CreateXRoadVehicleOwnerDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "example": "1234567890",
+            "description": "Citizen national ID (kennitala)"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jón Jónsson",
+            "description": "Full name of the citizen"
+          }
+        },
+        "required": ["nationalId", "name"]
+      },
+      "CreateXRoadVehicleDto": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "example": "ABC12",
+            "description": "Vehicle registration number"
+          },
+          "mileage": {
+            "type": "number",
+            "example": 150000,
+            "description": "Vehicle mileage"
+          },
+          "vin": {
+            "type": "string",
+            "example": "WVWZZZ3CZWE123456",
+            "description": "Vehicle identification number (VIN)"
+          },
+          "make": {
+            "type": "string",
+            "example": "Toyota",
+            "description": "Vehicle make/type"
+          },
+          "firstRegistrationDate": {
+            "type": "string",
+            "example": "2005-06-01",
+            "description": "First registration date"
+          },
+          "color": {
+            "type": "string",
+            "example": "Blue",
+            "description": "Vehicle color"
+          },
+          "nationalId": {
+            "type": "string",
+            "example": "1234567890",
+            "description": "Owner national ID (kennitala)"
+          }
+        },
+        "required": ["permno", "mileage", "vin", "make", "color", "nationalId"]
+      },
+      "CreateXRoadRecyclingRequestDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "example": "1234567890",
+            "description": "Citizen national ID (kennitala)"
+          },
+          "permno": {
+            "type": "string",
+            "example": "ABC12",
+            "description": "Vehicle registration number"
+          },
+          "requestType": {
+            "type": "string",
+            "example": "pendingRecycle",
+            "enum": ["pendingRecycle", "cancelled"],
+            "description": "Must be pendingRecycle or cancelled"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Jón Jónsson",
+            "description": "Full name of the citizen"
+          }
+        },
+        "required": ["nationalId", "permno", "requestType", "fullName"]
+      }
+    }
+  }
+}

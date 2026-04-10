@@ -31,6 +31,7 @@ import { WorkMachinesController } from './modules/work-machines-documents/work-m
 import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
 import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
 import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
+
 import {
   VehiclesClientConfig,
   VehiclesClientModule,

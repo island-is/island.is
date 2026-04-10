@@ -78,6 +78,7 @@ import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployme
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 
 @Module({
   imports: [
@@ -153,6 +154,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         HmsRentalAgreementClientConfig,
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
+        RecyclingFundClientConfig,
       ],
     }),
   ],

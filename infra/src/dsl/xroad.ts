@@ -1129,3 +1129,13 @@ export const GoProVerdicts = new XroadConf({
     },
   },
 })
+
+export const RecyclingFund = new XroadConf({
+  env: {
+    XROAD_RECYCLING_FUND_PATH: {
+      dev: 'IS-DEV/GOV/5308033680/Urvinnslusjodur-Client',
+      staging: 'IS-TEST/GOV/5308033680/Urvinnslusjodur-Client',
+      prod: 'IS/GOV/5308033680/Urvinnslusjodur-Client',
+    },
+  },
+})

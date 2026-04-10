@@ -134,6 +134,7 @@ env:
   XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
   XROAD_PRACTICAL_EXAMS_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token'
   XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
+  XROAD_RECYCLING_FUND_PATH: 'IS-DEV/GOV/5308033680/Urvinnslusjodur-Client'
   XROAD_RSK_RENTAL_RATE_PATH: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1'
   XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
   XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
