@@ -106,6 +106,8 @@ module.exports = {
               CROSS JOIN LATERAL unnest(c.police_case_numbers) AS x(nr)
               WHERE c.police_case_numbers IS NOT NULL
                 AND cardinality(c.police_case_numbers) > 0
+                AND x.nr IS NOT NULL
+                AND trim(x.nr) <> ''
             ) dedup
             `,
             { transaction },
