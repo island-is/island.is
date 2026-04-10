@@ -4,6 +4,9 @@ import React, {
   ReactNode,
   forwardRef,
   useEffect,
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
 } from 'react'
 import cn from 'classnames'
 import AnimateHeight, { Height } from 'react-animate-height'
@@ -18,12 +21,10 @@ import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
 import { Text } from '../../Text/Text'
-import { TextVariants } from '../../Text/Text.css'
 import { AccordionContext } from '../Accordion'
 import { Icon } from '../../IconRC/Icon'
 import * as styles from './AccordionItem.css'
 
-type IconVariantTypes = 'default' | 'small' | 'sidebar'
 type ColorVariants = 'blue' | 'red'
 
 export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'div'
@@ -31,10 +32,8 @@ export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'div'
 type BaseProps = {
   id: string
   label: ReactNode
-  labelVariant?: TextVariants
   labelUse?: AccordionItemLabelTags
   labelColor?: Colors
-  iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
   onBlur?: () => void
@@ -60,15 +59,17 @@ type StateProps =
 
 export type AccordionItemProps = BaseProps & StateProps
 
+
 export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   (
-    {
+    props,
+    forwardedRef,
+  ) => {
+    const {
       id,
       label,
-      labelVariant = 'h4',
       labelUse = 'h3',
       labelColor = 'currentColor',
-      iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,
       onToggle,
@@ -78,10 +79,14 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       onBlur,
       onFocus,
       colorVariant,
-    },
-    forwardedRef,
-  ) => {
-    const { toggledId, setToggledId } = useContext(AccordionContext)
+      variant: variantProp,
+      sidebar,
+    } = props as AccordionItemPrivateProps
+
+    const { toggledId, setToggledId, variant: contextVariant } = useContext(AccordionContext)
+    const accordionVariant = variantProp ?? contextVariant
+    const isMini = accordionVariant === 'mini'
+    const labelVariant = isMini ? 'h5' : accordionVariant === 'large' ? 'h3' : 'h4'
     const [expandedFallback, setExpandedFallback] = useState(false)
     let expanded = expandedProp ?? expandedFallback
     const [height, setHeight] = useState<Height>(expanded ? 'auto' : 0)
@@ -125,11 +130,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       [], // Only run when component mounts!
     )
 
-    const plusColor = colorVariant
-      ? colorVariant
-      : iconVariant === 'sidebar'
-      ? 'purple'
-      : 'blue'
+    const plusColor = colorVariant ? colorVariant : sidebar ? 'purple' : 'blue'
 
     return (
       <Box>
@@ -178,7 +179,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     className={cn(
                       styles.iconWrap,
                       styles.plusIconWrap({
-                        iconVariant,
+                        mini: isMini,
                         color: plusColor,
                       }),
                     )}
@@ -190,7 +191,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     >
                       <Icon
                         icon="remove"
-                        size={iconVariant === 'default' ? 'large' : 'small'}
+                        size={isMini ? 'small' : 'medium'}
                         color="currentColor"
                       />
                     </span>
@@ -201,7 +202,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     >
                       <Icon
                         icon="add"
-                        size={iconVariant === 'default' ? 'large' : 'small'}
+                        size={isMini ? 'small' : 'medium'}
                         color="currentColor"
                       />
                     </span>
@@ -222,13 +223,28 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   },
 )
 
+// File-private — allows AccordionCard and SidebarAccordion (in this file) to pass
+// internal props without exposing them as part of the public AccordionItemProps
+type AccordionItemPrivateProps = AccordionItemProps & {
+  variant?: 'mini' | 'small' | 'large'
+  sidebar?: boolean
+}
+
+// File-private cast so AccordionCard can use variant without TypeScript errors
+const PrivateAccordionItem = AccordionItem as ForwardRefExoticComponent<
+  PropsWithoutRef<AccordionItemPrivateProps> & RefAttributes<HTMLButtonElement>
+>
 // ---------------------------------------------------------------------------
 
-export type AccordionCardProps = AccordionItemProps & TestSupport
+type AccordionCardVariant = {
+  variant?: 'small' | 'large'
+}
 
-export const AccordionCard = ({ dataTestId, ...props }: AccordionCardProps) => {
+export type AccordionCardProps = AccordionItemProps & TestSupport  & AccordionCardVariant
+
+
+export const AccordionCard = ({ dataTestId, variant, ...props }: AccordionCardProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
-
   const handleFocus = () => setIsFocused(true)
   const handleBlur = () => setIsFocused(false)
 
@@ -243,25 +259,21 @@ export const AccordionCard = ({ dataTestId, ...props }: AccordionCardProps) => {
       padding={[2, 2, 4]}
       dataTestId={dataTestId}
     >
-      <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
+      <PrivateAccordionItem {...props} variant={variant} onFocus={handleFocus} onBlur={handleBlur}>
         {props.children}
-      </AccordionItem>
+      </PrivateAccordionItem>
     </Box>
   )
 }
 
 // ---------------------------------------------------------------------------
 
-export type SidebarAccordionProps = Omit<
-  BaseProps,
-  'labelVariant' | 'iconVariant'
-> &
-  StateProps
+export type SidebarAccordionProps = BaseProps & StateProps
 
 export const SidebarAccordion = (props: SidebarAccordionProps) => {
   return (
-    <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
+    <PrivateAccordionItem {...props} variant="mini" sidebar>
       {props.children}
-    </AccordionItem>
+    </PrivateAccordionItem>
   )
 }

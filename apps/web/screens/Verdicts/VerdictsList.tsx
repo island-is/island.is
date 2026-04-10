@@ -601,6 +601,7 @@ const Filters = ({
       )}
       <Box {...boxProps}>
         <Accordion
+          variant="mini"
           singleExpand={false}
           dividerOnTop={false}
           dividerOnBottom={false}
@@ -612,8 +613,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[0])
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={
               queryState[QueryParam.CASE_NUMBER] ? 'blue400' : undefined
             }
@@ -638,8 +637,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[1])
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={queryState[QueryParam.LAWS] ? 'blue400' : undefined}
           >
             <Stack space={2}>
@@ -664,8 +661,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[2])
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
           >
             <KeywordSelect
@@ -688,8 +683,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[3])
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={
               queryState[QueryParam.CASE_CONTACT] ? 'blue400' : undefined
             }
@@ -715,8 +708,6 @@ const Filters = ({
               onToggle={(expanded) => {
                 handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
               }}
-              iconVariant="small"
-              labelVariant="h5"
               labelColor={
                 queryState[QueryParam.CASE_TYPES] ||
                 queryState[QueryParam.CASE_CATEGORIES]
@@ -792,8 +783,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[5])
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={
               Boolean(queryState[QueryParam.DATE_FROM]) ||
               Boolean(queryState[QueryParam.DATE_TO])

@@ -39,6 +39,7 @@ export const ScopesCategoriesList = ({
             <AccordionCard
               key={cat.id}
               id={cat.id}
+              variant="large"
               label={
                 <Box display="flex" alignItems="center" zIndex={10}>
                   <Checkbox
@@ -54,9 +55,7 @@ export const ScopesCategoriesList = ({
                   <Text variant="h3">{cat.title}</Text>
                 </Box>
               }
-              labelVariant="h3"
               labelUse="h2"
-              iconVariant="default"
               visibleContent={cat.description}
               startExpanded={
                 !!selectedScopes?.some((s) =>

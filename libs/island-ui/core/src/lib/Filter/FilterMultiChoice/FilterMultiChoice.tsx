@@ -114,7 +114,7 @@ export const FilterMultiChoice: FC<
           key={category.id}
           id={category.id}
           label={category.label}
-          iconVariant="small"
+          variant="small"
         >
           <Stack space={2}>
             <CheckboxWrapper inline={category.inline}>
@@ -139,7 +139,7 @@ export const FilterMultiChoice: FC<
   ) : (
     <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
       <Accordion
-        space={3}
+        variant="mini"
         dividerOnBottom={false}
         dividerOnTop={false}
         singleExpand={singleExpand}
@@ -150,11 +150,9 @@ export const FilterMultiChoice: FC<
             id={category.id}
             label={category.label}
             labelUse={category.labelAs || 'h5'}
-            labelVariant="h5"
             labelColor={
               category.selected.length > 0 ? 'blue400' : 'currentColor'
             }
-            iconVariant="small"
           >
             <Stack space={2}>
               <CheckboxWrapper inline={category.inline}>

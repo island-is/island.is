@@ -202,6 +202,7 @@ const DocumentsFilter = ({
           />
           <Box marginTop={1}>
             <Accordion
+              variant="mini"
               dividerOnBottom={false}
               dividerOnTop={false}
               singleExpand={false}
@@ -211,8 +212,6 @@ const DocumentsFilter = ({
                 id="date-accordion-item"
                 label={formatMessage(m.datesLabel)}
                 labelUse="h2"
-                labelVariant="h5"
-                iconVariant="small"
               >
                 <Box display="flex" flexDirection="column">
                   <Box>

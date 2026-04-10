@@ -507,6 +507,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             </Box>
             <Box>
               <Accordion
+                variant="large"
                 singleExpand={false}
                 dividerOnTop={false}
                 dividerOnBottom={false}
@@ -517,8 +518,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     id="application-rules"
                     label={n('admissionRequirements', 'Inntökuskilyrði')}
                     labelUse="p"
-                    labelVariant="h3"
-                    iconVariant="default"
                     expanded={isOpen[0]}
                     onToggle={() => toggleIsOpen(0)}
                   >
@@ -535,8 +534,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     id="education-requirements"
                     label={n('educationRequirements', 'Námskröfur')}
                     labelUse="p"
-                    labelVariant="h3"
-                    iconVariant="default"
                     expanded={isOpen[1]}
                     onToggle={() => toggleIsOpen(1)}
                   >
@@ -553,8 +550,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     id="annual-cost"
                     label={n('yearlyCost', 'Árlegt gjald')}
                     labelUse="p"
-                    labelVariant="h3"
-                    iconVariant="default"
                     expanded={isOpen[3]}
                     onToggle={() => toggleIsOpen(3)}
                   >

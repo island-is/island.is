@@ -125,12 +125,11 @@ const Ruling = () => {
         <CourtCaseInfo workingCase={workingCase} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
           <Box component="section">
-            <Accordion>
+            <Accordion variant="large">
               <PoliceRequestAccordionItem workingCase={workingCase} />
               <AccordionItem
                 id="caseFileList"
                 label={`Rannsóknargögn (${caseFiles.length})`}
-                labelVariant="h3"
               >
                 <CaseFileList caseId={workingCase.id} files={caseFiles} />
               </AccordionItem>

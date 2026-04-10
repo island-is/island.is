@@ -139,6 +139,7 @@ const HousingBenefitsFilter = ({
           />
           <Box marginTop={1}>
             <Accordion
+              variant="mini"
               dividerOnBottom={false}
               dividerOnTop={false}
               singleExpand={false}
@@ -149,8 +150,6 @@ const HousingBenefitsFilter = ({
                 label={formatMessage(messages.hbRentalMonthYear)}
                 labelColor="dark400"
                 labelUse="h5"
-                labelVariant="h5"
-                iconVariant="small"
               >
                 <Box
                   className={cn(financeStyles.accordionBox, styles.selectBox)}

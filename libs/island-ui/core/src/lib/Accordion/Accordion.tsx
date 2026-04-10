@@ -9,29 +9,36 @@ import { BoxProps } from '../Box/types'
 interface AccordionContextValue {
   toggledId: string
   setToggledId: (id: string) => void
+  variant?: 'mini' | 'small' | 'large'
 }
 
 export const AccordionContext = createContext<AccordionContextValue>({
   toggledId: '',
   setToggledId: () => null,
+  variant: undefined,
 })
 
 export interface AccordionProps {
   children: ReactNodeNoStrings
+  /** @deprecated The spacing should always be 24 px. **/
   space?: BoxProps['paddingTop']
   dividers?: boolean
   dividerOnTop?: boolean
   dividerOnBottom?: boolean
   singleExpand?: boolean
+  variant?: 'mini' |'small' | 'large'
+  iconVariant?: 'purple' | 'default'
 }
 
 export const Accordion = ({
   children,
-  space = 2,
+  space = 3,
   dividers = true,
   dividerOnTop = true,
   dividerOnBottom = true,
   singleExpand = true,
+  variant = 'small',
+  iconVariant = 'default'
 }: AccordionProps) => {
   const [toggledId, setToggledId] = useState<string>('')
 
@@ -40,22 +47,25 @@ export const Accordion = ({
       value={{
         toggledId,
         setToggledId,
+        variant,
       }}
     >
-      <Stack space={space} dividers={dividers}>
+      <Stack space={3} dividers={dividers}>
         {children}
       </Stack>
     </AccordionContext.Provider>
   ) : (
-    <Stack space={space} dividers={dividers}>
-      {children}
-    </Stack>
+    <AccordionContext.Provider value={{ toggledId: '', setToggledId: () => null, variant }}>
+      <Stack space={3} dividers={dividers}>
+        {children}
+      </Stack>
+    </AccordionContext.Provider>
   )
 
   return (
     <Box>
       {dividerOnTop && <Divider />}
-      <Box paddingY={2}>{Accordions}</Box>
+      <Box paddingY={3}>{Accordions}</Box>
       {dividerOnBottom && <Divider />}
     </Box>
   )

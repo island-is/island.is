@@ -549,7 +549,6 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         label={formatMessage(strings.title, {
           policeCaseNumber,
         })}
-        labelVariant="h3"
         startExpanded={shouldStartExpanded}
       >
         <Box marginBottom={3}>

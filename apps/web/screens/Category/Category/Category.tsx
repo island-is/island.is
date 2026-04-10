@@ -138,7 +138,6 @@ const Category: Screen<CategoryProps> = ({
           id={`accordion-item-${groupSlug}`}
           label={group?.title}
           labelUse="h2"
-          labelVariant="h3"
           expanded={expanded}
           visibleContent={group?.description}
           onToggle={() => {

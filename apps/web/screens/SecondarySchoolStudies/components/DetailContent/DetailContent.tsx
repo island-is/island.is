@@ -62,6 +62,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
       </Box>
 
       <Accordion
+        variant="large"
         singleExpand={false}
         dividerOnTop={false}
         dividerOnBottom={false}
@@ -70,8 +71,6 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           id="admission-requirements"
           label={formatMessage(m.details.admissionRequirements)}
           labelUse="p"
-          labelVariant="h3"
-          iconVariant="default"
           expanded={isOpen.admissionRequirements}
           onToggle={() => toggleIsOpen('admissionRequirements')}
         >
@@ -91,8 +90,6 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           id="study-structure"
           label={formatMessage(m.details.studyStructure)}
           labelUse="p"
-          labelVariant="h3"
-          iconVariant="default"
           expanded={isOpen.studyStructure}
           onToggle={() => toggleIsOpen('studyStructure')}
         >
@@ -112,8 +109,6 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           id="academic-evaluation"
           label={formatMessage(m.details.assessment)}
           labelUse="p"
-          labelVariant="h3"
-          iconVariant="default"
           expanded={isOpen.assessment}
           onToggle={() => toggleIsOpen('assessment')}
         >
@@ -133,8 +128,6 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           id="competence-criteria"
           label={formatMessage(m.details.competenceCriteria)}
           labelUse="p"
-          labelVariant="h3"
-          iconVariant="default"
           expanded={isOpen.competenceCriteria}
           onToggle={() => toggleIsOpen('competenceCriteria')}
         >
@@ -157,8 +150,6 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           id="courses-levels-units"
           label={formatMessage(m.details.coursesLevelsUnits)}
           labelUse="p"
-          labelVariant="h3"
-          iconVariant="default"
           expanded={isOpen.coursesLevelsUnits}
           onToggle={() => toggleIsOpen('coursesLevelsUnits')}
         >

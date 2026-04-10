@@ -427,6 +427,7 @@ const Filters = ({
       )}
       <Box {...boxProps}>
         <Accordion
+          variant="mini"
           singleExpand={false}
           dividerOnTop={false}
           dividerOnBottom={false}
@@ -438,8 +439,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, DATE_ACCORDION_ID)
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={
               Boolean(queryState[QueryParam.DATE_FROM]) ||
               Boolean(queryState[QueryParam.DATE_TO])
@@ -493,8 +492,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, LAWYER_ACCORDION_ID)
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={queryState[QueryParam.LAWYER] ? 'blue400' : undefined}
           >
             <Stack space={2}>
@@ -535,8 +532,6 @@ const Filters = ({
               onToggle={(expanded) => {
                 handleToggle(expanded, SCHEDULE_TYPE_ACCORDION_ID)
               }}
-              iconVariant="small"
-              labelVariant="h5"
               labelColor={
                 queryState[QueryParam.SCHEDULE_TYPES] ? 'blue400' : undefined
               }
@@ -583,8 +578,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, CASE_TYPE_ACCORDION_ID)
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={
               queryState[QueryParam.CASE_TYPES] ? 'blue400' : undefined
             }

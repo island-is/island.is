@@ -26,7 +26,6 @@ const CommentsAccordionItem: FC<Props> = (props) => {
       label={formatMessage(strings.label, {
         commentCount,
       })}
-      labelVariant="h3"
     >
       {workingCase.comments && (
         <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>

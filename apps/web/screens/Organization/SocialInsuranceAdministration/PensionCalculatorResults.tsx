@@ -392,11 +392,10 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                       )}
 
                       {calculationIsPresent && (
-                        <Accordion dividerOnTop={false}>
+                        <Accordion variant="large" dividerOnTop={false}>
                           <AccordionItem
                             startExpanded={!highlightedItemPresent}
                             id="resultDetails"
-                            labelVariant="h3"
                             labelUse="h3"
                             label={formatMessage(
                               translationStrings.resultDetailsLabel,

@@ -164,16 +164,14 @@ const Overview = () => {
             />
           </Box>
 
-          <Accordion>
+          <Accordion variant="large">
             <AccordionItem
-              labelVariant="h3"
               id="id_1"
               label={formatMessage(lawsBrokenAccordion.heading)}
             >
               <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
             <AccordionItem
-              labelVariant="h3"
               id="id_2"
               label="Lagaákvæði sem krafan er byggð á"
             >
@@ -181,7 +179,6 @@ const Overview = () => {
             </AccordionItem>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
               <AccordionItem
-                labelVariant="h3"
                 id="id_4"
                 label="Greinargerð um málsatvik og lagarök"
               >
