@@ -115,7 +115,7 @@ export class WebSitemapService {
           maxRetries: WebSitemapService.MAX_RETRIES,
           retryDelayMs: WebSitemapService.RETRY_DELAY_MS,
         })
-        await this.wait(WebSitemapService.RETRY_DELAY_MS)
+        await this.wait(WebSitemapService.RETRY_DELAY_MS * attempt)
       }
     }
 
