@@ -573,10 +573,21 @@ export const m = defineMessages({
       'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
+  nextStepsIntroDefault: {
+    id: 'dl.application:nextStepsIntroDefault',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
+    description: '',
+  },
+  nextStepsIntroBE: {
+    id: 'dl.application:nextStepsIntroBE',
+    defaultMessage:
+      'Umsókn þín verður nú yfirfarin, þegar því er lokið er stafræn ökunámsbók virkjuð.',
+    description: '',
+  },
   nextStepsDescriptionBE: {
     id: 'dl.application:nextStepsDescriptionBE#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+      'Þegar ökunámi og prófi er lokið, pöntum við nýtt ökuskírteini sem við afhendum eftir afhendingamáta sem þú valdir í umsókninni. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
   nextStepsDescription65Renewal: {
