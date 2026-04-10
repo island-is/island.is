@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common'
 import { AuthAdminApiClientModule } from '@island.is/clients/auth/admin-api'
 import { CmsModule } from '@island.is/cms'
 
+import { ApiScopeUserResolver } from './api-scope-user/api-scope-user.resolver'
+import { ApiScopeUserService } from './api-scope-user/api-scope-user.service'
 import { TenantResolver } from './tenant/tenant.resolver'
 import { TenantEnvironmentResolver } from './tenant/tenant-environment.resolver'
 import { TenantsService } from './tenant/tenants.service'
@@ -22,6 +24,8 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
 @Module({
   imports: [AuthAdminApiClientModule, AuthDelegationApiClientModule, CmsModule],
   providers: [
+    ApiScopeUserResolver,
+    ApiScopeUserService,
     TenantResolver,
     TenantEnvironmentResolver,
     TenantsService,

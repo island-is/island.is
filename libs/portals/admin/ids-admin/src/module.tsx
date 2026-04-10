@@ -15,6 +15,8 @@ import { createPermissionAction } from './screens/Permission/CreatePermission/Cr
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
 import { permissionLoader } from './screens/Permission/Permission.loader'
 import { editPermissionAction } from './screens/Permission/EditPermission.action'
+import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers.loader'
+import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -97,26 +99,28 @@ export const idsAdminModule: PortalModule = {
                       name: m.apiScopeUsers,
                       path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
                       element: <ApiScopeUsers />,
+                      loader: apiScopeUsersLoader(props),
+                      action: apiScopeUsersAction(props),
                       handle: {
                         backPath: IDSAdminPaths.IDSAdmin,
                       },
                     },
-                    {
-                      name: m.grantTypes,
-                      path: IDSAdminPaths.IDSAdminControlsGrantTypes,
-                      element: <GrantTypes />,
-                      handle: {
-                        backPath: IDSAdminPaths.IDSAdmin,
-                      },
-                    },
-                    {
-                      name: m.idpProviders,
-                      path: IDSAdminPaths.IDSAdminControlsIdpProviders,
-                      element: <IdpProviders />,
-                      handle: {
-                        backPath: IDSAdminPaths.IDSAdmin,
-                      },
-                    },
+                    // {
+                    //   name: m.grantTypes,
+                    //   path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+                    //   element: <GrantTypes />,
+                    //   handle: {
+                    //     backPath: IDSAdminPaths.IDSAdmin,
+                    //   },
+                    // },
+                    // {
+                    //   name: m.idpProviders,
+                    //   path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+                    //   element: <IdpProviders />,
+                    //   handle: {
+                    //     backPath: IDSAdminPaths.IDSAdmin,
+                    //   },
+                    // },
                   ],
                 },
               ]

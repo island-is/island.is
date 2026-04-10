@@ -923,6 +923,94 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users',
     defaultMessage: 'API Scope Users',
   },
+  apiScopeUsersDescription: {
+    id: 'ap.ids-admin:api-scope-users-description',
+    defaultMessage: 'Manage users who have access to API scopes.',
+  },
+  apiScopeUsersSearchPlaceholder: {
+    id: 'ap.ids-admin:api-scope-users-search-placeholder',
+    defaultMessage: 'Search by name, national ID or email',
+  },
+  apiScopeUsersName: {
+    id: 'ap.ids-admin:api-scope-users-name',
+    defaultMessage: 'Name',
+  },
+  apiScopeUsersNationalId: {
+    id: 'ap.ids-admin:api-scope-users-national-id',
+    defaultMessage: 'National ID',
+  },
+  apiScopeUsersEmail: {
+    id: 'ap.ids-admin:api-scope-users-email',
+    defaultMessage: 'Email',
+  },
+  apiScopeUsersActions: {
+    id: 'ap.ids-admin:api-scope-users-actions',
+    defaultMessage: 'Actions',
+  },
+  apiScopeUsersCreateNew: {
+    id: 'ap.ids-admin:api-scope-users-create-new',
+    defaultMessage: 'Create user',
+  },
+  apiScopeUsersCreateTitle: {
+    id: 'ap.ids-admin:api-scope-users-create-title',
+    defaultMessage: 'Create API scope user',
+  },
+  apiScopeUsersEditTitle: {
+    id: 'ap.ids-admin:api-scope-users-edit-title',
+    defaultMessage: 'Edit API scope user',
+  },
+  apiScopeUsersDeleteConfirmTitle: {
+    id: 'ap.ids-admin:api-scope-users-delete-confirm-title',
+    defaultMessage: 'Delete API scope user',
+  },
+  apiScopeUsersDeleteConfirmMessage: {
+    id: 'ap.ids-admin:api-scope-users-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this API scope user?',
+  },
+  apiScopeUsersDeleteButton: {
+    id: 'ap.ids-admin:api-scope-users-delete-button',
+    defaultMessage: 'Delete',
+  },
+  apiScopeUserEditButton: {
+    id: 'ap.ids-admin:api-scope-user-edit',
+    defaultMessage: 'Edit',
+  },
+  apiScopeUsersSaveButton: {
+    id: 'ap.ids-admin:api-scope-users-save-button',
+    defaultMessage: 'Save',
+  },
+  apiScopeUsersCancelButton: {
+    id: 'ap.ids-admin:api-scope-users-cancel-button',
+    defaultMessage: 'Cancel',
+  },
+  apiScopeUsersCreateSuccess: {
+    id: 'ap.ids-admin:api-scope-users-create-success',
+    defaultMessage: 'API scope user created successfully',
+  },
+  apiScopeUsersUpdateSuccess: {
+    id: 'ap.ids-admin:api-scope-users-update-success',
+    defaultMessage: 'API scope user updated successfully',
+  },
+  apiScopeUsersDeleteSuccess: {
+    id: 'ap.ids-admin:api-scope-users-delete-success',
+    defaultMessage: 'API scope user deleted successfully',
+  },
+  apiScopeUsersError: {
+    id: 'ap.ids-admin:api-scope-users-error',
+    defaultMessage: 'An error occurred',
+  },
+  apiScopeUsersNoResults: {
+    id: 'ap.ids-admin:api-scope-users-no-results',
+    defaultMessage: 'No API scope users found',
+  },
+  apiScopeUsersScopes: {
+    id: 'ap.ids-admin:api-scope-users-scopes',
+    defaultMessage: 'Scopes',
+  },
+  apiScopeUsersScopesLoading: {
+    id: 'ap.ids-admin:api-scope-users-scopes-loading',
+    defaultMessage: 'Loading scopes...',
+  },
   grantTypes: {
     id: 'ap.ids-admin:grant-types',
     defaultMessage: 'Grant Types',
