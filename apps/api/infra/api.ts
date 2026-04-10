@@ -86,7 +86,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
+    .args('--tls-min-v1.0', 'main.cjs')
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -343,6 +343,11 @@ export const serviceSetup = (services: {
         staging:
           '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
+      HH_COURSES_ZENDESK_ENV_TAG: {
+        dev: 'hh_env_dev',
+        staging: 'hh_env_staging',
+        prod: 'hh_env_prod',
       },
     })
     .secrets({

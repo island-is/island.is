@@ -258,7 +258,7 @@ const AccessControlNew = () => {
       {outgoingGeneralMandateDelegations &&
         outgoingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
-            title={formatMessage(m.delegationTypeGeneralMandate)}
+            title={formatMessage(m.delegationTypeGeneralMandateOutgoing)}
             data={getGeneralMandateTableData(
               outgoingGeneralMandateDelegations,
               formatMessage,
@@ -337,7 +337,7 @@ const AccessControlNew = () => {
         incomingGeneralMandateDelegations &&
         incomingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
-            title={formatMessage(m.delegationTypeGeneralMandate)}
+            title={formatMessage(m.delegationTypeGeneralMandateIncoming)}
             data={getGeneralMandateTableData(
               incomingGeneralMandateDelegations,
               formatMessage,

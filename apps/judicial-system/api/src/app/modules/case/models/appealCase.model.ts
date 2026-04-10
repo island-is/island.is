@@ -66,4 +66,7 @@ export class AppealCase {
 
   @Field(() => String, { nullable: true })
   readonly appealIsolationToDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealedByNationalId?: string
 }
