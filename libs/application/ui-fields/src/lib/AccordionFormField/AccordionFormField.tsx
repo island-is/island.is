@@ -12,7 +12,11 @@ import { useEffect, useState } from 'react'
 interface Props extends FieldBaseProps {
   field: AccordionField
 }
-export const AccordionFormField = ({ field, application }: Props) => {
+export const AccordionFormField = ({
+  field,
+  application,
+  renderField,
+}: Props) => {
   const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage, lang: locale } = useLocale()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
@@ -37,15 +41,31 @@ export const AccordionFormField = ({ field, application }: Props) => {
       )}
       <Accordion>
         {items.map((item, index) => {
+          const hasContent = !!item.itemContent
+          const hasChildren = item.children && item.children.length > 0
           return (
             <AccordionItem
               key={`accordion-item-${index}`}
               id={`accordion-item-${index}`}
               label={formatText(item.itemTitle, application, formatMessage)}
             >
-              <Markdown>
-                {formatText(item.itemContent, application, formatMessage)}
-              </Markdown>
+              {hasContent && (
+                <Markdown>
+                  {formatText(item.itemContent!, application, formatMessage)}
+                </Markdown>
+              )}
+              {hasChildren && (
+                <Box
+                  style={{ overflow: 'visible' }}
+                  marginTop={hasContent ? 2 : 0}
+                >
+                  {item.children!.map((childField) => (
+                    <Box key={childField.id} marginBottom={2}>
+                      {renderField?.(childField)}
+                    </Box>
+                  ))}
+                </Box>
+              )}
             </AccordionItem>
           )
         })}

@@ -1,12 +1,23 @@
 import { validateAnswers } from '@island.is/application/core'
-import { FormNode, FormValue } from '@island.is/application/types'
+import {
+  Field,
+  FieldTypes,
+  FormNode,
+  FormValue,
+} from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form'
 import { ResolverContext } from '../types'
+import { getAccordionChildFieldIds } from '../utils'
 
-// Get all field id's from the provided form node
-const getFormNodeFieldIds = (formNode: FormNode) =>
-  formNode?.children?.filter((x) => x.id).map((x) => x.id as string) ?? []
+const getFormNodeFieldIds = (formNode: FormNode) => {
+  const children = formNode?.children ?? []
+  const directIds = children.filter((x) => x.id).map((x) => x.id as string)
+  const nestedIds = children
+    .filter((x): x is Field => 'type' in x && x.type === FieldTypes.ACCORDION)
+    .flatMap((x) => getAccordionChildFieldIds(x))
+  return [...directIds, ...nestedIds]
+}
 
 type Resolver = ({
   formValue,
