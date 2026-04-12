@@ -11,7 +11,7 @@ import {
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
-import { generateGoogleMapsLink } from '../../../utils/googleMaps'
+import { generateGoogleMapsLinkFromCoords } from '../../../utils/googleMaps'
 import { mapWeekday } from '../../../utils/mappers'
 import { DataState } from '../../../utils/types'
 
@@ -54,7 +54,10 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
           ),
           location: {
             label: appointment.location?.name ?? '',
-            href: generateGoogleMapsLink(appointment.location?.address ?? ''),
+            href: generateGoogleMapsLinkFromCoords(
+              appointment.location?.latitude,
+              appointment.location?.longitude,
+            ) ?? undefined,
           },
         },
       })) ?? []

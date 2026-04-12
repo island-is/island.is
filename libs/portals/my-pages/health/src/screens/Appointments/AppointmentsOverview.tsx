@@ -1,6 +1,6 @@
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
 import { Box, DatePicker, Filter, Input } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   HEALTH_DIRECTORATE_SLUG,
@@ -23,6 +23,7 @@ interface Filter {
 }
 
 const AppointmentsOverview = () => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
 
