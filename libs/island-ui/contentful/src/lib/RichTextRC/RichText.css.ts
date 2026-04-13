@@ -115,15 +115,11 @@ export const clearBoth = style({
 export const tableContainer = style({})
 
 globalStyle(`${tableContainer} th`, {
-  paddingTop: theme.spacing[2],
-  paddingBottom: theme.spacing[2],
-  paddingLeft: theme.spacing[2],
+  padding: theme.spacing[2],
 })
 
 globalStyle(`${tableContainer} td`, {
-  paddingTop: theme.spacing.p5,
-  paddingBottom: theme.spacing.p5,
-  paddingLeft: theme.spacing[2],
+  padding: `${theme.spacing.p5}px ${theme.spacing[2]}px`,
 })
 
 globalStyle(`${tableContainer} th p`, {
