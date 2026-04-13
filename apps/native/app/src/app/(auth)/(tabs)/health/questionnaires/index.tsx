@@ -95,11 +95,12 @@ export default function QuestionnairesScreen() {
     [intl, openBrowser],
   )
 
-  const { data, loading, error, refetch, networkStatus } = useGetQuestionnairesQuery({
-    variables: {
-      locale,
-    },
-  })
+  const { data, loading, error, refetch, networkStatus } =
+    useGetQuestionnairesQuery({
+      variables: {
+        locale,
+      },
+    })
 
   const isInitialLoading = loading && !data
 
@@ -138,7 +139,7 @@ export default function QuestionnairesScreen() {
             item.lastSubmissionId ?? undefined,
           )}
           style={{
-            marginBottom: theme.spacing[2]
+            marginBottom: theme.spacing[2],
           }}
         />
       )
@@ -159,52 +160,52 @@ export default function QuestionnairesScreen() {
 
   return (
     <>
-    <StackScreen networkStatus={networkStatus} />
-    <FlatList
-      refreshControl={
-        <RefreshControl refreshing={loading} onRefresh={refetch} />
-      }
-      style={{
-        paddingHorizontal: theme.spacing[2],
-        flex: 1,
-      }}
-      initialNumToRender={6}
-      data={questionnaires}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      ListEmptyComponent={
-        <>
-          {!loading && error && questionnaires.length === 0 ? (
-            <Problem error={error} withContainer />
-          ) : null}
+      <StackScreen networkStatus={networkStatus} />
+      <FlatList
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
+        }
+        style={{
+          paddingHorizontal: theme.spacing[2],
+          flex: 1,
+        }}
+        initialNumToRender={6}
+        data={questionnaires}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        ListEmptyComponent={
+          <>
+            {!loading && error && questionnaires.length === 0 ? (
+              <Problem error={error} withContainer />
+            ) : null}
 
-          {!loading && !error && questionnaires.length === 0 ? (
-            <Problem type="no_data" withContainer />
-          ) : null}
-          {isInitialLoading
-            ? createSkeletonArr(4).map((item) => (
-                <Skeleton
-                  key={item.id}
-                  active
-                  backgroundColor={{
-                    dark: theme.shades.dark.shade300,
-                    light: theme.color.blue100,
-                  }}
-                  overlayColor={{
-                    dark: theme.shades.dark.shade200,
-                    light: theme.color.blue200,
-                  }}
-                  overlayOpacity={1}
-                  height={112}
-                  style={{
-                    borderRadius: 8,
-                  }}
-                />
-              ))
-            : null}
-        </>
-      }
-    />
+            {!loading && !error && questionnaires.length === 0 ? (
+              <Problem type="no_data" withContainer />
+            ) : null}
+            {isInitialLoading
+              ? createSkeletonArr(4).map((item) => (
+                  <Skeleton
+                    key={item.id}
+                    active
+                    backgroundColor={{
+                      dark: theme.shades.dark.shade300,
+                      light: theme.color.blue100,
+                    }}
+                    overlayColor={{
+                      dark: theme.shades.dark.shade200,
+                      light: theme.color.blue200,
+                    }}
+                    overlayOpacity={1}
+                    height={112}
+                    style={{
+                      borderRadius: 8,
+                    }}
+                  />
+                ))
+              : null}
+          </>
+        }
+      />
     </>
   )
 }

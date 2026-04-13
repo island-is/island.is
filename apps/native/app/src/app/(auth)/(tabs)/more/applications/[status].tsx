@@ -20,13 +20,13 @@ export default function ApplicationsByStatusScreen() {
   const status = useMemo(() => {
     switch (params.status) {
       case 'incomplete':
-        return [ApplicationResponseDtoStatusEnum.Draft];
+        return [ApplicationResponseDtoStatusEnum.Draft]
       case 'completed':
-        return [ApplicationResponseDtoStatusEnum.Completed];
+        return [ApplicationResponseDtoStatusEnum.Completed]
       case 'in-progress':
-        return [ApplicationResponseDtoStatusEnum.Inprogress];
+        return [ApplicationResponseDtoStatusEnum.Inprogress]
     }
-    return [];
+    return []
   }, [params.status, intl])
 
   const title = useMemo(() => {

@@ -65,12 +65,10 @@ export default ({ config }) => {
       [
         'react-native-app-auth',
         {
-          redirectUrls: [
-            `${getUniqueIdentifier()}.auth://oauth`,
-          ],
+          redirectUrls: [`${getUniqueIdentifier()}.auth://oauth`],
         },
       ],
-      './plugins/with-island-app'
+      './plugins/with-island-app',
     ],
   }
 }

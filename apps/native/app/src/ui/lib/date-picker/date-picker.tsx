@@ -4,18 +4,11 @@ import DatePicker, {
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components/native'
 import { useIntl } from 'react-intl'
-import {
-  Button,
-  Image,
-  Modal,
-  Platform,
-  StyleSheet,
-  View
-} from 'react-native'
+import { Button, Image, Modal, Platform, StyleSheet, View } from 'react-native'
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
-  withTiming
+  withTiming,
 } from 'react-native-reanimated'
 import calendarIcon from '../../assets/icons/calendar.png'
 import { blue100 } from '../../utils'
@@ -149,10 +142,7 @@ export const DatePickerInput = ({
         <Image source={calendarIcon} />
       </DateInput>
       {Platform.OS === 'ios' && (
-        <Modal
-          visible={openDatePicker}
-          transparent
-        >
+        <Modal visible={openDatePicker} transparent>
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
@@ -200,7 +190,8 @@ export const DatePickerInput = ({
                 <Button
                   title={intl.formatMessage({ id: 'inbox.filterDateConfirm' })}
                   disabled={
-                    pickedDate?.toISOString() === selectedDate?.toISOString() && !!selectedDate
+                    pickedDate?.toISOString() === selectedDate?.toISOString() &&
+                    !!selectedDate
                   }
                   onPress={() => {
                     onSelectDate?.(pickedDate ?? new Date())

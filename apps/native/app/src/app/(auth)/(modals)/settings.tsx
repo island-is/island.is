@@ -364,7 +364,9 @@ export default function SettingsScreen() {
       <TableViewGroup
         header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
       >
-        <PressableHighlight onPress={() => router.navigate('/onboarding/pin?from=settings')}>
+        <PressableHighlight
+          onPress={() => router.navigate('/onboarding/pin?from=settings')}
+        >
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.security.changePinLabel',
@@ -527,7 +529,11 @@ export default function SettingsScreen() {
           />
         </PressableHighlight>
         <PressableHighlight
-          onPress={() => openBrowserAsync('https://island.is/personuverndarstefna-stafraent-islands')}
+          onPress={() =>
+            openBrowserAsync(
+              'https://island.is/personuverndarstefna-stafraent-islands',
+            )
+          }
         >
           <TableViewCell
             title={intl.formatMessage({

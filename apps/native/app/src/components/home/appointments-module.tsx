@@ -15,7 +15,7 @@ import {
   GeneralCardSkeleton,
   Heading,
   Typography,
-  ViewPager
+  ViewPager,
 } from '@/ui'
 import { screenWidth } from '@/utils/dimensions'
 import { router } from 'expo-router'
@@ -73,10 +73,10 @@ const AppointmentsModule = React.memo(
         style={
           count > 1
             ? {
-              width: viewPagerItemWidth,
-              paddingLeft: theme.spacing[2],
-              paddingBottom: theme.spacing[2],
-            }
+                width: viewPagerItemWidth,
+                paddingLeft: theme.spacing[2],
+                paddingBottom: theme.spacing[2],
+              }
             : { paddingBottom: theme.spacing[2] }
         }
       >
@@ -157,6 +157,5 @@ const AppointmentsModule = React.memo(
 export {
   AppointmentsModule,
   useGetAppointmentsQuery,
-  validateAppointmentsInitialData
+  validateAppointmentsInitialData,
 }
-

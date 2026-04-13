@@ -1,4 +1,3 @@
-
 export const environments = {
   prod: {
     id: 'prod',

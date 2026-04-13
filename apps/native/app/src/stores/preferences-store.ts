@@ -124,4 +124,6 @@ export const preferencesStore = create<PreferencesStore>()(
   ),
 )
 
-export const usePreferencesStore = <U = PreferencesStore>(selector?: (state: PreferencesStore) => U) => useStore(preferencesStore, selector!)
+export const usePreferencesStore = <U = PreferencesStore>(
+  selector?: (state: PreferencesStore) => U,
+) => useStore(preferencesStore, selector!)

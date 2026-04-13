@@ -1,5 +1,8 @@
 import { Passkey } from 'react-native-passkey'
-import { clearLockScreenSuppression, suppressLockScreen } from '@/stores/auth-store'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { preferencesStore } from '@/stores/preferences-store'
 import { router } from 'expo-router'

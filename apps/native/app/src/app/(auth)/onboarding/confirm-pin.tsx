@@ -84,7 +84,7 @@ export default function ConfirmPinScreen() {
                 preset: 'done',
                 duration: 1.2,
                 shouldDismissByDrag: true,
-              });
+              })
             }
           } else {
             nextOnboardingStep()

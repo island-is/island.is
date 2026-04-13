@@ -4,7 +4,9 @@ import { router } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { NetworkStatus } from '@apollo/client'
 
-export function navbarOfflineItem(networkStatus?: NetworkStatus | NetworkStatus[]): NativeStackHeaderItem {
+export function navbarOfflineItem(
+  networkStatus?: NetworkStatus | NetworkStatus[],
+): NativeStackHeaderItem {
   return {
     type: 'custom',
     element: <OfflineIcon networkStatus={networkStatus} />,
@@ -30,5 +32,5 @@ export function spacingItem(): NativeStackHeaderItem {
 }
 
 export function navbarAndroidOfflineItem() {
-  return (<OfflineIcon />);
+  return <OfflineIcon />
 }

@@ -34,8 +34,7 @@ export default function EditBankInfoScreen() {
 
   useEffect(() => {
     setDisabled(
-      stringifyBankData(info) ===
-        stringifyBankData({ bank, l, account }),
+      stringifyBankData(info) === stringifyBankData({ bank, l, account }),
     )
   }, [bank, l, account])
 

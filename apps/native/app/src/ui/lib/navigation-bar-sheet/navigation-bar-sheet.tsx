@@ -90,7 +90,7 @@ type NavigationBarSheetProps = {
 }
 
 export function NavigationBarSheet(props: NavigationBarSheetProps) {
-  return null;
+  return null
 }
 
 export function OldNavigationBarSheet({

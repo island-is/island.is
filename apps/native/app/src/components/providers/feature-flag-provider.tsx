@@ -13,7 +13,7 @@ import { environments } from '@/constants/environments'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { Platform } from 'react-native'
-import * as Application from 'expo-application';
+import * as Application from 'expo-application'
 
 interface FeatureFlagUser {
   identifier: string

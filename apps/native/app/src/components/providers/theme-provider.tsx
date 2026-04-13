@@ -1,22 +1,19 @@
 import { getThemeWithPreferences } from '@/utils/get-theme-with-preferences'
-import {
-  ThemeProvider as NavigationThemeProvider
-} from '@react-navigation/native'
+import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
 import React, { useEffect, useMemo } from 'react'
-import {
-  DynamicColorIOS,
-  Platform,
-  StatusBar
-} from 'react-native'
+import { DynamicColorIOS, Platform, StatusBar } from 'react-native'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const appearanceMode = 'light' as const
-  const selectedTheme = useMemo(() => getThemeWithPreferences({ appearanceMode }, appearanceMode), [appearanceMode]);
+  const selectedTheme = useMemo(
+    () => getThemeWithPreferences({ appearanceMode }, appearanceMode),
+    [appearanceMode],
+  )
 
   useEffect(() => {
-    StatusBar.setBarStyle('dark-content', true);
-  }, []);
+    StatusBar.setBarStyle('dark-content', true)
+  }, [])
 
   const navigationTheme = useMemo(() => {
     return {
@@ -51,15 +48,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           fontFamily: 'IBMPlexSans_700Bold',
           fontWeight: '700' as const,
         },
-      }
+      },
     }
   }, [selectedTheme])
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
-      <StyledThemeProvider
-        theme={{ ...selectedTheme, appearanceMode }}
-      >
+      <StyledThemeProvider theme={{ ...selectedTheme, appearanceMode }}>
         {children}
       </StyledThemeProvider>
     </NavigationThemeProvider>

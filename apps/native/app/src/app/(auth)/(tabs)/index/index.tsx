@@ -1,4 +1,10 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   Animated,
   Image,
@@ -61,7 +67,6 @@ import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
 import { StackScreen } from '../../../../components/stack-screen'
 import { blue400, red400, Typography } from '../../../../ui'
-
 
 interface ListItem {
   id: string
@@ -156,7 +161,10 @@ export default function HomeScreen() {
 
   const appointmentsFrom = useRef(new Date()).current
   const appointmentsRes = useGetAppointmentsQuery({
-    variables: { from: appointmentsFrom.toISOString(), status: BaseAppointmentStatuses },
+    variables: {
+      from: appointmentsFrom.toISOString(),
+      status: BaseAppointmentStatuses,
+    },
     fetchPolicy: 'network-only',
     skip: !appointmentsWidgetEnabled,
   })
@@ -409,21 +417,23 @@ export default function HomeScreen() {
                       />
                     </View>
                   )}
-                  {unseenCount > 0 ? <View
-                    style={{
-                      position: 'absolute',
-                      right: Platform.select({ ios: -4, android: 0 }),
-                      top: Platform.select({ ios: -4, android: 0 }),
-                      backgroundColor: red400,
-                      borderRadius: 8,
-                      paddingVertical: 2,
-                      paddingHorizontal: 4,
-                    }}
-                  >
-                    <Typography variant="eyebrow" color="white">
-                      {unseenCount}
-                    </Typography>
-                  </View> : null}
+                  {unseenCount > 0 ? (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        right: Platform.select({ ios: -4, android: 0 }),
+                        top: Platform.select({ ios: -4, android: 0 }),
+                        backgroundColor: red400,
+                        borderRadius: 8,
+                        paddingVertical: 2,
+                        paddingHorizontal: 4,
+                      }}
+                    >
+                      <Typography variant="eyebrow" color="white">
+                        {unseenCount}
+                      </Typography>
+                    </View>
+                  ) : null}
                 </Pressable>
               ),
               hidesSharedBackground: true,

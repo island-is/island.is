@@ -89,8 +89,8 @@ const LabelHost = styled.View<{ color: LabelColor; fullWidth?: boolean }>`
 `
 
 const LabelText = styled(Typography)<{
-  color: LabelColor;
-  fullWidth?: boolean;
+  color: LabelColor
+  fullWidth?: boolean
 }>`
   color: ${dynamicColor(getTextColor, true)};
   ${({ fullWidth }) => fullWidth && 'flex: 1'};

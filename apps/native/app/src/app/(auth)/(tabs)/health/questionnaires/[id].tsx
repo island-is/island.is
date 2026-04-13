@@ -72,16 +72,17 @@ export default function QuestionnaireDetailScreen() {
   const locale = useLocale()
   const { openBrowser } = useBrowser()
   const shouldSkipQuery = !id
-  const { data, loading, error, refetch, networkStatus } = useGetQuestionnaireQuery({
-    variables: {
-      locale,
-      input: {
-        id: id ?? '',
-        organization: organization ?? undefined,
+  const { data, loading, error, refetch, networkStatus } =
+    useGetQuestionnaireQuery({
+      variables: {
+        locale,
+        input: {
+          id: id ?? '',
+          organization: organization ?? undefined,
+        },
       },
-    },
-    skip: shouldSkipQuery,
-  })
+      skip: shouldSkipQuery,
+    })
 
   const questionnaire = data?.questionnairesDetail ?? null
   const base = questionnaire?.baseInformation ?? null
@@ -170,7 +171,9 @@ export default function QuestionnaireDetailScreen() {
           <RefreshControl refreshing={loading} onRefresh={refetch} />
         }
       >
-        {errorContent ? errorContent : (
+        {errorContent ? (
+          errorContent
+        ) : (
           <Content>
             <Typography variant="body">
               <FormattedMessage id="health.questionnaires.detail.description" />
@@ -228,7 +231,9 @@ export default function QuestionnaireDetailScreen() {
                   </RowHeader>
                   <Typography variant="heading4">
                     <FormattedMessage
-                      id={getQuestionnaireOrganizationLabelId(base?.organization)}
+                      id={getQuestionnaireOrganizationLabelId(
+                        base?.organization,
+                      )}
                     />
                   </Typography>
                 </InfoRow>

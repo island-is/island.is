@@ -16,7 +16,7 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native'
-import * as Application from 'expo-application';
+import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
@@ -87,7 +87,7 @@ if (__DEV__) {
         trackErrors: true, // track Errors
         sessionSampleRate: 10,
         nativeCrashReportEnabled: true,
-      }
+      },
     },
   )
 
@@ -96,7 +96,6 @@ if (__DEV__) {
 
   // enable performance metrics collection
   performanceMetrics()
-
 
   // register device for remote messages
   if (Device.isDevice) {
@@ -111,11 +110,10 @@ LogBox.ignoreLogs([
   /toggling bottomTabs visibility is deprecated on iOS/,
   /Require cycle:/,
   /new NativeEventEmitter/,
-  /Found screens with the same name nested inside one another/
+  /Found screens with the same name nested inside one another/,
 ])
 
 export function setupGlobals() {
-
   // set NSUserDefaults
   if (isIos) {
     Settings.set({

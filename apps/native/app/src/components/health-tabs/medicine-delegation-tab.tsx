@@ -12,9 +12,7 @@ import styled, { useTheme } from 'styled-components/native'
 import chevronForward from '@/assets/icons/chevron-forward.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import plusIcon from '@/assets/icons/plus.png'
-import {
-  useGetMedicineDelegationsQuery
-} from '@/graphql/types/schema'
+import { useGetMedicineDelegationsQuery } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import {
   Button,
@@ -125,9 +123,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
         />
       }
     >
-      <StackScreen
-        networkStatus={[medicineDelegationsRes.networkStatus]}
-      />
+      <StackScreen networkStatus={[medicineDelegationsRes.networkStatus]} />
       <Container>
         <Typography>
           <FormattedMessage id="health.medicineDelegation.description" />
@@ -146,12 +142,14 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
             </Typography>
             <Image source={externalLinkIcon} />
           </ReadMoreButton>
-          <View style={{
-            flexDirection: 'row',
-            gap: theme.spacing[2],
-            justifyContent: 'space-between',
-            width: '100%',
-           }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: theme.spacing[2],
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
             <Button
               isFilledUtilityButton
               title={intl.formatMessage({

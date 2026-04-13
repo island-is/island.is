@@ -1,4 +1,4 @@
-import * as Application from 'expo-application';
+import * as Application from 'expo-application'
 import compareVersions from 'compare-versions'
 import { featureFlagClient } from '@/lib/feature-flag-client'
 

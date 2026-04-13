@@ -46,7 +46,10 @@ const FamilyMember = React.memo(
     const router = useRouter()
 
     return (
-      <View style={{ paddingHorizontal: theme.spacing[2] }} testID={testIDs.FAMILY_MEMBER_ITEM}>
+      <View
+        style={{ paddingHorizontal: theme.spacing[2] }}
+        testID={testIDs.FAMILY_MEMBER_ITEM}
+      >
         <TouchableHighlight
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
@@ -113,10 +116,7 @@ export default function FamilyScreen() {
     })),
   ].filter((item) => item.nationalId)
 
-  const listOfPeople = [
-    ...(userItem ? [userItem] : []),
-    ...familyMembers,
-  ]
+  const listOfPeople = [...(userItem ? [userItem] : []), ...familyMembers]
 
   const isSkeleton = familyRes.loading && !familyRes.data
 

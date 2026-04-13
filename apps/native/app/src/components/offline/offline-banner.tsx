@@ -28,7 +28,7 @@ const Overlay = styled(SafeAreaView)`
 
 export const OfflineBanner = () => {
   const intl = getIntl()
-  const { toggleBanner,  } = useOfflineActions()
+  const { toggleBanner } = useOfflineActions()
   const popAnim = useRef(new Animated.Value(-TranslateYValue)).current
   const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
 
@@ -56,7 +56,7 @@ export const OfflineBanner = () => {
     if (bannerVisible) {
       popIn()
     } else {
-      popOut();
+      popOut()
     }
   }, [bannerVisible])
 

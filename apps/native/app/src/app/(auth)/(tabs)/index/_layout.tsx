@@ -1,8 +1,6 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
-import {
-  tabScreenOptions
-} from '../../../../constants/screen-options'
+import { tabScreenOptions } from '../../../../constants/screen-options'
 import { useNotificationsStore } from '../../../../stores/notifications-store'
 
 export default function IndexLayout() {

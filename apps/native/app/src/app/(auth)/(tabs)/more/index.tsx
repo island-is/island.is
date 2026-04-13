@@ -1,8 +1,5 @@
 import { useIntl } from 'react-intl'
-import {
-  Animated,
-  View,
-} from 'react-native'
+import { Animated, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -70,7 +67,7 @@ export default function MoreScreen() {
                 source: require('@/assets/icons/settings.png'),
               },
               onPress: () => router.navigate('/settings'),
-              tintColor: blue400
+              tintColor: blue400,
             },
           ],
         }}

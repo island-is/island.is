@@ -19,7 +19,7 @@ export const OfflineIcon = ({
 }: {
   networkStatus?: NetworkStatus | NetworkStatus[]
 }) => {
-  const debug = false;  // __DEV__;
+  const debug = false // __DEV__;
 
   const netInfo = useNetInfo()
 
@@ -29,7 +29,7 @@ export const OfflineIcon = ({
 
   const loading = networkStatuses.some(
     (status) => status === NetworkStatus.loading,
-  );
+  )
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const loadingStartRef = useRef<number | null>(null)
@@ -37,12 +37,12 @@ export const OfflineIcon = ({
   const [showDebugMenu, setShowDebugMenu] = useState(false)
 
   const isFetching = networkStatuses.some(
-    s => s === NetworkStatus.loading || s === NetworkStatus.refetch
-  );
+    (s) => s === NetworkStatus.loading || s === NetworkStatus.refetch,
+  )
 
   const onOfflinePress = useCallback(() => {
     // Show the offline modal
-    offlineStore.setState({ bannerVisible: true });
+    offlineStore.setState({ bannerVisible: true })
     void 0
   }, [])
 
@@ -110,18 +110,41 @@ export const OfflineIcon = ({
             <Text
               style={{
                 fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-
               }}
             >
               {!netInfo.isInternetReachable ? '⚠️ No Internet\n' : ''}
-              {netInfo.type}, {netInfo.isConnected ? 'connected' : 'disconnected'}{'\n'}
-              {JSON.stringify(netInfo.details, null, 2)}{'\n'}
-              Loading: {networkStatuses.filter((x) => x === NetworkStatus.loading).length}{'\n'}
-              Fetch More: {networkStatuses.filter((x) => x === NetworkStatus.fetchMore).length}{'\n'}
-              Refetch: {networkStatuses.filter((x) => x === NetworkStatus.refetch).length}{'\n'}
-              Poll: {networkStatuses.filter((x) => x === NetworkStatus.poll).length}{'\n'}
-              Ready: {networkStatuses.filter((x) => x === NetworkStatus.ready).length}{'\n'}
-              Error: {networkStatuses.filter((x) => x === NetworkStatus.error).length}{'\n'}
+              {netInfo.type},{' '}
+              {netInfo.isConnected ? 'connected' : 'disconnected'}
+              {'\n'}
+              {JSON.stringify(netInfo.details, null, 2)}
+              {'\n'}
+              Loading:{' '}
+              {
+                networkStatuses.filter((x) => x === NetworkStatus.loading)
+                  .length
+              }
+              {'\n'}
+              Fetch More:{' '}
+              {
+                networkStatuses.filter((x) => x === NetworkStatus.fetchMore)
+                  .length
+              }
+              {'\n'}
+              Refetch:{' '}
+              {
+                networkStatuses.filter((x) => x === NetworkStatus.refetch)
+                  .length
+              }
+              {'\n'}
+              Poll:{' '}
+              {networkStatuses.filter((x) => x === NetworkStatus.poll).length}
+              {'\n'}
+              Ready:{' '}
+              {networkStatuses.filter((x) => x === NetworkStatus.ready).length}
+              {'\n'}
+              Error:{' '}
+              {networkStatuses.filter((x) => x === NetworkStatus.error).length}
+              {'\n'}
             </Text>
           </View>
         ) : null}

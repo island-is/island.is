@@ -99,7 +99,7 @@ export default function PasskeyScreen() {
     return () => {
       if (url) {
         // We need to be sure the Passkey modal has been dismissed on iOS.
-        setTimeout(() => openBrowser(url), 1000);
+        setTimeout(() => openBrowser(url), 1000)
       }
     }
   }, [])
@@ -216,7 +216,10 @@ export default function PasskeyScreen() {
               } catch (error) {
                 setIsLoading(false)
                 clearLockScreenSuppression()
-                console.error('Error in Passkey registration/authentication flow:', error)
+                console.error(
+                  'Error in Passkey registration/authentication flow:',
+                  error,
+                )
                 if (
                   error instanceof Error &&
                   error.message.startsWith('Register')
@@ -225,7 +228,9 @@ export default function PasskeyScreen() {
                     intl.formatMessage({ id: 'passkeys.errorRegistering' }),
                     intl.formatMessage({
                       id: 'passkeys.errorRegisteringMessage',
-                    }) + '\n\n' + (error.message ?? ''),
+                    }) +
+                      '\n\n' +
+                      (error.message ?? ''),
                   )
                   return
                 }
@@ -242,7 +247,7 @@ export default function PasskeyScreen() {
               defaultMessage: 'Sleppa',
             })}
             onPress={() => {
-              router.back();
+              router.back()
             }}
           />
         </ButtonWrapper>

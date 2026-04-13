@@ -1,7 +1,7 @@
 const { withNxMetro } = require('@nx/react-native')
-const { getDefaultConfig } = require('expo/metro-config');
+const { getDefaultConfig } = require('expo/metro-config')
 
-const config = getDefaultConfig(__dirname);
+const config = getDefaultConfig(__dirname)
 
 const finalConfig = withNxMetro(config, {
   // Change this to true to see debugging info.
@@ -11,7 +11,7 @@ const finalConfig = withNxMetro(config, {
   extensions: [],
   // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
   watchFolders: [],
-});
+})
 
 /**
  * Support for ${configDir} in tsconfig paths.
@@ -25,5 +25,4 @@ const finalConfig = withNxMetro(config, {
  * }, {});
  */
 
-
-module.exports = finalConfig;
+module.exports = finalConfig

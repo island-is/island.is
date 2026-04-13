@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { View, SafeAreaView  } from 'react-native'
+import { View, SafeAreaView } from 'react-native'
 
 import { DrugCertificatesTab } from '@/components/health-tabs/drug-certificates-tab'
 import { MedicineDelegationTab } from '@/components/health-tabs/medicine-delegation-tab'
@@ -17,7 +17,7 @@ type Tab = {
 }
 
 export default function MedicineScreen() {
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams()
   const tabs = useMedicineTabs()
   const [tabIndex, setTabIndex] = useState(0)
   const [history, setHistory] = useState<number[]>([])
@@ -30,20 +30,19 @@ export default function MedicineScreen() {
     setTabIndex(index)
   }, [])
 
-
   useEffect(() => {
-    const initialTabIndex = tabs.findIndex((tab) => tab.id === params.tab);
+    const initialTabIndex = tabs.findIndex((tab) => tab.id === params.tab)
     if (initialTabIndex !== -1) {
-      setTabIndex(initialTabIndex);
+      setTabIndex(initialTabIndex)
     }
-  }, [tabs, params.tab]);
+  }, [tabs, params.tab])
 
   // Memoizing the tab component
   const Tab = useMemo(() => tabs[tabIndex].component, [tabIndex, tabs])
 
   return (
     <View style={{ flex: 1 }}>
-      <SafeAreaView  style={[{ marginHorizontal: 16 }]}>
+      <SafeAreaView style={[{ marginHorizontal: 16 }]}>
         <TabButtons
           buttons={tabs.map((tab) => ({
             title: tab.title,

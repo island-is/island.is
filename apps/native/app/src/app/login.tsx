@@ -1,11 +1,6 @@
 import React, { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import {
-  Alert,
-  Image,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Alert, Image, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logo from '@/assets/logo/logo-64w.png'
@@ -71,7 +66,9 @@ export default function LoginScreen() {
         authorizeResult: {
           accessToken: 'mock-access-token',
           tokenType: 'Bearer',
-          accessTokenExpirationDate: new Date(Date.now() + 3600 * 1000).toISOString(),
+          accessTokenExpirationDate: new Date(
+            Date.now() + 3600 * 1000,
+          ).toISOString(),
           authorizationCode: 'mock-authorization-code',
           idToken: 'mock-id-token',
           refreshToken: 'mock-refresh-token',
@@ -79,15 +76,19 @@ export default function LoginScreen() {
         userInfo: {
           name: 'Mock User',
           nationalId: '0000000000',
-          sub: 'mock-user'
-        }
+          sub: 'mock-user',
+        },
       })
       await nextOnboardingStep()
       return
     }
 
-    const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > (Date.now() / 1000)
-    if (environment.idsIssuer !== environments.prod.idsIssuer && !isCognitoAuth) {
+    const isCognitoAuth =
+      cognito?.accessToken && cognito?.expiresAt > Date.now() / 1000
+    if (
+      environment.idsIssuer !== environments.prod.idsIssuer &&
+      !isCognitoAuth
+    ) {
       Alert.alert(
         'Cognito required',
         'Please authenticate with cognito before logging in.',

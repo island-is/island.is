@@ -29,7 +29,10 @@ export const PressableListItem = memo(
     setSelectedState,
   }: PressableListItemProps) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
-    const isSelected = useMemo(() => selectable && selectedItems.includes(item.id), [selectable, selectedItems, item.id])
+    const isSelected = useMemo(
+      () => selectable && selectedItems.includes(item.id),
+      [selectable, selectedItems, item.id],
+    )
     const icon = useMemo(
       () =>
         item.sender.name
@@ -48,7 +51,7 @@ export const PressableListItem = memo(
 
     const onPress = useCallback(() => {
       if (selectable) {
-        toggleSelectItem();
+        toggleSelectItem()
       } else {
         router.navigate({
           pathname: '/inbox/[id]',
@@ -70,8 +73,8 @@ export const PressableListItem = memo(
     ])
 
     const onPressIcon = useCallback(() => {
-      setSelectedState(true);
-      toggleSelectItem();
+      setSelectedState(true)
+      toggleSelectItem()
     }, [toggleSelectItem, setSelectedState])
 
     return (

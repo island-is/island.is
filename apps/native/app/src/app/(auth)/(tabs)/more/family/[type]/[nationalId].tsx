@@ -146,7 +146,8 @@ export default function FamilyDetailScreen() {
           />
         ) : null}
       </InputRow>
-      {person && 'housing' in person &&
+      {person &&
+      'housing' in person &&
       person?.housing &&
       'address' in person.housing &&
       person.housing.address ? (

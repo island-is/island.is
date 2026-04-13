@@ -150,7 +150,10 @@ function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
   const isFromNotifications = source?.toString().includes('/notifications')
   if (isFromNotifications) {
     if (pathname.startsWith('/inbox/')) {
-      return replacePathname(dest, pathname.replace('/inbox/', '/notifications/document/'))
+      return replacePathname(
+        dest,
+        pathname.replace('/inbox/', '/notifications/document/'),
+      )
     }
   }
   return dest

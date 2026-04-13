@@ -2,7 +2,10 @@ import * as Share from 'expo-sharing'
 import * as FileSystem from 'expo-file-system'
 
 import { isAndroid } from '@/utils/devices'
-import { clearLockScreenSuppression, suppressLockScreen } from '@/stores/auth-store'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { DocumentV2 } from '@/graphql/types/schema'
 
 interface ShareFileProps {
@@ -39,17 +42,17 @@ export const shareFile = async ({
       htmlUrl = htmlFile.uri
     }
 
-    const url = pdfUrl
-      ? pdfUrl
+    const url = pdfUrl ? pdfUrl : isHtml ? htmlUrl : content ?? undefined
+    const mimeType = pdfUrl
+      ? 'application/pdf'
       : isHtml
-        ? htmlUrl
-        : content ?? undefined;
-    const mimeType = pdfUrl ? 'application/pdf' : isHtml ? 'text/html' : undefined;
+      ? 'text/html'
+      : undefined
     await Share.shareAsync(url ?? '', {
       dialogTitle: document.subject,
       mimeType,
       UTI: mimeType, // For iOS, to specify the file type
-    });
+    })
   } catch (error) {
     console.error('Failed to share document', error)
   } finally {

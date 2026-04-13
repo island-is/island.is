@@ -40,7 +40,10 @@ export function useDocument(id: string, isUrgent?: boolean) {
 
   // Full document query
   const query = useGetDocumentQuery({
-    variables: { input: { id, includeDocument: shouldIncludeDocument }, locale },
+    variables: {
+      input: { id, includeDocument: shouldIncludeDocument },
+      locale,
+    },
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const confirmation = data.documentV2?.confirmation

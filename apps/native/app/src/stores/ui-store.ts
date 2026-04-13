@@ -41,7 +41,8 @@ export const uiStore = create<UIStore>((set) => ({
   },
 }))
 
-export const useUiStore = <U = UIStore>(selector?: (state: UIStore) => U) => useStore(uiStore, selector!)
+export const useUiStore = <U = UIStore>(selector?: (state: UIStore) => U) =>
+  useStore(uiStore, selector!)
 
 function updateBiometricsStatus() {
   supportedAuthenticationTypesAsync().then((authenticationTypes) => {

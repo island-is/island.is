@@ -88,7 +88,10 @@ const LicensesModule = React.memo(
 
     const items = allLicenses
       .filter((license) => license.__typename === 'GenericUserLicense')
-      ?.filter((license) => !isLicenseEmptyStateOrChildLicense(license as GenericUserLicense))
+      ?.filter(
+        (license) =>
+          !isLicenseEmptyStateOrChildLicense(license as GenericUserLicense),
+      )
       ?.slice(0, 3)
       .map((item, index) => (
         <WalletItem

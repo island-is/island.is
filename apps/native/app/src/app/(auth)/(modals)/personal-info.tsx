@@ -21,9 +21,15 @@ export default function PersonalInfoScreen() {
       testID={testIDs.SCREEN_PERSONAL_INFO}
       stickyHeaderIndices={[0]}
     >
-      <StackScreen closeable networkStatus={natRegRes.networkStatus} options={{ title: 'Upplýsingar' }} />
+      <StackScreen
+        closeable
+        networkStatus={natRegRes.networkStatus}
+        options={{ title: 'Upplýsingar' }}
+      />
       <View testID={testIDs.USER_SCREEN_PROFILE_INFO}>
-        <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
+        <View
+          style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}
+        >
           <Typography>
             {intl.formatMessage({ id: 'user.natreg.description' })}
           </Typography>
@@ -106,7 +112,6 @@ export default function PersonalInfoScreen() {
           label={intl.formatMessage({ id: 'user.natreg.religion' })}
           value={natRegData?.religion}
         />
-
       </View>
     </ScrollView>
   )

@@ -9,7 +9,11 @@ const fs = require('fs')
 const path = require('path')
 
 const WIDGET_NAME = 'LicenseWidget'
-const SWIFT_SOURCES = ['LicenseWidget.swift', 'LicenseWidgetBundle.swift', 'AppIntent.swift']
+const SWIFT_SOURCES = [
+  'LicenseWidget.swift',
+  'LicenseWidgetBundle.swift',
+  'AppIntent.swift',
+]
 // Info.plist is handled by INFOPLIST_FILE build setting — do NOT add to Resources phase
 const RESOURCE_FILES = ['Assets.xcassets']
 
@@ -20,7 +24,9 @@ function copyDirSync(src, dest) {
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const srcPath = path.join(src, entry.name)
     const destPath = path.join(dest, entry.name)
-    entry.isDirectory() ? copyDirSync(srcPath, destPath) : fs.copyFileSync(srcPath, destPath)
+    entry.isDirectory()
+      ? copyDirSync(srcPath, destPath)
+      : fs.copyFileSync(srcPath, destPath)
   }
 }
 
@@ -54,7 +60,12 @@ function withLicenseWidgetXcodeProject(config) {
     if (alreadyAdded) return mod
 
     // 1. Add the extension target
-    const target = proj.addTarget(WIDGET_NAME, 'app_extension', WIDGET_NAME, widgetBundleId)
+    const target = proj.addTarget(
+      WIDGET_NAME,
+      'app_extension',
+      WIDGET_NAME,
+      widgetBundleId,
+    )
 
     // 2. Create a PBX group and attach it to the project's main group
     // Info.plist is listed in the group for Xcode visibility but NOT in the Resources
@@ -68,12 +79,25 @@ function withLicenseWidgetXcodeProject(config) {
     proj.addToPbxGroup(groupUuid, mainGroupKey)
 
     // 3. Build phases
-    proj.addBuildPhase(SWIFT_SOURCES, 'PBXSourcesBuildPhase', 'Sources', target.uuid)
+    proj.addBuildPhase(
+      SWIFT_SOURCES,
+      'PBXSourcesBuildPhase',
+      'Sources',
+      target.uuid,
+    )
     proj.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', target.uuid)
-    proj.addBuildPhase(RESOURCE_FILES, 'PBXResourcesBuildPhase', 'Resources', target.uuid)
+    proj.addBuildPhase(
+      RESOURCE_FILES,
+      'PBXResourcesBuildPhase',
+      'Resources',
+      target.uuid,
+    )
 
     // 4. Link WidgetKit and SwiftUI (weak/optional — they are system frameworks)
-    proj.addFramework('WidgetKit.framework', { target: target.uuid, link: false })
+    proj.addFramework('WidgetKit.framework', {
+      target: target.uuid,
+      link: false,
+    })
     proj.addFramework('SwiftUI.framework', { target: target.uuid, link: false })
 
     // 4b. Wire up PBXContainerItemProxy + PBXTargetDependency so the main app
@@ -82,7 +106,8 @@ function withLicenseWidgetXcodeProject(config) {
     const objs = proj.hash.project.objects
     const projectPortalUuid = proj.getFirstProject().uuid
     const mainTargetUuid = Object.keys(proj.pbxNativeTargetSection()).find(
-      (k) => proj.pbxNativeTargetSection()[k]?.name === mod.modRequest.projectName,
+      (k) =>
+        proj.pbxNativeTargetSection()[k]?.name === mod.modRequest.projectName,
     )
 
     if (mainTargetUuid) {
@@ -107,7 +132,10 @@ function withLicenseWidgetXcodeProject(config) {
 
       const mainTarget = proj.pbxNativeTargetSection()[mainTargetUuid]
       if (!mainTarget.dependencies) mainTarget.dependencies = []
-      mainTarget.dependencies.push({ value: depUuid, comment: 'PBXTargetDependency' })
+      mainTarget.dependencies.push({
+        value: depUuid,
+        comment: 'PBXTargetDependency',
+      })
     }
 
     // 5. Build settings — walk the configurations owned by our new target
@@ -140,7 +168,8 @@ function withLicenseWidgetXcodeProject(config) {
       INFOPLIST_KEY_CFBundleDisplayName: WIDGET_NAME,
       INFOPLIST_KEY_NSHumanReadableCopyright: '""',
       IPHONEOS_DEPLOYMENT_TARGET: '17.6',
-      LD_RUNPATH_SEARCH_PATHS: '("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks")',
+      LD_RUNPATH_SEARCH_PATHS:
+        '("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks")',
       LOCALIZATION_PREFERS_STRING_CATALOGS: 'YES',
       MARKETING_VERSION: '"1.0"',
       PRODUCT_BUNDLE_IDENTIFIER: `"${widgetBundleId}"`,
@@ -186,7 +215,8 @@ function withLicenseWidgetEas(config) {
   const appBundleId = config.ios?.bundleIdentifier ?? 'is.island.app'
   const widgetBundleId = `${appBundleId}.LicenseWidget`
 
-  const existing = config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? []
+  const existing =
+    config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? []
   const alreadyAdded = existing.some((e) => e.targetName === WIDGET_NAME)
   if (alreadyAdded) return config
 
@@ -249,14 +279,25 @@ function withLicenseWidgetAndroidFiles(config) {
 
       // res/ → android/app/src/main/res/ (merges into existing tree)
       const resSrc = path.join(__dirname, 'android', 'res')
-      const resDest = path.join(projectRoot, 'android', 'app', 'src', 'main', 'res')
+      const resDest = path.join(
+        projectRoot,
+        'android',
+        'app',
+        'src',
+        'main',
+        'res',
+      )
       copyDirSync(resSrc, resDest)
 
       // Patch the configure attribute in license_widget_info.xml if package differs
       if (pkg !== 'is.island.app') {
         const infoXml = path.join(resDest, 'xml', 'license_widget_info.xml')
         const xmlContent = fs.readFileSync(infoXml, 'utf8')
-        fs.writeFileSync(infoXml, xmlContent.replace(/is\.island\.app/g, pkg), 'utf8')
+        fs.writeFileSync(
+          infoXml,
+          xmlContent.replace(/is\.island\.app/g, pkg),
+          'utf8',
+        )
       }
 
       return mod
@@ -269,7 +310,9 @@ function withLicenseWidgetAndroidFiles(config) {
 function withLicenseWidgetAndroidManifest(config) {
   return withAndroidManifest(config, (mod) => {
     const pkg = config.android?.package ?? 'is.island.app'
-    const mainApp = AndroidConfig.Manifest.getMainApplicationOrThrow(mod.modResults)
+    const mainApp = AndroidConfig.Manifest.getMainApplicationOrThrow(
+      mod.modResults,
+    )
 
     if (!mainApp.receiver) mainApp.receiver = []
     if (!mainApp.activity) mainApp.activity = []
@@ -278,8 +321,12 @@ function withLicenseWidgetAndroidManifest(config) {
     const activityName = `${pkg}.LicenseWidgetConfigActivity`
 
     // Idempotency guards
-    const hasReceiver = mainApp.receiver.some((r) => r.$?.['android:name'] === receiverName)
-    const hasActivity = mainApp.activity.some((a) => a.$?.['android:name'] === activityName)
+    const hasReceiver = mainApp.receiver.some(
+      (r) => r.$?.['android:name'] === receiverName,
+    )
+    const hasActivity = mainApp.activity.some(
+      (a) => a.$?.['android:name'] === activityName,
+    )
 
     if (!hasReceiver) {
       mainApp.receiver.push({
@@ -287,7 +334,11 @@ function withLicenseWidgetAndroidManifest(config) {
         'intent-filter': [
           {
             action: [
-              { $: { 'android:name': 'android.appwidget.action.APPWIDGET_UPDATE' } },
+              {
+                $: {
+                  'android:name': 'android.appwidget.action.APPWIDGET_UPDATE',
+                },
+              },
             ],
           },
         ],
@@ -308,7 +359,12 @@ function withLicenseWidgetAndroidManifest(config) {
         'intent-filter': [
           {
             action: [
-              { $: { 'android:name': 'android.appwidget.action.APPWIDGET_CONFIGURE' } },
+              {
+                $: {
+                  'android:name':
+                    'android.appwidget.action.APPWIDGET_CONFIGURE',
+                },
+              },
             ],
           },
         ],

@@ -1,5 +1,8 @@
 import { Stack } from 'expo-router'
-import { modalScreenOptions, tabScreenOptions } from '../../../../constants/screen-options'
+import {
+  modalScreenOptions,
+  tabScreenOptions,
+} from '../../../../constants/screen-options'
 import { useIntl } from 'react-intl'
 
 export const unstable_settings = {
@@ -47,7 +50,9 @@ export default function InboxLayout() {
         options={{
           headerShown: false,
           ...modalScreenOptions,
-          title: intl.formatMessage({ id: 'documentDetail.buttonCommunications' }),
+          title: intl.formatMessage({
+            id: 'documentDetail.buttonCommunications',
+          }),
         }}
       />
       <Stack.Screen

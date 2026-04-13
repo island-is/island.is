@@ -130,4 +130,6 @@ export const environmentStore = create<EnvironmentStore>()(
     },
   ),
 )
-export const useEnvironmentStore = <U = EnvironmentStore>(selector?: (state: EnvironmentStore) => U) => useStore(environmentStore, selector!)
+export const useEnvironmentStore = <U = EnvironmentStore>(
+  selector?: (state: EnvironmentStore) => U,
+) => useStore(environmentStore, selector!)

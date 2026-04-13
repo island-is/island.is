@@ -18,16 +18,40 @@ function useBiometricType(types: AuthenticationType[]) {
   const intl = useIntl()
   if (types.includes(AuthenticationType.FACIAL_RECOGNITION)) {
     return Platform.OS === 'ios'
-      ? { text: intl.formatMessage({ id: 'onboarding.biometrics.type.faceId' }), icon: iris }
-      : { text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }), icon: iris }
+      ? {
+          text: intl.formatMessage({ id: 'onboarding.biometrics.type.faceId' }),
+          icon: iris,
+        }
+      : {
+          text: intl.formatMessage({
+            id: 'onboarding.biometrics.type.biometrics',
+          }),
+          icon: iris,
+        }
   } else if (types.includes(AuthenticationType.FINGERPRINT)) {
     return Platform.OS === 'ios'
-      ? { text: intl.formatMessage({ id: 'onboarding.biometrics.type.fingerprint' }), icon: finger }
-      : { text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }), icon: finger }
+      ? {
+          text: intl.formatMessage({
+            id: 'onboarding.biometrics.type.fingerprint',
+          }),
+          icon: finger,
+        }
+      : {
+          text: intl.formatMessage({
+            id: 'onboarding.biometrics.type.biometrics',
+          }),
+          icon: finger,
+        }
   } else if (types.includes(AuthenticationType.IRIS)) {
-    return { text: intl.formatMessage({ id: 'onboarding.biometrics.type.iris' }), icon: iris }
+    return {
+      text: intl.formatMessage({ id: 'onboarding.biometrics.type.iris' }),
+      icon: iris,
+    }
   }
-  return { text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }), icon: undefined }
+  return {
+    text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }),
+    icon: undefined,
+  }
 }
 
 export default function BiometricsScreen() {
@@ -37,13 +61,12 @@ export default function BiometricsScreen() {
   const biometricType = useBiometricType(authTypes)
 
   useEffect(() => {
-    Promise.all([
-      isEnrolledAsync(),
-      supportedAuthenticationTypesAsync(),
-    ]).then(([enrolled, types]) => {
-      setIsEnrolled(enrolled)
-      setAuthTypes(types)
-    })
+    Promise.all([isEnrolledAsync(), supportedAuthenticationTypesAsync()]).then(
+      ([enrolled, types]) => {
+        setIsEnrolled(enrolled)
+        setAuthTypes(types)
+      },
+    )
 
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') {

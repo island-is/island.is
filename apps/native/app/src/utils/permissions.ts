@@ -3,7 +3,10 @@ import {
   requestPermission,
 } from '@react-native-firebase/messaging'
 import { PermissionsAndroid } from 'react-native'
-import { clearLockScreenSuppression, suppressLockScreen } from '../stores/auth-store'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '../stores/auth-store'
 import { androidIsVersion33OrAbove } from './versions-check'
 import { app } from '../lib/firebase'
 

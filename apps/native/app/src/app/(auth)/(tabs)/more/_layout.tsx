@@ -7,19 +7,19 @@ import {
 
 export const unstable_settings = {
   initalRouteName: 'index',
-  "vehicles/[id]/index": {
-    initialRouteName: "vehicles",
+  'vehicles/[id]/index': {
+    initialRouteName: 'vehicles',
   },
-  "family/[type]/[nationalId]": {
-    initialRouteName: "family",
+  'family/[type]/[nationalId]': {
+    initialRouteName: 'family',
   },
-  "assets/[id]/index": {
-    initialRouteName: "assets",
+  'assets/[id]/index': {
+    initialRouteName: 'assets',
   },
-  "finance/status/[orgId]/[chargeTypeId]": {
-    initialRouteName: "finance",
-  }
-};
+  'finance/status/[orgId]/[chargeTypeId]': {
+    initialRouteName: 'finance',
+  },
+}
 
 export default function MoreLayout() {
   const intl = useIntl()

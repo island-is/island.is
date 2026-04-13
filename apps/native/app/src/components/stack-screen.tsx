@@ -6,7 +6,13 @@ import {
 } from '@react-navigation/native-stack'
 import { Stack } from 'expo-router'
 import { cloneElement, useCallback, useMemo } from 'react'
-import { Image, Platform, Text, TouchableNativeFeedback, View } from 'react-native'
+import {
+  Image,
+  Platform,
+  Text,
+  TouchableNativeFeedback,
+  View,
+} from 'react-native'
 import { navbarCloseItem, navbarOfflineItem } from './navbar/navbar-items'
 
 export type StackScreenOptions = Omit<
@@ -86,10 +92,10 @@ export function StackScreen({
   const leftAlignSpacing = useMemo(() => {
     const title = options?.title
     if (typeof title === 'string') {
-      return title.length < 24;
+      return title.length < 24
     }
-    return false;
-  }, [options?.title]);
+    return false
+  }, [options?.title])
   const headerLeftItems = useCallback(
     (props?: NativeStackHeaderItemProps) => {
       const currentLeftItems =
@@ -105,7 +111,13 @@ export function StackScreen({
         callbackOrValue(options?.headerRightItems, props) || []
 
       const result = [
-        leftAlignSpacing ? { type: 'custom', element: <View style={{ width: 30 }} />, hidesSharedBackground: true } : undefined,
+        leftAlignSpacing
+          ? {
+              type: 'custom',
+              element: <View style={{ width: 30 }} />,
+              hidesSharedBackground: true,
+            }
+          : undefined,
         navbarOfflineItem(networkStatus),
         ...currentRightItems,
         closeable && Platform.OS === 'ios' ? navbarCloseItem() : undefined,

@@ -79,32 +79,32 @@ export default function VaccinationsScreen() {
         }}
       />
       <Host>
-          <Typography>
-            <FormattedMessage
-              id="health.vaccinations.description"
-              defaultMessage="Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar."
+        <Typography>
+          <FormattedMessage
+            id="health.vaccinations.description"
+            defaultMessage="Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar."
+          />
+        </Typography>
+        {!vaccinationsRes.error && (
+          <Tabs>
+            <TabButtons
+              buttons={[
+                {
+                  title: intl.formatMessage({
+                    id: 'health.vaccinations.generalVaccinations',
+                  }),
+                },
+                {
+                  title: intl.formatMessage({
+                    id: 'health.vaccinations.otherVaccinations',
+                  }),
+                },
+              ]}
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
             />
-          </Typography>
-          {!vaccinationsRes.error && (
-            <Tabs>
-              <TabButtons
-                buttons={[
-                  {
-                    title: intl.formatMessage({
-                      id: 'health.vaccinations.generalVaccinations',
-                    }),
-                  },
-                  {
-                    title: intl.formatMessage({
-                      id: 'health.vaccinations.otherVaccinations',
-                    }),
-                  },
-                ]}
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-              />
-            </Tabs>
-          )}
+          </Tabs>
+        )}
         {!vaccinationsRes.error && (
           <Vaccinations>
             {vaccinationsRes.loading && !vaccinationsRes.data

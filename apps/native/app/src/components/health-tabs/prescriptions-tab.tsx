@@ -2,9 +2,7 @@ import { StackScreen } from '@/components/stack-screen'
 import React, { useMemo } from 'react'
 import { FlatList, RefreshControl } from 'react-native'
 
-import {
-  useGetDrugPrescriptionsQuery
-} from '@/graphql/types/schema'
+import { useGetDrugPrescriptionsQuery } from '@/graphql/types/schema'
 import { NetworkStatus } from '@apollo/client'
 import { useLocale } from '../../hooks/use-locale'
 import { PrescriptionCard } from '../prescription-card'

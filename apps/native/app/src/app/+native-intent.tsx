@@ -15,7 +15,6 @@ export function redirectSystemPath({
       return '/'
     }
 
-
     // Try to map universal link paths (island.is) to native routes
     const nativePath = findRoute(path)
     if (nativePath) {

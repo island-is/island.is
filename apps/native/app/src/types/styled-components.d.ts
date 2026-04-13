@@ -1,5 +1,5 @@
 import type { CSSProp } from 'styled-components'
-import { Theme, Shade, Color } from '@/ui/utils/theme';
+import { Theme, Shade, Color } from '@/ui/utils/theme'
 
 export interface ThemeType extends Theme {
   colorScheme: string
@@ -27,7 +27,6 @@ declare module 'react' {
     css?: CSSProp
   }
 }
-
 
 // import { } from 'styled-components'
 // import { Theme } from './ui'

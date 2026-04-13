@@ -1,5 +1,10 @@
 import { PdfView } from '@kishannareshpal/expo-pdf'
-import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import {
+  router,
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+} from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -70,7 +75,11 @@ export default function DocumentScreen() {
 
   // Parse isUrgent from route params (string → boolean | undefined)
   const isUrgent =
-    isUrgentParam === 'true' ? true : isUrgentParam === 'false' ? false : undefined
+    isUrgentParam === 'true'
+      ? true
+      : isUrgentParam === 'false'
+      ? false
+      : undefined
 
   const {
     document,

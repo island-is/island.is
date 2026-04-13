@@ -13,9 +13,7 @@ export interface MoreInfoConteinerProps {
   /** @deprecated Will be removed after full expo-router migration */
   componentId?: string
 }
-export const MoreInfoContiner = ({
-  externalLinks,
-}: MoreInfoConteinerProps) => {
+export const MoreInfoContiner = ({ externalLinks }: MoreInfoConteinerProps) => {
   const theme = useTheme()
   const intl = useIntl()
 
