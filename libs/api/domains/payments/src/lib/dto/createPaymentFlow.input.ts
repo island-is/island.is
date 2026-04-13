@@ -145,6 +145,23 @@ export class CreatePaymentFlowInput {
   @IsOptional()
   redirectToReturnUrlOnSuccess?: boolean
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'URL to redirect the user to after an invoice is created',
+  })
+  @IsString()
+  @IsOptional()
+  invoiceReturnUrl?: string
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'If true the user will be redirected to the invoiceReturnUrl after an invoice has been created',
+  })
+  @IsBoolean()
+  @IsOptional()
+  redirectOnInvoiceCreation?: boolean
+
   @Field(() => [ExtraDataItem], {
     nullable: true,
     description:
