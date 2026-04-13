@@ -1,7 +1,7 @@
 {
   "name": "@island.is/native-app",
   "main": "src/index",
-  "license": "0BSD",
+  "license": "MIT",
   "version": "1.0.0",
   "scripts": {
     "start": "APP_VARIANT=development expo start",

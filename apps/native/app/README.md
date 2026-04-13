@@ -473,3 +473,7 @@ Shared utilities (sign-in, tab selection, back navigation) are in `.maestro/util
 - [Expo documentation](https://docs.expo.dev)
 - [Expo Router documentation](https://docs.expo.dev/router/introduction/)
 - [Maestro documentation](https://maestro.mobile.dev/)
+
+## License
+
+MIT
