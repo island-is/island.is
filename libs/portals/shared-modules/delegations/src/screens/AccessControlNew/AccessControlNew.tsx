@@ -4,6 +4,7 @@ import {
   GridColumn,
   Icon,
   Input,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -222,6 +223,8 @@ const AccessControlNew = () => {
           </div>
         )}
 
+      {outgoingLoading && <SkeletonLoader space={1} height={40} repeat={5} />}
+
       {!outgoingLoading &&
         outgoingDelegations &&
         outgoingDelegations.length > 0 && (
@@ -275,6 +278,8 @@ const AccessControlNew = () => {
             error={outgoingError}
           />
         )}
+
+      {incomingLoading && <SkeletonLoader space={1} height={40} repeat={5} />}
 
       {!onlyOutgoingDelegations &&
         !incomingLoading &&
