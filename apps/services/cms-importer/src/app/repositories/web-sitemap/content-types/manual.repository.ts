@@ -34,7 +34,7 @@ export class ManualRepository implements SitemapUrlFetcher {
       }
     >()
     while (manualChapterIds.length > 0) {
-      const ids = manualChapterIds.splice(0, 10)
+      const ids = manualChapterIds.splice(0, 15)
       const manualChapterResponse = await this.managementClient.getEntries({
         content_type: 'manualChapter',
         select: 'fields.slug,fields.title,sys',
