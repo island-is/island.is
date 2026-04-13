@@ -1,29 +1,24 @@
 import {
-  buildBankAccountField,
   buildMultiField,
   buildPhoneField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import {
-  applicantInformationMessages,
-  parseBankAccountFromBankInfoString,
-} from '@island.is/application/ui-forms'
+import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import * as m from '../../../lib/messages'
 import {
   nationalIdPreface,
   getAssigneeNationalRegistryData,
   getAssigneeUserProfileData,
 } from '../../../utils/assigneeUtils'
+import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
 const labels = applicantInformationMessages.labels
 
 export const personalInformationSection = buildSection({
-  condition: (answers, externalData) => {
-    console.log('externalData: ', externalData)
-    return true
-  },
+  condition: (answers, externalData) =>
+    doesAssigneeAddressMatchRentalContract(answers, externalData),
   id: 'personalInformationSection',
   title: m.assigneeDraft.title,
   children: [

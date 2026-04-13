@@ -12,8 +12,8 @@ export const AssigneeDraftForm = buildForm({
   renderLastScreenBackButton: true,
   logo: HmsLogo,
   children: [
-    personalInformationSection,
     wrongHomeSection,
     refetchNationalRegistrySection,
+    personalInformationSection,
   ],
 })
