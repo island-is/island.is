@@ -110,7 +110,13 @@ export const Requirements: Form = buildForm({
     buildSection({
       id: Routes.TYPE_SELECTION,
       title: typeSelection.general.section,
-      children: [],
+      condition: isMinistry,
+      children: [
+        buildCustomField({
+          id: 'typeSelection',
+          component: 'TypeSelectionScreen',
+        }),
+      ],
     }),
     buildSection({
       id: Routes.ADVERT,

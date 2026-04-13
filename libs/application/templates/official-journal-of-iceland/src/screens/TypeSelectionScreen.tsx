@@ -24,7 +24,11 @@ export const TypeSelectionScreen = ({
 }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
-  const { updateApplication, updateApplicationV2 } = useApplication({
+  const {
+    application: currentApplication,
+    updateApplication,
+    updateApplicationV2,
+  } = useApplication({
     applicationId: application.id,
   })
 
@@ -34,7 +38,7 @@ export const TypeSelectionScreen = ({
   })
 
   const currentType = getValueViaPath<string>(
-    application.answers,
+    currentApplication.answers,
     'applicationType',
   )
 
@@ -135,10 +139,9 @@ export const TypeSelectionScreen = ({
     setValue('applicationType', value)
 
     try {
-      let currentAnswers = structuredClone(application.answers) as Record<
-        string,
-        unknown
-      >
+      let currentAnswers = structuredClone(
+        currentApplication.answers,
+      ) as Record<string, unknown>
       set(currentAnswers, 'applicationType', value)
 
       const isRegulation =
@@ -188,13 +191,6 @@ export const TypeSelectionScreen = ({
       : allOptions.filter((o) => o.value === ApplicationTypes.AD)
   }, [regulationsEnabled, f])
 
-  // Lock the type selection once the user has progressed past this screen
-  // (i.e. downstream data like department or a regulation draft exists).
-  const hasDownstreamData = !!(
-    getValueViaPath(application.answers, InputFields.advert.department) ||
-    getValueViaPath(application.answers, 'regulation.draftId')
-  )
-
   return (
     <FormScreen
       title={f(typeSelection.general.title)}
@@ -209,12 +205,8 @@ export const TypeSelectionScreen = ({
               borderColor={selected === option.value ? 'blue300' : 'blue200'}
               borderWidth="standard"
               padding={3}
-              cursor={hasDownstreamData ? undefined : 'pointer'}
-              opacity={hasDownstreamData && selected !== option.value ? 0.5 : 1}
               onClick={() => {
-                if (!hasDownstreamData) {
-                  handleSelect(option.value)
-                }
+                handleSelect(option.value)
               }}
             >
               <RadioButton
@@ -223,7 +215,6 @@ export const TypeSelectionScreen = ({
                 label={option.label}
                 value={option.value}
                 checked={selected === option.value}
-                disabled={hasDownstreamData}
                 large
               />
               <Box marginTop={1} paddingLeft={4}>
