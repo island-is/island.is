@@ -2,7 +2,7 @@
  * FORCE IMPORT to ensure csv-parse is in the bundle
  * without this, we get runtime errors in production
  *
- * trigger feature deployment
+ * trigger feature deployment (retry)
  */
 import 'csv-parse'
 import { bootstrap } from '@island.is/infra-nest-server'
