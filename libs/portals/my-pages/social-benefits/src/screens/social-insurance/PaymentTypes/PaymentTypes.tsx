@@ -7,7 +7,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  EmptyState,
   formatNationalId,
   IntroWrapper,
   LinkResolver,
@@ -73,7 +72,13 @@ const PaymentTypes = () => {
         ) : paymentTypesError ? (
           <Problem error={paymentTypesError} noBorder={false} />
         ) : !paymentTypes?.length ? (
-          <EmptyState title={m.noPaymentTypesFound} />
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noPaymentTypesFound)}
+            message={formatMessage(coreMessages.noDataFoundDetail)}
+            imgSrc="./assets/images/nodata.svg"
+          />
         ) : (
           <Stack space={2}>
             <Text variant="eyebrow" color="purple400">
