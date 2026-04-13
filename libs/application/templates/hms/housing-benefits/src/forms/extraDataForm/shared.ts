@@ -31,10 +31,7 @@ export const buildExtraDataSummaryMarkdown = (
   const docLines =
     rawDocs
       ?.filter(isRequestedDocType)
-      .map(
-        (d) =>
-          `- ${formatMessage(requestedDocumentMessage[d])}`,
-      )
+      .map((d) => `- ${formatMessage(requestedDocumentMessage[d])}`)
       .join('\n') ?? ''
 
   const messageTitle = formatMessage(

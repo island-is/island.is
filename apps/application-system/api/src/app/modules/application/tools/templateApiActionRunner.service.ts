@@ -247,10 +247,7 @@ export class TemplateApiActionRunner {
   ): Promise<void> {
     api.map((a) => {
       if (a.shouldPersistToExternalData === false) {
-        const resolvedId = a.resolveExternalDataId(
-          application,
-          auth.nationalId,
-        )
+        const resolvedId = a.resolveExternalDataId(application, auth.nationalId)
         delete newExternalData.data[resolvedId]
       }
     })

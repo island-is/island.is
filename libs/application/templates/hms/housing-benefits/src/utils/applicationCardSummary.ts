@@ -22,7 +22,9 @@ const applicantDisplayName = (application: Application): string => {
     .trim()
   if (fromParts) return fromParts
 
-  return getValueViaPath<string>(application.answers, 'applicant.name')?.trim() ?? ''
+  return (
+    getValueViaPath<string>(application.answers, 'applicant.name')?.trim() ?? ''
+  )
 }
 
 export const getApplicationCardRentalSummary = (

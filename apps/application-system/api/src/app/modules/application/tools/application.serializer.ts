@@ -140,11 +140,7 @@ export class ApplicationSerializer
       actionCard: {
         title:
           actionCardMeta.title !== undefined
-            ? formatText(
-                actionCardMeta.title,
-                application,
-                intl.formatMessage,
-              )
+            ? formatText(actionCardMeta.title, application, intl.formatMessage)
             : null,
         description:
           actionCardMeta.description !== undefined

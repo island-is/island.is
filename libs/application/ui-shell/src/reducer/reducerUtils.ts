@@ -92,7 +92,12 @@ export const screenHasBeenAnswered = (
 
     for (const subScreen of screen.children) {
       const requiresAnswer = screenRequiresAnswer(subScreen)
-      const hasBeenAnswered = screenHasBeenAnswered(subScreen, application, false, user)
+      const hasBeenAnswered = screenHasBeenAnswered(
+        subScreen,
+        application,
+        false,
+        user,
+      )
 
       if (requiresAnswer) {
         numberOfRequiredAnswers += 1
@@ -144,7 +149,12 @@ export const findCurrentScreen = (
     }
 
     // If we reach here we know that this screen requires an answer
-    const hasBeenAnswered = screenHasBeenAnswered(screen, application, false, user)
+    const hasBeenAnswered = screenHasBeenAnswered(
+      screen,
+      application,
+      false,
+      user,
+    )
     const hasBeenPartlyAnswered = screenHasBeenAnswered(
       screen,
       application,

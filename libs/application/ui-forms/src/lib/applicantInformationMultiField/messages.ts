@@ -90,7 +90,8 @@ export const applicantInformation = {
     bankAccountIncomplete: {
       id: 'uiForms.application:applicantInfo.error.bankAccountIncomplete',
       defaultMessage: 'Vinsamlegast fylltu út alla reiti bankareiknings',
-      description: 'All bank account fields must be filled when entering any part',
+      description:
+        'All bank account fields must be filled when entering any part',
     },
   }),
 }

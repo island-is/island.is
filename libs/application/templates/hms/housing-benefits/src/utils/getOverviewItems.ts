@@ -409,8 +409,18 @@ export const incomeSectionOverviewAttachments = (
   }
 
   const attachments: AttachmentItem[] = []
-  appendIncomeFiles(answers, 'incomeContractorFiles', 'Verktakagreiðslur', attachments)
-  appendIncomeFiles(answers, 'incomeForeignFiles', 'Erlendar greiðslur', attachments)
+  appendIncomeFiles(
+    answers,
+    'incomeContractorFiles',
+    'Verktakagreiðslur',
+    attachments,
+  )
+  appendIncomeFiles(
+    answers,
+    'incomeForeignFiles',
+    'Erlendar greiðslur',
+    attachments,
+  )
   appendIncomeFiles(answers, 'incomeOtherFiles', 'Aðrar greiðslur', attachments)
 
   return attachments
