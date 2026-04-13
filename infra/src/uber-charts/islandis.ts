@@ -352,4 +352,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   cmsImporter,
   cmsImporterEnergyGrantImport,
   cmsImporterFsreBuildingsImport,
+  cmsImporterWebSitemapImport,
 ]
