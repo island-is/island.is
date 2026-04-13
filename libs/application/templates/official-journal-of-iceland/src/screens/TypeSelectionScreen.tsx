@@ -56,6 +56,15 @@ export const TypeSelectionScreen = ({
     }
   }, [currentType, setValue, updateApplicationV2])
 
+  // Sync local state with persisted answers when the application prop updates
+  // (e.g. navigating back to this screen after the answers have loaded).
+  useEffect(() => {
+    if (currentType) {
+      setSelected(currentType)
+      setValue('applicationType', currentType)
+    }
+  }, [currentType, setValue])
+
   const { departments } = useDepartments()
 
   const [fetchMainTypes] = useLazyQuery<{
