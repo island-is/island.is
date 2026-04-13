@@ -34,7 +34,7 @@ import {
   ContextMenuCaseActionType,
   StringGroupValue,
   StringValue,
-  TagPairValue,
+  TagGroupValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -88,14 +88,14 @@ const renderTag = (value: TagValue) => {
   )
 }
 
-const renderTagPair = (value: TagPairValue) => {
-  const firstTag = value.firstTag
-  const secondTag = value.secondTag
+const renderTagGroup = (value: TagGroupValue) => {
+  const { firstTag, secondTag, thirdTag } = value
 
   return (
     <TagContainer>
       {renderTag(firstTag)}
       {secondTag && renderTag(secondTag)}
+      {thirdTag && renderTag(thirdTag)}
     </TagContainer>
   )
 }
@@ -114,8 +114,8 @@ const render = (cell: CaseTableCell): ReactNode => {
       return renderStringGroup(value)
     case 'TagValue':
       return renderTag(value)
-    case 'TagPairValue':
-      return renderTagPair(value)
+    case 'TagGroupValue':
+      return renderTagGroup(value)
     // This should never happen, but if it does, we return null
     default:
       return null

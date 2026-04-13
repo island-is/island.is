@@ -1,6 +1,7 @@
 import {
   CaseState,
   completedRequestCaseStates,
+  getMillisecondsFromDays,
   isRequestCase,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
@@ -53,8 +54,6 @@ const transformRequestCase = (theCase: Case): Case => {
   }
 }
 
-const getDays = (days: number) => days * 24 * 60 * 60 * 1000
-
 const transformIndictmentCase = (theCase: Case): Case => {
   const { indictmentRulingDecision, rulingDate, defendants } = theCase
 
@@ -74,7 +73,7 @@ const transformIndictmentCase = (theCase: Case): Case => {
     isStatementDeadlineExpired: theCase.appealCase?.appealReceivedByCourtDate
       ? Date.now() >=
         new Date(theCase.appealCase.appealReceivedByCourtDate).getTime() +
-          getDays(1)
+          getMillisecondsFromDays(1)
       : false,
     accusedPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
       ? theCase.accusedPostponedAppealDate
