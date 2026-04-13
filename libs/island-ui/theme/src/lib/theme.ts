@@ -3,26 +3,29 @@ import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors/colors'
 import { font, spacing as spacingPrimitives, radius } from './tokens/tokens'
+import { fontWeight, typographyValues } from './typography/typography'
+import { figmaPrimitives } from './tokens/figmaPrimitives'
 
 export const UNIT = 8
 
 // TODO: spacing will be further updated in the followup PR
+// mark as deprecated?
 export const spacing = {
-  0: spacingPrimitives['0'].$value ?? UNIT * 0,
-  1: spacingPrimitives['8'].$value ?? UNIT * 1,
-  2: spacingPrimitives['16'].$value ?? UNIT * 2,
-  3: spacingPrimitives['24'].$value ?? UNIT * 3,
-  4: spacingPrimitives['32'].$value ?? UNIT * 4,
-  5: spacingPrimitives['40'].$value ?? UNIT * 5,
-  6: spacingPrimitives['48'].$value ?? UNIT * 6,
-  7: spacingPrimitives['56'].$value ?? UNIT * 7,
-  8: spacingPrimitives['64'].$value ?? UNIT * 8,
-  9: spacingPrimitives['72'].$value ?? UNIT * 9,
-  10: spacingPrimitives['80'].$value ?? UNIT * 10,
-  12: spacingPrimitives['96'].$value ?? UNIT * 12,
-  13: spacingPrimitives['104'].$value ?? UNIT * 13,
+  0: UNIT * 0,
+  1: UNIT * 1,
+  2: UNIT * 2,
+  3: UNIT * 3,
+  4: UNIT * 4,
+  5: UNIT * 5,
+  6: UNIT * 6,
+  7: UNIT * 7,
+  8: UNIT * 8,
+  9: UNIT * 9,
+  10: UNIT * 10,
+  12: UNIT * 12,
+  13: UNIT * 13,
   14: UNIT * 14, // DEPRECATED
-  15: spacingPrimitives['120'].$value ?? UNIT * 15,
+  15: UNIT * 15,
   20: UNIT * 20, // DEPRECATED
   21: UNIT * 21, // DEPRECATED
   22: UNIT * 22, // DEPRECATED
@@ -30,11 +33,11 @@ export const spacing = {
   24: UNIT * 24, // DEPRECATED
   28: UNIT * 28, // DEPRECATED
   30: UNIT * 30, // DEPRECATED
-  200: spacingPrimitives['200'].$value ?? UNIT * 25,
+  200: UNIT * 25,
   none: UNIT * 0,
-  smallGutter: spacingPrimitives['4'].$value ?? UNIT * 0.5,
-  gutter: spacingPrimitives['16'].$value ?? UNIT * 2,
-  containerGutter: spacingPrimitives['48'].$value ?? UNIT * 6,
+  smallGutter: UNIT * 0.5,
+  gutter: UNIT * 2,
+  containerGutter: UNIT * 6,
   auto: 'auto',
   p1: 8,
   p2: 12,
@@ -42,6 +45,8 @@ export const spacing = {
   p4: 16,
   p5: 18,
 }
+
+export const figmaSpacing = spacingPrimitives
 
 export const zIndex = {
   below: -1,
@@ -75,16 +80,17 @@ export const theme = {
   zIndex,
   touchableSize: 10,
   typography: {
-    fontFamily: `"${font.family.primary.$value}", San Francisco, Segoe UI, sans-serif`,
-    light: 300,
-    regular: 400,
-    medium: 500,
-    semiBold: 600,
-    headingsFontWeight: 600,
-    baseFontSize: 18,
-    baseLineHeight: 1.5,
+    fontFamily: `"${font.family.primary}", San Francisco, Segoe UI, sans-serif`,
+    light: fontWeight.light,
+    regular: fontWeight.regular,
+    medium: fontWeight.medium,
+    semiBold: fontWeight.semiBold,
+    headingsFontWeight: fontWeight.semiBold,
+    baseFontSize: typographyValues.desktop.paragraph.default.fontSize,
+    baseLineHeight: `${typographyValues.desktop.paragraph.default.lineHeight} px`,
   },
   spacing,
+  figmaSpacing,
   transforms: {
     touchable: 'scale(0.98)',
   },
@@ -97,11 +103,11 @@ export const theme = {
       solid: 'solid',
     },
     radius: {
-      standard: `${radius.xs.$value ?? 4}px`, // TODO: check with designers to keep as standard
-      large: `${radius.default.$value ?? 8}px`, // TODO: check with designers to keep as large
-      md: `${radius.md.$value ?? 12}px`,
-      lg: `${radius.lg.$value ?? 16}px`,
-      full: `${radius.full.$value ?? 9999}px`,
+      standard: `${radius.xs ?? 4}px`, // TODO: check with designers to keep as standard
+      large: `${radius.default ?? 8}px`, // TODO: check with designers to keep as large
+      md: `${radius.md ?? 12}px`,
+      lg: `${radius.lg ?? 16}px`,
+      full: `${radius.full ?? 9999}px`,
     },
     width: {
       standard: 1,

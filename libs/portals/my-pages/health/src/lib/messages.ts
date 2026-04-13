@@ -435,9 +435,232 @@ export const messages = defineMessages({
     defaultMessage: 'Inneign',
     id: 'sp.health:credit',
   },
+<<<<<<< HEAD
+  registrationComplete: {
+    id: 'sp.health:registration-complete',
+    defaultMessage: 'Skráning tókst',
+  },
+  registrationFailed: {
+    id: 'sp.health:registration-failed',
+    defaultMessage: 'Skráning mistókst',
+  },
+  iAmOrganDonor: {
+    id: 'sp.health:i-am-organ-donor',
+    defaultMessage: 'Ég er líffæragjafi.',
+  },
+  iAmOrganDonorText: {
+    id: 'sp.health:i-am-organ-donor-text',
+    defaultMessage: 'Öll líffærin mín má nota til ígræðslu.',
+  },
+  iAmOrganDonorWithExceptions: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions',
+    defaultMessage: 'Ég heimila líffæragjöf, með takmörkunum.',
+  },
+  iAmOrganDonorWithExceptionsText: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions-text',
+    defaultMessage: 'Öll líffæri má nota til ígræðslu fyrir utan:',
+  },
+  iAmNotOrganDonor: {
+    id: 'sp.health:i-am-not-organ-donor',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  iAmNotOrganDonorText: {
+    id: 'sp.health:i-am-not-organ-donor-text',
+    defaultMessage: 'Engin líffæri má nota til ígræðslu',
+  },
+  organDonationRegistrationOptIn: {
+    id: 'sp.health:organ-donation-registration-opt-in',
+    defaultMessage: 'Við andlát mitt má nota líffæri mín til líffæragjafa.',
+  },
+  organDonationRegistrationException: {
+    id: 'sp.health:organ-donation-registration-exception',
+    defaultMessage:
+      'Ég gef leyfi fyrir líffæragjöf að undanskildum eftirfarandi líffærum:',
+  },
+  organDonationRegistrationOptOut: {
+    id: 'sp.health:organ-donation-registration-opt-out',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  vaccinations: {
+    id: 'sp.health:vaccinations',
+    defaultMessage: 'Bólusetningar',
+  },
+  vaccinationsIntro: {
+    id: 'sp.health:vaccinations-intro',
+    defaultMessage:
+      'Bólusetning er ónæmisaðgerð sem ætlað er að koma í veg fyrir alvarlegan smitsjúkdóm. Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  },
+  generalVaccinations: {
+    id: 'sp.health:general-vaccinations',
+    defaultMessage: 'Almennar bólusetningar',
+  },
+  otherVaccinations: {
+    id: 'sp.health:other-vaccinations',
+    defaultMessage: 'Aðrar bólusetningar',
+  },
+  landlaeknirVaccinationsTooltip: {
+    id: 'sp.health:landlaeknir-tooltip',
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
+  },
+  landlaeknirMedicinePrescriptionsTooltip: {
+    id: 'sp.health:landlaeknir-prescriptions-tooltip',
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar lyfjaávísanir.',
+  },
+  landlaeknirMedicineDelegationTooltip: {
+    id: 'sp.health:landlaeknir-delegation-tooltip',
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þín lyfjaumboð.',
+  },
+  readAboutVaccinations: {
+    id: 'sp.health:read-about-vaccinations',
+    defaultMessage: 'Lesa um bólusetningar',
+  },
+  readAboutVaccinationsLink: {
+    id: 'sp.health:read-about-vaccinations-link',
+    defaultMessage:
+      'https://www.landlaeknir.is/heilsa/heilsufraedi/bolusetningar/',
+  },
+  makeVaccinationAppointment: {
+    id: 'sp.health:make-vaccination-appointment',
+    defaultMessage: 'Panta tíma í bólusetningu',
+  },
+  makeVaccinationAppointmentLink: {
+    id: 'sp.health:make-vaccination-appointment-link',
+    defaultMessage: 'https://www.heilsuvera.is/',
+  },
+  vaccinatedFor: {
+    id: 'sp.health:vaccinated-for',
+    defaultMessage: 'Bólusett gegn',
+  },
+  vaccinatedLast: {
+    id: 'sp.health:vaccinated-last',
+    defaultMessage: 'Síðast',
+  },
+  vaccinatedStatus: {
+    id: 'sp.health:vaccinated-status',
+    defaultMessage: 'Staða',
+  },
+  noVaccinesRegistered: {
+    id: 'sp.health:no-vaccines-registered',
+    defaultMessage: 'Engar bólusetningar skráðar',
+  },
+  years: {
+    id: 'sp.health:years',
+    defaultMessage: 'ára',
+  },
+  months: {
+    id: 'sp.health:months',
+    defaultMessage: 'mán.',
+  },
+  vaccinesTableHeaderNr: {
+    id: 'sp.health:vaccines-table-header-nr',
+    defaultMessage: 'Nr.',
+  },
+  vaccinesTableHeaderDate: {
+    id: 'sp.health:vaccines-table-header-date',
+    defaultMessage: 'Dags.',
+  },
+  vaccinesTableHeaderAge: {
+    id: 'sp.health:vaccines-table-header-age',
+    defaultMessage: 'Aldur',
+  },
+  vaccinesTableHeaderVaccine: {
+    id: 'sp.health:vaccines-table-header-vaccine',
+    defaultMessage: 'Bóluefni',
+  },
+  vaccinesTableHeaderLocation: {
+    id: 'sp.health:vaccines-table-header-location',
+    defaultMessage: 'Staður',
+  },
+  healthDirectorateErrorTag: {
+    id: 'sp.health:health-directorate-error-tag',
+    defaultMessage: 'Villa',
+  },
+  healthDirectorateErrorTitle: {
+    id: 'sp.health:health-directorate-error-title',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá Embætti Landlæknis. Vinsamlegast reynið aftur síðar',
+  },
+  medicinePrescriptions: {
+    id: 'sp.health:medicine-prescriptions',
+    defaultMessage: 'Lyfjaávísanir',
+  },
+  medicineDelegation: {
+    id: 'sp.health:medicine-delegation',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicineDelegationIntroText: {
+    id: 'sp.health:medicine-delegation-intro-text',
+    defaultMessage:
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstakt umboð fyrir þig. Hér getur þú skráð þá aðila sem þú veitir umboð til að sækja lyf í apótek fyrir þig.',
+  },
+  medicinePrescriptionIntroText: {
+    id: 'sp.health:medicine-prescription-intro-text',
+    defaultMessage:
+      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við.',
+  },
+  medicinePrescriptionHistory: {
+    id: 'sp.health:medicine-prescription-history',
+    defaultMessage: 'Lyfjasagan',
+  },
+  medicinePrescriptionHistoryIntroText: {
+    id: 'sp.health:medicine-prescription-history-intro-text',
+    defaultMessage: 'Hér finnur þú yfirlit yfir þína lyfjasögu.',
+  },
+  usedFor: {
+    id: 'sp.health:used-for',
+    defaultMessage: 'Notað við',
+  },
+  process: {
+    id: 'sp.health:process',
+    defaultMessage: 'Afgreiðslur',
+  },
+  lastDispensed: {
+    id: 'sp.health:last-dispensed',
+    defaultMessage: 'Síðast afgreitt',
+  },
+  type: {
+    id: 'sp.health:type',
+    defaultMessage: 'Tegund',
+  },
+  renew: {
+    id: 'sp.health:renew',
+    defaultMessage: 'Endurnýja',
+  },
+  renewalMedicineRequest: {
+    id: 'sp.health:renewal-medicine-request',
+    defaultMessage: 'Beiðni um endurnýjun á lyfi',
+  },
+  renewalMedicineRequestText: {
+    id: 'sp.health:renewal-medicine-request-text',
+    defaultMessage:
+      'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
+  },
+  medicineInformation: {
+    id: 'sp.health:medicine-information',
+    defaultMessage: 'Upplýsingar um lyf',
+  },
+  moreDetailedInfo: {
+    id: 'sp.health:more-detailed-info',
+    defaultMessage: 'Nánari upplýsingar',
+  },
+  dispenseHistory: {
+    id: 'sp.health:dispense-history',
+    defaultMessage: 'Afgreiðslusaga',
+  },
+  version: {
+    id: 'sp.health:version',
+    defaultMessage: 'Útgáfa',
+  },
+  myDelegations: {
+    id: 'sp.health:my-delegations',
+    defaultMessage: 'Mínir umboðsaðilar',
+=======
   debit: {
     defaultMessage: 'Skuld',
     id: 'sp.health:debit',
+>>>>>>> main
   },
   delegationType: {
     defaultMessage: 'Tegund umboðs',
