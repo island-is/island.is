@@ -5,15 +5,15 @@ import { Tag, TagVariant } from '@island.is/island-ui/core'
 import { getAppealResultTextByValue } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UserContext } from '../../UserProvider/UserProvider'
 
 interface Props {
-  appealState?: CaseAppealState | null
+  appealState?: AppealCaseState | null
   appealRulingDecision?: CaseAppealRulingDecision | null
   appealCaseNumber?: string | null
 }
@@ -27,7 +27,7 @@ const TagAppealState: FC<Props> = ({
   const { user } = useContext(UserContext)
 
   const getTagVariantForAppealState = (
-    state?: CaseAppealState | null,
+    state?: AppealCaseState | null,
     ruling?: CaseAppealRulingDecision | null,
   ):
     | {
@@ -35,19 +35,19 @@ const TagAppealState: FC<Props> = ({
         text: string
       }
     | undefined => {
-    if (state === CaseAppealState.WITHDRAWN) {
+    if (state === AppealCaseState.WITHDRAWN) {
       return {
         color: 'red',
         text: formatMessage(tables.withdrawnTag),
       }
     }
-    if (state === CaseAppealState.APPEALED) {
+    if (state === AppealCaseState.APPEALED) {
       return {
         color: 'red',
         text: formatMessage(tables.appealDate),
       }
     }
-    if (state === CaseAppealState.RECEIVED) {
+    if (state === AppealCaseState.RECEIVED) {
       if (
         user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
         !appealCaseNumber
@@ -62,7 +62,7 @@ const TagAppealState: FC<Props> = ({
           text: formatMessage(tables.receivedTag),
         }
     }
-    if (state === CaseAppealState.COMPLETED) {
+    if (state === AppealCaseState.COMPLETED) {
       return {
         color:
           ruling === CaseAppealRulingDecision.ACCEPTING

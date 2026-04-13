@@ -34,8 +34,8 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseAppealDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -1222,19 +1222,19 @@ export class CaseService {
     if (
       updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
     ) {
-      if (updatedCase.appealCase?.appealState === CaseAppealState.APPEALED) {
+      if (updatedCase.appealCase?.appealState === AppealCaseState.APPEALED) {
         this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (
-        theCase.appealCase?.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
-        updatedCase.appealCase?.appealState === CaseAppealState.RECEIVED
+        theCase.appealCase?.appealState === AppealCaseState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealCase?.appealState === AppealCaseState.RECEIVED
       ) {
         this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (
-        updatedCase.appealCase?.appealState === CaseAppealState.COMPLETED
+        updatedCase.appealCase?.appealState === AppealCaseState.COMPLETED
       ) {
         this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
       } else if (
-        updatedCase.appealCase?.appealState === CaseAppealState.WITHDRAWN
+        updatedCase.appealCase?.appealState === AppealCaseState.WITHDRAWN
       ) {
         this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }

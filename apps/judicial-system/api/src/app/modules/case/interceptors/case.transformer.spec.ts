@@ -3,8 +3,8 @@ import endOfDay from 'date-fns/endOfDay'
 import each from 'jest-each'
 
 import {
+  AppealCaseState,
   CaseAppealDecision,
-  CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -262,7 +262,7 @@ describe('transformCase', () => {
         rulingDate: rulingDate.toISOString(),
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
         appealCase: {
-          appealState: CaseAppealState.APPEALED,
+          appealState: AppealCaseState.APPEALED,
         } as AppealCase,
       } as Case
 
@@ -282,7 +282,7 @@ describe('transformCase', () => {
         type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
         appealCase: {
-          appealState: CaseAppealState.RECEIVED,
+          appealState: AppealCaseState.RECEIVED,
           appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
         } as AppealCase,
       } as Case
@@ -380,7 +380,7 @@ describe('transformCase', () => {
         rulingDate: '2022-06-15T19:50:08.033Z',
         prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
         appealCase: {
-          appealState: CaseAppealState.APPEALED,
+          appealState: AppealCaseState.APPEALED,
         } as AppealCase,
       } as Case
 
@@ -402,7 +402,7 @@ describe('transformCase', () => {
         rulingDate: '2022-06-15T19:50:08.033Z',
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
         appealCase: {
-          appealState: CaseAppealState.APPEALED,
+          appealState: AppealCaseState.APPEALED,
         } as AppealCase,
       } as Case
 
@@ -476,7 +476,7 @@ describe('transformCase', () => {
 
     describe('for cases with status', () => {
       each(
-        Object.values(CaseAppealState).map((appealState) => ({ appealState })),
+        Object.values(AppealCaseState).map((appealState) => ({ appealState })),
       ).it(
         '$appealState should return that case has been appealed',
         ({ appealState }) => {
@@ -544,7 +544,7 @@ describe('getAppealInfo', () => {
       prosecutorAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
       appealCase: {
-        appealState: CaseAppealState.APPEALED,
+        appealState: AppealCaseState.APPEALED,
         appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
       } as AppealCase,
     } as Case
@@ -572,7 +572,7 @@ describe('getAppealInfo', () => {
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
       appealCase: {
-        appealState: CaseAppealState.APPEALED,
+        appealState: AppealCaseState.APPEALED,
       } as AppealCase,
     } as Case
 
@@ -812,7 +812,7 @@ describe('getIndictmentDismissalAppealInfo', () => {
       rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
       appealCase: {
-        appealState: CaseAppealState.APPEALED,
+        appealState: AppealCaseState.APPEALED,
       },
     } as Case
 
@@ -836,7 +836,7 @@ describe('getIndictmentDismissalAppealInfo', () => {
       rulingDate: '2022-06-15T19:50:08.033Z',
       accusedPostponedAppealDate: '2022-06-16T10:00:00.000Z',
       appealCase: {
-        appealState: CaseAppealState.APPEALED,
+        appealState: AppealCaseState.APPEALED,
       },
     } as Case
 
@@ -860,7 +860,7 @@ describe('getIndictmentDismissalAppealInfo', () => {
       rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
       appealCase: {
-        appealState: CaseAppealState.RECEIVED,
+        appealState: AppealCaseState.RECEIVED,
         appealReceivedByCourtDate: '2022-06-17T12:00:00.000Z',
       },
     } as Case
@@ -935,7 +935,7 @@ describe('transformCase for indictment dismissal appeals', () => {
       rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
       appealCase: {
-        appealState: CaseAppealState.RECEIVED,
+        appealState: AppealCaseState.RECEIVED,
         appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
       },
     } as Case
@@ -967,7 +967,7 @@ describe('transformCase for indictment dismissal appeals', () => {
       rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-16T10:00:00.000Z',
       appealCase: {
-        appealState: CaseAppealState.APPEALED,
+        appealState: AppealCaseState.APPEALED,
       },
     } as Case
 
