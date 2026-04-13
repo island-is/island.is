@@ -73,12 +73,6 @@ const PrimarySchoolAssessment = lazy(() =>
   ),
 )
 
-const PrimarySchoolStudentPermission = lazy(() =>
-  import(
-    './screens/PrimarySchool/PrimarySchoolStudentPermission/PrimarySchoolStudentPermission'
-  ),
-)
-
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
 
 export const educationModule: PortalModule = {
@@ -142,18 +136,6 @@ export const educationModule: PortalModule = {
       element: (
         <PrimarySchoolStudentWrapper>
           <PrimarySchoolAssessment />
-        </PrimarySchoolStudentWrapper>
-      ),
-    },
-    {
-      name: 'Heimildir',
-      path: EducationPaths.PrimarySchoolStudentPermission,
-      key: PRIMARY_SCHOOL_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.education),
-      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
-      element: (
-        <PrimarySchoolStudentWrapper>
-          <PrimarySchoolStudentPermission />
         </PrimarySchoolStudentWrapper>
       ),
     },

@@ -1,10 +1,5 @@
 import { ReactNode } from 'react'
-import {
-  generatePath,
-  useLoaderData,
-  useLocation,
-  useParams,
-} from 'react-router-dom'
+import { generatePath, useLoaderData, useLocation, useParams } from 'react-router-dom'
 import { Hidden, Box } from '@island.is/island-ui/core'
 import {
   IntroWrapperV2,
@@ -35,10 +30,6 @@ export const PrimarySchoolStudentWrapper = ({
   const assessmentPath = generatePath(EducationPaths.PrimarySchoolAssessment, {
     studentId: studentId!,
   })
-  const permissionPath = generatePath(
-    EducationPaths.PrimarySchoolStudentPermission,
-    { studentId: studentId! },
-  )
 
   const tabItems = [
     {
@@ -50,11 +41,6 @@ export const PrimarySchoolStudentWrapper = ({
       name: psm.assessmentTitle,
       path: assessmentPath,
       active: location.pathname === assessmentPath,
-    },
-    {
-      name: psm.permissionTitle,
-      path: permissionPath,
-      active: location.pathname === permissionPath,
     },
   ]
 

@@ -51,11 +51,6 @@ export const educationNavigation: PortalNavigationItem = {
                   navHide: true,
                   path: EducationPaths.PrimarySchoolAssessment,
                 },
-                {
-                  name: psm.permissionTitle,
-                  navHide: true,
-                  path: EducationPaths.PrimarySchoolStudentPermission,
-                },
               ],
             },
           ],
