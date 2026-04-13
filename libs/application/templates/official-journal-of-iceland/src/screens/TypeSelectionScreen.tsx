@@ -24,11 +24,7 @@ export const TypeSelectionScreen = ({
 }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
-  const {
-    application: currentApplication,
-    updateApplication,
-    updateApplicationV2,
-  } = useApplication({
+  const { updateApplication, updateApplicationV2 } = useApplication({
     applicationId: application.id,
   })
 
@@ -38,7 +34,7 @@ export const TypeSelectionScreen = ({
   })
 
   const currentType = getValueViaPath<string>(
-    currentApplication.answers,
+    application.answers,
     'applicationType',
   )
 
@@ -139,9 +135,10 @@ export const TypeSelectionScreen = ({
     setValue('applicationType', value)
 
     try {
-      let currentAnswers = structuredClone(
-        currentApplication.answers,
-      ) as Record<string, unknown>
+      let currentAnswers = structuredClone(application.answers) as Record<
+        string,
+        unknown
+      >
       set(currentAnswers, 'applicationType', value)
 
       const isRegulation =
