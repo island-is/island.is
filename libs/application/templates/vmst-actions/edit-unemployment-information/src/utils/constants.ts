@@ -4,12 +4,14 @@ export type Events = {
   type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
 }
 
+export enum ApiActions {
+  submitApplication = 'submitApplication',
+}
+
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   COMPLETED = 'completed',
-  PAYMENT = 'payment',
-  REVIEW = 'review',
 }
 
 export enum Roles {

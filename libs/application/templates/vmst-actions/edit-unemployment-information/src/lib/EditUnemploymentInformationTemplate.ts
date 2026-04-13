@@ -20,6 +20,7 @@ import {
 import { UnemploymentApi } from '../dataProviders'
 import { ApiActions } from '../utils/constants'
 import { application as applicationMessages } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const EditUnemploymentInformationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -33,6 +34,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.EditUnemploymentInformation.translation,
   dataSchema: editUnemploymentInfoDataSchema,
+  featureFlag: Features.editUnemploymentInformation,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
