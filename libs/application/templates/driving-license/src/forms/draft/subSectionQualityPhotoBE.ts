@@ -37,18 +37,6 @@ export const subSectionQualityPhotoBE = buildSubSection({
           defaultValue: (application: Application) => {
             const { externalData } = application
 
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
-              return 'qualityPhoto'
-            }
-
             const thjodskraPhotos =
               getValueViaPath<ThjodskraImage[]>(
                 externalData,
@@ -61,6 +49,18 @@ export const subSectionQualityPhotoBE = buildSubSection({
 
             if (facialPhotos.length > 0) {
               return facialPhotos[0].biometricId
+            }
+
+            const photoAndSig = getValueViaPath<{
+              imageTypeId?: number | null
+              pohto?: string | null
+            }>(externalData, 'qualityPhotoAndSignature.data')
+
+            if (
+              photoAndSig?.pohto &&
+              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
+            ) {
+              return 'qualityPhoto'
             }
 
             return undefined
