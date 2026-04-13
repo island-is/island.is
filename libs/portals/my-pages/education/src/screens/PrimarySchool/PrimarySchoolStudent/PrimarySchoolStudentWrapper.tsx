@@ -57,7 +57,7 @@ export const PrimarySchoolStudentWrapper = ({
           items={tabItems}
         />
       </Hidden>
-      <Box paddingTop={[3, 3, 5]}>{children}</Box>
+      <Box paddingTop={2}>{children}</Box>
     </IntroWrapperV2>
   )
 }
