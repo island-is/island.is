@@ -1,15 +1,13 @@
 import gql from 'graphql-tag'
 
-import { htmlFields, nestedFields, slices } from './fragments'
+import { nestedFields, slices } from './fragments'
 
 export const GET_ANNUAL_REPORTS_QUERY = gql`
   query GetAnnualReports($input: GetAnnualReportInput!) {
     getAnnualReports(input: $input) {
       id
       title
-      intro {
-        ...HtmlFields
-      }
+      intro
       pageIdentifier
       organizationPage {
         id
@@ -37,7 +35,6 @@ export const GET_ANNUAL_REPORTS_QUERY = gql`
       }
     }
   }
-  ${htmlFields}
 `
 
 export const GET_ANNUAL_REPORT_CHAPTER_QUERY = gql`

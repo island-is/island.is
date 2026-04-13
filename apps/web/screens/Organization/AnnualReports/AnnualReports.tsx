@@ -39,7 +39,6 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
-import { webRichText } from '@island.is/web/utils/richText'
 
 import { Screen } from '../../../types'
 import {
@@ -183,18 +182,20 @@ const AnnualReports: Screen<AnnualReportsProps> = ({
               <>
                 <GridRow>
                   <GridColumn span="12/12">
-                    <Stack space={2}>
-                      <Text variant="h2" as="h2">
-                        {selectedReport.title}
-                      </Text>
+                    <Text variant="h2" as="h2">
+                      {selectedReport.title}
+                    </Text>
 
-                      {selectedReport.intro &&
-                        selectedReport.intro.length > 0 && (
-                          <Text as="div">
-                            {webRichText(selectedReport.intro ?? [])}
-                          </Text>
-                        )}
-                    </Stack>
+                    {selectedReport.intro && (
+                      <Text variant="intro" as="p" paddingTop={2}>
+                        <span
+                          className="rs_read"
+                          id={slugify(selectedReport.intro)}
+                        >
+                          {selectedReport.intro}
+                        </span>
+                      </Text>
+                    )}
                   </GridColumn>
                 </GridRow>
 

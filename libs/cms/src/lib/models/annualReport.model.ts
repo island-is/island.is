@@ -7,7 +7,6 @@ import {
   AnnualReportChapter,
   mapAnnualReportChapter,
 } from './annualReportChapter.model'
-import { SliceUnion, mapDocument } from '../unions/slice.union'
 
 @ObjectType()
 export class AnnualReport {
@@ -17,8 +16,8 @@ export class AnnualReport {
   @Field()
   title!: string
 
-  @CacheField(() => [SliceUnion], { nullable: true })
-  intro?: Array<typeof SliceUnion>
+  @Field({ nullable: true })
+  intro?: string
 
   @Field()
   pageIdentifier!: string
@@ -39,7 +38,7 @@ export const mapAnnualReport = ({
 }: IAnnualReport): AnnualReport => ({
   id: sys.id,
   title: fields.title,
-  intro: fields.intro ? mapDocument(fields.intro, sys.id + ':intro') : [],
+  intro: fields.intro ?? '',
   pageIdentifier: fields.pageIdentifier,
   organizationPage: fields.organizationPage
     ? mapOrganizationPage(fields.organizationPage)

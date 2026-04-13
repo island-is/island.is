@@ -210,7 +210,7 @@ export interface IAnnualReportFields {
   title: string
 
   /** Intro */
-  intro?: Document | undefined
+  intro?: string | undefined
 
   /** Page Identifier */
   pageIdentifier: string
