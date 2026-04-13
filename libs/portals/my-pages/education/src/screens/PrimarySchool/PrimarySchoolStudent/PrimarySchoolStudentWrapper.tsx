@@ -1,5 +1,10 @@
 import { ReactNode } from 'react'
-import { generatePath, useLoaderData, useLocation, useParams } from 'react-router-dom'
+import {
+  generatePath,
+  useLoaderData,
+  useLocation,
+  useParams,
+} from 'react-router-dom'
 import { Hidden, Box } from '@island.is/island-ui/core'
 import {
   IntroWrapperV2,
