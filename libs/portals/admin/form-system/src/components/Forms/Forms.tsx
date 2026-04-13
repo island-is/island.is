@@ -19,7 +19,11 @@ import { useNavigate } from 'react-router-dom'
 import { FormsContext } from '../../context/FormsContext'
 import { FormSystemPaths } from '../../lib/paths'
 import { OrganizationSelect } from '../OrganizationSelect'
-import { TableHeader } from './components/Table/TableHeader'
+import {
+  SortColumn,
+  SortDirection,
+  TableHeader,
+} from './components/Table/TableHeader'
 import { TableRow } from './components/Table/TableRow'
 
 const defaultFormState = [
@@ -45,6 +49,22 @@ export const Forms = () => {
     name: '',
     formState: defaultFormState,
   })
+
+  const [sort, setSort] = useState<{
+    column: SortColumn | null
+    direction: SortDirection
+  }>({
+    column: null,
+    direction: 'asc',
+  })
+
+  const handleSort = (column: SortColumn) => {
+    setSort((prev) => ({
+      column,
+      direction:
+        prev.column === column && prev.direction === 'asc' ? 'desc' : 'asc',
+    }))
+  }
 
   const categories = [
     {
@@ -217,27 +237,46 @@ export const Forms = () => {
           </Box>
         </Filter>
       </Box>
-      <TableHeader />
+      <TableHeader
+        sortColumn={sort.column}
+        sortDirection={sort.direction}
+        onSort={handleSort}
+      />
       {forms &&
-        forms
-          ?.filter((form) => formFilter(form))
-          .map((f) => {
-            return (
-              <TableRow
-                key={f?.id}
-                id={f?.id}
-                name={f?.name?.is ?? ''}
-                isHeader={false}
-                translated={f?.isTranslated ?? false}
-                slug={f?.slug ?? ''}
-                beenPublished={f?.beenPublished ?? false}
-                setFormsState={setForms}
-                status={f?.status}
-                lastModified={f?.modified}
-                url={f?.submissionServiceUrl ?? ''}
-              />
-            )
-          })}
+        [...forms]
+          .filter((form) => formFilter(form))
+          .sort((a, b) => {
+            const dir = sort.direction === 'asc' ? 1 : -1
+            if (sort.column === 'name') {
+              return dir * (a.name?.is ?? '').localeCompare(b.name?.is ?? '')
+            }
+            if (sort.column === 'lastModified') {
+              return (
+                dir *
+                (new Date(a.modified ?? 0).getTime() -
+                  new Date(b.modified ?? 0).getTime())
+              )
+            }
+            if (sort.column === 'status') {
+              return dir * (a.status ?? '').localeCompare(b.status ?? '')
+            }
+            return 0
+          })
+          .map((f) => (
+            <TableRow
+              key={f?.id}
+              id={f?.id}
+              name={f?.name?.is ?? ''}
+              isHeader={false}
+              translated={f?.isTranslated ?? false}
+              slug={f?.slug ?? ''}
+              beenPublished={f?.beenPublished ?? false}
+              setFormsState={setForms}
+              status={f?.status}
+              lastModified={f?.modified}
+              url={f?.submissionServiceUrl ?? ''}
+            />
+          ))}
     </>
   )
 }
