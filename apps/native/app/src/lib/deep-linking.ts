@@ -64,7 +64,7 @@ const routes: Record<
   '/minarsidur/min-gogn/yfirlit': '/more/family',
   // Applications
   '/minarsidur/umsoknir': '/more/applications',
-  '/minarsidur/umsoknir/:status"': ({ status }) => ({
+  '/minarsidur/umsoknir/:status': ({ status }) => ({
     pathname: '/more/applications/[status]',
     params: {
       status:

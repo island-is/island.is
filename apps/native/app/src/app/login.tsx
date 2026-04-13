@@ -86,7 +86,7 @@ export default function LoginScreen() {
       return
     }
 
-    const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now()
+    const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > (Date.now() / 1000)
     if (environment.idsIssuer !== environments.prod.idsIssuer && !isCognitoAuth) {
       Alert.alert(
         'Cognito required',

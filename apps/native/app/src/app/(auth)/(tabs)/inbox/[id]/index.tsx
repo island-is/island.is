@@ -7,6 +7,9 @@ import {
   Image,
   SafeAreaView,
   TouchableNativeFeedback,
+  Touchable,
+  TouchableWithoutFeedback,
+  Pressable,
 } from 'react-native'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
@@ -171,7 +174,7 @@ export default function DocumentScreen() {
         options={{
           headerRight: () => (
             <>
-              <TouchableNativeFeedback onPress={onShare} disabled={!ready}>
+              <Pressable onPress={onShare} disabled={!ready}>
                 <Image
                   source={require('@/assets/icons/navbar-share.png')}
                   style={{
@@ -181,8 +184,8 @@ export default function DocumentScreen() {
                     marginHorizontal: 8,
                   }}
                 />
-              </TouchableNativeFeedback>
-              <TouchableNativeFeedback onPress={onToggleArchive}>
+              </Pressable>
+              <Pressable onPress={onToggleArchive}>
                 <Image
                   source={
                     document.archived
@@ -196,8 +199,8 @@ export default function DocumentScreen() {
                     marginHorizontal: 8,
                   }}
                 />
-              </TouchableNativeFeedback>
-              <TouchableNativeFeedback onPress={onToggleBookmark}>
+              </Pressable>
+              <Pressable onPress={onToggleBookmark}>
                 <Image
                   source={
                     document.bookmarked
@@ -211,7 +214,7 @@ export default function DocumentScreen() {
                     marginHorizontal: 8,
                   }}
                 />
-              </TouchableNativeFeedback>
+              </Pressable>
             </>
           ),
         }}

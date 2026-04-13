@@ -1,5 +1,3 @@
-import { background } from '@storybook/theming'
-
 const IS_DEV = process.env.APP_VARIANT === 'development'
 const IS_PROD = process.env.APP_VARIANT === 'production'
 
