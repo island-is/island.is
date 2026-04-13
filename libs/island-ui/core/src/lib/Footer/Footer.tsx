@@ -52,7 +52,7 @@ export const Footer = ({
 }: FooterProps) => {
   return (
     <footer>
-      <Box width="full" background="blue100" paddingY={7}>
+      <Box width="full" background="blue100" paddingTop={7} paddingBottom={6}>
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -175,9 +175,9 @@ export const Footer = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Box paddingY={3} className={styles.bottomBar}>
+      <Box className={styles.bottomBar}>
         <GridContainer>
-          <Inline space={[2, 2, 4]} alignY="center">
+          <Inline space={[2, 2, 5]} alignY="center">
             {bottomBarLinks.map(({ title, href }, index) => (
               <Box key={index} display="flex" alignItems="center" columnGap={1}>
                 <Icon

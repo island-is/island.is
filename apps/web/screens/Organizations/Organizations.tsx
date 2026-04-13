@@ -233,7 +233,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             </GridRow>
             <GridRow>
               <GridColumn span="12/12">
-                <Box paddingTop={8}>
+                <Box paddingBottom={8} paddingTop={5}>
                   <Pagination
                     page={page}
                     totalPages={totalPages}
@@ -309,4 +309,6 @@ OrganizationPage.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(OrganizationPage)
+export default withMainLayout(OrganizationPage, {
+  showFooterIllustration: true,
+})

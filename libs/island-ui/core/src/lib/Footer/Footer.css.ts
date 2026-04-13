@@ -3,7 +3,10 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const withDecorator = style({})
 
-export const bottomBar = style({})
+export const bottomBar = style({
+  paddingTop: '20px',
+  paddingBottom: '24px',
+})
 
 export const topLinksContainer = style({
   marginTop: '44px',
@@ -31,10 +34,6 @@ export const topLinksGrid = style({
 export const middleLinksGrid = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(2, 1fr)',
-  gap: '24px',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      gap: '4px',
-    },
-  },
+  rowGap: '4px',
+  columnGap: '24px',
 })
