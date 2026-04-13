@@ -39,7 +39,6 @@ const PaymentTypes = () => {
 
   const paymentTypes = paymentTypesData?.socialInsurancePaymentTypes
   const childBenefits = childBenefitsData?.socialInsuranceChildBenefits
-  const bothFailed = !!paymentTypesError && !!childBenefitsError
 
   const buttonGroup = [
     <LinkResolver
@@ -68,12 +67,7 @@ const PaymentTypes = () => {
       )}
       buttonGroup={buttonGroup}
     >
-      {bothFailed ? (
-        // Both queries failed — show a single error instead of two.
-        // Problem renders a generic message regardless of which error is passed.
-        <Problem error={paymentTypesError} noBorder={false} />
-      ) : (
-        <Stack space={6}>
+      <Stack space={6}>
         {paymentTypesLoading ? (
           <CardLoader />
         ) : paymentTypesError ? (
@@ -174,7 +168,6 @@ const PaymentTypes = () => {
           </Stack>
         ) : null}
       </Stack>
-      )}
     </IntroWrapper>
   )
 }
