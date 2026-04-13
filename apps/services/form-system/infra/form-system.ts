@@ -8,6 +8,7 @@ import {
   ChargeFjsV2,
   Client,
   NationalRegistryB2C,
+  payment,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
@@ -45,6 +46,11 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
+      XROAD_CHARGE_FJS_V2_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+        staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+        prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+      },
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -65,7 +71,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistryB2C, ChargeFjsV2)
+    .xroad(Base, Client, NationalRegistryB2C, ChargeFjsV2, payment)
     .ingress({
       primary: {
         host: {
