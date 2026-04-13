@@ -29,7 +29,6 @@ import {
   Query,
   QueryGetAnnualReportsArgs,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
@@ -37,15 +36,14 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 
-import { Screen } from '../../../types'
 import {
   GET_ANNUAL_REPORTS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import * as styles from './AnnualReports.css'
 
@@ -55,13 +53,17 @@ export interface AnnualReportsProps {
   annualReports: AnnualReport[]
 }
 
-const AnnualReports: Screen<AnnualReportsProps> = ({
+type AnnualReportsScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
   organizationPage,
   namespace,
   annualReports,
 }) => {
   useContentfulId(organizationPage?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('annualreports')
 
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -246,22 +248,41 @@ const AnnualReports: Screen<AnnualReportsProps> = ({
   )
 }
 
-AnnualReports.getProps = async ({ apolloClient, locale, query }) => {
-  const organizationPageSlug = (query.slugs as string[])[0]
+AnnualReports.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  organizationPage,
+}) => {
+  const [organizationPageSlug, annualReportsSlug] = query.slugs as string[]
 
   const [
     {
       data: { getOrganizationPage },
     },
+    {
+      data: { getAnnualReports },
+    },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
+    !organizationPage
+      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: organizationPageSlug,
+              lang: locale as ContentLanguage,
+              subpageSlugs: [annualReportsSlug],
+            },
+          },
+        })
+      : { data: { getOrganizationPage: organizationPage } },
+    apolloClient.query<Query, QueryGetAnnualReportsArgs>({
+      query: GET_ANNUAL_REPORTS_QUERY,
       variables: {
         input: {
           slug: organizationPageSlug,
           lang: locale as ContentLanguage,
-          // subpageSlugs: [locale === 'is' ? 'arsskyrslur' : 'annual-reports'],
         },
       },
     }),
@@ -287,30 +308,6 @@ AnnualReports.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  const {
-    data: { getOrganization },
-  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
-    query: GET_ORGANIZATION_QUERY,
-    variables: {
-      input: {
-        slug: getOrganizationPage.organization?.slug ?? organizationPageSlug,
-        lang: locale as ContentLanguage,
-      },
-    },
-  })
-
-  const {
-    data: { getAnnualReports },
-  } = await apolloClient.query<Query, QueryGetAnnualReportsArgs>({
-    query: GET_ANNUAL_REPORTS_QUERY,
-    variables: {
-      input: {
-        slug: getOrganizationPage.organization?.slug ?? organizationPageSlug,
-        lang: locale as ContentLanguage,
-      },
-    },
-  })
-
   if (!getAnnualReports) {
     throw new CustomNextError(404, 'Annual Reports not found')
   }
@@ -321,7 +318,7 @@ AnnualReports.getProps = async ({ apolloClient, locale, query }) => {
     annualReports: getAnnualReports,
     ...getThemeConfig(
       getOrganizationPage?.theme,
-      getOrganization ?? getOrganizationPage?.organization,
+      getOrganizationPage?.organization,
     ),
   }
 }

@@ -27,7 +27,6 @@ import {
   Query,
   QueryGetAnnualReportChapterArgs,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
@@ -35,17 +34,16 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
-import { Screen } from '../../../types'
 import {
   GET_ANNUAL_REPORT_CHAPTER_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
 } from '../../queries'
 
 export interface AnnualReportChapterProps {
@@ -54,13 +52,16 @@ export interface AnnualReportChapterProps {
   annualReportChapter: AnnualReportChapterSchema
 }
 
-const AnnualReportChapter: Screen<AnnualReportChapterProps> = ({
-  organizationPage,
-  namespace,
-  annualReportChapter,
-}) => {
-  useContentfulId(organizationPage?.id)
-  useLocalLinkTypeResolver()
+type AnnualReportChapterScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const AnnualReportChapter: Screen<
+  AnnualReportChapterProps,
+  AnnualReportChapterScreenContext
+> = ({ organizationPage, namespace, annualReportChapter }) => {
+  useContentfulId(organizationPage?.id, annualReportChapter.id)
+  useLocalLinkTypeResolver('annualreportchapter')
 
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -184,23 +185,42 @@ const AnnualReportChapter: Screen<AnnualReportChapterProps> = ({
   )
 }
 
-AnnualReportChapter.getProps = async ({ apolloClient, locale, query }) => {
-  const organizationPageSlug = (query.slugs as string[])[0]
-  const annualReportChapterSlug = (query.slugs as string[])[2]
+AnnualReportChapter.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  organizationPage,
+}) => {
+  const querySlugs = (query.slugs ?? []) as string[]
+  const [organizationPageSlug, _, annualReportChapterSlug] = querySlugs
 
   const [
     {
       data: { getOrganizationPage },
     },
+    {
+      data: { getAnnualReportChapter },
+    },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
+    !organizationPage
+      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: organizationPageSlug,
+              lang: locale as ContentLanguage,
+              subpageSlugs: querySlugs.slice(1),
+            },
+          },
+        })
+      : { data: { getOrganizationPage: organizationPage } },
+    await apolloClient.query<Query, QueryGetAnnualReportChapterArgs>({
+      query: GET_ANNUAL_REPORT_CHAPTER_QUERY,
       variables: {
         input: {
-          slug: organizationPageSlug,
+          slug: annualReportChapterSlug,
           lang: locale as ContentLanguage,
-          // subpageSlugs: [locale === 'is' ? 'arsskyrslur' : 'annual-reports'],
         },
       },
     }),
@@ -226,30 +246,6 @@ AnnualReportChapter.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  const {
-    data: { getOrganization },
-  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
-    query: GET_ORGANIZATION_QUERY,
-    variables: {
-      input: {
-        slug: getOrganizationPage.organization?.slug ?? organizationPageSlug,
-        lang: locale as ContentLanguage,
-      },
-    },
-  })
-
-  const {
-    data: { getAnnualReportChapter },
-  } = await apolloClient.query<Query, QueryGetAnnualReportChapterArgs>({
-    query: GET_ANNUAL_REPORT_CHAPTER_QUERY,
-    variables: {
-      input: {
-        slug: annualReportChapterSlug,
-        lang: locale as ContentLanguage,
-      },
-    },
-  })
-
   if (!getAnnualReportChapter) {
     throw new CustomNextError(404, 'Annual Report Chapter not found')
   }
@@ -260,7 +256,7 @@ AnnualReportChapter.getProps = async ({ apolloClient, locale, query }) => {
     annualReportChapter: getAnnualReportChapter,
     ...getThemeConfig(
       getOrganizationPage?.theme,
-      getOrganization ?? getOrganizationPage?.organization,
+      getOrganizationPage?.organization,
     ),
   }
 }
