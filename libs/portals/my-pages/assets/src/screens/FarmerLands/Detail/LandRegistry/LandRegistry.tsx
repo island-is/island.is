@@ -32,7 +32,7 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
         sortType: 'basic',
       },
       {
-        Header: formatMessage(fm.landRegistryNationalId),
+        Header: formatMessage(m.natreg),
         accessor: 'nationalId',
         sortType: 'basic',
         Cell: ({ value }: { value: string | null | undefined }) =>
