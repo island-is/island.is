@@ -13,6 +13,7 @@ import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import AssetLink from '../AssetLink/AssetLink'
 import * as styles from './RichText.css'
+import cn from 'classnames'
 
 const defaultHeaderMargins: {
   marginBottom: ResponsiveSpace
@@ -148,7 +149,7 @@ export const defaultRenderNodeObject: RenderNode = {
     </Box>
   ),
   [BLOCKS.TABLE]: (_node, children) => (
-    <Box className={styles.clearBoth}>
+    <Box className={cn(styles.clearBoth, styles.tableContainer)}>
       <T.Table>{children}</T.Table>
     </Box>
   ),

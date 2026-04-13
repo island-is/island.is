@@ -25,7 +25,9 @@ export const TableSlice = ({ slice }: TableSliceProps) => {
         <T.Head>
           {rows[0].content?.map((cell, index) => (
             <T.HeadData key={index}>
-              <Text>{extractTextFromRichTextTableCell(cell as Block)}</Text>
+              <Text>
+                {extractTextFromRichTextTableCell(cell as Block)} hello
+              </Text>
             </T.HeadData>
           ))}
         </T.Head>
