@@ -40,7 +40,7 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
         sortType: 'basic',
       },
       {
-        Header: formatMessage(fm.nationalId),
+        Header: formatMessage(m.natreg),
         accessor: 'nationalId',
         sortType: 'basic',
         Cell: ({ value }: { value: string | null | undefined }) =>

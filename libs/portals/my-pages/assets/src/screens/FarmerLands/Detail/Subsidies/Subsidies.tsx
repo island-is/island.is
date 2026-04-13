@@ -154,7 +154,7 @@ export const Subsidies = ({ farmId }: Props) => {
         accessor: 'contract',
       },
       {
-        Header: formatMessage(fm.subsidyGrossAmount),
+        Header: formatMessage(m.amount),
         accessor: 'grossAmount',
         disableSortBy: true,
         Cell: ({ value }) => amountFormat(value),
