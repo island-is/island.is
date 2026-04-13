@@ -1,9 +1,4 @@
-import {
-  Button,
-  Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -28,7 +23,10 @@ const PaymentTypes = () => {
     data: paymentTypesData,
     loading: paymentTypesLoading,
     error: paymentTypesError,
-  } = useGetPaymentTypesQuery({ variables: { locale: lang }, fetchPolicy: 'no-cache' })
+  } = useGetPaymentTypesQuery({
+    variables: { locale: lang },
+    fetchPolicy: 'no-cache',
+  })
 
   const {
     data: childBenefitsData,

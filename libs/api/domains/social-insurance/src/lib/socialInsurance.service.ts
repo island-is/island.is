@@ -218,9 +218,8 @@ export class SocialInsuranceService {
     })
 
     const mappedInput = mapPensionCalculationInput(input, pageData)
-    const calculation = await this.pensionCalculatorService.getPensionCalculation(
-      mappedInput,
-    )
+    const calculation =
+      await this.pensionCalculatorService.getPensionCalculation(mappedInput)
 
     const groups = groupPensionCalculationItems(calculation, pageData)
     const highlightedItems = getPensionCalculationHighlightedItems(
@@ -266,11 +265,12 @@ export class SocialInsuranceService {
       ? undefined
       : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
 
-    const discontinuingMonthsAndYears = taxCardsResult?.canDiscontinuePersonalAllowance
-      ? await this.personalTaxCreditClient.getTaxCardMonthsAndYearsWhenDiscontinuing(
-          user,
-        )
-      : undefined
+    const discontinuingMonthsAndYears =
+      taxCardsResult?.canDiscontinuePersonalAllowance
+        ? await this.personalTaxCreditClient.getTaxCardMonthsAndYearsWhenDiscontinuing(
+            user,
+          )
+        : undefined
 
     return {
       taxCards: taxCardsResult?.taxCards?.map((tc) => ({
