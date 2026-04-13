@@ -9,7 +9,6 @@ import {
   Base,
   Client,
   NationalRegistryB2C,
-  Payment,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
@@ -100,7 +99,7 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistryB2C, Payment)
+    .xroad(Base, Client, NationalRegistryB2C)
     .ingress({
       primary: {
         host: {
