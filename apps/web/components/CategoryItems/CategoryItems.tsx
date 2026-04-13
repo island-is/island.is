@@ -97,20 +97,11 @@ export const CategoryItems = ({
                 color="blue"
                 className={styles.card}
               >
-                <Text
-                  as="h3"
-                  variant="h4"
-                  color="dark400"
-                  truncate
-                >
+                <Text as="h3" variant="h4" color="dark400" truncate>
                   {title}
                 </Text>
                 {description && (
-                  <Text
-                    paddingTop={2}
-                    variant="medium"
-                    fontWeight="light"
-                  >
+                  <Text paddingTop={2} variant="medium" fontWeight="light">
                     {description}
                   </Text>
                 )}

@@ -54,12 +54,7 @@ interface HomeProps {
   webChat: GetWebChatQuery['getWebChat']
 }
 
-const Home: Screen<HomeProps> = ({
-  categories,
-  news,
-  page,
-  webChat,
-}) => {
+const Home: Screen<HomeProps> = ({ categories, news, page, webChat }) => {
   const namespace = JSON.parse(page?.namespace?.fields || '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
