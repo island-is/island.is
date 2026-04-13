@@ -242,7 +242,7 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         <GridContainer className={styles.container}>
           <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              <Box marginY={3} marginX={[2, 2, 0, 0]}>
+              <Box marginY={3} marginX={[3, 3, 0, 0]}>
                 <BreadCrumbs />
               </Box>
               <Box

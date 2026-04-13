@@ -31,10 +31,10 @@ const BreadCrumbs: FC = () => {
   return (
     <Box display="flex" alignItems="center">
       <Link href="/malalistar" className={styles.link}>
-        <Icon icon="home" size="small" color="purple300" />
+        <Icon icon="home" size="small" color="purple400" />
       </Link>
       <Box marginX={1}>
-        <Text color="purple300" variant="eyebrow">{`•`}</Text>
+        <Text color="purple400" variant="eyebrow">{`•`}</Text>
       </Box>
       {loading && (
         <SkeletonLoader
@@ -51,7 +51,7 @@ const BreadCrumbs: FC = () => {
           <Box key={entry.route} display="flex" alignItems="center">
             {index > 0 && (
               <Box marginX={1}>
-                <Text color="purple300" variant="eyebrow">{`/`}</Text>
+                <Text color="purple400" variant="eyebrow">{`/`}</Text>
               </Box>
             )}
             <Link href={`/malalistar/${entry.route}`} className={styles.link}>
