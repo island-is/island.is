@@ -57,6 +57,8 @@ export enum Features {
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
+  isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
+  isServicePortalTRPersonalTaxCreditPageEnabled = 'isServicePortalTRPersonalTaxCreditPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
@@ -84,6 +86,9 @@ export enum Features {
 
   //Is vehicle bulk mileage graph enabled?
   isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
+
+  //Enable user ships page
+  isServicePortalUserShipsPageEnabled = 'isServicePortalUserShipsPageEnabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
