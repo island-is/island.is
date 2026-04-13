@@ -1,4 +1,3 @@
-// chore: trigger deploy
 import '@island.is/api/mocks'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
