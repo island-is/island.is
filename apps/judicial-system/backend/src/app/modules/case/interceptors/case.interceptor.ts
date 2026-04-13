@@ -220,7 +220,7 @@ const transformCase = (
   theCase: Case,
   user: User | undefined,
 ): Record<string, unknown> => {
-  const isDefence = Boolean(user && isDefenceUser(user))
+  const isDefence = isDefenceUser(user)
   const {
     defendants: transformedDefendants,
     allCancelledOrDismissed,
