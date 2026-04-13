@@ -33,7 +33,9 @@ const getFormNodeFieldIds = (
   const directIds = visibleChildren
     .filter((x) => x.id)
     .map((x) =>
-      application ? resolveFieldId(x as Field, application, user) : (x.id as string),
+      application
+        ? resolveFieldId(x as Field, application, user)
+        : (x.id as string),
     )
 
   const nestedIds = visibleChildren

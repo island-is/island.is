@@ -167,7 +167,9 @@ export const extractAnswersToSubmitFromScreen = (
       return pick(
         data,
         screen.children.flatMap<string>((c) => [
-          application ? resolveFieldId(c as Field, application, user) : (c.id as string),
+          application
+            ? resolveFieldId(c as Field, application, user)
+            : (c.id as string),
           ...getAccordionChildFieldIds(c as Field, application, user),
         ]),
       )
