@@ -16,7 +16,6 @@ definitions:
     #        source: true
   environment: &environment
     node: 24.10.0
-    # xcode: '26.0.1'
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     XCODE_SCHEME: 'IslandApp'
