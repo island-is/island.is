@@ -7,7 +7,10 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import { format as formatKennitala, sanitize as sanitizeKennitala } from 'kennitala'
+import {
+  format as formatKennitala,
+  sanitize as sanitizeKennitala,
+} from 'kennitala'
 import {
   formatBankInfo,
   formatPhoneNumberWithIcelandicCountryCode,
@@ -660,10 +663,8 @@ export const assigneePersonalInfoOverviewItems = (
       width: 'half',
       keyText: m.draftMessages.overviewSection.nationalId,
       valueText: formatKennitala(
-        getValueViaPath<string>(
-          answers,
-          `${prefix}.assigneeInfo.nationalId`,
-        ) ?? '',
+        getValueViaPath<string>(answers, `${prefix}.assigneeInfo.nationalId`) ??
+          '',
       ),
     },
     {
@@ -677,10 +678,8 @@ export const assigneePersonalInfoOverviewItems = (
       width: 'half',
       keyText: m.draftMessages.overviewSection.postalCode,
       valueText:
-        getValueViaPath<string>(
-          answers,
-          `${prefix}.assigneeInfo.postalCode`,
-        ) ?? '',
+        getValueViaPath<string>(answers, `${prefix}.assigneeInfo.postalCode`) ??
+        '',
     },
     {
       width: 'half',

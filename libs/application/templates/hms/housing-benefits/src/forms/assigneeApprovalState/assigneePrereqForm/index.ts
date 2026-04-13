@@ -12,5 +12,9 @@ export const AssigneePrereqForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   logo: HmsLogo,
-  children: [assigneeMockDataSection, otherApprovalSection, externalDataSection],
+  children: [
+    assigneeMockDataSection,
+    otherApprovalSection,
+    externalDataSection,
+  ],
 })

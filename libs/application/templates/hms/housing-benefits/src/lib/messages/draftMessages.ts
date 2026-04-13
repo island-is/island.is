@@ -432,13 +432,11 @@ export const draftMessages = {
     validationDescriptionRequired: {
       id: 'hb.application:draft.incomeNoTaxReturnSection.validationDescriptionRequired',
       defaultMessage: 'Lýsing á tekjum er nauðsynleg',
-      description:
-        'Validation: income description required when no tax return',
+      description: 'Validation: income description required when no tax return',
     },
     validationFilesRequired: {
       id: 'hb.application:draft.incomeNoTaxReturnSection.validationFilesRequired',
-      defaultMessage:
-        'Að minnsta kosti eitt viðhengi um tekjur er nauðsynlegt',
+      defaultMessage: 'Að minnsta kosti eitt viðhengi um tekjur er nauðsynlegt',
       description: 'Validation: income files required when no tax return',
     },
   }),

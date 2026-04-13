@@ -14,8 +14,10 @@ export const MOCK_ASSIGNEE_NATIONAL_REGISTRY_ADDRESS = {
 
 const assigneeDevMockNatRegChecked = (answers: Answers): boolean => {
   if (
-    getValueViaPath<string>(answers ?? {}, 'assigneeDevMockSettings.useMock') !==
-    YES
+    getValueViaPath<string>(
+      answers ?? {},
+      'assigneeDevMockSettings.useMock',
+    ) !== YES
   ) {
     return false
   }
@@ -45,7 +47,10 @@ export const shouldOverlayMockAssigneeNationalRegistryAddress = (
 ): boolean => {
   const answers = application?.answers
   if (assigneeDevMockNatRegChecked(answers)) return true
-  if (options.isDevOrLocal && wrongHomeRefetchNationalRegistryPending(answers)) {
+  if (
+    options.isDevOrLocal &&
+    wrongHomeRefetchNationalRegistryPending(answers)
+  ) {
     return true
   }
   return false
@@ -114,4 +119,3 @@ export const getPersonalTaxMockMode = (application: {
   )
   return variant === 'emptySuccess' ? 'empty' : 'sample'
 }
-

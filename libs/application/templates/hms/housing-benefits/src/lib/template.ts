@@ -387,7 +387,11 @@ const template: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       recordAssigneeDraftApproval: assign((context, event) => {
-        if (!event || typeof event !== 'object' || event.type !== DefaultEvents.SUBMIT) {
+        if (
+          !event ||
+          typeof event !== 'object' ||
+          event.type !== DefaultEvents.SUBMIT
+        ) {
           return context
         }
         const nationalId = (event as Events).nationalId
@@ -395,12 +399,22 @@ const template: ApplicationTemplate<
           return context
         }
         const { application } = context
-        if (mapUserToRole(nationalId, application) !== Roles.UNSIGNED_DRAFT_ASSIGNEE) {
+        if (
+          mapUserToRole(nationalId, application) !==
+          Roles.UNSIGNED_DRAFT_ASSIGNEE
+        ) {
           return context
         }
-        const patch = appendAssigneeToHouseholdMemberApprovals(application, nationalId)
+        const patch = appendAssigneeToHouseholdMemberApprovals(
+          application,
+          nationalId,
+        )
         if (patch.householdMemberApprovals) {
-          set(application, 'answers.householdMemberApprovals', patch.householdMemberApprovals)
+          set(
+            application,
+            'answers.householdMemberApprovals',
+            patch.householdMemberApprovals,
+          )
         }
         return context
       }),
