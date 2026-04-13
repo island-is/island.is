@@ -184,11 +184,11 @@ const Statement = () => {
             >
               <SectionHeading title="Gögn" marginBottom={1} />
               <Text marginBottom={3} whiteSpace="pre">
-                {
-                  'Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim upp hér að neðan.'
-                }
+                Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim
+                upp hér að neðan.
                 {'\n'}
-                {!isDefenceUser(user) &&
+                {!isIndictmentCase(workingCase.type) &&
+                  !isDefenceUser(user) &&
                   'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
               </Text>
               <InputFileUpload
