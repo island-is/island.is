@@ -126,7 +126,7 @@ export const mapArticle = ({
   fields,
   sys,
 }: IArticle): SystemMetadata<Article> => {
-  let intro = fields.intro ?? ''
+  let intro = fields.intro?.trim() ?? ''
   if (!intro && fields.content) {
     const firstParagraph = fields.content.content?.find(
       (node) => node.nodeType === BLOCKS.PARAGRAPH,
