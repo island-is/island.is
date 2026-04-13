@@ -32,11 +32,11 @@ import {
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
-import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
 
 export interface RouteSection {
   name: string
