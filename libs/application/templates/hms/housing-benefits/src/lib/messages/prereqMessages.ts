@@ -139,17 +139,22 @@ export const prereqMessages = defineMessages({
   },
   devMockTaxVariantSample: {
     id: 'hb.application:prereq.devMockTaxVariantSample',
-    defaultMessage: 'Með sýnishorni af mánaðaruppgjörum',
+    defaultMessage: 'Framtali síðasta árs skilað',
     description: 'Tax mock: return sample rows',
   },
   devMockTaxVariantEmpty: {
     id: 'hb.application:prereq.devMockTaxVariantEmpty',
-    defaultMessage: 'Tóm svör',
+    defaultMessage: 'Framtali ekki skilað',
     description: 'Tax mock: success with empty list',
   },
   devMockTaxVariantRequired: {
     id: 'hb.application:prereq.devMockTaxVariantRequired',
     defaultMessage: 'Veldu hvernig skattgögn eiga að líta út.',
     description: 'Validation when tax mock is on but variant missing',
+  },
+  devMockNationalRegistryAddressLabel: {
+    id: 'hb.application:prereq.devMockNationalRegistryAddressLabel',
+    defaultMessage: 'Nota gervigögn fyrir lögheimili úr Þjóðskrá',
+    description: 'Checkbox: mock national registry address',
   },
 })

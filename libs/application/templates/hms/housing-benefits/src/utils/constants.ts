@@ -7,6 +7,8 @@ export type Events = {
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
     | DefaultEvents.EDIT
+  /** Set by ApplicationTemplateHelper.changeState when the API passes the authenticated user */
+  nationalId?: string
 }
 
 export enum States {

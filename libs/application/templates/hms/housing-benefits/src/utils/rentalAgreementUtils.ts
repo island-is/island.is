@@ -5,7 +5,32 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
+import { BffUser } from '@island.is/shared/types'
+import * as kennitala from 'kennitala'
 import { isFileUploaded } from './utils'
+
+type AssigneeNationalRegistryProvider = {
+  status?: 'failure' | 'success'
+  data?: unknown
+}
+
+const getAssigneeRegistryAddressFromProvider = (
+  provider: unknown,
+): {
+  streetAddress?: string | null
+  postalCode?: string | null
+} | null => {
+  const entry = provider as AssigneeNationalRegistryProvider
+  if (!entry || entry.status !== 'success' || entry.data == null) {
+    return null
+  }
+  return (
+    ((entry.data as Record<string, unknown>)?.address as {
+      streetAddress?: string | null
+      postalCode?: string | null
+    }) ?? null
+  )
+}
 
 const normalizeForComparison = (
   val: string | number | null | undefined,
@@ -84,23 +109,54 @@ export const doesAddressMatchRentalContract = (
 /**
  * Checks if the assignee's National Registry address matches the selected rental contract address.
  * Assignee data is stored under dynamic keys: `<nationalId>.assigneeNationalRegistry`.
+ *
+ * When `userOrNationalId` is set (BffUser or national id string), only that assignee's provider
+ * result is used. Otherwise the first `*.assigneeNationalRegistry` entry is used (e.g. tests).
+ * Failed fetches (`status !== 'success'`) never count as a match.
  */
 export const doesAssigneeAddressMatchRentalContract = (
   answers: FormValue,
   externalData: ExternalData,
+  userOrNationalId?: BffUser | null | string,
 ): boolean => {
   let assigneeAddress: {
     streetAddress?: string | null
     postalCode?: string | null
   } | null = null
-  for (const [key, value] of Object.entries(externalData)) {
-    if (key.endsWith('.assigneeNationalRegistry') && value?.data) {
-      assigneeAddress =
-        ((value.data as Record<string, unknown>)?.address as {
-          streetAddress?: string | null
-          postalCode?: string | null
-        }) ?? null
-      break
+
+  if (
+    typeof userOrNationalId === 'string' &&
+    userOrNationalId.trim().length > 0
+  ) {
+    const normalized = kennitala.isValid(userOrNationalId)
+      ? kennitala.sanitize(userOrNationalId)
+      : userOrNationalId.trim()
+    assigneeAddress = getAssigneeRegistryAddressFromProvider(
+      externalData[`${normalized}.assigneeNationalRegistry`],
+    )
+  } else if (userOrNationalId && typeof userOrNationalId !== 'string') {
+    const nationalId = userOrNationalId.profile?.nationalId
+    if (nationalId) {
+      const normalized = kennitala.isValid(nationalId)
+        ? kennitala.sanitize(nationalId)
+        : nationalId
+      assigneeAddress = getAssigneeRegistryAddressFromProvider(
+        externalData[`${normalized}.assigneeNationalRegistry`],
+      )
+    } else {
+      for (const [key, value] of Object.entries(externalData)) {
+        if (key.endsWith('.assigneeNationalRegistry')) {
+          assigneeAddress = getAssigneeRegistryAddressFromProvider(value)
+          break
+        }
+      }
+    }
+  } else {
+    for (const [key, value] of Object.entries(externalData)) {
+      if (key.endsWith('.assigneeNationalRegistry')) {
+        assigneeAddress = getAssigneeRegistryAddressFromProvider(value)
+        break
+      }
     }
   }
 

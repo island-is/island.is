@@ -35,6 +35,7 @@ import {
   needsHouseholdMemberApproval,
 } from '../utils/assigneeUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
+import { appendAssigneeToHouseholdMemberApprovals } from '../utils/appendAssigneeHouseholdMemberApproval'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 
 const template: ApplicationTemplate<
@@ -207,6 +208,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.ASSIGNEE_APPROVAL,
+            actions: 'recordAssigneeDraftApproval',
           },
           [DefaultEvents.APPROVE]: [
             {
@@ -384,6 +386,24 @@ const template: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      recordAssigneeDraftApproval: assign((context, event) => {
+        if (!event || typeof event !== 'object' || event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+        const nationalId = (event as Events).nationalId
+        if (!nationalId) {
+          return context
+        }
+        const { application } = context
+        if (mapUserToRole(nationalId, application) !== Roles.UNSIGNED_DRAFT_ASSIGNEE) {
+          return context
+        }
+        const patch = appendAssigneeToHouseholdMemberApprovals(application, nationalId)
+        if (patch.householdMemberApprovals) {
+          set(application, 'answers.householdMemberApprovals', patch.householdMemberApprovals)
+        }
+        return context
+      }),
       assignHouseholdMembers: assign((context) => {
         const { application } = context
         const assigneesNationalIds = getAssigneeNationalIds(application)

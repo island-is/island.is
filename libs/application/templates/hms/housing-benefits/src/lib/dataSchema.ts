@@ -74,6 +74,14 @@ const baseSchema = z.object({
       mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
     })
     .optional(),
+  assigneeDevMockSettings: z
+    .object({
+      useMock: z.union([z.literal(YES), z.literal('no')]).optional(),
+      mockTaxReturn: z.array(z.literal(YES)).optional(),
+      mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
+      mockNationalRegistryAddress: z.array(z.literal(YES)).optional(),
+    })
+    .optional(),
   confirmRead: confirmReadSchema.optional(),
   confirmMunicipality: z.array(z.literal(YES)).length(1).optional(),
   approveExternalData: z.boolean().optional(),
@@ -190,6 +198,11 @@ const baseSchema = z.object({
     .union([z.array(fileSchema), z.literal('')])
     .optional()
     .transform((v) => (v === '' ? undefined : v)),
+  incomeNoTaxReturnDescription: z.string().optional(),
+  incomeNoTaxReturnFiles: z
+    .union([z.array(fileSchema), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   payment: z
     .object({
       paymentRadio: z.enum(['me', 'landlord']).optional(),
@@ -250,6 +263,20 @@ export const dataSchema = baseSchema
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['devMockSettings', 'mockTaxReturnVariant'],
+        params: m.prereqMessages.devMockTaxVariantRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    const settings = data.assigneeDevMockSettings
+    const taxMockOn =
+      settings?.useMock === YES &&
+      Array.isArray(settings.mockTaxReturn) &&
+      settings.mockTaxReturn.includes(YES)
+    if (taxMockOn && !settings?.mockTaxReturnVariant) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['assigneeDevMockSettings', 'mockTaxReturnVariant'],
         params: m.prereqMessages.devMockTaxVariantRequired,
       })
     }

@@ -17,9 +17,13 @@ import {
   householdMembersOverviewAttachments,
   incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
+  incomeNoTaxReturnOverviewItems,
+  incomeNoTaxReturnOverviewAttachments,
+  assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
 import { doesAddressMatchRentalContract } from '../../utils/rentalAgreementUtils'
+import { isTaxReturnFiled, isTaxReturnNotFiled } from '../../utils/utils'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -62,7 +66,8 @@ export const overviewSection = buildSection({
           id: 'incomeSectionOverview',
           title: m.draftMessages.incomeSection.title,
           backId: 'incomeMultiField',
-          condition: (answers) => {
+          condition: (answers, externalData) => {
+            if (!isTaxReturnFiled(answers, externalData)) return false
             if (
               getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES
             ) {
@@ -78,6 +83,21 @@ export const overviewSection = buildSection({
           },
           items: incomeSectionOverviewItems,
           attachments: incomeSectionOverviewAttachments,
+        }),
+        buildOverviewField({
+          id: 'incomeNoTaxReturnOverview',
+          title: m.draftMessages.incomeNoTaxReturnSection.title,
+          backId: 'incomeNoTaxReturnMultiField',
+          condition: isTaxReturnNotFiled,
+          items: incomeNoTaxReturnOverviewItems,
+          attachments: incomeNoTaxReturnOverviewAttachments,
+        }),
+        buildOverviewField({
+          id: 'assetsDeclarationOverview',
+          title: m.draftMessages.assetsDeclarationSection.title,
+          backId: 'assetsDeclaration',
+          condition: isTaxReturnNotFiled,
+          items: assetsDeclarationOverviewItems,
         }),
         buildOverviewField({
           id: 'paymentSectionOverview',

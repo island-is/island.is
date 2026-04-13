@@ -17,8 +17,8 @@ import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgr
 const labels = applicantInformationMessages.labels
 
 export const personalInformationSection = buildSection({
-  condition: (answers, externalData) =>
-    doesAssigneeAddressMatchRentalContract(answers, externalData),
+  condition: (answers, externalData, user) =>
+    doesAssigneeAddressMatchRentalContract(answers, externalData, user),
   id: 'personalInformationSection',
   title: m.assigneeDraft.title,
   children: [

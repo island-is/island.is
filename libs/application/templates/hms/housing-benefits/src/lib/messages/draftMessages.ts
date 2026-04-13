@@ -390,6 +390,59 @@ export const draftMessages = {
     },
   }),
 
+  incomeNoTaxReturnSection: defineMessages({
+    title: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.title',
+      defaultMessage: 'Tekjur',
+      description: 'Income section title (no tax return)',
+    },
+    multiFieldTitle: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.multiFieldTitle',
+      defaultMessage: 'Upplýsingar um tekjur',
+      description: 'Income multi field title (no tax return)',
+    },
+    multiFieldDescription: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.multiFieldDescription',
+      defaultMessage:
+        'Skattframtali fyrir síðasta ár hefur ekki verið skilað. Til að halda áfram þarf að gefa upp upplýsingar um tekjur.',
+      description: 'Income multi field description (no tax return)',
+    },
+    descriptionTitle: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.descriptionTitle',
+      defaultMessage: 'Lýsing á tekjum',
+      description: 'Income description title (no tax return)',
+    },
+    descriptionDescription: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.descriptionDescription',
+      defaultMessage:
+        'Vinsamlegast lýstu þínum tekjum og aðstæðum. Þetta geta til dæmis verið launatekjur, verktakagreiðslur, erlendar tekjur, bætur eða aðrar tekjur.',
+      description: 'Income text area description (no tax return)',
+    },
+    filesTitle: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.filesTitle',
+      defaultMessage: 'Gögn um tekjur',
+      description: 'Income file upload title (no tax return)',
+    },
+    filesDescription: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.filesDescription',
+      defaultMessage:
+        'Hlaðið upp skjölum sem staðfesta tekjur, t.d. launaseðlum, ráðningarsamningi eða öðrum gögnum.',
+      description: 'Income file upload description (no tax return)',
+    },
+    validationDescriptionRequired: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.validationDescriptionRequired',
+      defaultMessage: 'Lýsing á tekjum er nauðsynleg',
+      description:
+        'Validation: income description required when no tax return',
+    },
+    validationFilesRequired: {
+      id: 'hb.application:draft.incomeNoTaxReturnSection.validationFilesRequired',
+      defaultMessage:
+        'Að minnsta kosti eitt viðhengi um tekjur er nauðsynlegt',
+      description: 'Validation: income files required when no tax return',
+    },
+  }),
+
   paymentSection: defineMessages({
     title: {
       id: 'hb.application:draft.paymentSection.title',
@@ -459,6 +512,56 @@ export const draftMessages = {
       id: 'hb.application:draft.paymentSection.validationLandlordBankAccountRequired',
       defaultMessage: 'Vinsamlegast fylltu inn bankareikning leigusala',
       description: 'Landlord bank account required',
+    },
+  }),
+  assetsDeclarationSection: defineMessages({
+    title: {
+      id: 'hb.application:draft.assetsDeclarationSection.title',
+      defaultMessage: 'Eignayfirlýsing',
+      description: 'Assets declaration section title',
+    },
+    multiFieldTitle: {
+      id: 'hb.application:draft.assetsDeclarationSection.multiFieldTitle',
+      defaultMessage: 'Eignayfirlýsing',
+      description: 'Assets declaration multi field title',
+    },
+    description: {
+      id: 'hb.application:draft.assetsDeclarationSection.description',
+      defaultMessage:
+        'Skattframtali fyrir síðasta ár hefur ekki verið skilað. Til að halda áfram þarf að fylla út eignayfirlýsingu.',
+      description: 'Assets declaration description',
+    },
+    description2: {
+      id: 'hb.application:draft.assetsDeclarationSection.description2',
+      defaultMessage:
+        'Eignayfirlýsing er einfaldlega upplistun á öllum þínum eignum. Ef þú átt engar eignir, þá þarft þú að lýsa því yfir að þú eigir engar eignir.',
+      description: 'Assets declaration description 2',
+    },
+    radioTitle: {
+      id: 'hb.application:draft.assetsDeclarationSection.radioTitle',
+      defaultMessage: 'Átt þú einhverskonar eignir?',
+      description: 'Assets declaration radio title',
+    },
+    radioDescription: {
+      id: 'hb.application:draft.assetsDeclarationSection.radioDescription',
+      defaultMessage:
+        'Eignir geta til dæmis verið: Fasteignir, ökutæki, hlutabréf eða fjármagn',
+      description: 'Assets declaration radio description',
+    },
+    optionYes: {
+      id: 'hb.application:draft.assetsDeclarationSection.optionYes',
+      defaultMessage: 'Já',
+      description: 'Yes option',
+    },
+    optionNo: {
+      id: 'hb.application:draft.assetsDeclarationSection.optionNo',
+      defaultMessage: 'Nei',
+      description: 'No option',
+    },
+    textFieldDescription: {
+      id: 'hb.application:draft.assetsDeclarationSection.textFieldDescription',
+      defaultMessage: 'Vinsamlegast listaðu upp allar þínar eignir.',
+      description: 'Assets declaration text field description',
     },
   }),
   overviewSection: defineMessages({

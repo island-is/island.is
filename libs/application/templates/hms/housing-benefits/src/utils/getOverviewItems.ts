@@ -7,13 +7,14 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatKennitala, sanitize as sanitizeKennitala } from 'kennitala'
 import {
   formatBankInfo,
   formatPhoneNumberWithIcelandicCountryCode,
 } from '@island.is/application/ui-components'
 import * as m from '../lib/messages'
 import {
+  doesAssigneeAddressMatchRentalContract,
   getHouseholdMembersForTable,
   getSelectedContract,
   getSelectedLandlordForPayment,
@@ -426,6 +427,79 @@ export const incomeSectionOverviewAttachments = (
   return attachments
 }
 
+export const incomeNoTaxReturnOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const description = getValueViaPath<string>(
+    answers,
+    'incomeNoTaxReturnDescription',
+  )?.trim()
+
+  if (!description) return []
+
+  return [
+    {
+      width: 'full',
+      keyText: m.draftMessages.incomeNoTaxReturnSection.descriptionTitle,
+      valueText: description,
+    },
+  ]
+}
+
+export const incomeNoTaxReturnOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<AttachmentItem> => {
+  const files = getValueViaPath<Array<{ key: string; name: string }>>(
+    answers,
+    'incomeNoTaxReturnFiles',
+  )
+  if (!Array.isArray(files)) return []
+  return files.map((file) => ({
+    width: 'full' as const,
+    fileName: file.name,
+    fileType: file.name?.split('.').pop(),
+  }))
+}
+
+export const assetsDeclarationOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const hasAssets =
+    getValueViaPath<string>(answers, 'assetsDeclarationRadio') === YES
+
+  const items: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: m.draftMessages.assetsDeclarationSection.radioTitle,
+      valueText: hasAssets
+        ? m.draftMessages.assetsDeclarationSection.optionYes
+        : m.draftMessages.assetsDeclarationSection.optionNo,
+    },
+  ]
+
+  if (hasAssets) {
+    const description =
+      getValueViaPath<string>(answers, 'assetsDeclarationTextField')?.trim() ??
+      ''
+    if (description) {
+      items.push({
+        width: 'full',
+        keyText: m.draftMessages.assetsDeclarationSection.textFieldDescription,
+        valueText: description,
+      })
+    }
+  }
+
+  return items
+}
+
 export const paymentSectionOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
@@ -567,3 +641,126 @@ export const extraDataChangedCircumstancesOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,
 ) => extraDataOverviewAttachmentsForDocType(answers, 'changedCircumstances')
+
+export const assigneePersonalInfoOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
+  return [
+    {
+      width: 'full',
+      keyText: m.draftMessages.overviewSection.name,
+      valueText:
+        getValueViaPath<string>(answers, `${prefix}.assigneeInfo.name`) ?? '',
+    },
+    {
+      width: 'half',
+      keyText: m.draftMessages.overviewSection.nationalId,
+      valueText: formatKennitala(
+        getValueViaPath<string>(
+          answers,
+          `${prefix}.assigneeInfo.nationalId`,
+        ) ?? '',
+      ),
+    },
+    {
+      width: 'half',
+      keyText: m.draftMessages.overviewSection.address,
+      valueText:
+        getValueViaPath<string>(answers, `${prefix}.assigneeInfo.address`) ??
+        '',
+    },
+    {
+      width: 'half',
+      keyText: m.draftMessages.overviewSection.postalCode,
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          `${prefix}.assigneeInfo.postalCode`,
+        ) ?? '',
+    },
+    {
+      width: 'half',
+      keyText: m.draftMessages.overviewSection.city,
+      valueText:
+        getValueViaPath<string>(answers, `${prefix}.assigneeInfo.city`) ?? '',
+    },
+    {
+      width: 'half',
+      keyText: m.draftMessages.overviewSection.email,
+      valueText:
+        getValueViaPath<string>(answers, `${prefix}.assigneeInfo.email`) ?? '',
+    },
+    {
+      width: 'half',
+      keyText: m.draftMessages.overviewSection.phoneNumber,
+      valueText: formatPhoneNumberWithIcelandicCountryCode(
+        getValueViaPath<string>(
+          answers,
+          `${prefix}.assigneeInfo.phoneNumber`,
+        ) ?? '',
+      ),
+    },
+  ]
+}
+
+export const assigneeAssetDeclarationOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const hasAssets =
+    getValueViaPath<string>(answers, 'assetDeclerationRadio') === YES
+
+  const items: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: m.assigneeDraftOverview.ownsAssets,
+      valueText: hasAssets
+        ? m.assigneeDraftOverview.yes
+        : m.assigneeDraftOverview.no,
+    },
+  ]
+
+  if (hasAssets) {
+    const description =
+      getValueViaPath<string>(answers, 'assetDeclerationTextField')?.trim() ??
+      ''
+    if (description) {
+      items.push({
+        width: 'full',
+        keyText: m.assigneeDraftOverview.assetDescription,
+        valueText: description,
+      })
+    }
+  }
+
+  return items
+}
+
+export const assigneeAddressMatchOverviewItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+  userNationalId: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const matches = doesAssigneeAddressMatchRentalContract(
+    answers,
+    externalData,
+    userNationalId,
+  )
+
+  return [
+    {
+      width: 'full',
+      keyText: m.assigneeDraftOverview.addressMatchStatus,
+      valueText: matches
+        ? m.assigneeDraftOverview.addressMatchConfirmed
+        : m.assigneeDraftOverview.no,
+    },
+  ]
+}

@@ -13,8 +13,15 @@ const hasAssigneeCompletedPrereq = (
 ): boolean => {
   const { externalData, answers } = application
 
+  const assigneeRegistry = externalData[
+    `${normalizedNationalId}.assigneeNationalRegistry`
+  ] as { status?: string; data?: unknown } | undefined
   const hasNationalRegistry =
-    !!externalData[`${normalizedNationalId}.assigneeNationalRegistry`]?.data
+    assigneeRegistry != null &&
+    assigneeRegistry.status !== 'failure' &&
+    assigneeRegistry.data != null &&
+    typeof assigneeRegistry.data === 'object' &&
+    Object.keys(assigneeRegistry.data as object).length > 0
   const hasUserProfile =
     !!externalData[`${normalizedNationalId}.assigneeUserProfile`]?.data
   const hasTaxReturn =

@@ -3,6 +3,7 @@ import { FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 
 import { externalDataSection } from './externalDataSection'
+import { assigneeMockDataSection } from './mockDataSection'
 import { otherApprovalSection } from './otherApprovalSection'
 
 export const AssigneePrereqForm = buildForm({
@@ -11,5 +12,5 @@ export const AssigneePrereqForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   logo: HmsLogo,
-  children: [otherApprovalSection, externalDataSection],
+  children: [assigneeMockDataSection, otherApprovalSection, externalDataSection],
 })

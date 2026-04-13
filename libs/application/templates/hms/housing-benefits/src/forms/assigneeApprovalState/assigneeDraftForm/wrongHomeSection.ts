@@ -9,11 +9,13 @@ import {
 import { HandShake } from '@island.is/application/assets/graphics'
 import * as m from '../../../lib/messages'
 import { shouldShowRefetchNationalRegistrySection } from '../../../utils/conditions'
+import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
 export const wrongHomeSection = buildSection({
-  condition: (answers) => {
+  condition: (answers, externalData, user) => {
     console.log('answers: ', answers)
-    return true
+    console.log('externalData: ', externalData)
+    return !doesAssigneeAddressMatchRentalContract(answers, externalData, user)
   },
   id: 'wrongHomeSection',
   title: m.assigneeDraft.wrongHomeTitle,

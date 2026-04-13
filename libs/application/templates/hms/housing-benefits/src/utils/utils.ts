@@ -57,14 +57,24 @@ export const isExemptionReason = (answers: FormValue, reason: string) =>
   isExemptionRequested(answers) &&
   getValueViaPath<string>(answers, 'exemptionReason') === reason
 
-/** RSK direct-tax provider returned success with no salary rows (e.g. no employment on record). */
-export const isPersonalTaxReturnSuccessWithEmptyPayments = (
+/** Tax return provider returned success but the tax return was not filed. */
+export const isTaxReturnNotFiled = (
   _answers: FormValue,
   externalData?: ExternalData,
 ): boolean => {
   const result = externalData?.getPersonalTaxReturn
   if (!result || result.status !== 'success') return false
-  const data = result.data as { directTaxPayments?: unknown[] } | undefined
-  const payments = data?.directTaxPayments
-  return Array.isArray(payments) && payments.length === 0
+  const data = result.data as { taxReturnFiled?: boolean } | undefined
+  return data?.taxReturnFiled === false
+}
+
+/** Tax return provider returned success and the tax return was filed. */
+export const isTaxReturnFiled = (
+  _answers: FormValue,
+  externalData?: ExternalData,
+): boolean => {
+  const result = externalData?.getPersonalTaxReturn
+  if (!result || result.status !== 'success') return false
+  const data = result.data as { taxReturnFiled?: boolean } | undefined
+  return data?.taxReturnFiled !== false
 }

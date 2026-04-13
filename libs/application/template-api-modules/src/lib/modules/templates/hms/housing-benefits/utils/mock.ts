@@ -1,6 +1,67 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
+import type { NationalRegistryIndividual } from '@island.is/application/types'
 
 type Answers = Record<string, unknown> | undefined
+
+/** Dev/testing address aligned with rental mock data (húsnæðisbætur assignee flow). */
+export const MOCK_ASSIGNEE_NATIONAL_REGISTRY_ADDRESS = {
+  city: 'Reykjavík',
+  locality: 'Reykjavík',
+  municipalityCode: '0000',
+  postalCode: '112',
+  streetAddress: 'Funafold 31',
+} as const
+
+const assigneeDevMockNatRegChecked = (answers: Answers): boolean => {
+  if (
+    getValueViaPath<string>(answers ?? {}, 'assigneeDevMockSettings.useMock') !==
+    YES
+  ) {
+    return false
+  }
+  const natReg = getValueViaPath<string[]>(
+    answers ?? {},
+    'assigneeDevMockSettings.mockNationalRegistryAddress',
+  )
+  return Array.isArray(natReg) && natReg.includes(YES)
+}
+
+const wrongHomeRefetchNationalRegistryPending = (answers: Answers): boolean => {
+  const v = getValueViaPath<string | boolean>(
+    answers ?? {},
+    'wrongHome.shouldRefetchNationalRegistry',
+  )
+  return v === 'true' || v === true
+}
+
+/**
+ * Overlay mock Þjóðskrá address for assignee national registry.
+ * - Prereq: assignee dev mock on + “mock national registry address” checked.
+ * - Wrong-home refetch: hidden flag set when user confirmed address update but NR still mismatches (dev/local only).
+ */
+export const shouldOverlayMockAssigneeNationalRegistryAddress = (
+  application: { answers?: Record<string, unknown> },
+  options: { isDevOrLocal: boolean },
+): boolean => {
+  const answers = application?.answers
+  if (assigneeDevMockNatRegChecked(answers)) return true
+  if (options.isDevOrLocal && wrongHomeRefetchNationalRegistryPending(answers)) {
+    return true
+  }
+  return false
+}
+
+export const applyMockAssigneeNationalRegistryAddress = <
+  T extends NationalRegistryIndividual,
+>(
+  individual: T,
+): T => ({
+  ...individual,
+  address: {
+    ...(individual.address ?? {}),
+    ...MOCK_ASSIGNEE_NATIONAL_REGISTRY_ADDRESS,
+  },
+})
 
 const legacyMockEnabled = (answers: Answers): boolean => {
   const mockData = getValueViaPath<string[]>(answers ?? {}, 'mockData')
@@ -54,54 +115,3 @@ export const getPersonalTaxMockMode = (application: {
   return variant === 'emptySuccess' ? 'empty' : 'sample'
 }
 
-/** Shape returned by HousingBenefitsService.getPersonalTaxReturn (persisted under externalData.getPersonalTaxReturn.data). */
-export type MockPersonalTaxReturnPayload = {
-  year: number
-  directTaxPayments: {
-    totalSalary: number
-    payerNationalId: string
-    personalAllowance: number
-    withheldAtSource: number
-    month: number
-    year: number
-  }[]
-}
-
-export const getMockPersonalTaxReturn = (
-  year: number,
-): MockPersonalTaxReturnPayload => ({
-  year,
-  directTaxPayments: [
-    {
-      totalSalary: 450_000,
-      payerNationalId: '5402696029',
-      personalAllowance: 58_084,
-      withheldAtSource: 112_500,
-      month: 1,
-      year,
-    },
-    {
-      totalSalary: 450_000,
-      payerNationalId: '5402696029',
-      personalAllowance: 58_084,
-      withheldAtSource: 112_500,
-      month: 2,
-      year,
-    },
-    {
-      totalSalary: 462_000,
-      payerNationalId: '5402696029',
-      personalAllowance: 58_084,
-      withheldAtSource: 115_500,
-      month: 3,
-      year,
-    },
-  ],
-})
-
-export const getEmptyMockPersonalTaxReturn = (
-  year: number,
-): MockPersonalTaxReturnPayload => ({
-  year,
-  directTaxPayments: [],
-})

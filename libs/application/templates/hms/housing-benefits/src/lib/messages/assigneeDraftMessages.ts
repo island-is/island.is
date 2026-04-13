@@ -1,5 +1,69 @@
 import { defineMessages } from 'react-intl'
 
+export const assigneeDraftOverview = defineMessages({
+  title: {
+    id: 'hb.application:assigneeDraft.overview.title',
+    defaultMessage: 'Yfirlit',
+    description: 'Assignee overview section title',
+  },
+  description: {
+    id: 'hb.application:assigneeDraft.overview.description',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og staðfestu að þær séu réttar.',
+    description: 'Assignee overview section description',
+  },
+  personalInfoTitle: {
+    id: 'hb.application:assigneeDraft.overview.personalInfoTitle',
+    defaultMessage: 'Persónuupplýsingar',
+    description: 'Assignee overview personal info title',
+  },
+  assetDeclarationTitle: {
+    id: 'hb.application:assigneeDraft.overview.assetDeclarationTitle',
+    defaultMessage: 'Eignayfirlýsing',
+    description: 'Assignee overview asset declaration title',
+  },
+  ownsAssets: {
+    id: 'hb.application:assigneeDraft.overview.ownsAssets',
+    defaultMessage: 'Á eignir',
+    description: 'Owns assets label',
+  },
+  yes: {
+    id: 'hb.application:assigneeDraft.overview.yes',
+    defaultMessage: 'Já',
+    description: 'Yes',
+  },
+  no: {
+    id: 'hb.application:assigneeDraft.overview.no',
+    defaultMessage: 'Nei',
+    description: 'No',
+  },
+  assetDescription: {
+    id: 'hb.application:assigneeDraft.overview.assetDescription',
+    defaultMessage: 'Lýsing eigna',
+    description: 'Asset description label',
+  },
+  addressMatchTitle: {
+    id: 'hb.application:assigneeDraft.overview.addressMatchTitle',
+    defaultMessage: 'Lögheimili',
+    description: 'Assignee overview address match title',
+  },
+  addressMatchStatus: {
+    id: 'hb.application:assigneeDraft.overview.addressMatchStatus',
+    defaultMessage: 'Lögheimili passar við leigusamning',
+    description: 'Address match status label',
+  },
+  addressMatchConfirmed: {
+    id: 'hb.application:assigneeDraft.overview.addressMatchConfirmed',
+    defaultMessage: 'Lögheimili passar við heimilisfang á leigusamningi',
+    description: 'Address matches rental agreement',
+  },
+  submitButton: {
+    id: 'hb.application:assigneeDraft.overview.submitButton',
+    defaultMessage: 'Staðfesta',
+    description: 'Assignee overview submit button',
+  },
+})
+
 export const assigneeDraft = defineMessages({
   title: {
     id: 'hb.application:assigneeDraft.title',

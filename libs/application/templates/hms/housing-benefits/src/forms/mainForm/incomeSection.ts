@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import * as m from '../../lib/messages'
+import { isTaxReturnFiled } from '../../utils/utils'
 
 const incomeOtherIncomeYes = (answers: FormValue) =>
   getValueViaPath<string>(answers, 'incomeHasOtherIncome') === YES
@@ -49,6 +50,7 @@ const incomeRadioClearChildren = [
 export const incomeSection = buildSection({
   id: 'incomeSection',
   title: m.draftMessages.incomeSection.title,
+  condition: isTaxReturnFiled,
   children: [
     buildMultiField({
       id: 'incomeMultiField',
