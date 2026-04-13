@@ -2,9 +2,7 @@ import {
   CardLoader,
   InfoLine,
   InfoLineStack,
-  IntroWrapperV2,
   m,
-  MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
@@ -23,11 +21,7 @@ export const PrimarySchoolOverview = () => {
   const student = data?.primarySchoolStudents?.find((s) => s.id === studentId)
 
   return (
-    <IntroWrapperV2
-      title={psm.overviewTitle}
-      intro={psm.overviewIntro}
-      serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
-    >
+    <>
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && !student && (
@@ -66,7 +60,7 @@ export const PrimarySchoolOverview = () => {
         </InfoLineStack>
       )}
       {/* TODO: Add "Ósvaraðar heimildir" card when permissions API is available */}
-    </IntroWrapperV2>
+    </>
   )
 }
 

@@ -1,9 +1,4 @@
-import {
-  CardLoader,
-  IntroWrapperV2,
-  m,
-  MMS_SLUG,
-} from '@island.is/portals/my-pages/core'
+import { CardLoader, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -25,11 +20,7 @@ export const PrimarySchoolAssessment = () => {
   const assessmentHistory = data?.primarySchoolStudent?.assessmentHistory ?? []
 
   return (
-    <IntroWrapperV2
-      title={psm.assessmentTitle}
-      intro={psm.assessmentIntro}
-      serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
-    >
+    <>
       {loading && !error && <CardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!loading && !error && !assessmentHistory.length && (
@@ -60,7 +51,7 @@ export const PrimarySchoolAssessment = () => {
           })}
         </Accordion>
       )}
-    </IntroWrapperV2>
+    </>
   )
 }
 
