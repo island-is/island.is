@@ -36,7 +36,7 @@ const SortIndicator = ({
   return (
     <Box marginLeft={1} style={{ opacity: column === sortColumn ? 1 : 0.4 }}>
       <Icon
-        icon={showDown ? 'arrowDown' : 'arrowUp'}
+        icon={showDown ? 'chevronDown' : 'chevronUp'}
         size="small"
         color="blue400"
       />
