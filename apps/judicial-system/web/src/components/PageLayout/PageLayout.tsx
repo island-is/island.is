@@ -239,15 +239,7 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         background="purple100"
         className={styles.processContainer}
       >
-        <BreadCrumbs
-          links={[
-            [
-              { label: 'Home', href: '/' },
-              { label: 'asd', href: '/asd' },
-            ],
-            { label: 'Another', href: '/another' },
-          ]}
-        />
+        <BreadCrumbs />
         <GridContainer className={styles.container}>
           <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
