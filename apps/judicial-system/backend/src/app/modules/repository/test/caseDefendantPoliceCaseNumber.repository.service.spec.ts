@@ -1,6 +1,7 @@
+import { Op, Transaction } from 'sequelize'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
-import { Op } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -8,7 +9,7 @@ import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCase
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 
 describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
-  const transaction = { id: 'tx' } as never
+  const transaction = {} as Transaction
 
   let service: CaseDefendantPoliceCaseNumberRepositoryService
   let mockModel: {
