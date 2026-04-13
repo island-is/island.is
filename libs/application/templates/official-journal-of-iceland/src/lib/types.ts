@@ -68,7 +68,6 @@ export enum TemplateApiActions {
   departments = 'getDepartments',
   types = 'getAdvertTypes',
   postApplication = 'postApplication',
-  syncRegulationDraft = 'syncRegulationDraft',
 }
 
 export const isAdApplication = (answers: partialSchema | undefined) =>

@@ -882,7 +882,8 @@ export type FieldsRepeaterField = BaseField & {
 
 export type AccordionItem = {
   itemTitle: FormText
-  itemContent: FormText
+  itemContent?: FormText
+  children?: Field[]
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
@@ -994,6 +995,7 @@ export type PaginatedSearchableTableHeader = {
   editable?: boolean
   inputType?: 'text' | 'number'
   min?: number
+  placeholderKey?: string
 }
 
 export interface PaginatedSearchableTableField extends BaseField {
