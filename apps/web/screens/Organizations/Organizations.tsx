@@ -194,7 +194,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                         goToPage(1, false)
                       }}
                     >
-                      {range.label}
+                      {index === 0
+                        ? n('organizationsFilterAll', 'Allt')
+                        : range.label}
                     </Tag>
                   ))}
                 </Box>

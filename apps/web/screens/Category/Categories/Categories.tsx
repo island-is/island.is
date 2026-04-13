@@ -4,7 +4,6 @@ import NextLink from 'next/link'
 import {
   Box,
   Breadcrumbs,
-  Button,
   ColorSchemeContext,
   FilterInput,
   FocusableBox,
@@ -181,9 +180,10 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                           href={href}
                           display="flex"
                           flexDirection="column"
-                          justifyContent="spaceBetween"
-                          paddingY={3}
-                          paddingX={3}
+                          paddingTop={2}
+                          paddingRight={2}
+                          paddingBottom={3}
+                          paddingLeft={3}
                           borderRadius="large"
                           borderColor="blue200"
                           borderWidth="standard"
@@ -193,26 +193,23 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                           color="blue"
                           className={styles.card}
                         >
-                          <Box>
-                            <Text as="h3" variant="h4" color="dark400">
-                              {title}
-                            </Text>
-                            {description && (
-                              <Text paddingTop={1} variant="default">
-                                {description}
-                              </Text>
-                            )}
-                          </Box>
-                          <Box paddingTop={2} className={styles.cardLink}>
-                            <Button
-                              variant="text"
-                              as="span"
-                              icon="arrowForward"
-                              size="small"
+                          <Text
+                            as="h3"
+                            variant="h4"
+                            color="dark400"
+                            truncate
+                          >
+                            {title}
+                          </Text>
+                          {description && (
+                            <Text
+                              paddingTop={2}
+                              variant="medium"
+                              fontWeight="light"
                             >
-                              {n('viewCategoryLink', 'Skoða þjónustuflokk')}
-                            </Button>
-                          </Box>
+                              {description}
+                            </Text>
+                          )}
                         </FocusableBox>
                       </GridColumn>
                     )

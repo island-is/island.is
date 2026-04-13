@@ -23,7 +23,6 @@ interface CategoryItemsProps {
   heading?: string
   headingId?: string
   items: GetArticleCategoriesQuery['getArticleCategories']
-  viewCategoryText?: string
   seeMoreText?: string
   seeMoreHref?: string
   indicator?: ScrollIndicatorColors
@@ -33,7 +32,6 @@ export const CategoryItems = ({
   heading,
   headingId,
   items = [],
-  viewCategoryText = 'Skoða þjónustuflokk',
   seeMoreText,
   seeMoreHref,
   indicator,
@@ -68,6 +66,7 @@ export const CategoryItems = ({
         </GridContainer>
       )}
       <GridItems
+        third
         mobileItemWidth={270}
         mobileItemsRows={3}
         paddingTop={4}
@@ -77,7 +76,7 @@ export const CategoryItems = ({
       >
         {items
           .filter((item) => !EXCLUDED_CATEGORY_SLUGS.includes(item.slug))
-          .map(({ title, description, slug, __typename: typename }, index) => {
+          .map(({ title, description, slug, __typename: typename }) => {
             const href = linkResolver(typename as LinkType, [slug]).href
             return (
               <FocusableBox
@@ -85,9 +84,10 @@ export const CategoryItems = ({
                 href={href}
                 display="flex"
                 flexDirection="column"
-                justifyContent="spaceBetween"
-                paddingY={3}
-                paddingX={3}
+                paddingTop={2}
+                paddingRight={2}
+                paddingBottom={3}
+                paddingLeft={3}
                 borderRadius="large"
                 borderColor="blue200"
                 borderWidth="standard"
@@ -97,26 +97,23 @@ export const CategoryItems = ({
                 color="blue"
                 className={styles.card}
               >
-                <Box>
-                  <Text as="h3" variant="h4" color="dark400">
-                    {title}
-                  </Text>
-                  {description && (
-                    <Text paddingTop={1} variant="default">
-                      {description}
-                    </Text>
-                  )}
-                </Box>
-                <Box paddingTop={2} className={styles.cardLink}>
-                  <Button
-                    variant="text"
-                    as="span"
-                    icon="arrowForward"
-                    size="small"
+                <Text
+                  as="h3"
+                  variant="h4"
+                  color="dark400"
+                  truncate
+                >
+                  {title}
+                </Text>
+                {description && (
+                  <Text
+                    paddingTop={2}
+                    variant="medium"
+                    fontWeight="light"
                   >
-                    {viewCategoryText}
-                  </Button>
-                </Box>
+                    {description}
+                  </Text>
+                )}
               </FocusableBox>
             )
           })}

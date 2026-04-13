@@ -56,8 +56,8 @@ export const Footer = ({
         <GridContainer>
           <GridRow>
             <GridColumn
-              span={['12/12', '12/12', '4/12', '4/12']}
-              paddingBottom={[5, 5, 0]}
+              span={['12/12', '12/12', '12/12', '4/12']}
+              paddingBottom={[5, 5, 5, 0]}
               className={styles.withDecorator}
             >
               <Logo iconOnly id="footer_logo" width={32} height={32} />
@@ -90,8 +90,8 @@ export const Footer = ({
             </GridColumn>
             {showMiddleLinks && (
               <GridColumn
-                span={['12/12', '12/12', '5/12', '5/12']}
-                paddingBottom={[5, 5, 0]}
+                span={['12/12', '12/12', '12/12', '5/12']}
+                paddingBottom={[5, 5, 5, 0]}
               >
                 <Box paddingX={[0, 0, 1]} className={styles.columnTopSpace}>
                   {!!middleLinksTitle && (
@@ -114,17 +114,30 @@ export const Footer = ({
                     }}
                   >
                     {showTagLinks ? (
-                      <div className={styles.middleLinksGrid}>
-                        {middleLinks.map(({ title, href }, index) => (
-                          <Text
-                            key={index}
-                            variant="medium"
-                            color="blue600"
-                            fontWeight="light"
-                          >
-                            <a href={href}>{title}</a>
-                          </Text>
-                        ))}
+                      <div className={styles.middleLinksColumns}>
+                        {[0, 1].map((colIndex) => {
+                          const half = Math.ceil(middleLinks.length / 2)
+                          const start = colIndex * half
+                          return (
+                            <div
+                              key={colIndex}
+                              className={styles.middleLinksColumn}
+                            >
+                              {middleLinks
+                                .slice(start, start + half)
+                                .map(({ title, href }, index) => (
+                                  <Text
+                                    key={index}
+                                    variant="medium"
+                                    color="blue600"
+                                    fontWeight="light"
+                                  >
+                                    <a href={href}>{title}</a>
+                                  </Text>
+                                ))}
+                            </div>
+                          )
+                        })}
                       </div>
                     ) : (
                       <Tiles space={2} columns={[1, 2, 2, 2, 3]}>
@@ -145,7 +158,7 @@ export const Footer = ({
               </GridColumn>
             )}
             {showTagLinks && tagLinks.length > 0 && (
-              <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '3/12']}>
                 <Box className={styles.columnTopSpace}>
                   {!!tagLinksTitle && (
                     <Text

@@ -31,9 +31,15 @@ export const topLinksGrid = style({
   },
 })
 
-export const middleLinksGrid = style({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, 1fr)',
-  rowGap: '4px',
-  columnGap: '24px',
+export const middleLinksColumns = style({
+  display: 'flex',
+  gap: '24px',
+})
+
+export const middleLinksColumn = style({
+  display: 'flex',
+  flex: '1 1 0',
+  flexDirection: 'column',
+  gap: '4px',
+  minWidth: 0,
 })
