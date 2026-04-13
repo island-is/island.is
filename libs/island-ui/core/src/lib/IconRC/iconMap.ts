@@ -34,6 +34,7 @@ export type Icon =
   | 'dots'
   | 'download'
   | 'upload'
+  | 'election'
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
@@ -141,6 +142,7 @@ export default {
     dots: 'Dots',
     download: 'Download',
     upload: 'Upload',
+    election: 'Election',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
@@ -245,6 +247,7 @@ export default {
     dots: 'Dots',
     download: 'DownloadOutline',
     upload: 'UploadOutline',
+    election: 'ElectionOutline',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
