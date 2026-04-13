@@ -1,5 +1,4 @@
 import {
-  AlertMessage,
   Button,
   Stack,
   Table as T,
@@ -8,6 +7,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  EmptyState,
   formatNationalId,
   IntroWrapper,
   LinkResolver,
@@ -23,13 +23,13 @@ import {
 
 const PaymentTypes = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage, formatDate } = useLocale()
+  const { formatMessage, formatDate, lang } = useLocale()
 
   const {
     data: paymentTypesData,
     loading: paymentTypesLoading,
     error: paymentTypesError,
-  } = useGetPaymentTypesQuery()
+  } = useGetPaymentTypesQuery({ variables: { locale: lang }, fetchPolicy: 'no-cache' })
 
   const {
     data: childBenefitsData,
@@ -39,6 +39,7 @@ const PaymentTypes = () => {
 
   const paymentTypes = paymentTypesData?.socialInsurancePaymentTypes
   const childBenefits = childBenefitsData?.socialInsuranceChildBenefits
+  const bothFailed = !!paymentTypesError && !!childBenefitsError
 
   const buttonGroup = [
     <LinkResolver
@@ -67,16 +68,18 @@ const PaymentTypes = () => {
       )}
       buttonGroup={buttonGroup}
     >
-      <Stack space={6}>
+      {bothFailed ? (
+        // Both queries failed — show a single error instead of two.
+        // Problem renders a generic message regardless of which error is passed.
+        <Problem error={paymentTypesError} noBorder={false} />
+      ) : (
+        <Stack space={6}>
         {paymentTypesLoading ? (
           <CardLoader />
         ) : paymentTypesError ? (
           <Problem error={paymentTypesError} noBorder={false} />
         ) : !paymentTypes?.length ? (
-          <AlertMessage
-            type="info"
-            message={formatMessage(m.noPaymentTypesFound)}
-          />
+          <EmptyState title={m.noPaymentTypesFound} />
         ) : (
           <Stack space={2}>
             <Text variant="eyebrow" color="purple400">
@@ -171,6 +174,7 @@ const PaymentTypes = () => {
           </Stack>
         ) : null}
       </Stack>
+      )}
     </IntroWrapper>
   )
 }

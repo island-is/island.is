@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
@@ -8,6 +8,7 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
 import { Audit } from '@island.is/nest/audit'
 import {
   FeatureFlag,
@@ -18,7 +19,7 @@ import { PaymentTypeOverview } from '../models/paymentTypes/paymentTypeOverview.
 import { ChildBenefitInformation } from '../models/paymentTypes/childBenefitInformation.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
-@Resolver()
+@Resolver(() => PaymentTypeOverview)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
 @FeatureFlag(Features.isServicePortalTRPaymentTypesOverviewPageEnabled)
@@ -32,9 +33,11 @@ export class PaymentTypesOverviewResolver {
   })
   @Audit()
   getPaymentTypes(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<PaymentTypeOverview[] | null> {
-    return this.service.getPaymentTypes(user)
+    return this.service.getPaymentTypes(user, locale)
   }
 
   @Query(() => [ChildBenefitInformation], {
