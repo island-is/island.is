@@ -147,6 +147,7 @@ const Layout: Screen<LayoutProps> = ({
   footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
+  footerTagsMenu,
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
@@ -440,27 +441,31 @@ const Layout: Screen<LayoutProps> = ({
                 )}
                 <Footer
                   topLinks={footerUpperInfo}
-                  topLinksContact={footerUpperContact}
-                  bottomLinks={footerLowerMenu}
                   middleLinks={footerMiddleMenu}
-                  bottomLinksTitle={t.siteExternalTitle}
                   middleLinksTitle={String(namespace.footerMiddleLabel)}
-                  languageSwitchLink={{
-                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                    href: activeLocale === 'en' ? '/' : '/en',
-                  }}
-                  privacyPolicyLink={{
-                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
-                    href: n(
-                      'privacyPolicyHref',
-                      '/personuverndarstefna-stafraent-islands',
-                    ),
-                  }}
-                  termsLink={{
-                    title: n('termsTitle', 'Skilmálar'),
-                    href: n('termsHref', '/skilmalar-island-is'),
-                  }}
                   showMiddleLinks
+                  tagLinks={footerTagsMenu}
+                  tagLinksTitle={String(
+                    namespace.footerTagsLabel ?? 'Flýtileiðir',
+                  )}
+                  showTagLinks
+                  bottomBarLinks={[
+                    {
+                      title: n('helpTitle', 'Getum við aðstoðað?'),
+                      href: n('helpHref', '/s/stafraent-island/hafa-samband'),
+                    },
+                    {
+                      title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                      href: n(
+                        'privacyPolicyHref',
+                        '/personuverndarstefna-stafraent-islands',
+                      ),
+                    },
+                    {
+                      title: n('termsTitle', 'Notendaskilmálar'),
+                      href: n('termsHref', '/skilmalar-island-is'),
+                    },
+                  ]}
                 />
               </>
             )}
