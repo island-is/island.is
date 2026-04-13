@@ -7,7 +7,6 @@ import {
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
-  ChargeFjsV2,
   Client,
   NationalRegistryB2C,
   Payment,
@@ -101,7 +100,7 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistryB2C, ChargeFjsV2, Payment)
+    .xroad(Base, Client, NationalRegistryB2C, Payment)
     .ingress({
       primary: {
         host: {
