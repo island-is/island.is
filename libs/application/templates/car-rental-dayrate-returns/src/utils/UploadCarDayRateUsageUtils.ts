@@ -1,17 +1,8 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
-import {
-  CarUsageError,
-  CarUsageRecord,
-  DayRateEntryMap,
-  DayRateRecord,
-} from './types'
+import { CarUsageError, CarUsageRecord, DayRateRecord } from './types'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
-import {
-  DayRateEntryModel,
-  EntryModel,
-} from '@island.is/clients-rental-day-rate'
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
@@ -261,20 +252,6 @@ export type ParseUploadResult =
   | { ok: true; records: CarUsageRecord[] }
   | { ok: false; errors: CarUsageError[]; reason: 'errors' | 'no-data' }
 
-export const buildDayRateEntryMap = (
-  previousPeriodDayRateReturns: EntryModel[] | undefined,
-): DayRateEntryMap => {
-  if (!previousPeriodDayRateReturns?.length) return {}
-
-  return previousPeriodDayRateReturns.reduce((acc, vehicle) => {
-    if (!vehicle.permno || !vehicle.dayRateEntries) return acc
-
-    acc[vehicle.permno] = vehicle.dayRateEntries
-
-    return acc
-  }, {} as DayRateEntryMap)
-}
-
 export const getUploadFileType = (
   nameOrMime: string,
 ): UploadFileType | null => {
@@ -315,67 +292,4 @@ export const parseUploadFile = async (
   }
 
   return { ok: true, records: parsed as CarUsageRecord[] }
-}
-
-export type MonthTotalInput = {
-  dayRateEntries: DayRateEntryModel[]
-  targetYear: number
-  targetMonthIndex: number // 0-11
-}
-
-export type MonthTotalResult = {
-  totalDays: number
-  entryId: number
-}
-
-export const getMonthTotalDayRateDays = ({
-  dayRateEntries,
-  targetYear,
-  targetMonthIndex,
-}: MonthTotalInput): MonthTotalResult | null => {
-  const entries = dayRateEntries ?? []
-  if (entries.length === 0) return null
-
-  const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
-  const targetToUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
-
-  const targetEntry = entries.find((entry) => {
-    if (!entry.validFrom) return false
-    const entryValidFromUtc = new Date(entry.validFrom)
-    const entryValidToUtc = entry.validTo
-      ? new Date(entry.validTo)
-      : targetToUtc
-
-    return entryValidFromUtc <= targetToUtc && entryValidToUtc >= targetFromUtc
-  })
-
-  if (!targetEntry) return null
-
-  // Check if there is an active period usage for the target month
-  const hasPeriodUsage = targetEntry.periodUsage?.some((usage) => {
-    return (
-      usage.period ===
-      `${targetYear}-${(targetMonthIndex + 1).toString().padStart(2, '0')}`
-    )
-  })
-
-  if (hasPeriodUsage) return null
-
-  const entryValidFromUtc = targetEntry.validFrom
-    ? new Date(targetEntry.validFrom)
-    : targetFromUtc
-  const entryValidToUtc = targetEntry.validTo
-    ? new Date(targetEntry.validTo)
-    : targetToUtc
-
-  const start =
-    entryValidFromUtc > targetFromUtc ? entryValidFromUtc : targetFromUtc
-  const end = entryValidToUtc < targetToUtc ? entryValidToUtc : targetToUtc
-
-  if (end < start) return null
-
-  const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
-  if (days <= 0) return null
-
-  return { totalDays: days, entryId: targetEntry.id }
 }
