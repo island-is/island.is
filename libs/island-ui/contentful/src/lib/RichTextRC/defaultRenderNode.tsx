@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -13,7 +14,6 @@ import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import AssetLink from '../AssetLink/AssetLink'
 import * as styles from './RichText.css'
-import cn from 'classnames'
 
 const defaultHeaderMargins: {
   marginBottom: ResponsiveSpace
