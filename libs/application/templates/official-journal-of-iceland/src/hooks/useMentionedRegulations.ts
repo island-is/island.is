@@ -43,8 +43,7 @@ export const useMentionedRegulations = (
       return []
     }
 
-    const regulations =
-      data?.OJOIAGetRegulationOptionList?.regulations ?? []
+    const regulations = data?.OJOIAGetRegulationOptionList?.regulations ?? []
 
     return mentionedNames.map((name): SelRegOption => {
       const reg = regulations.find((r) => r.name === String(name))
