@@ -52,6 +52,12 @@ export class GetPaymentFlowResponse {
   @Field(() => Boolean, { nullable: true })
   redirectToReturnUrlOnSuccess?: boolean
 
+  @Field(() => String, { nullable: true })
+  invoiceReturnUrl?: string
+
+  @Field(() => Boolean, { nullable: true })
+  redirectOnInvoiceCreation?: boolean
+
   @Field(() => Date)
   updatedAt!: Date
 }

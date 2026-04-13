@@ -4,6 +4,8 @@ import {
   buildSubSection,
   buildAlertMessageField,
   buildDescriptionField,
+  buildFileUploadField,
+  buildHiddenInput,
   YES,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -20,10 +22,14 @@ export const subSectionHealthDeclaration = buildSubSection({
   title: m.healthDeclarationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,
   children: [
+    // Health declaration for B-temp and B-full — same questions as BE
+    // but without the health certificate file upload that BE requires
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+      condition: (answers) =>
+        answers.applicationFor !== B_FULL_RENEWAL_65 &&
+        answers.applicationFor !== BE,
       space: 2,
       children: [
         buildDescriptionField({
@@ -143,26 +149,163 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
-            answers.applicationFor !== BE &&
             getValueViaPath(
               answers,
               'healthDeclaration.contactGlassesMismatch',
             ) === true,
         }),
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
+      ],
+    }),
+    // Same health declaration questions for BE, plus health certificate
+    // file upload when any health condition is triggered
+    buildMultiField({
+      id: 'overviewBE',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor === BE,
+      space: 2,
+      children: [
         buildDescriptionField({
-          id: 'healthDeclarationValidForBELicense',
+          id: 'healthDeclarationDescriptionBE',
+          description: m.healthDeclarationSubTitle,
+          marginBottom: 2,
         }),
+        buildCustomField({
+          id: 'remarksBE',
+          component: 'HealthRemarks',
+          condition: (_answers, externalData) => hasHealthRemarks(externalData),
+        }),
+        buildHiddenInput({
+          id: 'hasHealthRemarks',
+        }),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.usesContactGlasses',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            title: m.healthDeclarationMultiFieldSubTitle,
+            label: m.healthDeclaration1,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.hasReducedPeripheralVision',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration2,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.hasEpilepsy',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration3,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.hasHeartDisease',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration4,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.hasMentalIllness',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration5,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.usesMedicalDrugs',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration6,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.isAlcoholic',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration7,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.hasDiabetes',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration8,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.isDisabled',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration9,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'healthDeclaration.hasOtherDiseases',
+            title: '',
+            component: 'HealthDeclaration',
+          },
+          {
+            label: m.healthDeclaration10,
+          },
+        ),
         buildAlertMessageField({
-          id: 'healthDeclaration.BE',
-          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
+          id: 'healthDeclaration.contactGlassesMismatch',
+          message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
-          condition: (answers, externalData) =>
-            answers.applicationFor === BE &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: (answers) =>
+            getValueViaPath(
+              answers,
+              'healthDeclaration.contactGlassesMismatch',
+            ) === true,
+        }),
+        buildDescriptionField({
+          id: 'healthCertificateDescriptionBE',
+          description: m.healthCertificateDescription,
+          condition: needsHealthCertificateCondition(YES),
+        }),
+        buildFileUploadField({
+          id: 'healthCertificate',
+          title: m.healthCertificateTitle,
+          uploadHeader: m.healthCertificateUploadHeader,
+          uploadDescription: m.healthCertificateUploadDescription,
+          uploadButtonLabel: m.healthCertificateUploadButtonLabel,
+          maxSize: 10000000,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
+          condition: needsHealthCertificateCondition(YES),
         }),
       ],
     }),
+    // 65+ multifield — unchanged
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,

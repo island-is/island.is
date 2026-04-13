@@ -119,7 +119,10 @@ export interface LimitedAccessUpdateCase
     Partial<
       Pick<
         AppealCase,
-        'appealState' | 'defendantStatementDate' | 'appealRulingDecision'
+        | 'appealState'
+        | 'defendantStatementDate'
+        | 'appealRulingDecision'
+        | 'appealedByNationalId'
       >
     > {}
 
