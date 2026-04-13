@@ -77,6 +77,45 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   /**
    * When a defendant is split to a new case, move attributed links to the new case_id.
    */
+  /**
+   * Distinct LÖKE numbers per case from the junction table (unassigned + defendant-linked).
+   * Used as the read path for `Case.policeCaseNumbers` while the legacy array column remains.
+   */
+  async findDistinctPoliceCaseNumbersByCaseIds(
+    caseIds: string[],
+    options?: { transaction?: Transaction },
+  ): Promise<Map<string, string[]>> {
+    const result = new Map<string, string[]>()
+    for (const id of caseIds) {
+      result.set(id, [])
+    }
+
+    if (caseIds.length === 0) {
+      return result
+    }
+
+    const rows = await this.model.findAll({
+      where: { caseId: caseIds },
+      attributes: ['caseId', 'policeCaseNumber'],
+      transaction: options?.transaction,
+    })
+
+    const byCase = new Map<string, Set<string>>()
+    for (const id of caseIds) {
+      byCase.set(id, new Set())
+    }
+
+    for (const row of rows) {
+      byCase.get(row.caseId)?.add(row.policeCaseNumber)
+    }
+
+    for (const [caseId, set] of byCase) {
+      result.set(caseId, [...set].sort((a, b) => a.localeCompare(b)))
+    }
+
+    return result
+  }
+
   async moveAssignedRowsToCaseForDefendant(
     fromCaseId: string,
     toCaseId: string,

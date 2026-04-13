@@ -16,6 +16,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     destroy: jest.Mock
     bulkCreate: jest.Mock
     update: jest.Mock
+    findAll: jest.Mock
   }
 
   beforeEach(async () => {
@@ -23,6 +24,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       destroy: jest.fn().mockResolvedValue(undefined),
       bulkCreate: jest.fn().mockResolvedValue(undefined),
       update: jest.fn().mockResolvedValue([1]),
+      findAll: jest.fn().mockResolvedValue([]),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -84,6 +86,31 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
 
       expect(mockModel.destroy).toHaveBeenCalled()
       expect(mockModel.bulkCreate).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('findDistinctPoliceCaseNumbersByCaseIds', () => {
+    it('returns sorted distinct numbers per case id', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { caseId: 'case-a', policeCaseNumber: '007-2' },
+        { caseId: 'case-a', policeCaseNumber: '007-1' },
+        { caseId: 'case-a', policeCaseNumber: '007-1' },
+        { caseId: 'case-b', policeCaseNumber: '008' },
+      ])
+
+      const map = await service.findDistinctPoliceCaseNumbersByCaseIds(
+        ['case-a', 'case-b', 'case-c'],
+        { transaction },
+      )
+
+      expect(mockModel.findAll).toHaveBeenCalledWith({
+        where: { caseId: ['case-a', 'case-b', 'case-c'] },
+        attributes: ['caseId', 'policeCaseNumber'],
+        transaction,
+      })
+      expect(map.get('case-a')).toEqual(['007-1', '007-2'])
+      expect(map.get('case-b')).toEqual(['008'])
+      expect(map.get('case-c')).toEqual([])
     })
   })
 

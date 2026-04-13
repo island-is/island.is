@@ -4,9 +4,9 @@ import { Test } from '@nestjs/testing'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  CaseType,
-  CaseState,
   CaseOrigin,
+  CaseState,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
@@ -36,6 +36,21 @@ const mockSequelizeModel = () => ({
   count: jest.fn(),
 })
 
+const stubCase = (id: string, policeCaseNumbers: string[]): Case => {
+  let numbers = [...policeCaseNumbers]
+  return {
+    id,
+    get policeCaseNumbers() {
+      return numbers
+    },
+    setDataValue(key: string, val: unknown) {
+      if (key === 'policeCaseNumbers') {
+        numbers = val as string[]
+      }
+    },
+  } as unknown as Case
+}
+
 describe('CaseRepositoryService — police case number junction sync', () => {
   const transaction = { id: 'tx' } as never
 
@@ -43,6 +58,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
   const moveAssignedRowsToCaseForDefendant = jest
     .fn()
     .mockResolvedValue(undefined)
+  const findDistinctPoliceCaseNumbersByCaseIds = jest
+    .fn()
+    .mockResolvedValue(new Map())
 
   let caseRepositoryService: CaseRepositoryService
   let caseModel: ReturnType<typeof mockSequelizeModel>
@@ -59,6 +77,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
+    findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(new Map())
 
     caseModel = mockSequelizeModel()
     defendantModel = mockSequelizeModel()
@@ -114,6 +133,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
           useValue: {
             replaceUnassignedFromPoliceCaseNumbersArray: replaceUnassigned,
             moveAssignedRowsToCaseForDefendant,
+            findDistinctPoliceCaseNumbersByCaseIds,
           },
         },
         CaseRepositoryService,
@@ -121,6 +141,41 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     }).compile()
 
     caseRepositoryService = moduleRef.get(CaseRepositoryService)
+  })
+
+  describe('findById', () => {
+    it('overwrites policeCaseNumbers from junction rows when present', async () => {
+      const built = stubCase('c1', ['legacy'])
+
+      caseModel.findByPk.mockResolvedValue(built)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([['c1', ['007-2024-a', '007-2024-z']]]),
+      )
+
+      const res = await caseRepositoryService.findById('c1')
+
+      expect(findDistinctPoliceCaseNumbersByCaseIds).toHaveBeenCalledWith(
+        ['c1'],
+        { transaction: undefined },
+      )
+      expect(res?.policeCaseNumbers).toEqual(['007-2024-a', '007-2024-z'])
+    })
+  })
+
+  describe('findOne', () => {
+    it('does not load junction when policeCaseNumbers is not in attributes', async () => {
+      const built = stubCase('c1', ['x'])
+
+      caseModel.findOne.mockResolvedValue(built)
+
+      await caseRepositoryService.findOne({
+        where: { id: 'c1' },
+        attributes: ['id'],
+      })
+
+      expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
+      expect(built.policeCaseNumbers).toEqual(['x'])
+    })
   })
 
   describe('create', () => {
