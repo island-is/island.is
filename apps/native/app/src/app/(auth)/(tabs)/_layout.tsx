@@ -53,7 +53,7 @@ export default function TabLayout() {
           },
           default: {
             color: theme.shade.foreground,
-          }
+          },
         }}
         iconColor={theme.color.blue400}
         hidden={tabsHidden && Platform.OS === 'ios'}

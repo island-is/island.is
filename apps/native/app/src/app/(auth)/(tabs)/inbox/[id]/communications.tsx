@@ -209,12 +209,10 @@ export default function DocumentCommunicationsScreen() {
           refreshControl={
             <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
           }
-          contentContainerStyle={{flexGrow: 1}}
+          contentContainerStyle={{ flexGrow: 1 }}
           contentInsetAdjustmentBehavior="automatic"
           automaticallyAdjustContentInsets
-          ListFooterComponent={
-            <SafeAreaView style={{ height: 160 }} />
-          }
+          ListFooterComponent={<SafeAreaView style={{ height: 160 }} />}
         />
         {(closedForMoreReplies || (replyEmail && replyable)) && (
           <AlertsContainer

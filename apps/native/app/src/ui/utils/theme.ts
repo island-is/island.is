@@ -70,7 +70,6 @@ export const theme = {
   },
   color,
 
-
   // Helper Functions
   fontByWeight,
   fontByWeightItalic,

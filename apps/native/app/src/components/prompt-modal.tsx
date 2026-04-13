@@ -67,10 +67,7 @@ export function PromptModal() {
               ]}
             >
               <View style={styles.content}>
-                <Typography
-                  variant="heading4"
-                  style={styles.title}
-                >
+                <Typography variant="heading4" style={styles.title}>
                   {options.title}
                 </Typography>
                 {options.message ? (

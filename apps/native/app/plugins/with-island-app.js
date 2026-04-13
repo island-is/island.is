@@ -101,10 +101,7 @@ const withSigningConfig = (config) => {
         }`
 
       // Insert release block inside existing signingConfigs
-      gradle = gradle.replace(
-        /(signingConfigs\s*\{)/,
-        `$1${releaseBlock}`,
-      )
+      gradle = gradle.replace(/(signingConfigs\s*\{)/, `$1${releaseBlock}`)
 
       // Replace signingConfig in the release buildType
       gradle = gradle.replace(

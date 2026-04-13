@@ -1,5 +1,5 @@
 import { Platform } from 'react-native'
-import * as Application from 'expo-application';
+import * as Application from 'expo-application'
 
 export const getCustomUserAgent = () => {
   return [

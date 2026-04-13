@@ -62,7 +62,7 @@ export async function syncLicenseWidgetData(
     ]
   })
   if (!entries?.length) {
-    return;
+    return
   }
 
   const payload = JSON.stringify(entries || [])

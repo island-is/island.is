@@ -143,6 +143,8 @@ export const organizationsStore = create<OrganizationsStore>()(
   ),
 )
 
-export const useOrganizationsStore = <U = OrganizationsStore>(selector?: (state: OrganizationsStore) => U) => useStore(organizationsStore, selector!)
+export const useOrganizationsStore = <U = OrganizationsStore>(
+  selector?: (state: OrganizationsStore) => U,
+) => useStore(organizationsStore, selector!)
 
 organizationsStore.getState().actions.updateOriganizations()

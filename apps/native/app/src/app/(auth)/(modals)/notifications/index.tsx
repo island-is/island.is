@@ -139,7 +139,7 @@ export default function NotificationsScreen() {
 
       navigateToUniversalLink({
         link: notification.message?.link?.url,
-        fromScreen: '/notifications'
+        fromScreen: '/notifications',
       })
     },
     [markUserNotificationAsRead, router],

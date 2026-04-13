@@ -112,9 +112,7 @@
           "ios": {
             "useFrameworks": "static",
             "buildReactNativeFromSource": false,
-            "forceStaticLinking": [
-              "RNFBApp"
-            ],
+            "forceStaticLinking": ["RNFBApp"],
             "ccacheEnabled": false,
             "useHermesV1": false
           },
@@ -142,7 +140,7 @@
             "../../../node_modules/@expo-google-fonts/ibm-plex-sans/500Medium_Italic/IBMPlexSans_500Medium_Italic.ttf",
             "../../../node_modules/@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic/IBMPlexSans_600SemiBold_Italic.ttf",
             "../../../node_modules/@expo-google-fonts/ibm-plex-sans/700Bold_Italic/IBMPlexSans_700Bold_Italic.ttf"
-           ]
+          ]
         }
       ]
     ],

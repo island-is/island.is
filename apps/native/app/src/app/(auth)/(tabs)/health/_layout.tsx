@@ -1,6 +1,9 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
-import { modalScreenOptions, tabScreenOptions } from '@/constants/screen-options'
+import {
+  modalScreenOptions,
+  tabScreenOptions,
+} from '@/constants/screen-options'
 
 export default function HealthLayout() {
   const intl = useIntl()
@@ -63,7 +66,9 @@ export default function HealthLayout() {
       <Stack.Screen
         name="medicine/index"
         options={{
-          title: intl.formatMessage({ id: 'health.prescriptionsAndCertificates.screenTitle' }),
+          title: intl.formatMessage({
+            id: 'health.prescriptionsAndCertificates.screenTitle',
+          }),
         }}
       />
       {/* Legacy health screen from the old app */}

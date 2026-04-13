@@ -120,7 +120,9 @@ export default function HomeOptionsScreen() {
       nestedScrollEnabled
       alwaysBounceVertical={false}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ paddingBottom: Platform.OS === 'android' ? 48 : 0}}
+      contentContainerStyle={{
+        paddingBottom: Platform.OS === 'android' ? 48 : 0,
+      }}
     >
       <SafeAreaView
         style={{

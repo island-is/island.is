@@ -33,7 +33,7 @@ const Tab = styled.Pressable<{ isSelected: boolean }>`
   border-radius: 6px;
   flex: 1;
   padding-left: 4px;
-  padding-right: 4px
+  padding-right: 4px;
 `
 
 const ActiveBackground = styled(Animated.View)<{ buttonWidth: number }>`

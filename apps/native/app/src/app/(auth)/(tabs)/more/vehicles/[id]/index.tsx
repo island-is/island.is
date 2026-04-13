@@ -114,14 +114,19 @@ export default function VehicleDetailScreen() {
                 type: 'custom',
                 element: (
                   <ContextMenu
-                    title={intl.formatMessage({ id: 'vehicleDetail.moreOptions' })}
+                    title={intl.formatMessage({
+                      id: 'vehicleDetail.moreOptions',
+                    })}
                     trigger="tap"
                     android={{ visible: showContext }}
                     actions={
                       dropdownItems.map((item) => ({
                         id: item.link,
                         title: item.title,
-                        image: Platform.select({ android: 'ic_external_link', ios: 'arrow.up.forward' }),
+                        image: Platform.select({
+                          android: 'ic_external_link',
+                          ios: 'arrow.up.forward',
+                        }),
                       })) || []
                     }
                     onPressAction={(id, title) => {
@@ -132,9 +137,7 @@ export default function VehicleDetailScreen() {
                     }}
                     onMenuClose={() => setShowContext(false)}
                   >
-                    <Pressable
-                      onPress={() => setShowContext(true)}
-                    >
+                    <Pressable onPress={() => setShowContext(true)}>
                       <Image
                         source={require('@/assets/icons/Ellipsis-vertical.png')}
                         width={24}

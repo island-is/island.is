@@ -1,13 +1,10 @@
 import { addEventListener } from '@react-native-community/netinfo'
-import {
-  DeviceEventEmitter,
-  Linking
-} from 'react-native'
+import { DeviceEventEmitter, Linking } from 'react-native'
 import { environmentStore } from '../../stores/environment-store'
 import { offlineStore } from '../../stores/offline-store'
 import { handleQuickAction } from '../quick-actions'
 import * as WebBrowser from 'expo-web-browser'
-import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging'
 
 export function setupEventHandlers() {
   // const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -16,7 +13,6 @@ export function setupEventHandlers() {
 
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
-
     // Handle Cognito
     if (/cognito/.test(url)) {
       const [, hash] = url.split('#')
@@ -34,11 +30,11 @@ export function setupEventHandlers() {
         expiresAt: Number(params.expires_in) + Date.now() / 1000,
         tokenType: params.token_type,
       })
-      WebBrowser.dismissBrowser()?.catch(() => void 0);
-      return;
+      WebBrowser.dismissBrowser()?.catch(() => void 0)
+      return
     }
 
-    console.log('Received url event:', url);
+    console.log('Received url event:', url)
   })
 
   // Handle quick actions

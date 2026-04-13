@@ -2,11 +2,18 @@ import { Redirect, Stack, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef } from 'react'
 import { AppState, Keyboard } from 'react-native'
 
-import { authStore, isLockScreenSuppressed, useAuthStore } from '@/stores/auth-store'
+import {
+  authStore,
+  isLockScreenSuppressed,
+  useAuthStore,
+} from '@/stores/auth-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { useIntl } from 'react-intl'
 import { config } from '../../config'
-import { modalScreenOptions, tabScreenOptions } from '../../constants/screen-options'
+import {
+  modalScreenOptions,
+  tabScreenOptions,
+} from '../../constants/screen-options'
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',

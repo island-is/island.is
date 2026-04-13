@@ -9,7 +9,7 @@ import {
   GenericUserLicenseExpiryStatus,
   GenericUserLicenseFragmentFragmentDoc,
   GenericUserLicensePkPassStatus,
-  useGetLicenseQuery
+  useGetLicenseQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useOfflineStore } from '@/stores/offline-store'
@@ -27,11 +27,7 @@ import { useLocalSearchParams } from 'expo-router'
 import { StackScreen } from '@/components/stack-screen'
 import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  View
-} from 'react-native'
+import { ActivityIndicator, SafeAreaView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { LicenseFieldRender } from '@/components/license-field-render'
 import { testIDs } from '@/utils/test-ids'

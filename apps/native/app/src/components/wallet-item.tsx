@@ -96,9 +96,7 @@ export const WalletItem = React.memo(
                 pathname: '/wallet/[licenseType]/[id]',
                 params: {
                   licenseType: item.license.type,
-                  id:
-                    item.payload?.metadata?.licenseId ??
-                    'default',
+                  id: item.payload?.metadata?.licenseId ?? 'default',
                 },
               })
             }}

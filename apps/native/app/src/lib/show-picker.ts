@@ -44,8 +44,7 @@ export function showPrompt(
           {
             isPreferred: true,
             text: positiveText,
-            onPress: (text?: string) =>
-              resolve({ action: 'positive', text }),
+            onPress: (text?: string) => resolve({ action: 'positive', text }),
             style: 'default',
           },
           {

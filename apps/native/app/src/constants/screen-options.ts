@@ -1,8 +1,6 @@
 import { StackScreenProps } from 'expo-router'
 import { Platform } from 'react-native'
-import {
-  navbarCloseItem,spacingItem
-} from '../components/navbar/navbar-items'
+import { navbarCloseItem, spacingItem } from '../components/navbar/navbar-items'
 import { theme } from '../ui'
 
 export const tabScreenOptions: StackScreenProps['options'] = {

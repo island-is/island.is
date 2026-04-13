@@ -36,5 +36,4 @@ export const inboxFilterStore = create<InboxFilterState>(() => ({
 
 export const useInboxFilterStore = inboxFilterStore
 
-export const resetInboxFilters = () =>
-  inboxFilterStore.setState(initialFilters)
+export const resetInboxFilters = () => inboxFilterStore.setState(initialFilters)

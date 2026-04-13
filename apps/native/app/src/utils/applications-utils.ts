@@ -6,9 +6,9 @@ import {
 } from '../graphql/types/schema'
 
 export const getSlugFromType = async (type: string) => {
-  const ApplicationConfigurations = await import('@island.is/application/types').then(
-    (module) => module.ApplicationConfigurations,
-  );
+  const ApplicationConfigurations = await import(
+    '@island.is/application/types'
+  ).then((module) => module.ApplicationConfigurations)
   for (const [key, value] of Object.entries(ApplicationConfigurations)) {
     if (type === key) {
       return value.slug

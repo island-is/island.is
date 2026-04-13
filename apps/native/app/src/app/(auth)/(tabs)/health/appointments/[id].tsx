@@ -13,13 +13,7 @@ import {
   HealthDirectorateAppointment,
   useGetAppointmentsQuery,
 } from '@/graphql/types/schema'
-import {
-  Icon,
-  Input,
-  InputRow,
-  Problem,
-  Typography,
-} from '@/ui'
+import { Icon, Input, InputRow, Problem, Typography } from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
 
 const HeaderContainer = styled.View`
