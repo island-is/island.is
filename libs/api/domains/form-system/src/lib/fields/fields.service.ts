@@ -58,7 +58,9 @@ export class FieldsService {
         input as unknown as FieldsControllerUpdateRequest,
       )
     } catch (error) {
-      this.handleError(error, 'Error updating field')
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error))
+      this.handleError(normalizedError, 'Error updating field')
     }
   }
 
