@@ -45,6 +45,7 @@ import {
   OJOIACreateDraftResponse,
 } from '../models/regulation.response'
 import { OJOIAGetRegulationsSearchInput } from '../models/getRegulationsSearch.input'
+import { OJOIAGetRegulationOptionListInput } from '../models/getRegulationOptionList.input'
 import { OJOIAGetRegulationFromApiInput } from '../models/getRegulationFromApi.input'
 import { OJOIAGetRegulationImpactsInput } from '../models/getRegulationImpacts.input'
 import { OJOIACreateDraftRegulationInput } from '../models/createDraftRegulation.input'
@@ -227,6 +228,16 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @Args('input') input: OJOIAGetRegulationsSearchInput,
   ) {
     return this.ojoiApplicationService.getRegulationsOptionSearch(input)
+  }
+
+  @Query(() => OJOIARegulationOptionSearchResponse, {
+    name: 'OJOIAGetRegulationOptionList',
+    nullable: true,
+  })
+  getRegulationOptionList(
+    @Args('input') input: OJOIAGetRegulationOptionListInput,
+  ) {
+    return this.ojoiApplicationService.getRegulationOptionList(input.names)
   }
 
   @Query(() => graphqlTypeJson, {
