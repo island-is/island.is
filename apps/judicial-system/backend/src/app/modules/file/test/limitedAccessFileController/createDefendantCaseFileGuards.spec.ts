@@ -2,19 +2,19 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../../test'
 import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
-import { CivilClaimantExistsGuard } from '../../../defendant'
-import { LimitedAccessCreateCivilClaimantCaseFileGuard } from '../../guards/limitedAccessCreateCivilClaimantCaseFile.guard'
+import { DefendantExistsGuard } from '../../../defendant'
+import { LimitedAccessCreateDefendantCaseFileGuard } from '../../guards/limitedAccessCreateDefendantCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
-describe('LimitedAccessFileController - Create civil claimant case file guards', () => {
+describe('LimitedAccessFileController - Create defendant case file guards', () => {
   verifyGuards(
     LimitedAccessFileController,
-    'createCivilClaimantCaseFile',
+    'createDefendantCaseFile',
     [
       CaseTypeGuard,
       CaseWriteGuard,
-      CivilClaimantExistsGuard,
-      LimitedAccessCreateCivilClaimantCaseFileGuard,
+      DefendantExistsGuard,
+      LimitedAccessCreateDefendantCaseFileGuard,
     ],
     [
       {
