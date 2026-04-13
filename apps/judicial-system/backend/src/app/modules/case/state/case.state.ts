@@ -546,7 +546,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           }
 
           throw new ForbiddenException(
-            'Current user cannot appeal a ${theCase.type} case',
+            `Current user cannot appeal a ${theCase.type} case`,
           )
         },
       },
