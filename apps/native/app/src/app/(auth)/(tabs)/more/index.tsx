@@ -1,27 +1,19 @@
-import { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Animated,
-  TouchableHighlight,
   View,
-  SafeAreaView,
-  TouchableNativeFeedback,
-  Image,
 } from 'react-native'
-import { Stack, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
 import airplaneIcon from '@/assets/icons/airplane.png'
 import assetsIcon from '@/assets/icons/assets.png'
 import familyIcon from '@/assets/icons/family.png'
 import financeIcon from '@/assets/icons/finance.png'
-import healthIcon from '@/assets/icons/health.png'
 import vehicleIcon from '@/assets/icons/vehicle.png'
 import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
-import { formatNationalId } from '@/lib/format-national-id'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
-import { useAuthStore } from '@/stores/auth-store'
-import { blue400, FamilyMemberCard, MoreCard, TopLine } from '@/ui'
+import { blue400, MoreCard } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../components/stack-screen'
 
@@ -35,7 +27,6 @@ export default function MoreScreen() {
   const intl = useIntl()
   const theme = useTheme()
   const router = useRouter()
-  const authStore = useAuthStore()
   const myPagesLinks = useMyPagesLinks()
 
   const externalLinks = [
@@ -91,21 +82,6 @@ export default function MoreScreen() {
           paddingVertical: 16,
         }}
       >
-        <SafeAreaView style={{ marginBottom: theme.spacing[1] }}>
-          <TouchableHighlight
-            underlayColor={
-              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-            }
-            onPress={() => {
-              router.navigate('/personal-info')
-            }}
-          >
-            <FamilyMemberCard
-              name={authStore.userInfo?.name ?? ''}
-              nationalId={formatNationalId(authStore.userInfo?.nationalId)}
-            />
-          </TouchableHighlight>
-        </SafeAreaView>
         <Row>
           <MoreCard
             testID={testIDs.MORE_CARD_FAMILY}

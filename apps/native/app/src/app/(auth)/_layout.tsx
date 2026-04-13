@@ -76,7 +76,7 @@ export default function AuthLayout() {
         name="(modals)/personal-info"
         options={{
           ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'personalInfo.screenTitle' }),
+          headerTitle: intl.formatMessage({ id: 'familyDetail.title' }),
         }}
       />
       <Stack.Screen

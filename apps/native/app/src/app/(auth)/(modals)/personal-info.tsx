@@ -1,18 +1,15 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
-import { router, Stack } from 'expo-router'
 
-import { Alert, Button, Input, InputRow, NavigationBarSheet } from '@/ui'
+import { Input, InputRow, Typography } from '@/ui'
 import { useNationalRegistryUserQuery } from '@/graphql/types/schema'
 import { formatNationalId } from '@/lib/format-national-id'
-import { usePreferencesStore } from '@/stores/preferences-store'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '@/components/stack-screen'
 
 export default function PersonalInfoScreen() {
   const intl = useIntl()
-  const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useNationalRegistryUserQuery()
   const natRegData = natRegRes?.data?.nationalRegistryPerson
   const errorNatReg = !!natRegRes.error && !natRegData
@@ -24,16 +21,13 @@ export default function PersonalInfoScreen() {
       testID={testIDs.SCREEN_PERSONAL_INFO}
       stickyHeaderIndices={[0]}
     >
-      <StackScreen closeable networkStatus={natRegRes.networkStatus} />
+      <StackScreen closeable networkStatus={natRegRes.networkStatus} options={{ title: 'Upplýsingar' }} />
       <View testID={testIDs.USER_SCREEN_PROFILE_INFO}>
-        <Alert
-          type="info"
-          visible={!dismissed.includes('userNatRegInformational')}
-          message={intl.formatMessage({ id: 'user.natreg.infoBox' })}
-          onClose={() => dismiss('userNatRegInformational')}
-          hideIcon
-        />
-        <View style={{ height: 8 }} />
+        <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
+          <Typography>
+            {intl.formatMessage({ id: 'user.natreg.description' })}
+          </Typography>
+        </View>
         <Input
           loading={loadingNatReg}
           error={errorNatReg}
@@ -113,16 +107,6 @@ export default function PersonalInfoScreen() {
           value={natRegData?.religion}
         />
 
-        <View style={{ paddingHorizontal: 16, paddingVertical: 32 }}>
-          <Button
-            isOutlined
-            title={intl.formatMessage({
-              id: 'user.natreg.settingsButton',
-              defaultMessage: 'Fara í stillingar',
-            })}
-            onPress={() => router.navigate('/settings')}
-          />
-        </View>
       </View>
     </ScrollView>
   )

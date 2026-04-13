@@ -20,6 +20,7 @@ import {
   useNationalRegistryPersonQuery,
 } from '@/graphql/types/schema'
 import { formatNationalId } from '@/lib/format-national-id'
+import { useAuthStore } from '@/stores/auth-store'
 import { testIDs } from '@/utils/test-ids'
 import React from 'react'
 import { StackScreen } from '../../../../../components/stack-screen'
@@ -30,9 +31,12 @@ type ChildItem = NationalRegistryChildCustody & {
 
 type SpouseItem = NationalRegistrySpouse & { type: 'spouse' }
 
+type UserItem = { type: 'user'; nationalId: string; name: string }
+
 type FamilyListItem =
   | ChildItem
   | SpouseItem
+  | UserItem
   | { type: 'skeleton'; id: string }
   | { type: 'empty'; id: string }
 
@@ -75,6 +79,8 @@ export default function FamilyScreen() {
   const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const theme = useTheme()
+  const router = useRouter()
+  const authStore = useAuthStore()
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const familyRes = useNationalRegistryPersonQuery()
@@ -87,7 +93,15 @@ export default function FamilyScreen() {
     (child) => !childCustody?.some((c) => c.nationalId === child.nationalId),
   )
 
-  const listOfPeople = [
+  const userItem: UserItem | null = authStore.userInfo?.nationalId
+    ? {
+        type: 'user',
+        nationalId: authStore.userInfo.nationalId,
+        name: authStore.userInfo.name ?? '',
+      }
+    : null
+
+  const familyMembers = [
     { ...(spouse ?? {}), type: 'spouse' },
     ...(childCustody ?? []).map((item: NationalRegistryChildCustody) => ({
       ...item,
@@ -98,6 +112,11 @@ export default function FamilyScreen() {
       type: 'bioChild',
     })),
   ].filter((item) => item.nationalId)
+
+  const listOfPeople = [
+    ...(userItem ? [userItem] : []),
+    ...familyMembers,
+  ]
 
   const isSkeleton = familyRes.loading && !familyRes.data
 
@@ -163,6 +182,29 @@ export default function FamilyScreen() {
               />
             }
           />
+        </View>
+      )
+    }
+
+    if (item.type === 'user') {
+      return (
+        <View style={{ paddingHorizontal: theme.spacing[2] }}>
+          <TouchableHighlight
+            underlayColor={
+              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+            }
+            style={{ marginBottom: theme.spacing[2], borderRadius: 16 }}
+            onPress={() => {
+              router.navigate('/personal-info')
+            }}
+          >
+            <SafeAreaView>
+              <FamilyMemberCard
+                name={item.name}
+                nationalId={formatNationalId(item.nationalId)}
+              />
+            </SafeAreaView>
+          </TouchableHighlight>
         </View>
       )
     }

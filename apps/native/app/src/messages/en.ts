@@ -139,6 +139,7 @@ export const en: TranslatedMessages = {
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',
+  'user.natreg.description': 'Below is data about you retrieved from Registers Iceland',
   'user.natreg.displayName': 'Full name',
   'user.natreg.nationalId': 'Social ID',
   'user.natreg.birthPlace': 'Birthplace',
