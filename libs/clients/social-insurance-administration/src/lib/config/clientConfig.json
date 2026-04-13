@@ -6028,26 +6028,17 @@
             "content": {
               "text/plain; x-api-version=1.0": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
-                  }
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewResponse"
                 }
               },
               "application/json; x-api-version=1.0": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
-                  }
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewResponse"
                 }
               },
               "text/json; x-api-version=1.0": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
-                  }
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewResponse"
                 }
               }
             }
@@ -6153,26 +6144,17 @@
             "content": {
               "text/plain; x-api-version=1.0": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
-                  }
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationResponse"
                 }
               },
               "application/json; x-api-version=1.0": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
-                  }
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationResponse"
                 }
               },
               "text/json; x-api-version=1.0": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
-                  }
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationResponse"
                 }
               }
             }
@@ -14084,14 +14066,41 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationResponse": {
+        "type": "object",
+        "properties": {
+          "benefitChildren": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn": {
         "type": "object",
         "properties": {
           "paymentType": { "type": "string", "nullable": true },
+          "paymentTypeEnglish": { "type": "string", "nullable": true },
           "dateFrom": { "type": "string", "format": "date-time" },
           "dateTo": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewResponse": {
+        "type": "object",
+        "properties": {
+          "paymentOverview": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
+            },
             "nullable": true
           }
         },

@@ -310,11 +310,14 @@ export class SocialInsuranceService {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async getPaymentTypes(user: User): Promise<PaymentTypeOverview[] | null> {
+  async getPaymentTypes(
+    user: User,
+    locale: Locale,
+  ): Promise<PaymentTypeOverview[] | null> {
     const data = await this.paymentTypesOverviewClient
       .getPaymentTypesOverview(user)
       .catch(handle404)
-    return data ? data.map(mapPaymentTypeOverview) : null
+    return data ? data.map((row) => mapPaymentTypeOverview(row, locale)) : null
   }
 
   async getChildBenefits(

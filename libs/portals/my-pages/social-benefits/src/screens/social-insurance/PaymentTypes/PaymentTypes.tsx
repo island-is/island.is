@@ -1,10 +1,4 @@
-import {
-  AlertMessage,
-  Button,
-  Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -23,13 +17,16 @@ import {
 
 const PaymentTypes = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage, formatDate } = useLocale()
+  const { formatMessage, formatDate, lang } = useLocale()
 
   const {
     data: paymentTypesData,
     loading: paymentTypesLoading,
     error: paymentTypesError,
-  } = useGetPaymentTypesQuery()
+  } = useGetPaymentTypesQuery({
+    variables: { locale: lang },
+    fetchPolicy: 'no-cache',
+  })
 
   const {
     data: childBenefitsData,
@@ -73,9 +70,12 @@ const PaymentTypes = () => {
         ) : paymentTypesError ? (
           <Problem error={paymentTypesError} noBorder={false} />
         ) : !paymentTypes?.length ? (
-          <AlertMessage
-            type="info"
-            message={formatMessage(m.noPaymentTypesFound)}
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noPaymentTypesFound)}
+            message={formatMessage(coreMessages.noDataFoundDetail)}
+            imgSrc="./assets/images/nodata.svg"
           />
         ) : (
           <Stack space={2}>

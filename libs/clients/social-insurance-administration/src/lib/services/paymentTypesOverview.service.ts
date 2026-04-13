@@ -25,6 +25,7 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   > {
     return this.paymentTypesOverviewApiWithAuth(user)
       .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet({})
+      .then((result) => result?.paymentOverview ?? null)
       .catch(handle404)
   }
 
@@ -36,6 +37,7 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   > {
     return this.paymentTypesOverviewApiWithAuth(user)
       .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet({})
+      .then((result) => result?.benefitChildren ?? null)
       .catch(handle404)
   }
 }
