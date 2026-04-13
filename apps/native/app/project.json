@@ -1,7 +1,7 @@
 {
-  "name": "expo-app",
+  "name": "native-app",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/native/expo-app/src",
+  "sourceRoot": "apps/native/app/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -32,7 +32,7 @@
       }
     },
     "build": {
-      "executor": "@nx/expo:build",
+      "executor": "",
       "dependsOn": ["sync-deps"],
       "options": {}
     },
@@ -74,15 +74,15 @@
       "outputs": ["{options.outputDir}"],
       "options": {
         "platform": "all",
-        "outputDir": "dist/apps/native/expo-app"
+        "outputDir": "dist/apps/native/app"
       }
     },
     "serve-static": {
       "executor": "@nx/web:file-server",
       "dependsOn": ["export"],
       "options": {
-        "buildTarget": "expo-app:export",
-        "staticFilePath": "dist/apps/native/expo-app",
+        "buildTarget": "native-app:export",
+        "staticFilePath": "dist/apps/native/app",
         "spa": true
       }
     }
