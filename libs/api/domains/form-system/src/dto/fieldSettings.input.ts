@@ -97,14 +97,8 @@ export class FieldSettingsInput {
   @Field(() => String, { nullable: true })
   performingOrgID?: string
 
-  @Field(() => String, { nullable: true })
-  quantityProviderId?: string
-
   @Field(() => Int, { nullable: true })
   priceAmount?: number
-
-  @Field(() => Boolean, { nullable: true })
-  chooseQuantity?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isDropdown?: boolean
