@@ -58,11 +58,21 @@ export const Forms = () => {
     direction: 'asc',
   })
 
+  const defaultDirection: Record<SortColumn, SortDirection> = {
+    name: 'asc',
+    lastModified: 'desc',
+    status: 'asc',
+  }
+
   const handleSort = (column: SortColumn) => {
     setSort((prev) => ({
       column,
       direction:
-        prev.column === column && prev.direction === 'asc' ? 'desc' : 'asc',
+        prev.column === column
+          ? prev.direction === 'asc'
+            ? 'desc'
+            : 'asc'
+          : defaultDirection[column],
     }))
   }
 
@@ -140,8 +150,6 @@ export const Forms = () => {
 
     return matchesStatus && matchesName
   }
-
-  const env = process.env.NODE_ENV
 
   return (
     <>

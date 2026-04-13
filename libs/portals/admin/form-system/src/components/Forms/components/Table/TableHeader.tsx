@@ -22,25 +22,27 @@ interface SortIndicatorProps {
   column: SortColumn
   sortColumn: SortColumn | null
   sortDirection: SortDirection
+  flip?: boolean
 }
 
 const SortIndicator = ({
   column,
   sortColumn,
   sortDirection,
-}: SortIndicatorProps) => (
-  <Box marginLeft={1} style={{ opacity: column === sortColumn ? 0.7 : 0.2 }}>
-    <Icon
-      icon={
-        column === sortColumn && sortDirection === 'desc'
-          ? 'arrowDown'
-          : 'arrowUp'
-      }
-      size="small"
-      color="blue400"
-    />
-  </Box>
-)
+  flip = false,
+}: SortIndicatorProps) => {
+  const isDesc = column === sortColumn && sortDirection === 'desc'
+  const showDown = flip ? !isDesc : isDesc
+  return (
+    <Box marginLeft={1} style={{ opacity: column === sortColumn ? 1 : 0.35 }}>
+      <Icon
+        icon={showDown ? 'arrowDown' : 'arrowUp'}
+        size="small"
+        color="blue400"
+      />
+    </Box>
+  )
+}
 
 export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
   const { formatMessage } = useIntl()
@@ -62,6 +64,7 @@ export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
               column="name"
               sortColumn={sortColumn}
               sortDirection={sortDirection}
+              flip
             />
           </Box>
         </Column>
