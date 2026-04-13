@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react'
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import {
   Animated,
   Image,
@@ -38,6 +38,12 @@ import {
   validateVehiclesInitialData,
   VehiclesModule,
 } from '@/components/home/vehicles-module'
+import {
+  AppointmentsModule,
+  useGetAppointmentsQuery,
+  validateAppointmentsInitialData,
+} from '@/components/home/appointments-module'
+import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
@@ -96,6 +102,9 @@ export default function HomeScreen() {
   const airDiscountWidgetEnabled = usePreferencesStore(
     ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
   )
+  const appointmentsWidgetEnabled = usePreferencesStore(
+    ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
+  )
   const widgetsInitialised = usePreferencesStore(
     ({ widgetsInitialised }) => widgetsInitialised,
   )
@@ -145,6 +154,13 @@ export default function HomeScreen() {
     skip: !vehiclesWidgetEnabled,
   })
 
+  const appointmentsFrom = useRef(new Date()).current
+  const appointmentsRes = useGetAppointmentsQuery({
+    variables: { from: appointmentsFrom.toISOString(), status: BaseAppointmentStatuses },
+    fetchPolicy: 'network-only',
+    skip: !appointmentsWidgetEnabled,
+  })
+
   useEffect(() => {
     // If widgets have not been initialized, validate data and set state accordingly
     if (!widgetsInitialised) {
@@ -166,12 +182,17 @@ export default function HomeScreen() {
         ...airDiscountRes,
       })
 
+      const shouldShowAppointmentsWidget = validateAppointmentsInitialData({
+        ...appointmentsRes,
+      })
+
       preferencesStore.setState({
         inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+        appointmentsWidgetEnabled: shouldShowAppointmentsWidget,
       })
 
       // Don't set initialized state if any of the queries are still loading
@@ -180,7 +201,8 @@ export default function HomeScreen() {
         applicationsRes.loading ||
         inboxRes.loading ||
         airDiscountRes.loading ||
-        vehiclesRes.loading
+        vehiclesRes.loading ||
+        appointmentsRes.loading
       ) {
         return
       }
@@ -193,6 +215,14 @@ export default function HomeScreen() {
     inboxRes.loading,
     airDiscountRes.loading,
     vehiclesRes.loading,
+    appointmentsRes.loading,
+    widgetsInitialised,
+    inboxRes,
+    licensesRes,
+    applicationsRes,
+    vehiclesRes,
+    airDiscountRes,
+    appointmentsRes,
   ])
 
   const renderItem = useCallback(
@@ -237,6 +267,7 @@ export default function HomeScreen() {
         licensesWidgetEnabled && licensesRes.refetch(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
+        appointmentsWidgetEnabled && appointmentsRes.refetch(),
       ].filter(Boolean)
 
       await Promise.all(promises)
@@ -251,11 +282,13 @@ export default function HomeScreen() {
     licensesRes,
     airDiscountRes,
     vehiclesRes,
+    appointmentsRes,
     vehiclesWidgetEnabled,
     airDiscountWidgetEnabled,
     applicationsWidgetEnabled,
     licensesWidgetEnabled,
     inboxWidgetEnabled,
+    appointmentsWidgetEnabled,
   ])
 
   const data = [
@@ -270,6 +303,12 @@ export default function HomeScreen() {
     {
       id: 'inbox',
       component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+    },
+    {
+      id: 'appointments',
+      component: appointmentsWidgetEnabled ? (
+        <AppointmentsModule {...appointmentsRes} />
+      ) : null,
     },
     {
       id: 'licenses',
@@ -309,6 +348,7 @@ export default function HomeScreen() {
           licensesRes.networkStatus,
           airDiscountRes.networkStatus,
           vehiclesRes.networkStatus,
+          appointmentsRes.networkStatus,
         ]}
         options={{
           headerTitle: '',

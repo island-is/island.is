@@ -27,6 +27,9 @@ export default function HomeOptionsScreen() {
   const airDiscountWidgetEnabled = usePreferencesStore(
     ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
   )
+  const appointmentsWidgetEnabled = usePreferencesStore(
+    ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
+  )
   const graphicWidgetEnabled = usePreferencesStore(
     ({ graphicWidgetEnabled }) => graphicWidgetEnabled,
   )
@@ -95,6 +98,17 @@ export default function HomeOptionsScreen() {
       onValueChange: (value: boolean) => {
         preferencesStore.setState({
           airDiscountWidgetEnabled: value,
+        })
+      },
+    },
+    {
+      enabled: appointmentsWidgetEnabled,
+      label: intl.formatMessage({
+        id: 'homeOptions.appointments',
+      }),
+      onValueChange: (value: boolean) => {
+        preferencesStore.setState({
+          appointmentsWidgetEnabled: value,
         })
       },
     },

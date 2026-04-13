@@ -24,6 +24,7 @@ export interface PreferencesStore {
   licensesWidgetEnabled: boolean
   vehiclesWidgetEnabled: boolean
   airDiscountWidgetEnabled: boolean
+  appointmentsWidgetEnabled: boolean
   widgetsInitialised: boolean
   skippedSoftUpdate: boolean
   lastUsedPasskey: number
@@ -65,6 +66,7 @@ const defaultPreferences = {
   licensesWidgetEnabled: true,
   vehiclesWidgetEnabled: true,
   airDiscountWidgetEnabled: true,
+  appointmentsWidgetEnabled: true,
   widgetsInitialised: false,
   skippedSoftUpdate: false,
   lastUsedPasskey: 0,

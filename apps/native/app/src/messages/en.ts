@@ -204,6 +204,7 @@ export const en: TranslatedMessages = {
   'homeOptions.applications': 'Applications',
   'homeOptions.vehicles': 'Vehicles',
   'homeOptions.airDiscount': 'Air discount scheme',
+  'homeOptions.appointments': 'Doctor appointments',
 
   // inbox
   'inbox.screenTitle': 'Inbox',

@@ -203,6 +203,7 @@ export const is = {
   'homeOptions.applications': 'Umsóknir',
   'homeOptions.vehicles': 'Ökutæki',
   'homeOptions.airDiscount': 'Loftbrú',
+  'homeOptions.appointments': 'Tímabókanir',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
