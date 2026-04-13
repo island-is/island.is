@@ -8,7 +8,7 @@ export class FileResponseDto {
   filename!: string
 
   @ApiPropertyOptional()
-  mimetype!: string
+  fileType!: string
 
   @ApiPropertyOptional()
   size!: number
