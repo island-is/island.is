@@ -65,6 +65,9 @@ export const createTestingRepositoryModule = async () => {
           findDistinctPoliceCaseNumbersByCaseIds: jest
             .fn()
             .mockResolvedValue(new Map()),
+          resolvePoliceCaseNumbersForCases: jest
+            .fn()
+            .mockResolvedValue(undefined),
         },
       },
       CaseRepositoryService,

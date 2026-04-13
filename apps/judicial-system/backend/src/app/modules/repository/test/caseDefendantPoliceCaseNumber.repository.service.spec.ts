@@ -5,6 +5,7 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 
@@ -86,6 +87,47 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
 
       expect(mockModel.destroy).toHaveBeenCalled()
       expect(mockModel.bulkCreate).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('resolvePoliceCaseNumbersForCases', () => {
+    it('sets policeCaseNumbers from junction when rows exist', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { caseId: 'case-a', policeCaseNumber: '007-2' },
+        { caseId: 'case-a', policeCaseNumber: '007-1' },
+      ])
+
+      let numbers = ['legacy']
+      const caseA = {
+        id: 'case-a',
+        get policeCaseNumbers() {
+          return numbers
+        },
+        setDataValue(key: string, val: unknown) {
+          if (key === 'policeCaseNumbers') {
+            numbers = val as string[]
+          }
+        },
+      } as unknown as Case
+
+      await service.resolvePoliceCaseNumbersForCases([caseA], { transaction })
+
+      expect(caseA.policeCaseNumbers).toEqual(['007-1', '007-2'])
+    })
+
+    it('does not overwrite when junction has no rows for the case', async () => {
+      mockModel.findAll.mockResolvedValue([])
+
+      const caseA = {
+        id: 'case-a',
+        policeCaseNumbers: ['keep-me'],
+        setDataValue: jest.fn(),
+      } as unknown as Case
+
+      await service.resolvePoliceCaseNumbersForCases([caseA], { transaction })
+
+      expect(caseA.policeCaseNumbers).toEqual(['keep-me'])
+      expect(caseA.setDataValue).not.toHaveBeenCalled()
     })
   })
 

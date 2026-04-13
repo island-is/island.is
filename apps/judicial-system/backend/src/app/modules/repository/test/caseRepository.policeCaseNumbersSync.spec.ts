@@ -62,6 +62,8 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     .fn()
     .mockResolvedValue(new Map())
 
+  const resolvePoliceCaseNumbersForCases = jest.fn()
+
   let caseRepositoryService: CaseRepositoryService
   let caseModel: ReturnType<typeof mockSequelizeModel>
   let defendantModel: ReturnType<typeof mockSequelizeModel>
@@ -78,6 +80,26 @@ describe('CaseRepositoryService — police case number junction sync', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
     findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(new Map())
+    resolvePoliceCaseNumbersForCases.mockImplementation(
+      async (
+        cases: Case[],
+        opts?: { transaction?: unknown },
+      ): Promise<void> => {
+        if (cases.length === 0) {
+          return
+        }
+        const map = await findDistinctPoliceCaseNumbersByCaseIds(
+          cases.map((c) => c.id),
+          opts,
+        )
+        for (const c of cases) {
+          const fromJunction = map.get(c.id) ?? []
+          if (fromJunction.length > 0) {
+            c.setDataValue('policeCaseNumbers', fromJunction)
+          }
+        }
+      },
+    )
 
     caseModel = mockSequelizeModel()
     defendantModel = mockSequelizeModel()
@@ -134,6 +156,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
             replaceUnassignedFromPoliceCaseNumbersArray: replaceUnassigned,
             moveAssignedRowsToCaseForDefendant,
             findDistinctPoliceCaseNumbersByCaseIds,
+            resolvePoliceCaseNumbersForCases,
           },
         },
         CaseRepositoryService,
@@ -154,6 +177,10 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
       const res = await caseRepositoryService.findById('c1')
 
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [built],
+        { transaction: undefined },
+      )
       expect(findDistinctPoliceCaseNumbersByCaseIds).toHaveBeenCalledWith(
         ['c1'],
         { transaction: undefined },
@@ -173,6 +200,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         attributes: ['id'],
       })
 
+      expect(resolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
       expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
       expect(built.policeCaseNumbers).toEqual(['x'])
     })

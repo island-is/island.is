@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 
 interface ReplaceUnassignedOptions {
@@ -75,9 +76,6 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   }
 
   /**
-   * When a defendant is split to a new case, move attributed links to the new case_id.
-   */
-  /**
    * Distinct LÖKE numbers per case from the junction table (unassigned + defendant-linked).
    * Used as the read path for `Case.policeCaseNumbers` while the legacy array column remains.
    */
@@ -116,6 +114,47 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     return result
   }
 
+  /**
+   * Sets `policeCaseNumbers` on each case from the junction table when rows exist;
+   * otherwise leaves the value loaded from the legacy `case.police_case_numbers` column.
+   */
+  async resolvePoliceCaseNumbersForCases(
+    cases: Case[],
+    options?: { transaction?: Transaction },
+  ): Promise<void> {
+    if (cases.length === 0) {
+      return
+    }
+
+    try {
+      this.logger.debug(
+        `Resolving police case numbers from junction for ${cases.length} case(s)`,
+      )
+
+      const map = await this.findDistinctPoliceCaseNumbersByCaseIds(
+        cases.map((c) => c.id),
+        options,
+      )
+
+      for (const c of cases) {
+        const fromJunction = map.get(c.id) ?? []
+        if (fromJunction.length > 0) {
+          c.setDataValue('policeCaseNumbers', fromJunction)
+        }
+      }
+    } catch (error) {
+      this.logger.error(
+        'Error resolving police case numbers from junction for cases',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * When a defendant is split to a new case, move attributed links to the new case_id.
+   */
   async moveAssignedRowsToCaseForDefendant(
     fromCaseId: string,
     toCaseId: string,

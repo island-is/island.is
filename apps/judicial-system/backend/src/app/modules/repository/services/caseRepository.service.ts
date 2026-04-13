@@ -131,10 +131,9 @@ export class CaseRepositoryService {
   ) {}
 
   /**
-   * When the query loads `policeCaseNumbers`, replace it from the junction table when present
-   * so API behaviour stays an array while the table is the source of truth.
+   * When the Sequelize query includes `policeCaseNumbers`, resolve that field from the junction table.
    */
-  private shouldHydratePoliceCaseNumbers(
+  private shouldResolvePoliceCaseNumbers(
     attributes?: FindAttributeOptions,
   ): boolean {
     if (attributes == null) {
@@ -153,28 +152,6 @@ export class CaseRepositoryService {
     }
 
     return true
-  }
-
-  private async attachPoliceCaseNumbersFromAssignments(
-    cases: Case[],
-    transaction?: Transaction,
-  ): Promise<void> {
-    if (cases.length === 0) {
-      return
-    }
-
-    const map =
-      await this.caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds(
-        cases.map((c) => c.id),
-        { transaction },
-      )
-
-    for (const c of cases) {
-      const fromAssignments = map.get(c.id) ?? []
-      if (fromAssignments.length > 0) {
-        c.setDataValue('policeCaseNumbers', fromAssignments)
-      }
-    }
   }
 
   async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
@@ -196,9 +173,9 @@ export class CaseRepositoryService {
       this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
 
       if (result) {
-        await this.attachPoliceCaseNumbersFromAssignments(
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
           [result],
-          options?.transaction,
+          { transaction: options?.transaction },
         )
       }
 
@@ -244,11 +221,11 @@ export class CaseRepositoryService {
 
       if (
         result &&
-        this.shouldHydratePoliceCaseNumbers(options?.attributes)
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
       ) {
-        await this.attachPoliceCaseNumbersFromAssignments(
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
           [result],
-          options?.transaction,
+          { transaction: options?.transaction },
         )
       }
 
@@ -313,11 +290,11 @@ export class CaseRepositoryService {
 
       if (
         results.length > 0 &&
-        this.shouldHydratePoliceCaseNumbers(options?.attributes)
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
       ) {
-        await this.attachPoliceCaseNumbersFromAssignments(
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
           results,
-          options?.transaction,
+          { transaction: options?.transaction },
         )
       }
 
@@ -387,11 +364,11 @@ export class CaseRepositoryService {
 
       if (
         results.rows.length > 0 &&
-        this.shouldHydratePoliceCaseNumbers(options?.attributes)
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
       ) {
-        await this.attachPoliceCaseNumbersFromAssignments(
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
           results.rows,
-          options?.transaction,
+          { transaction: options?.transaction },
         )
       }
 
@@ -474,9 +451,9 @@ export class CaseRepositoryService {
         { transaction: options.transaction },
       )
 
-      await this.attachPoliceCaseNumbersFromAssignments(
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
         [result],
-        options.transaction,
+        { transaction: options.transaction },
       )
 
       return result
@@ -780,9 +757,9 @@ export class CaseRepositoryService {
         { transaction },
       )
 
-      await this.attachPoliceCaseNumbersFromAssignments(
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
         [result],
-        transaction,
+        { transaction },
       )
 
       this.logger.debug(
@@ -878,9 +855,9 @@ export class CaseRepositoryService {
         )
       }
 
-      await this.attachPoliceCaseNumbersFromAssignments(
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
         [updatedCase],
-        options.transaction,
+        { transaction: options.transaction },
       )
 
       return updatedCase
