@@ -125,7 +125,9 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const formSystemApi = formSystemApiSetup()
+const formSystemApi = formSystemApiSetup({
+  paymentsApi: paymentsService,
+})
 const formSystemWorker = formSystemWorkerSetup()
 const formSystemWeb = formSystemWebSetup()
 
@@ -350,4 +352,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   cmsImporter,
   cmsImporterEnergyGrantImport,
   cmsImporterFsreBuildingsImport,
+  cmsImporterWebSitemapImport,
 ]

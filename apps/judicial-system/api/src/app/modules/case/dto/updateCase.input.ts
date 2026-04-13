@@ -45,6 +45,22 @@ class UpdateDateLog {
 }
 
 @InputType()
+class UpdateCaseDefendantEventLogDecisionInput {
+  @Allow()
+  @Field(() => ID)
+  readonly defendantId!: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly rulingDate?: string
+
+  @Allow()
+  @Field(() => CaseIndictmentRulingDecision)
+  readonly rulingDecision!: CaseIndictmentRulingDecision
+}
+
+@InputType()
 export class UpdateCaseInput {
   @Allow()
   @Field(() => ID)
@@ -525,4 +541,11 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly penalties?: string
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @IsObject({ each: true })
+  @Field(() => [UpdateCaseDefendantEventLogDecisionInput], { nullable: true })
+  readonly defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecisionInput[]
 }
