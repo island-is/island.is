@@ -173,7 +173,11 @@ export const MainForm = buildForm({
                         )
                         return (index ?? 0) < defaults.length
                       },
-                      defaultValue: (application: Application, _activeField: unknown, index?: number) => {
+                      defaultValue: (
+                        application: Application,
+                        _activeField: unknown,
+                        index?: number,
+                      ) => {
                         const defaults = getDefaultEducation(
                           application.externalData,
                         )
@@ -196,7 +200,11 @@ export const MainForm = buildForm({
                         )
                         return (index ?? 0) < defaults.length
                       },
-                      defaultValue: (application: Application, _activeField: unknown, index?: number) => {
+                      defaultValue: (
+                        application: Application,
+                        _activeField: unknown,
+                        index?: number,
+                      ) => {
                         const defaults = getDefaultEducation(
                           application.externalData,
                         )
@@ -220,7 +228,11 @@ export const MainForm = buildForm({
                         )
                         return (index ?? 0) < defaults.length
                       },
-                      defaultValue: (application: Application, _activeField: unknown, index?: number) => {
+                      defaultValue: (
+                        application: Application,
+                        _activeField: unknown,
+                        index?: number,
+                      ) => {
                         const defaults = getDefaultEducation(
                           application.externalData,
                         )
@@ -245,7 +257,11 @@ export const MainForm = buildForm({
                         )
                         return (index ?? 0) < defaults.length
                       },
-                      defaultValue: (application: Application, _activeField: unknown, index?: number) => {
+                      defaultValue: (
+                        application: Application,
+                        _activeField: unknown,
+                        index?: number,
+                      ) => {
                         const defaults = getDefaultEducation(
                           application.externalData,
                         )
@@ -359,7 +375,11 @@ export const MainForm = buildForm({
                         )
                         return (index ?? 0) < defaults.length
                       },
-                      defaultValue: (application: Application, _activeField: unknown, index?: number) => {
+                      defaultValue: (
+                        application: Application,
+                        _activeField: unknown,
+                        index?: number,
+                      ) => {
                         const defaults = getDefaultLanguages(
                           application.externalData,
                         )
@@ -382,7 +402,11 @@ export const MainForm = buildForm({
                         )
                         return (index ?? 0) < defaults.length
                       },
-                      defaultValue: (application: Application, _activeField: unknown, index?: number) => {
+                      defaultValue: (
+                        application: Application,
+                        _activeField: unknown,
+                        index?: number,
+                      ) => {
                         const defaults = getDefaultLanguages(
                           application.externalData,
                         )
