@@ -15,6 +15,7 @@ query AuthDelegationsGroupedByIdentityIncoming($lang: String) {
       id
       name
       displayName
+      delegationId
       validFrom
       validTo
       domain(lang: $lang) {

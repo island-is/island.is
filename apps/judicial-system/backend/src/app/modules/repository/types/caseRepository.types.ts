@@ -3,6 +3,7 @@ import { col, Includeable, Op } from 'sequelize'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
@@ -413,6 +414,12 @@ interface UpdateDateLog {
   location?: string
 }
 
+export interface UpdateCaseDefendantEventLogDecision {
+  defendantId: string
+  rulingDate?: Date
+  rulingDecision: CaseIndictmentRulingDecision
+}
+
 export interface UpdateCase
   extends Pick<
       Case,
@@ -527,6 +534,7 @@ export interface UpdateCase
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
   penalties?: string
+  defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
   rulingSignatureDate?: Date | null
   withCourtSessions?: boolean
   courtRecordHash?: string | null

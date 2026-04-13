@@ -95,7 +95,7 @@ export const IndictmentCaseSubtypes: CourtIndictmentSubtypes = {
   POLICE_REGULATIONS: 'Brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'Brot í nánu sambandi',
   ANIMAL_PROTECTION: 'Brot á lögum um dýravernd',
-  FOREIGN_NATIONALS: 'Brot á lögum um útlendinga',
+  FOREIGN_NATIONALS: 'Brot gegn útlendingalögum',
   PUBLIC_SERVICE_VIOLATION: 'Brot í opinberu starfi',
   PROPERTY_DAMAGE: 'Eignaspjöll',
   NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
@@ -336,6 +336,7 @@ export enum IndictmentDecision {
   REDISTRIBUTING = 'REDISTRIBUTING',
   SCHEDULING = 'SCHEDULING',
   SPLITTING = 'SPLITTING',
+  COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
 }
 
 export enum CaseAppealRulingDecision {

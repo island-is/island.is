@@ -52,6 +52,7 @@ env:
   FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
   FISKISTOFA_ZENTER_CLIENT_ID: '1114'
   FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+  HH_COURSES_ZENDESK_ENV_TAG: 'hh_env_prod'
   HH_COURSES_ZENDESK_SUBJECT: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
   HMS_CONTRACTS_AUTH_CLIENT_ID: '44055958-a462-4ba8-bbd2-5bfedbbd18c0'
   HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
