@@ -103,7 +103,11 @@ export const findSubmitField = (
   return undefined
 }
 
-export const getAccordionChildFieldIds = (field: Field): string[] => {
+export const getAccordionChildFieldIds = (
+  field: Field,
+  application?: Application,
+  user?: BffUser,
+): string[] => {
   if (field.type !== FieldTypes.ACCORDION) return []
   const accordion = field as AccordionField
   const items =
@@ -111,7 +115,13 @@ export const getAccordionChildFieldIds = (field: Field): string[] => {
       ? []
       : accordion.accordionItems
   return items.flatMap((item) =>
-    item.children ? item.children.map((child) => child.id) : [],
+    item.children
+      ? item.children.map((child) =>
+          application
+            ? resolveFieldId(child, application, user)
+            : (child.id as string),
+        )
+      : [],
   )
 }
 
@@ -156,7 +166,10 @@ export const extractAnswersToSubmitFromScreen = (
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,
-        screen.children.flatMap((c) => [c.id, ...getAccordionChildFieldIds(c)]),
+        screen.children.flatMap<string>((c) => [
+          application ? resolveFieldId(c as Field, application, user) : (c.id as string),
+          ...getAccordionChildFieldIds(c as Field, application, user),
+        ]),
       )
     case FormItemTypes.REPEATER:
       return {}

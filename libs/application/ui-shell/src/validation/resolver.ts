@@ -19,7 +19,11 @@ import { ResolverError, ResolverResult } from 'react-hook-form'
 import { FieldDef, ResolverContext } from '../types'
 import { getAccordionChildFieldIds } from '../utils'
 
-const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
+const getFormNodeFieldIds = (
+  formNode: FormNode,
+  application?: Application,
+  user?: BffUser,
+) => {
   const children = formNode?.children ?? []
 
   const visibleChildren = children.filter(
@@ -28,7 +32,9 @@ const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
 
   const directIds = visibleChildren
     .filter((x) => x.id)
-    .map((x) => x.id as string)
+    .map((x) =>
+      application ? resolveFieldId(x as Field, application, user) : (x.id as string),
+    )
 
   const nestedIds = visibleChildren
     .filter((x): x is Field => 'type' in x && x.type === FieldTypes.ACCORDION)
@@ -49,7 +55,7 @@ const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
                   null,
                 ),
               )
-              .map((child) => child.id)
+              .map((child) => resolveFieldId(child, application, user))
           : [],
       )
     })
@@ -90,7 +96,6 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
       context.formNode as FormNode,
       applicationForFields,
       context.user,
-      context.application,
     ),
     formatMessage,
   })

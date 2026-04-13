@@ -51,8 +51,6 @@ const FormField: FC<
 }) => {
   const [allFields] = useFields()
 
-  const error = getErrorViaPath(errors, field.id)
-
   const renderField = useCallback(
     (childField: Field) => {
       const isVisible = shouldShowFormItem(
@@ -72,7 +70,7 @@ const FormField: FC<
 
       return (
         <FormField
-          key={childField.id}
+          key={resolveFieldId(childField, application, user)}
           application={application}
           field={childDef}
           errors={errors}
@@ -96,6 +94,7 @@ const FormField: FC<
       setFieldLoadingState,
       setSubmitButtonDisabled,
       answerQuestions,
+      user,
     ],
   )
 

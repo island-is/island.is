@@ -35,7 +35,7 @@ const HealthDeclaration = ({
       ...formValues,
       healthDeclaration: {
         ...formValues.healthDeclaration,
-        [field.id.replace('healthDeclaration.', '')]: value,
+        [id.replace('healthDeclaration.', '')]: value,
       },
     }
 
@@ -61,11 +61,11 @@ const HealthDeclaration = ({
 
     // Get the current value of the other question
     const q1Value =
-      field.id === 'healthDeclaration.usesContactGlasses'
+      id === 'healthDeclaration.usesContactGlasses'
         ? value
         : (getValues('healthDeclaration.usesContactGlasses') as string)
     const q2Value =
-      field.id === 'healthDeclaration.hasReducedPeripheralVision'
+      id === 'healthDeclaration.hasReducedPeripheralVision'
         ? value
         : (getValues('healthDeclaration.hasReducedPeripheralVision') as string)
 

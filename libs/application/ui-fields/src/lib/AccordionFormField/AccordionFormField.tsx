@@ -5,7 +5,12 @@ import {
 } from '@island.is/application/types'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText, formatTextWithLocale } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  resolveFieldId,
+} from '@island.is/application/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Markdown } from '@island.is/shared/components'
 import { useEffect, useState } from 'react'
 
@@ -19,6 +24,7 @@ export const AccordionFormField = ({
 }: Props) => {
   const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
   useEffect(() => {
     if (typeof accordionItems === 'function') {
@@ -62,8 +68,13 @@ export const AccordionFormField = ({
                   {item.children!.map((childField) => {
                     const rendered = renderField?.(childField)
                     if (!rendered) return null
+                    const resolvedId = resolveFieldId(
+                      childField,
+                      application,
+                      user,
+                    )
                     return (
-                      <Box key={childField.id} marginBottom={2}>
+                      <Box key={resolvedId} marginBottom={2}>
                         {rendered}
                       </Box>
                     )
