@@ -25,11 +25,17 @@ type GivenWhenThen = (
 
 describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
+  let upsertAssignedDefendantPoliceCaseNumbers: jest.Mock
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
 
-    const { policeController } = await createTestingPoliceModule()
+    const { policeController, caseDefendantPoliceCaseNumberRepositoryService } =
+      await createTestingPoliceModule()
+
+    upsertAssignedDefendantPoliceCaseNumbers =
+      caseDefendantPoliceCaseNumberRepositoryService
+        .upsertAssignedDefendantPoliceCaseNumbers as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -49,9 +55,11 @@ describe('PoliceController - Get police case info', () => {
 
   describe('police case info found', () => {
     const theUser = {} as User
+    const caseId = uuid()
     const theCase = {
+      id: caseId,
       defendants: [
-        { nationalId: '0101302399', noNationalId: false },
+        { id: '11111111-1111-1111-1111-111111111111', nationalId: '0101302399', noNationalId: false },
         { nationalId: '', noNationalId: false },
       ],
     } as Case
@@ -178,7 +186,7 @@ describe('PoliceController - Get police case info', () => {
         ],
       })
 
-      then = await givenWhenThen(uuid(), theUser, theCase)
+      then = await givenWhenThen(caseId, theUser, theCase)
     })
 
     it('should return police case info without duplicates', () => {
@@ -220,11 +228,34 @@ describe('PoliceController - Get police case info', () => {
         ),
       ).toBe(false)
     })
+
+    it('should upsert defendant-linked police case numbers from LÖKE case units', () => {
+      expect(upsertAssignedDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
+      expect(upsertAssignedDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
+        caseId,
+        expect.arrayContaining([
+          {
+            defendantId: '11111111-1111-1111-1111-111111111111',
+            policeCaseNumber: '007-2021-000001',
+          },
+          {
+            defendantId: '11111111-1111-1111-1111-111111111111',
+            policeCaseNumber: '007-2020-000103',
+          },
+          {
+            defendantId: '11111111-1111-1111-1111-111111111111',
+            policeCaseNumber: '007-2020-000057',
+          },
+        ]),
+      )
+    })
   })
 
   describe('police case info found with no usable national ids on case', () => {
     const theUser = {} as User
+    const caseId = uuid()
     const theCase = {
+      id: caseId,
       defendants: [{ nationalId: '', noNationalId: false }],
     } as Case
     let then: Then
@@ -273,12 +304,13 @@ describe('PoliceController - Get police case info', () => {
         ],
       })
 
-      then = await givenWhenThen(uuid(), theUser, theCase)
+      then = await givenWhenThen(caseId, theUser, theCase)
     })
 
     it('should fetch police defendants as fallback', () => {
       const mockFetch = fetch as jest.Mock
 
+      expect(upsertAssignedDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
       expect(mockFetch).toHaveBeenCalledTimes(4)
       expect(
         mockFetch.mock.calls.some((call) =>

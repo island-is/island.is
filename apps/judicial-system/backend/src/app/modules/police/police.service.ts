@@ -42,7 +42,13 @@ import {
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
-import { Case, DateLog, Defendant, IndictmentSubtype } from '../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  DateLog,
+  Defendant,
+  IndictmentSubtype,
+} from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -251,6 +257,7 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -911,7 +918,7 @@ export class PoliceService {
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
-    nationalIds: string[] = [],
+    defendants: { id: string; nationalId: string }[] = [],
   ): Promise<PoliceCaseInfo[]> {
     try {
       const policeCaseResponse = await this.getPoliceCaseFiles(
@@ -926,16 +933,9 @@ export class PoliceService {
         'getPoliceCaseInfo',
       )
 
-      const caseNationalIds = Array.from(
-        new Set(
-          nationalIds
-            .map((nationalId) => nationalId?.trim())
-            .filter((nationalId) => Boolean(nationalId)),
-        ),
-      )
       const nationalIdsToUse =
-        caseNationalIds.length > 0
-          ? caseNationalIds
+        defendants.length > 0
+          ? defendants.map((d) => d.nationalId)
           : (await this.getDefendantsFromPolice(caseId, user)).map(
               (defendant) => defendant.nationalId,
             )
@@ -1003,6 +1003,34 @@ export class PoliceService {
             }
           }),
       )
+
+      const defendantIdByNationalId = new Map(
+        defendants.map((d) => [d.nationalId, d.id]),
+      )
+
+      const assignedLinks: { defendantId: string; policeCaseNumber: string }[] =
+        []
+      for (const { nationalId, caseUnits } of caseUnitsByDefendant) {
+        const defendantId = defendantIdByNationalId.get(nationalId)
+        if (!defendantId) {
+          continue
+        }
+        for (const unit of caseUnits) {
+          if (unit.upprunalegtMalsnumer) {
+            assignedLinks.push({
+              defendantId,
+              policeCaseNumber: unit.upprunalegtMalsnumer,
+            })
+          }
+        }
+      }
+
+      if (assignedLinks.length > 0) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.upsertAssignedDefendantPoliceCaseNumbers(
+          caseId,
+          assignedLinks,
+        )
+      }
 
       return cases
     } catch (reason) {

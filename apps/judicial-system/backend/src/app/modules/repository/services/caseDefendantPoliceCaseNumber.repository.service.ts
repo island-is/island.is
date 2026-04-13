@@ -153,6 +153,62 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   }
 
   /**
+   * Inserts defendant-linked (case_id, defendant_id, police_case_number) rows,
+   * ignoring duplicates via the partial unique index, then removes redundant
+   * unassigned rows for the same police case numbers on this case.
+   */
+  async upsertAssignedDefendantPoliceCaseNumbers(
+    caseId: string,
+    links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
+  ): Promise<void> {
+    if (links.length === 0) {
+      return
+    }
+
+    const sequelize = this.model.sequelize
+    if (!sequelize) {
+      throw new Error('Sequelize instance unavailable')
+    }
+
+    try {
+      await sequelize.transaction(async (transaction) => {
+        await this.model.bulkCreate(
+          links.map(({ defendantId, policeCaseNumber }) => ({
+            caseId,
+            defendantId,
+            policeCaseNumber,
+          })),
+          { transaction, ignoreDuplicates: true },
+        )
+
+        const policeCaseNumbers = [
+          ...new Set(links.map((l) => l.policeCaseNumber)),
+        ]
+
+        await this.model.destroy({
+          where: {
+            caseId,
+            defendantId: { [Op.is]: null },
+            policeCaseNumber: { [Op.in]: policeCaseNumbers },
+          },
+          transaction,
+        })
+      })
+
+      this.logger.debug(
+        `Upserted ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error upserting defendant-linked police case number rows for case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
    * When a defendant is split to a new case, move attributed links to the new case_id.
    */
   async moveAssignedRowsToCaseForDefendant(

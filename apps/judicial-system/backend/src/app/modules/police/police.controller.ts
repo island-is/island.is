@@ -135,8 +135,8 @@ export class PoliceController {
       theCase.id,
       user,
       theCase.defendants
-        ?.map((defendant) => defendant.nationalId)
-        .filter((nationalId): nationalId is string => nationalId !== undefined),
+        ?.filter((d) => d.nationalId)
+        .map((d) => ({ id: d.id, nationalId: d.nationalId as string })),
     )
   }
 

@@ -13,7 +13,10 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
-import { IndictmentSubtype } from '../../repository'
+import {
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  IndictmentSubtype,
+} from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
@@ -55,6 +58,14 @@ export const createTestingPoliceModule = async () => {
           findOne: jest.fn(),
         },
       },
+      {
+        provide: CaseDefendantPoliceCaseNumberRepositoryService,
+        useValue: {
+          upsertAssignedDefendantPoliceCaseNumbers: jest
+            .fn()
+            .mockResolvedValue(undefined),
+        },
+      },
     ],
   }).compile()
 
@@ -68,7 +79,18 @@ export const createTestingPoliceModule = async () => {
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    policeModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
+
   policeModule.close()
 
-  return { config, awsS3Service, policeService, policeController }
+  return {
+    config,
+    awsS3Service,
+    policeService,
+    policeController,
+    caseDefendantPoliceCaseNumberRepositoryService,
+  }
 }

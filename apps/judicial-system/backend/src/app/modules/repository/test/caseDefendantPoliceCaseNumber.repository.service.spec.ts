@@ -18,6 +18,9 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     bulkCreate: jest.Mock
     update: jest.Mock
     findAll: jest.Mock
+    sequelize: {
+      transaction: jest.Mock
+    }
   }
 
   beforeEach(async () => {
@@ -26,6 +29,11 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       bulkCreate: jest.fn().mockResolvedValue(undefined),
       update: jest.fn().mockResolvedValue([1]),
       findAll: jest.fn().mockResolvedValue([]),
+      sequelize: {
+        transaction: jest.fn(async (fn: (t: Transaction) => Promise<void>) => {
+          await fn(transaction)
+        }),
+      },
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -153,6 +161,41 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       expect(map.get('case-a')).toEqual(['007-1', '007-2'])
       expect(map.get('case-b')).toEqual(['008'])
       expect(map.get('case-c')).toEqual([])
+    })
+  })
+
+  describe('upsertAssignedDefendantPoliceCaseNumbers', () => {
+    it('bulk-creates links and removes matching unassigned rows', async () => {
+      await service.upsertAssignedDefendantPoliceCaseNumbers('case-1', [
+        { defendantId: 'def-a', policeCaseNumber: '007-1' },
+        { defendantId: 'def-b', policeCaseNumber: '007-2' },
+      ])
+
+      expect(mockModel.sequelize.transaction).toHaveBeenCalledTimes(1)
+      expect(mockModel.bulkCreate).toHaveBeenCalledWith(
+        [
+          { caseId: 'case-1', defendantId: 'def-a', policeCaseNumber: '007-1' },
+          { caseId: 'case-1', defendantId: 'def-b', policeCaseNumber: '007-2' },
+        ],
+        { transaction, ignoreDuplicates: true },
+      )
+
+      expect(mockModel.destroy).toHaveBeenCalledWith({
+        where: {
+          caseId: 'case-1',
+          defendantId: { [Op.is]: null },
+          policeCaseNumber: { [Op.in]: ['007-1', '007-2'] },
+        },
+        transaction,
+      })
+    })
+
+    it('does nothing when links array is empty', async () => {
+      await service.upsertAssignedDefendantPoliceCaseNumbers('case-1', [])
+
+      expect(mockModel.sequelize.transaction).not.toHaveBeenCalled()
+      expect(mockModel.bulkCreate).not.toHaveBeenCalled()
+      expect(mockModel.destroy).not.toHaveBeenCalled()
     })
   })
 
