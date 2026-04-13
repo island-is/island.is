@@ -51,8 +51,9 @@ export const CertificateExpandedRow = ({ issueDate, extensionDate }: Props) => {
       background="backgroundBrandMinimal"
       columnGap={2}
     >
-      {pairs.map(({ label, value }) => (
+      {pairs.map(({ label, value }, index) => (
         <Box
+          key={index}
           display="flex"
           justifyContent="spaceAround"
           width="full"

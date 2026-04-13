@@ -65,7 +65,7 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                   rowitem && (
                     <T.Data
                       key={`rowitem-${iii}`}
-                      colSpan={2}
+                      colSpan={row.length === 1 ? 4 : 2}
                       style={tableStyles}
                     >
                       <Columns alignY="center" collapseBelow="lg" space={2}>
