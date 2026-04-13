@@ -57,8 +57,10 @@ const PrimarySchoolOverviewWrapper = lazy(() =>
   ),
 )
 
-const PrimarySchoolStudent = lazy(() =>
-  import('./screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent'),
+const PrimarySchoolStudentWrapper = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudentWrapper'
+  ),
 )
 
 const PrimarySchoolOverview = lazy(() =>
@@ -117,29 +119,43 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolStudent,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
-      element: <PrimarySchoolStudent />,
+      element: <Navigate to="yfirlit" replace />,
     },
     {
       name: 'Yfirlit',
       path: EducationPaths.PrimarySchoolOverview,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <PrimarySchoolOverview />,
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper>
+          <PrimarySchoolOverview />
+        </PrimarySchoolStudentWrapper>
+      ),
     },
     {
       name: 'Námsmat',
       path: EducationPaths.PrimarySchoolAssessment,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <PrimarySchoolAssessment />,
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper>
+          <PrimarySchoolAssessment />
+        </PrimarySchoolStudentWrapper>
+      ),
     },
     {
       name: 'Heimildir',
       path: EducationPaths.PrimarySchoolStudentPermission,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <PrimarySchoolStudentPermission />,
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper>
+          <PrimarySchoolStudentPermission />
+        </PrimarySchoolStudentWrapper>
+      ),
     },
 
     // Framhaldsskóli - Secondary education
