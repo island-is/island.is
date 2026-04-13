@@ -24,6 +24,7 @@ export class FarmerLandSubsidiesInput {
 
   @Field(() => FarmerLandSubsidyOrderDirection, {
     nullable: true,
+    defaultValue: FarmerLandSubsidyOrderDirection.Ascending,
     description:
       'Sort direction. Only has effect when orderField is also provided. Defaults to ascending.',
   })
