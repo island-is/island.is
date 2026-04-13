@@ -34,7 +34,7 @@ const SortIndicator = ({
   const isDesc = column === sortColumn && sortDirection === 'desc'
   const showDown = flip ? !isDesc : isDesc
   return (
-    <Box marginLeft={1} style={{ opacity: column === sortColumn ? 1 : 0.35 }}>
+    <Box marginLeft={1} style={{ opacity: column === sortColumn ? 1 : 0.4 }}>
       <Icon
         icon={showDown ? 'arrowDown' : 'arrowUp'}
         size="small"
