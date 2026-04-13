@@ -169,7 +169,7 @@ export const renderSignatureToDate = (
   const records = sig.regular?.records ?? sig.committee?.records ?? []
 
   const firstRecord = records?.[0]
-  return firstRecord?.signatureDate ?? undefined
+  return firstRecord?.signatureDate || undefined
 }
 
 /**
