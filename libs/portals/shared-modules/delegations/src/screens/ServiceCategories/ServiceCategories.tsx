@@ -23,9 +23,9 @@ export const ServiceCategories = () => {
     variables: { input: { slug: 'umbod/thjonustuflokkar', lang } },
   })
   const contentfulData = contentfulQueryData?.getServicePortalPage
-  const faqList = isCompany(userInfo)
-    ? contentfulData?.faqListCompany
-    : contentfulData?.faqList
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
 
   const {
     data: categoriesData,

@@ -81,9 +81,9 @@ const AccessControlNew = () => {
     variables: { input: { slug: 'umbod', lang } },
   })
   const contentfulData = contentfulQueryData?.getServicePortalPage
-  const faqList = isCompany(userInfo)
-    ? contentfulData?.faqListCompany
-    : contentfulData?.faqList
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
 
   // Outgoing
   const {
@@ -279,7 +279,11 @@ const AccessControlNew = () => {
           />
         )}
 
-      {incomingLoading && <SkeletonLoader space={1} height={40} repeat={5} />}
+      {incomingLoading && !onlyOutgoingDelegations && (
+        <Box paddingTop={1}>
+          <SkeletonLoader space={1} height={40} repeat={5} />
+        </Box>
+      )}
 
       {!onlyOutgoingDelegations &&
         !incomingLoading &&

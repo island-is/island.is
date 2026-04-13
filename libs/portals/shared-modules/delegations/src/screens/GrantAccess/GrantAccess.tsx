@@ -56,9 +56,9 @@ const GrantAccess = () => {
     variables: { input: { slug: 'umbod', lang } },
   })
   const contentfulData = contentfulQueryData?.getServicePortalPage
-  const faqList = isCompany(userInfo)
-    ? contentfulData?.faqListCompany
-    : contentfulData?.faqList
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
   const {
     options,
     selectedOption,
