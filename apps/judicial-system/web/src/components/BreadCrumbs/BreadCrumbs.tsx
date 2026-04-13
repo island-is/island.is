@@ -68,12 +68,14 @@ const BreadCrumbs: FC<Props> = ({ links }) => {
 
   return (
     <Box display="flex" alignItems="center">
-      <Icon icon="home" size="small" color="purple300" />
+      <Link href="/malalistar">
+        <Icon icon="home" size="small" color="purple300" />
+      </Link>
       {caseTableEntries.map((entry, index) => (
         <Box key={entry.route} display="flex" alignItems="center">
           <Text color="purple300">{` • `}</Text>
           {index > 0 && <Text color="purple300">{` / `}</Text>}
-          <Link href={`/malalistar/${entry.route}`} replace>
+          <Link href={`/malalistar/${entry.route}`}>
             <Text color="purple300">{entry.title}</Text>
           </Link>
         </Box>
