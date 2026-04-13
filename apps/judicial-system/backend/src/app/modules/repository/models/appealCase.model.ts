@@ -217,4 +217,13 @@ export class AppealCase extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   appealIsolationToDate?: Date
+
+  /**********
+   * The national ID of the person who filed the appeal — used for indictment
+   * cases where multiple defenders/civil claimant lawyers exist.
+   * Not used for request cases.
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealedByNationalId?: string
 }
