@@ -2,9 +2,9 @@ import { FC, useContext } from 'react'
 import Link from 'next/link'
 
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { getCaseTableGroups } from '@island.is/judicial-system/types'
 import { useCaseTableMembershipQuery } from '../../utils/hooks/useCaseTableMembership/caseTableMembership.generated'
 import { FormContext } from '../FormProvider/FormProvider'
-import { getCaseTableGroups } from '@island.is/judicial-system/types'
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './BreadCrumbs.css'
 
