@@ -7,5 +7,8 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "../api/core/src/lib/scheduledNotification/scheduledNotifications.model.ts"
+  ]
 }

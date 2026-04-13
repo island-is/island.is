@@ -78,6 +78,7 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import {
   getApplicationLifecycle,
+  handleScheduledNotifications,
   removeObjectWithKeyFromAnswers,
 } from './utils/application'
 import { DecodedAssignmentToken } from './types'
@@ -460,6 +461,13 @@ export class ApplicationController {
       //Programmers responsible for handling failure status
       updatedApplication.externalData = withUpdatedExternalData.externalData
     }
+
+    await handleScheduledNotifications(
+      this.applicationService,
+      actionDto,
+      template,
+      updatedApplication.state,
+    )
 
     return updatedApplication
   }
@@ -1051,6 +1059,10 @@ export class ApplicationController {
     await this.applicationChargeService.deleteCharge(existingApplication)
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
+    await this.applicationService.cancelScheduledNotifications(
+      existingApplication.id,
+    )
 
     await this.applicationService.softDelete(existingApplication.id)
 

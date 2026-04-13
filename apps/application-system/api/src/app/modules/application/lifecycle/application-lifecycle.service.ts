@@ -53,20 +53,21 @@ export class ApplicationLifeCycleService {
   public async run() {
     // Pruning
     this.logger.info(`Starting application pruning...`)
-    await this.fetchApplicationsToBePruned()
-    await this.pruneAttachments()
-    await this.pruneApplicationCharge()
-    await this.pruneApplicationData()
-    await this.reportPruningResults()
+    // await this.fetchApplicationsToBePruned()
+    await this.fetchApplicationsToBeWarned()
+    // await this.pruneAttachments()
+    // await this.pruneApplicationCharge()
+    // await this.pruneApplicationData()
+    // await this.reportPruningResults()
     this.logger.info(`Application pruning done.`)
 
     // Post-pruning
-    this.logger.info(`Starting application post-pruning...`)
-    await this.fetchApplicationsToBePostPruned()
-    await this.postPruneApplicationHistory()
-    await this.postPruneApplicationData()
-    await this.reportPostPruningResults()
-    this.logger.info(`Application post-pruning done.`)
+    // this.logger.info(`Starting application post-pruning...`)
+    // await this.fetchApplicationsToBePostPruned()
+    // await this.postPruneApplicationHistory()
+    // await this.postPruneApplicationData()
+    // await this.reportPostPruningResults()
+    // this.logger.info(`Application post-pruning done.`)
   }
 
   public getProcessingApplications() {
@@ -97,6 +98,15 @@ export class ApplicationLifeCycleService {
         this.pruneNotifications.set(application.id, notifications)
       }
     }
+  }
+
+  private async fetchApplicationsToBeWarned() {
+    const scheduledNotifications =
+      await this.applicationService.findAllDueToBeWarned()
+
+    this.logger.info(
+      `Found ${scheduledNotifications.length} scheduled notifications to be warned.`,
+    )
   }
 
   private async pruneAttachments() {
@@ -159,6 +169,9 @@ export class ApplicationLifeCycleService {
 
         let postPruneAt
         if (prune.pruned) {
+          await this.applicationService.cancelScheduledNotifications(
+            prune.application.id,
+          )
           postPruneAt = addMilliseconds(
             new Date(),
             template?.adminDataConfig?.postPruneDelayOverride ??

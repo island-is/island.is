@@ -16,7 +16,10 @@ import {
   TemplateApi,
 } from '@island.is/application/types'
 
-import { getApplicationLifecycle } from './utils/application'
+import {
+  getApplicationLifecycle,
+  handleScheduledNotifications,
+} from './utils/application'
 import { StateChangeResult, TemplateAPIModuleActionResult } from './types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -202,12 +205,23 @@ export class ApplicationActionService {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
-      await this.historyService.saveStateTransition(
-        application.id,
-        newState,
-        auth,
-        event,
-      )
+
+      // Wait for both promises in parallel, no fail fast
+      Promise.allSettled([
+        this.historyService.saveStateTransition(
+          application.id,
+          newState,
+          auth,
+          event,
+        ),
+        handleScheduledNotifications(
+          // Clean up old and create new scheduled notifications
+          this.applicationService,
+          updatedApplication,
+          template,
+          newState,
+        ),
+      ])
     } catch (e) {
       this.logger.error(e)
       return {
