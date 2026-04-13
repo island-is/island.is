@@ -36,6 +36,7 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
+import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
 
 export interface RouteSection {
   name: string
@@ -238,6 +239,15 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         background="purple100"
         className={styles.processContainer}
       >
+        <BreadCrumbs
+          links={[
+            [
+              { label: 'Home', href: '/' },
+              { label: 'asd', href: '/asd' },
+            ],
+            { label: 'Another', href: '/another' },
+          ]}
+        />
         <GridContainer className={styles.container}>
           <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
