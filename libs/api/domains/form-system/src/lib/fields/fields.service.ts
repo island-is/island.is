@@ -53,9 +53,13 @@ export class FieldsService {
   }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
-    await this.fieldsApiWithAuth(auth).fieldsControllerUpdate(
-      input as unknown as FieldsControllerUpdateRequest,
-    )
+    try {
+      await this.fieldsApiWithAuth(auth).fieldsControllerUpdate(
+        input as unknown as FieldsControllerUpdateRequest,
+      )
+    } catch (error) {
+      this.handleError(error, 'Error updating field')
+    }
   }
 
   async updateFieldsDisplayOrder(
