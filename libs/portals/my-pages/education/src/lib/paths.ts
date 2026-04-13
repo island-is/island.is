@@ -8,7 +8,6 @@ export enum EducationPaths {
   PrimarySchoolStudent = '/menntun/grunnskoli/nemendur/:studentId',
   PrimarySchoolOverview = '/menntun/grunnskoli/nemendur/:studentId/yfirlit',
   PrimarySchoolAssessment = '/menntun/grunnskoli/nemendur/:studentId/namsmat',
-  PrimarySchoolStudentPermission = '/menntun/grunnskoli/nemendur/:studentId/heimildir',
 
   EducationFramhskoli = '/menntun/framhaldsskoli',
   EducationFramhskoliCareer = '/menntun/framhaldsskoli/namsferill',
