@@ -70,8 +70,10 @@ export class EducationController {
       )
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')
-      res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'nmax-age=0')
+      res.header(
+        'Cache-Control',
+        'no-cache, no-store, max-age=0, must-revalidate',
+      )
       return res.status(200).end(buffer)
     }
     return res.end()
@@ -112,8 +114,10 @@ export class EducationController {
       )
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')
-      res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'nmax-age=0')
+      res.header(
+        'Cache-Control',
+        'no-cache, no-store, max-age=0, must-revalidate',
+      )
       return res.status(200).end(buffer)
     }
     return res.end()

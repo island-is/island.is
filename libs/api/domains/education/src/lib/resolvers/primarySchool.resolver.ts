@@ -9,6 +9,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
+import { isDefined } from '@island.is/shared/utils'
 import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
 import { mapAssessment } from '../models/primarySchool/primarySchool.mapper'
@@ -25,7 +26,7 @@ export class PrimarySchoolResolver {
   async primarySchoolStudents(@CurrentUser() user: User) {
     const students = await this.primarySchoolService.getStudents(user)
     return students
-      ?.filter((s) => s.id != null)
+      ?.filter((s) => isDefined(s.id))
       .map((s) => ({ ...s, contactType: s.relationType }))
   }
 
@@ -54,6 +55,6 @@ export class PrimarySchoolResolver {
     return subjects
       ?.flatMap((s) => s.assessmentTypes ?? [])
       .map((t) => mapAssessment(t, student.id))
-      .filter((a): a is PrimarySchoolAssessment => a !== null)
+      .filter(isDefined)
   }
 }

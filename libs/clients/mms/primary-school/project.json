@@ -26,7 +26,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=data-gateway-backend-internal > src/clientConfig.json",
+          "curl --fail --silent --show-error -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=data-gateway-backend-internal -o src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

@@ -16,9 +16,12 @@ export const PrimarySchoolOverview = () => {
   const { formatMessage } = useLocale()
   const { studentId } = useParams<{ studentId: string }>()
 
-  const { data, loading, error } = usePrimarySchoolStudentOverviewQuery()
+  const { data, loading, error } = usePrimarySchoolStudentOverviewQuery({
+    variables: { studentId: studentId ?? '' },
+    skip: !studentId,
+  })
 
-  const student = data?.primarySchoolStudents?.find((s) => s.id === studentId)
+  const student = data?.primarySchoolStudent
 
   return (
     <>
@@ -59,7 +62,6 @@ export const PrimarySchoolOverview = () => {
           />
         </InfoLineStack>
       )}
-      {/* TODO: Add "Ósvaraðar heimildir" card when permissions API is available */}
     </>
   )
 }

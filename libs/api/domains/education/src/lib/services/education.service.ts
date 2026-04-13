@@ -17,6 +17,8 @@ import {
   ExamResult,
   Student,
 } from '../types'
+import { CourseGrade } from '../models/grade/courseGrade.model'
+import { GradeType } from '../models/grade/gradeType.model'
 import { getYearInterval } from '../utils'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { isDefined } from '@island.is/shared/utils'
@@ -178,8 +180,7 @@ export class EducationService {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapCourseGrade(grade: Grade): any {
+  private mapCourseGrade(grade: Grade): CourseGrade | undefined {
     if (!grade) {
       return undefined
     }
@@ -190,7 +191,9 @@ export class EducationService {
       competenceStatus: grade.haefnieinkunnStada,
       gradeSum: this.mapGradeType(grade.samtals),
       progressText: this.mapGrade(grade.framfaraTexti),
-      grades: grade.einkunnir.map((gradeType) => this.mapGradeType(gradeType)),
+      grades: grade.einkunnir
+        .map((gradeType) => this.mapGradeType(gradeType))
+        .filter(isDefined),
       wordAndNumbers: this.mapGrade(grade.ordOgTalnadaemi),
     }
   }
@@ -205,9 +208,9 @@ export class EducationService {
       fullName: familyMember.name,
       grades: studentAssessment.einkunnir.map((einkunn) => ({
         studentYear: einkunn.bekkur,
-        courses: einkunn.namsgreinar.map((namsgrein) =>
-          this.mapCourseGrade(namsgrein),
-        ),
+        courses: einkunn.namsgreinar
+          .map((namsgrein) => this.mapCourseGrade(namsgrein))
+          .filter(isDefined),
       })),
     }
   }

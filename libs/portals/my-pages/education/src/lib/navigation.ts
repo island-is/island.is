@@ -39,16 +39,19 @@ export const educationNavigation: PortalNavigationItem = {
               // Student hub — "Nemandi" in breadcrumb
               name: psm.studentLabel,
               navHide: true,
+              searchHide: true,
               path: EducationPaths.PrimarySchoolStudent,
               children: [
                 {
                   name: psm.hubOverview,
                   navHide: true,
+                  searchHide: true,
                   path: EducationPaths.PrimarySchoolOverview,
                 },
                 {
                   name: psm.assessmentTitle,
                   navHide: true,
+                  searchHide: true,
                   path: EducationPaths.PrimarySchoolAssessment,
                 },
               ],

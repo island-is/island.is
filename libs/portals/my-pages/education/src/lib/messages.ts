@@ -232,14 +232,6 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:unanswered',
     defaultMessage: 'Ósvarað',
   },
-  headerLinkButtonUrl: {
-    id: 'sp.education-primary-school:header-link-button-url',
-    defaultMessage: 'todo',
-  },
-  headerLinkButtonText: {
-    id: 'sp.education-primary-school:header-button-text',
-    defaultMessage: 'Nánar um réttindi barna',
-  },
 })
 
 export const uniMessages = defineMessages({

@@ -2,7 +2,8 @@ import { registerEnumType } from '@nestjs/graphql'
 
 import { AgentType } from '@island.is/clients/mms/primary-school'
 
-// Re-export so models import from this file to make sure registerEnumType is called before model references it.
+// Import AgentType through this file (not directly from the client) to ensure
+// registerEnumType runs before any @Field decorator references this enum.
 export { AgentType } from '@island.is/clients/mms/primary-school'
 
 registerEnumType(AgentType, {

@@ -1,9 +1,11 @@
-import { lazy } from 'react'
+import { lazy, useState, useEffect } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
+import { CardLoader } from '@island.is/portals/my-pages/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
@@ -51,12 +53,6 @@ const PrimarySchool = lazy(() =>
   import('./screens/PrimarySchool/PrimarySchool/PrimarySchool'),
 )
 
-const PrimarySchoolOverviewWrapper = lazy(() =>
-  import(
-    './screens/PrimarySchool/PrimarySchoolOverview/PrimarySchoolOverviewWrapper'
-  ),
-)
-
 const PrimarySchoolStudentWrapper = lazy(() =>
   import(
     './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudentWrapper'
@@ -75,6 +71,27 @@ const PrimarySchoolAssessment = lazy(() =>
 
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
 
+const EducationRootRedirect = () => {
+  const featureFlagClient = useFeatureFlagClient()
+  const [target, setTarget] = useState<string | null>(null)
+
+  useEffect(() => {
+    featureFlagClient
+      .getValue(Features.isServicePortalPrimarySchoolPageEnabled, false)
+      .then((enabled) =>
+        setTarget(
+          enabled
+            ? EducationPaths.EducationGrunnskoli
+            : EducationPaths.EducationAssessment,
+        ),
+      )
+      .catch(() => setTarget(EducationPaths.EducationAssessment))
+  }, [featureFlagClient])
+
+  if (!target) return <CardLoader />
+  return <Navigate to={target} replace />
+}
+
 export const educationModule: PortalModule = {
   name: 'Menntun',
   enabled: ({ isCompany }) => !isCompany,
@@ -83,15 +100,16 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Navigate to={EducationPaths.EducationGrunnskoli} replace />,
+      element: <EducationRootRedirect />,
     },
 
     // Grunnskóli - Elementary
     {
       name: 'Grunnskóli',
       path: EducationPaths.EducationGrunnskoli,
+      key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <PrimarySchoolOverviewWrapper />,
+      element: <PrimarySchool />,
     },
     {
       name: 'Námsmat',

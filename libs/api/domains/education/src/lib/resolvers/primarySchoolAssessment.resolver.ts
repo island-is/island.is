@@ -9,6 +9,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
+import { isDefined } from '@island.is/shared/utils'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@nestjs/config'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
@@ -39,18 +40,10 @@ export class PrimarySchoolAssessmentResolver {
       assessment.id,
     )
 
-    //TODO: REMOVE WHEN MERGING -- YOU MUST. CODERABBIT FLAG THIS!
-    const downloadServiceFeatureBaseUrl =
-      'https://featprimary-school-assessments-api.dev01.devland.is'
-
     return results
       ?.map((r) =>
-        mapResult(
-          r,
-          assessment.studentId,
-          downloadServiceFeatureBaseUrl /*this.downloadServiceConfig.baseUrl*/,
-        ),
+        mapResult(r, assessment.studentId, this.downloadServiceConfig.baseUrl),
       )
-      .filter((r): r is PrimarySchoolAssessmentResult => r !== null)
+      .filter(isDefined)
   }
 }
