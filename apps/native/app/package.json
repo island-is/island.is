@@ -1,8 +1,8 @@
 {
   "name": "@island.is/native-app",
   "main": "src/index",
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
     "start": "APP_VARIANT=development expo start",
     "android": "APP_VARIANT=development expo run:android",
@@ -82,6 +82,5 @@
     "firebase-admin": "13.7.0",
     "react-test-renderer": "19.2.0",
     "typescript": "~5.9.2"
-  },
-  "private": true
+  }
 }
