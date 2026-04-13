@@ -11,6 +11,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -67,6 +68,7 @@ import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
+import { UpdatePoliceDigitalCaseFilesDto } from './dto/updatePoliceDigitalCaseFiles.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
@@ -430,8 +432,14 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseGuards(CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
     type: PoliceDigitalCaseFileSyncResult,
@@ -455,6 +463,37 @@ export class FileController {
     )
   }
 
+  @UseGuards(CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('policeDigitalCaseFileTokenUrl')
+  @ApiOkResponse({
+    type: SignedUrl,
+    description: 'Gets a token URL for a police digital case file',
+  })
+  getPoliceDigitalCaseFileTokenUrl(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @Query('policeDigitalFileId') policeDigitalFileId: string,
+  ): Promise<SignedUrl> {
+    if (!policeDigitalFileId?.trim()) {
+      throw new BadRequestException('Missing policeDigitalFileId')
+    }
+
+    this.logger.debug(
+      `Getting token URL for police digital case file ${policeDigitalFileId} in case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService
+      .getTokenUrl(caseId, user, policeDigitalFileId)
+      .then((url) => ({ url }))
+  }
+
   @UseGuards(CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete('policeDigitalCaseFile/:fileId')
@@ -474,5 +513,30 @@ export class FileController {
         fileId,
       )
     return { success }
+  }
+
+  @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Patch('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    description: 'Updates order of police digital case files',
+  })
+  async updatePoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @Body() updateDto: UpdatePoliceDigitalCaseFilesDto,
+  ): Promise<object> {
+    this.logger.debug(
+      `Updating police digital case file orders for case ${caseId}`,
+    )
+
+    await this.sequelize.transaction((transaction) =>
+      this.policeDigitalCaseFileService.updatePoliceDigitalCaseFileOrders(
+        caseId,
+        updateDto.files,
+        transaction,
+      ),
+    )
+
+    return {}
   }
 }

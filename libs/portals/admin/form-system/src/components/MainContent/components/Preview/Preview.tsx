@@ -10,6 +10,7 @@ import {
   m,
   MessageWithLink,
   NationalId,
+  PaymentQuantity,
   PhoneNumber,
   PropertyNumber,
   Radio,
@@ -69,6 +70,9 @@ export const Preview = ({ data, screenOrSection }: Props) => {
         {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
         {type === FieldTypesEnum.PROPERTY_NUMBER && (
           <PropertyNumber item={data} />
+        )}
+        {type === FieldTypesEnum.PAYMENT_QUANTITY && (
+          <PaymentQuantity item={data} />
         )}
       </Box>
     </FormProvider>

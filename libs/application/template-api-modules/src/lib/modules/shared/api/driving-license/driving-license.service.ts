@@ -1,18 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
 
-import {
-  StudentAssessment,
-  DrivingLicenseFakeData,
-  DrivingLicense,
-  HasQualitySignature,
-} from './types'
+import { StudentAssessment, DrivingLicense, HasQualitySignature } from './types'
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
@@ -25,7 +16,15 @@ import {
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
-import { getTodayDateWithMonthDiff } from './utils'
+import {
+  getFakeData,
+  buildFakeCurrentLicense,
+  buildFakeQualityPhoto,
+  buildFakeQualitySignature,
+  buildFakeQualityPhotoAndSignature,
+  buildFakeAllPhotosFromThjodskra,
+  buildFakeDrivingAssessment,
+} from './drivingLicenseFakeData'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -142,49 +141,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<CurrentLicenseParameters>): Promise<DrivingLicense> {
     let drivingLicense
 
-    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
-      application.answers,
-      'fakeData',
-    )
-    if (fakeData?.useFakeData === YES) {
-      const currentLicense = (() => {
-        switch (fakeData.currentLicense) {
-          case 'temp':
-            return 'B'
-          case 'B':
-          case 'C':
-          case 'C1':
-          case 'D':
-          case 'D1':
-            return fakeData.currentLicense
-          default:
-            return null
-        }
-      })()
-      drivingLicense = {
-        currentLicense,
-        categories: [
-          {
-            id: Math.floor(Math.random() * 100000000),
-            nr: currentLicense,
-            name: currentLicense || '', // for useLegacyVersion
-            issued: getTodayDateWithMonthDiff(-12),
-            expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
-            comments: '',
-          },
-        ],
-        remarks:
-          fakeData.remarks === YES
-            ? [
-                {
-                  code: '',
-                  description:
-                    'Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.',
-                },
-              ]
-            : undefined,
-        id: Math.floor(Math.random() * 100000000),
-      }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      drivingLicense = buildFakeCurrentLicense(fakeData)
     } else {
       if (params?.useLegacyVersion) {
         drivingLicense =
@@ -244,19 +203,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     hasQualityPhoto: boolean
     qualityPhoto: string | null
   }> {
-    // If running locally or on dev allow for fake data
-    const useFakeData = getValueViaPath<'yes' | 'no'>(
-      application.answers,
-      'fakeData.useFakeData',
-    )
-
-    if (useFakeData === 'yes') {
-      const hasQualityPhoto = getValueViaPath<'yes' | 'no'>(
-        application.answers,
-        'fakeData.qualityPhoto',
-      )
-      return { hasQualityPhoto: hasQualityPhoto === 'yes', qualityPhoto: null }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeQualityPhoto(fakeData)
     }
+
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
       { token: auth.authorization },
     )
@@ -275,25 +226,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps): Promise<HasQualitySignature | null> {
-    // If running locally or on dev allow for fake data
-    const useFakeData = getValueViaPath<'yes' | 'no'>(
-      application.answers,
-      'fakeData.useFakeData',
-    )
-
-    if (useFakeData === 'yes') {
-      const hasQualitySignature = getValueViaPath<'yes' | 'no'>(
-        application.answers,
-        'fakeData.qualitySignature',
-      )
-      if (hasQualitySignature === 'yes') {
-        return {
-          hasQualitySignature: true,
-        }
-      } else {
-        return null
-      }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeQualitySignature(fakeData)
     }
+
     const hasQualitySignature =
       await this.drivingLicenseService.getHasQualitySignature({
         token: auth.authorization,
@@ -303,19 +240,42 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
+  async qualityPhotoAndSignature({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeQualityPhotoAndSignature(fakeData)
+    }
+
+    try {
+      return await this.drivingLicenseService.getQualityPhotoAndSignature({
+        token: auth.authorization,
+      })
+    } catch {
+      return null
+    }
+  }
+
+  async allPhotosFromThjodskra({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeAllPhotosFromThjodskra(fakeData)
+    }
+
     try {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({
         token: auth.authorization,
       })
-    } catch (error) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
-        },
-        400,
-      )
+    } catch {
+      // Return empty rather than throwing — this provider runs for all
+      // flows but is only used by BE. Throwing here would block
+      // B-temp/B-full/65+ applications if the Thjodskra API is down.
+      return { images: [] }
     }
   }
 
@@ -356,16 +316,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps): Promise<StudentAssessment | null> {
-    const fakeData = application.answers.fakeData as
-      | DrivingLicenseFakeData
-      | undefined
-
-    if (fakeData?.useFakeData === YES) {
-      return {
-        teacherNationalId: '123456-7890',
-        teacherName: 'Bílar Kennar Ekilsson',
-        studentNationalId: '123456-7890',
-      }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeDrivingAssessment()
     }
 
     return await this.getDrivingAssessment(auth.authorization)

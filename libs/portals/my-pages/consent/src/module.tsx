@@ -15,12 +15,21 @@ export const consentModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.includes(ApiScope.internal)
   },
-  routes({ userInfo }) {
+  async routes({ userInfo, featureFlagClient }) {
+    const useNewRoute = await featureFlagClient.getValue(
+      Features.useNewDelegationSystem,
+      false,
+      {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      },
+    )
     return [
       {
         name: m.consent,
-        path: ConsentPaths.Consent,
+        path: useNewRoute ? ConsentPaths.ConsentNew : ConsentPaths.Consent,
         enabled: userInfo.scopes.includes(ApiScope.internal),
+        notAvailableForActors: true,
         element: <Consent />,
       },
     ]

@@ -33,6 +33,7 @@ import { Case } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { PoliceDefendant } from './models/policeDefendant.model'
 import { PoliceSystemDigitalCaseFile } from './models/PoliceSystemDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
@@ -72,6 +73,30 @@ export class PoliceController {
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
+  @Get('policeDefendants')
+  @ApiOkResponse({
+    type: PoliceDefendant,
+    isArray: true,
+    description: 'Gets defendants for a case from the police API',
+  })
+  getPoliceDefendants(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceDefendant[]> {
+    if (theCase.policeDefendantNationalId) {
+      // Case was created with the deprecated create case method where a single defendant is set on the case
+      // We don't need to fetch defendants from the police API in this case
+      return Promise.resolve([])
+    }
+
+    this.logger.debug(`Getting defendants for case ${caseId} from police API`)
+
+    return this.policeService.getDefendantsFromPolice(theCase.id, user)
+  }
+
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeDigitalFiles')
   @ApiOkResponse({
     type: PoliceSystemDigitalCaseFile,
@@ -106,7 +131,13 @@ export class PoliceController {
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting info for police case ${caseId}`)
 
-    return this.policeService.getPoliceCaseInfo(theCase.id, user)
+    return this.policeService.getPoliceCaseInfo(
+      theCase.id,
+      user,
+      theCase.defendants
+        ?.map((defendant) => defendant.nationalId)
+        .filter((nationalId): nationalId is string => nationalId !== undefined),
+    )
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
