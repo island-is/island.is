@@ -11,13 +11,21 @@ import {
 } from './ServiceCategories.generated'
 
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { useLoaderData } from 'react-router-dom'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
+import { useGetServicePortalPageQuery } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { ServiceCategoriesGrid } from '../../components/ServiceCategoriesGrid/ServiceCategoriesGrid'
 
 export const ServiceCategories = () => {
   const { formatMessage, lang } = useLocale()
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const userInfo = useUserInfo()
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod/thjonustuflokkar', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList = isCompany(userInfo)
+    ? contentfulData?.faqListCompany
+    : contentfulData?.faqList
 
   const {
     data: categoriesData,
@@ -85,9 +93,9 @@ export const ServiceCategories = () => {
           </Box>
         )}
 
-        {contentfulData?.faqList && (
+        {faqList && faqList.questions.length > 0 && (
           <Box paddingTop={8}>
-            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+            <FaqList {...(faqList as unknown as FaqListProps)} />
           </Box>
         )}
       </Box>

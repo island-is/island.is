@@ -21,6 +21,7 @@ import {
   formatNationalId,
 } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   InputController,
@@ -40,19 +41,24 @@ import {
 
 import * as styles from './GrantAccess.css'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
-import { useLoaderData } from 'react-router-dom'
+import { useGetServicePortalPageQuery } from '@island.is/portals/core'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
   const userInfo = useUserInfo()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [formError, setFormError] = useState<Error | undefined>()
   const [name, setName] = useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { md } = useBreakpoint()
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList = isCompany(userInfo)
+    ? contentfulData?.faqListCompany
+    : contentfulData?.faqList
   const {
     options,
     selectedOption,
@@ -301,9 +307,9 @@ const GrantAccess = () => {
           </form>
         </FormProvider>
 
-        {contentfulData?.faqList && (
+        {faqList && faqList.questions.length > 0 && (
           <Box paddingTop={8}>
-            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+            <FaqList {...(faqList as unknown as FaqListProps)} />
           </Box>
         )}
       </div>

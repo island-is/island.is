@@ -1,16 +1,20 @@
 import { useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
-import { useNavigate, useLoaderData } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  useGetServicePortalPageQuery,
+} from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { useDelegationForm } from '../../context'
 import { FlowStep, FlowStepper } from '@island.is/island-ui/core'
 import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipients'
@@ -25,7 +29,8 @@ const GrantAccess = () => {
   const [isConfirmModalVisible, setIsConfirmModalVisible] =
     useState<boolean>(false)
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+  const userInfo = useUserInfo()
   const { setIdentities, selectedScopes, clearForm } = useDelegationForm()
 
   const navigate = useNavigate()
@@ -35,7 +40,13 @@ const GrantAccess = () => {
     return () => clearForm()
   }, [clearForm])
 
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod/veita', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList = isCompany(userInfo)
+    ? contentfulData?.faqListCompany
+    : contentfulData?.faqList
 
   const methods = useForm({
     mode: 'onChange',
@@ -105,9 +116,9 @@ const GrantAccess = () => {
           isVisible={isConfirmModalVisible}
         />
 
-        {contentfulData?.faqList && (
+        {faqList && faqList.questions.length > 0 && (
           <Box paddingTop={8}>
-            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+            <FaqList {...(faqList as unknown as FaqListProps)} />
           </Box>
         )}
       </div>
