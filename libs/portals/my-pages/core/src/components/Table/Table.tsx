@@ -19,6 +19,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '../EmptyTable/EmptyTable'
 import { useIsMobile } from '../../hooks/useIsMobile/useIsMobile'
 import * as styles from './Table.css'
+import cn from 'classnames'
 
 interface TableProps<TData extends object> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,10 +111,10 @@ export const Table = <TData extends object>({
     return <EmptyTable message={emptyMessage} />
   }
 
-  if (isMobile && mobileTitleKey) {
+  if (isMobile) {
     return (
       <Box>
-        {table.getRowModel().rows.map((row, rowIndex) => {
+        {table.getRowModel().rows.map((row) => {
           const titleCell = row
             .getVisibleCells()
             .find((c) => c.column.id === mobileTitleKey)
@@ -130,9 +131,12 @@ export const Table = <TData extends object>({
             <Box
               key={row.id}
               background={isExpanded || isCollapsing ? 'blue100' : undefined}
-              paddingTop={3}
-              marginTop={rowIndex > 0 ? 3 : 0}
+              className={cn(styles.mobileRow, {
+                [styles.container]: isExpanded || isCollapsing,
+              })}
               position="relative"
+              paddingTop={3}
+              paddingBottom={3}
             >
               <Box
                 marginBottom={1}

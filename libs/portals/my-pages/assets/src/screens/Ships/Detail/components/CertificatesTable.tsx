@@ -47,13 +47,14 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
           return (
             <Tag
               outlined
+              disabled
               variant={
                 value === ShipRegistryCertificateStatus.Invalid
                   ? 'red'
                   : value ===
                       ShipRegistryCertificateStatus.ReinspectionNeeded ||
                     value === ShipRegistryCertificateStatus.InInspectionWindow
-                  ? 'yellow'
+                  ? 'purple'
                   : 'mint'
               }
             >
@@ -105,6 +106,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
           onChange={(e) => setSearch(e.target.value)}
           size="sm"
           backgroundColor="blue"
+          icon={{ name: 'search' }}
         />
       </Box>
       <Table
@@ -112,6 +114,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
         data={filteredCertificates}
         loading={loading}
         emptyMessage={formatMessage(shipsMessages.certificatesEmpty)}
+        mobileTitleKey="name"
         renderExpandedRow={renderExpandedRow}
       />
     </Box>
