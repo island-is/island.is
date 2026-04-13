@@ -4,6 +4,7 @@ import {
   resolveFormItemId,
 } from '@island.is/application/core'
 import {
+  AccordionField,
   Application,
   DataProviderItem,
   ExternalData,
@@ -102,6 +103,18 @@ export const findSubmitField = (
   return undefined
 }
 
+export const getAccordionChildFieldIds = (field: Field): string[] => {
+  if (field.type !== FieldTypes.ACCORDION) return []
+  const accordion = field as AccordionField
+  const items =
+    typeof accordion.accordionItems === 'function'
+      ? []
+      : accordion.accordionItems
+  return items.flatMap((item) =>
+    item.children ? item.children.map((child) => child.id) : [],
+  )
+}
+
 export const extractAnswersToSubmitFromScreen = (
   data: FormValue,
   screen: FormScreen,
@@ -143,7 +156,7 @@ export const extractAnswersToSubmitFromScreen = (
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,
-        screen.children.map((c) => resolveFieldId(c as Field, app, user)),
+        screen.children.flatMap((c) => [c.id, ...getAccordionChildFieldIds(c)]),
       )
     case FormItemTypes.REPEATER:
       return {}

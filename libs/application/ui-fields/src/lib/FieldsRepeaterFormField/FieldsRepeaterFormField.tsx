@@ -92,16 +92,16 @@ export const FieldsRepeaterFormField = ({
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
-      if (
-        isEqual(prev, {
-          ...stableApplication,
-          answers: { ...stableApplication.answers, ...stableAnswers },
-        })
-      ) {
+      const newApp = {
+        ...stableApplication,
+        answers: { ...stableApplication.answers, ...stableAnswers },
+      }
+
+      if (isEqual(prev, newApp)) {
         return prev
       }
 
-      return { ...stableApplication, answers: stableAnswers }
+      return newApp
     })
   }, [stableApplication, stableAnswers])
 

@@ -1,31 +1,60 @@
-import { resolveFieldId, validateAnswers } from '@island.is/application/core'
+import { BffUser } from '@island.is/shared/types'
 import {
+  resolveFieldId,
+  shouldShowFormItem,
+  validateAnswers,
+} from '@island.is/application/core'
+import {
+  AccordionField,
   Application,
   Field,
   FormItemTypes,
+  FieldTypes,
   FormNode,
   FormValue,
   MultiField,
 } from '@island.is/application/types'
-import { BffUser } from '@island.is/shared/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form'
-import { ResolverContext } from '../types'
+import { FieldDef, ResolverContext } from '../types'
+import { getAccordionChildFieldIds } from '../utils'
 
-const getFormNodeFieldIds = (
-  formNode: FormNode,
-  application: Application,
-  user?: BffUser,
-): string[] => {
-  if (formNode.type === FormItemTypes.MULTI_FIELD && 'children' in formNode) {
-    return (formNode as MultiField).children.map((c) =>
-      resolveFieldId(c as Field, application, user),
-    )
-  }
-  if ('component' in formNode && 'id' in formNode) {
-    return [resolveFieldId(formNode as Field, application, user)]
-  }
-  return []
+const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
+  const children = formNode?.children ?? []
+
+  const visibleChildren = children.filter(
+    (x) => (x as FieldDef).isNavigable !== false,
+  )
+
+  const directIds = visibleChildren
+    .filter((x) => x.id)
+    .map((x) => x.id as string)
+
+  const nestedIds = visibleChildren
+    .filter((x): x is Field => 'type' in x && x.type === FieldTypes.ACCORDION)
+    .flatMap((accordion) => {
+      if (!application) return getAccordionChildFieldIds(accordion)
+
+      const acc = accordion as AccordionField
+      const items =
+        typeof acc.accordionItems === 'function' ? [] : acc.accordionItems
+      return items.flatMap((item) =>
+        item.children
+          ? item.children
+              .filter((child) =>
+                shouldShowFormItem(
+                  child,
+                  application.answers,
+                  application.externalData,
+                  null,
+                ),
+              )
+              .map((child) => child.id)
+          : [],
+      )
+    })
+
+  return [...directIds, ...nestedIds]
 }
 
 type Resolver = ({
@@ -61,6 +90,7 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
       context.formNode as FormNode,
       applicationForFields,
       context.user,
+      context.application,
     ),
     formatMessage,
   })
