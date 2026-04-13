@@ -234,10 +234,7 @@ const transformCase = (
       }
 
   const stateOverride =
-    isDefence &&
-    isIndictmentCase(theCase.type) &&
-    allCancelledOrDismissed &&
-    theCase.state !== CaseState.COMPLETED
+    isDefence && isIndictmentCase(theCase.type) && allCancelledOrDismissed
       ? {
           state: CaseState.COMPLETED,
           rulingDate: latestCancelledOrDismissedDate,
