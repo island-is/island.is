@@ -953,8 +953,7 @@ export class PoliceService {
           foundCase.subtypes = []
         }
 
-        const isRelevant =
-          !foundCase.date || (date && date >= foundCase.date)
+        const isRelevant = !foundCase.date || (date && date >= foundCase.date)
 
         if (subtype && isRelevant && !foundCase.subtypes?.includes(subtype)) {
           foundCase.subtypes?.push(subtype)
