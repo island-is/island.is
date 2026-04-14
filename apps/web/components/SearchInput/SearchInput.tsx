@@ -384,7 +384,6 @@ export const SearchInput = forwardRef<
               <Results
                 quickContentLabel={quickContentLabel}
                 search={search}
-                locale={locale}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
                 highlightedIndex={highlightedIndex}
