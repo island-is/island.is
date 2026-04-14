@@ -45,6 +45,7 @@ interface AssetCardProps {
   small?: boolean
   filled?: boolean
   style?: ViewStyle
+  testID?: string
 }
 
 export const MoreCard = ({
@@ -54,6 +55,7 @@ export const MoreCard = ({
   small = false,
   filled = false,
   style,
+  testID,
 }: AssetCardProps) => {
   const theme = useTheme()
   return (
@@ -62,6 +64,7 @@ export const MoreCard = ({
         theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
       }
       style={[{ flex: 1, minHeight: small ? 70 : 90 }, style]}
+      testID={testID}
       onPress={onPress}
     >
       <Host small={small} filled={filled}>

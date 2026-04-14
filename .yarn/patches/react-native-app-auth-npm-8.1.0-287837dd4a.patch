@@ -1,0 +1,13 @@
+diff --git a/plugin/build/ios/app-delegate.js b/plugin/build/ios/app-delegate.js
+index e83dedee3ef380c0159f9900fb6c5fbad9c5968b..85d0a781e5b76ee783a7630acb4c01fa38510550 100644
+--- a/plugin/build/ios/app-delegate.js
++++ b/plugin/build/ios/app-delegate.js
+@@ -8,7 +8,7 @@ const withAppDelegateSwift = rootConfig => {
+     return (0, config_plugins_1.withAppDelegate)(rootConfig, config => {
+         let { contents } = config.modResults;
+         if (!contents.includes('RNAppAuthAuthorizationFlowManager')) {
+-            const replaceText = 'public class AppDelegate: ExpoAppDelegate';
++            const replaceText = 'class AppDelegate: ExpoAppDelegate';
+             contents = contents.replace(replaceText, `${replaceText}, RNAppAuthAuthorizationFlowManager`);
+             const replaceText2 = 'return super.application(app, open: url, options: options) || RCTLinkingManager.application(app, open: url, options: options)';
+             contents = contents.replace(replaceText2, `if let authorizationFlowManagerDelegate = self.authorizationFlowManagerDelegate {

@@ -33,10 +33,12 @@ type Transition = (
   update: UpdateCase,
   theCase: Case,
   actor: Actor,
+  nationalId?: string,
 ) => UpdateCase
 
 interface IndictmentCaseRule {
   fromStates: IndictmentCaseState[]
+  fromAppealStates: (CaseAppealState | undefined)[]
   transition: Transition
 }
 
@@ -54,10 +56,10 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
     {
       fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
-      transition: (update: UpdateCase) => ({
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.WAITING_FOR_CONFIRMATION,
-        indictmentReturnedExplanation: null,
       }),
     },
   ],
@@ -65,7 +67,8 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.DENY_INDICTMENT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
-      transition: (update: UpdateCase) => ({
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.DRAFT,
       }),
@@ -75,7 +78,8 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.SUBMIT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
-      transition: (update: UpdateCase) => ({
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.SUBMITTED,
         indictmentDeniedExplanation: null,
@@ -83,10 +87,22 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.RECEIVE,
+    {
+      fromStates: [IndictmentCaseState.SUBMITTED],
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        state: CaseState.RECEIVED,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.MOVE,
     {
       fromStates: [IndictmentCaseState.RECEIVED],
-      transition: (update: UpdateCase) => ({
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         courtCaseNumber: null,
         judgeId: null,
@@ -99,7 +115,8 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
-      transition: (update: UpdateCase, theCase: Case) => {
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
         if (update.indictmentDecision ?? theCase.indictmentDecision) {
           throw new ForbiddenException(
             'Cannot ask for cancellation of an indictment that is already in progress at the district court',
@@ -111,28 +128,6 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
-    IndictmentCaseTransition.RECEIVE,
-    {
-      fromStates: [IndictmentCaseState.SUBMITTED],
-      transition: (update: UpdateCase) => ({
-        ...update,
-        state: CaseState.RECEIVED,
-      }),
-    },
-  ],
-  [
-    IndictmentCaseTransition.RETURN_INDICTMENT,
-    {
-      fromStates: [IndictmentCaseState.RECEIVED],
-      transition: (update: UpdateCase) => ({
-        ...update,
-        state: CaseState.DRAFT,
-        courtCaseNumber: null,
-        indictmentHash: null,
-      }),
-    },
-  ],
-  [
     IndictmentCaseTransition.COMPLETE,
     {
       fromStates: [
@@ -140,7 +135,8 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.RECEIVED,
         IndictmentCaseState.CORRECTING,
       ],
-      transition: (update: UpdateCase, theCase: Case) => ({
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => ({
         ...update,
         // Shouldn't ever happen since court end time should always be set
         // but just in case, we don't want rulingDate to be empty when completed.
@@ -156,7 +152,8 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.DRAFT,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
       ],
-      transition: (update: UpdateCase) => ({
+      fromAppealStates: [undefined],
+      transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.DELETED,
       }),
@@ -166,7 +163,14 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.REOPEN,
     {
       fromStates: [IndictmentCaseState.COMPLETED],
-      transition: (update: UpdateCase, theCase: Case) => {
+      fromAppealStates: [
+        undefined,
+        CaseAppealState.APPEALED,
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
+      ],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
         if (
           theCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.WITHDRAWAL
@@ -181,6 +185,129 @@ const indictmentCaseStateMachine: Map<
           state: CaseState.CORRECTING,
           courtRecordHash: null,
         }
+      },
+    },
+  ],
+  [
+    IndictmentCaseTransition.APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [undefined],
+      transition: (
+        update: UpdateCase,
+        theCase: Case,
+        actor: Actor,
+        nationalId?: string,
+      ): UpdateCase => {
+        if (
+          theCase.indictmentRulingDecision !==
+          CaseIndictmentRulingDecision.DISMISSAL
+        ) {
+          throw new ForbiddenException(
+            'Only dismissed indictment cases can be appealed',
+          )
+        }
+
+        if (actor === 'Prosecution') {
+          return {
+            ...update,
+            appealState: CaseAppealState.APPEALED,
+            prosecutorPostponedAppealDate:
+              update.prosecutorPostponedAppealDate ?? nowFactory(),
+          }
+        }
+
+        if (actor === 'Defence') {
+          return {
+            ...update,
+            appealState: CaseAppealState.APPEALED,
+            accusedPostponedAppealDate:
+              update.accusedPostponedAppealDate ?? nowFactory(),
+            appealedByNationalId: nationalId,
+          }
+        }
+
+        throw new ForbiddenException(
+          'Current user cannot appeal an indictment case',
+        )
+      },
+    },
+  ],
+  [
+    IndictmentCaseTransition.RECEIVE_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.APPEALED],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        appealState: CaseAppealState.RECEIVED,
+        appealReceivedByCourtDate: nowFactory(),
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.COMPLETE_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        appealState: CaseAppealState.COMPLETED,
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.REOPEN_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.COMPLETED],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        appealState: CaseAppealState.RECEIVED,
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.WITHDRAW_APPEAL,
+    {
+      fromStates: [
+        IndictmentCaseState.COMPLETED,
+        IndictmentCaseState.CORRECTING,
+      ],
+      fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        // We only want to set the appeal ruling decision if the
+        // case has already been received.
+        // Otherwise the court of appeals never knew of the appeal in
+        // the first place so it remains withdrawn without a decision.
+        if (
+          !(
+            update.appealRulingDecision ??
+            theCase.appealCase?.appealRulingDecision
+          ) &&
+          (update.appealState ?? theCase.appealCase?.appealState) ===
+            CaseAppealState.RECEIVED
+        ) {
+          return {
+            ...update,
+            appealState: CaseAppealState.WITHDRAWN,
+            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+          }
+        }
+
+        return { ...update, appealState: CaseAppealState.WITHDRAWN }
       },
     },
   ],
@@ -243,7 +370,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.NEW],
         fromAppealStates: [undefined],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           state: CaseState.DRAFT,
         }),
@@ -254,7 +381,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.DRAFT],
         fromAppealStates: [undefined],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           state: CaseState.SUBMITTED,
         }),
@@ -265,7 +392,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.SUBMITTED],
         fromAppealStates: [undefined],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           state: CaseState.RECEIVED,
         }),
@@ -276,7 +403,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.RECEIVED],
         fromAppealStates: [undefined],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           courtCaseNumber: null,
           judgeId: null,
@@ -337,7 +464,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.RECEIVED,
         ],
         fromAppealStates: [undefined],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           state: CaseState.DELETED,
           parentCaseId: null,
@@ -359,7 +486,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           CaseAppealState.COMPLETED,
           CaseAppealState.WITHDRAWN,
         ],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           state: CaseState.RECEIVED,
           rulingDate: null,
@@ -379,7 +506,11 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [undefined],
-        transition: (update: UpdateCase, theCase: Case, actor?: Actor) => {
+        transition: (
+          update: UpdateCase,
+          theCase: Case,
+          actor?: Actor,
+        ): UpdateCase => {
           if (actor === 'Prosecution') {
             return {
               ...update,
@@ -401,7 +532,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           }
 
           throw new ForbiddenException(
-            `${actor} cannot appeal a ${theCase.type} case`,
+            `Current user cannot appeal a ${theCase.type} case`,
           )
         },
       },
@@ -415,7 +546,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.APPEALED],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           appealState: CaseAppealState.RECEIVED,
           appealReceivedByCourtDate: nowFactory(),
@@ -431,7 +562,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
-        transition: (update: UpdateCase, theCase: Case) => {
+        transition: (update: UpdateCase, theCase: Case): UpdateCase => {
           const newUpdate = {
             ...update,
             appealState: CaseAppealState.COMPLETED,
@@ -489,7 +620,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.COMPLETED],
-        transition: (update: UpdateCase) => ({
+        transition: (update: UpdateCase): UpdateCase => ({
           ...update,
           appealState: CaseAppealState.RECEIVED,
         }),
@@ -504,7 +635,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
-        transition: (update: UpdateCase, theCase: Case) => {
+        transition: (update: UpdateCase, theCase: Case): UpdateCase => {
           // We only want to set the appeal ruling decision if the
           // case has already been received.
           // Otherwise the court of appeals never knew of the appeal in
@@ -535,8 +666,11 @@ const transitionIndictmentCase = (
   theCase: Case,
   update: UpdateCase,
   actor: Actor,
+  nationalId?: string,
 ): UpdateCase => {
   const currentState = update.state ?? theCase.state
+  const currentAppealState =
+    update.appealState ?? theCase.appealCase?.appealState
 
   if (
     !isIndictmentCaseTransition(transition) ||
@@ -549,9 +683,14 @@ const transitionIndictmentCase = (
 
   const rule = indictmentCaseStateMachine.get(transition)
 
-  if (!rule?.fromStates.some((state) => state === currentState)) {
+  if (
+    !rule?.fromStates.some((state) => state === currentState) ||
+    !rule?.fromAppealStates.some(
+      (appealState) => appealState === (currentAppealState ?? undefined),
+    )
+  ) {
     throw new ForbiddenException(
-      `The transition ${transition} cannot be applied to an indictment case in state ${currentState}`,
+      `The transition ${transition} cannot be applied to an indictment case in state ${currentState} and appeal state ${currentAppealState}`,
     )
   }
 
@@ -566,7 +705,7 @@ const transitionIndictmentCase = (
     )
   }
 
-  return rule.transition(update, theCase, actor)
+  return rule.transition(update, theCase, actor, nationalId)
 }
 
 const transitionRequestCase = (
@@ -620,7 +759,13 @@ export const transitionCase = function (
   }
 
   if (isIndictmentCase(theCase.type)) {
-    return transitionIndictmentCase(transition, theCase, update, actor)
+    return transitionIndictmentCase(
+      transition,
+      theCase,
+      update,
+      actor,
+      user.nationalId,
+    )
   }
 
   if (isRequestCase(theCase.type)) {

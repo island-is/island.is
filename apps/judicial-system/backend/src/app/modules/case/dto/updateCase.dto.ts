@@ -52,6 +52,22 @@ class UpdateDateLog {
   readonly location?: string
 }
 
+class UpdateCaseDefendantEventLogDecisionDto {
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly defendantId!: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly rulingDate?: Date
+
+  @IsEnum(CaseIndictmentRulingDecision)
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  readonly rulingDecision!: CaseIndictmentRulingDecision
+}
+
 export class UpdateCaseDto {
   @IsOptional()
   @IsEnum(CaseType)
@@ -493,11 +509,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly indictmentReturnedExplanation?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
   readonly postponedIndefinitelyExplanation?: string
 
   @IsOptional()
@@ -549,4 +560,14 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly penalties?: string
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateCaseDefendantEventLogDecisionDto)
+  @ApiPropertyOptional({
+    type: UpdateCaseDefendantEventLogDecisionDto,
+    isArray: true,
+  })
+  readonly defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecisionDto[]
 }

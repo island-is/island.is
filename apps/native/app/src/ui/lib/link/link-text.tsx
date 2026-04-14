@@ -35,7 +35,7 @@ export function LinkText({
   const theme = useTheme()
   const styles = variants[variant]
   const variantLineHeight = styles.lineHeight / styles.fontSize
-  const lineHeight = styles.fontSize * variantLineHeight ?? styles.lineHeight
+  const lineHeight = styles.fontSize * (variantLineHeight ?? styles.lineHeight)
   const fontFamily = fontByWeight(styles.fontWeight)
 
   return (

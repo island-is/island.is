@@ -15,6 +15,59 @@
     }
   ],
   "paths": {
+    "/api/DayRate/entries/{EntityId}/eligible-vehicles": {
+      "get": {
+        "tags": ["DayRate"],
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Api-Version",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidVehicle"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidVehicle"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidVehicle"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/DayRate/entries/{EntityId}": {
       "get": {
         "tags": ["DayRate"],
@@ -574,7 +627,13 @@
         "additionalProperties": false
       },
       "InsertRentalDaysModel": {
-        "required": ["dayRateEntryId", "numberOfDays", "permno"],
+        "required": [
+          "dayRateEntryId",
+          "month",
+          "numberOfDays",
+          "permno",
+          "year"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -582,6 +641,14 @@
             "nullable": true
           },
           "numberOfDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "year": {
             "type": "integer",
             "format": "int32"
           },
@@ -635,17 +702,9 @@
         "additionalProperties": false
       },
       "RentalDayRegistrationModel": {
-        "required": ["entries", "month", "year"],
+        "required": ["entries"],
         "type": "object",
         "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
           "entries": {
             "type": "array",
             "items": {
@@ -674,6 +733,21 @@
           "timabil": {
             "type": "string",
             "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidVehicle": {
+        "required": ["mileage", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "mileage": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

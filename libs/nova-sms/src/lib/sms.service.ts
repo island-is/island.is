@@ -4,6 +4,7 @@ import {
   createEnhancedFetch,
   type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { DogStatsD } from '@island.is/infra-metrics'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
@@ -48,6 +49,7 @@ export class NovaError extends Error {
 @Injectable()
 export class SmsService {
   private readonly fetch: EnhancedFetchAPI
+  private readonly metrics = new DogStatsD({ prefix: 'nova-sms.' })
 
   constructor(
     @Inject(smsModuleConfig.KEY)
@@ -104,11 +106,24 @@ export class SmsService {
 
     try {
       // Make HTTP POST request with Basic Auth
+      const creds = this.getCredentials(options?.payer)
+      if (!creds) {
+        this.logger.error(
+          `Missing Nova credentials for payer "${options?.payer}", SMS not sent`,
+        )
+        throw new NovaError(
+          true,
+          `Missing credentials for payer "${options?.payer}"`,
+        )
+      }
       const response = await this.fetch(this.config.url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: this.buildBasicAuthHeader(),
+          Authorization: this.buildBasicAuthHeader(
+            creds.username,
+            creds.password,
+          ),
         },
         body: JSON.stringify(requestBody),
       })
@@ -125,6 +140,12 @@ export class SmsService {
           response.status,
         )
       }
+
+      this.metrics.increment(
+        'sent',
+        1,
+        options?.payer ? { payer: options.payer } : undefined,
+      )
 
       // Map to simplified result
       return this.mapToSendResult(data)
@@ -173,7 +194,10 @@ export class SmsService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: this.buildBasicAuthHeader(),
+          Authorization: this.buildBasicAuthHeader(
+            this.config.username,
+            this.config.password,
+          ),
         },
         body: JSON.stringify(requestBody),
       })
@@ -206,11 +230,30 @@ export class SmsService {
   }
 
   /**
+   * Resolve credentials for a given payer, falling back to defaults
+   * @private
+   */
+  private getCredentials(payer?: string): {
+    username: string
+    password: string
+  } | null {
+    if (payer) {
+      const payerCreds = this.config.payerCredentials?.[payer]
+      const { username, password } = payerCreds ?? {}
+      if (username && password) {
+        return { username, password }
+      }
+      return null
+    }
+    return { username: this.config.username, password: this.config.password }
+  }
+
+  /**
    * Build HTTP Basic Authentication header
    * @private
    */
-  private buildBasicAuthHeader(): string {
-    const credentials = `${this.config.username}:${this.config.password}`
+  private buildBasicAuthHeader(username: string, password: string): string {
+    const credentials = `${username}:${password}`
     const base64Credentials = Buffer.from(credentials).toString('base64')
     return `Basic ${base64Credentials}`
   }

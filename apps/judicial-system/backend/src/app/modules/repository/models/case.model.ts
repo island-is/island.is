@@ -31,7 +31,6 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
@@ -826,13 +825,6 @@ export class Case extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentDeniedExplanation?: string
-
-  /**********
-   * The explanation given for the return of an indictment by the district court
-   **********/
-  @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  indictmentReturnedExplanation?: string
 
   /**********
    * The case's notifications
