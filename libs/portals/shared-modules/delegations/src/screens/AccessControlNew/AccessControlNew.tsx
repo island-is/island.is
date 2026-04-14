@@ -232,7 +232,7 @@ const AccessControlNew = () => {
             display="flex"
             columnGap={1}
             alignItems="center"
-            marginBottom={3}
+            marginBottom={4}
             paddingTop={2}
             borderBottomWidth="standard"
             borderColor="blue200"
@@ -293,8 +293,11 @@ const AccessControlNew = () => {
             display="flex"
             columnGap={1}
             alignItems="center"
-            marginBottom={3}
-            paddingTop={2}
+            marginBottom={4}
+            paddingTop={4}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+            paddingBottom={2}
           >
             <Box
               borderRadius="large"
