@@ -6,9 +6,11 @@ import {
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
   GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
+  GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class VMSTApplicationsService {
@@ -92,8 +94,9 @@ export class VMSTApplicationsService {
 
   async getApplicationOverview(
     auth: User,
+    locale?: Locale,
   ): Promise<GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse> {
-    return this.vmstUnemploymentService.getApplicationOverview(auth)
+    return this.vmstUnemploymentService.getApplicationOverview(auth, locale)
   }
 
   async resolveApplicant(
@@ -106,5 +109,15 @@ export class VMSTApplicationsService {
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse> {
     return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
+  }
+
+  async getApplicantOverview(
+    applicantId: string,
+    locale?: Locale,
+  ): Promise<GaldurXRoadAPIModelsApplicantApplicantOverviewResponse> {
+    return this.vmstUnemploymentService.getApplicantOverview(
+      applicantId,
+      locale,
+    )
   }
 }

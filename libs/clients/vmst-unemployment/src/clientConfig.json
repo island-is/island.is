@@ -394,6 +394,55 @@
         ]
       }
     },
+    "/api/ActivationGrant/{applicationId}/withdraw": {
+      "post": {
+        "tags": [
+          "ActivationGrant"
+        ],
+        "operationId": "ActivationGrant_WithdrawApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applicants/resolve": {
       "post": {
         "tags": [
@@ -419,6 +468,88 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ResolveApplicantResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/overview": {
+      "get": {
+        "tags": [
+          "Applicant"
+        ],
+        "operationId": "Applicant_Overview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantOverviewResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{ssn}/withdraw": {
+      "get": {
+        "tags": [
+          "Applicant"
+        ],
+        "operationId": "Applicant_CanWithdrawApplication",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
@@ -1103,6 +1234,34 @@
         ]
       }
     },
+    "/api/SupportData/delistingReasons": {
+      "get": {
+        "tags": [
+          "SupportData"
+        ],
+        "operationId": "SupportData_GetDelistingReasons",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_DelistingReasonDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/UnemploymentApplication": {
       "post": {
         "tags": [
@@ -1155,6 +1314,15 @@
               "type": "string"
             },
             "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
           }
         ],
         "responses": {
@@ -1394,6 +1562,55 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/{applicationId}/withdraw": {
+      "post": {
+        "tags": [
+          "UnemploymentApplication"
+        ],
+        "operationId": "UnemploymentApplication_WithdrawApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
@@ -5114,6 +5331,23 @@
           }
         }
       },
+      "Galdur_External_Domain_Requests_WithdrawApplicationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantSSN": {
+            "type": "string"
+          },
+          "withdrawDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reasonId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
       "Galdur_XRoad_API_Models_ResolveApplicantResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -5130,6 +5364,94 @@
         "properties": {
           "ssn": {
             "type": "string"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_ApplicantOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "passCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredJobs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bankAccount": {
+            "type": "string",
+            "nullable": true
+          },
+          "union": {
+            "type": "string",
+            "nullable": true
+          },
+          "pensionFund": {
+            "type": "string",
+            "nullable": true
+          },
+          "usedPersonalTaxCredit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfChildren": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "employmentHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "educationHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "drivingLicenses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languageAbilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_LanguageOverviewDTO"
+            }
+          },
+          "serviceArea": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentAddressDifferent": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "savedToEures": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_LanguageOverviewDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "proficiency": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -5228,13 +5550,6 @@
             "type": "number",
             "format": "decimal",
             "nullable": true
-          },
-          "rskEmploymentHistory": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer"
-            }
           }
         }
       },
@@ -5340,56 +5655,6 @@
           },
           "abilityId": {
             "type": "string"
-          }
-        }
-      },
-      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "nullable": true
-              },
-              "ssn": {
-                "type": "string",
-                "nullable": true
-              },
-              "periods": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Entities_RskPeriod": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "employerSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "startDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "endDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "ratio": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
@@ -5507,13 +5772,6 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_External_Domain_Models_EducationDTO"
-            }
-          },
-          "employmentHistory": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_External_Domain_Models_EmploymentDTO"
             }
           },
           "drivingLicenses": {
@@ -7299,6 +7557,41 @@
           }
         }
       },
+      "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Galdur_External_Domain_Models_SupportData_SettingsBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "otherId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "orderNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "english": {
+            "type": "string"
+          }
+        }
+      },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel": {
         "allOf": [
           {
@@ -9062,6 +9355,56 @@
           "serviceAreas": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "ssn": {
+                "type": "string",
+                "nullable": true
+              },
+              "periods": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_RskPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "ratio": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

@@ -1,6 +1,5 @@
 import { PortalRoute } from '@island.is/portals/core'
 import { ApiScope } from '@island.is/auth/scopes'
-import { lazy } from 'react'
 import { BffUser } from '@island.is/shared/types'
 import { m, sharedMessages } from '../messages'
 import { UnemploymentBenefitsPaths } from '../paths'
@@ -19,7 +18,7 @@ export const unemploymentBenefitsRoutes = (
   {
     name: sharedMessages.myStatus,
     path: UnemploymentBenefitsPaths.Status,
-    enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
+    enabled: true,
     dynamic: true,
     element: <Status />,
   },

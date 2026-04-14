@@ -9,8 +9,10 @@ import {
   ValidationUnemploymentApplication,
   UnemploymentApplicationOverview,
   VmstApplicationsOverview,
+  VmstApplicantOverview,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -69,8 +71,12 @@ export class VMSTApplicationsResolver {
     name: 'vmstApplicationsUnemploymentApplicationOverview',
   })
   @Audit()
-  async getApplicationOverview(@CurrentUser() auth: User) {
-    return this.vmstApplicationsService.getApplicationOverview(auth)
+  async getApplicationOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ) {
+    return this.vmstApplicationsService.getApplicationOverview(auth, locale)
   }
 
   @Query(() => VmstApplicationsOverview, {
@@ -87,5 +93,28 @@ export class VMSTApplicationsResolver {
     }
 
     return this.vmstApplicationsService.getApplicationsOverview(applicantId)
+  }
+
+  @Query(() => VmstApplicantOverview, {
+    name: 'vmstApplicantOverview',
+  })
+  @Audit()
+  async getApplicantOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    if (!applicantId) {
+      throw new Error('Could not resolve applicant')
+    }
+
+    return this.vmstApplicationsService.getApplicantOverview(
+      applicantId,
+      locale,
+    )
   }
 }

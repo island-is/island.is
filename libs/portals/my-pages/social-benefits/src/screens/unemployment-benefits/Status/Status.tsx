@@ -16,10 +16,12 @@ import { Problem } from '@island.is/react-spa/shared'
 
 // Atvinnuleysi – Staðan þín
 const Status = () => {
-  useNamespaces('sp.support-maintenance')
+  useNamespaces('sp.social-benefits-unemployment')
   const { formatMessage, locale } = useLocale()
   const { isMobile } = useIsMobile()
-  const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery()
+  const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({
+    variables: { locale },
+  })
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
   const availableActions = overview?.availableActions
@@ -28,30 +30,35 @@ const Status = () => {
       key: 'contact',
       icon: 'open' as const,
       label: formatMessage(um.statusContactUs),
+      href: formatMessage(um.statusContactUsUrl),
       visible: availableActions?.canContact !== false,
     },
     {
       key: 'submit',
       icon: 'documents' as const,
       label: formatMessage(um.statusSubmitDocuments),
+      href: formatMessage(um.statusSubmitDocumentsUrl),
       visible: availableActions?.canSubmitDocuments !== false,
     },
     {
       key: 'income',
       icon: 'wallet' as const,
       label: formatMessage(um.statusReportIncome),
+      href: formatMessage(um.statusReportIncomeUrl),
       visible: availableActions?.canReportWork !== false,
     },
     {
       key: 'travel',
       icon: 'airplane' as const,
       label: formatMessage(um.statusReportTravel),
+      href: formatMessage(um.statusReportTravelUrl),
       visible: availableActions?.canReportTravel !== false,
     },
     {
       key: 'unsubscribe',
       icon: 'logOut' as const,
       label: formatMessage(um.statusUnsubscribe),
+      href: formatMessage(um.statusUnsubscribeUrl),
       visible: availableActions?.canUnregister !== false,
     },
   ].filter((b) => b.visible)
@@ -76,16 +83,19 @@ const Status = () => {
           alignItems="stretch"
           marginBottom={4}
         >
-          {actionButtons.map(({ key, icon, label }) => (
-            <Button
-              key={key}
-              variant="utility"
-              size="small"
-              icon={icon}
-              iconType="outline"
-            >
-              {label}
-            </Button>
+          {actionButtons.map(({ key, icon, label, href }) => (
+            <a key={key} href={href} target="_blank" rel="noreferrer">
+              <Button
+                as="span"
+                unfocusable
+                variant="utility"
+                size="small"
+                icon={icon}
+                iconType="outline"
+              >
+                {label}
+              </Button>
+            </a>
           ))}
         </Box>
       )}
@@ -100,22 +110,31 @@ const Status = () => {
           marginTop={4}
           marginBottom={4}
         >
-          {actionButtons.map(({ key, icon, label }) => (
+          {actionButtons.map(({ key, icon, label, href }) => (
             <Box key={key} flexGrow={1} display="flex" alignItems="stretch">
-              <Button
-                variant="utility"
-                size="small"
-                icon={icon}
-                iconType="outline"
-                fluid
+              <a
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                style={{ display: 'flex', width: '100%' }}
               >
-                {label}
-              </Button>
+                <Button
+                  as="span"
+                  unfocusable
+                  variant="utility"
+                  size="small"
+                  icon={icon}
+                  iconType="outline"
+                  fluid
+                >
+                  {label}
+                </Button>
+              </a>
             </Box>
           ))}
         </Box>
       )}
-      {!availableActions?.canConfirmJobSearch && (
+      {!loading && availableActions?.canConfirmJobSearch !== false && (
         <Box marginBottom={4}>
           <ActionCard
             heading={formatMessage(um.jobSearchConfirmationHeading)}
@@ -165,7 +184,7 @@ const Status = () => {
             label: formatMessage(
               isMobile ? um.statusTabApplicantMobile : um.statusTabApplicant,
             ),
-            content: <ApplicantOverview items={[]} />,
+            content: <ApplicantOverview />,
           },
         ]}
       />
