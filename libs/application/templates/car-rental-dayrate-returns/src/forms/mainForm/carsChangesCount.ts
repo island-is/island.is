@@ -7,7 +7,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { UploadSelection } from '../../utils/constants'
 import { formatDayRateReturnsApiErrorMessages } from '../../utils/errorFormatUtils'
+import { PaginatedSearchableTableRow } from '@island.is/application/types'
 
 export const carsChangesCountSection = buildSection({
   id: 'carsChangesCountSection',
@@ -20,6 +22,21 @@ export const carsChangesCountSection = buildSection({
         buildStaticTableField({
           header: [m.carsChangesCount.header],
           rows: (application) => {
+            const uploadSelection =
+              getValueViaPath<string>(
+                application.answers,
+                'singleOrMultiSelectionRadio',
+              ) ?? UploadSelection.MULTI
+
+            if (uploadSelection === UploadSelection.SINGLE) {
+              const tableRows =
+                getValueViaPath<PaginatedSearchableTableRow[]>(
+                  application.answers,
+                  'vehicleDayRateUsageRows',
+                ) ?? []
+              return [[tableRows.length.toString()]]
+            }
+
             const data =
               getValueViaPath<number>(
                 application.answers,

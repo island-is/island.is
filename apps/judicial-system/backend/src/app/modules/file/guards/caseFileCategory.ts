@@ -43,6 +43,21 @@ const defenderCaseFileCategoriesForIndictmentCases =
     CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
     CaseFileCategory.DEFENDANT_CASE_FILE,
     CaseFileCategory.CIVIL_CLAIM,
+    // Appeal file categories — in indictment cases, all appeal files are
+    // visible to defence users (unlike request cases where prosecution
+    // case files are hidden)
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+    CaseFileCategory.APPEAL_RULING,
+    CaseFileCategory.APPEAL_COURT_RECORD,
   )
 
 const prisonAdminCaseFileCategories = [
@@ -151,6 +166,7 @@ const canDefenceUserViewCaseFile = ({
     const hasUserSubmittedCaseFile =
       (submittedBy || fileRepresentative) &&
       (userName === submittedBy || userName === fileRepresentative)
+
     return (
       canDefenceUserViewCaseFileOfIndictmentCase(
         nationalId,

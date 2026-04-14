@@ -1,4 +1,153 @@
 {
-  "name": "IslandApp",
-  "displayName": "IslandApp"
+  "expo": {
+    "name": "IslandApp",
+    "displayName": "Ísland.is",
+    "slug": "island-app",
+    "version": "1.41.2",
+    "orientation": "portrait",
+    "icon": "./assets/images/island_is/icon.png",
+    "scheme": "is.island.app",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/island_is/splashscreen.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "googleServicesFile": "./assets/firebase/GoogleService-Info.plist",
+      "supportsTablet": true,
+      "bundleIdentifier": "is.island.app.dev",
+      "buildNumber": "264",
+      "associatedDomains": ["webcredentials:island.is", "applinks:island.is"],
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.is.island.app"],
+        "keychain-access-groups": [
+          "$(AppIdentifierPrefix)is.island.app",
+          "$(AppIdentifierPrefix)is.island.app.dev"
+        ]
+      },
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "en",
+        "NSCameraUsageDescription": "Used for license scanning capabilities",
+        "NSFaceIDUsageDescription": "Used for unlocking the app",
+        "NSMicrophoneUsageDescription": "Used for license scanning capabilities",
+        "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME) needs access to your Photo Library to save captured photos and videos.",
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationCategoryType": "public.app-category.lifestyle",
+        "NSLocationWhenInUseUsageDescription": "Used for nearby features"
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": ["C617.1", "0A2A.1", "3B52.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1", "1C8F.1", "C56D.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": ["E174.1", "85F4.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+            "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
+          }
+        ]
+      },
+      "appleTeamId": "J3WWZR9JLF"
+    },
+    "android": {
+      "googleServicesFile": "./assets/firebase/google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/island_is/adaptive_icon.png",
+        "monochromeImage": "./assets/images/monochrome_icon.png"
+      },
+      "package": "is.island.app",
+      "versionCode": 264,
+      "permissions": ["android.permission.CAMERA"],
+      "blockedPermissions": ["com.google.android.gms.permission.AD_ID"],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "island.is",
+              "pathPrefix": [
+                "/minarsidur/postholf",
+                "/minarsidur/skirteini",
+                "/minarsidur/eignir/fasteignir",
+                "/minarsidur/eignir/okutaeki/min-okutaeki",
+                "/minarsidur/loftbru"
+              ]
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "./plugins/license-widget",
+      "expo-router",
+      "expo-sharing",
+      "expo-web-browser",
+      "expo-core-spotlight",
+      "react-native-vision-camera",
+      "@react-native-community/datetimepicker",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      "@react-native-firebase/perf",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "buildReactNativeFromSource": false,
+            "forceStaticLinking": ["RNFBApp"],
+            "ccacheEnabled": false,
+            "useHermesV1": false
+          },
+          "android": {
+            "buildReactNativeFromSource": false,
+            "useHermesV1": false
+          }
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/100Thin/IBMPlexSans_100Thin.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/200ExtraLight/IBMPlexSans_200ExtraLight.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/300Light/IBMPlexSans_300Light.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/400Regular/IBMPlexSans_400Regular.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/500Medium/IBMPlexSans_500Medium.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/600SemiBold/IBMPlexSans_600SemiBold.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/700Bold/IBMPlexSans_700Bold.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/100Thin_Italic/IBMPlexSans_100Thin_Italic.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/200ExtraLight_Italic/IBMPlexSans_200ExtraLight_Italic.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/300Light_Italic/IBMPlexSans_300Light_Italic.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/400Regular_Italic/IBMPlexSans_400Regular_Italic.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/500Medium_Italic/IBMPlexSans_500Medium_Italic.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic/IBMPlexSans_600SemiBold_Italic.ttf",
+            "../../../node_modules/@expo-google-fonts/ibm-plex-sans/700Bold_Italic/IBMPlexSans_700Bold_Italic.ttf"
+          ]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "owner": "island-is"
+  }
 }
