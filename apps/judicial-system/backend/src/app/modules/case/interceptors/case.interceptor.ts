@@ -220,7 +220,7 @@ const transformCase = (
   theCase: Case,
   user: User | undefined,
 ): Record<string, unknown> => {
-  const isDefence = Boolean(user && isDefenceUser(user))
+  const isDefence = isDefenceUser(user)
   const {
     defendants: transformedDefendants,
     allCancelledOrDismissed,
@@ -234,10 +234,7 @@ const transformCase = (
       }
 
   const stateOverride =
-    isDefence &&
-    isIndictmentCase(theCase.type) &&
-    allCancelledOrDismissed &&
-    theCase.state !== CaseState.COMPLETED
+    isDefence && isIndictmentCase(theCase.type) && allCancelledOrDismissed
       ? {
           state: CaseState.COMPLETED,
           rulingDate: latestCancelledOrDismissedDate,

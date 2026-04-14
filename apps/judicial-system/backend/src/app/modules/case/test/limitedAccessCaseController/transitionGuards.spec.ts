@@ -1,5 +1,6 @@
 import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -27,7 +28,11 @@ describe('LimitedAccessCaseController - Transition guards', () => {
       {
         guard: CaseTypeGuard,
         prop: {
-          allowedCaseTypes: [...restrictionCases, ...investigationCases],
+          allowedCaseTypes: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
         },
       },
     ],

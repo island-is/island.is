@@ -207,6 +207,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
+      appealedByNationalId
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
@@ -431,6 +432,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         submittedBy
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
       policeCaseNumbers
       indictmentSubtypes

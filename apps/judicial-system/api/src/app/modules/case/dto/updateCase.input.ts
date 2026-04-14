@@ -485,11 +485,6 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  readonly indictmentReturnedExplanation?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
   readonly postponedIndefinitelyExplanation?: string
 
   @Allow()

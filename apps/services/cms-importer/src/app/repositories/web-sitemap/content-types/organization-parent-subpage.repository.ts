@@ -57,7 +57,7 @@ export class OrganizationParentSubpageRepository implements SitemapUrlFetcher {
     >()
 
     while (organizationPageIds.length > 0) {
-      const ids = organizationPageIds.splice(0, 10)
+      const ids = organizationPageIds.splice(0, 15)
       const organizationPageResponse = await this.managementClient.getEntries({
         content_type: 'organizationPage',
         select: 'fields.slug,fields.title,sys',
@@ -74,7 +74,7 @@ export class OrganizationParentSubpageRepository implements SitemapUrlFetcher {
     }
 
     while (organizationSubpageIds.length > 0) {
-      const ids = organizationSubpageIds.splice(0, 10)
+      const ids = organizationSubpageIds.splice(0, 15)
       const organizationSubpageResponse =
         await this.managementClient.getEntries({
           content_type: 'organizationSubpage',

@@ -393,6 +393,7 @@ query Case($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
+      appealedByNationalId
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
@@ -422,7 +423,6 @@ query Case($input: CaseQueryInput!) {
       appealIsolationToDate
     }
     indictmentDeniedExplanation
-    indictmentReturnedExplanation
     arraignmentDate {
       date
       location
