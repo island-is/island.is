@@ -410,6 +410,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-positive-number',
     defaultMessage: 'Must be a positive number',
   },
+  addCorsOrigin: {
+    id: 'ap.ids-admin:add-cors-origin',
+    defaultMessage: 'Add origin',
+  },
   delegations: {
     id: 'ap.ids-admin:delegations',
     defaultMessage: 'Delegations',

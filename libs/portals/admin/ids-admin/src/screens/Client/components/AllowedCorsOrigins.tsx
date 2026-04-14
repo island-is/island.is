@@ -5,7 +5,6 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
 import { ClientFormTypes } from '../EditClient.schema'
-import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { FormCard } from '../../../components/FormCard/FormCard'
 
@@ -88,7 +87,7 @@ const AllowedCorsOrigins = ({
       shouldSupportMultiEnvironment={false}
       headerMarginBottom={3}
     >
-      <Box display="flex" columnGap={2} alignItems="flexStart" marginBottom={3}>
+      <Box display="flex" columnGap={1} alignItems="flexStart" marginBottom={5}>
         <Box flexGrow={1}>
           <Input
             name="corsOriginInput"
@@ -109,19 +108,19 @@ const AllowedCorsOrigins = ({
             backgroundColor="blue"
             errorMessage={inputError}
             hasError={!!inputError}
-            buttons={[
-              {
-                label: formatMessage(m.add),
-                name: 'add',
-                type: 'outline',
-                onClick: handleAdd,
-              },
-            ]}
           />
         </Box>
+        <Button
+          variant="ghost"
+          icon="add"
+          onClick={handleAdd}
+          disabled={newOrigin.length === 0}
+        >
+          {formatMessage(m.addCorsOrigin)}
+        </Button>
       </Box>
       {hasData && (
-        <ShadowBox style={{ maxHeight: 340 }}>
+        <Box style={{ maxHeight: 340 }}>
           <T.Table box={{ overflow: 'initial' }}>
             <T.Head sticky>
               <T.Row>
@@ -153,7 +152,7 @@ const AllowedCorsOrigins = ({
               ))}
             </T.Body>
           </T.Table>
-        </ShadowBox>
+        </Box>
       )}
       {origins.map((origin) => (
         <input
