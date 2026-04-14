@@ -83,6 +83,16 @@ export const m = {
       defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
       description: 'Message shown when no health center is found',
     },
+    education: {
+      id: 'hh.courses.application:userInformation.education',
+      defaultMessage: 'Menntun',
+      description: 'Title of education field',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:userInformation.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of job title field',
+    },
   }),
   prerequisites: defineMessages({
     nationalRegistryTitle: {
@@ -281,6 +291,21 @@ export const m = {
       id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
       description: 'Title of submit button in overview section without payment',
+    },
+    educationAndJobTitleHeading: {
+      id: 'hh.courses.application:overview.educationAndJobTitleHeading',
+      defaultMessage: 'Menntun og starfsheiti',
+      description: 'Heading for education and job title in overview section',
+    },
+    education: {
+      id: 'hh.courses.application:overview.education',
+      defaultMessage: 'Menntun',
+      description: 'Heading for education in overview section',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:overview.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Heading for job title in overview section',
     },
   }),
   completedForm: defineMessages({

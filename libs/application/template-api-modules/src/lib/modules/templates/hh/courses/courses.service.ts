@@ -84,7 +84,7 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { name, email, phone, healthcenter, nationalId } =
+      const { name, email, phone, healthcenter, nationalId, education, jobTitle } =
         await this.extractApplicantInfo(application)
 
       if (!name || !email || !phone || !nationalId)
@@ -109,6 +109,8 @@ export class CoursesService extends BaseTemplateApiService {
         email,
         phone,
         healthcenter,
+        education,
+        jobTitle,
       )
 
       const success = await this.zendeskService.submitTicket({
@@ -427,6 +429,14 @@ export class CoursesService extends BaseTemplateApiService {
       application.answers,
       'userInformation.healthcenter',
     )
+    const education = getValueViaPath<string>(
+      application.answers,
+      'education',
+    )
+    const jobTitle = getValueViaPath<string>(
+      application.answers,
+      'jobTitle',
+    )
 
     return {
       nationalId,
@@ -434,6 +444,8 @@ export class CoursesService extends BaseTemplateApiService {
       email,
       phone,
       healthcenter,
+      education,
+      jobTitle,
     }
   }
 
@@ -469,6 +481,8 @@ export class CoursesService extends BaseTemplateApiService {
     email: string,
     phone: string,
     healthcenter?: string,
+    education?: string,
+    jobTitle?: string,
   ): Promise<string> {
     const courseHasChargeItemCode = Boolean(courseInstance.chargeItemCode)
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
@@ -505,6 +519,8 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
     message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
+    if (education) message += `Menntun umsækjanda: ${education}\n`
+    if (jobTitle) message += `Starfsheiti umsækjanda: ${jobTitle}\n`
 
     if (courseHasChargeItemCode) {
       const payer =

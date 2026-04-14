@@ -27,4 +27,6 @@ export type ApplicationAnswers = {
   courseSelect: string
   dateSelect: string
   courseHasChargeItemCode?: boolean
+  education?: string
+  jobTitle?: string
 }

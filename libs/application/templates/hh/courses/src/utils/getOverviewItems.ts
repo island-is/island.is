@@ -85,3 +85,31 @@ export const getPayerOverviewItems = (
 
   return items
 }
+
+export const getEducationAndJobTitleOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const items: Array<KeyValueItem> = []
+
+  const education = getValueViaPath<string>(answers, 'education')
+  const jobTitle = getValueViaPath<string>(answers, 'jobTitle')
+
+  if (education) {
+    items.push({
+      width: 'half',
+      keyText: m.overview.education,
+      valueText: education,
+    })
+  }
+
+  if (jobTitle) {
+    items.push({
+      width: 'half',
+      keyText: m.overview.jobTitle,
+      valueText: jobTitle,
+    })
+  }
+
+  return items
+}

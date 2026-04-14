@@ -8,6 +8,17 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { getCachedCourseListPageId } from '../../utils/loadOptions'
+
+const COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS = '147YftiWFQsBcbUFFe2rj1'
+
+const isCourseForProfessionals = (answers: Record<string, unknown>) => {
+  const courseId = getValueViaPath<string>(answers, 'courseSelect', '')
+  return (
+    getCachedCourseListPageId(courseId) ===
+    COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS
+  )
+}
 
 export const userInformation = buildSection({
   id: 'userInformation',
@@ -84,6 +95,18 @@ export const userInformation = buildSection({
               externalData,
               'currentHealthcenter.data.healthCenter',
             ),
+        }),
+        buildTextField({
+          id: 'education',
+          title: m.userInformation.education,
+          width: 'half',
+          condition: (answers) => isCourseForProfessionals(answers),
+        }),
+        buildTextField({
+          id: 'jobTitle',
+          title: m.userInformation.jobTitle,
+          width: 'half',
+          condition: (answers) => isCourseForProfessionals(answers),
         }),
       ],
     }),
