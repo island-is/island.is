@@ -16,10 +16,7 @@ export {
   UploadState,
   useCourtUpload,
 } from './useCourtUpload'
-export {
-  getAppealDecision,
-  default as useAppealAlertBanner,
-} from './useAppealAlertBanner'
+export { getAppealDecision, default as useAppealCase } from './useAppealCase'
 export { default as useSort } from './useSort/useSort'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'

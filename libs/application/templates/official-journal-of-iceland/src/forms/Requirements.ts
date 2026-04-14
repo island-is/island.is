@@ -98,7 +98,6 @@ export const Requirements: Form = buildForm({
               id: 'additionalParties',
               component: 'AdditionalPartiesScreen',
             }),
-            buildSubmitToDraftField('toDraftFromAdditionalParties'),
           ],
         }),
         buildMultiField({
@@ -110,7 +109,23 @@ export const Requirements: Form = buildForm({
     buildSection({
       id: Routes.TYPE_SELECTION,
       title: typeSelection.general.section,
-      children: [],
+      condition: isMinistry,
+      children: [
+        buildMultiField({
+          id: Routes.TYPE_SELECTION,
+          children: [
+            buildCustomField({
+              id: 'typeSelection',
+              component: 'TypeSelectionScreen',
+            }),
+            buildSubmitToDraftField('toDraftFromTypeSelection'),
+          ],
+        }),
+        buildMultiField({
+          id: '',
+          children: [],
+        }),
+      ],
     }),
     buildSection({
       id: Routes.ADVERT,

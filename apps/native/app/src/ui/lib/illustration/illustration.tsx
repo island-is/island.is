@@ -4,6 +4,7 @@ import styled, { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
 import gridDotSrc from '../../assets/illustrations/grid-dot.png'
 import { dynamicColor } from '../../utils'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Host = styled.SafeAreaView<{ isBottom: boolean }>`
   background-color: ${dynamicColor((props) => ({
