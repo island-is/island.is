@@ -714,10 +714,7 @@ export const assigneeAssetDeclarationOverviewItems = (
 ): Array<KeyValueItem> => {
   const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
   const hasAssets =
-    getValueViaPath<string>(
-      answers,
-      `${prefix}.assetDeclerationRadio`,
-    ) === YES
+    getValueViaPath<string>(answers, `${prefix}.assetDeclerationRadio`) === YES
 
   const items: Array<KeyValueItem> = [
     {
