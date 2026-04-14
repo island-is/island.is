@@ -19,6 +19,7 @@ import { IDSAdminPaths } from '../../../lib/paths'
 import { m } from '../../../lib/messages'
 import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
 import { useGetScopeClientsQuery } from './PermissionApplications.generated'
+import { ClientType } from '../../../components/ClientType'
 
 export const PermissionApplications = () => {
   const { formatMessage, locale } = useLocale()
@@ -47,12 +48,14 @@ export const PermissionApplications = () => {
       border="standard"
       display="flex"
       flexDirection="column"
-      rowGap={3}
+      rowGap={2}
     >
       <Text as="h2" variant="h3">
         {formatMessage(m.clients)}
       </Text>
-      <Text>{formatMessage(m.permissionApplicationsDescription)}</Text>
+      <Text marginBottom={3}>
+        {formatMessage(m.permissionApplicationsDescription)}
+      </Text>
       {error ? (
         <AlertMessage
           message={formatMessage(m.errorLoadingData)}
@@ -108,7 +111,7 @@ export const PermissionApplications = () => {
                       </Button>
                     </T.Data>
                     <T.Data>
-                      <Text>{client.clientType}</Text>
+                      <ClientType client={{ clientType: client.clientType }} />
                     </T.Data>
                   </T.Row>
                 )
