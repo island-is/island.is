@@ -91,7 +91,6 @@ const ALL_TYPES: `${SearchableContentTypes}`[] = [
   'webLifeEventPage',
   'webDigitalIcelandService',
   'webDigitalIcelandCommunityPage',
-  'webSubArticle',
   'webLink',
   'webNews',
   'webOrganizationSubpage',
@@ -145,7 +144,6 @@ const connectedTypes: Partial<
 > = {
   webArticle: [
     'WebArticle',
-    'WebSubArticle',
     'WebOrganizationSubpage',
     'webOrganizationPage',
     'WebProjectPage',
@@ -208,10 +206,6 @@ const Search: Screen<CategoryProps> = ({
 
       total +=
         (countResults?.typesCount ?? []).find((x) => x.key === 'webArticle')
-          ?.count ?? 0
-
-      total +=
-        (countResults?.typesCount ?? []).find((x) => x.key === 'webSubArticle')
           ?.count ?? 0
 
       total +=
@@ -297,7 +291,6 @@ const Search: Screen<CategoryProps> = ({
     | Record<string, string> = useMemo(
     () => ({
       webArticle: n('webArticle', 'Greinar'),
-      webSubArticle: n('webSubArticle', 'Undirgreinar'),
       webLink: n('webLink', 'Tenglar'),
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
