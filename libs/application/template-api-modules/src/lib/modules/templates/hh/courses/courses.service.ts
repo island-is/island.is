@@ -84,8 +84,15 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { name, email, phone, healthcenter, nationalId, education, jobTitle } =
-        await this.extractApplicantInfo(application)
+      const {
+        name,
+        email,
+        phone,
+        healthcenter,
+        nationalId,
+        education,
+        jobTitle,
+      } = await this.extractApplicantInfo(application)
 
       if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
@@ -429,14 +436,8 @@ export class CoursesService extends BaseTemplateApiService {
       application.answers,
       'userInformation.healthcenter',
     )
-    const education = getValueViaPath<string>(
-      application.answers,
-      'education',
-    )
-    const jobTitle = getValueViaPath<string>(
-      application.answers,
-      'jobTitle',
-    )
+    const education = getValueViaPath<string>(application.answers, 'education')
+    const jobTitle = getValueViaPath<string>(application.answers, 'jobTitle')
 
     return {
       nationalId,
