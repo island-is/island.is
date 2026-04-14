@@ -944,14 +944,19 @@ export class PoliceService {
           subtypes: subtype ? [subtype] : [],
         })
       } else {
-        if (date && (!foundCase.date || date > foundCase.date)) {
+        const isNewer = date && (!foundCase.date || date > foundCase.date)
+
+        if (isNewer) {
           foundCase.place = place
           foundCase.date = date
           foundCase.licencePlate = licencePlate
           foundCase.subtypes = []
         }
 
-        if (subtype && !foundCase.subtypes?.includes(subtype)) {
+        const isRelevant =
+          !foundCase.date || (date && date >= foundCase.date)
+
+        if (subtype && isRelevant && !foundCase.subtypes?.includes(subtype)) {
           foundCase.subtypes?.push(subtype)
         }
       }

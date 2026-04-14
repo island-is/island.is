@@ -361,6 +361,7 @@ export class CaseRepositoryService {
 
       if (
         results.rows.length > 0 &&
+        !options?.raw &&
         this.shouldResolvePoliceCaseNumbers(options?.attributes)
       ) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
