@@ -27,8 +27,6 @@ export const editTenantLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     }
 
     if (!userInfo.scopes.includes(AdminPortalScope.idsAdminSuperUser)) {
-      // Non-super admins have no business on the domain edit page; bounce
-      // them back to the tenant's applications list which they can use.
       return redirect(
         replaceParams({
           href: IDSAdminPaths.IDSAdminClients,

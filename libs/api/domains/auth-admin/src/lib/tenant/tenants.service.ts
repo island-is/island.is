@@ -25,8 +25,6 @@ export class TenantsService extends MultiEnvironmentService {
       ),
     )
 
-    // Intermediate shape: TenantEnvironment plus the tenant-level nationalId
-    // captured from the backend so we can attach it to the Tenant below.
     type TenantListEnvironment = TenantEnvironment & { nationalId?: string }
 
     const tenantsEnvironments: TenantListEnvironment[] =
@@ -97,11 +95,6 @@ export class TenantsService extends MultiEnvironmentService {
     }
   }
 
-  /**
-   * Returns the full Tenant with per-environment data on each
-   * `TenantEnvironment`. Used by the edit page so the user can switch
-   * environments without re-fetching.
-   */
   async getTenantByIdForAdmin(id: string, user: User): Promise<Tenant> {
     const settled = await Promise.allSettled(
       environments.map((environment) =>
@@ -133,8 +126,6 @@ export class TenantsService extends MultiEnvironmentService {
       throw new Error(`Tenant ${id} not found`)
     }
 
-    // Aggregated top-level fields (convenience for slim consumers). We pick
-    // the first environment that has the field populated.
     const primary = tenantEnvironments[0]
 
     return {
@@ -218,11 +209,6 @@ export class TenantsService extends MultiEnvironmentService {
     })
   }
 
-  /**
-   * Copy a tenant from one environment to another. Reads the source
-   * environment's full data and POSTs it to the target. Mirrors
-   * `ClientsService.publishClient`.
-   */
   async publishTenant(
     user: User,
     input: PublishTenantInput,
@@ -282,11 +268,7 @@ export class TenantsService extends MultiEnvironmentService {
   }
 
   async deleteTenant(user: User, input: DeleteTenantInput): Promise<boolean> {
-    // "Success-if-any" across environments. We must filter to environments
-    // that are actually configured — otherwise `makeRequest` silently
-    // resolves to `null` (without throwing) for unconfigured envs and the
-    // absence-of-error check would treat them as successful. In a single-env
-    // local setup that made a failing delete look like it succeeded.
+    // Only attempt deletion on configured environments.
     const configuredEnvironments = environments.filter((environment) =>
       this.isEnvironmentConfigured(environment),
     )

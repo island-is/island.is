@@ -12,8 +12,6 @@ export class Tenant {
   @Field(() => [TenantEnvironment])
   environments!: TenantEnvironment[]
 
-  // Admin-only detail fields. Nullable so the existing list query stays
-  // backward compatible — they are only populated by the admin details query.
   @Field({ nullable: true })
   nationalId?: string
 

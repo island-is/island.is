@@ -1,4 +1,3 @@
-import * as kennitala from 'kennitala'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsEmail,
@@ -6,18 +5,9 @@ import {
   IsOptional,
   IsString,
   Matches,
-  ValidateBy,
 } from 'class-validator'
 
-const IsKennitala = () =>
-  ValidateBy({
-    name: 'isKennitala',
-    validator: {
-      validate: (value): boolean =>
-        typeof value === 'string' && kennitala.isValid(value),
-      defaultMessage: () => 'National id must be a valid kennitala',
-    },
-  })
+import { IsNationalId } from '@island.is/nest/core'
 
 const SAFE_TEXT_REGEX = /^[^<>%$]+$/
 
@@ -36,7 +26,7 @@ export class AdminCreateTenantDto {
   @Matches(/^\d{10}$/, {
     message: 'National id must be 10 digits',
   })
-  @IsKennitala()
+  @IsNationalId()
   @ApiProperty({ example: '0123456789' })
   nationalId!: string
 

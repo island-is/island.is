@@ -322,11 +322,7 @@ describe('TenantsService', () => {
       await app?.cleanUp()
     })
 
-    // Regression: previously the "success-if-any" aggregation started every
-    // environment at `success: true` and never flipped unconfigured envs to
-    // false. With only dev configured locally, a failing dev delete left
-    // staging/prod marked as fake successes, and the mutation returned true
-    // even though nothing was deleted.
+    // Ensure unconfigured environments don't count as successes.
     it('returns false when the only configured environment fails', async () => {
       deleteMockDevApi.meTenantsControllerDeleteRaw.mockRejectedValue(
         new Error('tenant has references'),
