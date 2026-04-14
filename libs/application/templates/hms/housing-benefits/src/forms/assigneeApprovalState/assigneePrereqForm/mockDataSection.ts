@@ -8,6 +8,10 @@ import {
 } from '@island.is/application/core'
 import { prereqMessages as m } from '../../../lib/messages'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
+import {
+  assigneeUseMock,
+  assigneeUseTaxReturnMock,
+} from '../../../utils/conditions'
 
 export const assigneeMockDataSection = buildSection({
   id: 'assigneeMockDataSection',
@@ -33,6 +37,20 @@ export const assigneeMockDataSection = buildSection({
           marginBottom: 3,
         }),
         buildCheckboxField({
+          condition: assigneeUseMock,
+          id: (application, user) =>
+            nationalIdPreface(
+              application,
+              user,
+              'assigneeDevMockSettings.mockNationalRegistryAddress',
+            ),
+          options: [
+            { value: YES, label: m.devMockNationalRegistryAddressLabel },
+          ],
+          marginBottom: 2,
+        }),
+        buildCheckboxField({
+          condition: assigneeUseMock,
           id: (application, user) =>
             nationalIdPreface(
               application,
@@ -43,6 +61,7 @@ export const assigneeMockDataSection = buildSection({
           marginBottom: 2,
         }),
         buildRadioField({
+          condition: assigneeUseTaxReturnMock,
           id: (application, user) =>
             nationalIdPreface(
               application,
@@ -62,18 +81,6 @@ export const assigneeMockDataSection = buildSection({
             },
           ],
           defaultValue: 'withSampleData',
-          marginBottom: 2,
-        }),
-        buildCheckboxField({
-          id: (application, user) =>
-            nationalIdPreface(
-              application,
-              user,
-              'assigneeDevMockSettings.mockNationalRegistryAddress',
-            ),
-          options: [
-            { value: YES, label: m.devMockNationalRegistryAddressLabel },
-          ],
           marginBottom: 2,
         }),
       ],

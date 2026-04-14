@@ -1,7 +1,11 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
-import { getNationalIdPrefix } from './assigneeUtils'
+import { getNationalIdPrefix, nationalIdPreface } from './assigneeUtils'
 import { doesAssigneeAddressMatchRentalContract } from './rentalAgreementUtils'
 
 export const shouldShowRefetchNationalRegistrySection = (
@@ -23,4 +27,36 @@ export const shouldShowRefetchNationalRegistrySection = (
     user,
   )
   return isCheckboxChecked && !addressMatches
+}
+
+export const assigneeUseMock = (
+  answers: FormValue,
+  externalData: ExternalData,
+  user: BffUser | null,
+) => {
+  if (!user) return false
+
+  const radioId = nationalIdPreface(
+    { answers, externalData } as Application,
+    user,
+    'assigneeDevMockSettings.useMock',
+  )
+  const radioValue = getValueViaPath<string>(answers, radioId)
+  return radioValue === YES
+}
+
+export const assigneeUseTaxReturnMock = (
+  answers: FormValue,
+  externalData: ExternalData,
+  user: BffUser | null,
+) => {
+  if (!user) return false
+
+  const checkedValueName = nationalIdPreface(
+    { answers, externalData } as Application,
+    user,
+    'assigneeDevMockSettings.mockTaxReturn',
+  )
+  const checkedValue = getValueViaPath<string[]>(answers, checkedValueName)
+  return checkedValue ? checkedValue.includes(YES) : false
 }

@@ -216,6 +216,9 @@ const template: ApplicationTemplate<
               actions: 'recordSignedAssignee',
             },
           ],
+          [DefaultEvents.EDIT]: {
+            target: States.ASSIGNEE_APPROVAL,
+          },
         },
       },
       [States.APPLICANT_SUBMIT]: {
@@ -386,9 +389,9 @@ const template: ApplicationTemplate<
         const normalized = kennitala.isValid(nationalId)
           ? kennitala.sanitize(nationalId)
           : nationalId
-        const signed = ((application.answers?.signedAssignees ?? []) as string[]).map(
-          (id) => (kennitala.isValid(id) ? kennitala.sanitize(id) : id),
-        )
+        const signed = (
+          (application.answers?.signedAssignees ?? []) as string[]
+        ).map((id) => (kennitala.isValid(id) ? kennitala.sanitize(id) : id))
         const allSigned = new Set([...signed, normalized])
         return allSigned.size >= (application.assignees ?? []).length
       },
@@ -401,7 +404,8 @@ const template: ApplicationTemplate<
         const normalized = kennitala.isValid(nationalId)
           ? kennitala.sanitize(nationalId)
           : nationalId
-        const existing = (application.answers?.signedAssignees ?? []) as string[]
+        const existing = (application.answers?.signedAssignees ??
+          []) as string[]
         const existingSet = new Set(
           existing.map((id) =>
             kennitala.isValid(id) ? kennitala.sanitize(id) : id,

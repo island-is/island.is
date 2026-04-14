@@ -65,7 +65,6 @@ export const mockDataSection = buildSection({
               label: m.devMockTaxVariantEmpty,
             },
           ],
-          defaultValue: 'withSampleData',
           marginBottom: 2,
           condition: (answers) =>
             devMockEnabled(answers) && devMockTaxChecked(answers),

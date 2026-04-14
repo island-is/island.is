@@ -15,12 +15,6 @@ import { DefaultEvents } from '@island.is/application/types'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
 
 export const externalDataSection = buildSection({
-  condition: (answers, externalData) => {
-    console.log('answers: ', answers)
-    console.log('externalData: ', externalData)
-
-    return true
-  },
   id: 'assigneePrereqExternalData',
   title: m.assigneeApproval.title,
   children: [
@@ -58,7 +52,7 @@ export const externalDataSection = buildSection({
         refetchApplicationAfterSubmit: true,
         actions: [
           {
-            event: DefaultEvents.SUBMIT,
+            event: DefaultEvents.EDIT,
             name: coreMessages.buttonNext,
             type: 'primary',
           },
