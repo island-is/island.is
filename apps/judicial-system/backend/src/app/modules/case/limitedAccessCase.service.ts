@@ -37,7 +37,11 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
-import { FileService, getDefenceUserCaseFileCategories } from '../file'
+import {
+  FileService,
+  getDefenceUserCaseFileCategories,
+  getDefenceUserCutoffDate,
+} from '../file'
 import {
   AppealCase,
   Case,
@@ -302,6 +306,9 @@ export const include: Includeable[] = [
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
@@ -758,6 +765,11 @@ export class LimitedAccessCaseService {
       theCase.civilClaimants,
     )
 
+    const cutoffDate = getDefenceUserCutoffDate(
+      user.nationalId,
+      theCase.defendants,
+    )
+
     const allowedCaseFiles =
       theCase.caseFiles?.filter((file) => {
         if (!file.isKeyAccessible || !file.category) {
@@ -765,6 +777,10 @@ export class LimitedAccessCaseService {
         }
 
         if (!allowedCaseFileCategories.includes(file.category)) {
+          return false
+        }
+
+        if (cutoffDate && file.created > cutoffDate) {
           return false
         }
 
