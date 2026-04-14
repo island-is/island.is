@@ -32,6 +32,7 @@ import {
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -233,7 +234,7 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   ) : children ? (
     <>
       <Box
-        paddingY={[0, 0, 3, 6]}
+        paddingBottom={[0, 0, 3, 6]}
         paddingX={[0, 0, 4]}
         background="purple100"
         className={styles.processContainer}
@@ -241,6 +242,9 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         <GridContainer className={styles.container}>
           <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+              <Box marginY={3} marginX={[3, 3, 0, 0]}>
+                <BreadCrumbs />
+              </Box>
               <Box
                 background="white"
                 borderColor="white"
