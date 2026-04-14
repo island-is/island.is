@@ -294,6 +294,9 @@ const Search: Screen<CategoryProps> = ({
           labels.push(item.organizationPageTitle)
         }
         break
+      case 'Course':
+        if (item.organizationTitle) labels.push(item.organizationTitle)
+        break
       default:
         break
     }

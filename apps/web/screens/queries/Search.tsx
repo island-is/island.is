@@ -328,6 +328,8 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           courseSlug: slug
           courseListPageId
+          organizationTitle
+          intro
         }
       }
       tagCounts {

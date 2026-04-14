@@ -5,6 +5,7 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { GetCoursesInput } from '../dto/getCourses.input'
 import { GetCourseSelectOptionsInput } from '../dto/getCourseSelectOptions.input'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 
 @ObjectType()
 class CourseInstanceTimeDuration {
@@ -88,6 +89,12 @@ export class Course {
 
   @Field(() => Boolean, { nullable: true })
   showPlaceholderTextIfNoCourseInstances?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  intro?: string | null
+
+  @Field(() => String, { nullable: true })
+  organizationTitle?: string | null
 }
 
 @ObjectType()
@@ -124,6 +131,11 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
     slug: fields.slug?.trim() ?? null,
     showPlaceholderTextIfNoCourseInstances:
       fields.showPlaceholderTextIfNoCourseInstances ?? true,
+    intro: fields.cardIntro
+      ? documentToPlainTextString(fields.cardIntro).trim()
+      : '',
+    organizationTitle:
+      fields.courseListPage?.fields?.organization?.fields?.title ?? '',
   }
 }
 
