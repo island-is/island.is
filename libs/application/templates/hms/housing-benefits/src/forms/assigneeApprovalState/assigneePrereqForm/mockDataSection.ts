@@ -3,23 +3,11 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  getValueViaPath,
   NO,
   YES,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
 import { prereqMessages as m } from '../../../lib/messages'
-
-const devMockEnabled = (answers: FormValue) =>
-  getValueViaPath<string>(answers, 'assigneeDevMockSettings.useMock') === YES
-
-const devMockTaxChecked = (answers: FormValue) => {
-  const tax = getValueViaPath<string[]>(
-    answers,
-    'assigneeDevMockSettings.mockTaxReturn',
-  )
-  return Array.isArray(tax) && tax.includes(YES)
-}
+import { nationalIdPreface } from '../../../utils/assigneeUtils'
 
 export const assigneeMockDataSection = buildSection({
   id: 'assigneeMockDataSection',
@@ -30,7 +18,12 @@ export const assigneeMockDataSection = buildSection({
       title: m.devMockSectionTitle,
       children: [
         buildRadioField({
-          id: 'assigneeDevMockSettings.useMock',
+          id: (application, user) =>
+            nationalIdPreface(
+              application,
+              user,
+              'assigneeDevMockSettings.useMock',
+            ),
           title: m.devMockUseMockTitle,
           width: 'full',
           options: [
@@ -40,13 +33,22 @@ export const assigneeMockDataSection = buildSection({
           marginBottom: 3,
         }),
         buildCheckboxField({
-          id: 'assigneeDevMockSettings.mockTaxReturn',
+          id: (application, user) =>
+            nationalIdPreface(
+              application,
+              user,
+              'assigneeDevMockSettings.mockTaxReturn',
+            ),
           options: [{ value: YES, label: m.devMockTaxLabel }],
           marginBottom: 2,
-          condition: devMockEnabled,
         }),
         buildRadioField({
-          id: 'assigneeDevMockSettings.mockTaxReturnVariant',
+          id: (application, user) =>
+            nationalIdPreface(
+              application,
+              user,
+              'assigneeDevMockSettings.mockTaxReturnVariant',
+            ),
           title: m.devMockTaxVariantTitle,
           width: 'full',
           options: [
@@ -61,16 +63,18 @@ export const assigneeMockDataSection = buildSection({
           ],
           defaultValue: 'withSampleData',
           marginBottom: 2,
-          condition: (answers) =>
-            devMockEnabled(answers) && devMockTaxChecked(answers),
         }),
         buildCheckboxField({
-          id: 'assigneeDevMockSettings.mockNationalRegistryAddress',
+          id: (application, user) =>
+            nationalIdPreface(
+              application,
+              user,
+              'assigneeDevMockSettings.mockNationalRegistryAddress',
+            ),
           options: [
             { value: YES, label: m.devMockNationalRegistryAddressLabel },
           ],
           marginBottom: 2,
-          condition: devMockEnabled,
         }),
       ],
     }),

@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getHouseholdMembersForTable } from './rentalAgreementUtils'
@@ -171,16 +171,33 @@ export const getAssigneeApproverDisplayName = (
   return member?.name?.trim() ?? ''
 }
 
+export const getNationalIdPrefix = (user: BffUser): string => {
+  const nationalId = user.profile.nationalId
+  return kennitala.isValid(nationalId)
+    ? kennitala.sanitize(nationalId)
+    : nationalId
+}
+
 export const nationalIdPreface = (
   _application: Application,
   user: BffUser,
   fieldKey: string,
 ) => {
-  const nationalId = user.profile.nationalId
-  const normalized = kennitala.isValid(nationalId)
-    ? kennitala.sanitize(nationalId)
-    : nationalId
-  return `${normalized}.${fieldKey}`
+  return `${getNationalIdPrefix(user)}.${fieldKey}`
+}
+
+export const findCurrentAssigneeBackId = (
+  answers: FormValue,
+  fieldSuffix: string,
+): string | undefined => {
+  const ans = answers as Record<string, any>
+  const signed = getValueViaPath<string[]>(answers, 'signedAssignees') ?? []
+  for (const key of Object.keys(ans)) {
+    if (ans[key]?.[fieldSuffix] !== undefined && !signed.includes(key)) {
+      return `${key}.${fieldSuffix}`
+    }
+  }
+  return undefined
 }
 
 /**

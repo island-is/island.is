@@ -8,6 +8,10 @@ import {
   NO,
   getValueViaPath,
 } from '@island.is/application/core'
+import {
+  nationalIdPreface,
+  getNationalIdPrefix,
+} from '../../../utils/assigneeUtils'
 import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
 export const assetDeclerationSection = buildSection({
@@ -17,7 +21,7 @@ export const assetDeclerationSection = buildSection({
   title: 'Eignayfirlýsing',
   children: [
     buildMultiField({
-      id: 'assetDecleration',
+      id: 'assetDeclerationMultiField',
       title: 'Eignayfirlýsing',
       children: [
         buildDescriptionField({
@@ -32,7 +36,8 @@ export const assetDeclerationSection = buildSection({
           marginBottom: 4,
         }),
         buildRadioField({
-          id: 'assetDeclerationRadio',
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'assetDeclerationRadio'),
           title: 'Átt þú einhverskonar eignir?',
           description:
             'Eignir geta til dæmis verið: Fasteignir, ökutæki, hlutabréf eða fjármagn',
@@ -43,9 +48,16 @@ export const assetDeclerationSection = buildSection({
           marginBottom: 4,
         }),
         buildTextField({
-          condition: (answers) =>
-            getValueViaPath(answers, 'assetDeclerationRadio') === YES,
-          id: 'assetDeclerationTextField',
+          condition: (_answers, _externalData, user) => {
+            if (!user) return false
+            const prefix = getNationalIdPrefix(user)
+            return (
+              getValueViaPath(_answers, `${prefix}.assetDeclerationRadio`) ===
+              YES
+            )
+          },
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'assetDeclerationTextField'),
           description: 'Vinsamlegast listaðu upp allar þínar eignir.',
           variant: 'textarea',
           rows: 10,

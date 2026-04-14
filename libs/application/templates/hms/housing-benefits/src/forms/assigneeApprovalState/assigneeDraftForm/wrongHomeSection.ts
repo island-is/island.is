@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import { HandShake } from '@island.is/application/assets/graphics'
 import * as m from '../../../lib/messages'
+import { nationalIdPreface } from '../../../utils/assigneeUtils'
 import { shouldShowRefetchNationalRegistrySection } from '../../../utils/conditions'
 import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
@@ -47,7 +48,8 @@ export const wrongHomeSection = buildSection({
           marginBottom: 6,
         }),
         buildCheckboxField({
-          id: 'wrongHome.addressUpdated',
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'wrongHome.addressUpdated'),
           title: '',
           options: [
             {

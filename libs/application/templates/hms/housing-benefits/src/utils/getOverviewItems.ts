@@ -709,11 +709,15 @@ export const assigneePersonalInfoOverviewItems = (
 export const assigneeAssetDeclarationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
-  _userNationalId?: string,
+  userNationalId?: string,
   _locale?: Locale,
 ): Array<KeyValueItem> => {
+  const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
   const hasAssets =
-    getValueViaPath<string>(answers, 'assetDeclerationRadio') === YES
+    getValueViaPath<string>(
+      answers,
+      `${prefix}.assetDeclerationRadio`,
+    ) === YES
 
   const items: Array<KeyValueItem> = [
     {
@@ -727,8 +731,10 @@ export const assigneeAssetDeclarationOverviewItems = (
 
   if (hasAssets) {
     const description =
-      getValueViaPath<string>(answers, 'assetDeclerationTextField')?.trim() ??
-      ''
+      getValueViaPath<string>(
+        answers,
+        `${prefix}.assetDeclerationTextField`,
+      )?.trim() ?? ''
     if (description) {
       items.push({
         width: 'full',

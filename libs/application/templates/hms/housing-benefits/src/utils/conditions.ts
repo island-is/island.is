@@ -1,5 +1,7 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
+import { getNationalIdPrefix } from './assigneeUtils'
 import { doesAssigneeAddressMatchRentalContract } from './rentalAgreementUtils'
 
 export const shouldShowRefetchNationalRegistrySection = (
@@ -7,8 +9,12 @@ export const shouldShowRefetchNationalRegistrySection = (
   externalData: ExternalData,
   user: BffUser | null,
 ) => {
-  const checked = (answers as Record<string, Record<string, string[]>>)
-    ?.wrongHome?.addressUpdated
+  if (!user) return false
+  const prefix = getNationalIdPrefix(user)
+  const checked = getValueViaPath<string[]>(
+    answers,
+    `${prefix}.wrongHome.addressUpdated`,
+  )
   const isCheckboxChecked =
     Array.isArray(checked) && checked.includes('confirmed')
   const addressMatches = doesAssigneeAddressMatchRentalContract(
