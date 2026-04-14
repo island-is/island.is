@@ -55,8 +55,6 @@ export class AdminScopeService {
     private readonly apiScopeTag: typeof ApiScopeTag,
     @InjectModel(ClientAllowedScope)
     private readonly clientAllowedScope: typeof ClientAllowedScope,
-    @InjectModel(Client)
-    private readonly clientModel: typeof Client,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
