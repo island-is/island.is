@@ -327,14 +327,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:cors',
     defaultMessage: 'CORS',
   },
+  allowedCorsOrigins: {
+    id: 'ap.ids-admin:allowed-cors-origins',
+    defaultMessage: 'Allowed CORS origins',
+  },
   corsPlaceholder: {
     id: 'ap.ids-admin:cors-placeholder',
-    defaultMessage: 'List CORS urls, comma seperated',
+    defaultMessage: 'http://localhost:4200',
   },
   corsDescription: {
     id: 'ap.ids-admin:cors-description',
     defaultMessage:
-      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. URLs can be comma-separated or added line-by-line Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com) Query strings and hash information are ignored Organization URL placeholders are supported',
+      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com) Query strings and hash information are ignored Organization URL placeholders are supported',
   },
   translations: {
     id: 'ap.ids-admin:translations',
@@ -389,9 +393,26 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-urls',
     defaultMessage: 'List of URLs, comma separated',
   },
+  errorInvalidUrl: {
+    id: 'ap.ids-admin:error-invalid-url',
+    defaultMessage: 'Invalid URL',
+  },
+  errorCorsOriginAlreadyExists: {
+    id: 'ap.ids-admin:error-cors-origin-already-exists',
+    defaultMessage: 'Origin already added',
+  },
+  errorCorsOriginNotAdded: {
+    id: 'ap.ids-admin:error-cors-origin-not-added',
+    defaultMessage:
+      'Press Enter or click the plus button to include this origin',
+  },
   errorPositiveNumber: {
     id: 'ap.ids-admin:error-positive-number',
     defaultMessage: 'Must be a positive number',
+  },
+  addCorsOrigin: {
+    id: 'ap.ids-admin:add-cors-origin',
+    defaultMessage: 'Add origin',
   },
   delegations: {
     id: 'ap.ids-admin:delegations',
