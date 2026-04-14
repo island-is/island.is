@@ -419,7 +419,6 @@ query Case($input: CaseQueryInput!) {
       appealIsolationToDate
     }
     indictmentDeniedExplanation
-    indictmentReturnedExplanation
     arraignmentDate {
       date
       location

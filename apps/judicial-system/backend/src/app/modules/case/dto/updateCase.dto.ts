@@ -509,11 +509,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly indictmentReturnedExplanation?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
   readonly postponedIndefinitelyExplanation?: string
 
   @IsOptional()
