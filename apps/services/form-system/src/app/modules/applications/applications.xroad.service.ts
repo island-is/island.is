@@ -76,14 +76,19 @@ export class ApplicationsXRoadService {
   ): ApplicationXroadDto {
     const fields: ApplicationXroadFieldDto[] = (applicationDto.sections ?? [])
       .flatMap((section) => section.screens ?? [])
-      .flatMap((screen) => screen.fields ?? [])
-      .filter((field) => !field.isHidden)
-      .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .filter((field) => (field.values?.length ?? 0) > 0)
-      .map((field) => {
+      .flatMap((screen) =>
+        (screen.fields ?? []).map((field) => ({
+          field,
+          screenIdentifier: screen.identifier,
+        })),
+      )
+      .filter(({ field }) => !field.isHidden)
+      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .filter(({ field }) => (field.values?.length ?? 0) > 0)
+      .map(({ field, screenIdentifier }) => {
         const xroadField = new ApplicationXroadFieldDto()
         xroadField.identifier = field.identifier
-        xroadField.screenId = field.screenId
+        xroadField.screenIdentifier = screenIdentifier
         xroadField.fieldType = field.fieldType
         xroadField.values = (field.values ?? []).map((value) => {
           const xroadValue = new ApplicationXroadValueDto()

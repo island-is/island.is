@@ -53,6 +53,14 @@ const districtCourtIndictmentsTableGroup = {
       includeCounter: true,
     },
     {
+      type: CaseTableType.DISTRICT_COURT_INDICTMENTS_APPEALED,
+      route: 'kaerur-til-landsrettar-i-sakamalum',
+      title: 'Kærur til Landsréttar í sakamálum',
+      description:
+        'Úrskurðir í sakamálum sem búið er að kæra en á eftir að senda til Landsréttar.',
+      includeCounter: true,
+    },
+    {
       type: CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING,
       route: 'sakamal-i-fragangi',
       title: 'Sakamál í frágangi',

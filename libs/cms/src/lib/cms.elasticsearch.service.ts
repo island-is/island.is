@@ -1442,7 +1442,7 @@ export class CmsElasticsearchService {
             bool: {
               must: [
                 { term: { 'tags.type': 'keyword' } },
-                { match: { 'tags.value': queryString } },
+                { match_phrase_prefix: { 'tags.value': queryString } },
               ],
             },
           },

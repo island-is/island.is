@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Image, TouchableOpacity, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
-import Clipboard from '@react-native-clipboard/clipboard'
+import Clipboard from 'expo-clipboard'
 
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
@@ -80,7 +80,7 @@ export function Field({
           )}
           {link?.type === GenericUserLicenseMetaLinksType.Copy && (
             <TouchableOpacity
-              onPress={() => Clipboard.setString(value ?? '')}
+              onPress={() => Clipboard.setStringAsync(value ?? '')}
               style={{ marginLeft: 4 }}
             >
               <Image

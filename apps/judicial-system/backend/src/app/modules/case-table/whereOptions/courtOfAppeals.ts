@@ -1,11 +1,11 @@
 import { CaseAppealState } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions } from '../caseTable.types'
-import { courtOfAppealsRequestCasesAccessWhereOptions } from './access'
+import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
-// Court of appeals request cases
+// Court of appeals cases
 
-export const courtOfAppealsRequestCasesInProgressWhereOptions =
+export const courtOfAppealsCasesInProgressWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
       appealCase: {
@@ -16,10 +16,10 @@ export const courtOfAppealsRequestCasesInProgressWhereOptions =
         },
       },
     },
-    where: courtOfAppealsRequestCasesAccessWhereOptions,
+    where: courtOfAppealsCasesAccessWhereOptions(),
   })
 
-export const courtOfAppealsRequestCasesCompletedWhereOptions =
+export const courtOfAppealsCasesCompletedWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
       appealCase: {
@@ -30,5 +30,5 @@ export const courtOfAppealsRequestCasesCompletedWhereOptions =
         },
       },
     },
-    where: courtOfAppealsRequestCasesAccessWhereOptions,
+    where: courtOfAppealsCasesAccessWhereOptions(),
   })
