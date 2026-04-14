@@ -1,0 +1,16 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    appId: ${APP_ID}
+- runFlow: utils/sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Heilsa'
+
+- assertVisible:
+    id: 'SCREEN_HEALTH_OVERVIEW'
+- tapOn:
+    id: 'BUTTON_VACCINATIONS'
+- assertVisible:
+    id: 'SCREEN_VACCINATIONS'
