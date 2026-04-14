@@ -34,8 +34,7 @@ describe('PoliceController - Get police case info', () => {
       await createTestingPoliceModule()
 
     upsertAssignedDefendantPoliceCaseNumbers =
-      caseDefendantPoliceCaseNumberRepositoryService
-        .upsertAssignedDefendantPoliceCaseNumbers as jest.Mock
+      caseDefendantPoliceCaseNumberRepositoryService.upsertAssignedDefendantPoliceCaseNumbers as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -59,7 +58,11 @@ describe('PoliceController - Get police case info', () => {
     const theCase = {
       id: caseId,
       defendants: [
-        { id: '11111111-1111-1111-1111-111111111111', nationalId: '0101302399', noNationalId: false },
+        {
+          id: '11111111-1111-1111-1111-111111111111',
+          nationalId: '0101302399',
+          noNationalId: false,
+        },
         { nationalId: '', noNationalId: false },
       ],
     } as Case
