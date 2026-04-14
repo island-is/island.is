@@ -436,11 +436,7 @@ const Search: Screen<CategoryProps> = ({
     title: item.title,
     parentTitle: item.parent?.title ?? item.manual?.title,
     description:
-      item.intro ??
-      item.description ??
-      item.parent?.intro ??
-      item.subtitle ??
-      item.cardIntro,
+      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
     link: getItemLink(item),
     categorySlug: item.category?.slug ?? item.parent?.category?.slug,
     category: item.category ?? item.parent?.category,
