@@ -137,7 +137,7 @@ const HousingBenefitsFilter = ({
             borderColor="blue200"
             width="full"
           />
-          <Box marginTop={1}>
+          <Box>
             <Accordion
               variant="mini"
               dividerOnBottom={false}
@@ -156,7 +156,7 @@ const HousingBenefitsFilter = ({
                   display="flex"
                   flexDirection="column"
                 >
-                  <Stack space="smallGutter">
+                  <Stack space={2}>
                     <Select
                       label={formatMessage(m.month)}
                       placeholder={formatMessage(m.month)}
@@ -168,7 +168,7 @@ const HousingBenefitsFilter = ({
                       }
                       options={monthOptions}
                       isClearable
-                      size="sm"
+                      size="xs"
                     />
                     <Select
                       label={formatMessage(m.year)}
@@ -181,7 +181,7 @@ const HousingBenefitsFilter = ({
                       }
                       options={yearOptions}
                       isClearable
-                      size="sm"
+                      size="xs"
                     />
                   </Stack>
                 </Box>
@@ -191,7 +191,6 @@ const HousingBenefitsFilter = ({
               borderBottomWidth="standard"
               borderColor="blue200"
               width="full"
-              marginTop={1}
               marginBottom={1}
             />
             <Box paddingY={2}>

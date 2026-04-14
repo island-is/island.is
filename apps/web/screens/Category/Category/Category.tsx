@@ -58,6 +58,112 @@ import {
 
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
+interface PageGroupComponentProps {
+  group: CategoryGroups[number]
+  index: number
+  hashArray: string[]
+  onAccordionClick: (groupSlug: string) => void
+  n: (key: string, fallback?: string) => string
+  linkResolver: (type: LinkType, slugs?: string[]) => { href: string }
+  activeLocale: string
+  itemsRef: React.MutableRefObject<Array<HTMLElement | null>>
+}
+
+const PageGroupComponent = ({
+  group,
+  index,
+  hashArray,
+  onAccordionClick,
+  n,
+  linkResolver,
+  activeLocale,
+  itemsRef,
+}: PageGroupComponentProps) => {
+  const groupSlug = group.slug
+  const expanded = hashArray.includes(groupSlug)
+
+  return (
+    <div id={groupSlug} ref={(el) => (itemsRef.current[index] = el) as any}>
+      <AccordionCard
+        id={`accordion-item-${groupSlug}`}
+        label={group?.title}
+        labelUse="h2"
+        expanded={expanded}
+        visibleContent={group?.description}
+        onToggle={() => {
+          onAccordionClick(groupSlug)
+        }}
+      >
+        <Box paddingTop={2}>
+          {group.subgroups.map((subgroup, index) => {
+            // Groups with 1 subgroup only have the "other" group and don't get a heading.
+            const hasSubgroups = group.subgroups.length > 1
+
+            const subgroupName = subgroup.title || n('other')
+
+            const heading = hasSubgroups ? subgroupName : ''
+
+            return (
+              <React.Fragment key={subgroup.title}>
+                {heading && (
+                  <Text
+                    variant="h5"
+                    as="h3"
+                    paddingBottom={3}
+                    paddingTop={index === 0 ? 0 : 3}
+                  >
+                    {heading}
+                  </Text>
+                )}
+                <Stack space={2}>
+                  {subgroup.pages.map((page) => {
+                    let topicCardProps = {}
+                    if (
+                      page.__typename === 'Article' &&
+                      (hasProcessEntries(page as Article) ||
+                        page.processEntryButtonText)
+                    ) {
+                      topicCardProps = {
+                        tag: n(
+                          page.processEntryButtonText || 'application',
+                          'Umsókn',
+                        ),
+                      }
+                    } else if (page.__typename === 'Manual') {
+                      topicCardProps = {
+                        tag: n(
+                          'manualCardTag',
+                          activeLocale === 'is' ? 'Handbók' : 'Manual',
+                        ),
+                      }
+                    }
+
+                    return (
+                      <FocusableBox key={page.slug} borderRadius="large">
+                        <TopicCard
+                          href={
+                            linkResolver(
+                              page.__typename?.toLowerCase() as LinkType,
+                              [page.slug],
+                            ).href
+                          }
+                          {...topicCardProps}
+                        >
+                          {page.title}
+                        </TopicCard>
+                      </FocusableBox>
+                    )
+                  })}
+                </Stack>
+              </React.Fragment>
+            )
+          })}
+        </Box>
+      </AccordionCard>
+    </div>
+  )
+}
+
 interface CategoryProps {
   groups: CategoryGroups
   selectedCategory: GetArticleCategoriesQuery['getArticleCategories'][number]
@@ -120,98 +226,6 @@ const Category: Screen<CategoryProps> = ({
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
     window.location.href = `#${getHashString(updatedArr)}`
-  }
-
-  const PageGroupComponent = ({
-    group,
-    index,
-  }: {
-    group: CategoryGroups[number]
-    index: number
-  }) => {
-    const groupSlug = group.slug
-    const expanded = hashArray.includes(groupSlug)
-
-    return (
-      <div id={groupSlug} ref={(el) => (itemsRef.current[index] = el) as any}>
-        <AccordionCard
-          id={`accordion-item-${groupSlug}`}
-          label={group?.title}
-          labelUse="h2"
-          expanded={expanded}
-          visibleContent={group?.description}
-          onToggle={() => {
-            handleAccordionClick(groupSlug)
-          }}
-        >
-          <Box paddingTop={2}>
-            {group.subgroups.map((subgroup, index) => {
-              // Groups with 1 subgroup only have the "other" group and don't get a heading.
-              const hasSubgroups = group.subgroups.length > 1
-
-              const subgroupName = subgroup.title || n('other')
-
-              const heading = hasSubgroups ? subgroupName : ''
-
-              return (
-                <React.Fragment key={subgroup.title}>
-                  {heading && (
-                    <Text
-                      variant="h5"
-                      as="h3"
-                      paddingBottom={3}
-                      paddingTop={index === 0 ? 0 : 3}
-                    >
-                      {heading}
-                    </Text>
-                  )}
-                  <Stack space={2}>
-                    {subgroup.pages.map((page) => {
-                      let topicCardProps = {}
-                      if (
-                        page.__typename === 'Article' &&
-                        (hasProcessEntries(page as Article) ||
-                          page.processEntryButtonText)
-                      ) {
-                        topicCardProps = {
-                          tag: n(
-                            page.processEntryButtonText || 'application',
-                            'Umsókn',
-                          ),
-                        }
-                      } else if (page.__typename === 'Manual') {
-                        topicCardProps = {
-                          tag: n(
-                            'manualCardTag',
-                            activeLocale === 'is' ? 'Handbók' : 'Manual',
-                          ),
-                        }
-                      }
-
-                      return (
-                        <FocusableBox key={page.slug} borderRadius="large">
-                          <TopicCard
-                            href={
-                              linkResolver(
-                                page.__typename?.toLowerCase() as LinkType,
-                                [page.slug],
-                              ).href
-                            }
-                            {...topicCardProps}
-                          >
-                            {page.title}
-                          </TopicCard>
-                        </FocusableBox>
-                      )
-                    })}
-                  </Stack>
-                </React.Fragment>
-              )
-            })}
-          </Box>
-        </AccordionCard>
-      </div>
-    )
   }
 
   return (
@@ -335,7 +349,17 @@ const Category: Screen<CategoryProps> = ({
         </Box>
         <Stack space={2}>
           {groups.map((group, index) => (
-            <PageGroupComponent group={group} index={index} key={index} />
+            <PageGroupComponent
+              key={index}
+              group={group}
+              index={index}
+              hashArray={hashArray}
+              onAccordionClick={handleAccordionClick}
+              n={n}
+              linkResolver={linkResolver}
+              activeLocale={activeLocale}
+              itemsRef={itemsRef}
+            />
           ))}
           {lifeEvents.map(
             (

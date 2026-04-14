@@ -200,7 +200,7 @@ const DocumentsFilter = ({
             borderColor="blue200"
             width="full"
           />
-          <Box marginTop={1}>
+          <Box>
             <Accordion
               variant="mini"
               dividerOnBottom={false}

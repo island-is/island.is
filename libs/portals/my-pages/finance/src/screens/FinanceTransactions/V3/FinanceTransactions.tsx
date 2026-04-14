@@ -226,7 +226,7 @@ const FinanceTransactions = () => {
                     borderColor="blue200"
                     width="full"
                   />
-                  <Box marginTop={1}>
+                  <Box>
                     <Accordion
                       variant="mini"
                       dividerOnBottom={false}
@@ -245,22 +245,32 @@ const FinanceTransactions = () => {
                           display="flex"
                           flexDirection="column"
                         >
-                          <DatePicker
-                            label={formatMessage(m.datepickPeriod)}
-                            placeholderText={formatMessage(
-                              m.datepickPeriodLabel,
-                            )}
-                            locale="is"
-                            backgroundColor="blue"
-                            size="xs"
-                            handleChange={(d, e) => {
-                              setFromDate(d)
-                              setToDate(e)
-                            }}
-                            selected={fromDate}
-                            appearInline
-                            range
-                          />
+                          <Stack space={2}>
+                            <DatePicker
+                              label={formatMessage(m.dateFrom)}
+                              placeholderText={formatMessage(m.dateFrom)}
+                              locale="is"
+                              backgroundColor="blue"
+                              size="xs"
+                              handleChange={(d) => {
+                                setFromDate(d)
+                              }}
+                              selected={fromDate}
+                              appearInline
+                            />
+                            <DatePicker
+                              label={formatMessage(m.dateTo)}
+                              placeholderText={formatMessage(m.dateTo)}
+                              locale="is"
+                              backgroundColor="blue"
+                              size="xs"
+                              handleChange={(d) => {
+                                setToDate(d)
+                              }}
+                              selected={toDate}
+                              appearInline
+                            />
+                          </Stack>
                           {fromDate !== undefined || toDate !== undefined ? (
                             <Box textAlign="right" marginTop={1}>
                               <Button

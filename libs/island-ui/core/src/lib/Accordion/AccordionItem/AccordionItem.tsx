@@ -4,9 +4,7 @@ import React, {
   ReactNode,
   forwardRef,
   useEffect,
-  ForwardRefExoticComponent,
-  PropsWithoutRef,
-  RefAttributes,
+  useCallback,
 } from 'react'
 import cn from 'classnames'
 import AnimateHeight, { Height } from 'react-animate-height'
@@ -39,6 +37,8 @@ type BaseProps = {
   onBlur?: () => void
   onFocus?: () => void
   colorVariant?: ColorVariants
+  variant?: 'mini' | 'small' | 'large'
+  sidebar?: boolean
 }
 
 type StateProps =
@@ -59,13 +59,9 @@ type StateProps =
 
 export type AccordionItemProps = BaseProps & StateProps
 
-
 export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   (
-    props,
-    forwardedRef,
-  ) => {
-    const {
+    {
       id,
       label,
       labelUse = 'h3',
@@ -81,28 +77,45 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       colorVariant,
       variant: variantProp,
       sidebar,
-    } = props as AccordionItemPrivateProps
-
-    const { toggledId, setToggledId, variant: contextVariant } = useContext(AccordionContext)
+    },
+    forwardedRef,
+  ) => {
+    const {
+      registerForSingleExpand,
+      notifyExpanded,
+      variant: contextVariant,
+    } = useContext(AccordionContext)
     const accordionVariant = variantProp ?? contextVariant
     const isMini = accordionVariant === 'mini'
-    const labelVariant = isMini ? 'h5' : accordionVariant === 'large' ? 'h3' : 'h4'
+    const labelVariant = isMini
+      ? 'h5'
+      : accordionVariant === 'large'
+      ? 'h3'
+      : 'h4'
     const [expandedFallback, setExpandedFallback] = useState(false)
-    let expanded = expandedProp ?? expandedFallback
+    const expanded = expandedProp ?? expandedFallback
     const [height, setHeight] = useState<Height>(expanded ? 'auto' : 0)
 
-    if (toggledId && toggledId !== id && expanded) {
-      expanded = false
-
-      if (height !== 0) {
+    // When this item should be collapsed by singleExpand, the Accordion calls
+    // this directly — no context state change, so only this item re-renders.
+    const collapseForSingleExpand = useCallback(() => {
+      if (expandedProp !== undefined) {
+        onToggle?.(false)
+      } else {
+        setExpandedFallback(false)
         setHeight(0)
       }
-    }
+    }, [expandedProp, onToggle])
+
+    useEffect(() => {
+      return registerForSingleExpand?.(id, collapseForSingleExpand)
+    }, [id, registerForSingleExpand, collapseForSingleExpand])
 
     const handleToggle = () => {
       const newValue = !expanded
-      if (typeof setToggledId === 'function' && newValue) {
-        setToggledId(id)
+
+      if (newValue) {
+        notifyExpanded?.(id)
       }
 
       setHeight(newValue ? 'auto' : 0)
@@ -116,6 +129,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
+    // Sync height when expandedProp changes in controlled mode
     useEffect(() => {
       setHeight(expanded ? 'auto' : 0)
     }, [expanded])
@@ -223,45 +237,33 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   },
 )
 
-// File-private — allows AccordionCard and SidebarAccordion (in this file) to pass
-// internal props without exposing them as part of the public AccordionItemProps
-type AccordionItemPrivateProps = AccordionItemProps & {
-  variant?: 'mini' | 'small' | 'large'
-  sidebar?: boolean
-}
-
-// File-private cast so AccordionCard can use variant without TypeScript errors
-const PrivateAccordionItem = AccordionItem as ForwardRefExoticComponent<
-  PropsWithoutRef<AccordionItemPrivateProps> & RefAttributes<HTMLButtonElement>
->
 // ---------------------------------------------------------------------------
 
 type AccordionCardVariant = {
   variant?: 'small' | 'large'
 }
 
-export type AccordionCardProps = AccordionItemProps & TestSupport  & AccordionCardVariant
+export type AccordionCardProps = AccordionItemProps &
+  TestSupport &
+  AccordionCardVariant
 
-
-export const AccordionCard = ({ dataTestId, variant, ...props }: AccordionCardProps) => {
-  const [isFocused, setIsFocused] = useState<boolean>(false)
-  const handleFocus = () => setIsFocused(true)
-  const handleBlur = () => setIsFocused(false)
-
+export const AccordionCard = ({
+  dataTestId,
+  variant = 'large',
+  ...props
+}: AccordionCardProps) => {
   return (
     <Box
       height="full"
       background="white"
       borderRadius="large"
-      className={cn(styles.card({ color: props.colorVariant }), {
-        [styles.focused]: isFocused,
-      })}
+      className={styles.card({ color: props.colorVariant })}
       padding={[2, 2, 4]}
       dataTestId={dataTestId}
     >
-      <PrivateAccordionItem {...props} variant={variant} onFocus={handleFocus} onBlur={handleBlur}>
+      <AccordionItem {...props} variant={variant}>
         {props.children}
-      </PrivateAccordionItem>
+      </AccordionItem>
     </Box>
   )
 }
@@ -272,8 +274,8 @@ export type SidebarAccordionProps = BaseProps & StateProps
 
 export const SidebarAccordion = (props: SidebarAccordionProps) => {
   return (
-    <PrivateAccordionItem {...props} variant="mini" sidebar>
+    <AccordionItem {...props} variant="mini" sidebar>
       {props.children}
-    </PrivateAccordionItem>
+    </AccordionItem>
   )
 }

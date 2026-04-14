@@ -741,80 +741,6 @@ const Filters = ({
             />
           </AccordionItem>
 
-<<<<<<< HEAD
-          {!isRetrialCourt && (
-            <AccordionItem
-              id={FILTER_ACCORDION_ITEM_IDS[4]}
-              label={formatMessage(m.listPage.caseTypeAccordionLabel)}
-              expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
-              onToggle={(expanded) => {
-                handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
-              }}
-              labelColor={
-                queryState[QueryParam.CASE_TYPES] ||
-                queryState[QueryParam.CASE_CATEGORIES]
-                  ? 'blue400'
-                  : undefined
-              }
-            >
-              <Stack space={2}>
-                <Stack space={2} key={renderKey}>
-                  {caseFilterOptions[selectedCourtLevel].options.map(
-                    ({ label, typeOfOption }) => {
-                      const queryParamKey =
-                        typeOfOption ===
-                        WebVerdictCaseFilterOptionType.CaseCategory
-                          ? QueryParam.CASE_CATEGORIES
-                          : QueryParam.CASE_TYPES
-                      return (
-                        <DebouncedCheckbox
-                          debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                          key={label}
-                          checked={Boolean(
-                            queryState[queryParamKey]?.includes(label),
-                          )}
-                          label={label}
-                          value={label}
-                          onChange={(checked) => {
-                            updateQueryState(queryParamKey, (previousState) => {
-                              let updatedValues = [
-                                ...(previousState[queryParamKey] ?? []),
-                              ]
-                              if (checked) {
-                                updatedValues.push(label)
-                              } else {
-                                updatedValues = updatedValues.filter(
-                                  (value) => value !== label,
-                                )
-                              }
-                              return {
-                                ...previousState,
-                                [queryParamKey]:
-                                  updatedValues.length === 0
-                                    ? null
-                                    : updatedValues,
-                              }
-                            })
-                          }}
-                        />
-                      )
-                    },
-                  )}
-                </Stack>
-                <Box display="flex" justifyContent="flexEnd">
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={() => {
-                      updateQueryState(QueryParam.CASE_TYPES, [])
-                      updateRenderKey()
-                    }}
-                  >
-                    {formatMessage(m.listPage.clearFilter)}
-                  </Button>
-                </Box>
-=======
           <AccordionItem
             id={FILTER_ACCORDION_ITEM_IDS[4]}
             label={formatMessage(m.listPage.caseTypeAccordionLabel)}
@@ -822,8 +748,6 @@ const Filters = ({
             onToggle={(expanded) => {
               handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
             }}
-            iconVariant="small"
-            labelVariant="h5"
             labelColor={
               queryState[QueryParam.CASE_TYPES] ||
               queryState[QueryParam.CASE_CATEGORIES]
@@ -884,7 +808,6 @@ const Filters = ({
                     </Stack>
                   </Stack>
                 ))}
->>>>>>> main
               </Stack>
               <Box display="flex" justifyContent="flexEnd">
                 <Button
