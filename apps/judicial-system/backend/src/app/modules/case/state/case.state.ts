@@ -60,7 +60,6 @@ const indictmentCaseStateMachine: Map<
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.WAITING_FOR_CONFIRMATION,
-        indictmentReturnedExplanation: null,
       }),
     },
   ],
@@ -126,19 +125,6 @@ const indictmentCaseStateMachine: Map<
 
         return { ...update, state: CaseState.WAITING_FOR_CANCELLATION }
       },
-    },
-  ],
-  [
-    IndictmentCaseTransition.RETURN_INDICTMENT,
-    {
-      fromStates: [IndictmentCaseState.RECEIVED],
-      fromAppealStates: [undefined],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.DRAFT,
-        courtCaseNumber: null,
-        indictmentHash: null,
-      }),
     },
   ],
   [

@@ -1086,18 +1086,6 @@ export class CaseService {
     })
   }
 
-  private addMessagesForReturnedIndictmentCaseToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_RETURNED },
-    })
-  }
-
   private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
     user: TUser,
@@ -1210,12 +1198,6 @@ export class CaseService {
         isIndictment
       ) {
         this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
-      } else if (
-        updatedCase.state === CaseState.DRAFT &&
-        theCase.state === CaseState.RECEIVED &&
-        isIndictment
-      ) {
-        this.addMessagesForReturnedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
         this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
