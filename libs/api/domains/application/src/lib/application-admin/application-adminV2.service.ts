@@ -56,7 +56,9 @@ export class ApplicationAdminV2Service {
 
     const appSystemPromise = skipAppSystem
       ? null
-      : this.appSystemApplicationApiWithAuth(user).adminControllerFindAllSuperAdmin({
+      : this.appSystemApplicationApiWithAuth(
+          user,
+        ).adminControllerFindAllSuperAdmin({
           count: fetchCount,
           page: 1,
           applicantNationalId: filters.applicantNationalId,
@@ -71,17 +73,19 @@ export class ApplicationAdminV2Service {
 
     const formSystemPromise = skipFormSystem
       ? null
-      : this.formSystemAdminApiWithAuth(user).adminControllerGetOverviewForSuperAdmin({
-            count: fetchCount,
-            page: 1,
-            applicantNationalId: filters.applicantNationalId,
-            locale,
-            from: filters.from,
-            to: filters.to,
-            formId: filters.typeIdValue,
-            searchStr: filters.searchStr,
-            institutionNationalId: filters.institutionNationalId,
-          })
+      : this.formSystemAdminApiWithAuth(
+          user,
+        ).adminControllerGetOverviewForSuperAdmin({
+          count: fetchCount,
+          page: 1,
+          applicantNationalId: filters.applicantNationalId,
+          locale,
+          from: filters.from,
+          to: filters.to,
+          formId: filters.typeIdValue,
+          searchStr: filters.searchStr,
+          institutionNationalId: filters.institutionNationalId,
+        })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise ?? Promise.resolve(null),
@@ -137,7 +141,9 @@ export class ApplicationAdminV2Service {
 
     const appSystemPromise = skipAppSystem
       ? null
-      : this.appSystemApplicationApiWithAuth(user).adminControllerFindAllInstitutionAdmin({
+      : this.appSystemApplicationApiWithAuth(
+          user,
+        ).adminControllerFindAllInstitutionAdmin({
           count: fetchCount,
           page: 1,
           applicantNationalId: filters.applicantNationalId,
@@ -151,16 +157,18 @@ export class ApplicationAdminV2Service {
 
     const formSystemPromise = skipFormSystem
       ? null
-      : this.formSystemAdminApiWithAuth(user).adminControllerGetOverviewForInstitutionAdmin({
-            count: fetchCount,
-            page: 1,
-            applicantNationalId: filters.applicantNationalId,
-            locale,
-            from: filters.from,
-            to: filters.to,
-            formId: filters.typeIdValue,
-            searchStr: filters.searchStr,
-          })
+      : this.formSystemAdminApiWithAuth(
+          user,
+        ).adminControllerGetOverviewForInstitutionAdmin({
+          count: fetchCount,
+          page: 1,
+          applicantNationalId: filters.applicantNationalId,
+          locale,
+          from: filters.from,
+          to: filters.to,
+          formId: filters.typeIdValue,
+          searchStr: filters.searchStr,
+        })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise ?? Promise.resolve(null),
