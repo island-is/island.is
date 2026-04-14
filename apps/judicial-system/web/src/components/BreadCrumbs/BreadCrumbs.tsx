@@ -12,11 +12,13 @@ import * as styles from './BreadCrumbs.css'
 const BreadCrumbs: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const caseId = workingCase?.id
 
   const { data, loading, error } = useCaseTableMembershipQuery({
     variables: {
-      caseId: workingCase?.id || '',
+      caseId: caseId || '',
     },
+    skip: !caseId,
   })
 
   const caseTableGroups = getCaseTableGroups(user)
