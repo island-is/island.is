@@ -227,9 +227,7 @@ export const PermissionDelegations = ({
       intent={PermissionFormTypes.DELEGATIONS}
       inSync={checkEnvironmentsSync(permission.environments, [
         'supportedDelegationTypes',
-        ...(showCategoriesAndTags
-          ? (['categoryIds', 'tagIds'] as const)
-          : []),
+        ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
       customValidation={customValidation}
       submitDisabled={categoryRequired}
