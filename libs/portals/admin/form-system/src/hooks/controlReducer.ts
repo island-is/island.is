@@ -1371,6 +1371,7 @@ export const controlReducer = (
         },
         fieldSettings: {
           ...field.fieldSettings,
+          __typename: undefined,
           chargeItemCode,
           chargeItemName,
           chargeType,
