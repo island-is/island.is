@@ -41,6 +41,7 @@ import {
   AnchorPage,
   Article,
   ContentLanguage,
+  Course,
   GetNamespaceQuery,
   GetSearchCountTagsQuery,
   GetSearchResultsDetailedQuery,
@@ -102,6 +103,37 @@ const ALL_TYPES: `${SearchableContentTypes}`[] = [
   'webOrganizationParentSubpage',
 ]
 
+const COURSE_LIST_PAGE_PATHS: Record<string, { is: string; en: string }> = {
+  '6pkONOn80xzGTGij6qtjai': {
+    is: '/s/hh/namskeid-fyrir-almenning',
+    en: '/en/o/hh/courses-for-the-public',
+  },
+  '147YftiWFQsBcbUFFe2rj1': {
+    is: '/s/hh/namskeid-fyrir-fagfolk',
+    en: '/en/o/hh/courses-for-professionals',
+  },
+}
+
+const getCourseUrl = (
+  item: {
+    courseSlug?: string | null
+    id: string
+    courseListPageId?: string | null
+  },
+  locale = 'is',
+): string => {
+  const courseId = item.courseSlug || item.id
+  const basePath =
+    item.courseListPageId && COURSE_LIST_PAGE_PATHS[item.courseListPageId]
+      ? COURSE_LIST_PAGE_PATHS[item.courseListPageId][
+          locale === 'en' ? 'en' : 'is'
+        ]
+      : COURSE_LIST_PAGE_PATHS['6pkONOn80xzGTGij6qtjai'][
+          locale === 'en' ? 'en' : 'is'
+        ]
+  return `${basePath}/${courseId}`
+}
+
 type SearchQueryFilters = {
   category: string
   type: string
@@ -135,7 +167,8 @@ export type SearchEntryType = Article &
   ProjectPage &
   Manual &
   ManualChapterItem &
-  OrganizationParentSubpage
+  OrganizationParentSubpage &
+  Course
 
 const connectedTypes: Partial<
   Record<
@@ -155,6 +188,7 @@ const connectedTypes: Partial<
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
   webManual: ['WebManual', 'WebManualChapterItem'],
+  webCourse: ['WebCourse'],
 }
 
 const stringToArray = (value: string | string[] | undefined) =>
@@ -259,6 +293,9 @@ const Search: Screen<CategoryProps> = ({
           labels.push(item.organizationPageTitle)
         }
         break
+      case 'Course':
+        labels.push(n('course', 'Námskeið'))
+        break
       default:
         break
     }
@@ -292,6 +329,8 @@ const Search: Screen<CategoryProps> = ({
     return labels
   }
 
+  const isHhOrganization = stringToArray(query.organization).includes('hh')
+
   const tagTitles:
     | Partial<Record<SearchableContentTypes, string>>
     | Record<string, string> = useMemo(
@@ -304,8 +343,11 @@ const Search: Screen<CategoryProps> = ({
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
       webManual: n('webManual', 'Handbækur'),
       webManualChapterItem: n('webManual', 'Handbækur'),
+      ...(isHhOrganization && {
+        webCourse: n('webCourse', 'Námskeið'),
+      }),
     }),
-    [n],
+    [n, isHhOrganization],
   )
 
   const pathname = linkResolver('search').href
@@ -359,6 +401,10 @@ const Search: Screen<CategoryProps> = ({
 
     if (item.__typename === 'OrganizationParentSubpage') {
       return (item.href as string) ?? ''
+    }
+
+    if (item.__typename === 'Course') {
+      return getCourseUrl(item, activeLocale)
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -447,6 +493,10 @@ const Search: Screen<CategoryProps> = ({
       delete newQuery['processentry']
     }
 
+    if (!newQuery.organization?.includes('hh') && newQuery.type?.length) {
+      newQuery.type = newQuery.type.filter((t) => t !== 'webCourse')
+    }
+
     routerReplace({
       pathname,
       query: newQuery,
@@ -454,6 +504,36 @@ const Search: Screen<CategoryProps> = ({
       window.scrollTo(0, 0)
     })
   }, [state, pathname, q, routerReplace])
+
+  useEffect(() => {
+    const queryType = stringToArray(query.type) as SearchableContentTypes[]
+    const queryCategory = stringToArray(query.category)
+    const queryOrganization = stringToArray(query.organization)
+
+    const stateType = state.query.type ?? []
+    const stateCategory = state.query.category ?? []
+    const stateOrganization = state.query.organization ?? []
+
+    const hasChanged =
+      JSON.stringify(queryType) !== JSON.stringify(stateType) ||
+      JSON.stringify(queryCategory) !== JSON.stringify(stateCategory) ||
+      JSON.stringify(queryOrganization) !== JSON.stringify(stateOrganization)
+
+    if (hasChanged) {
+      dispatch({
+        type: ActionType.SET_PARAMS,
+        payload: {
+          query: {
+            type: queryType,
+            category: queryCategory,
+            organization: queryOrganization,
+          },
+          searchLocked: true,
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.type, query.category, query.organization])
 
   const getSearchParams = (contentType: string) => {
     return {
@@ -896,6 +976,11 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     (x: SearchableContentTypes) => x,
   )
 
+  const includesCourses = stringToArray(organization).includes('hh')
+  const allTypesWithCourses = includesCourses
+    ? ([...ALL_TYPES, 'webCourse'] as `${SearchableContentTypes}`[])
+    : ALL_TYPES
+
   const ensureContentTypeExists = (
     types: string[],
   ): types is SearchableContentTypes[] =>
@@ -920,8 +1005,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           queryString,
           types: types.length
             ? types
-            : ensureContentTypeExists(ALL_TYPES)
-            ? ALL_TYPES
+            : ensureContentTypeExists(allTypesWithCourses)
+            ? allTypesWithCourses
             : [],
           ...(tags.length && { tags }),
           ...countTag,
@@ -944,7 +1029,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: ensureContentTypeExists(ALL_TYPES) ? ALL_TYPES : [],
+          types: ensureContentTypeExists(allTypesWithCourses) ? allTypesWithCourses : [],
           countTypes: true,
           countProcessEntry: true,
         },

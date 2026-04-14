@@ -28,6 +28,7 @@ import {
   AnchorPage,
   Article,
   ContentLanguage,
+  Course,
   GetSearchResultsQuery,
   LifeEventPage,
   News,
@@ -46,6 +47,37 @@ import * as styles from './SearchInput.css'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
+
+const COURSE_LIST_PAGE_PATHS: Record<string, { is: string; en: string }> = {
+  '6pkONOn80xzGTGij6qtjai': {
+    is: '/s/hh/namskeid-fyrir-almenning',
+    en: '/en/o/hh/courses-for-the-public',
+  },
+  '147YftiWFQsBcbUFFe2rj1': {
+    is: '/s/hh/namskeid-fyrir-fagfolk',
+    en: '/en/o/hh/courses-for-professionals',
+  },
+}
+
+const getCourseUrl = (
+  item: {
+    courseSlug?: string | null
+    id: string
+    courseListPageId?: string | null
+  },
+  locale: Locale = 'is',
+): string => {
+  const courseId = item.courseSlug || item.id
+  const basePath =
+    item.courseListPageId && COURSE_LIST_PAGE_PATHS[item.courseListPageId]
+      ? COURSE_LIST_PAGE_PATHS[item.courseListPageId][
+          locale === 'en' ? 'en' : 'is'
+        ]
+      : COURSE_LIST_PAGE_PATHS['6pkONOn80xzGTGij6qtjai'][
+          locale === 'en' ? 'en' : 'is'
+        ]
+  return `${basePath}/${courseId}`
+}
 
 type SearchState = {
   term: string
@@ -135,6 +167,9 @@ const useSearch = (
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
                   SearchableContentTypes['WebManual'],
                   SearchableContentTypes['WebOrganizationParentSubpage'],
+                  ...(organization === 'hh'
+                    ? ['webCourse' as SearchableContentTypes]
+                    : []),
                 ],
                 highlightResults: false,
                 useQuery: 'suggestions',
@@ -386,6 +421,7 @@ export const SearchInput = forwardRef<
               <Results
                 quickContentLabel={quickContentLabel}
                 search={search}
+                locale={locale}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
                 highlightedIndex={highlightedIndex}
@@ -414,9 +450,11 @@ type SearchResultItem =
   | SubArticle
   | OrganizationSubpage
   | OrganizationParentSubpage
+  | Course
 
 type ResultsProps = {
   search: SearchState
+  locale: Locale
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
@@ -428,6 +466,7 @@ type ResultsProps = {
 
 const Results = ({
   search,
+  locale,
   highlightedIndex,
   getItemProps,
   autosuggest,
@@ -471,9 +510,10 @@ const Results = ({
                   | LinkType
                   | 'anchorpage'
                   | 'organizationparentsubpage'
+                  | 'course'
                 let variables: string[] = []
 
-                if ('slug' in item) {
+                if ('slug' in item && item.slug) {
                   variables = item.slug.split('/')
                 }
 
@@ -481,21 +521,27 @@ const Results = ({
                   variables = (item as OrganizationSubpage).url
                 }
 
+                let href: string | undefined
+                if (typename === 'course') {
+                  href = getCourseUrl(item, locale)
+                } else if (typename === 'organizationparentsubpage') {
+                  href = (item as OrganizationParentSubpage).href ?? undefined
+                } else {
+                  href = linkResolver(
+                    typename === 'anchorpage'
+                      ? extractAnchorPageLinkType(item as AnchorPage)
+                      : typename === 'organizationsubpage' &&
+                        (item as OrganizationSubpage)?.url?.length === 3
+                      ? 'organizationparentsubpagechild'
+                      : typename,
+                    variables,
+                  )?.href
+                }
+
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string:
-                      typename === 'organizationparentsubpage'
-                        ? (item as OrganizationParentSubpage).href
-                        : linkResolver(
-                            typename === 'anchorpage'
-                              ? extractAnchorPageLinkType(item as AnchorPage)
-                              : typename === 'organizationsubpage' &&
-                                (item as OrganizationSubpage)?.url?.length === 3
-                              ? 'organizationparentsubpagechild'
-                              : typename,
-                            variables,
-                          )?.href,
+                    string: href,
                   },
                 })
                 return (
