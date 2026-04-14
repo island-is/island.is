@@ -75,10 +75,6 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
   }
 
-  /**
-   * Distinct LÖKE numbers per case from the junction table (unassigned + defendant-linked).
-   * Used as the read path for `Case.policeCaseNumbers` while the legacy array column remains.
-   */
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },
@@ -108,7 +104,10 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
 
     for (const [caseId, set] of byCase) {
-      result.set(caseId, [...set].sort((a, b) => a.localeCompare(b)))
+      result.set(
+        caseId,
+        [...set].sort((a, b) => a.localeCompare(b)),
+      )
     }
 
     return result
