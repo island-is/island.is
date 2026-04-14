@@ -84,6 +84,9 @@ export const idsAdminModule: PortalModule = {
               {
                 name: m.editTenant,
                 path: IDSAdminPaths.IDSAdminTenantEdit,
+                enabled: props.userInfo.scopes.includes(
+                  AdminPortalScope.idsAdminSuperUser,
+                ),
                 element: <EditTenant />,
                 loader: editTenantLoader(props),
                 action: editTenantAction(props),

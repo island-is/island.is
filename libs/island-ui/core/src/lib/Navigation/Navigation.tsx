@@ -225,9 +225,18 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             titleLink?.active || isFocused || isHovered ? activeColor : color
 
           return (
-            <Text as="span" variant="h4" color={textColor}>
-              {title}
-            </Text>
+            <>
+              <Text as="span" variant="h4" color={textColor}>
+                {title}
+              </Text>
+              <Text
+                as="span"
+                variant="h4"
+                color={titleLink?.active ? activeColor : color}
+              >
+                {title}
+              </Text>
+            </>
           )
         }}
       </FocusableBox>,

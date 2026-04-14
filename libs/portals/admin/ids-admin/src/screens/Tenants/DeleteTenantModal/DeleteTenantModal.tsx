@@ -29,9 +29,6 @@ const DeleteTenantModal = ({
   const { formatMessage } = useLocale()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [deleteTenant, { loading }] = useDeleteTenantMutation({
-    // Refetch the tenants list so it reflects the removal; `awaitRefetchQueries`
-    // makes the mutation promise resolve only after the refetch is done, so
-    // the caller's navigation happens against the updated cache.
     refetchQueries: ['Tenants'],
     awaitRefetchQueries: true,
   })

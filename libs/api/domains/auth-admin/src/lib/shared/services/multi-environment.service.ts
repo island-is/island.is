@@ -56,14 +56,7 @@ export abstract class MultiEnvironmentService {
     }
   }
 
-  /**
-   * Returns true when the admin api client for the given environment has
-   * been configured (and is therefore actually reachable). Use this from
-   * subclasses that need to distinguish "real environment that succeeded"
-   * from "unconfigured environment whose `makeRequest` returns null without
-   * throwing" — otherwise success-if-any style aggregation can report a
-   * false positive when only one environment is configured and it fails.
-   */
+  /** Returns true if the admin API client for the given environment is configured. */
   protected isEnvironmentConfigured(environment: Environment): boolean {
     switch (environment) {
       case Environment.Development:

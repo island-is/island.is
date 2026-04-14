@@ -333,13 +333,7 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    // Only count environments that are actually configured — otherwise
-    // `makeRequest` silently resolves to `null` for unconfigured envs and
-    // the old `if (!response)` check both a) marked successful configured
-    // envs as failures (handle204 returns null on 204 / undefined on 200
-    // void) and b) marked unconfigured envs as fake successes. In a
-    // single-env local setup that meant a successful archive looked like
-    // a failure in the UI.
+    // Skip unconfigured environments so we only track actual delete results.
     const configuredEnvironments = environments.filter((environment) =>
       this.isEnvironmentConfigured(environment),
     )

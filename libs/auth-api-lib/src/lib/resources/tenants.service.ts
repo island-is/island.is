@@ -74,10 +74,7 @@ export class TenantsService {
     }
   }
 
-  /**
-   * Full domain row used by the admin edit screen. Includes fields that the
-   * public `findById` intentionally does not return.
-   */
+  /** Returns all domain fields, including admin-only attributes. */
   async findByIdForAdmin(id: string): Promise<Domain> {
     const tenant = await this.domainModel.findOne({
       where: { name: id },
