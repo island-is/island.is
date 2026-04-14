@@ -1,12 +1,13 @@
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import Clipboard from '@react-native-clipboard/clipboard'
+import Clipboard from 'expo-clipboard'
 import styled, { useTheme } from 'styled-components/native'
 
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
 import { ViewStyle } from 'react-native'
+import { testIDs } from '../../../utils/test-ids'
 
 const Host = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -100,7 +101,7 @@ export function AirDiscountCard({
   const theme = useTheme()
   const discountCode = credit === 0 ? undefined : code ?? '0'
   return (
-    <Host style={style}>
+    <Host style={style} testID={testIDs.AIR_DISCOUNT_ITEM}>
       <Content>
         <Message>
           <Typography
@@ -142,7 +143,7 @@ export function AirDiscountCard({
       </Content>
       {credit !== 0 && (
         <CopyCodeContainer>
-          <CopyCodeButton onPress={() => Clipboard.setString(code ?? '')}>
+          <CopyCodeButton onPress={() => Clipboard.setStringAsync(code ?? '')}>
             <Typography variant="heading5" color={theme.color.blue400}>
               <FormattedMessage
                 id="airDiscount.copyDiscountCode"

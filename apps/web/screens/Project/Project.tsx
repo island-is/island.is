@@ -313,11 +313,7 @@ const ProjectPage: Screen<PageProps> = ({
               </Box>
             )
           }
-          if (
-            slice.__typename === 'LatestNewsSlice' &&
-            slice.news.length >= 3 &&
-            projectPage?.slug
-          ) {
+          if (slice.__typename === 'LatestNewsSlice' && projectPage?.slug) {
             return (
               <Box paddingBottom={[2, 2, 5]} key={slice.id}>
                 <DigitalIcelandLatestNewsSlice

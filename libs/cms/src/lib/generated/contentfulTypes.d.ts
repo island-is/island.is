@@ -205,6 +205,80 @@ export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
   }
 }
 
+export interface IAnnualReportFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Page Identifier */
+  pageIdentifier: string
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Chapters */
+  chapters: IAnnualReportChapter[]
+}
+
+/** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
+
+export interface IAnnualReport extends Entry<IAnnualReportFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'annualReport'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnnualReportChapterFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
+
+  /** Content */
+  content: Document
+}
+
+export interface IAnnualReportChapter
+  extends Entry<IAnnualReportChapterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'annualReportChapter'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAppUriFields {
   /** URI */
   uri: string
@@ -4394,6 +4468,9 @@ export interface IServicePortalPageFields {
   /** FAQ List */
   faqList?: IFaqList | undefined
 
+  /** FAQ List - Company */
+  faqListCompany?: IFaqList | undefined
+
   /** Empty State Message */
   emptyStateMessage?: Document | undefined
 }
@@ -5626,7 +5703,12 @@ export interface IWebChatFields {
   internalTitle: string
 
   /** Display Locations */
-  displayLocations: (IOrganization | IArticle | IOrganizationPage)[]
+  displayLocations: (
+    | IOrganization
+    | IArticle
+    | IOrganizationPage
+    | IFrontpage
+  )[]
 
   /** Web Chat Configuration */
   webChatConfiguration?: Record<string, any> | undefined
@@ -5654,6 +5736,8 @@ export type CONTENT_TYPE =
   | 'alertBanner'
   | 'anchorPage'
   | 'anchorPageList'
+  | 'annualReport'
+  | 'annualReportChapter'
   | 'appUri'
   | 'article'
   | 'articleCategory'
