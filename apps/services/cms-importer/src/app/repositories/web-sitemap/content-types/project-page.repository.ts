@@ -36,7 +36,7 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
     >()
 
     while (projectSubpageIds.length > 0) {
-      const ids = projectSubpageIds.splice(0, 10)
+      const ids = projectSubpageIds.splice(0, 15)
       const projectSubpageResponse = await this.managementClient.getEntries({
         content_type: 'projectSubpage',
         select: 'fields.slug,fields.title,sys',
