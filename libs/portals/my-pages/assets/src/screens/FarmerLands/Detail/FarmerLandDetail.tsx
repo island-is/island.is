@@ -1,7 +1,8 @@
-import { Tabs } from '@island.is/island-ui/core'
+import { Box, Divider, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  InfoLine,
   IntroWrapperV2,
   ATVINNUVEGARADUNEYTID_SLUG,
   m as cm,
@@ -73,13 +74,26 @@ export const FarmerLandDetail = () => {
         />
       )}
       {!loading && data?.farmerLand && (
-        <Tabs
-          label={formatMessage(fm.selectTab)}
-          tabs={tabs}
-          contentBackground="transparent"
-          selected="0"
-          size="xs"
-        />
+        <>
+          <Box marginBottom={5}>
+            <InfoLine
+              label={formatMessage(fm.farmNumberLabel)}
+              content={land?.id ?? '-'}
+              loading={loading}
+            />
+
+            <Box paddingY={2}>
+              <Divider />
+            </Box>
+          </Box>
+          <Tabs
+            label={formatMessage(fm.selectTab)}
+            tabs={tabs}
+            contentBackground="transparent"
+            selected="0"
+            size="xs"
+          />
+        </>
       )}
     </IntroWrapperV2>
   )

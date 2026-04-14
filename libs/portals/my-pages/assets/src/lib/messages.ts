@@ -188,6 +188,10 @@ export const farmerLandsMessages = defineMessages({
     id: 'sp.farmer-lands:farm-number',
     defaultMessage: 'Búsnúmer: {arg}',
   },
+  farmNumberLabel: {
+    id: 'sp.farmer-lands:farm-number-label',
+    defaultMessage: 'Búsnúmer',
+  },
   // Tab labels
   selectTab: {
     id: 'sp.farmer-lands:select-tab',
