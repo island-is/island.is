@@ -1,3 +1,5 @@
+import type { PrimarySchoolAssessment } from './models/primarySchool/primarySchoolAssessment.model'
+
 export interface EducationLicense {
   id: string
   school: string
@@ -51,4 +53,12 @@ export interface ExamResult {
 export interface Student {
   name: string
   nationalId: string
+}
+
+/**
+ * Intersection type used to thread studentId through field resolvers on PrimarySchoolAssessment.
+ * `studentId` is not a @Field — it's internal state passed via @Parent() to child resolvers.
+ */
+export type PrimarySchoolAssessmentWithContext = PrimarySchoolAssessment & {
+  studentId: string
 }

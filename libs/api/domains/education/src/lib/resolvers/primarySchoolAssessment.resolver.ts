@@ -15,7 +15,7 @@ import type { ConfigType } from '@nestjs/config'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
 import { PrimarySchoolAssessmentResult } from '../models/primarySchool/primarySchoolAssessmentResult.model'
 import { mapResult } from '../models/primarySchool/primarySchool.mapper'
-import type { PrimarySchoolAssessmentWithContext } from '../shared/types'
+import type { PrimarySchoolAssessmentWithContext } from '../types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => PrimarySchoolAssessment)

@@ -27,7 +27,6 @@ import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
 import { EducationV2Module } from '@island.is/api/domains/education'
-import { PrimarySchoolModule } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import {
   EmailSignupModule,
@@ -296,7 +295,6 @@ const environment = getConfig
       fileDownloadBucket: environment.education.fileDownloadBucket as string,
     }),
     EducationV2Module,
-    PrimarySchoolModule,
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
