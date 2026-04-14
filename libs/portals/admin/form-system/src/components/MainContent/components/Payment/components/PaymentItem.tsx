@@ -66,6 +66,7 @@ export const PaymentItem = ({
               const paymentSettings = paymentCatalog.find(
                 (item: PaymentCatalogItem) => item.chargeItemCode === e?.value,
               )
+              console.log('paymentSettings', paymentSettings)
               controlDispatch({
                 type: 'SET_PAYMENT_SETTINGS',
                 payload: {

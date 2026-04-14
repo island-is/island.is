@@ -2,7 +2,7 @@ import { FC, Fragment, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -13,14 +13,13 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
   Conclusion,
-  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
@@ -30,12 +29,12 @@ import {
   PageLayout,
   PageTitle,
   serviceAnnouncementsStrings,
-  useIndictmentsLawsBroken,
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
+  CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
   Defendant,
@@ -44,6 +43,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -105,14 +105,10 @@ const IndictmentOverview: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const { appealBanner, appealModals } = useAppealCase()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
-
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
@@ -123,191 +119,177 @@ const IndictmentOverview: FC = () => {
     (isCaseDefendantDefender(user, workingCase) ||
       isCaseCivilClaimantSpokesperson(user, workingCase))
 
+  const shouldDisplayAppealBanner =
+    workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.DISMISSAL &&
+    (workingCase.canBeAppealed ||
+      workingCase.hasBeenAppealed ||
+      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
+      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      isValid={true}
-      onNavigationTo={handleNavigationTo}
-    >
-      <PageHeader
-        title={
-          caseIsClosed
-            ? formatMessage(titles.shared.closedCaseOverview, {
-                courtCaseNumber: workingCase.courtCaseNumber,
-              })
-            : formatMessage(titles.court.indictments.overview)
-        }
-      />
-      <FormContentContainer>
-        <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
-        <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.rulingModifiedHistory && (
-          <AlertMessage
-            type="info"
-            title="Mál leiðrétt"
-            message={
-              <MarkdownWrapper
-                markdown={workingCase.rulingModifiedHistory}
-                textProps={{ variant: 'small' }}
-              />
-            }
-          />
-        )}
-        {workingCase.defendants?.map(
-          (defendant) =>
-            defendant.verdict && (
-              <Box
-                key={`${defendant.id}${defendant.verdict.id}`}
-                marginBottom={2}
-              >
-                <VerdictStatusAlert
-                  defendant={defendant}
-                  verdict={defendant.verdict}
+    <>
+      {shouldDisplayAppealBanner && appealBanner}
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={isLoadingWorkingCase}
+        notFound={caseNotFound}
+        isValid={true}
+        onNavigationTo={handleNavigationTo}
+      >
+        <PageHeader
+          title={
+            caseIsClosed
+              ? formatMessage(titles.shared.closedCaseOverview, {
+                  courtCaseNumber: workingCase.courtCaseNumber,
+                })
+              : formatMessage(titles.court.indictments.overview)
+          }
+        />
+        <FormContentContainer>
+          <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
+          <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.rulingModifiedHistory && (
+            <AlertMessage
+              type="info"
+              title="Mál leiðrétt"
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
                 />
-              </Box>
-            ),
-        )}
-        {workingCase.defendants?.map((defendant) => (
-          <Fragment key={defendant.id}>
-            {defendant.alternativeServiceDescription && (
-              <AlternativeServiceAnnouncement
-                alternativeServiceDescription={
-                  defendant.alternativeServiceDescription
-                }
-                defendantName={defendant.name}
-              />
-            )}
-            {defendant.subpoenas
-              ?.filter((subpoena) =>
-                isSuccessfulServiceStatus(subpoena.serviceStatus),
-              )
-              .map((subpoena) => (
-                <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                  <ServiceAnnouncement
+              }
+            />
+          )}
+          {workingCase.defendants?.map(
+            (defendant) =>
+              defendant.verdict && (
+                <Box
+                  key={`${defendant.id}${defendant.verdict.id}`}
+                  marginBottom={2}
+                >
+                  <VerdictStatusAlert
                     defendant={defendant}
-                    subpoena={subpoena}
+                    verdict={defendant.verdict}
                   />
                 </Box>
-              ))}
-          </Fragment>
-        ))}
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
-          {caseHasBeenReceivedByCourt &&
-            workingCase.court &&
-            latestDate?.date &&
-            workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
-            workingCase.indictmentDecision !==
-              IndictmentDecision.REDISTRIBUTING && (
-              <Box component="section">
-                <IndictmentCaseScheduledCard
-                  court={workingCase.court}
-                  indictmentDecision={workingCase.indictmentDecision}
-                  courtDate={latestDate.date}
-                  courtRoom={latestDate.location}
-                  postponedIndefinitelyExplanation={
-                    workingCase.postponedIndefinitelyExplanation
+              ),
+          )}
+          {workingCase.defendants?.map((defendant) => (
+            <Fragment key={defendant.id}>
+              {defendant.alternativeServiceDescription && (
+                <AlternativeServiceAnnouncement
+                  alternativeServiceDescription={
+                    defendant.alternativeServiceDescription
                   }
-                  courtSessionType={workingCase.courtSessionType}
+                  defendantName={defendant.name}
+                />
+              )}
+              {defendant.subpoenas
+                ?.filter((subpoena) =>
+                  isSuccessfulServiceStatus(subpoena.serviceStatus),
+                )
+                .map((subpoena) => (
+                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                    <ServiceAnnouncement
+                      defendant={defendant}
+                      subpoena={subpoena}
+                    />
+                  </Box>
+                ))}
+            </Fragment>
+          ))}
+          <div className={grid({ gap: 5, marginBottom: 10 })}>
+            {caseHasBeenReceivedByCourt &&
+              workingCase.court &&
+              latestDate?.date &&
+              workingCase.indictmentDecision !==
+                IndictmentDecision.COMPLETING &&
+              workingCase.indictmentDecision !==
+                IndictmentDecision.REDISTRIBUTING && (
+                <Box component="section">
+                  <IndictmentCaseScheduledCard
+                    court={workingCase.court}
+                    indictmentDecision={workingCase.indictmentDecision}
+                    courtDate={latestDate.date}
+                    courtRoom={latestDate.location}
+                    postponedIndefinitelyExplanation={
+                      workingCase.postponedIndefinitelyExplanation
+                    }
+                    courtSessionType={workingCase.courtSessionType}
+                  />
+                </Box>
+              )}
+            <Box component="section">
+              {caseIsClosed ? (
+                <InfoCardClosedIndictment
+                  displayAppealExpirationInfo={
+                    workingCase.indictmentRulingDecision ===
+                      CaseIndictmentRulingDecision.RULING &&
+                    (user?.role === UserRole.DEFENDER ||
+                      workingCase.indictmentReviewer?.id === user?.id)
+                  }
+                  displayVerdictViewDate
+                />
+              ) : (
+                <InfoCardActiveIndictment displayVerdictViewDate />
+              )}
+            </Box>
+            {caseIsClosed &&
+              isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+                <Conclusion
+                  title={`${
+                    workingCase.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.RULING
+                      ? 'Dóms'
+                      : 'Úrskurðar'
+                  }orð héraðsdóms`}
+                  conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                  judgeName={workingCase.judge?.name}
+                />
+              )}
+            <AllIndictmentCaseFiles
+              displayGeneratedPDFs={displayGeneratedPDFs}
+            />
+            {canAddFiles && (
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  size="small"
+                  icon="add"
+                  onClick={() =>
+                    router.push(
+                      `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                >
+                  Bæta við gögnum
+                </Button>
+              </Box>
+            )}
+            {caseIsClosed && (
+              <Box component="section">
+                <ZipButton
+                  caseId={workingCase.id}
+                  courtCaseNumber={workingCase.courtCaseNumber}
                 />
               </Box>
             )}
-          <Box component="section">
-            {caseIsClosed ? (
-              <InfoCardClosedIndictment
-                displayAppealExpirationInfo={
-                  workingCase.indictmentRulingDecision ===
-                    CaseIndictmentRulingDecision.RULING &&
-                  (user?.role === UserRole.DEFENDER ||
-                    workingCase.indictmentReviewer?.id === user?.id)
-                }
-                displayVerdictViewDate
-              />
-            ) : (
-              <InfoCardActiveIndictment displayVerdictViewDate />
-            )}
-          </Box>
-          {caseIsClosed &&
-            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
-              <Conclusion
-                title={`${
-                  workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.RULING
-                    ? 'Dóms'
-                    : 'Úrskurðar'
-                }orð héraðsdóms`}
-                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
-                judgeName={workingCase.judge?.name}
-              />
-            )}
-          {(hasLawsBroken || hasMergeCases) && (
-            <Box>
-              {/* 
-            NOTE: Temporarily hidden while list of laws broken is not complete in
-            indictment cases
-            
-            {hasLawsBroken && (
-              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )} */}
-              {hasMergeCases && (
-                <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                  {workingCase.mergedCases?.map((mergedCase) => (
-                    <Box key={mergedCase.id}>
-                      <ConnectedCaseFilesAccordionItem
-                        connectedCaseParentId={workingCase.id}
-                        connectedCase={mergedCase}
-                        displayGeneratedPDFs={displayGeneratedPDFs}
-                      />
-                    </Box>
-                  ))}
-                </Accordion>
-              )}
-            </Box>
-          )}
-          <Box component="section">
-            <IndictmentCaseFilesList
-              workingCase={workingCase}
-              displayGeneratedPDFs={displayGeneratedPDFs}
-            />
-          </Box>
-          {canAddFiles && (
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                size="small"
-                icon="add"
-                onClick={() =>
-                  router.push(
-                    `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
-                  )
-                }
-              >
-                Bæta við gögnum
-              </Button>
-            </Box>
-          )}
-          {caseIsClosed && (
-            <Box component="section">
-              <ZipButton
-                caseId={workingCase.id}
-                courtCaseNumber={workingCase.courtCaseNumber}
-              />
-            </Box>
-          )}
-        </div>
-      </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={getStandardUserDashboardRoute(user)}
-          hideNextButton
-        />
-      </FormContentContainer>
-    </PageLayout>
+          </div>
+        </FormContentContainer>
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={getStandardUserDashboardRoute(user)}
+            hideNextButton
+          />
+        </FormContentContainer>
+        {appealModals}
+      </PageLayout>
+    </>
   )
 }
 
