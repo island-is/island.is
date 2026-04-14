@@ -101,6 +101,7 @@ const ALL_TYPES: `${SearchableContentTypes}`[] = [
   'webManual',
   'webManualChapterItem',
   'webOrganizationParentSubpage',
+  'webCourse',
 ]
 
 const COURSE_LIST_PAGE_PATHS: Record<string, { is: string; en: string }> = {
@@ -293,9 +294,6 @@ const Search: Screen<CategoryProps> = ({
           labels.push(item.organizationPageTitle)
         }
         break
-      case 'Course':
-        labels.push(n('course', 'Námskeið'))
-        break
       default:
         break
     }
@@ -329,8 +327,6 @@ const Search: Screen<CategoryProps> = ({
     return labels
   }
 
-  const isHhOrganization = stringToArray(query.organization).includes('hh')
-
   const tagTitles:
     | Partial<Record<SearchableContentTypes, string>>
     | Record<string, string> = useMemo(
@@ -343,11 +339,8 @@ const Search: Screen<CategoryProps> = ({
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
       webManual: n('webManual', 'Handbækur'),
       webManualChapterItem: n('webManual', 'Handbækur'),
-      ...(isHhOrganization && {
-        webCourse: n('webCourse', 'Námskeið'),
-      }),
     }),
-    [n, isHhOrganization],
+    [n],
   )
 
   const pathname = linkResolver('search').href
@@ -443,7 +436,11 @@ const Search: Screen<CategoryProps> = ({
     title: item.title,
     parentTitle: item.parent?.title ?? item.manual?.title,
     description:
-      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+      item.intro ??
+      item.description ??
+      item.parent?.intro ??
+      item.subtitle ??
+      item.cardIntro,
     link: getItemLink(item),
     categorySlug: item.category?.slug ?? item.parent?.category?.slug,
     category: item.category ?? item.parent?.category,
@@ -491,10 +488,6 @@ const Search: Screen<CategoryProps> = ({
 
     if (newQuery.processentry === false) {
       delete newQuery['processentry']
-    }
-
-    if (!newQuery.organization?.includes('hh') && newQuery.type?.length) {
-      newQuery.type = newQuery.type.filter((t) => t !== 'webCourse')
     }
 
     routerReplace({
@@ -976,11 +969,6 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     (x: SearchableContentTypes) => x,
   )
 
-  const includesCourses = stringToArray(organization).includes('hh')
-  const allTypesWithCourses = includesCourses
-    ? ([...ALL_TYPES, 'webCourse'] as `${SearchableContentTypes}`[])
-    : ALL_TYPES
-
   const ensureContentTypeExists = (
     types: string[],
   ): types is SearchableContentTypes[] =>
@@ -1005,8 +993,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           queryString,
           types: types.length
             ? types
-            : ensureContentTypeExists(allTypesWithCourses)
-            ? allTypesWithCourses
+            : ensureContentTypeExists(ALL_TYPES)
+            ? ALL_TYPES
             : [],
           ...(tags.length && { tags }),
           ...countTag,
@@ -1029,7 +1017,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: ensureContentTypeExists(allTypesWithCourses) ? allTypesWithCourses : [],
+          types: ensureContentTypeExists(ALL_TYPES) ? ALL_TYPES : [],
           countTypes: true,
           countProcessEntry: true,
         },
