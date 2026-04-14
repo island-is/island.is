@@ -7,12 +7,12 @@ import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AllIndictmentCaseFiles,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
   MarkdownWrapper,
@@ -177,18 +177,7 @@ export const Overview = () => {
                 />
               </Box>
             )}
-          {/* 
-        NOTE: Temporarily hidden while list of laws broken is not complete in
-        indictment cases
-        
-        {lawsBroken.size > 0 && (
-          <Box component="section">
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-          </Box>
-        )} */}
-          <Box component="section">
-            <IndictmentCaseFilesList workingCase={workingCase} />
-          </Box>
+          <AllIndictmentCaseFiles />
           <Box component="section">
             {isReviewMissing && (
               <IndictmentReviewerSelector

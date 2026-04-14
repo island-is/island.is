@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
@@ -8,6 +8,7 @@ import {
   TagAppealState,
   TagCaseState,
   useOpenCaseInNewTab,
+  UserContext,
   useWithdrawAppealMenuOption,
   WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
@@ -33,6 +34,7 @@ export const DefenderCasesTable: FC<Props> = ({
   showingCompletedCases,
 }) => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const {
@@ -73,7 +75,7 @@ export const DefenderCasesTable: FC<Props> = ({
         data={cases}
         generateContextMenuItems={(row) => [
           openCaseInNewTab(row.id),
-          ...(shouldDisplayWithdrawAppealOption(row)
+          ...(shouldDisplayWithdrawAppealOption(row, user?.nationalId)
             ? [withdrawAppealMenuOption(row.id)]
             : []),
         ]}
