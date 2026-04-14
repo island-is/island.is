@@ -48,37 +48,6 @@ import * as styles from './SearchInput.css'
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
 
-const COURSE_LIST_PAGE_PATHS: Record<string, { is: string; en: string }> = {
-  '6pkONOn80xzGTGij6qtjai': {
-    is: '/s/hh/namskeid-fyrir-almenning',
-    en: '/en/o/hh/courses-for-the-public',
-  },
-  '147YftiWFQsBcbUFFe2rj1': {
-    is: '/s/hh/namskeid-fyrir-fagfolk',
-    en: '/en/o/hh/courses-for-professionals',
-  },
-}
-
-const getCourseUrl = (
-  item: {
-    courseSlug?: string | null
-    id: string
-    courseListPageId?: string | null
-  },
-  locale: Locale = 'is',
-): string => {
-  const courseId = item.courseSlug || item.id
-  const basePath =
-    item.courseListPageId && COURSE_LIST_PAGE_PATHS[item.courseListPageId]
-      ? COURSE_LIST_PAGE_PATHS[item.courseListPageId][
-          locale === 'en' ? 'en' : 'is'
-        ]
-      : COURSE_LIST_PAGE_PATHS['6pkONOn80xzGTGij6qtjai'][
-          locale === 'en' ? 'en' : 'is'
-        ]
-  return `${basePath}/${courseId}`
-}
-
 type SearchState = {
   term: string
   results?: GetSearchResultsQuery['searchResults']
@@ -452,7 +421,6 @@ type SearchResultItem =
 
 type ResultsProps = {
   search: SearchState
-  locale: Locale
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
@@ -464,7 +432,6 @@ type ResultsProps = {
 
 const Results = ({
   search,
-  locale,
   highlightedIndex,
   getItemProps,
   autosuggest,
@@ -521,7 +488,7 @@ const Results = ({
 
                 let href: string | undefined
                 if (typename === 'course') {
-                  href = getCourseUrl(item, locale)
+                  href = (item as Course).courseHref || undefined
                 } else if (typename === 'organizationparentsubpage') {
                   href = (item as OrganizationParentSubpage).href ?? undefined
                 } else {

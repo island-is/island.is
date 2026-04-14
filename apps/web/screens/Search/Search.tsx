@@ -104,37 +104,6 @@ const ALL_TYPES: `${SearchableContentTypes}`[] = [
   'webCourse',
 ]
 
-const COURSE_LIST_PAGE_PATHS: Record<string, { is: string; en: string }> = {
-  '6pkONOn80xzGTGij6qtjai': {
-    is: '/s/hh/namskeid-fyrir-almenning',
-    en: '/en/o/hh/courses-for-the-public',
-  },
-  '147YftiWFQsBcbUFFe2rj1': {
-    is: '/s/hh/namskeid-fyrir-fagfolk',
-    en: '/en/o/hh/courses-for-professionals',
-  },
-}
-
-const getCourseUrl = (
-  item: {
-    courseSlug?: string | null
-    id: string
-    courseListPageId?: string | null
-  },
-  locale = 'is',
-): string => {
-  const courseId = item.courseSlug || item.id
-  const basePath =
-    item.courseListPageId && COURSE_LIST_PAGE_PATHS[item.courseListPageId]
-      ? COURSE_LIST_PAGE_PATHS[item.courseListPageId][
-          locale === 'en' ? 'en' : 'is'
-        ]
-      : COURSE_LIST_PAGE_PATHS['6pkONOn80xzGTGij6qtjai'][
-          locale === 'en' ? 'en' : 'is'
-        ]
-  return `${basePath}/${courseId}`
-}
-
 type SearchQueryFilters = {
   category: string
   type: string
@@ -400,7 +369,8 @@ const Search: Screen<CategoryProps> = ({
     }
 
     if (item.__typename === 'Course') {
-      return getCourseUrl(item, activeLocale)
+      if (item.courseHref) return item.courseHref
+      return ''
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -459,7 +429,9 @@ const Search: Screen<CategoryProps> = ({
     return !filters.category || filters.category === item.categorySlug
   }
 
-  const filteredItems = [...searchResultsItems].filter(noUncategorized)
+  const filteredItems = [...searchResultsItems]
+    .filter(noUncategorized)
+    .filter((item) => Boolean(item.link))
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)

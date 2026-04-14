@@ -68,6 +68,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           courseSlug: slug
           courseListPageId
+          courseHref
         }
       }
     }
@@ -330,6 +331,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           courseListPageId
           organizationTitle
           intro
+          courseHref
         }
       }
       tagCounts {
