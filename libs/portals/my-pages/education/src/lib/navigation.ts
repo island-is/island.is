@@ -13,20 +13,23 @@ export const educationNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      // Old assessment screen — hidden from nav and breadcrumb; kept as sibling
+      // (not under Grunnskoli) so that when the primary-school feature flag is
+      // off and the EducationGrunnskoli route is filtered out, the Grunnskoli
+      // nav item has no descendant routes and is removed from the tree entirely.
+      name: m.educationAssessment,
+      navHide: true,
+      breadcrumbHide: true,
+      searchHide: true,
+      path: EducationPaths.EducationAssessment,
+    },
+    {
       name: m.educationGrunnskoli,
       description: m.educationPrimarySchoolIntro,
       searchTags: [m.educationAssessment],
       path: EducationPaths.EducationGrunnskoli,
       // No subnav in sidebar for grunnskóli
       children: [
-        {
-          // Old assessment screen — hidden from nav and breadcrumb
-          name: m.educationAssessment,
-          navHide: true,
-          breadcrumbHide: true,
-          searchHide: true,
-          path: EducationPaths.EducationAssessment,
-        },
         {
           // Student list — same content as grunnskoli root via wrapper, hide from both
           name: m.educationGrunnskoli,

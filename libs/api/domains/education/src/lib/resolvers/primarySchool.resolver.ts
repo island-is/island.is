@@ -12,7 +12,10 @@ import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-schoo
 import { isDefined } from '@island.is/shared/utils'
 import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
-import { mapAssessment } from '../models/primarySchool/primarySchool.mapper'
+import {
+  mapAssessment,
+  mapPrimarySchoolStudent,
+} from '../models/primarySchool/primarySchool.mapper'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => PrimarySchoolStudent)
@@ -27,7 +30,7 @@ export class PrimarySchoolResolver {
     const students = await this.primarySchoolService.getStudents(user)
     return students
       ?.filter((s) => isDefined(s.id))
-      .map((s) => ({ ...s, contactType: s.relationType }))
+      .map(mapPrimarySchoolStudent)
   }
 
   @Query(() => PrimarySchoolStudent, { nullable: true })
@@ -39,7 +42,7 @@ export class PrimarySchoolResolver {
     const students = await this.primarySchoolService.getStudents(user)
     const student = students?.find((s) => s.id === studentId)
     if (!student?.id) return null
-    return { ...student, contactType: student.relationType }
+    return mapPrimarySchoolStudent(student)
   }
 
   @ResolveField(() => [PrimarySchoolAssessment], { nullable: true })

@@ -1,9 +1,15 @@
 import type {
   IslandIsAssessmentTypeDto,
   IslandIsSimpleAssignmentResultDto,
+  IslandIsStudentDto,
 } from '@island.is/clients/mms/primary-school'
 import type { PrimarySchoolAssessment } from './primarySchoolAssessment.model'
 import type { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
+
+export const mapPrimarySchoolStudent = (student: IslandIsStudentDto) => ({
+  ...student,
+  contactType: student.relationType,
+})
 
 export const mapAssessment = (
   type: IslandIsAssessmentTypeDto,
