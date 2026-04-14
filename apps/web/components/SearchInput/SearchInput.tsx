@@ -178,11 +178,7 @@ type SubmitType = {
   string: string
 }
 
-const useSubmit = (
-  locale: Locale,
-  onRouting?: () => void,
-  organization?: string,
-) => {
+const useSubmit = (onRouting?: () => void, organization?: string) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -264,7 +260,7 @@ export const SearchInput = forwardRef<
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete, organization)
 
-    const onSubmit = useSubmit(locale, undefined, organization)
+    const onSubmit = useSubmit(undefined, organization)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
