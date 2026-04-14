@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,

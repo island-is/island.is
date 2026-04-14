@@ -1,9 +1,10 @@
 import { InstitutionUser } from '../user'
 import {
-  courtOfAppealsRequestCasesCompleted,
-  courtOfAppealsRequestCasesInProgress,
+  courtOfAppealsCasesCompleted,
+  courtOfAppealsCasesInProgress,
 } from './caseTables/courtOfAppeals'
 import {
+  districtCourtIndictmentsAppealed,
   districtCourtIndictmentsCompleted,
   districtCourtIndictmentsFinalizing,
   districtCourtIndictmentsInProgress,
@@ -24,6 +25,7 @@ import {
   prisonStaffRequestCasesDone,
 } from './caseTables/prisonStaff'
 import {
+  prosecutionIndictmentsAppealed,
   prosecutionIndictmentsCompleted,
   prosecutionIndictmentsInDraft,
   prosecutionIndictmentsInProgress,
@@ -64,9 +66,8 @@ export const getCaseTableType = (
 }
 
 export const caseTables: Record<CaseTableType, CaseTable> = {
-  COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS:
-    courtOfAppealsRequestCasesInProgress,
-  COURT_OF_APPEALS_REQUEST_CASES_COMPLETED: courtOfAppealsRequestCasesCompleted,
+  COURT_OF_APPEALS_CASES_IN_PROGRESS: courtOfAppealsCasesInProgress,
+  COURT_OF_APPEALS_CASES_COMPLETED: courtOfAppealsCasesCompleted,
   DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS: districtCourtRequestCasesInProgress,
   DISTRICT_COURT_REQUEST_CASES_APPEALED: districtCourtRequestCasesAppealed,
   DISTRICT_COURT_REQUEST_CASES_COMPLETED: districtCourtRequestCasesCompleted,
@@ -74,6 +75,7 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   DISTRICT_COURT_INDICTMENTS_RECEIVED: districtCourtIndictmentsReceived,
   DISTRICT_COURT_INDICTMENTS_IN_PROGRESS: districtCourtIndictmentsInProgress,
   DISTRICT_COURT_INDICTMENTS_FINALIZING: districtCourtIndictmentsFinalizing,
+  DISTRICT_COURT_INDICTMENTS_APPEALED: districtCourtIndictmentsAppealed,
   DISTRICT_COURT_INDICTMENTS_COMPLETED: districtCourtIndictmentsCompleted,
   PRISON_STAFF_REQUEST_CASES_ACTIVE: prisonStaffRequestCasesActive,
   PRISON_STAFF_REQUEST_CASES_DONE: prisonStaffRequestCasesDone,
@@ -110,6 +112,7 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION:
     prosecutionIndictmentsWaitingForConfirmation,
   PROSECUTION_INDICTMENTS_IN_PROGRESS: prosecutionIndictmentsInProgress,
+  PROSECUTION_INDICTMENTS_APPEALED: prosecutionIndictmentsAppealed,
   PROSECUTION_INDICTMENTS_COMPLETED: prosecutionIndictmentsCompleted,
   // Exception: Not implemented as a static table but we currently need to preserve the case table type
   STATISTICS: {

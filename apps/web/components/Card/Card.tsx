@@ -125,7 +125,12 @@ export const Card = ({
                   <span dangerouslySetInnerHTML={{ __html: title }}></span>
                 </Text>
               ) : (
-                <Text as="h3" variant="h3" color={titleColor}>
+                <Text
+                  as="h3"
+                  variant="h3"
+                  color={titleColor}
+                  fontWeight="medium"
+                >
                   <Hyphen>{title}</Hyphen>
                 </Text>
               )}

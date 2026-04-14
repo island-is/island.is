@@ -1492,7 +1492,7 @@ describe('Transition Case', () => {
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-        expect(act).toThrow('Neutral cannot appeal an indictment case')
+        expect(act).toThrow('Current user cannot appeal an indictment case')
       })
 
       it.each(Object.values(CaseAppealState))(

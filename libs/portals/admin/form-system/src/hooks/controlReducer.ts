@@ -1378,6 +1378,7 @@ export const controlReducer = (
           priceAmount,
         },
       }
+      console.log('Updating payment settings with', newField.fieldSettings)
       update({ type: 'Field', data: newField })
       return {
         ...state,

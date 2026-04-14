@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import createUse from 'zustand'
-import { persist } from 'zustand/middleware'
-import create, { State } from 'zustand/vanilla'
-import { config, environments } from '../config'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { config } from '../config-constants'
+import { environments } from '../constants/environments'
+import { create, useStore } from 'zustand'
 
 export interface EnvironmentConfig {
   id: string
@@ -33,7 +33,7 @@ export interface EnvironmentResponse {
   }
 }
 
-export interface EnvironmentStore extends State {
+export interface EnvironmentStore {
   environment: EnvironmentConfig
   cognito: CognitoResponse | null
   loading: boolean
@@ -46,7 +46,7 @@ export interface EnvironmentStore extends State {
   }
 }
 
-export const environmentStore = create<EnvironmentStore>(
+export const environmentStore = create<EnvironmentStore>()(
   persist(
     (set, get) => ({
       environment: config.isTestingApp ? environments.dev : environments.prod,
@@ -117,21 +117,19 @@ export const environmentStore = create<EnvironmentStore>(
       },
     }),
     {
-      name: '@island/environment13',
-      getStorage: () => AsyncStorage,
-      deserialize(str: string) {
-        const { state, version } = JSON.parse(str)
-        delete state.actions
-        delete state.loading
-
-        if (!config.isTestingApp) {
-          state.environment = environments.prod
-        }
-
-        return { state, version }
-      },
+      name: '@island/environment15',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        environment: !config.isTestingApp
+          ? environments.prod
+          : state.environment,
+        cognito: state.cognito,
+        result: state.result,
+        fetchedAt: state.fetchedAt,
+      }),
     },
   ),
 )
-
-export const useEnvironmentStore = createUse(environmentStore)
+export const useEnvironmentStore = <U = EnvironmentStore>(
+  selector?: (state: EnvironmentStore) => U,
+) => useStore(environmentStore, selector!)

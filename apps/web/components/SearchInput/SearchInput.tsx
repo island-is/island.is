@@ -136,7 +136,7 @@ const useSearch = (
                   SearchableContentTypes['WebManual'],
                   SearchableContentTypes['WebOrganizationParentSubpage'],
                 ],
-                highlightResults: true,
+                highlightResults: false,
                 useQuery: 'suggestions',
                 tags: organization
                   ? [{ key: organization, type: SearchableTags.Organization }]
@@ -396,7 +396,7 @@ export const SearchInput = forwardRef<
                     onRouting()
                   }
                 }}
-                highlightedResults={true}
+                highlightedResults={false}
               />
             )}
           </AsyncSearchInput>

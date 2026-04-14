@@ -10,6 +10,7 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -22,6 +23,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseAppealState,
   CaseFile,
   CaseFileCategory,
@@ -35,6 +37,41 @@ import {
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
+
+const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
+  const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
+
+  if (prosecutorSubmitted) {
+    return 'Sækjandi lagði fram'
+  }
+
+  // For indictment cases, try to resolve the defender/spokesperson name
+  if (isIndictmentCase(workingCase.type) && file.defendantId) {
+    const defendant = workingCase.defendants?.find(
+      (d) => d.id === file.defendantId,
+    )
+
+    if (defendant?.defenderName) {
+      return `Verjandi ${defendant.defenderName} lagði fram`
+    }
+  }
+
+  // Fallback: use submittedBy if available (covers civil claimant
+  // spokespersons and other defence users)
+  if (isIndictmentCase(workingCase.type) && file.civilClaimantId) {
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (d) => d.id === file.civilClaimantId,
+    )
+
+    if (civilClaimant?.spokespersonName) {
+      return `${
+        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður'
+      } ${civilClaimant.spokespersonName} lagði fram`
+    }
+  }
+
+  return 'Varnaraðili lagði fram'
+}
 
 const AppealCaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
@@ -110,7 +147,7 @@ const AppealCaseFilesOverview = () => {
           <SectionHeading
             title="Skjöl kærumáls"
             tooltip={
-              isProsecutionUser(user)
+              isProsecutionUser(user) && !isIndictmentCase(workingCase.type)
                 ? 'Verjandi sér einungis kæru og greinargerð.'
                 : undefined
             }
@@ -157,10 +194,8 @@ const AppealCaseFilesOverview = () => {
                         CaseFileCategory.APPEAL_RULING,
                         CaseFileCategory.APPEAL_COURT_RECORD,
                       ].includes(file.category) && (
-                        <Text variant="small">
-                          {formatMessage(strings.submittedBy, {
-                            filesCategory: prosecutorSubmitted,
-                          })}
+                        <Text whiteSpace="nowrap" variant="small">
+                          {getFileSubmittedByText(file, workingCase)}
                         </Text>
                       )}
                   </Box>

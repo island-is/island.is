@@ -26,10 +26,11 @@ import {
   publicProsecutionOfficeCasesAccessWhereOptions,
 } from './whereOptions/access'
 import {
-  courtOfAppealsRequestCasesCompletedWhereOptions,
-  courtOfAppealsRequestCasesInProgressWhereOptions,
+  courtOfAppealsCasesCompletedWhereOptions,
+  courtOfAppealsCasesInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
+  districtCourtIndictmentsAppealedWhereOptions,
   districtCourtIndictmentsCompletedWhereOptions,
   districtCourtIndictmentsFinalizingWhereOptions,
   districtCourtIndictmentsInProgressWhereOptions,
@@ -50,6 +51,7 @@ import {
   prisonStaffRequestCasesDoneWhereOptions,
 } from './whereOptions/prisonStaff'
 import {
+  prosecutionIndictmentsAppealedWhereOptions,
   prosecutionIndictmentsCompletedWhereOptions,
   prosecutionIndictmentsInDraftWhereOptions,
   prosecutionIndictmentsInProgressWhereOptions,
@@ -115,10 +117,10 @@ export const caseTableWhereOptions: Record<
   CaseTableType,
   (user: User) => CaseWhereOptions
 > = {
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
-    courtOfAppealsRequestCasesInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_COMPLETED]:
-    courtOfAppealsRequestCasesCompletedWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS]:
+    courtOfAppealsCasesInProgressWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED]:
+    courtOfAppealsCasesCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
@@ -131,6 +133,8 @@ export const caseTableWhereOptions: Record<
     districtCourtIndictmentsReceivedWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]:
     districtCourtIndictmentsInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_APPEALED]:
+    districtCourtIndictmentsAppealedWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]:
     districtCourtIndictmentsFinalizingWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
@@ -181,6 +185,8 @@ export const caseTableWhereOptions: Record<
     prosecutionIndictmentsWaitingForConfirmationWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS]:
     prosecutionIndictmentsInProgressWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_APPEALED]:
+    prosecutionIndictmentsAppealedWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]:
     prosecutionIndictmentsCompletedWhereOptions,
   [CaseTableType.STATISTICS]: () => {

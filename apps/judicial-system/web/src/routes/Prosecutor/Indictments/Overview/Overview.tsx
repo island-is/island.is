@@ -4,7 +4,6 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
-  Accordion,
   AlertMessage,
   Box,
   Button,
@@ -15,12 +14,11 @@ import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AllIndictmentCaseFiles,
   BlueBox,
-  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
@@ -32,7 +30,6 @@ import {
   ProsecutorSelection,
   SectionHeading,
   ServiceAnnouncements,
-  useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
@@ -67,7 +64,6 @@ const Overview: FC = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { transitionCase, updateCase, isTransitioningCase } = useCase()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -176,10 +172,6 @@ const Overview: FC = () => {
     return Math.max(2, margin)
   }
 
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -249,32 +241,7 @@ const Overview: FC = () => {
             }}
           />
         </Box>
-        {(hasLawsBroken || hasMergeCases) && (
-          <Box marginBottom={5}>
-            {/* 
-            NOTE: Temporarily hidden while list of laws broken is not complete in
-            indictment cases
-            
-            {hasLawsBroken && (
-              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )} */}
-            {hasMergeCases && (
-              <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                {workingCase.mergedCases?.map((mergedCase) => (
-                  <Box key={mergedCase.id}>
-                    <ConnectedCaseFilesAccordionItem
-                      connectedCaseParentId={workingCase.id}
-                      connectedCase={mergedCase}
-                    />
-                  </Box>
-                ))}
-              </Accordion>
-            )}
-          </Box>
-        )}
-        <Box marginBottom={5}>
-          <IndictmentCaseFilesList workingCase={workingCase} />
-        </Box>
+        <AllIndictmentCaseFiles />
         {userCanAddDocuments && (
           <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
             <Button

@@ -134,6 +134,26 @@ export const districtCourtIndictmentsInProgressWhereOptions = (
   },
 })
 
+export const districtCourtIndictmentsAppealedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
+  includes: {
+    appealCase: {
+      attributes: [],
+      required: true,
+      where: {
+        appeal_state: CaseAppealState.APPEALED,
+      },
+    },
+  },
+  where: {
+    [Op.and]: [
+      districtCourtIndictmentsAccessWhereOptions(user),
+      { state: completedIndictmentCaseStates },
+    ],
+  },
+})
+
 export const districtCourtIndictmentsFinalizingWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({

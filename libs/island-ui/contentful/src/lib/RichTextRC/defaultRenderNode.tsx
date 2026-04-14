@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -148,7 +149,7 @@ export const defaultRenderNodeObject: RenderNode = {
     </Box>
   ),
   [BLOCKS.TABLE]: (_node, children) => (
-    <Box className={styles.clearBoth}>
+    <Box className={cn(styles.clearBoth, styles.tableContainer)}>
       <T.Table>{children}</T.Table>
     </Box>
   ),
