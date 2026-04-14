@@ -66,11 +66,11 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                     <T.Data
                       key={`rowitem-${iii}`}
                       colSpan={
-                      row.filter((item): item is TableItem => Boolean(item))
-                        .length === 1
-                        ? 4
-                        : 2
-                    }
+                        row.filter((item): item is TableItem => Boolean(item))
+                          .length === 1
+                          ? 4
+                          : 2
+                      }
                       style={tableStyles}
                     >
                       <Columns alignY="center" collapseBelow="lg" space={2}>
