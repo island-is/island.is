@@ -37,7 +37,7 @@ export const PrimarySchool = () => {
 
   return (
     <IntroWrapperV2
-      title={psm.studentListTitle}
+      title={psm.schoolLabel}
       intro={psm.studentListIntro}
       serviceProvider={{
         slug: MMS_SLUG,

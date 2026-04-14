@@ -39,7 +39,7 @@ export const PrimarySchoolOverview = () => {
         </Box>
       )}
       {!loading && !error && student && (
-        <InfoLineStack label={formatMessage(psm.basicInfo)}>
+        <InfoLineStack label={formatMessage(m.baseInfo)}>
           <InfoLine
             label={psm.studentLabel}
             content={student.name ?? undefined}

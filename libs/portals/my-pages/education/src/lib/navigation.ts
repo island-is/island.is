@@ -46,7 +46,7 @@ export const educationNavigation: PortalNavigationItem = {
               path: EducationPaths.PrimarySchoolStudent,
               children: [
                 {
-                  name: psm.hubOverview,
+                  name: m.overview,
                   navHide: true,
                   searchHide: true,
                   path: EducationPaths.PrimarySchoolOverview,

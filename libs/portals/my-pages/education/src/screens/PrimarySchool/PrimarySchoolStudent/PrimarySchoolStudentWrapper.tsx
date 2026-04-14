@@ -27,7 +27,7 @@ export const PrimarySchoolStudentWrapper = ({
   const { studentId } = useParams<{ studentId: string }>()
   const location = useLocation()
   const loaderData = useLoaderData() as PrimarySchoolStudentLoaderData
-  const title = loaderData?.studentName ?? psm.studentListTitle
+  const title = loaderData?.studentName ?? psm.schoolLabel
 
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId!,
@@ -38,7 +38,7 @@ export const PrimarySchoolStudentWrapper = ({
 
   const tabItems = [
     {
-      name: psm.hubOverview,
+      name: m.overview,
       path: overviewPath,
       active: location.pathname === overviewPath,
     },
