@@ -3,6 +3,14 @@ query PrimarySchoolAssessmentData($studentId: String!) {
     assessmentHistory {
       id
       name
+    }
+  }
+}
+
+query PrimarySchoolAssessmentResults($studentId: String!, $assessmentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    assessmentHistory(assessmentId: $assessmentId) {
+      id
       resultHistory {
         id
         schoolYear

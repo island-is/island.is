@@ -1,11 +1,10 @@
 import { CardLoader, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Accordion, AccordionItem } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
-import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolAssessmentDataQuery } from './PrimarySchoolAssessment.generated'
-import { AssessmentTable } from './AssessmentTable'
+import { SingleAssessment } from './subsections/SingleAssessment'
+import { AssessmentAccordionList } from './subsections/AssessmentAccordionList'
 
 export const PrimarySchoolAssessment = () => {
   useNamespaces('sp.education-primary-school')
@@ -19,37 +18,36 @@ export const PrimarySchoolAssessment = () => {
 
   const assessmentHistory = data?.primarySchoolStudent?.assessmentHistory ?? []
 
+  if (loading && !error) return <CardLoader />
+  if (error && !loading) return <Problem error={error} noBorder={false} />
+
+  if (!assessmentHistory.length) {
+    return (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(m.noData)}
+        message={formatMessage(m.noDataFoundDetail)}
+        imgSrc="./assets/images/sofa.svg"
+      />
+    )
+  }
+
+  if (assessmentHistory.length === 1 && assessmentHistory[0].id) {
+    return (
+      <SingleAssessment
+        assessmentId={assessmentHistory[0].id}
+        name={assessmentHistory[0].name ?? ''}
+        studentId={studentId ?? ''}
+      />
+    )
+  }
+
   return (
-    <>
-      {loading && !error && <CardLoader />}
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {!loading && !error && !assessmentHistory.length && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
-      {!loading && !error && assessmentHistory.length > 0 && (
-        <Accordion dividerOnTop={false} space={3}>
-          {assessmentHistory.map((assessment) => {
-            if (!assessment.id) return null
-            return (
-              <AccordionItem
-                startExpanded={assessmentHistory.length === 1}
-                key={assessment.id}
-                id={assessment.id}
-                label={assessment.name ?? ''}
-              >
-                <AssessmentTable results={assessment.resultHistory ?? []} />
-              </AccordionItem>
-            )
-          })}
-        </Accordion>
-      )}
-    </>
+    <AssessmentAccordionList
+      assessmentHistory={assessmentHistory}
+      studentId={studentId ?? ''}
+    />
   )
 }
 

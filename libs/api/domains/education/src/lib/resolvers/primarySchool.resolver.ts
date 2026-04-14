@@ -48,14 +48,17 @@ export class PrimarySchoolResolver {
   async assessmentHistory(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
+    @Args('assessmentId', { nullable: true }) assessmentId?: string,
   ) {
     const subjects = await this.primarySchoolService.getAssessmentSubjects(
       user,
       student.id,
     )
-    return subjects
+    const all = subjects
       ?.flatMap((s) => s.assessmentTypes ?? [])
       .map((t) => mapAssessment(t, student.id))
       .filter(isDefined)
+
+    return assessmentId ? all?.filter((a) => a.id === assessmentId) : all
   }
 }
