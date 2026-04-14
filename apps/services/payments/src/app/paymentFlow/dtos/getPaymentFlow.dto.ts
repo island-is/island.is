@@ -182,6 +182,19 @@ export class GetPaymentFlowDTO {
   redirectToReturnUrlOnSuccess?: boolean
 
   @ApiPropertyOptional({
+    description: 'The URL to redirect the user to after an invoice is created',
+    type: String,
+  })
+  invoiceReturnUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'If user should be redirected to the invoiceReturnUrl after an invoice has been created',
+    type: Boolean,
+  })
+  redirectOnInvoiceCreation?: boolean
+
+  @ApiPropertyOptional({
     description: 'Events associated with the payment flow',
     type: [PaymentFlowEventDTO],
   })

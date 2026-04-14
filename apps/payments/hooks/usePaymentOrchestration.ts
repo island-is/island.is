@@ -36,9 +36,15 @@ export const usePaymentOrchestration = ({
 
   const commonOnPaymentSuccess = useCallback(
     (paymentMethod: 'card' | 'invoice') => {
-      // For invoice payments, always reload to show the "invoice created" screen
       if (paymentMethod === 'invoice') {
-        router.reload()
+        if (
+          paymentFlow?.redirectOnInvoiceCreation &&
+          paymentFlow?.invoiceReturnUrl
+        ) {
+          window.location.assign(paymentFlow.invoiceReturnUrl)
+        } else {
+          router.reload()
+        }
         return
       }
 

@@ -187,7 +187,13 @@ export function Button({
           <Loader />
         </View>
       ) : (
-        <>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            columnGap: theme.spacing.p1,
+          }}
+        >
           {icon && iconPosition === 'start' && renderIcon()}
           {title && (
             <Text
@@ -205,7 +211,7 @@ export function Button({
             </Text>
           )}
           {icon && iconPosition === 'end' && renderIcon()}
-        </>
+        </View>
       )}
     </Host>
   )

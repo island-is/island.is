@@ -15,7 +15,7 @@ export class ServicePortalPage {
   @CacheField(() => Html, { nullable: true })
   emptyStateMessage!: Html | null
 
-  @CacheField(() => FaqList)
+  @CacheField(() => FaqList, { nullable: true })
   faqList!: FaqList | null
 }
 

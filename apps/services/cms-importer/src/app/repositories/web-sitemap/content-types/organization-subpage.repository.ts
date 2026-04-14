@@ -42,7 +42,7 @@ export class OrganizationSubpageRepository implements SitemapUrlFetcher {
     >()
 
     while (organizationPageIds.length > 0) {
-      const ids = organizationPageIds.splice(0, 10)
+      const ids = organizationPageIds.splice(0, 15)
       const organizationPageResponse = await this.managementClient.getEntries({
         content_type: 'organizationPage',
         select: 'fields.slug,fields.title,sys',
