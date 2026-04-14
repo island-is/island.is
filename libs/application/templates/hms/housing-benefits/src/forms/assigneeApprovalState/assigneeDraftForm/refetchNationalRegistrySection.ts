@@ -36,7 +36,7 @@ export const refetchNationalRegistrySection = buildSection({
         refetchApplicationAfterSubmit: true,
         actions: [
           {
-            event: DefaultEvents.SUBMIT,
+            event: DefaultEvents.EDIT,
             name: coreMessages.buttonNext,
             type: 'primary',
           },
