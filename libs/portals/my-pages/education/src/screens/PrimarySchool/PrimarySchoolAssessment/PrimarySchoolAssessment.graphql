@@ -7,7 +7,10 @@ query PrimarySchoolAssessmentData($studentId: String!) {
   }
 }
 
-query PrimarySchoolAssessmentResults($studentId: String!, $assessmentId: String!) {
+query PrimarySchoolAssessmentResults(
+  $studentId: String!
+  $assessmentId: String!
+) {
   primarySchoolStudent(studentId: $studentId) {
     assessmentHistory(assessmentId: $assessmentId) {
       id
