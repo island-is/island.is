@@ -19,6 +19,7 @@ import {
   GridRow as Row,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
@@ -132,7 +133,7 @@ export const TableRow = ({
         })
         const form = formData?.formSystemForm?.form
         if (!form || !hasEnglishForAllNameFields(form)) {
-          window.alert(formatMessage(m.translationNeededError))
+          toast.warning(formatMessage(m.translationNeededError))
           return
         }
         try {
@@ -201,7 +202,7 @@ export const TableRow = ({
         if (slug) {
           window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
         } else {
-          window.alert(
+          toast.error(
             formatMessage({
               id: 'slugMissing',
               defaultMessage: 'Það vantar slug',
