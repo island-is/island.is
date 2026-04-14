@@ -80,7 +80,6 @@ export const assigneeMockDataSection = buildSection({
               label: m.devMockTaxVariantEmpty,
             },
           ],
-          defaultValue: 'withSampleData',
           marginBottom: 2,
         }),
       ],
