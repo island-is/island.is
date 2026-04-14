@@ -66,8 +66,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
         ... on Course {
           id
           title
-          courseSlug: slug
-          courseListPageId
           courseHref
         }
       }
@@ -327,8 +325,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         ... on Course {
           id
           title
-          courseSlug: slug
-          courseListPageId
           organizationTitle
           intro
           courseHref
