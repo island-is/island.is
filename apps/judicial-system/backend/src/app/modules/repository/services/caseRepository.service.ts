@@ -424,7 +424,6 @@ export class CaseRepositoryService {
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
-        'indictmentReturnedExplanation',
         'indictmentHash',
         'hasCivilClaims',
       ]
