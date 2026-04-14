@@ -18,12 +18,13 @@ export const SingleAssessment = ({ assessmentId, name, studentId }: Props) => {
   const results =
     data?.primarySchoolStudent?.assessmentHistory?.[0]?.resultHistory ?? []
 
+  if (loading && !error) return <CardLoader />
+  if (error && !loading) return <Problem error={error} noBorder={false} />
+
   return (
-    <Accordion dividerOnTop={false} space={3}>
+    <Accordion dividerOnTop={false} dividerOnBottom={false} space={3}>
       <AccordionItem startExpanded id={assessmentId} label={name}>
-        {loading && <CardLoader />}
-        {error && <Problem error={error} noBorder={false} />}
-        {!loading && !error && <AssessmentTable results={results} />}
+        <AssessmentTable results={results} />
       </AccordionItem>
     </Accordion>
   )
