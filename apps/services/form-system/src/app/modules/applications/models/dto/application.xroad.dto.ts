@@ -28,7 +28,7 @@ export class ApplicationXroadFieldDto {
 
   @ApiProperty()
   @IsString()
-  screenId!: string
+  screenIdentifier!: string
 
   @ApiProperty()
   @IsString()
