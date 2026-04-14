@@ -16,10 +16,14 @@ export const CertificateExpandedRow = ({ issueDate, extensionDate }: Props) => {
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
 
-  const issueDateFormatted = issueDate ? formatDate(new Date(issueDate)) : '-'
-  const extensionDateFormatted = extensionDate
-    ? formatDate(new Date(extensionDate))
-    : '-'
+  const formatDateOrDash = (raw?: string | null) => {
+    if (!raw) return '-'
+    const parsed = new Date(raw)
+    return Number.isNaN(parsed.getTime()) ? '-' : formatDate(parsed)
+  }
+
+  const issueDateFormatted = formatDateOrDash(issueDate)
+  const extensionDateFormatted = formatDateOrDash(extensionDate)
 
   const pairs = [
     {
