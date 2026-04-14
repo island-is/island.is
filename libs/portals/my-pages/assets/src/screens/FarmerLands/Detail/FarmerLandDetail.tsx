@@ -56,7 +56,13 @@ export const FarmerLandDetail = () => {
   return (
     <IntroWrapperV2
       title={land?.name ?? formatMessage(fm.title)}
-      intro={fm.description}
+      intro={
+        land?.id
+          ? formatMessage(fm.farmNumber, {
+              arg: land?.id,
+            })
+          : formatMessage(fm.description)
+      }
       serviceProvider={{
         slug: ATVINNUVEGARADUNEYTID_SLUG,
         tooltip: formatMessage(cm.farmerLandTooltip),
