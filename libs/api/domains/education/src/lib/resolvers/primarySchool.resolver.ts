@@ -28,9 +28,7 @@ export class PrimarySchoolResolver {
   @Scopes(ApiScope.education)
   async primarySchoolStudents(@CurrentUser() user: User) {
     const students = await this.primarySchoolService.getStudents(user)
-    return students
-      ?.filter((s) => isDefined(s.id))
-      .map(mapPrimarySchoolStudent)
+    return students?.filter((s) => isDefined(s.id)).map(mapPrimarySchoolStudent)
   }
 
   @Query(() => PrimarySchoolStudent, { nullable: true })
