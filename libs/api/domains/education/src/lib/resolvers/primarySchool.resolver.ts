@@ -8,6 +8,11 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { isDefined } from '@island.is/shared/utils'
 import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
@@ -17,7 +22,8 @@ import {
   mapPrimarySchoolStudent,
 } from '../models/primarySchool/primarySchool.mapper'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isServicePortalPrimarySchoolPageEnabled)
 @Resolver(() => PrimarySchoolStudent)
 export class PrimarySchoolResolver {
   constructor(
