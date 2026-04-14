@@ -88,4 +88,3 @@ export const getPayerOverviewItems = (
 
   return items
 }
-
