@@ -11,8 +11,11 @@ import {
   assigneeAssetDeclarationOverviewItems,
   assigneeAddressMatchOverviewItems,
 } from '../../../utils/getOverviewItems'
+import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
 export const assigneeOverviewSection = buildSection({
+  condition: (answers, externalData, user) =>
+    doesAssigneeAddressMatchRentalContract(answers, externalData, user),
   id: 'assigneeOverviewSection',
   title: m.assigneeDraftOverview.title,
   children: [

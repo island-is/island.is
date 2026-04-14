@@ -35,7 +35,6 @@ import {
   needsHouseholdMemberApproval,
 } from '../utils/assigneeUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
-import { appendAssigneeToHouseholdMemberApprovals } from '../utils/appendAssigneeHouseholdMemberApproval'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 
 const template: ApplicationTemplate<
@@ -206,21 +205,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.ASSIGNEE_APPROVAL,
-            actions: 'recordAssigneeDraftApproval',
-          },
-          [DefaultEvents.APPROVE]: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: States.APPLICANT_SUBMIT,
-              cond: ({ application }: ApplicationContext) => {
-                const signed = (application.answers?.householdMemberApprovals ??
-                  []) as string[]
-                const assignees = application.assignees ?? []
-                return signed.length >= assignees.length
-              },
+              actions: 'recordSignedAssignee',
+              cond: 'isLastAssigneeToSign',
             },
-            { target: States.ASSIGNEE_APPROVAL },
+            {
+              target: States.ASSIGNEE_APPROVAL,
+              actions: 'recordSignedAssignee',
+            },
           ],
         },
       },
@@ -385,36 +379,36 @@ const template: ApplicationTemplate<
     },
   },
   stateMachineOptions: {
-    actions: {
-      recordAssigneeDraftApproval: assign((context, event) => {
-        if (
-          !event ||
-          typeof event !== 'object' ||
-          event.type !== DefaultEvents.SUBMIT
-        ) {
-          return context
-        }
+    guards: {
+      isLastAssigneeToSign: ({ application }, event) => {
         const nationalId = (event as Events).nationalId
-        if (!nationalId) {
-          return context
-        }
-        const { application } = context
-        if (
-          mapUserToRole(nationalId, application) !==
-          Roles.UNSIGNED_DRAFT_ASSIGNEE
-        ) {
-          return context
-        }
-        const patch = appendAssigneeToHouseholdMemberApprovals(
-          application,
-          nationalId,
+        if (!nationalId) return false
+        const normalized = kennitala.isValid(nationalId)
+          ? kennitala.sanitize(nationalId)
+          : nationalId
+        const signed = ((application.answers?.signedAssignees ?? []) as string[]).map(
+          (id) => (kennitala.isValid(id) ? kennitala.sanitize(id) : id),
         )
-        if (patch.householdMemberApprovals) {
-          set(
-            application,
-            'answers.householdMemberApprovals',
-            patch.householdMemberApprovals,
-          )
+        const allSigned = new Set([...signed, normalized])
+        return allSigned.size >= (application.assignees ?? []).length
+      },
+    },
+    actions: {
+      recordSignedAssignee: assign((context, event) => {
+        const nationalId = (event as Events).nationalId
+        if (!nationalId) return context
+        const { application } = context
+        const normalized = kennitala.isValid(nationalId)
+          ? kennitala.sanitize(nationalId)
+          : nationalId
+        const existing = (application.answers?.signedAssignees ?? []) as string[]
+        const existingSet = new Set(
+          existing.map((id) =>
+            kennitala.isValid(id) ? kennitala.sanitize(id) : id,
+          ),
+        )
+        if (!existingSet.has(normalized)) {
+          set(application, 'answers.signedAssignees', [...existing, normalized])
         }
         return context
       }),

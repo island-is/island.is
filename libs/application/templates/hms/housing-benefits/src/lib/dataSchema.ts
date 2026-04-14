@@ -123,7 +123,7 @@ const baseSchema = z.object({
     .array(householdMemberRowSchema)
     .optional()
     .nullable(),
-  householdMemberApprovals: z.array(z.string()).optional(),
+  signedAssignees: z.array(z.string()).optional(),
   /** National IDs of assignees who finished the assignee-prerequisite step (same state). */
   assigneePrerequisitesCompleted: z.array(z.string()).optional(),
   assigneePrereq: z

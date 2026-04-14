@@ -140,9 +140,10 @@ export class ApplicationActionService {
       }
     }
 
+    const stateEvent = { type: event, nationalId: auth.nationalId }
     const [hasChanged, newState, withUpdatedState] =
       new ApplicationTemplateHelper(updatedApplication, template).changeState(
-        event,
+        stateEvent,
       )
     updatedApplication = {
       ...updatedApplication,

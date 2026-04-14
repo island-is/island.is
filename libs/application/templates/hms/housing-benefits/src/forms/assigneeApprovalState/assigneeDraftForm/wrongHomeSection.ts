@@ -5,6 +5,7 @@ import {
   buildMultiField,
   buildSection,
   buildImageField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { HandShake } from '@island.is/application/assets/graphics'
 import * as m from '../../../lib/messages'
@@ -56,7 +57,8 @@ export const wrongHomeSection = buildSection({
           ],
           clearOnChange: (application) => {
             const answers = application.answers as Record<string, any>
-            const signed = (answers.householdMemberApprovals ?? []) as string[]
+            const signed =
+              getValueViaPath<Array<string>>(answers, 'signedAssignees') ?? []
             const suffixes = [
               'assigneeInfo.name',
               'assigneeInfo.nationalId',

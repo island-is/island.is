@@ -8,8 +8,11 @@ import {
   NO,
   getValueViaPath,
 } from '@island.is/application/core'
+import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
 export const assetDeclerationSection = buildSection({
+  condition: (answers, externalData, user) =>
+    doesAssigneeAddressMatchRentalContract(answers, externalData, user),
   id: 'assetDeclerationSection',
   title: 'Eignayfirlýsing',
   children: [

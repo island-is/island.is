@@ -108,7 +108,7 @@ export const getSignedApprovalNames = (application: Application): string[] => {
     getHouseholdMembersOver18ExcludingApplicant(application)
   const signed = (getValueViaPath<string[]>(
     application.answers,
-    'householdMemberApprovals',
+    'signedAssignees',
   ) ?? []) as string[]
   const signedNames = signed
     .map((natId) => {
@@ -129,7 +129,7 @@ export const getUnsignedApprovalNames = (
     getHouseholdMembersOver18ExcludingApplicant(application)
   const signed = (getValueViaPath<string[]>(
     application.answers,
-    'householdMemberApprovals',
+    'signedAssignees',
   ) ?? []) as string[]
   return assigneeMembers
     .filter((m) => !signed.includes(m.nationalId))
