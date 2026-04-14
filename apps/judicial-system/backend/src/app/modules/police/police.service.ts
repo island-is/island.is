@@ -915,25 +915,10 @@ export class PoliceService {
       })
   }
 
-  private buildPoliceCaseInfoFromResponses(
-    policeCaseResponse: { malsnumer: string; skjol?: { malsnumer: string }[] },
-    digitalCaseFiles: { malsnumer: string }[] | undefined,
+  private buildPoliceCaseInfoFromCaseUnits(
     caseUnits: CaseUnit[],
   ): PoliceCaseInfo[] {
-    const policeCaseNumbers = new Set<string>([policeCaseResponse.malsnumer])
-
-    policeCaseResponse.skjol?.forEach((info) => {
-      policeCaseNumbers.add(info.malsnumer)
-    })
-    digitalCaseFiles?.forEach((info) => {
-      policeCaseNumbers.add(info.malsnumer)
-    })
-
-    const cases: PoliceCaseInfo[] = Array.from(policeCaseNumbers).map(
-      (number) => ({
-        policeCaseNumber: number,
-      }),
-    )
+    const cases: PoliceCaseInfo[] = []
 
     for (const unit of caseUnits) {
       const policeCaseNumber = unit.upprunalegtMalsnumer
@@ -1009,18 +994,6 @@ export class PoliceService {
     defendants: { id: string; nationalId: string }[] = [],
   ): Promise<PoliceCaseInfo[]> {
     try {
-      const policeCaseResponse = await this.getPoliceCaseFiles(
-        caseId,
-        user,
-        'getPoliceCaseInfo',
-      )
-
-      const digitalCaseFiles = await this.getDigitalCaseFiles(
-        caseId,
-        user,
-        'getPoliceCaseInfo',
-      )
-
       const nationalIdsToUse =
         defendants.length > 0
           ? defendants.map((d) => d.nationalId)
@@ -1034,9 +1007,7 @@ export class PoliceService {
         user,
       )
 
-      const cases = this.buildPoliceCaseInfoFromResponses(
-        policeCaseResponse,
-        digitalCaseFiles,
+      const cases = this.buildPoliceCaseInfoFromCaseUnits(
         caseUnitsByDefendant.flatMap((entry) => entry.caseUnits),
       )
 
