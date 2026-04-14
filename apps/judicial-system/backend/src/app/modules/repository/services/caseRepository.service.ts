@@ -219,10 +219,7 @@ export class CaseRepositoryService {
 
       this.logger.debug(`Case ${result ? 'found' : 'not found'}`)
 
-      if (
-        result &&
-        this.shouldResolvePoliceCaseNumbers(options?.attributes)
-      ) {
+      if (result && this.shouldResolvePoliceCaseNumbers(options?.attributes)) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
           [result],
           { transaction: options?.transaction },

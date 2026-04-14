@@ -108,7 +108,10 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
 
     for (const [caseId, set] of byCase) {
-      result.set(caseId, [...set].sort((a, b) => a.localeCompare(b)))
+      result.set(
+        caseId,
+        [...set].sort((a, b) => a.localeCompare(b)),
+      )
     }
 
     return result
