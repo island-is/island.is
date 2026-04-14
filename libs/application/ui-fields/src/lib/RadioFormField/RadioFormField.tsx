@@ -30,11 +30,7 @@ const resolveIllustration = (
   if (typeof illustration === 'function') return illustration
   const { image: Image, alt } = illustration
   return () =>
-    typeof Image === 'string' ? (
-      <img src={Image} alt={alt ?? ''} />
-    ) : (
-      <Image />
-    )
+    typeof Image === 'string' ? <img src={Image} alt={alt ?? ''} /> : <Image />
 }
 
 interface Props extends FieldBaseProps {

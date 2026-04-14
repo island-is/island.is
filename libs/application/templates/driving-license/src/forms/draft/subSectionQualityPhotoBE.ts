@@ -27,8 +27,7 @@ const toBase64DataUrl = (photoData?: string): string => {
     cleaned = cleaned.substring(1, cleaned.length - 1).replace(/\\/g, '')
   }
 
-  const isValidBase64 =
-    cleaned.length > 100 && !/[^A-Za-z0-9+/=]/.test(cleaned)
+  const isValidBase64 = cleaned.length > 100 && !/[^A-Za-z0-9+/=]/.test(cleaned)
 
   return isValidBase64 ? `data:image/jpeg;base64,${cleaned}` : PLACEHOLDER_SRC
 }
