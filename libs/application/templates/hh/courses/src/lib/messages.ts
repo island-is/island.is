@@ -83,10 +83,10 @@ export const m = {
       defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
       description: 'Message shown when no health center is found',
     },
-    education: {
-      id: 'hh.courses.application:userInformation.education',
-      defaultMessage: 'Menntun',
-      description: 'Title of education field',
+    workplace: {
+      id: 'hh.courses.application:userInformation.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of workplace field',
     },
     jobTitle: {
       id: 'hh.courses.application:userInformation.jobTitle',
@@ -175,6 +175,16 @@ export const m = {
       id: 'hh.courses.application:participant.participantPhone',
       defaultMessage: 'Símanúmer',
       description: 'Title of participant phone field',
+    },
+    participantWorkplace: {
+      id: 'hh.courses.application:participant.participantWorkplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of participant workplace field',
+    },
+    participantJobTitle: {
+      id: 'hh.courses.application:participant.participantJobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of participant job title field',
     },
   }),
   payer: defineMessages({
@@ -292,15 +302,10 @@ export const m = {
       defaultMessage: 'Staðfesta skráningu',
       description: 'Title of submit button in overview section without payment',
     },
-    educationAndJobTitleHeading: {
-      id: 'hh.courses.application:overview.educationAndJobTitleHeading',
-      defaultMessage: 'Menntun og starfsheiti',
-      description: 'Heading for education and job title in overview section',
-    },
-    education: {
-      id: 'hh.courses.application:overview.education',
-      defaultMessage: 'Menntun',
-      description: 'Heading for education in overview section',
+    workplace: {
+      id: 'hh.courses.application:overview.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Heading for workplace in overview section',
     },
     jobTitle: {
       id: 'hh.courses.application:overview.jobTitle',

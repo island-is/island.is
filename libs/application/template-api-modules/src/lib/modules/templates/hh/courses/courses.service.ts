@@ -90,7 +90,7 @@ export class CoursesService extends BaseTemplateApiService {
         phone,
         healthcenter,
         nationalId,
-        education,
+        workplace,
         jobTitle,
       } = await this.extractApplicantInfo(application)
 
@@ -116,7 +116,7 @@ export class CoursesService extends BaseTemplateApiService {
         email,
         phone,
         healthcenter,
-        education,
+        workplace,
         jobTitle,
       )
 
@@ -436,7 +436,7 @@ export class CoursesService extends BaseTemplateApiService {
       application.answers,
       'userInformation.healthcenter',
     )
-    const education = getValueViaPath<string>(application.answers, 'education')
+    const workplace = getValueViaPath<string>(application.answers, 'workplace')
     const jobTitle = getValueViaPath<string>(application.answers, 'jobTitle')
 
     return {
@@ -445,7 +445,7 @@ export class CoursesService extends BaseTemplateApiService {
       email,
       phone,
       healthcenter,
-      education,
+      workplace,
       jobTitle,
     }
   }
@@ -482,7 +482,7 @@ export class CoursesService extends BaseTemplateApiService {
     email: string,
     phone: string,
     healthcenter?: string,
-    education?: string,
+    workplace?: string,
     jobTitle?: string,
   ): Promise<string> {
     const courseHasChargeItemCode = Boolean(courseInstance.chargeItemCode)
@@ -520,7 +520,7 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
     message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
-    if (education) message += `Menntun umsækjanda: ${education}\n`
+    if (workplace) message += `Vinnustaður umsækjanda: ${workplace}\n`
     if (jobTitle) message += `Starfsheiti umsækjanda: ${jobTitle}\n`
 
     if (courseHasChargeItemCode) {
@@ -542,6 +542,14 @@ export class CoursesService extends BaseTemplateApiService {
       message += `Kennitala þátttakanda ${index + 1}: ${p.nationalId}\n`
       message += `Netfang þátttakanda ${index + 1}: ${p.email}\n`
       message += `Símanúmer þátttakanda ${index + 1}: ${p.phone}\n`
+      if (participant.workplace)
+        message += `Vinnustaður þátttakanda ${index + 1}: ${
+          participant.workplace
+        }\n`
+      if (participant.jobTitle)
+        message += `Starfsheiti þátttakanda ${index + 1}: ${
+          participant.jobTitle
+        }\n`
     })
 
     return message

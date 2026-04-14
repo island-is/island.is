@@ -16,6 +16,8 @@ export type ApplicationAnswers = {
   }
   participantList: Array<{
     nationalIdWithName: NationalIdWithName
+    workplace?: string
+    jobTitle?: string
   }>
   userInformation: {
     name: string
@@ -27,6 +29,6 @@ export type ApplicationAnswers = {
   courseSelect: string
   dateSelect: string
   courseHasChargeItemCode?: boolean
-  education?: string
+  workplace?: string
   jobTitle?: string
 }

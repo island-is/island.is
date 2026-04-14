@@ -16,34 +16,37 @@ export const getParticipantOverviewTableData = (
   answers: FormValue,
   _externalData: ExternalData,
 ): TableData => {
-  const tableData: TableData = {
-    header: [
-      m.overview.participantName,
-      m.overview.participantNationalId,
-      m.overview.participantEmail,
-      m.overview.participantPhone,
-    ],
-    rows: [],
-  }
-
   const participantList =
     getValueViaPath<z.infer<typeof dataSchema.shape.participantList>>(
       answers,
       'participantList',
     ) ?? []
 
-  if (participantList.length > 0) {
-    for (const participant of participantList) {
-      tableData.rows.push([
-        participant.nationalIdWithName.name,
-        participant.nationalIdWithName.nationalId,
-        participant.nationalIdWithName.email,
-        formatPhoneNumber(participant.nationalIdWithName.phone),
-      ])
-    }
-  }
+  const hasWorkplaceOrJobTitle = participantList.some(
+    (p) => p.workplace || p.jobTitle,
+  )
 
-  return tableData
+  const header = [
+    m.overview.participantName,
+    m.overview.participantNationalId,
+    m.overview.participantEmail,
+    m.overview.participantPhone,
+    ...(hasWorkplaceOrJobTitle
+      ? [m.overview.workplace, m.overview.jobTitle]
+      : []),
+  ]
+
+  const rows = participantList.map((participant) => [
+    participant.nationalIdWithName.name,
+    participant.nationalIdWithName.nationalId,
+    participant.nationalIdWithName.email,
+    formatPhoneNumber(participant.nationalIdWithName.phone),
+    ...(hasWorkplaceOrJobTitle
+      ? [participant.workplace ?? '', participant.jobTitle ?? '']
+      : []),
+  ])
+
+  return { header, rows }
 }
 
 export const getPayerOverviewItems = (
@@ -86,30 +89,3 @@ export const getPayerOverviewItems = (
   return items
 }
 
-export const getEducationAndJobTitleOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<KeyValueItem> => {
-  const items: Array<KeyValueItem> = []
-
-  const education = getValueViaPath<string>(answers, 'education')
-  const jobTitle = getValueViaPath<string>(answers, 'jobTitle')
-
-  if (education) {
-    items.push({
-      width: 'half',
-      keyText: m.overview.education,
-      valueText: education,
-    })
-  }
-
-  if (jobTitle) {
-    items.push({
-      width: 'half',
-      keyText: m.overview.jobTitle,
-      valueText: jobTitle,
-    })
-  }
-
-  return items
-}

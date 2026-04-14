@@ -10,7 +10,6 @@ import { type Application, DefaultEvents } from '@island.is/application/types'
 import {
   getPayerOverviewItems,
   getParticipantOverviewTableData,
-  getEducationAndJobTitleOverviewItems,
 } from '../../utils/getOverviewItems'
 import { m } from '../../lib/messages'
 import { doesCourseInstanceHaveChargeItemCode } from '../../utils/loadOptions'
@@ -40,17 +39,6 @@ export const overviewSection = buildSection({
           bottomLine: false,
           title: m.overview.participantHeading,
           tableData: getParticipantOverviewTableData,
-        }),
-        buildOverviewField({
-          condition: (answers) =>
-            !!(
-              getValueViaPath<string>(answers, 'education') ||
-              getValueViaPath<string>(answers, 'jobTitle')
-            ),
-          id: 'educationAndJobTitleOverview',
-          bottomLine: false,
-          title: m.overview.educationAndJobTitleHeading,
-          items: getEducationAndJobTitleOverviewItems,
         }),
         buildOverviewField({
           condition: (answers) => {
