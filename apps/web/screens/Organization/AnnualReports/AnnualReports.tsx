@@ -78,7 +78,7 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
     return annualReports.map((report) => ({
       label: report.title,
       value: report.id,
-      slug: slugify(report.title),
+      slug: report.slug,
     }))
   }, [annualReports])
 
@@ -209,6 +209,7 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                           {selectedReport.chapters.map((chapter) => {
                             const href = linkResolver('annualreportchapter', [
                               organizationPage?.slug ?? '',
+                              selectedReport.slug,
                               chapter.slug,
                             ]).href
 
@@ -281,7 +282,7 @@ AnnualReports.getProps = async ({
       query: GET_ANNUAL_REPORTS_QUERY,
       variables: {
         input: {
-          slug: organizationPageSlug,
+          organizationSlug: organizationPageSlug,
           lang: locale as ContentLanguage,
         },
       },

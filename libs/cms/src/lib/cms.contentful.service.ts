@@ -76,10 +76,7 @@ import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { AnnualReport, mapAnnualReport } from './models/annualReport.model'
 import { GetAnnualReportInput } from './dto/getAnnualReport.input'
-import {
-  AnnualReportChapter,
-  mapAnnualReportChapter,
-} from './models/annualReportChapter.model'
+import { GetAnnualReportsInput } from './dto/getAnnualReports.input'
 import {
   DelegationScopeTag,
   mapDelegationScopeTag,
@@ -909,13 +906,13 @@ export class CmsContentfulService {
   }
 
   async getAnnualReports({
-    slug,
+    organizationSlug,
     lang,
-  }: GetAnnualReportInput): Promise<AnnualReport[]> {
+  }: GetAnnualReportsInput): Promise<AnnualReport[]> {
     const params = {
       ['content_type']: 'annualReport',
       'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': slug,
+      'fields.organization.fields.slug': organizationSlug,
     }
 
     const result = await this.contentfulRepository
@@ -925,23 +922,24 @@ export class CmsContentfulService {
     return (result.items as types.IAnnualReport[]).map(mapAnnualReport) ?? []
   }
 
-  async getAnnualReportChapter({
-    slug,
+  async getAnnualReport({
+    organizationSlug,
+    annualReportSlug,
     lang,
-  }: GetAnnualReportInput): Promise<AnnualReportChapter | null> {
+  }: GetAnnualReportInput): Promise<AnnualReport | null> {
     const params = {
-      ['content_type']: 'annualReportChapter',
-      'fields.slug': slug,
+      ['content_type']: 'annualReport',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': organizationSlug,
+      'fields.slug': annualReportSlug,
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IAnnualReportChapterFields>(lang, params)
-      .catch(errorHandler('getAnnualReportChapter'))
+      .getLocalizedEntries<types.IAnnualReportFields>(lang, params)
+      .catch(errorHandler('getAnnualReport'))
 
     return (
-      (result.items as types.IAnnualReportChapter[]).map(
-        mapAnnualReportChapter,
-      )[0] ?? null
+      (result.items as types.IAnnualReport[]).map(mapAnnualReport)[0] ?? null
     )
   }
 

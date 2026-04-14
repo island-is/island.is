@@ -106,8 +106,8 @@ import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.inpu
 import { EntryTitle } from './models/entryTitle.model'
 import { LifeEventPage } from './models/lifeEventPage.model'
 import { AnnualReport } from './models/annualReport.model'
-import { AnnualReportChapter } from './models/annualReportChapter.model'
 import { GetAnnualReportInput } from './dto/getAnnualReport.input'
+import { GetAnnualReportsInput } from './dto/getAnnualReports.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
@@ -442,17 +442,17 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => [AnnualReport])
   getAnnualReports(
-    @Args('input') input: GetAnnualReportInput,
+    @Args('input') input: GetAnnualReportsInput,
   ): Promise<AnnualReport[]> {
     return this.cmsContentfulService.getAnnualReports(input)
   }
 
   @CacheControl(defaultCache)
-  @Query(() => AnnualReportChapter, { nullable: true })
-  getAnnualReportChapter(
+  @Query(() => AnnualReport, { nullable: true })
+  getAnnualReport(
     @Args('input') input: GetAnnualReportInput,
-  ): Promise<AnnualReportChapter | null> {
-    return this.cmsContentfulService.getAnnualReportChapter(input)
+  ): Promise<AnnualReport | null> {
+    return this.cmsContentfulService.getAnnualReport(input)
   }
 
   @CacheControl(defaultCache)

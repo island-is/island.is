@@ -20,12 +20,13 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
+  AnnualReport,
   AnnualReportChapter as AnnualReportChapterSchema,
   ContentLanguage,
   GetNamespaceQuery,
   OrganizationPage,
   Query,
-  QueryGetAnnualReportChapterArgs,
+  QueryGetAnnualReportArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
@@ -41,7 +42,7 @@ import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/orga
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
-  GET_ANNUAL_REPORT_CHAPTER_QUERY,
+  GET_ANNUAL_REPORT_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../../queries'
@@ -49,6 +50,7 @@ import {
 export interface AnnualReportChapterProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+  annualReport: AnnualReport
   annualReportChapter: AnnualReportChapterSchema
 }
 
@@ -59,8 +61,8 @@ type AnnualReportChapterScreenContext = ScreenContext & {
 const AnnualReportChapter: Screen<
   AnnualReportChapterProps,
   AnnualReportChapterScreenContext
-> = ({ organizationPage, namespace, annualReportChapter }) => {
-  useContentfulId(organizationPage?.id, annualReportChapter.id)
+> = ({ organizationPage, namespace, annualReport, annualReportChapter }) => {
+  useContentfulId(organizationPage?.id, annualReport.id, annualReportChapter.id)
   useLocalLinkTypeResolver('annualreportchapter')
 
   const n = useNamespace(namespace)
@@ -112,8 +114,9 @@ const AnnualReportChapter: Screen<
                 },
                 {
                   title: 'Ársskýrslur',
-                  href: linkResolver('annualreports', [
+                  href: linkResolver('annualreport', [
                     organizationPage?.slug ?? '',
+                    annualReport.slug,
                   ]).href,
                 },
               ]}
@@ -192,14 +195,19 @@ AnnualReportChapter.getProps = async ({
   organizationPage,
 }) => {
   const querySlugs = (query.slugs ?? []) as string[]
-  const [organizationPageSlug, _, annualReportChapterSlug] = querySlugs
+  const [
+    organizationPageSlug,
+    _annualReportsPath,
+    annualReportSlug,
+    annualReportChapterSlug,
+  ] = querySlugs
 
   const [
     {
       data: { getOrganizationPage },
     },
     {
-      data: { getAnnualReportChapter },
+      data: { getAnnualReport },
     },
     namespace,
   ] = await Promise.all([
@@ -215,11 +223,12 @@ AnnualReportChapter.getProps = async ({
           },
         })
       : { data: { getOrganizationPage: organizationPage } },
-    await apolloClient.query<Query, QueryGetAnnualReportChapterArgs>({
-      query: GET_ANNUAL_REPORT_CHAPTER_QUERY,
+    apolloClient.query<Query, QueryGetAnnualReportArgs>({
+      query: GET_ANNUAL_REPORT_QUERY,
       variables: {
         input: {
-          slug: annualReportChapterSlug,
+          organizationSlug: organizationPageSlug,
+          annualReportSlug: annualReportSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -246,14 +255,23 @@ AnnualReportChapter.getProps = async ({
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  if (!getAnnualReportChapter) {
+  if (!getAnnualReport) {
+    throw new CustomNextError(404, 'Annual Report not found')
+  }
+
+  const annualReportChapter = getAnnualReport.chapters.find(
+    (chapter) => chapter.slug === annualReportChapterSlug,
+  )
+
+  if (!annualReportChapter) {
     throw new CustomNextError(404, 'Annual Report Chapter not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
     namespace,
-    annualReportChapter: getAnnualReportChapter,
+    annualReport: getAnnualReport,
+    annualReportChapter,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

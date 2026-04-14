@@ -16,11 +16,14 @@ export class AnnualReport {
   @Field()
   title!: string
 
-  @Field({ nullable: true })
-  intro?: string
+  @Field()
+  slug!: string
 
   @Field()
   pageIdentifier!: string
+
+  @Field({ nullable: true })
+  intro?: string
 
   @CacheField(() => OrganizationPage)
   organizationPage!: OrganizationPage | null
@@ -38,8 +41,9 @@ export const mapAnnualReport = ({
 }: IAnnualReport): AnnualReport => ({
   id: sys.id,
   title: fields.title,
-  intro: fields.intro ?? '',
+  slug: fields.slug,
   pageIdentifier: fields.pageIdentifier,
+  intro: fields.intro ?? '',
   organizationPage: fields.organizationPage
     ? mapOrganizationPage(fields.organizationPage)
     : null,

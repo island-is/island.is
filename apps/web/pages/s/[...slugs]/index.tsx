@@ -409,14 +409,6 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (slugs[1] === 'annual-reports') {
-        return {
-          page: {
-            type: PageType.ANNUAL_REPORT_CHAPTER,
-            props: await AnnualReportChapter.getProps(modifiedContext),
-          },
-        }
-      }
     } else {
       if (slugs[1] === 'frett') {
         return {
@@ -431,14 +423,6 @@ Component.getProps = async (context) => {
           page: {
             type: PageType.EVENT_DETAILS,
             props: await OrganizationEventArticle.getProps(modifiedContext),
-          },
-        }
-      }
-      if (slugs[1] === 'arsskyrslur') {
-        return {
-          page: {
-            type: PageType.ANNUAL_REPORT_CHAPTER,
-            props: await AnnualReportChapter.getProps(modifiedContext),
           },
         }
       }
@@ -496,6 +480,26 @@ Component.getProps = async (context) => {
   }
 
   if (slugs.length === 4) {
+    if (locale !== 'is') {
+      if (slugs[1] === 'annual-reports') {
+        return {
+          page: {
+            type: PageType.ANNUAL_REPORT_CHAPTER,
+            props: await AnnualReportChapter.getProps(modifiedContext),
+          },
+        }
+      }
+    } else {
+      if (slugs[1] === 'arsskyrslur') {
+        return {
+          page: {
+            type: PageType.ANNUAL_REPORT_CHAPTER,
+            props: await AnnualReportChapter.getProps(modifiedContext),
+          },
+        }
+      }
+    }
+
     return {
       page: {
         type: PageType.GENERIC_LIST_ITEM,

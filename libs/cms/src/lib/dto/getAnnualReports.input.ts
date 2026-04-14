@@ -2,14 +2,10 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
-export class GetAnnualReportInput {
+export class GetAnnualReportsInput {
   @Field()
   @IsString()
   organizationSlug!: string
-
-  @Field()
-  @IsString()
-  annualReportSlug!: string
 
   @Field(() => String)
   @IsString()

@@ -3,12 +3,13 @@ import gql from 'graphql-tag'
 import { nestedFields, slices } from './fragments'
 
 export const GET_ANNUAL_REPORTS_QUERY = gql`
-  query GetAnnualReports($input: GetAnnualReportInput!) {
+  query GetAnnualReports($input: GetAnnualReportsInput!) {
     getAnnualReports(input: $input) {
       id
       title
-      intro
+      slug
       pageIdentifier
+      intro
       organizationPage {
         id
         title
@@ -37,23 +38,41 @@ export const GET_ANNUAL_REPORTS_QUERY = gql`
   }
 `
 
-export const GET_ANNUAL_REPORT_CHAPTER_QUERY = gql`
-  query GetAnnualReportChapter($input: GetAnnualReportInput!) {
-    getAnnualReportChapter(input: $input) {
+export const GET_ANNUAL_REPORT_QUERY = gql`
+  query GetAnnualReport($input: GetAnnualReportInput!) {
+    getAnnualReport(input: $input) {
       id
       title
       slug
+      pageIdentifier
       intro
-      thumbnailImage {
-        url
+      organizationPage {
+        id
         title
-        width
-        height
-        description
+        slug
       }
-      content {
-        ...AllSlices
-        ${nestedFields}
+      organization {
+        id
+        title
+        shortTitle
+        slug
+      }
+      chapters {
+        id
+        title
+        slug
+        intro
+        thumbnailImage {
+          url
+          title
+          width
+          height
+          description
+        }
+        content {
+          ...AllSlices
+          ${nestedFields}
+        }
       }
     }
   }

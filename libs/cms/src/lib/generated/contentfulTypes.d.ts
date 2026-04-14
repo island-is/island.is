@@ -209,11 +209,14 @@ export interface IAnnualReportFields {
   /** Title */
   title: string
 
-  /** Intro */
-  intro?: string | undefined
+  /** Slug */
+  slug: string
 
   /** Page Identifier */
   pageIdentifier: string
+
+  /** Intro */
+  intro?: string | undefined
 
   /** Organization Page */
   organizationPage: IOrganizationPage
