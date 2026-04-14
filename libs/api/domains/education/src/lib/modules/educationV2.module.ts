@@ -5,9 +5,10 @@ import { GradesResolver } from '../resolvers/grades.resolver'
 import { EducationServiceV2 } from '../services/educationV2.service'
 import { PrimarySchoolAssessmentResolver } from '../resolvers/primarySchoolAssessment.resolver'
 import { PrimarySchoolResolver } from '../resolvers/primarySchool.resolver'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [GradesClientModule, PrimarySchoolClientModule],
+  imports: [GradesClientModule, PrimarySchoolClientModule, FeatureFlagModule],
   providers: [
     GradesResolver,
     EducationServiceV2,
