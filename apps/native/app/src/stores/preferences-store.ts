@@ -1,18 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Navigation } from 'react-native-navigation'
-import createUse from 'zustand'
-import { persist } from 'zustand/middleware'
-import create, { State } from 'zustand/vanilla'
-import { getDefaultOptions } from '../utils/get-default-options'
-import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
+import { create } from 'zustand'
+import { useStore } from 'zustand/react'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
-export type ThemeMode = 'dark' | 'light' | 'efficient'
+export type ThemeMode = 'dark' | 'light'
 export type AppearanceMode = ThemeMode | 'automatic'
 
 export const PREFERENCES_KEY = 'preferences_04'
 
-export interface PreferencesStore extends State {
+export interface PreferencesStore {
   dev__useLockScreen: boolean
   hasOnboardedPinCode: boolean
   hasOnboardedBiometrics: boolean
@@ -27,6 +24,7 @@ export interface PreferencesStore extends State {
   licensesWidgetEnabled: boolean
   vehiclesWidgetEnabled: boolean
   airDiscountWidgetEnabled: boolean
+  appointmentsWidgetEnabled: boolean
   widgetsInitialised: boolean
   skippedSoftUpdate: boolean
   lastUsedPasskey: number
@@ -68,6 +66,7 @@ const defaultPreferences = {
   licensesWidgetEnabled: true,
   vehiclesWidgetEnabled: true,
   airDiscountWidgetEnabled: true,
+  appointmentsWidgetEnabled: true,
   widgetsInitialised: false,
   skippedSoftUpdate: false,
   lastUsedPasskey: 0,
@@ -80,7 +79,7 @@ const defaultPreferences = {
   pinTries: 0,
 }
 
-export const preferencesStore = create<PreferencesStore>(
+export const preferencesStore = create<PreferencesStore>()(
   persist(
     (set, get) => ({
       ...(defaultPreferences as PreferencesStore),
@@ -120,16 +119,11 @@ export const preferencesStore = create<PreferencesStore>(
     }),
     {
       name: PREFERENCES_KEY,
-      getStorage: () => AsyncStorage,
-      onRehydrateStorage: () => (state, err) => {
-        if (state) {
-          Navigation.setDefaultOptions(
-            getDefaultOptions(getThemeWithPreferences(state)),
-          )
-        }
-      },
+      storage: createJSONStorage(() => AsyncStorage),
     },
   ),
 )
 
-export const usePreferencesStore = createUse(preferencesStore)
+export const usePreferencesStore = <U = PreferencesStore>(
+  selector?: (state: PreferencesStore) => U,
+) => useStore(preferencesStore, selector!)

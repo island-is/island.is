@@ -99,6 +99,7 @@ export {
 export { default as FileNotFoundModal } from './Modals/FileNotFoundModal/FileNotFoundModal'
 export { default as SearchModal } from './Modals/SearchModal/SearchModal'
 
+export { default as AllIndictmentCaseFiles } from './AllIndictmentCaseFiles/AllIndictmentCaseFiles'
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'

@@ -224,7 +224,7 @@ describe('caseTable.utils', () => {
       ).toBe(false)
     })
 
-    it('returns false for indictment case', () => {
+    it('returns true for indictment case when prosecution appealed', () => {
       const user = prosecutionUser('p-1')
       expect(
         canCancelAppeal(
@@ -235,7 +235,7 @@ describe('caseTable.utils', () => {
           } as unknown as Case,
           user,
         ),
-      ).toBe(false)
+      ).toBe(true)
     })
 
     it('returns true when prosecution, request case, appealed and has postponed date', () => {
