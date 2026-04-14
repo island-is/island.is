@@ -22,6 +22,10 @@ const getIsMyCaseAttributes = (user: User): string[] => {
     return ['creatingProsecutorId', 'prosecutorId']
   }
 
+  if (isDistrictCourtUser(user)) {
+    return ['judgeId', 'registrarId']
+  }
+
   return []
 }
 
@@ -296,7 +300,7 @@ export const canCancelAppeal = (
   theCase: Pick<Case, 'type' | 'appealCase' | 'prosecutorPostponedAppealDate'>,
   user: User,
 ): boolean => {
-  if (!isProsecutionUser(user) || !isRequestCase(theCase.type)) {
+  if (!isProsecutionUser(user)) {
     return false
   }
 

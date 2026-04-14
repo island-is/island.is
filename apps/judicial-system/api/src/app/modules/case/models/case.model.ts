@@ -270,9 +270,6 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly isAppealDeadlineExpired?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  readonly isAppealGracePeriodExpired?: boolean
-
   @Field(() => String, { nullable: true })
   readonly rulingDate?: string
 
@@ -377,9 +374,6 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly indictmentDeniedExplanation?: string
-
-  @Field(() => String, { nullable: true })
-  readonly indictmentReturnedExplanation?: string
 
   @Field(() => String, { nullable: true })
   readonly postponedIndefinitelyExplanation?: string

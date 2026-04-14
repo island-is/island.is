@@ -166,52 +166,6 @@ describe('transformCase', () => {
     })
   })
 
-  describe('isAppealGracePeriodExpired', () => {
-    it('should be false when no court end time is set', () => {
-      // Arrange
-      const theCase = { type: CaseType.CUSTODY } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAppealGracePeriodExpired).toBe(false)
-    })
-
-    it('should be false while the appeal window is open', () => {
-      // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 31)
-      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = {
-        type: CaseType.CUSTODY,
-        rulingDate: rulingDate.toISOString(),
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAppealGracePeriodExpired).toBe(false)
-    })
-
-    it('should be true when the appeal window has closed', () => {
-      // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 31)
-      const theCase = {
-        type: CaseType.CUSTODY,
-        rulingDate: rulingDate.toISOString(),
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAppealGracePeriodExpired).toBe(true)
-    })
-  })
-
   describe('isStatementDeadlineExpired', () => {
     it('should be false if the case has not been appealed', () => {
       // Arrange

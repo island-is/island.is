@@ -22,7 +22,7 @@ import {
   VehiclesMileageClientConfig,
   VehiclesMileageClientModule,
 } from '@island.is/clients/vehicles-mileage'
-import { ClientsPaymentsModule } from '@island.is/clients/payments'
+import { PaymentModule } from '@island.is/application/api/payment'
 @Module({
   imports: [
     SharedTemplateAPIModule,
@@ -31,7 +31,7 @@ import { ClientsPaymentsModule } from '@island.is/clients/payments'
     VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
-    ClientsPaymentsModule,
+    PaymentModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
