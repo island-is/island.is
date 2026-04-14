@@ -167,9 +167,7 @@ const useSearch = (
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
                   SearchableContentTypes['WebManual'],
                   SearchableContentTypes['WebOrganizationParentSubpage'],
-                  ...(organization === 'hh'
-                    ? ['webCourse' as SearchableContentTypes]
-                    : []),
+                  SearchableContentTypes['WebCourse'],
                 ],
                 highlightResults: false,
                 useQuery: 'suggestions',
