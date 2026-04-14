@@ -68,12 +68,7 @@ export const Draft: Form = buildForm({
       id: Routes.TYPE_SELECTION,
       title: typeSelection.general.section,
       condition: isMinistry,
-      children: [
-        buildCustomField({
-          id: 'typeSelection',
-          component: 'TypeSelectionScreen',
-        }),
-      ],
+      children: [],
     }),
 
     // ── Ad flow (unchanged) ──
