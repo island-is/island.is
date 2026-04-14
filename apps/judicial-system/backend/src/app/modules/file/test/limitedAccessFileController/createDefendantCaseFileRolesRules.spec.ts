@@ -2,8 +2,8 @@ import { defenderRule } from '../../../../guards'
 import { verifyRolesRules } from '../../../../test'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
-describe('LimitedAccessFileController - Create civil claimant case file rules', () => {
-  verifyRolesRules(LimitedAccessFileController, 'createCivilClaimantCaseFile', [
+describe('LimitedAccessFileController - Create defendant case file rules', () => {
+  verifyRolesRules(LimitedAccessFileController, 'createDefendantCaseFile', [
     defenderRule,
   ])
 })
