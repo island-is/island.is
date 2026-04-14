@@ -383,6 +383,27 @@ const Search: Screen<CategoryProps> = ({
     }
   }
 
+  const getChildLinks = (
+    item: SearchEntryType,
+  ): { label: string; href: string }[] => {
+    if (item.__typename === 'Article' && item.subArticles?.length) {
+      return item.subArticles.map((sub) => ({
+        label: sub.title,
+        href: linkResolver('subarticle', sub.slug.split('/')).href,
+      }))
+    }
+    if (
+      item.__typename === 'OrganizationParentSubpage' &&
+      item.childLinks?.length
+    ) {
+      return item.childLinks.map((link) => ({
+        label: link.label,
+        href: link.href,
+      }))
+    }
+    return []
+  }
+
   const searchResultsItems = (
     searchResults.items as Array<SearchEntryType>
   ).map((item) => ({
@@ -399,6 +420,7 @@ const Search: Screen<CategoryProps> = ({
     group: item.group,
     ...getItemImages(item),
     labels: getLabels(item),
+    childLinks: getChildLinks(item),
   }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -785,6 +807,7 @@ const Search: Screen<CategoryProps> = ({
                       thumbnail,
                       labels,
                       parentTitle,
+                      childLinks,
                       link: linkHref,
                       ...rest
                     },
@@ -810,6 +833,7 @@ const Search: Screen<CategoryProps> = ({
                         subTitle={parentTitle}
                         highlightedResults={false}
                         link={{ href: linkHref }}
+                        childLinks={childLinks}
                         {...rest}
                       />
                     )
