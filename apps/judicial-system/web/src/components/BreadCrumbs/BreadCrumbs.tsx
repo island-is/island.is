@@ -34,7 +34,7 @@ const BreadCrumbs: FC = () => {
   return (
     <Box display="flex" alignItems="center">
       <Link href="/malalistar" className={styles.link}>
-        <Icon icon="home" size="small" color="purple400" />
+        <Icon icon="home" size="small" color="purple400" type="outline" />
       </Link>
       <Box marginX={1}>
         <Text color="purple400" variant="eyebrow">{`•`}</Text>
