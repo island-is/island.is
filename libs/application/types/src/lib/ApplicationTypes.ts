@@ -101,6 +101,12 @@ export enum ApplicationTypes {
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
 }
 
+export interface ApplicationConfiguration {
+  slug: string
+  translation: string | string[]
+  useSdf?: boolean
+}
+
 export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
@@ -113,6 +119,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
     translation: ['exi.application', 'uiForms.application'],
+    useSdf: true,
   },
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',
@@ -153,6 +160,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
     translation: ['pl.application', 'uiForms.application'],
+    useSdf: true,
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -506,4 +514,4 @@ export const ApplicationConfigurations = {
     slug: 'hh-namskeid',
     translation: ['hh.courses.application', 'uiForms.application'],
   },
-}
+} satisfies Record<string, ApplicationConfiguration>

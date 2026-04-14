@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "application-screen-compiler",
+  "sourceRoot": "libs/application/screen-compiler/src",
+  "projectType": "library",
+  "tags": [
+    "scope:application-system",
+    "lib:application-system",
+    "type:util"
+  ],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/screen-compiler/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/application/screen-compiler"]
+    }
+  }
+}

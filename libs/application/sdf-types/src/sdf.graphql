@@ -1,0 +1,404 @@
+enum ActionType {
+  NEXT_PAGE
+  PREV_PAGE
+  SUBMIT
+  REFETCH
+  VALIDATE
+}
+
+enum ButtonVariant {
+  PRIMARY
+  GHOST
+  SUBTLE
+  REJECT
+  SIGN
+}
+
+type Screen {
+  applicationId: String!
+  header: Header!
+  stepper: Stepper!
+  page: Page!
+  footer: Footer!
+  locale: String!
+}
+
+type Header {
+  title: String!
+  description: String
+}
+
+type Stepper {
+  sections: [StepperSection!]!
+  activeSectionIndex: Int!
+  activeSubSectionIndex: Int!
+}
+
+type StepperSection {
+  id: String!
+  title: String!
+  isComplete: Boolean!
+  children: [StepperSubSection!]!
+}
+
+type StepperSubSection {
+  id: String!
+  title: String!
+}
+
+type Footer {
+  buttons: [FooterButton!]!
+  canGoBack: Boolean!
+}
+
+type FooterButton {
+  id: String!
+  text: String!
+  variant: ButtonVariant!
+  actionType: ActionType!
+}
+
+type Page {
+  id: String!
+  index: Int!
+  sectionIndex: Int!
+  subSectionIndex: Int!
+  components: [Component!]!
+  errors: [ValidationError!]!
+}
+
+type ValidationError {
+  componentId: String!
+  message: String!
+}
+
+union Component =
+    TextField
+  | SelectField
+  | RadioField
+  | CheckboxField
+  | DateField
+  | FileUploadField
+  | PhoneField
+  | NationalIdField
+  | CompanySearchField
+  | AsyncSelectField
+  | SubmitField
+  | DividerField
+  | DescriptionField
+  | KeyValueField
+  | AlertMessageField
+  | LinkField
+  | RedirectToServicePortalField
+  | PaymentPendingField
+  | MessageWithLinkButtonField
+  | ExpandableDescriptionField
+  | AccordionField
+  | ActionCardListField
+  | TableRepeaterField
+  | StaticTableField
+  | HiddenInputField
+  | HiddenInputWithWatchedValueField
+  | FindVehicleField
+  | DisplayField
+  | ImageField
+  | BankAccountField
+  | SliderField
+  | RepeaterComponent
+  | CustomComponent
+
+type RepeaterComponent {
+  id: String!
+  arrayPath: String!
+  addItemLabel: String!
+  removeItemLabel: String
+  minItems: Int
+  maxItems: Int
+  items: [[Component!]!]!
+}
+
+type CustomComponent {
+  componentName: String!
+  props: String!
+}
+
+type TextField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  maxLength: Int
+  defaultValue: String
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type SelectField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  options: [SelectOption!]!
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type SelectOption {
+  label: String!
+  value: String!
+}
+
+type RadioField {
+  id: String!
+  label: String!
+  required: Boolean!
+  disabled: Boolean!
+  options: [SelectOption!]!
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type CheckboxField {
+  id: String!
+  label: String!
+  required: Boolean!
+  disabled: Boolean!
+  options: [SelectOption!]!
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type DateField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  minDate: String
+  maxDate: String
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type FileUploadField {
+  id: String!
+  label: String!
+  required: Boolean!
+  disabled: Boolean!
+  maxSize: Int
+  accept: String
+  clientCondition: ClientCondition
+}
+
+type PhoneField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type NationalIdField {
+  id: String!
+  label: String!
+  required: Boolean!
+  disabled: Boolean!
+  clientCondition: ClientCondition
+}
+
+type CompanySearchField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  clientCondition: ClientCondition
+}
+
+type AsyncSelectField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  clientCondition: ClientCondition
+}
+
+type SubmitField {
+  id: String!
+  label: String!
+  placement: String
+  actions: [SubmitAction!]!
+  clientCondition: ClientCondition
+}
+
+type SubmitAction {
+  event: String!
+  name: String!
+  type: String!
+}
+
+type DividerField {
+  id: String!
+  clientCondition: ClientCondition
+}
+
+type DescriptionField {
+  id: String!
+  label: String!
+  description: String
+  clientCondition: ClientCondition
+}
+
+type KeyValueField {
+  id: String!
+  label: String!
+  value: String!
+  clientCondition: ClientCondition
+}
+
+type AlertMessageField {
+  id: String!
+  alertType: String!
+  title: String!
+  message: String
+  clientCondition: ClientCondition
+}
+
+type LinkField {
+  id: String!
+  label: String!
+  url: String!
+  clientCondition: ClientCondition
+}
+
+type RedirectToServicePortalField {
+  id: String!
+  clientCondition: ClientCondition
+}
+
+type PaymentPendingField {
+  id: String!
+  clientCondition: ClientCondition
+}
+
+type MessageWithLinkButtonField {
+  id: String!
+  message: String!
+  url: String!
+  buttonTitle: String!
+  clientCondition: ClientCondition
+}
+
+type ExpandableDescriptionField {
+  id: String!
+  label: String!
+  introText: String
+  description: String!
+  clientCondition: ClientCondition
+}
+
+type AccordionField {
+  id: String!
+  label: String!
+  items: [AccordionItem!]!
+  clientCondition: ClientCondition
+}
+
+type AccordionItem {
+  label: String!
+  content: String!
+}
+
+type ActionCardListField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type TableRepeaterField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type StaticTableField {
+  id: String!
+  label: String!
+  header: [String!]!
+  rows: [[String!]!]!
+  clientCondition: ClientCondition
+}
+
+type HiddenInputField {
+  id: String!
+  clientCondition: ClientCondition
+}
+
+type HiddenInputWithWatchedValueField {
+  id: String!
+  watchValue: String!
+  clientCondition: ClientCondition
+}
+
+type FindVehicleField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type DisplayField {
+  id: String!
+  label: String!
+  value: String
+  clientCondition: ClientCondition
+}
+
+type ImageField {
+  id: String!
+  label: String!
+  imageUrl: String
+  clientCondition: ClientCondition
+}
+
+type BankAccountField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type SliderField {
+  id: String!
+  label: String!
+  min: Int!
+  max: Int!
+  step: Int
+  clientCondition: ClientCondition
+}
+
+enum ComponentWidth {
+  FULL
+  HALF
+}
+
+union ClientCondition = SingleClientCondition | MultiClientCondition
+
+type SingleClientCondition {
+  questionId: String!
+  comparator: String!
+  value: String!
+}
+
+type MultiClientCondition {
+  on: ConditionOperator!
+  checks: [SingleClientCondition!]!
+}
+
+enum ConditionOperator {
+  ALL
+  ANY
+}

@@ -11,6 +11,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
+import { SdfModule } from './modules/sdf/sdf.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
@@ -85,6 +86,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
       useClass: SequelizeConfigService,
     }),
     ApplicationModule,
+    SdfModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
