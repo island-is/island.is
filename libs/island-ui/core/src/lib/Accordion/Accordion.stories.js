@@ -11,7 +11,10 @@ import { Stack } from '../Stack/Stack'
 
 const SAMPLE_ITEMS = [
   { id: 'id_1', label: 'Hvenær þarf að skila umsókn?' },
-  { id: 'id_2', label: 'Er hægt að leggja inn greiðslur á bankareikning maka?' },
+  {
+    id: 'id_2',
+    label: 'Er hægt að leggja inn greiðslur á bankareikning maka?',
+  },
   { id: 'id_3', label: 'Hvernig kem ég umsókninni til ykkar?' },
 ]
 

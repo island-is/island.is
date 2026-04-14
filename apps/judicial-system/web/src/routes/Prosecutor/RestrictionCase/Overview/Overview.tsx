@@ -219,10 +219,7 @@ export const Overview = () => {
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
-              <AccordionItem
-                id="id_2"
-                label="Lagaákvæði sem krafan er byggð á"
-              >
+              <AccordionItem id="id_2" label="Lagaákvæði sem krafan er byggð á">
                 {workingCase.legalProvisions &&
                   workingCase.legalProvisions.map(
                     (legalProvision: CaseLegalProvisions, index: number) => {

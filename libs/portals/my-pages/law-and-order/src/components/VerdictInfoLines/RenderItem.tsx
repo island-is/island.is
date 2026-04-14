@@ -43,7 +43,6 @@ export const RenderItem: React.FC<RenderItemProps> = ({
             <AccordionItem
               id={`accordion-${item.label ?? ''}`}
               label={item.label ?? ''}
-              
             >
               {HtmlParser(String(item.value))}
             </AccordionItem>

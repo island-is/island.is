@@ -29,7 +29,7 @@ export const ExpandableDescriptionFormField: FC<
           locale as Locale,
           formatMessage,
         )}
-        variant='large'
+        variant="large"
       >
         {field.introText && (
           <Box marginBottom={4}>
