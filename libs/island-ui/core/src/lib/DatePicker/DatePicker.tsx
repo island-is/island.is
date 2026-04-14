@@ -465,6 +465,9 @@ const CustomInput = forwardRef<
       fixedFocusState,
       icon,
       onClick,
+      onClear,
+      isClearable,
+      clearLabel,
       ...props
     },
     ref,
@@ -485,13 +488,13 @@ const CustomInput = forwardRef<
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}
       buttons={
-        props.isClearable
+        isClearable
           ? [
               {
                 name: 'close',
                 type: 'outline',
-                label: props.clearLabel || 'Clear',
-                onClick: props.onClear,
+                label: clearLabel || 'Clear',
+                onClick: onClear,
                 disabled: props.disabled,
               },
             ]

@@ -80,7 +80,6 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
-  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
   SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   SPLIT: ':scissors: Mál klofið',

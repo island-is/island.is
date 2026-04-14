@@ -686,92 +686,6 @@ describe('Transition Case', () => {
     },
   )
 
-  // --- RETURN INDICTMENT ---
-
-  describe.each(indictmentCases)('return indictment %s', (type) => {
-    const allowedFromStates = [CaseState.RECEIVED]
-
-    describe.each(allowedFromStates)('state %s', (fromState) => {
-      it('no appeal case - should return indictment', () => {
-        // Act
-        const res = transitionCase(
-          CaseTransition.RETURN_INDICTMENT,
-          { id: uuid(), state: fromState, type } as Case,
-          { id: uuid() } as User,
-        )
-
-        // Assert
-        expect(res).toMatchObject({ state: CaseState.DRAFT })
-      })
-
-      it.each(Object.values(AppealCaseState))(
-        'appeal state %s - should not return indictment',
-        (fromAppealState) => {
-          // Arrange
-          const act = () =>
-            transitionCase(
-              CaseTransition.RETURN_INDICTMENT,
-              {
-                id: uuid(),
-                state: fromState,
-                ...withAppealCase(fromAppealState),
-                type,
-              } as Case,
-              { id: uuid() } as User,
-            )
-
-          // Act and assert
-          expect(act).toThrow(ForbiddenException)
-        },
-      )
-    })
-
-    describe.each(
-      Object.values(CaseState).filter(
-        (state) => !allowedFromStates.includes(state),
-      ),
-    )('state %s - should not return indictment', (fromState) => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.RETURN_INDICTMENT,
-          { id: uuid(), state: fromState, type } as Case,
-          { id: uuid() } as User,
-        )
-
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
-  })
-
-  describe.each([...restrictionCases, ...investigationCases])(
-    'return indictment %s',
-    (type) => {
-      describe.each(Object.values(CaseState))('state %s', (fromState) => {
-        it.each(allAppealOptions)(
-          'appeal state %s - should not return indictment',
-          (fromAppealState) => {
-            // Arrange
-            const act = () =>
-              transitionCase(
-                CaseTransition.RETURN_INDICTMENT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  ...withAppealCase(fromAppealState),
-                  type,
-                } as Case,
-                { id: uuid() } as User,
-              )
-
-            // Act and assert
-            expect(act).toThrow(ForbiddenException)
-          },
-        )
-      })
-    },
-  )
-
   // --- COMPLETE ---
 
   describe.each(indictmentCases)('complete %s', (type) => {
@@ -1667,7 +1581,7 @@ describe('Transition Case', () => {
       AppealCaseState.RECEIVED,
     ]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1819,7 +1733,7 @@ describe('Transition Case', () => {
         AppealCaseState.RECEIVED,
       ]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1965,7 +1879,7 @@ describe('Transition Case', () => {
     const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [AppealCaseState.APPEALED]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2050,7 +1964,7 @@ describe('Transition Case', () => {
       ]
       const allowedFromAppealStates = [AppealCaseState.APPEALED]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2136,7 +2050,7 @@ describe('Transition Case', () => {
       AppealCaseState.WITHDRAWN,
     ]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2225,7 +2139,7 @@ describe('Transition Case', () => {
         AppealCaseState.WITHDRAWN,
       ]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2308,7 +2222,7 @@ describe('Transition Case', () => {
     const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [AppealCaseState.COMPLETED]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2392,7 +2306,7 @@ describe('Transition Case', () => {
       ]
       const allowedFromAppealStates = [AppealCaseState.COMPLETED]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {

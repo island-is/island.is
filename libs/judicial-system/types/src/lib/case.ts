@@ -251,7 +251,6 @@ export enum CaseTransition {
   REJECT = 'REJECT',
   REOPEN = 'REOPEN',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
-  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   SUBMIT = 'SUBMIT',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
@@ -269,7 +268,6 @@ export enum IndictmentCaseTransition {
   RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REOPEN = CaseTransition.REOPEN,
   REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
-  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
   WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
