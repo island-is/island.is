@@ -67,19 +67,16 @@ export class AppealCaseRepositoryService {
     options: CreateAppealCaseOptions,
   ): Promise<AppealCase> {
     try {
-      this.logger.debug(
-        `Creating appeal case for case ${caseId} with data:`,
-        { data: Object.keys(data) },
-      )
+      this.logger.debug(`Creating appeal case for case ${caseId} with data:`, {
+        data: Object.keys(data),
+      })
 
       const result = await this.appealCaseModel.create(
         { ...data, caseId },
         { transaction: options.transaction },
       )
 
-      this.logger.debug(
-        `Created appeal case ${result.id} for case ${caseId}`,
-      )
+      this.logger.debug(`Created appeal case ${result.id} for case ${caseId}`)
 
       return result
     } catch (error) {
@@ -98,10 +95,9 @@ export class AppealCaseRepositoryService {
     options: UpdateAppealCaseOptions,
   ): Promise<AppealCase> {
     try {
-      this.logger.debug(
-        `Updating appeal case ${appealCaseId} with data:`,
-        { data: Object.keys(data) },
-      )
+      this.logger.debug(`Updating appeal case ${appealCaseId} with data:`, {
+        data: Object.keys(data),
+      })
 
       const [numberOfAffectedRows, updatedAppealCases] =
         await this.appealCaseModel.update(data, {
