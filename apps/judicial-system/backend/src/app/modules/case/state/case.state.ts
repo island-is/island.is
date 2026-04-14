@@ -60,7 +60,6 @@ const indictmentCaseStateMachine: Map<
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.WAITING_FOR_CONFIRMATION,
-        indictmentReturnedExplanation: null,
       }),
     },
   ],
@@ -126,19 +125,6 @@ const indictmentCaseStateMachine: Map<
 
         return { ...update, state: CaseState.WAITING_FOR_CANCELLATION }
       },
-    },
-  ],
-  [
-    IndictmentCaseTransition.RETURN_INDICTMENT,
-    {
-      fromStates: [IndictmentCaseState.RECEIVED],
-      fromAppealStates: [undefined],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.DRAFT,
-        courtCaseNumber: null,
-        indictmentHash: null,
-      }),
     },
   ],
   [
@@ -245,7 +231,7 @@ const indictmentCaseStateMachine: Map<
         }
 
         throw new ForbiddenException(
-          `${actor} cannot appeal an indictment case`,
+          'Current user cannot appeal an indictment case',
         )
       },
     },
@@ -546,7 +532,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           }
 
           throw new ForbiddenException(
-            `${actor} cannot appeal a ${theCase.type} case`,
+            `Current user cannot appeal a ${theCase.type} case`,
           )
         },
       },

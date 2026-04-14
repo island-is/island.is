@@ -47,6 +47,7 @@ import {
   CourtDocumentType,
   DateType,
   dateTypes,
+  DefendantEventType,
   defendantEventTypes,
   EventType,
   eventTypes,
@@ -86,6 +87,7 @@ import {
   DateLog,
   Defendant,
   DefendantEventLog,
+  DefendantEventLogRepositoryService,
   EventLog,
   Institution,
   Subpoena,
@@ -229,6 +231,7 @@ export class CaseService {
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -1083,18 +1086,6 @@ export class CaseService {
     })
   }
 
-  private addMessagesForReturnedIndictmentCaseToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_RETURNED },
-    })
-  }
-
   private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
     user: TUser,
@@ -1207,12 +1198,6 @@ export class CaseService {
         isIndictment
       ) {
         this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
-      } else if (
-        updatedCase.state === CaseState.DRAFT &&
-        theCase.state === CaseState.RECEIVED &&
-        isIndictment
-      ) {
-        this.addMessagesForReturnedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
         this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
@@ -1909,6 +1894,74 @@ export class CaseService {
     }
   }
 
+  private async handleDefendantEventLogUpdatesForIndictments(
+    theCase: Case,
+    update: UpdateCase,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    const decisions = update.defendantEventLogDecisions
+
+    if (!decisions || decisions.length === 0) {
+      return
+    }
+
+    const caseDefendantIds = new Set(
+      (theCase.defendants ?? []).map((d) => d.id),
+    )
+
+    const eventUpdates = decisions.map(
+      ({ defendantId, rulingDecision, rulingDate }) => {
+        if (!caseDefendantIds.has(defendantId)) {
+          throw new BadRequestException(
+            `Defendant ${defendantId} does not belong to case ${theCase.id}`,
+          )
+        }
+
+        if (
+          rulingDecision !== CaseIndictmentRulingDecision.DISMISSAL &&
+          rulingDecision !== CaseIndictmentRulingDecision.CANCELLATION
+        ) {
+          throw new BadRequestException(
+            `Unsupported defendant ruling decision ${rulingDecision} for case ${theCase.id}`,
+          )
+        }
+
+        return {
+          defendantId,
+          rulingDate,
+          eventType:
+            rulingDecision === CaseIndictmentRulingDecision.DISMISSAL
+              ? DefendantEventType.INDICTMENT_DISMISSED
+              : DefendantEventType.INDICTMENT_CANCELLED,
+        }
+      },
+    )
+
+    await Promise.all(
+      eventUpdates.map(({ defendantId, eventType, rulingDate }) => {
+        if (!rulingDate) {
+          return this.defendantEventLogRepositoryService.createWithUser(
+            eventType,
+            theCase.id,
+            defendantId,
+            user,
+            transaction,
+          )
+        }
+
+        return this.defendantEventLogRepositoryService.createWithUser(
+          eventType,
+          theCase.id,
+          defendantId,
+          user,
+          transaction,
+          rulingDate,
+        )
+      }),
+    )
+  }
+
   private async handleEventLogUpdates(
     theCase: Case,
     updatedCase: Case,
@@ -1991,23 +2044,27 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    await this.handleDateLogUpdates(theCase, update, transaction)
-    await this.handleCaseStringUpdates(theCase, update, transaction)
+    // Keep transient defendant event log decisions out of the case persistence
+    // payload without mutating the original update object.
+    const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
-    if (Object.keys(update).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, update, {
+    await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
+    await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
+
+    if (Object.keys(caseUpdate).length > 0) {
+      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
         transaction,
       })
     }
 
     // Update police case numbers of case files if necessary
-    await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
+    await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
 
     // Reset case file states if court case number is changed
     if (
       theCase.courtCaseNumber &&
-      update.courtCaseNumber &&
-      update.courtCaseNumber !== theCase.courtCaseNumber
+      caseUpdate.courtCaseNumber &&
+      caseUpdate.courtCaseNumber !== theCase.courtCaseNumber
     ) {
       await this.fileService.resetCaseFileStates(theCase.id, transaction)
     }
@@ -2036,25 +2093,25 @@ export class CaseService {
     // we have to clean up idle verdicts
     const hasNewDecision =
       theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
-      !!update.indictmentDecision &&
+      !!caseUpdate.indictmentDecision &&
       [
         IndictmentDecision.POSTPONING,
         IndictmentDecision.POSTPONING_UNTIL_VERDICT,
         IndictmentDecision.REDISTRIBUTING,
         IndictmentDecision.SCHEDULING,
-      ].includes(update.indictmentDecision)
+      ].includes(caseUpdate.indictmentDecision)
 
     const hasNewRulingDecision =
       theCase.indictmentRulingDecision ===
         CaseIndictmentRulingDecision.RULING &&
-      !!update.indictmentRulingDecision &&
+      !!caseUpdate.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.CANCELLATION,
         CaseIndictmentRulingDecision.FINE,
         CaseIndictmentRulingDecision.DISMISSAL,
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
-      ].includes(update.indictmentRulingDecision)
+      ].includes(caseUpdate.indictmentRulingDecision)
 
     if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
       await Promise.all(
@@ -2120,7 +2177,15 @@ export class CaseService {
     const updatedCase = await this.findById(theCase.id, true, transaction)
 
     await this.handleEventLogUpdates(theCase, updatedCase, user, transaction)
-
+    await this.handleDefendantEventLogUpdatesForIndictments(
+      theCase,
+      {
+        ...caseUpdate,
+        defendantEventLogDecisions,
+      },
+      user,
+      transaction,
+    )
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     if (isReceivingCase) {

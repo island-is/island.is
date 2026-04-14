@@ -22,7 +22,7 @@ import {
 
 // Court of appeals access
 
-export const courtOfAppealsRequestCasesAccessWhereOptions = {
+const courtOfAppealsRequestCasesAccessWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
@@ -40,8 +40,30 @@ export const courtOfAppealsRequestCasesAccessWhereOptions = {
   ],
 }
 
-export const courtOfAppealsCasesAccessWhereOptions = () =>
-  courtOfAppealsRequestCasesAccessWhereOptions
+const courtOfAppealsIndictmentsAccessWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: completedIndictmentCaseStates,
+  [Op.or]: [
+    {
+      '$appealCase.appeal_state$': [
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ],
+    },
+    {
+      '$appealCase.appeal_state$': CaseAppealState.WITHDRAWN,
+      '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
+    },
+  ],
+}
+
+export const courtOfAppealsCasesAccessWhereOptions = () => ({
+  [Op.or]: [
+    courtOfAppealsRequestCasesAccessWhereOptions,
+    courtOfAppealsIndictmentsAccessWhereOptions,
+  ],
+})
 
 // District court access
 
