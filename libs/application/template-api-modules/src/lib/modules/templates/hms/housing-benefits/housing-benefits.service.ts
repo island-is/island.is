@@ -88,9 +88,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
-  async getPersonalTaxReturn({
-    application,
-  }: TemplateApiModuleActionProps) {
+  async getPersonalTaxReturn({ application }: TemplateApiModuleActionProps) {
     const lastYear = new Date().getFullYear() - 1
 
     const taxMockMode = getPersonalTaxMockMode(application)
