@@ -95,7 +95,7 @@ export const container = style({
   '@media': {
     [`screen and (min-width: 1100px)`]: {
       flexDirection: 'row',
-      alignItems: 'flex-end',
+      alignItems: 'flex-start',
       maxWidth: 750,
     },
   },
@@ -110,6 +110,8 @@ export const removeButtonWrapper = style({
   '@media': {
     [`screen and (min-width: 1100px)`]: {
       order: 1,
+      paddingBottom: 0,
+      paddingTop: 25,
     },
   },
 })

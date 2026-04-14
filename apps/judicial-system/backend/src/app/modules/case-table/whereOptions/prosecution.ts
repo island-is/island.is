@@ -84,7 +84,6 @@ export const prosecutionRequestCasesCompletedWhereOptions = (
 })
 
 // Prosecution indictments
-
 export const prosecutionIndictmentsInDraftWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
