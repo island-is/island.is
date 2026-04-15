@@ -11,7 +11,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -20,7 +19,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import {
@@ -38,7 +36,6 @@ import {
   FilterSection,
   Footer,
   Header,
-  MobileFooter,
   SearchSection,
   StudyCardsGrid,
 } from './components'
@@ -246,7 +243,9 @@ const SecondarySchoolStudiesLandingPage: Screen<
         description={formatMessage(m.home.metaDescription)}
       />
 
-      <Header />
+      <Box marginBottom={4}>
+        <Header />
+      </Box>
 
       {/* Main */}
       <Box>
@@ -434,12 +433,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
         </GridContainer>
       </Box>
       {/* Main ends */}
-      <Box display={['none', 'none', 'none', 'block']} component="footer">
-        <Footer />
-      </Box>
-      <Box display={['block', 'block', 'block', 'none']} component="footer">
-        <MobileFooter />
-      </Box>
+      <Footer />
     </Box>
   )
 }

@@ -21,7 +21,6 @@ import {
   DetailSidebarMobile,
   Footer,
   Header,
-  MobileFooter,
   ProgrammeHeader,
 } from './components'
 import * as styles from './SecondarySchoolStudies.css'
@@ -43,7 +42,9 @@ const SecondarySchoolStudiesDetailsPage: Screen<
         description={programme?.description || ''}
       />
 
-      <Header />
+      <Box marginBottom={4}>
+        <Header />
+      </Box>
 
       <GridContainer>
         <Box
@@ -114,12 +115,7 @@ const SecondarySchoolStudiesDetailsPage: Screen<
           </Box>
         </Box>
       </GridContainer>
-      <Box display={['none', 'none', 'none', 'block']} component="footer">
-        <Footer />
-      </Box>
-      <Box display={['block', 'block', 'block', 'none']} component="footer">
-        <MobileFooter />
-      </Box>
+      <Footer />
     </Box>
   )
 }
