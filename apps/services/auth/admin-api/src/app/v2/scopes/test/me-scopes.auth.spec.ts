@@ -33,6 +33,7 @@ describe('withoutAuth and permissions', () => {
     ${'POST'}  | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes`}
     ${'GET'}   | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}`}
     ${'PATCH'} | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}`}
+    ${'GET'}   | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}/clients`}
   `(
     '$method $endpoint should return 401 when user is not authenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -67,6 +68,7 @@ describe('withoutAuth and permissions', () => {
     ${'POST'}  | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes`}
     ${'GET'}   | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}`}
     ${'PATCH'} | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}`}
+    ${'GET'}   | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}/clients`}
   `(
     '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
     async ({ method, endpoint }: TestEndpointOptions) => {
