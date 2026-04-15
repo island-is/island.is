@@ -8,7 +8,12 @@ import {
 import { Case, User } from '../../repository'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
-const appealCaseFields: (keyof UpdateAppealCaseDto)[] = [
+const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
+  'prosecutorStatementDate',
+  'requestAppealRulingNotToBePublished',
+]
+
+const courtOfAppealsUpdateFields: (keyof UpdateAppealCaseDto)[] = [
   'appealCaseNumber',
   'appealAssistantId',
   'appealJudge1Id',
@@ -26,19 +31,19 @@ const appealCaseFields: (keyof UpdateAppealCaseDto)[] = [
 export const courtOfAppealsJudgeUpdateRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_JUDGE,
   type: RulesType.FIELD,
-  dtoFields: appealCaseFields,
+  dtoFields: courtOfAppealsUpdateFields,
 }
 
 export const courtOfAppealsRegistrarUpdateRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_REGISTRAR,
   type: RulesType.FIELD,
-  dtoFields: appealCaseFields,
+  dtoFields: courtOfAppealsUpdateFields,
 }
 
 export const courtOfAppealsAssistantUpdateRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_ASSISTANT,
   type: RulesType.FIELD,
-  dtoFields: appealCaseFields,
+  dtoFields: courtOfAppealsUpdateFields,
 }
 
 // Court of appeals transition rules
@@ -87,19 +92,20 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
   dtoFieldValues: [AppealCaseTransition.RECEIVE_APPEAL],
 }
 
-// Prosecutor create/transition rules
-export const prosecutorCreateRule: RolesRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.BASIC,
-}
-
 // Prosecutor update rules (statement date)
 export const prosecutorUpdateRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD,
-  dtoFields: ['prosecutorStatementDate'],
+  dtoFields: prosecutorFields,
 }
 
+export const prosecutorRepresentativeUpdateRule: RolesRule = {
+  role: UserRole.PROSECUTOR_REPRESENTATIVE,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+}
+
+// Prosecutor transition rules
 export const prosecutorTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
@@ -120,11 +126,25 @@ export const prosecutorTransitionRule: RolesRule = {
     return true
   },
 }
+export const prosecutorRepresentativeTransitionRule: RolesRule = {
+  role: UserRole.PROSECUTOR_REPRESENTATIVE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
+  canActivate: (request) => {
+    const theCase: Case = request.case
 
-// Defender create/transition rules
-export const defenderCreateRule: RolesRule = {
-  role: UserRole.DEFENDER,
-  type: RulesType.BASIC,
+    if (!theCase) {
+      return false
+    }
+
+    // Deny withdrawal if prosecutor did not appeal the case
+    if (!theCase.prosecutorPostponedAppealDate) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Defender update rules (statement date)
