@@ -1,3 +1,4 @@
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { WrappedActionFn } from '@island.is/portals/core'
 
 import {
@@ -38,6 +39,18 @@ const parseUserAccess = (
   }
 }
 
+const parseEnvironments = (
+  formData: FormData,
+): AuthAdminEnvironment[] | undefined => {
+  const raw = formData.get('environments') as string | null
+  if (!raw) return undefined
+  try {
+    return JSON.parse(raw) as AuthAdminEnvironment[]
+  } catch {
+    return undefined
+  }
+}
+
 export const apiScopeUsersAction: WrappedActionFn =
   ({ client }) =>
   async ({ request }): Promise<ApiScopeUsersActionResult> => {
@@ -59,6 +72,7 @@ export const apiScopeUsersAction: WrappedActionFn =
                 name: formData.get('name') as string,
                 email: formData.get('email') as string,
                 userAccess: parseUserAccess(formData, nationalId),
+                environments: parseEnvironments(formData),
               },
             },
           })

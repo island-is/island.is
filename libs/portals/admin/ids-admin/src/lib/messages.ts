@@ -1020,6 +1020,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-save-button',
     defaultMessage: 'Save',
   },
+  apiScopeUsersCreateButton: {
+    id: 'ap.ids-admin:api-scope-users-create-button',
+    defaultMessage: 'Create',
+  },
   apiScopeUsersCancelButton: {
     id: 'ap.ids-admin:api-scope-users-cancel-button',
     defaultMessage: 'Cancel',
@@ -1051,6 +1055,30 @@ export const m = defineMessages({
   apiScopeUsersScopesLoading: {
     id: 'ap.ids-admin:api-scope-users-scopes-loading',
     defaultMessage: 'Loading scopes...',
+  },
+  apiScopeUsersPublishSuccess: {
+    id: 'ap.ids-admin:api-scope-users-publish-success',
+    defaultMessage: 'User published to {environment} successfully',
+  },
+  apiScopeUsersErrorNameMinLength: {
+    id: 'ap.ids-admin:api-scope-users-error-name-min-length',
+    defaultMessage: 'Name must be at least 2 characters',
+  },
+  apiScopeUsersErrorNationalId: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id',
+    defaultMessage: 'National ID must be exactly 10 digits',
+  },
+  apiScopeUsersErrorEmailRequired: {
+    id: 'ap.ids-admin:api-scope-users-error-email-required',
+    defaultMessage: 'Email is required',
+  },
+  apiScopeUsersErrorEmailFormat: {
+    id: 'ap.ids-admin:api-scope-users-error-email-format',
+    defaultMessage: 'Email must be a valid email address',
+  },
+  apiScopeUsersErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:api-scope-users-error-environment-required',
+    defaultMessage: 'Select at least one environment',
   },
   grantTypes: {
     id: 'ap.ids-admin:grant-types',

@@ -17,6 +17,10 @@ query GetAccessControlledScopes {
   }
 }
 
+query GetConfiguredEnvironments {
+  authAdminApiScopeUserConfiguredEnvironments
+}
+
 query GetApiScopeUser($nationalId: String!) {
   authAdminApiScopeUser(nationalId: $nationalId) {
     nationalId
@@ -26,6 +30,7 @@ query GetApiScopeUser($nationalId: String!) {
       nationalId
       scope
     }
+    availableEnvironments
   }
 }
 

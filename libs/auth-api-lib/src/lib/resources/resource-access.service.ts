@@ -95,13 +95,7 @@ export class ResourceAccessService {
     const newApiScopeUser = await this.apiScopeUser.create(apiScopeUser)
 
     if (newApiScopeUser) {
-      const apiScopeResponse = await this.createUserScopes(userAccess)
-
-      if (apiScopeResponse) {
-        return newApiScopeUser
-      } else {
-        throw new Error('Error inserting scopes')
-      }
+      await this.createUserScopes(userAccess)
     }
 
     return newApiScopeUser

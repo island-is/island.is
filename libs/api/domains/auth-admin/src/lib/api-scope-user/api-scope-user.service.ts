@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminApi } from '@island.is/clients/auth/admin-api'
 import { ApiResponse } from '@island.is/clients/middlewares'
+import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { environments } from '../shared/constants/environments'
@@ -92,6 +93,10 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     )
   }
 
+  getAvailableEnvironments(): Environment[] {
+    return this.getConfiguredEnvironments()
+  }
+
   async getAccessControlledScopes(
     user: User,
   ): Promise<AccessControlledScope[]> {
@@ -116,25 +121,35 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
+    let userData: ApiScopeUser | null = null
+    const availableEnvironments: Environment[] = []
+
     for (const environment of environments) {
       const result = await this.typedRequest(user, environment, (api) =>
         api.meApiScopeUsersControllerFindOneRaw({ nationalId }),
       )
 
       if (result) {
-        return {
-          nationalId: result.nationalId,
-          name: result.name ?? undefined,
-          email: result.email,
-          userAccess: result.userAccess?.map((access) => ({
-            nationalId: access.nationalId,
-            scope: access.scope,
-          })),
+        availableEnvironments.push(environment)
+        if (!userData) {
+          userData = {
+            nationalId: result.nationalId,
+            name: result.name ?? undefined,
+            email: result.email,
+            userAccess: result.userAccess?.map((access) => ({
+              nationalId: access.nationalId,
+              scope: access.scope,
+            })),
+          }
         }
       }
     }
 
-    return null
+    if (userData) {
+      userData.availableEnvironments = availableEnvironments
+    }
+
+    return userData
   }
 
   async getApiScopeUsers(
@@ -169,7 +184,14 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     input: CreateApiScopeUserInput,
   ): Promise<ApiScopeUser> {
-    for (const environment of environments) {
+    const inputEnvironments = input.environments
+    const targetEnvironments = inputEnvironments?.length
+      ? environments.filter((env) => inputEnvironments.includes(env))
+      : environments
+
+    let lastResult: ApiScopeUser | null = null
+
+    for (const environment of targetEnvironments) {
       const result = await this.typedRequest(user, environment, (api) =>
         api.meApiScopeUsersControllerCreateRaw({
           apiScopeUserDTO: {
@@ -185,7 +207,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       )
 
       if (result) {
-        return {
+        lastResult = {
           nationalId: result.nationalId,
           name: result.name ?? undefined,
           email: result.email,
@@ -195,6 +217,10 @@ export class ApiScopeUserService extends MultiEnvironmentService {
           })),
         }
       }
+    }
+
+    if (lastResult) {
+      return lastResult
     }
 
     throw new Error('Failed to create API scope user')
@@ -237,13 +263,14 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
   async deleteApiScopeUser(user: User, nationalId: string): Promise<boolean> {
     for (const environment of environments) {
-      const result = await this.typedRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerDeleteRaw({
-          nationalId,
-        }),
-      )
+      let requestMade = false
 
-      if (result !== null && result !== undefined) {
+      await this.typedRequest(user, environment, (api) => {
+        requestMade = true
+        return api.meApiScopeUsersControllerDeleteRaw({ nationalId })
+      })
+
+      if (requestMade) {
         return true
       }
     }

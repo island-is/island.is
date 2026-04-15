@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Environment } from '@island.is/shared/types'
 
 import { ApiScopeUser } from './models/api-scope-user.model'
 import { AccessControlledScope } from './models/access-controlled-scope.model'
@@ -44,6 +45,13 @@ export class ApiScopeUserResolver {
     @CurrentUser() user: User,
   ): Promise<AccessControlledScope[]> {
     return this.apiScopeUserService.getAccessControlledScopes(user)
+  }
+
+  @Query(() => [Environment], {
+    name: 'authAdminApiScopeUserConfiguredEnvironments',
+  })
+  getConfiguredEnvironments(): Environment[] {
+    return this.apiScopeUserService.getAvailableEnvironments()
   }
 
   @Mutation(() => ApiScopeUser, { name: 'createAuthAdminApiScopeUser' })

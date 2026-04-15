@@ -3,12 +3,15 @@ import { useFetcher, useLoaderData, useSearchParams } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
 import { MultiValue } from 'react-select'
 
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   Box,
   Button,
+  Checkbox,
   DialogPrompt,
   FilterInput,
   Input,
+  InputError,
   Pagination,
   Select,
   Stack,
@@ -19,8 +22,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { Modal } from '@island.is/react/components'
+import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
+import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
+import { authAdminEnvironments } from '../../utils/environments'
 import type { ApiScopeUsersLoaderData } from './ApiScopeUsers.loader'
 import {
   ApiScopeUserIntent,
@@ -30,8 +36,8 @@ import {
   GetApiScopeUserDocument,
   type GetApiScopeUserQuery,
   type GetApiScopeUserQueryVariables,
+  useCreateApiScopeUserMutation,
 } from './ApiScopeUsers.generated'
-import { Problem } from '@island.is/react-spa/shared'
 
 interface ApiScopeUserRow {
   nationalId: string
@@ -53,6 +59,16 @@ const emptyForm: ApiScopeUserFormData = {
   email: '',
 }
 
+interface FormErrors {
+  name?: string
+  nationalId?: string
+  email?: string
+  environments?: string
+}
+
+const NATIONAL_ID_REGEX = /^\d{10}$/
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const ApiScopeUsers = () => {
   const { formatMessage } = useLocale()
   const data = useLoaderData() as ApiScopeUsersLoaderData
@@ -63,13 +79,22 @@ const ApiScopeUsers = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<ApiScopeUserFormData>(emptyForm)
   const [activeScopes, setActiveScopes] = useState<string[]>([])
+  const [selectedEnvironments, setSelectedEnvironments] = useState<
+    AuthAdminEnvironment[]
+  >([])
+  const [userAvailableEnvironments, setUserAvailableEnvironments] = useState<
+    AuthAdminEnvironment[]
+  >([])
   const [loadingUser, setLoadingUser] = useState(false)
+  const [formErrors, setFormErrors] = useState<FormErrors>({})
   const lastHandledFetcherData = useRef<ApiScopeUsersActionResult | null>(null)
 
   const [fetchUser] = useLazyQuery<
     GetApiScopeUserQuery,
     GetApiScopeUserQueryVariables
   >(GetApiScopeUserDocument, { fetchPolicy: 'network-only' })
+  const [publishToEnvironment, { loading: isPublishing }] =
+    useCreateApiScopeUserMutation()
 
   const currentPage = Number(searchParams.get('page') ?? 1)
   const searchValue = searchParams.get('search') ?? ''
@@ -78,6 +103,19 @@ const ApiScopeUsers = () => {
     () => data?.accessControlledScopes ?? [],
     [data?.accessControlledScopes],
   )
+  const configuredEnvironments = useMemo(
+    () => data?.configuredEnvironments ?? [],
+    [data?.configuredEnvironments],
+  )
+
+  const environmentWrappers = useMemo(() => {
+    const envs = configuredEnvironments.map((env) => ({ environment: env }))
+    return envs.length > 0
+      ? envs
+      : [{ environment: AuthAdminEnvironment.Development }]
+  }, [configuredEnvironments])
+  const { environment: selectedEnvResult, updateEnvironment } =
+    useEnvironmentQuery(environmentWrappers)
 
   const [localSearch, setLocalSearch] = useState(searchValue)
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -117,6 +155,8 @@ const ApiScopeUsers = () => {
       setModalVisible(false)
       setFormData(emptyForm)
       setActiveScopes([])
+      setSelectedEnvironments([])
+      setUserAvailableEnvironments([])
     } else {
       toast.error(formatMessage(m.apiScopeUsersError))
     }
@@ -165,6 +205,9 @@ const ApiScopeUsers = () => {
     setIsEditing(false)
     setFormData(emptyForm)
     setActiveScopes([])
+    setSelectedEnvironments([])
+    setUserAvailableEnvironments([])
+    setFormErrors({})
     setModalVisible(true)
   }
 
@@ -176,18 +219,24 @@ const ApiScopeUsers = () => {
       email: user.email,
     })
     setActiveScopes([])
+    setUserAvailableEnvironments([])
+    setFormErrors({})
     setLoadingUser(true)
     setModalVisible(true)
 
     const result = await fetchUser({
       variables: { nationalId: user.nationalId },
     })
-    if (result.data?.authAdminApiScopeUser?.userAccess) {
+    const userData = result.data?.authAdminApiScopeUser
+    if (userData?.userAccess) {
       setActiveScopes(
-        result.data.authAdminApiScopeUser.userAccess.map(
+        userData.userAccess.map(
           (access: { nationalId: string; scope: string }) => access.scope,
         ),
       )
+    }
+    if (userData?.availableEnvironments) {
+      setUserAvailableEnvironments(userData.availableEnvironments)
     }
     setLoadingUser(false)
   }
@@ -202,11 +251,9 @@ const ApiScopeUsers = () => {
           displayName?: string | null
           description?: string | null
         }) => ({
-          label: `${scope.displayName ?? scope.name} (${scope.name})`,
+          label: `${scope.displayName ?? scope.name} - ${scope.name}`,
           value: scope.name,
-          description: `${scope.name}${scope.description ? ' - ' : ''}${
-            scope.description ?? ''
-          }`,
+          description: scope.description ?? '',
         }),
       ),
     [accessControlledScopes],
@@ -217,7 +264,40 @@ const ApiScopeUsers = () => {
     [scopeOptions, activeScopes],
   )
 
+  const validateForm = useCallback((): FormErrors => {
+    const errors: FormErrors = {}
+
+    if (formData.name.length < 2) {
+      errors.name = formatMessage(m.apiScopeUsersErrorNameMinLength)
+    }
+
+    if (!NATIONAL_ID_REGEX.test(formData.nationalId)) {
+      errors.nationalId = formatMessage(m.apiScopeUsersErrorNationalId)
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = formatMessage(m.apiScopeUsersErrorEmailRequired)
+    } else if (!EMAIL_REGEX.test(formData.email)) {
+      errors.email = formatMessage(m.apiScopeUsersErrorEmailFormat)
+    }
+
+    if (!isEditing && selectedEnvironments.length === 0) {
+      errors.environments = formatMessage(
+        m.apiScopeUsersErrorEnvironmentRequired,
+      )
+    }
+
+    return errors
+  }, [formData, isEditing, selectedEnvironments, formatMessage])
+
   const handleSubmit = () => {
+    const errors = validateForm()
+    setFormErrors(errors)
+
+    if (Object.keys(errors).length > 0) {
+      return
+    }
+
     const intent = isEditing
       ? ApiScopeUserIntent.update
       : ApiScopeUserIntent.create
@@ -229,7 +309,49 @@ const ApiScopeUsers = () => {
     submitData.set('email', formData.email)
     submitData.set('userAccess', JSON.stringify(activeScopes))
 
+    if (!isEditing && selectedEnvironments.length > 0) {
+      submitData.set('environments', JSON.stringify(selectedEnvironments))
+    }
+
     fetcher.submit(submitData, { method: 'post' })
+  }
+
+  const handlePublish = async (targetEnvironment: AuthAdminEnvironment) => {
+    try {
+      await publishToEnvironment({
+        variables: {
+          input: {
+            nationalId: formData.nationalId,
+            name: formData.name,
+            email: formData.email,
+            userAccess: activeScopes.map((scope) => ({
+              nationalId: formData.nationalId,
+              scope,
+            })),
+            environments: [targetEnvironment],
+          },
+        },
+      })
+
+      setUserAvailableEnvironments((prev) => [...prev, targetEnvironment])
+      updateEnvironment(targetEnvironment)
+      toast.success(
+        formatMessage(m.apiScopeUsersPublishSuccess, {
+          environment: targetEnvironment,
+        }),
+      )
+    } catch {
+      toast.error(formatMessage(m.apiScopeUsersError))
+    }
+  }
+
+  const handleEnvironmentCheckboxChange = (env: AuthAdminEnvironment) => {
+    setSelectedEnvironments((prev) =>
+      prev.includes(env) ? prev.filter((e) => e !== env) : [...prev, env],
+    )
+    if (formErrors.environments) {
+      setFormErrors((prev) => ({ ...prev, environments: undefined }))
+    }
   }
 
   const handleDelete = (nationalId: string) => {
@@ -239,6 +361,22 @@ const ApiScopeUsers = () => {
 
     fetcher.submit(submitData, { method: 'post' })
   }
+
+  const environmentOptions = useMemo(
+    () =>
+      authAdminEnvironments
+        .filter((env) => configuredEnvironments.includes(env))
+        .map((env) => {
+          const isAvailable = userAvailableEnvironments.includes(env)
+          return {
+            label: isAvailable
+              ? env
+              : formatMessage(m.publishEnvironment, { environment: env }),
+            value: env,
+          }
+        }),
+    [userAvailableEnvironments, configuredEnvironments, formatMessage],
+  )
 
   const isSubmitting = fetcher.state !== 'idle'
 
@@ -265,7 +403,7 @@ const ApiScopeUsers = () => {
             backgroundColor="blue"
           />
         </Box>
-        <Button size="small" icon="add" onClick={openCreateModal}>
+        <Button size="small" onClick={openCreateModal}>
           {formatMessage(m.apiScopeUsersCreateNew)}
         </Button>
       </Box>
@@ -322,6 +460,7 @@ const ApiScopeUsers = () => {
                         buttonTextConfirm={formatMessage(
                           m.apiScopeUsersDeleteButton,
                         )}
+                        buttonPropsConfirm={{ colorScheme: 'destructive' }}
                         buttonTextCancel={formatMessage(
                           m.apiScopeUsersCancelButton,
                         )}
@@ -370,103 +509,210 @@ const ApiScopeUsers = () => {
               ? formatMessage(m.apiScopeUsersEditTitle)
               : formatMessage(m.apiScopeUsersCreateTitle)
           }
-          title={
-            isEditing
-              ? formatMessage(m.apiScopeUsersEditTitle)
-              : formatMessage(m.apiScopeUsersCreateTitle)
-          }
           onClose={() => {
             setModalVisible(false)
             setFormData(emptyForm)
             setActiveScopes([])
+            setSelectedEnvironments([])
+            setUserAvailableEnvironments([])
           }}
           closeButtonLabel={formatMessage(m.apiScopeUsersCancelButton)}
           scrollType="outside"
         >
-          <Box paddingTop={4}>
-            <Stack space={3}>
-              <Input
-                name="nationalId"
-                label={formatMessage(m.apiScopeUsersNationalId)}
-                value={formData.nationalId}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    nationalId: e.target.value,
-                  }))
-                }
-                disabled={isEditing}
-                size="sm"
-                backgroundColor="blue"
-              />
-              <Input
-                name="name"
-                label={formatMessage(m.apiScopeUsersName)}
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                size="sm"
-                backgroundColor="blue"
-              />
-              <Input
-                name="email"
-                label={formatMessage(m.apiScopeUsersEmail)}
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
-                size="sm"
-                backgroundColor="blue"
-              />
-
-              {accessControlledScopes.length > 0 && (
-                <Box>
-                  {loadingUser ? (
-                    <Text>{formatMessage(m.apiScopeUsersScopesLoading)}</Text>
-                  ) : (
-                    <Select
-                      label={formatMessage(m.apiScopeUsersScopes)}
-                      value={selectedScopeOptions}
-                      options={scopeOptions}
-                      onChange={(value) => {
-                        setActiveScopes(
-                          (value as MultiValue<ScopeOption>).map(
-                            (opt) => opt.value,
-                          ),
-                        )
-                      }}
-                      placeholder={formatMessage(m.apiScopeUsersScopes)}
-                      isMulti
-                      size="sm"
-                      backgroundColor="blue"
-                    />
+          <Box paddingX={4}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={4}
+            >
+              <Text variant="h2" as="h2">
+                {isEditing
+                  ? formatMessage(m.apiScopeUsersEditTitle)
+                  : formatMessage(m.apiScopeUsersCreateTitle)}
+              </Text>
+              {isEditing && !loadingUser && (
+                <Select
+                  name="publishEnvironment"
+                  label={formatMessage(m.environment)}
+                  options={environmentOptions}
+                  value={environmentOptions.find(
+                    (opt) => opt.value === selectedEnvResult.environment,
                   )}
-                </Box>
-              )}
-
-              <Box display="flex" justifyContent="flexEnd" columnGap={2}>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setModalVisible(false)
-                    setFormData(emptyForm)
-                    setActiveScopes([])
+                  size="sm"
+                  backgroundColor="blue"
+                  isDisabled={isPublishing}
+                  onChange={(opt) => {
+                    if (!opt) return
+                    const env = opt.value as AuthAdminEnvironment
+                    if (userAvailableEnvironments.includes(env)) {
+                      updateEnvironment(env)
+                    } else {
+                      handlePublish(env)
+                    }
                   }}
+                />
+              )}
+            </Box>
+
+            <Box
+              padding={4}
+              border="standard"
+              borderRadius="large"
+              marginBottom={3}
+            >
+              <Stack space={3}>
+                <Input
+                  name="nationalId"
+                  label={formatMessage(m.apiScopeUsersNationalId)}
+                  value={formData.nationalId}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      nationalId: e.target.value,
+                    }))
+                    if (formErrors.nationalId) {
+                      setFormErrors((prev) => ({
+                        ...prev,
+                        nationalId: undefined,
+                      }))
+                    }
+                  }}
+                  disabled={isEditing}
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!formErrors.nationalId}
+                  errorMessage={formErrors.nationalId}
+                />
+                <Input
+                  name="name"
+                  label={formatMessage(m.apiScopeUsersName)}
+                  value={formData.name}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                    if (formErrors.name) {
+                      setFormErrors((prev) => ({
+                        ...prev,
+                        name: undefined,
+                      }))
+                    }
+                  }}
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!formErrors.name}
+                  errorMessage={formErrors.name}
+                />
+                <Input
+                  name="email"
+                  label={formatMessage(m.apiScopeUsersEmail)}
+                  value={formData.email}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                    if (formErrors.email) {
+                      setFormErrors((prev) => ({
+                        ...prev,
+                        email: undefined,
+                      }))
+                    }
+                  }}
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!formErrors.email}
+                  errorMessage={formErrors.email}
+                />
+
+                {accessControlledScopes.length > 0 && (
+                  <Box>
+                    {loadingUser ? (
+                      <Text>{formatMessage(m.apiScopeUsersScopesLoading)}</Text>
+                    ) : (
+                      <Select
+                        label={formatMessage(m.apiScopeUsersScopes)}
+                        value={selectedScopeOptions}
+                        options={scopeOptions}
+                        onChange={(value) => {
+                          setActiveScopes(
+                            (value as MultiValue<ScopeOption>).map(
+                              (opt) => opt.value,
+                            ),
+                          )
+                        }}
+                        isMulti
+                        size="sm"
+                        backgroundColor="blue"
+                      />
+                    )}
+                  </Box>
+                )}
+
+                {!isEditing && (
+                  <Box marginTop={3}>
+                    <Text variant="h4" marginBottom={2}>
+                      {formatMessage(m.chooseEnvironment)}
+                    </Text>
+                    <Box
+                      display="flex"
+                      flexDirection={['column', 'row']}
+                      columnGap={3}
+                      rowGap={2}
+                    >
+                      {authAdminEnvironments.map((env) => (
+                        <Box width="full" key={env}>
+                          <Checkbox
+                            label={env}
+                            name="environments"
+                            id={`environments.${env}`}
+                            value={env}
+                            checked={selectedEnvironments.includes(env)}
+                            onChange={() =>
+                              handleEnvironmentCheckboxChange(env)
+                            }
+                            disabled={!configuredEnvironments.includes(env)}
+                            large
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+                    {formErrors.environments && (
+                      <InputError
+                        id="environments-error"
+                        errorMessage={formErrors.environments}
+                      />
+                    )}
+                  </Box>
+                )}
+                <Box
+                  paddingTop={4}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  columnGap={2}
                 >
-                  {formatMessage(m.apiScopeUsersCancelButton)}
-                </Button>
-                <Button onClick={handleSubmit} loading={isSubmitting}>
-                  {formatMessage(m.apiScopeUsersSaveButton)}
-                </Button>
-              </Box>
-            </Stack>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setModalVisible(false)
+                      setFormData(emptyForm)
+                      setActiveScopes([])
+                      setSelectedEnvironments([])
+                      setUserAvailableEnvironments([])
+                    }}
+                  >
+                    {formatMessage(m.apiScopeUsersCancelButton)}
+                  </Button>
+                  <Button onClick={handleSubmit} loading={isSubmitting}>
+                    {isEditing
+                      ? formatMessage(m.apiScopeUsersSaveButton)
+                      : formatMessage(m.apiScopeUsersCreateButton)}
+                  </Button>
+                </Box>
+              </Stack>
+            </Box>
           </Box>
         </Modal>
       )}

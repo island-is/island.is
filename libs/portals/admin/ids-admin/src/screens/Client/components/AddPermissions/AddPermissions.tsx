@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useFetcher, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { SingleValue } from 'react-select'
 
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
@@ -21,8 +21,8 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { ShadowBox } from '../../../../components/ShadowBox/ShadowBox'
 import { m } from '../../../../lib/messages'
-import { IDSAdminPaths } from '../../../../lib/paths'
 import { AuthTenants } from '../../../Tenants/Tenants.loader'
+import { useTenantsLazyQuery } from '../../../Tenants/Tenants.generated'
 import { useClient } from '../../ClientContext'
 import {
   GetAvailableScopesQuery,
@@ -60,8 +60,10 @@ export const AddPermissions = ({
   const {
     selectedEnvironment: { environment, allowedScopes },
   } = useClient()
-  const fetcher = useFetcher()
-  const tenants = fetcher.data
+  const [getTenantsQuery, { data: tenantsQueryData }] = useTenantsLazyQuery()
+  const tenants = tenantsQueryData?.authAdminTenants?.data as
+    | AuthTenants
+    | undefined
   const [selectedTenant, setSelectedTenant] = useState<Option | null>(null)
   const [availableTenants, setAvailableTenants] = useState<AuthTenants>([])
   const [availableScopes, setAvailableScopes] = useState<AuthAdminScope[]>([])
@@ -98,20 +100,18 @@ export const AddPermissions = ({
   >(new Map())
 
   useEffect(() => {
-    if (fetcher.state === 'idle' && !tenants) {
-      fetcher.load(IDSAdminPaths.IDSAdmin)
+    if (!tenants) {
+      getTenantsQuery()
     }
-  }, [fetcher])
+  }, [])
 
   useEffect(() => {
     if (tenants) {
-      // When fetcher has loaded data we filter available tenants for the selected environment
-      const availableTenants = (tenants as AuthTenants).filter((tenant) =>
+      const availableTenants = tenants.filter((tenant) =>
         tenant.availableEnvironments.find(
           (availableEnvironment) => availableEnvironment === environment,
         ),
       )
-      // Populate the available tenants state for dropdown values
       setAvailableTenants(availableTenants)
 
       setDefaultTenant(availableTenants)

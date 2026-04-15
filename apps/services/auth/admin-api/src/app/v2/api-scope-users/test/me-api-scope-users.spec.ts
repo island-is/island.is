@@ -187,7 +187,7 @@ describe('MeApiScopeUsersController', () => {
           `/v2/me/api-scope-users/${nationalId}`,
         )
 
-        expect(response.status).toEqual(200)
+        expect(response.status).toEqual(204)
 
         const dbUser = await apiScopeUserModel.findByPk(nationalId)
         expect(dbUser).toBeNull()
