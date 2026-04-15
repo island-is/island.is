@@ -44,7 +44,10 @@ export const useSyncDefendantsFromPolice = () => {
         .filter((id): id is string => Boolean(id)),
     )
 
-    if (isRestrictionCase(workingCase.type) && existingNationalIds.size > 0) {
+    if (
+      isRestrictionCase(workingCase.type) &&
+      (workingCase.defendants?.length ?? 0) > 0
+    ) {
       return
     }
 
