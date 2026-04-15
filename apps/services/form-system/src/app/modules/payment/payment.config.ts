@@ -4,7 +4,6 @@ import { z } from 'zod'
 const PaymentModule = z.object({
   callbackBaseUrl: z.string(),
   callbackAdditionUrl: z.string(),
-  arkBaseUrl: z.string(),
   clientLocationOrigin: z.string(),
   authIssuer: z.string(),
   paymentApiCallbackUrl: z.string(),
