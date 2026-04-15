@@ -194,11 +194,7 @@ const FormStepper = ({
                 sectionIndex={i}
                 subSections={
                   section.children.length > 1
-                    ? parseSubsections(
-                        section.children,
-                        isSectionActive,
-                        i,
-                      )
+                    ? parseSubsections(section.children, isSectionActive, i)
                     : undefined
                 }
                 isComplete={currentScreen.sectionIndex > i}
