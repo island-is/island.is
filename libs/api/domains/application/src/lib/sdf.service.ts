@@ -3,8 +3,11 @@ import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
 
-import { SdfApi, ScreenDto } from '../../gen/fetch'
-import { SdfActionType } from './sdf.model'
+import {
+  SdfApi,
+  ExecuteActionDtoActionTypeEnum,
+} from '../../gen/fetch'
+import type { ScreenDto } from '../../gen/fetch'
 
 @Injectable()
 export class SdfService {
@@ -29,7 +32,7 @@ export class SdfService {
 
   async executeAction(
     applicationId: string,
-    actionType: SdfActionType,
+    actionType: string,
     answers: Record<string, unknown> | undefined,
     lastKnownPageIndex: number,
     locale: Locale,
@@ -40,7 +43,7 @@ export class SdfService {
     return this.sdfApiWithAuth(auth).sdfControllerExecuteAction({
       applicationId,
       executeActionDto: {
-        actionType,
+        actionType: actionType as ExecuteActionDtoActionTypeEnum,
         answers,
         locale,
         lastKnownPageIndex,

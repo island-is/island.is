@@ -24,3 +24,10 @@ In this monorepo, code is shared via the `libs/` directory. You MUST respect the
 - **Core/Shared Utilities (`libs/application/core`)**
   - **Contents:** The new `FormBuilder` Fluent API classes, basic string/date formatting functions.
   - **Rule:** Ensure these utilities do not accidentally import React or Node-specific modules so they remain safe for cross-environment usage.
+
+# Linting Expectations
+
+- Follow the project's existing linting and formatting rules when editing code.
+- Match the established style in nearby files instead of introducing ad-hoc patterns just because they compile.
+- Do NOT disable, bypass, or weaken lint rules unless the user explicitly asks for that change.
+- After substantive edits, check the files you changed for lint issues and fix any new problems you introduced before considering the task complete.

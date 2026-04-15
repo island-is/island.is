@@ -408,8 +408,8 @@ export class SdfAlertMessageField {
   @Field()
   id!: string
 
-  @Field()
-  alertType!: string
+  @Field({ nullable: true })
+  alertType?: string
 
   @Field()
   title!: string
@@ -652,13 +652,94 @@ export class SdfSliderField {
   clientCondition?: typeof SdfClientCondition
 }
 
-@ObjectType('SdfCustomComponent')
-export class SdfCustomComponent {
+@ObjectType('SdfExternalDataProviderField')
+export class SdfExternalDataProviderField {
   @Field()
-  componentName!: string
+  id!: string
 
   @Field()
-  props!: string
+  label!: string
+}
+
+@ObjectType('SdfTitleField')
+export class SdfTitleField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfPaginatedSearchableTableField')
+export class SdfPaginatedSearchableTableField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfNationalIdWithNameField')
+export class SdfNationalIdWithNameField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfFieldsRepeaterField')
+export class SdfFieldsRepeaterField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfOverviewField')
+export class SdfOverviewField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfVehiclePermnoWithInfoField')
+export class SdfVehiclePermnoWithInfoField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfCustomComponent')
+export class SdfCustomComponent {
+  @Field({ nullable: true })
+  componentName?: string
+
+  @Field({ nullable: true })
+  props?: string
 }
 
 // RepeaterComponent must be declared before the union to avoid forward-reference errors.
@@ -726,6 +807,13 @@ const allComponentTypes = () =>
     SdfImageField,
     SdfBankAccountField,
     SdfSliderField,
+    SdfExternalDataProviderField,
+    SdfTitleField,
+    SdfPaginatedSearchableTableField,
+    SdfNationalIdWithNameField,
+    SdfFieldsRepeaterField,
+    SdfOverviewField,
+    SdfVehiclePermnoWithInfoField,
     SdfRepeaterComponent,
     SdfCustomComponent,
   ] as const
@@ -735,6 +823,7 @@ const resolveComponentTypeByName = (
 ): (new () => unknown) | undefined => {
   const typeMap: Record<string, new () => unknown> = {
     TEXT: SdfTextField,
+    EMAIL: SdfTextField,
     SELECT: SdfSelectField,
     RADIO: SdfRadioField,
     CHECKBOX: SdfCheckboxField,
@@ -753,6 +842,7 @@ const resolveComponentTypeByName = (
     REDIRECT_TO_SERVICE_PORTAL: SdfRedirectToServicePortalField,
     PAYMENT_PENDING: SdfPaymentPendingField,
     MESSAGE_WITH_LINK_BUTTON: SdfMessageWithLinkButtonField,
+    MESSAGE_WITH_LINK_BUTTON_FIELD: SdfMessageWithLinkButtonField,
     EXPANDABLE_DESCRIPTION: SdfExpandableDescriptionField,
     ACCORDION: SdfAccordionField,
     ACTION_CARD_LIST: SdfActionCardListField,
@@ -765,23 +855,40 @@ const resolveComponentTypeByName = (
     IMAGE: SdfImageField,
     BANK_ACCOUNT: SdfBankAccountField,
     SLIDER: SdfSliderField,
+    EXTERNAL_DATA_PROVIDER: SdfExternalDataProviderField,
+    TITLE: SdfTitleField,
+    PAGINATED_SEARCHABLE_TABLE: SdfPaginatedSearchableTableField,
+    NATIONAL_ID_WITH_NAME: SdfNationalIdWithNameField,
+    FIELDS_REPEATER: SdfFieldsRepeaterField,
+    OVERVIEW: SdfOverviewField,
+    VEHICLE_PERMNO_WITH_INFO: SdfVehiclePermnoWithInfoField,
+    VEHICLE_RADIO: SdfRadioField,
+    VEHICLE_SELECT: SdfSelectField,
     REPEATER: SdfRepeaterComponent,
     CUSTOM: SdfCustomComponent,
+    INFORMATION_CARD: SdfCustomComponent,
+    PAYMENT_CHARGE_OVERVIEW: SdfCustomComponent,
+    PDF_LINK_BUTTON: SdfCustomComponent,
+    COPY_LINK: SdfCustomComponent,
   }
   return typeMap[typeName]
 }
 
 export const resolveComponentType = (
   value: Record<string, unknown>,
-): string | undefined => {
+): string => {
   const typeName = value?.type as string | undefined
   if (typeName) {
     const cls = resolveComponentTypeByName(typeName)
     if (cls) return cls.name
   }
-  if ('componentName' in value) return SdfCustomComponent.name
-  if ('arrayPath' in value) return SdfRepeaterComponent.name
-  return undefined
+  if (typeof value?.componentName === 'string' && value.componentName.length > 0) {
+    return SdfCustomComponent.name
+  }
+  if (typeof value?.arrayPath === 'string' && value.arrayPath.length > 0) {
+    return SdfRepeaterComponent.name
+  }
+  return SdfCustomComponent.name
 }
 
 export const SdfComponent = createUnionType({

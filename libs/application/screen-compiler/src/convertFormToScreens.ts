@@ -250,6 +250,10 @@ const convertFormNodeToScreens = (
   subSectionIndex: number,
   user: BffUser | null,
 ): FormScreen[] => {
+  if (!formNode) {
+    return []
+  }
+
   const { children } = formNode
 
   if (isValidScreen(formNode)) {
@@ -270,6 +274,7 @@ const convertFormNodeToScreens = (
   if (children) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
+      if (!child) continue
       const sections = getSectionsInForm(form, answers, externalData, user)
 
       if (child.type === FormItemTypes.SECTION) {
@@ -324,6 +329,9 @@ export const convertFormToScreens = (
   externalData: ExternalData,
   user: BffUser | null,
 ): FormScreen[] => {
+  if (!form) {
+    return []
+  }
   return convertFormNodeToScreens(
     form,
     answers,

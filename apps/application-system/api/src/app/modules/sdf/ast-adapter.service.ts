@@ -36,6 +36,18 @@ import {
   ValidateResponseDto,
 } from './dto/screen.dto'
 
+// Vanilla-extract CSS files (.css.ts) import `style()` which requires a
+// build-tool-managed "file scope". On the server there is no build tool running,
+// so we set a persistent no-op scope. The generated class-name strings are
+// thrown away — we only need the form AST, not actual CSS.
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { setFileScope } = require('@vanilla-extract/css/fileScope')
+  setFileScope('sdf-server-shim', 'application-system-api')
+} catch {
+  // vanilla-extract not available — form templates that don't use CSS will still work
+}
+
 interface AdapterOptions {
   ephemeral?: boolean
 }
@@ -168,13 +180,31 @@ export class AstAdapterService {
 
     // Step 8: Build Footer
     const step8Start = Date.now()
-    const footerButtons = buildFooterButtons(
-      roleInState.actions,
-      filteredAnswers,
-      filteredExternalData,
-      bffUser as any,
-      resolver,
-    )
+    const isLastScreen = !screens
+      .slice(resolvedIndex + 1)
+      .some((s) => s.isNavigable)
+
+    let footerButtons: ReturnType<typeof buildFooterButtons>
+    if (isLastScreen) {
+      footerButtons = buildFooterButtons(
+        roleInState.actions,
+        filteredAnswers,
+        filteredExternalData,
+        bffUser as any,
+        resolver,
+      )
+    } else {
+      footerButtons = [
+        {
+          id: 'next',
+          text: resolver.resolve(
+            currentScreen?.nextButtonText ?? 'Halda áfram',
+          ),
+          variant: 'PRIMARY',
+          actionType: 'NEXT_PAGE',
+        },
+      ]
+    }
     const footer = {
       buttons: footerButtons,
       canGoBack: canGoBack(screens, resolvedIndex),
@@ -183,8 +213,12 @@ export class AstAdapterService {
 
     // Step 9: Build Header
     const header = {
-      title: resolver.resolve(form.title),
-      description: undefined,
+      title: resolver.resolve(
+        currentScreen?.title || form.title,
+      ),
+      description: (currentScreen as any)?.description
+        ? resolver.resolve((currentScreen as any).description)
+        : undefined,
     }
 
     // Step 10: Assemble & Return Screen
@@ -460,7 +494,23 @@ export class AstAdapterService {
       throw new Error('No formLoader defined for role in current state')
     }
     const featureFlagClient = this.featureFlagService
-    return roleInState.formLoader({ featureFlagClient } as any)
+    const form = await roleInState.formLoader({ featureFlagClient } as any)
+
+    if (!form) {
+      throw new Error(
+        `formLoader for role "${roleInState.id}" in state "${application.state}" returned undefined. ` +
+          `Check that the form module exports the form correctly.`,
+      )
+    }
+
+    if (!form.children) {
+      throw new Error(
+        `Form loaded for role "${roleInState.id}" has no children array. ` +
+          `Expected a Form object with children, got: ${JSON.stringify(Object.keys(form))}`,
+      )
+    }
+
+    return form
   }
 
   private filterDataByRole(

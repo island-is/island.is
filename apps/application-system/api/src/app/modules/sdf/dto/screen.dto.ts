@@ -61,6 +61,75 @@ export class ComponentDto {
   @ApiPropertyOptional()
   options?: unknown
 
+  @ApiPropertyOptional()
+  title?: string
+
+  @ApiPropertyOptional()
+  message?: string
+
+  @ApiPropertyOptional()
+  alertType?: string
+
+  @ApiPropertyOptional()
+  value?: string
+
+  @ApiPropertyOptional()
+  url?: string
+
+  @ApiPropertyOptional()
+  buttonTitle?: string
+
+  @ApiPropertyOptional()
+  description?: string
+
+  @ApiPropertyOptional()
+  introText?: string
+
+  @ApiPropertyOptional()
+  placement?: string
+
+  @ApiPropertyOptional({ type: [Object] })
+  actions?: Array<{ event: string; name: string; type: string }>
+
+  @ApiPropertyOptional()
+  watchValue?: string
+
+  @ApiPropertyOptional()
+  min?: number
+
+  @ApiPropertyOptional()
+  max?: number
+
+  @ApiPropertyOptional()
+  step?: number
+
+  @ApiPropertyOptional()
+  minDate?: string
+
+  @ApiPropertyOptional()
+  maxDate?: string
+
+  @ApiPropertyOptional()
+  maxLength?: number
+
+  @ApiPropertyOptional()
+  maxSize?: number
+
+  @ApiPropertyOptional()
+  accept?: string
+
+  @ApiPropertyOptional()
+  imageUrl?: string
+
+  @ApiPropertyOptional({ type: [String] })
+  header?: string[]
+
+  @ApiPropertyOptional()
+  rows?: string[][]
+
+  @ApiPropertyOptional({ type: [Object] })
+  items?: Array<{ label: string; content: string }>
+
   @ApiPropertyOptional({ description: 'Serialized props for custom components.' })
   props?: string
 

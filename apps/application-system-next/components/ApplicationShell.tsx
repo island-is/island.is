@@ -1,8 +1,22 @@
 'use client'
 
+import React from 'react'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  FormStepperV2,
+  Section,
+  Text,
+} from '@island.is/island-ui/core'
+
 import { useFormActions } from '../hooks/useFormActions'
 import { FormRenderer } from './FormRenderer'
 import type { SdfScreen } from '../lib/graphql'
+import * as styles from './ApplicationShell.css'
 
 interface ApplicationShellProps {
   applicationId: string
@@ -25,211 +39,189 @@ export function ApplicationShell({
   } = useFormActions(applicationId, initialScreen)
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '280px 1fr',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '2rem',
-        gap: '2rem',
-        fontFamily: 'IBM Plex Sans, sans-serif',
-      }}
-    >
-      {/* Stepper sidebar */}
-      <aside>
-        <nav>
-          {screen.stepper.sections.map((section, idx) => (
-            <div key={section.id} style={{ marginBottom: '1.5rem' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.25rem',
-                }}
+    <Box className={styles.root}>
+      <Box paddingTop={[0, 4]} paddingBottom={[0, 5]} width="full" height="full">
+        <GridContainer>
+          <GridRow>
+            {/* Main content — 9/12 on desktop */}
+            <GridColumn
+              span={['12/12', '12/12', '9/12', '9/12']}
+              className={styles.shellContainer}
+            >
+              <Box
+                paddingTop={[3, 6, 10]}
+                height="full"
+                borderRadius="large"
+                background="white"
               >
-                <div
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    background:
-                      idx === screen.stepper.activeSectionIndex
-                        ? '#0061ff'
-                        : section.isComplete
-                          ? '#00B85C'
-                          : '#e6e6e6',
-                    color:
-                      idx === screen.stepper.activeSectionIndex ||
-                      section.isComplete
-                        ? 'white'
-                        : '#666',
-                  }}
+                {/* Screen header */}
+                <GridColumn
+                  span={['12/12', '12/12', '10/12', '7/9']}
+                  offset={['0', '0', '1/12', '1/9']}
                 >
-                  {section.isComplete ? '\u2713' : idx + 1}
-                </div>
-                <span
-                  style={{
-                    fontWeight:
-                      idx === screen.stepper.activeSectionIndex ? 700 : 400,
-                    color:
-                      idx === screen.stepper.activeSectionIndex
-                        ? '#00003C'
-                        : '#666',
-                  }}
-                >
-                  {section.title}
-                </span>
-              </div>
-              {idx === screen.stepper.activeSectionIndex &&
-                section.children.length > 0 && (
-                  <div style={{ marginLeft: '2.5rem', marginTop: '0.5rem' }}>
-                    {section.children.map((sub, subIdx) => (
-                      <div
-                        key={sub.id}
-                        style={{
-                          padding: '0.25rem 0',
-                          fontSize: '14px',
-                          color:
-                            subIdx === screen.stepper.activeSubSectionIndex
-                              ? '#0061ff'
-                              : '#999',
-                          fontWeight:
-                            subIdx === screen.stepper.activeSubSectionIndex
-                              ? 600
-                              : 400,
-                        }}
-                      >
-                        {sub.title}
-                      </div>
-                    ))}
-                  </div>
+                  <Text variant="h1" marginBottom={1}>
+                    {screen.header.title}
+                  </Text>
+                  {screen.header.description && (
+                    <Text marginBottom={3}>{screen.header.description}</Text>
+                  )}
+                </GridColumn>
+
+                {/* Error banner */}
+                {error && (
+                  <GridColumn
+                    span={['12/12', '12/12', '10/12', '7/9']}
+                    offset={['0', '0', '1/12', '1/9']}
+                  >
+                    <Box marginBottom={3}>
+                      <AlertMessage type="error" title={error} />
+                    </Box>
+                  </GridColumn>
                 )}
-            </div>
-          ))}
-        </nav>
-      </aside>
 
-      {/* Main content */}
-      <main>
-        <header style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#00003C' }}>
-            {screen.header.title}
-          </h1>
-          {screen.header.description && (
-            <p style={{ color: '#555', marginTop: '0.5rem', lineHeight: 1.6 }}>
-              {screen.header.description}
-            </p>
-          )}
-        </header>
+                {/* Form fields */}
+                <GridColumn
+                  span={['12/12', '12/12', '10/12', '7/9']}
+                  offset={['0', '0', '1/12', '1/9']}
+                >
+                  <FormRenderer
+                    components={screen.page.components}
+                    errors={screen.page.errors}
+                    answers={answers.current}
+                    onAnswerChange={onAnswerChange}
+                  />
+                </GridColumn>
 
-        {error && (
-          <div
-            style={{
-              padding: '1rem',
-              background: '#FFF0F0',
-              border: '1px solid #B30038',
-              borderRadius: '8px',
-              marginBottom: '1.5rem',
-              color: '#B30038',
-            }}
-          >
-            {error}
-          </div>
-        )}
+                {/* Footer */}
+                <Box marginTop={7} className={styles.buttonContainer}>
+                  <GridColumn
+                    span={['12/12', '12/12', '10/12', '7/9']}
+                    offset={['0', '0', '1/12', '1/9']}
+                  >
+                    <Box
+                      display="flex"
+                      flexDirection="rowReverse"
+                      alignItems="center"
+                      justifyContent="spaceBetween"
+                      paddingTop={[1, 4]}
+                    >
+                      <Box display="inlineFlex" padding={2} paddingRight="none">
+                        {screen.footer.buttons.map((btn) => (
+                          <Box key={btn.id} marginLeft={1}>
+                            <Button
+                              loading={isPending}
+                              icon={
+                                btn.actionType === 'NEXT_PAGE'
+                                  ? 'arrowForward'
+                                  : btn.actionType === 'SUBMIT'
+                                    ? 'checkmarkCircle'
+                                    : undefined
+                              }
+                              variant={
+                                btn.variant === 'REJECT' ? 'ghost' : 'primary'
+                              }
+                              colorScheme={
+                                btn.variant === 'REJECT'
+                                  ? 'destructive'
+                                  : 'default'
+                              }
+                              onClick={() => {
+                                if (btn.actionType === 'SUBMIT') {
+                                  submit(btn.id)
+                                } else if (btn.actionType === 'NEXT_PAGE') {
+                                  nextPage()
+                                }
+                              }}
+                            >
+                              {btn.text}
+                            </Button>
+                          </Box>
+                        ))}
+                      </Box>
+                      {screen.footer.canGoBack && (
+                        <>
+                          <Box
+                            display={['none', 'inlineFlex']}
+                            padding={2}
+                            paddingLeft="none"
+                          >
+                            <Button
+                              variant="ghost"
+                              onClick={prevPage}
+                              disabled={isPending}
+                            >
+                              Til baka
+                            </Button>
+                          </Box>
+                          <Box
+                            display={['inlineFlex', 'none']}
+                            padding={2}
+                            paddingLeft="none"
+                          >
+                            <Button
+                              circle
+                              variant="ghost"
+                              icon="arrowBack"
+                              onClick={prevPage}
+                              disabled={isPending}
+                            />
+                          </Box>
+                        </>
+                      )}
+                    </Box>
+                  </GridColumn>
+                </Box>
+              </Box>
+            </GridColumn>
 
-        <FormRenderer
-          components={screen.page.components}
-          errors={screen.page.errors}
-          answers={answers.current}
-          onAnswerChange={onAnswerChange}
-        />
-
-        {/* Footer */}
-        <footer
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '2rem',
-            paddingTop: '1.5rem',
-            borderTop: '1px solid #e6e6e6',
-          }}
-        >
-          <div>
-            {screen.footer.canGoBack && (
-              <button
-                type="button"
-                onClick={prevPage}
-                disabled={isPending}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '8px',
-                  border: '1px solid #ccdfff',
-                  background: 'transparent',
-                  color: '#0061ff',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  cursor: isPending ? 'wait' : 'pointer',
-                  opacity: isPending ? 0.6 : 1,
-                }}
+            {/* Sidebar — 3/12 on desktop */}
+            <GridColumn
+              span={['12/12', '12/12', '3/12', '3/12']}
+              className={styles.sidebarContainer}
+            >
+              <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="spaceBetween"
+                height="full"
+                paddingTop={[0, 0, 8]}
+                paddingLeft={[0, 0, 0, 4]}
+                className={styles.sidebarInner}
               >
-                Back
-              </button>
-            )}
-          </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            {screen.footer.buttons.map((btn) => (
-              <button
-                key={btn.id}
-                type="button"
-                onClick={() => {
-                  if (btn.actionType === 'SUBMIT') {
-                    submit(btn.id)
-                  } else if (btn.actionType === 'NEXT_PAGE') {
-                    nextPage()
-                  }
-                }}
-                disabled={isPending}
-                style={{
-                  padding: '0.75rem 2rem',
-                  borderRadius: '8px',
-                  border:
-                    btn.variant === 'PRIMARY'
-                      ? 'none'
-                      : btn.variant === 'REJECT'
-                        ? '1px solid #B30038'
-                        : '1px solid #ccdfff',
-                  background:
-                    btn.variant === 'PRIMARY'
-                      ? '#0061ff'
-                      : btn.variant === 'REJECT'
-                        ? '#FFF0F0'
-                        : 'transparent',
-                  color:
-                    btn.variant === 'PRIMARY'
-                      ? 'white'
-                      : btn.variant === 'REJECT'
-                        ? '#B30038'
-                        : '#0061ff',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  cursor: isPending ? 'wait' : 'pointer',
-                  opacity: isPending ? 0.6 : 1,
-                }}
-              >
-                {isPending ? '...' : btn.text}
-              </button>
-            ))}
-          </div>
-        </footer>
-      </main>
-    </div>
+                <FormStepperV2
+                  sections={screen.stepper.sections.map((section, idx) => (
+                    <Section
+                      key={section.id}
+                      section={section.title}
+                      sectionIndex={idx}
+                      isActive={screen.stepper.activeSectionIndex === idx}
+                      isComplete={section.isComplete}
+                      subSections={
+                        section.children.length > 1
+                          ? section.children.map((sub, subIdx) => (
+                              <Text
+                                key={sub.id}
+                                variant="medium"
+                                fontWeight={
+                                  screen.stepper.activeSectionIndex === idx &&
+                                  screen.stepper.activeSubSectionIndex === subIdx
+                                    ? 'semiBold'
+                                    : 'regular'
+                                }
+                              >
+                                {sub.title}
+                              </Text>
+                            ))
+                          : undefined
+                      }
+                    />
+                  ))}
+                />
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+    </Box>
   )
 }

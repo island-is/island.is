@@ -75,29 +75,11 @@ const createRealisticScreenDto = (): ScreenDto => {
       addItemLabel: 'Bæta við tímabili',
       removeItemLabel: 'Fjarlægja',
       children: [
-        [
-          {
-            id: 'periods[0].startDate',
-            type: 'DATE',
-            label: 'Upphafsdagur',
-            required: true,
-            disabled: false,
-          },
-          {
-            id: 'periods[0].endDate',
-            type: 'DATE',
-            label: 'Lokadagur',
-            required: true,
-            disabled: false,
-          },
-          {
-            id: 'periods[0].ratio',
-            type: 'SLIDER',
-            label: 'Hlutfall',
-            required: true,
-            disabled: false,
-          },
-        ],
+        JSON.stringify([
+          { id: 'periods[0].startDate', type: 'DATE', label: 'Upphafsdagur', required: true, disabled: false },
+          { id: 'periods[0].endDate', type: 'DATE', label: 'Lokadagur', required: true, disabled: false },
+          { id: 'periods[0].ratio', type: 'SLIDER', label: 'Hlutfall', required: true, disabled: false },
+        ]),
       ],
     },
     {
@@ -110,7 +92,7 @@ const createRealisticScreenDto = (): ScreenDto => {
         { label: 'Já', value: 'yes' },
         { label: 'Nei', value: 'no' },
       ],
-      clientCondition: null,
+      clientCondition: undefined,
     },
     {
       id: 'bankAccount',

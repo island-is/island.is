@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
-import { fetchScreen } from '../../../../lib/graphql'
-import { ApplicationShell } from '../../../../components/ApplicationShell'
+import { InitialScreenGate } from '../../../../components/InitialScreenGate'
 import { ShellSkeleton } from '../../../../components/ShellSkeleton'
 
 interface ApplicationPageProps {
@@ -29,6 +28,5 @@ async function ApplicationContent({
   id: string
   step?: number
 }) {
-  const screen = await fetchScreen(id, step)
-  return <ApplicationShell applicationId={id} initialScreen={screen} />
+  return <InitialScreenGate applicationId={id} step={step} />
 }

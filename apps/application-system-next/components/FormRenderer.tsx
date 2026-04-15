@@ -1,12 +1,83 @@
 'use client'
 
 import React, { useCallback, useMemo } from 'react'
-import type { SdfComponentData, SdfValidationError, ClientCondition } from '../lib/graphql'
+import type {
+  SdfComponentData,
+  SdfValidationError,
+  ClientCondition,
+} from '../lib/graphql'
 import { evaluateClientCondition } from '../lib/evaluateClientCondition'
 import {
   getCustomComponent,
   validateCustomComponentProps,
 } from './registry'
+import {
+  AlertMessage,
+  AccordionCard,
+  Accordion,
+  AccordionItem,
+  Box,
+  Text,
+  Button,
+  Input,
+  Select,
+  RadioButton,
+  Checkbox,
+  DatePicker,
+  Divider,
+  BulletList,
+  LinkV2,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
+
+const FULL_ROW_TYPES = new Set([
+  'SdfRadioField',
+  'SdfCheckboxField',
+  'SdfDisplayField',
+  'SdfAlertMessageField',
+  'SdfExpandableDescriptionField',
+  'SdfAccordionField',
+  'SdfStaticTableField',
+  'SdfFileUploadField',
+  'SdfSliderField',
+  'SdfDividerField',
+  'SdfTitleField',
+  'SdfDescriptionField',
+])
+
+function isHalfWidthCandidate(comp: SdfComponentData): boolean {
+  return comp.width === 'HALF' && !FULL_ROW_TYPES.has(comp.__typename)
+}
+
+function groupComponentsIntoRows(
+  components: SdfComponentData[],
+): SdfComponentData[][] {
+  const rows: SdfComponentData[][] = []
+  let i = 0
+
+  while (i < components.length) {
+    const comp = components[i]
+    if (isHalfWidthCandidate(comp)) {
+      const row: SdfComponentData[] = [comp]
+      if (
+        i + 1 < components.length &&
+        isHalfWidthCandidate(components[i + 1])
+      ) {
+        row.push(components[i + 1])
+        i += 2
+      } else {
+        i += 1
+      }
+      rows.push(row)
+    } else {
+      rows.push([comp])
+      i += 1
+    }
+  }
+
+  return rows
+}
 
 interface FormRendererProps {
   components: SdfComponentData[]
@@ -29,18 +100,44 @@ export function FormRenderer({
     return map
   }, [errors])
 
+  const rows = groupComponentsIntoRows(components)
+
   return (
-    <div className="sdf-form-renderer">
-      {components.map((component, index) => (
-        <ComponentSwitch
-          key={component.id ?? `component-${index}`}
-          component={component}
-          error={component.id ? errorMap[component.id] : undefined}
-          answers={answers}
-          onAnswerChange={onAnswerChange}
-        />
-      ))}
-    </div>
+    <Box>
+      {rows.map((row, rowIdx) => {
+        if (row.length === 1 && row[0].width !== 'HALF') {
+          const component = row[0]
+          return (
+            <ComponentSwitch
+              key={component.id ?? `component-${rowIdx}`}
+              component={component}
+              error={component.id ? errorMap[component.id] : undefined}
+              answers={answers}
+              onAnswerChange={onAnswerChange}
+            />
+          )
+        }
+
+        return (
+          <GridRow key={`row-${rowIdx}`}>
+            {row.map((component, colIdx) => (
+              <GridColumn
+                key={component.id ?? `col-${rowIdx}-${colIdx}`}
+                span={['1/1', '1/2']}
+                paddingBottom={2}
+              >
+                <ComponentSwitch
+                  component={component}
+                  error={component.id ? errorMap[component.id] : undefined}
+                  answers={answers}
+                  onAnswerChange={onAnswerChange}
+                />
+              </GridColumn>
+            ))}
+          </GridRow>
+        )
+      })}
+    </Box>
   )
 }
 
@@ -57,13 +154,6 @@ function ComponentSwitch({
   answers,
   onAnswerChange,
 }: ComponentSwitchProps) {
-  const visible = evaluateClientCondition(
-    component.clientCondition as ClientCondition | null | undefined,
-    answers,
-  )
-
-  if (!visible) return null
-
   const handleChange = useCallback(
     (value: unknown) => {
       if (component.id) {
@@ -73,406 +163,318 @@ function ComponentSwitch({
     [component.id, onAnswerChange],
   )
 
+  const visible = evaluateClientCondition(
+    component.clientCondition as ClientCondition | null | undefined,
+    answers,
+  )
+
+  if (!visible) return null
+
   const currentValue = component.id ? answers[component.id] : undefined
 
   switch (component.__typename) {
     case 'SdfTextField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-            {component.required && <span style={{ color: '#B30038' }}> *</span>}
-          </label>
-          <input
-            id={component.id}
-            type="text"
+        <Box marginBottom={3}>
+          <Input
+            id={component.id ?? ''}
+            name={component.id ?? ''}
+            label={component.label ?? ''}
             placeholder={component.placeholder ?? ''}
             disabled={component.disabled}
             maxLength={component.maxLength ?? undefined}
+            required={component.required}
+            hasError={!!error}
+            errorMessage={error}
             defaultValue={
               (currentValue as string) ?? component.defaultValue ?? ''
             }
             onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: component.width === 'HALF' ? '50%' : '100%',
-              padding: '0.75rem',
-              border: error ? '2px solid #B30038' : '1px solid #ccdfff',
-              borderRadius: '8px',
-              fontSize: '16px',
-            }}
+            size="md"
           />
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        </Box>
       )
 
     case 'SdfSelectField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-            {component.required && <span style={{ color: '#B30038' }}> *</span>}
-          </label>
-          <select
-            id={component.id}
-            disabled={component.disabled}
-            defaultValue={(currentValue as string) ?? ''}
-            onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: component.width === 'HALF' ? '50%' : '100%',
-              padding: '0.75rem',
-              border: error ? '2px solid #B30038' : '1px solid #ccdfff',
-              borderRadius: '8px',
-              fontSize: '16px',
-            }}
-          >
-            <option value="">{component.placeholder ?? 'Select...'}</option>
-            {component.options?.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        <Box marginBottom={3}>
+          <Select
+            name={component.id ?? ''}
+            label={component.label ?? ''}
+            placeholder={component.placeholder ?? 'Select...'}
+            isDisabled={component.disabled}
+            required={component.required}
+            hasError={!!error}
+            errorMessage={error}
+            options={
+              component.options?.map((opt) => ({
+                label: opt.label,
+                value: opt.value,
+              })) ?? []
+            }
+            value={
+              component.options?.find(
+                (opt) => opt.value === (currentValue as string),
+              )
+                ? {
+                    label:
+                      component.options.find(
+                        (opt) => opt.value === (currentValue as string),
+                      )?.label ?? '',
+                    value: (currentValue as string) ?? '',
+                  }
+                : undefined
+            }
+            onChange={(opt) => handleChange(opt?.value)}
+          />
+        </Box>
       )
 
-    case 'SdfRadioField':
+    case 'SdfRadioField': {
+      const radioSplit = component.width === 'HALF' ? '1/2' : '1/1'
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-            <legend style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-              {component.label}
-              {component.required && (
-                <span style={{ color: '#B30038' }}> *</span>
-              )}
-            </legend>
+        <Box marginBottom={3} paddingTop={2}>
+          <Text variant="h4" as="h4" marginBottom={2}>
+            {component.label}
+          </Text>
+          <GridRow>
             {component.options?.map((opt) => (
-              <label
+              <GridColumn
                 key={opt.value}
-                style={{
-                  display: 'block',
-                  padding: '0.75rem 1rem',
-                  marginBottom: '0.5rem',
-                  border:
-                    currentValue === opt.value
-                      ? '2px solid #0061ff'
-                      : '1px solid #ccdfff',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  background: currentValue === opt.value ? '#f0f6ff' : 'white',
-                }}
+                span={['1/1', radioSplit]}
+                paddingBottom={2}
+                paddingTop={2}
               >
-                <input
-                  type="radio"
-                  name={component.id}
+                <RadioButton
+                  name={component.id ?? ''}
+                  label={opt.label}
                   value={opt.value}
                   checked={currentValue === opt.value}
                   disabled={component.disabled}
                   onChange={() => handleChange(opt.value)}
-                  style={{ marginRight: '0.5rem' }}
+                  hasError={!!error}
+                  large
+                  backgroundColor="blue"
                 />
-                {opt.label}
-              </label>
+              </GridColumn>
             ))}
-          </fieldset>
+          </GridRow>
           {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
+            <Text variant="small" color="red600" marginTop={1}>
               {error}
-            </p>
+            </Text>
           )}
-        </div>
+        </Box>
       )
+    }
 
     case 'SdfCheckboxField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-            <legend style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-              {component.label}
-              {component.required && (
-                <span style={{ color: '#B30038' }}> *</span>
-              )}
-            </legend>
-            {component.options?.map((opt) => {
-              const checked =
-                Array.isArray(currentValue) &&
-                (currentValue as string[]).includes(opt.value)
-              return (
-                <label
-                  key={opt.value}
-                  style={{
-                    display: 'block',
-                    padding: '0.75rem 1rem',
-                    marginBottom: '0.5rem',
-                    border: checked
-                      ? '2px solid #0061ff'
-                      : '1px solid #ccdfff',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    background: checked ? '#f0f6ff' : 'white',
+        <Box marginBottom={3}>
+          <Text variant="h5" marginBottom={2}>
+            {component.label}
+            {component.required && (
+              <Text as="span" color="red600">
+                {' '}
+                *
+              </Text>
+            )}
+          </Text>
+          {component.options?.map((opt) => {
+            const checked =
+              Array.isArray(currentValue) &&
+              (currentValue as string[]).includes(opt.value)
+            return (
+              <Box key={opt.value} marginBottom={1}>
+                <Checkbox
+                  name={component.id ?? ''}
+                  label={opt.label}
+                  value={opt.value}
+                  checked={checked}
+                  disabled={component.disabled}
+                  onChange={(e) => {
+                    const current = Array.isArray(currentValue)
+                      ? (currentValue as string[])
+                      : []
+                    if (e.target.checked) {
+                      handleChange([...current, opt.value])
+                    } else {
+                      handleChange(current.filter((v) => v !== opt.value))
+                    }
                   }}
-                >
-                  <input
-                    type="checkbox"
-                    value={opt.value}
-                    checked={checked}
-                    disabled={component.disabled}
-                    onChange={(e) => {
-                      const current = Array.isArray(currentValue)
-                        ? (currentValue as string[])
-                        : []
-                      if (e.target.checked) {
-                        handleChange([...current, opt.value])
-                      } else {
-                        handleChange(current.filter((v) => v !== opt.value))
-                      }
-                    }}
-                    style={{ marginRight: '0.5rem' }}
-                  />
-                  {opt.label}
-                </label>
-              )
-            })}
-          </fieldset>
+                  hasError={!!error}
+                />
+              </Box>
+            )
+          })}
           {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
+            <Text variant="small" color="red600" marginTop={1}>
               {error}
-            </p>
+            </Text>
           )}
-        </div>
+        </Box>
       )
 
     case 'SdfDateField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-            {component.required && <span style={{ color: '#B30038' }}> *</span>}
-          </label>
-          <input
-            id={component.id}
-            type="date"
+        <Box marginBottom={3}>
+          <DatePicker
+            id={component.id ?? ''}
+            label={component.label ?? ''}
+            placeholderText={component.placeholder}
             disabled={component.disabled}
-            min={component.minDate ?? undefined}
-            max={component.maxDate ?? undefined}
-            defaultValue={(currentValue as string) ?? ''}
-            onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: component.width === 'HALF' ? '50%' : '100%',
-              padding: '0.75rem',
-              border: error ? '2px solid #B30038' : '1px solid #ccdfff',
-              borderRadius: '8px',
-              fontSize: '16px',
-            }}
+            minDate={component.minDate ? new Date(component.minDate) : undefined}
+            maxDate={component.maxDate ? new Date(component.maxDate) : undefined}
+            required={component.required}
+            hasError={!!error}
+            errorMessage={error}
+            selected={currentValue ? new Date(currentValue as string) : undefined}
+            handleChange={(date) => handleChange(date.toISOString().split('T')[0])}
+            size="md"
           />
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        </Box>
       )
 
     case 'SdfPhoneField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-            {component.required && <span style={{ color: '#B30038' }}> *</span>}
-          </label>
-          <input
-            id={component.id}
-            type="tel"
+        <Box marginBottom={3}>
+          <Input
+            id={component.id ?? ''}
+            name={component.id ?? ''}
+            label={component.label ?? ''}
             placeholder={component.placeholder ?? ''}
             disabled={component.disabled}
+            required={component.required}
+            hasError={!!error}
+            errorMessage={error}
+            type="tel"
             defaultValue={(currentValue as string) ?? ''}
             onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: component.width === 'HALF' ? '50%' : '100%',
-              padding: '0.75rem',
-              border: error ? '2px solid #B30038' : '1px solid #ccdfff',
-              borderRadius: '8px',
-              fontSize: '16px',
-            }}
+            size={component.width === 'HALF' ? 'xs' : 'md'}
           />
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        </Box>
       )
 
     case 'SdfNationalIdField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-            {component.required && <span style={{ color: '#B30038' }}> *</span>}
-          </label>
-          <input
-            id={component.id}
-            type="text"
+        <Box marginBottom={3}>
+          <Input
+            id={component.id ?? ''}
+            name={component.id ?? ''}
+            label={component.label ?? ''}
             placeholder="000000-0000"
             disabled={component.disabled}
+            required={component.required}
+            hasError={!!error}
+            errorMessage={error}
             defaultValue={(currentValue as string) ?? ''}
             onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: '50%',
-              padding: '0.75rem',
-              border: error ? '2px solid #B30038' : '1px solid #ccdfff',
-              borderRadius: '8px',
-              fontSize: '16px',
-            }}
+            size="xs"
           />
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        </Box>
       )
 
     case 'SdfFileUploadField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-            {component.required && <span style={{ color: '#B30038' }}> *</span>}
-          </label>
-          <input
-            id={component.id}
-            type="file"
+        <Box marginBottom={3}>
+          <Input
+            id={component.id ?? ''}
+            name={component.id ?? ''}
+            label={component.label ?? ''}
             disabled={component.disabled}
-            accept={component.accept ?? undefined}
-            style={{ fontSize: '16px' }}
+            required={component.required}
+            hasError={!!error}
+            errorMessage={error}
+            type="file"
           />
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        </Box>
       )
 
     case 'SdfDescriptionField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <h3 style={{ marginBottom: '0.5rem' }}>{component.label}</h3>
+        <Box marginBottom={3}>
+          <Text variant="h3" marginBottom={1}>
+            {component.label}
+          </Text>
           {component.description && (
-            <p style={{ color: '#555', lineHeight: 1.6 }}>
-              {component.description}
-            </p>
+            <Text>{component.description}</Text>
           )}
-        </div>
+        </Box>
       )
 
     case 'SdfDividerField':
       return (
-        <hr
-          style={{
-            border: 'none',
-            borderTop: '1px solid #e6e6e6',
-            margin: '1.5rem 0',
-          }}
-        />
+        <Box marginY={3}>
+          <Divider />
+        </Box>
       )
 
     case 'SdfKeyValueField':
       return (
-        <div
-          className="sdf-field"
-          style={{
-            marginBottom: '1rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0.75rem 0',
-            borderBottom: '1px solid #f2f2f2',
-          }}
+        <Box
+          marginBottom={2}
+          display="flex"
+          justifyContent="spaceBetween"
+          paddingY={2}
+          borderBottomWidth="standard"
+          borderColor="blue200"
         >
-          <span style={{ fontWeight: 600 }}>{component.label}</span>
-          <span>{component.value}</span>
-        </div>
+          <Text fontWeight="semiBold">{component.label}</Text>
+          <Text>{component.value}</Text>
+        </Box>
       )
 
     case 'SdfAlertMessageField':
       return (
-        <div
-          className="sdf-field"
-          style={{
-            marginBottom: '1.5rem',
-            padding: '1rem',
-            borderRadius: '8px',
-            border: `1px solid ${alertColor(component.alertType)}`,
-            background: `${alertColor(component.alertType)}10`,
-          }}
-        >
-          <strong>{component.title}</strong>
-          {component.message && (
-            <p style={{ marginTop: '0.5rem' }}>{component.message}</p>
-          )}
-        </div>
+        <Box marginBottom={3}>
+          <AlertMessage
+            type={(component.alertType as 'info' | 'error' | 'warning' | 'success') ?? 'info'}
+            title={component.title ?? ''}
+            message={component.message}
+          />
+        </Box>
       )
 
     case 'SdfLinkField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1rem' }}>
-          <a
-            href={component.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#0061ff', textDecoration: 'underline' }}
+        <Box marginBottom={2}>
+          <LinkV2
+            href={component.url ?? '#'}
+            newTab
+            color="blue400"
+            underline="normal"
           >
             {component.label}
-          </a>
-        </div>
+          </LinkV2>
+        </Box>
       )
 
     case 'SdfDisplayField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1rem' }}>
-          <strong>{component.label}</strong>
-          {component.value && (
-            <p style={{ marginTop: '0.25rem' }}>{component.value}</p>
+        <Box paddingY={3}>
+          {component.label && (
+            <Text variant="h4" paddingBottom={1}>
+              {component.label}
+            </Text>
           )}
-        </div>
+          <Input
+            id={component.id ?? ''}
+            name={component.id ?? ''}
+            label={component.description ?? ''}
+            value={String(currentValue ?? component.value ?? '')}
+            readOnly
+            backgroundColor="blue"
+            size="md"
+          />
+        </Box>
       )
 
     case 'SdfSliderField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
+        <Box marginBottom={3}>
+          <Text variant="h5" marginBottom={1}>
             {component.label}
-          </label>
+          </Text>
           <input
             id={component.id}
             type="range"
@@ -480,103 +482,73 @@ function ComponentSwitch({
             max={component.max}
             step={component.step ?? 1}
             defaultValue={
-              (currentValue as string) ??
-              String(component.min ?? 0)
+              (currentValue as string) ?? String(component.min ?? 0)
             }
             onChange={(e) => handleChange(Number(e.target.value))}
             style={{ width: '100%' }}
           />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '14px',
-              color: '#666',
-            }}
-          >
-            <span>{component.min}</span>
-            <span>{String(currentValue ?? component.min ?? 0)}</span>
-            <span>{component.max}</span>
-          </div>
-        </div>
+          <Box display="flex" justifyContent="spaceBetween">
+            <Text variant="small" color="dark300">
+              {component.min}
+            </Text>
+            <Text variant="small" color="dark300">
+              {String(currentValue ?? component.min ?? 0)}
+            </Text>
+            <Text variant="small" color="dark300">
+              {component.max}
+            </Text>
+          </Box>
+        </Box>
       )
 
     case 'SdfSubmitField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
+        <Box marginBottom={3} display="flex" flexDirection="row" columnGap={2}>
           {component.actions?.map((action) => (
-            <button
+            <Button
               key={action.event}
-              type="button"
-              style={{
-                padding: '0.75rem 2rem',
-                marginRight: '0.5rem',
-                borderRadius: '8px',
-                border:
-                  action.type === 'primary'
-                    ? 'none'
-                    : '1px solid #0061ff',
-                background:
-                  action.type === 'primary' ? '#0061ff' : 'transparent',
-                color:
-                  action.type === 'primary' ? 'white' : '#0061ff',
-                fontSize: '16px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
+              variant={action.type === 'primary' ? 'primary' : 'ghost'}
+              size="default"
             >
               {action.name}
-            </button>
+            </Button>
           ))}
-        </div>
+        </Box>
       )
 
     case 'SdfImageField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
+        <Box marginBottom={3}>
+          <Text fontWeight="semiBold" marginBottom={1}>
             {component.label}
-          </p>
+          </Text>
           {component.imageUrl && (
-            <img
-              src={component.imageUrl}
-              alt={component.label}
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
-            />
+            <Box borderRadius="large" overflow="hidden">
+              <img
+                src={component.imageUrl}
+                alt={component.label ?? ''}
+                style={{ maxWidth: '100%', display: 'block' }}
+              />
+            </Box>
           )}
-        </div>
+        </Box>
       )
 
     case 'SdfBankAccountField':
       return (
-        <div className="sdf-field" style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor={component.id}
-            style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-          >
-            {component.label}
-          </label>
-          <input
-            id={component.id}
-            type="text"
+        <Box marginBottom={3}>
+          <Input
+            id={component.id ?? ''}
+            name={component.id ?? ''}
+            label={component.label ?? ''}
             placeholder="0000-00-000000"
             disabled={component.disabled}
+            hasError={!!error}
+            errorMessage={error}
             defaultValue={(currentValue as string) ?? ''}
             onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              border: error ? '2px solid #B30038' : '1px solid #ccdfff',
-              borderRadius: '8px',
-              fontSize: '16px',
-            }}
           />
-          {error && (
-            <p style={{ color: '#B30038', fontSize: '14px', marginTop: '0.25rem' }}>
-              {error}
-            </p>
-          )}
-        </div>
+        </Box>
       )
 
     case 'SdfCustomComponent':
@@ -590,53 +562,174 @@ function ComponentSwitch({
 
     case 'SdfRepeaterComponent':
       return (
-        <div
-          className="sdf-field"
-          style={{
-            marginBottom: '1.5rem',
-            border: '1px solid #e6e6e6',
-            borderRadius: '8px',
-            padding: '1rem',
-          }}
+        <Box
+          marginBottom={3}
+          border="standard"
+          borderRadius="large"
+          padding={3}
         >
-          <p style={{ fontWeight: 600, marginBottom: '1rem' }}>
+          <Text fontWeight="semiBold" marginBottom={2}>
             {component.addItemLabel ?? 'Items'}
-          </p>
-          {/* Repeater items are JSON-serialized by the backend */}
-          <p style={{ color: '#888', fontSize: '14px' }}>
+          </Text>
+          <Text variant="small" color="dark300">
             Repeater rendering handled by the backend. Items are re-evaluated
             on REFETCH.
-          </p>
-        </div>
+          </Text>
+        </Box>
+      )
+
+    case 'SdfExpandableDescriptionField':
+      return (
+        <Box marginTop={2} marginBottom={2}>
+          <AccordionCard
+            id={`expandable-${component.id}`}
+            label={component.label ?? ''}
+            labelVariant="h3"
+          >
+            {component.introText && (
+              <Box marginBottom={4}>
+                <Text>{component.introText}</Text>
+              </Box>
+            )}
+            {component.description && (
+              <BulletList space="gutter" type="ul">
+                <Text>{component.description}</Text>
+              </BulletList>
+            )}
+          </AccordionCard>
+        </Box>
+      )
+
+    case 'SdfMessageWithLinkButtonField':
+      return (
+        <Box marginTop={2} marginBottom={2}>
+          <Box
+            borderRadius="standard"
+            padding={4}
+            background="blue100"
+            display={['block', 'block', 'flex']}
+            alignItems="center"
+            justifyContent="spaceBetween"
+            flexDirection={['column', 'column', 'row']}
+            marginY={2}
+          >
+            <Box paddingRight={[0, 0, 4]}>
+              <Text variant="small">
+                {component.message}
+              </Text>
+            </Box>
+            <Box marginTop={[3, 3, 0]} marginLeft={[0, 0, 3]}>
+              <Button
+                onClick={() => {
+                  window.open(component.url ?? '#', '_blank')
+                }}
+                size="small"
+                icon="arrowForward"
+                nowrap
+              >
+                {component.buttonTitle}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      )
+
+    case 'SdfAccordionField':
+      return (
+        <Box marginBottom={3}>
+          {component.label && (
+            <Text variant="h3" marginBottom={2}>
+              {component.label}
+            </Text>
+          )}
+          <Accordion>
+            {(
+              component.items as
+                | { label: string; content: string }[]
+                | undefined
+            )?.map((item, i) => (
+              <AccordionItem
+                key={i}
+                id={`accordion-${component.id}-${i}`}
+                label={item.label}
+              >
+                <Text>{item.content}</Text>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Box>
+      )
+
+    case 'SdfStaticTableField':
+      return (
+        <Box marginBottom={3}>
+          {component.label && (
+            <Text variant="h3" marginBottom={2}>
+              {component.label}
+            </Text>
+          )}
+          <Box overflow="auto">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              {component.header && (
+                <thead>
+                  <tr>
+                    {component.header.map((h: string, i: number) => (
+                      <th key={i} style={{ textAlign: 'left' }}>
+                        <Box paddingY={2} paddingX={3} borderBottomWidth="standard" borderColor="blue200">
+                          <Text fontWeight="semiBold" variant="small">{h}</Text>
+                        </Box>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
+              <tbody>
+                {component.rows?.map((row: string[], ri: number) => (
+                  <tr key={ri}>
+                    {row.map((cell: string, ci: number) => (
+                      <td key={ci}>
+                        <Box paddingY={2} paddingX={3} borderBottomWidth="standard" borderColor="blue100">
+                          <Text variant="small">{cell}</Text>
+                        </Box>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Box>
+        </Box>
       )
 
     case 'SdfHiddenInputField':
     case 'SdfHiddenInputWithWatchedValueField':
+      return null
+
     case 'SdfRedirectToServicePortalField':
     case 'SdfPaymentPendingField':
+    case 'SdfExternalDataProviderField':
+    case 'SdfTitleField':
+    case 'SdfPaginatedSearchableTableField':
+    case 'SdfNationalIdWithNameField':
+    case 'SdfFieldsRepeaterField':
+    case 'SdfOverviewField':
+    case 'SdfVehiclePermnoWithInfoField':
     case 'SdfCompanySearchField':
     case 'SdfAsyncSelectField':
-    case 'SdfExpandableDescriptionField':
-    case 'SdfAccordionField':
     case 'SdfActionCardListField':
     case 'SdfTableRepeaterField':
-    case 'SdfStaticTableField':
     case 'SdfFindVehicleField':
-    case 'SdfMessageWithLinkButtonField':
       return (
-        <div
-          className="sdf-field"
-          style={{
-            marginBottom: '1rem',
-            padding: '0.75rem',
-            background: '#f8f8f8',
-            borderRadius: '8px',
-            fontSize: '14px',
-            color: '#666',
-          }}
+        <Box
+          marginBottom={2}
+          padding={2}
+          background="blue100"
+          borderRadius="large"
         >
-          [{component.__typename}] {component.label ?? component.id}
-        </div>
+          <Text variant="small" color="dark300">
+            [{component.__typename}] {component.label ?? component.id}
+          </Text>
+        </Box>
       )
 
     default:
@@ -656,7 +749,9 @@ function CustomComponentRenderer({
   const { component: Component } = getCustomComponent(componentName)
   const { parsed } = validateCustomComponentProps(componentName, rawProps)
 
-  const DynComponent = Component as React.ComponentType<Record<string, unknown>>
+  const DynComponent = Component as React.ComponentType<
+    Record<string, unknown>
+  >
 
   return (
     <DynComponent
@@ -665,18 +760,4 @@ function CustomComponentRenderer({
       {...parsed}
     />
   )
-}
-
-function alertColor(alertType?: string): string {
-  switch (alertType) {
-    case 'error':
-      return '#B30038'
-    case 'warning':
-      return '#F5A623'
-    case 'success':
-      return '#00B85C'
-    case 'info':
-    default:
-      return '#0061FF'
-  }
 }

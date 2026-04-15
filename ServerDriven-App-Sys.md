@@ -698,6 +698,8 @@ export function ApplicationShell({ applicationId, screen }) {
 
 **Implementation note:** Use `<Suspense>` with a `<ShellSkeleton>` so the page shell renders instantly while the NestJS backend computes the `Screen`. This prevents blank-page cold-start latency.
 
+**Implementation note — UI Components:** The `FormRenderer` MUST render every field type using `@island.is/island-ui/core` components — never inline CSS styles (see §8, Constraint 19). Each `case` in `ComponentSwitch` should mirror the corresponding `*FormField` implementation in `libs/application/ui-fields/` (e.g., `SdfAlertMessageField` uses `<AlertMessage>`, `SdfExpandableDescriptionField` uses `<AccordionCard>`, `SdfMessageWithLinkButtonField` uses `<Box background="blue100">` + `<Text>` + `<Button icon="arrowForward">`). The `tsconfig.json` already extends `tsconfig.base.json` which provides the `@island.is/island-ui/core` path alias.
+
 ---
 
 ## 5. The AstAdapter: Legacy-to-SDF Bridge (Critical Path)
@@ -1549,6 +1551,18 @@ page.addTextField('nationalId', 'Kennitala', {
 - **What:** `POST /sdf/:id/action` MUST include a `lastKnownPageIndex` field in the request. The backend rejects writes where this doesn't match the currently persisted page index, forcing the frontend to re-fetch the current `Screen` before retrying. Wrap the validate-persist-advance sequence in a database transaction — no partial state.
 - **Why:** If validation passes but the DB write fails (transient Postgres error), a retry without idempotency protection could cause duplicate answer writes or frontend/backend state desync.
 - **Verified at:** Phase 2 Gate #4.
+
+### Constraint 19: No Inline Styles — Use `@island.is/island-ui/core` Exclusively
+
+- **What:** The `application-system-next` frontend MUST NOT use inline CSS styles or custom CSS for rendering SDF components. Every component in `FormRenderer` (`ComponentSwitch`) MUST be implemented using `@island.is/island-ui/core` design system components (`Box`, `Text`, `Button`, `AlertMessage`, `AccordionCard`, `Accordion`, `AccordionItem`, `Input`, `Select`, `RadioButton`, `Checkbox`, `DatePicker`, `BulletList`, etc.) and their built-in props for layout, spacing, colors, and typography. The reference implementations in `libs/application/ui-fields/` define the canonical rendering for each field type — the SDF renderers must produce visually identical output using the same island-ui components.
+- **Why:** The `island.is` design system enforces accessibility (WCAG 2.1 AA), responsive breakpoints, theme tokens, and visual consistency across all government services. Inline styles bypass all of these guarantees, create visual drift from the existing application system, and prevent design system upgrades from propagating to the SDF frontend. The old system already renders every field type through island-ui components — the new system must do the same.
+- **Reference implementations (canonical source of truth for each field type):**
+  - `AlertMessageFormField` → uses `AlertMessage` from `@island.is/island-ui/core`
+  - `ExpandableDescriptionFormField` → uses `AccordionCard`, `Box`, `BulletList` from `@island.is/island-ui/core`
+  - `MessageWithLinkButtonFormField` → uses `Box`, `Text`, `Button` (with `icon="arrowForward"`) from `@island.is/island-ui/core`
+  - `AccordionFormField` → uses `Accordion`, `AccordionItem` from `@island.is/island-ui/core`
+  - All other field types → corresponding island-ui form components (`Input`, `Select`, `DatePicker`, etc.)
+- **Verified at:** Phase 4 Gate, code review. Any PR adding a new SDF field renderer MUST import from `@island.is/island-ui/core` and MUST NOT contain `style={{` JSX attributes.
 
 ---
 

@@ -5,10 +5,34 @@
  * so requests never leave the cluster. The BFF proxy handles auth tokens.
  */
 
-const GRAPHQL_ENDPOINT =
+const SERVER_GRAPHQL_ENDPOINT =
   process.env.INTERNAL_API_URL
     ? `${process.env.INTERNAL_API_URL}/api/graphql`
     : 'http://localhost:4444/api/graphql'
+
+const CLIENT_GRAPHQL_ENDPOINT = '/bff/api/graphql'
+const LOCAL_BFF_GRAPHQL_ENDPOINT = process.env.BFF_PROXY_TARGET
+  ? `${process.env.BFF_PROXY_TARGET}${CLIENT_GRAPHQL_ENDPOINT}`
+  : 'http://localhost:3010/bff/api/graphql'
+
+export interface ForwardAuthHeaders {
+  cookie?: string
+  authorization?: string
+  host?: string
+  protocol?: string
+}
+
+export class GraphqlHttpError extends Error {
+  status: number
+  detail?: string
+
+  constructor(status: number, message: string, detail?: string) {
+    super(message)
+    this.name = 'GraphqlHttpError'
+    this.status = status
+    this.detail = detail
+  }
+}
 
 export interface SdfScreen {
   applicationId: string
@@ -90,6 +114,7 @@ export interface SdfComponentData {
   alertType?: string
   title?: string
   value?: string
+  displayValue?: string
   imageUrl?: string
   min?: number
   max?: number
@@ -101,7 +126,10 @@ export interface SdfComponentData {
   header?: string[]
   rows?: string[][]
   watchValue?: string
-  items?: SdfComponentData[][]
+  items?: SdfComponentData[][] | { label: string; content: string }[]
+  expandableDescription?: string
+  linkMessage?: string
+  accordionItems?: { label: string; content: string }[]
   arrayPath?: string
   addItemLabel?: string
   removeItemLabel?: string
@@ -112,7 +140,7 @@ export interface SdfComponentData {
   placement?: string
 }
 
-const GET_SCREEN_QUERY = `
+export const GET_SCREEN_QUERY = `
   query ApplicationSdfScreen($input: SdfGetScreenInput!, $locale: String) {
     applicationSdfScreen(input: $input, locale: $locale) {
       applicationId
@@ -308,7 +336,7 @@ const GET_SCREEN_QUERY = `
           ... on SdfDisplayField {
             id
             label
-            value
+            displayValue: value
             clientCondition {
               ... on SdfSingleClientCondition { questionId comparator value }
               ... on SdfMultiClientCondition { on checks { questionId comparator value } }
@@ -320,6 +348,97 @@ const GET_SCREEN_QUERY = `
             min
             max
             step
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfExternalDataProviderField {
+            id
+            label
+          }
+          ... on SdfTitleField {
+            id
+            label
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfPaginatedSearchableTableField {
+            id
+            label
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfNationalIdWithNameField {
+            id
+            label
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfFieldsRepeaterField {
+            id
+            label
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfOverviewField {
+            id
+            label
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfVehiclePermnoWithInfoField {
+            id
+            label
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfExpandableDescriptionField {
+            id
+            label
+            introText
+            expandableDescription: description
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfMessageWithLinkButtonField {
+            id
+            linkMessage: message
+            url
+            buttonTitle
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfAccordionField {
+            id
+            label
+            accordionItems: items { label content }
+            clientCondition {
+              ... on SdfSingleClientCondition { questionId comparator value }
+              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
+            }
+          }
+          ... on SdfStaticTableField {
+            id
+            label
+            header
+            rows
             clientCondition {
               ... on SdfSingleClientCondition { questionId comparator value }
               ... on SdfMultiClientCondition { on checks { questionId comparator value } }
@@ -357,7 +476,7 @@ const GET_SCREEN_QUERY = `
   }
 `
 
-const EXECUTE_ACTION_MUTATION = `
+export const EXECUTE_ACTION_MUTATION = `
   mutation ApplicationSdfAction($input: SdfExecuteActionInput!, $locale: String) {
     applicationSdfAction(input: $input, locale: $locale) {
       applicationId
@@ -389,8 +508,19 @@ const EXECUTE_ACTION_MUTATION = `
           ... on SdfKeyValueField { id label value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfAlertMessageField { id alertType title message clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfLinkField { id label url clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDisplayField { id label value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfDisplayField { id label displayValue: value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSliderField { id label min max step clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfExternalDataProviderField { id label }
+          ... on SdfTitleField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfPaginatedSearchableTableField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfNationalIdWithNameField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfFieldsRepeaterField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfOverviewField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfVehiclePermnoWithInfoField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfExpandableDescriptionField { id label introText expandableDescription: description clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfMessageWithLinkButtonField { id linkMessage: message url buttonTitle clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfAccordionField { id label accordionItems: items { label content } clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfStaticTableField { id label header rows clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfCustomComponent { componentName props }
           ... on SdfRepeaterComponent { id arrayPath addItemLabel removeItemLabel minItems maxItems items }
         }
@@ -401,29 +531,170 @@ const EXECUTE_ACTION_MUTATION = `
   }
 `
 
+export function normalizeAliasedComponentValues(
+  components: SdfComponentData[],
+): SdfComponentData[] {
+  return components.map((component) => {
+    let normalized = component
+
+    if (
+      normalized.__typename === 'SdfDisplayField' &&
+      normalized.value === undefined &&
+      normalized.displayValue !== undefined
+    ) {
+      normalized = { ...normalized, value: normalized.displayValue }
+    }
+
+    if (
+      normalized.__typename === 'SdfExpandableDescriptionField' &&
+      normalized.expandableDescription !== undefined
+    ) {
+      normalized = { ...normalized, description: normalized.expandableDescription }
+    }
+
+    if (
+      normalized.__typename === 'SdfMessageWithLinkButtonField' &&
+      normalized.linkMessage !== undefined
+    ) {
+      normalized = { ...normalized, message: normalized.linkMessage }
+    }
+
+    if (
+      normalized.__typename === 'SdfAccordionField' &&
+      normalized.accordionItems !== undefined
+    ) {
+      normalized = { ...normalized, items: normalized.accordionItems }
+    }
+
+    return normalized
+  })
+}
+
+export function buildGraphqlHeaders(
+  forwardedHeaders?: ForwardAuthHeaders,
+): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    ...(forwardedHeaders?.cookie
+      ? { cookie: forwardedHeaders.cookie }
+      : {}),
+    ...(forwardedHeaders?.authorization
+      ? { authorization: forwardedHeaders.authorization }
+      : {}),
+  }
+}
+
+const getServerGraphqlEndpoint = (
+  forwardedHeaders?: ForwardAuthHeaders,
+): string => {
+  if (!forwardedHeaders?.host) {
+    return SERVER_GRAPHQL_ENDPOINT
+  }
+
+  if (
+    forwardedHeaders.host.startsWith('localhost') ||
+    forwardedHeaders.host.startsWith('127.0.0.1')
+  ) {
+    return LOCAL_BFF_GRAPHQL_ENDPOINT
+  }
+
+  const protocol =
+    forwardedHeaders.protocol ??
+    (forwardedHeaders.host.startsWith('localhost') ||
+    forwardedHeaders.host.startsWith('127.0.0.1')
+      ? 'http'
+      : 'https')
+
+  return `${protocol}://${forwardedHeaders.host}${CLIENT_GRAPHQL_ENDPOINT}`
+}
+
+const getGraphqlEndpoint = (
+  operationName: string,
+  forwardedHeaders?: ForwardAuthHeaders,
+): string => {
+  const baseEndpoint =
+    typeof window === 'undefined'
+      ? getServerGraphqlEndpoint(forwardedHeaders)
+      : CLIENT_GRAPHQL_ENDPOINT
+
+  return `${baseEndpoint}?op=${operationName}`
+}
+
+export function extractOperationResult<T>(
+  payload: unknown,
+  operationField: string,
+): T {
+  const wrapped = payload as {
+    data?: Record<string, T>
+  }
+  const unwrapped = payload as Record<string, T>
+
+  return (wrapped.data?.[operationField] ?? unwrapped[operationField]) as T
+}
+
+const throwIfHttpError = (res: Response, payload: unknown): void => {
+  if (res.ok) {
+    return
+  }
+
+  const problem = payload as {
+    status?: number
+    title?: string
+    detail?: string
+  }
+
+  throw new GraphqlHttpError(
+    problem.status ?? res.status,
+    problem.title ?? `Request failed with status ${res.status}`,
+    problem.detail,
+  )
+}
+
 export async function fetchScreen(
   applicationId: string,
   step?: number,
   locale = 'is',
+  forwardedHeaders?: ForwardAuthHeaders,
 ): Promise<SdfScreen> {
-  const res = await fetch(GRAPHQL_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query: GET_SCREEN_QUERY,
-      variables: {
-        input: { applicationId, step },
-        locale,
-      },
-    }),
-    cache: 'no-store',
-  })
+  const res = await fetch(
+    getGraphqlEndpoint('ApplicationSdfScreen', forwardedHeaders),
+    {
+      method: 'POST',
+      headers: buildGraphqlHeaders(forwardedHeaders),
+      body: JSON.stringify({
+        query: GET_SCREEN_QUERY,
+        variables: {
+          input: { applicationId, step },
+          locale,
+        },
+      }),
+      cache: 'no-store',
+    },
+  )
 
   const json = await res.json()
+  throwIfHttpError(res, json)
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
   }
-  return json.data.applicationSdfScreen
+  const screen = extractOperationResult<SdfScreen>(
+    json,
+    'applicationSdfScreen',
+  )
+  if (!screen) {
+    throw new Error(
+      `Malformed GraphQL response: missing applicationSdfScreen. Payload keys: ${Object.keys(
+        json ?? {},
+      ).join(', ')}`,
+    )
+  }
+  return {
+    ...screen,
+    page: {
+      ...screen.page,
+      components: normalizeAliasedComponentValues(screen.page.components),
+    },
+  }
 }
 
 export async function executeAction(
@@ -435,9 +706,9 @@ export async function executeAction(
   fieldIds?: string[],
   event?: string,
 ): Promise<SdfScreen> {
-  const res = await fetch(GRAPHQL_ENDPOINT, {
+  const res = await fetch(getGraphqlEndpoint('ApplicationSdfAction'), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: buildGraphqlHeaders(),
     body: JSON.stringify({
       query: EXECUTE_ACTION_MUTATION,
       variables: {
@@ -456,8 +727,23 @@ export async function executeAction(
   })
 
   const json = await res.json()
+  throwIfHttpError(res, json)
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
   }
-  return json.data.applicationSdfAction
+  const screen = extractOperationResult<SdfScreen>(json, 'applicationSdfAction')
+  if (!screen) {
+    throw new Error(
+      `Malformed GraphQL response: missing applicationSdfAction. Payload keys: ${Object.keys(
+        json ?? {},
+      ).join(', ')}`,
+    )
+  }
+  return {
+    ...screen,
+    page: {
+      ...screen.page,
+      components: normalizeAliasedComponentValues(screen.page.components),
+    },
+  }
 }

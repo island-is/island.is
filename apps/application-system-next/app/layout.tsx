@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { GlobalStylesProvider } from '../components/GlobalStylesProvider'
+import { AppHeader } from '../components/AppHeader'
 
 export const metadata: Metadata = {
   title: 'Ísland.is - Umsóknir',
@@ -12,7 +14,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="is">
-      <body>{children}</body>
+      <body>
+        <GlobalStylesProvider>
+          <AppHeader
+            institutionName="Stafrænt Ísland"
+            applicationName="Example Inputs"
+          />
+          {children}
+        </GlobalStylesProvider>
+      </body>
     </html>
   )
 }
