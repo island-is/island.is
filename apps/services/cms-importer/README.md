@@ -40,12 +40,21 @@ Generates a sitemap.xml file in S3 (that gets forwarded to https://island.is/sit
 yarn nx run services-cms-importer:web-sitemap
 ```
 
+### CMS Cleanup
+
+Runs CMS cleanup tasks. Initial scaffold is intended for cleanup jobs like deleting duplicate assets in other Contentful environments.
+
+```bash
+yarn nx run services-cms-importer:cms-cleanup
+```
+
 ## Architecture
 
 - **main.ts** - Entry point that handles job routing based on command-line arguments
 - **app/grant-import/** - Grant import module with service and worker logic
 - **app/energy-fund-import/** - Energy fund import module
 - **app/fsre-buildings-import/** - FSRE buildings import module
+- **app/cms-cleanup/** - CMS cleanup module
 - **app/repositories/** - Data access layer for CMS, grants, and energy grants
 
 ## Building
@@ -64,6 +73,7 @@ Each job can be run individually using the corresponding Nx target:
 nx grant-import services-cms-importer
 nx energy-fund-import services-cms-importer
 nx fsre-buildings-import services-cms-importer
+nx cms-cleanup services-cms-importer
 ```
 
 Or run the built application directly with job arguments:
