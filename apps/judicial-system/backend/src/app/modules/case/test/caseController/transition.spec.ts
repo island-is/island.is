@@ -8,8 +8,8 @@ import { ConfigType } from '@island.is/nest/config'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -556,12 +556,12 @@ describe('CaseController - Transition', () => {
 
   each`
       transition                        | caseState                    | currentAppealState           | newAppealState
-      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
-      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${CaseAppealState.COMPLETED} | ${CaseAppealState.RECEIVED}
-      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.WITHDRAWN}
-      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.WITHDRAWN}
+      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${AppealCaseState.APPEALED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${AppealCaseState.APPEALED}  | ${AppealCaseState.RECEIVED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.RECEIVED}  | ${AppealCaseState.COMPLETED}
+      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${AppealCaseState.COMPLETED} | ${AppealCaseState.RECEIVED}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.APPEALED}  | ${AppealCaseState.WITHDRAWN}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.RECEIVED}  | ${AppealCaseState.WITHDRAWN}
 
 
     `.describe(
@@ -645,7 +645,7 @@ describe('CaseController - Transition', () => {
                     : undefined,
                 appealRulingDecision:
                   transition === CaseTransition.WITHDRAW_APPEAL &&
-                  currentAppealState === CaseAppealState.RECEIVED
+                  currentAppealState === AppealCaseState.RECEIVED
                     ? CaseAppealRulingDecision.DISCONTINUED
                     : undefined,
               },

@@ -1239,4 +1239,11 @@ export const m = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Pay',
   },
+  translationNeededError: {
+    id: 'form.system:translation-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
+    description:
+      'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
 })
