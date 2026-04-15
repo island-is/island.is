@@ -127,7 +127,6 @@ const useSearch = (
                 types: [
                   // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
                   SearchableContentTypes['WebArticle'],
-                  SearchableContentTypes['WebSubArticle'],
                   SearchableContentTypes['WebProjectPage'],
                   SearchableContentTypes['WebOrganizationPage'],
                   SearchableContentTypes['WebOrganizationSubpage'],

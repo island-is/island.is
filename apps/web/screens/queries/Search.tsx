@@ -276,6 +276,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           href
           organizationPageTitle
           intro
+          childLinks {
+            label
+            href
+          }
         }
         ... on ProjectPage {
           id

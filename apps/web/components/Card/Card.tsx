@@ -8,6 +8,7 @@ import {
   FocusableBox,
   Hyphen,
   Inline,
+  LinkV2,
   Stack,
   Tag,
   TagProps,
@@ -42,6 +43,7 @@ export interface CardProps {
   linkProps?: LinkProps
   link?: LinkResolverResponse
   highlightedResults?: boolean
+  childLinks?: Array<{ label: string; href: string }>
 }
 
 export const Card = ({
@@ -53,6 +55,7 @@ export const Card = ({
   link,
   dataTestId,
   highlightedResults = false,
+  childLinks = [],
 }: CardProps & TestSupport) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
@@ -88,6 +91,13 @@ export const Card = ({
 
   const visibleTags = tags.filter((t) => t.title)
 
+  const TitleWrapper =
+    childLinks.length > 0 && !!link?.href
+      ? ({ children }: { children: ReactNode }) => (
+          <LinkV2 href={link?.href}>{children}</LinkV2>
+        )
+      : Box
+
   const items = (
     <Box
       ref={ref}
@@ -115,25 +125,27 @@ export const Card = ({
           )}
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
-              {highlightedResults ? (
-                <Text
-                  as="h3"
-                  variant="h3"
-                  color={titleColor}
-                  fontWeight="medium"
-                >
-                  <span dangerouslySetInnerHTML={{ __html: title }}></span>
-                </Text>
-              ) : (
-                <Text
-                  as="h3"
-                  variant="h3"
-                  color={titleColor}
-                  fontWeight="medium"
-                >
-                  <Hyphen>{title}</Hyphen>
-                </Text>
-              )}
+              <TitleWrapper>
+                {highlightedResults ? (
+                  <Text
+                    as="h3"
+                    variant="h3"
+                    color={titleColor}
+                    fontWeight="medium"
+                  >
+                    <span dangerouslySetInnerHTML={{ __html: title }}></span>
+                  </Text>
+                ) : (
+                  <Text
+                    as="h3"
+                    variant="h3"
+                    color={titleColor}
+                    fontWeight="medium"
+                  >
+                    <Hyphen>{title}</Hyphen>
+                  </Text>
+                )}
+              </TitleWrapper>
             </Box>
           </Box>
           {description && highlightedResults ? (
@@ -144,7 +156,27 @@ export const Card = ({
             <Text>{description}</Text>
           )}
 
-          {visibleTags.length > 0 && highlightedResults && (
+          {childLinks.length > 0 && (
+            <Box paddingTop={2} flexGrow={0} position="relative">
+              <Stack space={1}>
+                {childLinks.map(({ label, href }) => (
+                  <Box key={`${label}-${href}`} display="flex">
+                    <LinkV2 href={href}>
+                      <Text
+                        variant="small"
+                        fontWeight="semiBold"
+                        color={titleColor}
+                      >
+                        {label}
+                      </Text>
+                    </LinkV2>
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          )}
+
+          {visibleTags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
                 {visibleTags.map(
@@ -188,10 +220,11 @@ export const Card = ({
     </Box>
   )
 
-  if (link?.href) {
+  if (link?.href && !childLinks.length) {
     return (
       <FocusableBox
         href={link.href}
+        cursor="pointer"
         borderRadius="large"
         flexDirection="column"
         height="full"
@@ -206,7 +239,21 @@ export const Card = ({
       </FocusableBox>
     )
   }
-  return <Frame>{items}</Frame>
+  return (
+    <Box
+      borderRadius="large"
+      flexDirection="column"
+      height="full"
+      width="full"
+      data-testid={dataTestId}
+      flexGrow={1}
+      background="white"
+      borderColor={borderColor}
+      borderWidth="standard"
+    >
+      <Frame>{items}</Frame>
+    </Box>
+  )
 }
 
 export const Frame = ({ children }: { children: ReactNode }) => {
