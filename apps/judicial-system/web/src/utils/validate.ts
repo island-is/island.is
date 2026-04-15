@@ -4,9 +4,9 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   Case,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
@@ -680,7 +680,7 @@ export const isAdminUserFormValid = (user: User): boolean => {
 
 export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   return Boolean(
-    (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN ||
+    (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN ||
       (workingCase.appealCase?.appealJudge1 &&
         workingCase.appealCase?.appealJudge2 &&
         workingCase.appealCase?.appealJudge3 &&
