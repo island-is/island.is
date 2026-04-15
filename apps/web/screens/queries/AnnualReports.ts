@@ -8,19 +8,7 @@ export const GET_ANNUAL_REPORTS_QUERY = gql`
       id
       title
       slug
-      pageIdentifier
       intro
-      organizationPage {
-        id
-        title
-        slug
-      }
-      organization {
-        id
-        title
-        shortTitle
-        slug
-      }
       chapters {
         id
         title
@@ -44,19 +32,7 @@ export const GET_ANNUAL_REPORT_QUERY = gql`
       id
       title
       slug
-      pageIdentifier
       intro
-      organizationPage {
-        id
-        title
-        slug
-      }
-      organization {
-        id
-        title
-        shortTitle
-        slug
-      }
       chapters {
         id
         title
