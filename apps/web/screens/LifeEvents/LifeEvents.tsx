@@ -1,16 +1,12 @@
-import { useMemo, useState } from 'react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 
 import {
   Box,
   Breadcrumbs,
-  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
-  Inline,
-  RadioButton,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -43,33 +39,9 @@ interface Props {
   namespace: ApplicationsTexts
 }
 
-type SortOption = 'a-z' | 'z-a'
-
 const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const [searchValue, setSearchValue] = useState('')
-  const [sort, setSort] = useState<SortOption>('a-z')
-
-  const filteredLifeEvents = useMemo(() => {
-    const query = searchValue.toLowerCase()
-    const items = lifeEvents?.filter((event) => {
-      const title = (event.shortTitle ?? event.title).toLowerCase()
-      return title.includes(query)
-    })
-
-    if (items) {
-      return [...items].sort((a, b) => {
-        const titleA = (a.shortTitle ?? a.title).toLowerCase()
-        const titleB = (b.shortTitle ?? b.title).toLowerCase()
-        return sort === 'a-z'
-          ? titleA.localeCompare(titleB, 'is')
-          : titleB.localeCompare(titleA, 'is')
-      })
-    }
-
-    return items
-  }, [lifeEvents, searchValue, sort])
 
   return (
     <>
@@ -123,55 +95,9 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
 
       <Box background="purple100" display="inlineBlock" width="full">
         <GridContainer className={styles.listContainer}>
-          <Box
-            paddingTop={[4, 4, 8]}
-            paddingBottom={[5, 5, 8]}
-            display="flex"
-            flexDirection={['column', 'column', 'column', 'row', 'row']}
-            justifyContent={[
-              'flexStart',
-              'flexStart',
-              'flexStart',
-              'spaceBetween',
-              'spaceBetween',
-            ]}
-            alignItems={['stretch', 'stretch', 'stretch', 'center', 'center']}
-            flexWrap="wrap"
-            rowGap={3}
-          >
-            <Box>
-              <FilterInput
-                name="life-events-search"
-                placeholder={n('searchPlaceholder', 'Sía eftir leitarorði')}
-                value={searchValue}
-                onChange={setSearchValue}
-                backgroundColor="white"
-              />
-            </Box>
-            <Box>
-              <Inline space={3} alignY="center">
-                <RadioButton
-                  name="life-events-sort"
-                  id="sort-a-z"
-                  label={n('sortAZ', 'Heiti (A - Ö)')}
-                  value="a-z"
-                  checked={sort === 'a-z'}
-                  onChange={() => setSort('a-z')}
-                />
-                <RadioButton
-                  name="life-events-sort"
-                  id="sort-z-a"
-                  label={n('sortZA', 'Heiti (Ö - A)')}
-                  value="z-a"
-                  checked={sort === 'z-a'}
-                  onChange={() => setSort('z-a')}
-                />
-              </Inline>
-            </Box>
-          </Box>
-          <Box paddingBottom={[3, 3, 6]}>
+          <Box paddingTop={[4, 4, 8]} paddingBottom={[3, 3, 6]}>
             <GridRow>
-              {filteredLifeEvents?.map(
+              {lifeEvents?.map(
                 ({
                   __typename: typename,
                   shortTitle,

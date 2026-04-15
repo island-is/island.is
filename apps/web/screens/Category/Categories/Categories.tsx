@@ -1,17 +1,14 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import NextLink from 'next/link'
 
 import {
   Box,
   Breadcrumbs,
   ColorSchemeContext,
-  FilterInput,
   FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Inline,
-  RadioButton,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -32,8 +29,6 @@ import * as styles from './Categories.css'
 
 const EXCLUDED_CATEGORY_SLUGS = ['thjonusta-island-is', 'services-on-island-is']
 
-type SortOption = 'a-z' | 'z-a'
-
 interface CategoriesProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -44,30 +39,14 @@ interface CategoriesProps {
 const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
   const n = useNamespaceStrict(namespace)
   const { linkResolver } = useLinkResolver()
-  const [searchValue, setSearchValue] = useState('')
-  const [sort, setSort] = useState<SortOption>('a-z')
 
-  const allItems = useMemo(
+  const items = useMemo(
     () =>
       (categories as GetArticleCategoriesQuery['getArticleCategories'])?.filter(
         (item) => !EXCLUDED_CATEGORY_SLUGS.includes(item.slug),
       ) ?? [],
     [categories],
   )
-
-  const items = useMemo(() => {
-    const query = searchValue.toLowerCase()
-    const filtered = allItems.filter((item) =>
-      item.title.toLowerCase().includes(query),
-    )
-    return [...filtered].sort((a, b) => {
-      const titleA = a.title.toLowerCase()
-      const titleB = b.title.toLowerCase()
-      return sort === 'a-z'
-        ? titleA.localeCompare(titleB, 'is')
-        : titleB.localeCompare(titleA, 'is')
-    })
-  }, [allItems, searchValue, sort])
 
   return (
     <>
@@ -119,53 +98,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <GridContainer className={styles.listContainer}>
-            <Box
-              paddingTop={[4, 4, 8]}
-              paddingBottom={[5, 5, 8]}
-              display="flex"
-              flexDirection={['column', 'column', 'column', 'row', 'row']}
-              justifyContent={[
-                'flexStart',
-                'flexStart',
-                'flexStart',
-                'spaceBetween',
-                'spaceBetween',
-              ]}
-              alignItems={['stretch', 'stretch', 'stretch', 'center', 'center']}
-              flexWrap="wrap"
-              rowGap={3}
-            >
-              <Box>
-                <FilterInput
-                  name="categories-search"
-                  placeholder={n('searchPlaceholder', 'Sía eftir leitarorði')}
-                  value={searchValue}
-                  onChange={setSearchValue}
-                  backgroundColor="white"
-                />
-              </Box>
-              <Box>
-                <Inline space={3} alignY="center">
-                  <RadioButton
-                    name="categories-sort"
-                    id="categories-sort-a-z"
-                    label={n('sortAZ', 'Heiti (A - Ö)')}
-                    value="a-z"
-                    checked={sort === 'a-z'}
-                    onChange={() => setSort('a-z')}
-                  />
-                  <RadioButton
-                    name="categories-sort"
-                    id="categories-sort-z-a"
-                    label={n('sortZA', 'Heiti (Ö - A)')}
-                    value="z-a"
-                    checked={sort === 'z-a'}
-                    onChange={() => setSort('z-a')}
-                  />
-                </Inline>
-              </Box>
-            </Box>
-            <Box paddingBottom={[3, 3, 6]}>
+            <Box paddingTop={[4, 4, 8]} paddingBottom={[3, 3, 6]}>
               <GridRow>
                 {items.map(
                   ({ title, description, slug, __typename: typename }) => {
