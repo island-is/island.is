@@ -13,7 +13,8 @@ export class CmsCleanupService {
   public async run() {
     logger.info('CMS cleanup worker starting...')
 
-    const allMasterAssets = await this.getAllAssets(ENVIRONMENT)
+    logger.info(`Fetching all assets in ${ENVIRONMENT} environment...`)
+    const allMasterAssets = await this.getAllAssets(ENVIRONMENT, true)
     logger.info(
       `Found ${allMasterAssets.length} assets in ${ENVIRONMENT} environment`,
     )
@@ -130,10 +131,10 @@ export class CmsCleanupService {
     logger.info('CMS cleanup worker finished.')
   }
 
-  private async getAllAssets(environment: string) {
+  private async getAllAssets(environment: string, logProgress = false) {
     let skip = 0
     let total = Infinity
-    const limit = 100
+    const limit = 500
     const assets: Asset[] = []
 
     while (skip < total) {
@@ -147,6 +148,9 @@ export class CmsCleanupService {
       if (!response.ok) throw response.error
       skip += limit
       total = response.data.total
+      if (logProgress)
+        logger.info(`Fetched ${skip < total ? skip : total}/${total} assets...`)
+
       assets.push(...response.data.items)
     }
 
