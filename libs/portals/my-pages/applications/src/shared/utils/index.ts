@@ -16,6 +16,7 @@ interface SortedApplication {
   incomplete: Application[]
   inProgress: Application[]
   finished: Application[]
+  older: Application[]
 }
 
 interface ApplicationWithInstitution extends Application {
@@ -25,14 +26,17 @@ interface ApplicationWithInstitution extends Application {
 }
 
 export const sortApplicationsStatus = (
-  applications: Application[],
+  applications: (Application & Partial<Pick<ApplicationCard, 'pruned'>>)[],
 ): SortedApplication => {
   const incomplete: Application[] = []
   const inProgress: Application[] = []
   const finished: Application[] = []
+  const older: Application[] = []
 
   applications.forEach((application) => {
-    if (
+    if (application.pruned) {
+      older.push(application)
+    } else if (
       application.status === ApplicationStatus.DRAFT ||
       application.status === ApplicationStatus.NOT_STARTED
     ) {
@@ -48,6 +52,7 @@ export const sortApplicationsStatus = (
     incomplete,
     inProgress,
     finished,
+    older,
   }
 }
 
@@ -87,6 +92,9 @@ export const mapLinkToStatus = (link: string) => {
   }
   if (link === ApplicationsPaths.ApplicationCompleteApplications) {
     return ApplicationOverViewStatus.completed
+  }
+  if (link === ApplicationsPaths.ApplicationOlderApplications) {
+    return ApplicationOverViewStatus.older
   }
   return ApplicationOverViewStatus.all
 }

@@ -7,6 +7,7 @@ export enum ApplicationOverViewStatus {
   completed = 'completed',
   rejected = 'rejected',
   approved = 'approved',
+  older = 'older',
   all = 'all',
 }
 
