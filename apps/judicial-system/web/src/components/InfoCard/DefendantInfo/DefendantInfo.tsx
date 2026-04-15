@@ -10,7 +10,10 @@ import {
   formatDOB,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
+import {
+  CaseIndictmentRulingDecision,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
@@ -232,6 +235,17 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
               date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
             })}
           </Text>
+        )}
+        {defendant.indictmentCancelledOrDismissedState && (
+          <Text fontWeight="semiBold">{`${
+            defendant.indictmentCancelledOrDismissedState.type ===
+            CaseIndictmentRulingDecision.DISMISSAL
+              ? 'Vísað frá'
+              : 'Niðurfellt'
+          } ${formatDate(
+            defendant.indictmentCancelledOrDismissedState.time,
+            'P',
+          )}`}</Text>
         )}
         {displayOpenCaseReference && (
           <ConnectedCasesInfo
