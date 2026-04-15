@@ -136,22 +136,11 @@ export class CaseRepositoryService {
   private shouldResolvePoliceCaseNumbers(
     attributes?: FindAttributeOptions,
   ): boolean {
-    if (attributes == null) {
-      return true
-    }
-
+    if (!attributes) return true
     if (Array.isArray(attributes)) {
       return attributes.some((attr) => attr === 'policeCaseNumbers')
     }
-
-    if (typeof attributes === 'object' && attributes !== null) {
-      const exclude = (attributes as { exclude?: string[] }).exclude
-      if (Array.isArray(exclude)) {
-        return !exclude.includes('policeCaseNumbers')
-      }
-    }
-
-    return true
+    return !attributes.exclude?.includes('policeCaseNumbers')
   }
 
   async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
