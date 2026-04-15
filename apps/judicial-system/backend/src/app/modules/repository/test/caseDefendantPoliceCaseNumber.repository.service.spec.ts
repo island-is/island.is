@@ -164,9 +164,9 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     })
   })
 
-  describe('upsertAssignedDefendantPoliceCaseNumbers', () => {
+  describe('assignDefendantPoliceCaseNumbers', () => {
     it('bulk-creates links and removes matching unassigned rows', async () => {
-      await service.upsertAssignedDefendantPoliceCaseNumbers('case-1', [
+      await service.assignDefendantPoliceCaseNumbers('case-1', [
         { defendantId: 'def-a', policeCaseNumber: '007-1' },
         { defendantId: 'def-b', policeCaseNumber: '007-2' },
       ])
@@ -191,7 +191,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     })
 
     it('does nothing when links array is empty', async () => {
-      await service.upsertAssignedDefendantPoliceCaseNumbers('case-1', [])
+      await service.assignDefendantPoliceCaseNumbers('case-1', [])
 
       expect(mockModel.sequelize.transaction).not.toHaveBeenCalled()
       expect(mockModel.bulkCreate).not.toHaveBeenCalled()

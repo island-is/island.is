@@ -1022,7 +1022,7 @@ export class PoliceService {
         )
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.upsertAssignedDefendantPoliceCaseNumbers(
+        await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
           caseId,
           defendantPoliceCaseNumberLinks,
         )

@@ -61,7 +61,7 @@ export const createTestingPoliceModule = async () => {
       {
         provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
-          upsertAssignedDefendantPoliceCaseNumbers: jest
+          assignDefendantPoliceCaseNumbers: jest
             .fn()
             .mockResolvedValue(undefined),
         },

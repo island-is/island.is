@@ -134,9 +134,9 @@ export class PoliceController {
     return this.policeService.getPoliceCaseInfo(
       theCase.id,
       user,
-      theCase.defendants
-        ?.filter((d) => d.nationalId)
-        .map((d) => ({ id: d.id, nationalId: d.nationalId as string })),
+      theCase.defendants?.flatMap((d) =>
+        d.nationalId ? [{ id: d.id, nationalId: d.nationalId }] : [],
+      ),
     )
   }
 

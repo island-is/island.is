@@ -152,11 +152,12 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   }
 
   /**
-   * Inserts defendant-linked (case_id, defendant_id, police_case_number) rows,
-   * ignoring duplicates via the partial unique index, then removes redundant
-   * unassigned rows for the same police case numbers on this case.
+   * Assigns police case numbers to defendants by inserting
+   * (case_id, defendant_id, police_case_number) rows, skipping duplicates
+   * via the partial unique index, then removes redundant unassigned rows
+   * for the same police case numbers on this case.
    */
-  async upsertAssignedDefendantPoliceCaseNumbers(
+  async assignDefendantPoliceCaseNumbers(
     caseId: string,
     links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
   ): Promise<void> {
@@ -195,11 +196,11 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       })
 
       this.logger.debug(
-        `Upserted ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
+        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
       )
     } catch (error) {
       this.logger.error(
-        `Error upserting defendant-linked police case number rows for case ${caseId}`,
+        `Error assigning defendant-linked police case number rows for case ${caseId}`,
         { error },
       )
 

@@ -25,7 +25,7 @@ type GivenWhenThen = (
 
 describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
-  let upsertAssignedDefendantPoliceCaseNumbers: jest.Mock
+  let assignDefendantPoliceCaseNumbers: jest.Mock
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
@@ -33,8 +33,8 @@ describe('PoliceController - Get police case info', () => {
     const { policeController, caseDefendantPoliceCaseNumberRepositoryService } =
       await createTestingPoliceModule()
 
-    upsertAssignedDefendantPoliceCaseNumbers =
-      caseDefendantPoliceCaseNumberRepositoryService.upsertAssignedDefendantPoliceCaseNumbers as jest.Mock
+    assignDefendantPoliceCaseNumbers =
+      caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -144,9 +144,9 @@ describe('PoliceController - Get police case info', () => {
       ).toBe(false)
     })
 
-    it('should upsert defendant-linked police case numbers from police case units', () => {
-      expect(upsertAssignedDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
-      expect(upsertAssignedDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
+    it('should assign defendant-linked police case numbers from police case units', () => {
+      expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
+      expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
         caseId,
         expect.arrayContaining([
           {
@@ -210,7 +210,7 @@ describe('PoliceController - Get police case info', () => {
     it('should fetch police defendants as fallback', () => {
       const mockFetch = fetch as jest.Mock
 
-      expect(upsertAssignedDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
+      expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
       expect(mockFetch).toHaveBeenCalledTimes(2)
       expect(
         mockFetch.mock.calls.some((call) =>
