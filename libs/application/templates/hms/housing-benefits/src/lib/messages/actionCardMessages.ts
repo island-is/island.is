@@ -55,7 +55,7 @@ export const actionCardMessages = defineMessages({
   },
   historyDraftSubmitted: {
     id: 'hb.application:actionCard.historyDraftSubmitted',
-    defaultMessage: 'Umsókn útfyllt af {applicantName}',
+    defaultMessage: '{applicantName} fyllti út umsókn um húsnæðisbætur',
     description: 'History log when draft is submitted',
   },
   historyAssigneeApprovedWithName: {
@@ -69,6 +69,12 @@ export const actionCardMessages = defineMessages({
     defaultMessage: 'Heimilismaður samþykkti umsóknina',
     description:
       'History log when assignee approves but the signatory name is unknown',
+  },
+  historyApplicantSubmitted: {
+    id: 'hb.application:actionCard.historyApplicantSubmitted',
+    defaultMessage: '{applicantName} yfirfór og sendi inn umsókn',
+    description:
+      'History log when applicant reviews and submits the application to HMS',
   },
   pendingTitleDraft: {
     id: 'hb.application:actionCard.pendingTitleDraft',
@@ -197,6 +203,18 @@ export const actionCardMessages = defineMessages({
     defaultMessage:
       'Umsóknin þín um húsnæðisbætur var hafnað. Þú getur skoðað nánari upplýsingar í umsókninni. {applicantName} · {rentalAddress}',
     description: 'Rejected state content',
+  },
+  historyInReviewRequestedExtraData: {
+    id: 'hb.application:actionCard.historyInReviewRequestedExtraData',
+    defaultMessage: 'HMS óskaði eftir viðbótargögnum',
+    description:
+      'History log when institution requests extra data from the applicant',
+  },
+  historyExtraDataSubmitted: {
+    id: 'hb.application:actionCard.historyExtraDataSubmitted',
+    defaultMessage: '{applicantName} skilaði viðbótargögnum',
+    description:
+      'History log when applicant submits the requested extra data back to HMS',
   },
   inReviewDescription: {
     id: 'hb.application:actionCard.inReviewDescription',

@@ -15,12 +15,8 @@ export const extraDataExemptionReasonUploadSection = buildSection({
     buildMultiField({
       id: 'extraDataExemptionMultiField',
       title: m.extraDataMessages.exemptionUploadTitle,
+      description: m.extraDataMessages.exemptionUploadDescription,
       children: [
-        buildDescriptionField({
-          id: 'extraDataExemptionDescription',
-          description: m.extraDataMessages.exemptionUploadDescription,
-          marginBottom: 4,
-        }),
         buildFileUploadField({
           id: 'extraDataAttachments.exemptionReason',
           title: m.extraDataMessages.documentExemptionReason,

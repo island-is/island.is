@@ -6,7 +6,10 @@ import {
 import { Application, FormatMessage } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import * as m from '../../lib/messages'
-import { buildExtraDataSummaryMarkdown } from './shared'
+import {
+  buildInstitutionMessageMarkdown,
+  buildRequestedDocumentsMarkdown,
+} from './shared'
 
 export const extraDataMessageSection = buildSection({
   id: 'extraDataMessageSection',
@@ -15,14 +18,13 @@ export const extraDataMessageSection = buildSection({
     buildMultiField({
       id: 'extraDataMessageMultiField',
       title: m.extraDataMessages.messageScreenTitle,
+      description: m.extraDataMessages.intro,
       children: [
         buildDescriptionField({
-          id: 'extraDataIntro',
-          description: m.extraDataMessages.intro,
+          id: 'extraDataInstitutionMessage',
+          title: m.extraDataMessages.messageFromInstitutionTitle,
+          titleVariant: 'h4',
           marginBottom: 4,
-        }),
-        buildDescriptionField({
-          id: 'extraDataInstitutionSummary',
           description: (
             application: Application,
             _locale: Locale,
@@ -31,7 +33,22 @@ export const extraDataMessageSection = buildSection({
             if (!formatMessage) {
               return ''
             }
-            return buildExtraDataSummaryMarkdown(application, formatMessage)
+            return buildInstitutionMessageMarkdown(application)
+          },
+        }),
+        buildDescriptionField({
+          id: 'extraDataRequestedDocuments',
+          title: m.extraDataMessages.requestedDocumentsTitle,
+          titleVariant: 'h4',
+          description: (
+            application: Application,
+            _locale: Locale,
+            formatMessage?: FormatMessage,
+          ) => {
+            if (!formatMessage) {
+              return ''
+            }
+            return buildRequestedDocumentsMarkdown(application, formatMessage)
           },
         }),
       ],

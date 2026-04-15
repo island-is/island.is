@@ -627,7 +627,24 @@ export const extraDataChangedCircumstancesOverviewItems = (
   _externalData: ExternalData,
   _userNationalId?: string,
   _locale?: Locale,
-) => extraDataOverviewItemsForDocType(answers, 'changedCircumstances')
+): Array<KeyValueItem> => {
+  const items: Array<KeyValueItem> = []
+
+  const description = getValueViaPath<string>(
+    answers,
+    'extraDataCircumstancesInput',
+  )?.trim()
+  if (description) {
+    items.push({
+      width: 'full',
+      keyText: m.extraDataMessages.circumstancesDescriptionLabel,
+      valueText: description,
+    })
+  }
+
+  items.push(...extraDataOverviewItemsForDocType(answers, 'changedCircumstances'))
+  return items
+}
 
 export const extraDataChangedCircumstancesOverviewAttachments = (
   answers: FormValue,

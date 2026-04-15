@@ -14,15 +14,23 @@ const isRequestedDocType = (
 ): value is keyof typeof requestedDocumentMessage =>
   (institutionRequestedDocumentTypes as readonly string[]).includes(value)
 
-export const buildExtraDataSummaryMarkdown = (
-  application: Application,
-  formatMessage: FormatMessage,
-) => {
+export const buildInstitutionMessageMarkdown = (application: Application) => {
   const message = getValueViaPath<string>(
     application.answers,
     'institutionMessageToApplicant',
   )?.trim()
 
+  if (!message) {
+    return ''
+  }
+
+  return message
+}
+
+export const buildRequestedDocumentsMarkdown = (
+  application: Application,
+  formatMessage: FormatMessage,
+) => {
   const rawDocs = getValueViaPath<string[]>(
     application.answers,
     'institutionRequestedDocuments',
@@ -34,22 +42,9 @@ export const buildExtraDataSummaryMarkdown = (
       .map((d) => `- ${formatMessage(requestedDocumentMessage[d])}`)
       .join('\n') ?? ''
 
-  const messageTitle = formatMessage(
-    m.extraDataMessages.messageFromInstitutionTitle,
-  )
-  const documentsTitle = formatMessage(
-    m.extraDataMessages.requestedDocumentsTitle,
-  )
-
-  const parts: string[] = []
-
-  if (message) {
-    parts.push(`**${messageTitle}**`, '', message)
+  if (!docLines) {
+    return ''
   }
 
-  if (docLines) {
-    parts.push('', `**${documentsTitle}**`, docLines)
-  }
-
-  return parts.join('\n').trim()
+  return docLines
 }

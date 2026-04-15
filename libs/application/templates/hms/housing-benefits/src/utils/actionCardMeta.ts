@@ -123,7 +123,7 @@ export const housingBenefitsActionCards = {
     },
     historyLogs: [
       {
-        onEvent: DefaultEvents.APPROVE,
+        onEvent: DefaultEvents.SUBMIT,
         logMessage: (application: Application, subjectNationalId?: string) => {
           const name = getAssigneeApproverDisplayName(
             application,
@@ -151,6 +151,21 @@ export const housingBenefitsActionCards = {
         values: rentalMessageValues(application),
       },
     }),
+    historyLogs: [
+      {
+        onEvent: DefaultEvents.SUBMIT,
+        logMessage: (application: Application) => {
+          const applicantName = getValueViaPath<string>(
+            application.externalData,
+            'nationalRegistry.data.fullName',
+          )
+          return {
+            ...ac.historyApplicantSubmitted,
+            values: { applicantName: applicantName ?? '' },
+          }
+        },
+      },
+    ],
   },
   inReview: {
     title: ac.applicationTitle,
@@ -184,6 +199,10 @@ export const housingBenefitsActionCards = {
         onEvent: DefaultEvents.APPROVE,
         logMessage: coreHistoryMessages.applicationApproved,
       },
+      {
+        onEvent: DefaultEvents.EDIT,
+        logMessage: ac.historyInReviewRequestedExtraData,
+      },
     ],
   },
   extraData: {
@@ -196,6 +215,21 @@ export const housingBenefitsActionCards = {
         values: rentalMessageValues(application),
       },
     }),
+    historyLogs: [
+      {
+        onEvent: DefaultEvents.SUBMIT,
+        logMessage: (application: Application) => {
+          const applicantName = getValueViaPath<string>(
+            application.externalData,
+            'nationalRegistry.data.fullName',
+          )
+          return {
+            ...ac.historyExtraDataSubmitted,
+            values: { applicantName: applicantName ?? '' },
+          }
+        },
+      },
+    ],
   },
   approved: {
     title: ac.applicationTitle,

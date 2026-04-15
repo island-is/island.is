@@ -15,12 +15,8 @@ export const extraDataCustodyAgreementUploadSection = buildSection({
     buildMultiField({
       id: 'extraDataCustodyMultiField',
       title: m.extraDataMessages.custodyUploadTitle,
+      description: m.extraDataMessages.custodyUploadDescription,
       children: [
-        buildDescriptionField({
-          id: 'extraDataCustodyDescription',
-          description: m.extraDataMessages.custodyUploadDescription,
-          marginBottom: 4,
-        }),
         buildFileUploadField({
           id: 'extraDataAttachments.custodyAgreement',
           title: m.extraDataMessages.documentCustodyAgreement,
