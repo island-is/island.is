@@ -70,6 +70,8 @@ export const iconIdMapper = (iconType: string) => {
       return 'eyzGY9baL4Z1'
     case 'gavel':
       return 'eDi3AOmSGXe1'
+    case 'election':
+      return 'epyxrSILKQP1'
     default:
       return ''
   }

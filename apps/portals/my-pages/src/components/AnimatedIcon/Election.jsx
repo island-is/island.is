@@ -25,12 +25,12 @@ export default function Election() {
     })(
       '7c8cb2ed',
       {
-        root: 'eHga0p9oesu1',
+        root: 'epyxrSILKQP1',
         version: '2025-04-07',
         animations: [
           {
             elements: {
-              eHga0p9oesu4: {
+              epyxrSILKQP4: {
                 'stroke-dashoffset': [
                   { t: 0, v: 0 },
                   { t: 20, v: 0 },
@@ -38,14 +38,14 @@ export default function Election() {
                   { t: 600, v: 0 },
                 ],
               },
-              eHga0p9oesu5: {
+              epyxrSILKQP5: {
                 'stroke-dashoffset': [
                   { t: 0, v: 0 },
                   { t: 300, v: 0 },
                   { t: 600, v: 0 },
                 ],
               },
-              eHga0p9oesu8: {
+              epyxrSILKQP8: {
                 transform: {
                   data: { t: { x: -12.0441, y: -6.270185 } },
                   keys: {
@@ -65,32 +65,40 @@ export default function Election() {
                   },
                 },
               },
-              eHga0p9oesu9: {
+              epyxrSILKQP9: {
                 'stroke-dashoffset': [
                   { t: 0, v: 0 },
                   { t: 300, v: 0 },
                   { t: 600, v: 0 },
                 ],
               },
-              eHga0p9oesu15: {
+              epyxrSILKQP15: {
                 transform: {
-                  data: { s: { x: 1, y: 0.936339 }, t: { x: -21.5, y: -21.5 } },
+                  data: {
+                    s: { x: 0.893589, y: 0.836702 },
+                    t: { x: -21.5, y: -21.5 },
+                  },
                   keys: {
                     o: [
                       { t: 0, v: { x: 12.054696, y: 9.20318, type: 'corner' } },
-                      {
-                        t: 290,
-                        v: { x: 12.03265, y: 11.002395, type: 'corner' },
-                      },
+                      { t: 290, v: { x: 12, y: 10.221785, type: 'corner' } },
                       {
                         t: 600,
-                        v: { x: 12.032648, y: 10.427643, type: 'corner' },
+                        v: { x: 12.000007, y: 9.427643, type: 'corner' },
+                      },
+                      {
+                        t: 640,
+                        v: { x: 12.032648, y: 9.427643, type: 'corner' },
+                      },
+                      {
+                        t: 920,
+                        v: { x: 12.032648, y: 8.728843, type: 'corner' },
                       },
                     ],
                   },
                 },
               },
-              eHga0p9oesu17: {
+              epyxrSILKQP17: {
                 'stroke-dashoffset': [
                   { t: 0, v: 0 },
                   { t: 300, v: 6 },
@@ -98,15 +106,26 @@ export default function Election() {
                 ],
               },
             },
-            s: 'MDA1XZGEzNGFQOGM5ZDlhODk5YzkxMOTc5NjRhNjI1OTViNTg1ODU0JNGE4YzkxOWE4ZDhiOWM5MTk3KOTY0YTYyNTk1NDRhOTE5YzhkTOWE4OTljOTE5Nzk2OWI0YTYyFSkQ1OTU0NGE4ZTkxOTROOTQ0TYTYyNTk1NFg0YTg5VTk0OWM4OZDlhOTY4OTljOGQ0YTYyOGU4POUk5NDliOGQ1NDRhOWI5ODhkAOGQ4YzRhNjI1OTU0NGE4ZTk4COWJENGE2MjU5NTg1OGE1Rw|',
+            s: 'MDA1NZGI1NWM5ZWFmQmFjOWJhZUdhXM2E5YTg1Yzc0NmI2ZDZhUzZhTNjY1YzllYTNhYzlmOWRhZWEzLYTlhODVjNzQ2YjY2NWNhM2FlLOWZhY1E5YmFlYTNhOWE4YWQ1SYzc0NmJUNjY1Y2EwYTNhNmE2PNWM3NDZiNjY1YzliYTZhZTlmPYWNhODliYWU5ZjVjNzRhMDliGYTZCYWQ5ZjY2NWNhZGFhOWY5RZjllNWM3NE42YjY2TDVjYTBhMYWFkNWM3NDZiNmE2YWI3',
           },
         ],
-        options: 'MDAxHMDhmMzY4Nzg4NzVGODY4ODM2JNGUzNjgwODM3NTc4MzY5MQ|',
+        options:
+          'MDAyGMmEzNGFDOWJCOWNSODk5YTljBNGE2MjRhOTA5NzllOGRSOWE0TYTU0NGE5MEc5NzllOGRJOWE0PYTYyNGE4ZTlhOGQ4ZGEyOGQ0IYWE1',
       },
       '__SVGATOR_PLAYER__',
       window,
       document,
     )
+
+    const svgEl = document.querySelector('#epyxrSILKQP1')
+    if (svgEl?.svgatorPlayer) {
+      const setupHover = (player) => {
+        svgEl.style.cursor = 'pointer'
+        svgEl.addEventListener('click', () => player.restart())
+      }
+      const p = svgEl.svgatorPlayer
+      p.play ? setupHover(p) : p.ready(setupHover)
+    }
   }, [])
   return <Svg />
 }
