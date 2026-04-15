@@ -3,7 +3,7 @@ import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -52,9 +52,9 @@ export class UpdateAppealCaseDto {
   readonly appealRulingModifiedHistory?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealRulingDecision)
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @IsEnum(AppealCaseRulingDecision)
+  @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @IsOptional()
   @ApiPropertyOptional({ type: Date })

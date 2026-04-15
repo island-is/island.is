@@ -1,9 +1,9 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
-  CaseAppealRulingDecision,
   CaseDecision,
   CaseState,
   isRestrictionCase,
@@ -58,9 +58,9 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
 
             if (
               currentAppealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED ||
+                AppealCaseRulingDecision.CHANGED ||
               currentAppealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+                AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY
             ) {
               caseUpdate.validToDate = theCase.appealCase?.appealValidToDate
               caseUpdate.isCustodyIsolation =
@@ -68,7 +68,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
               caseUpdate.isolationToDate =
                 theCase.appealCase?.appealIsolationToDate
             } else if (
-              currentAppealRulingDecision === CaseAppealRulingDecision.REPEAL
+              currentAppealRulingDecision === AppealCaseRulingDecision.REPEAL
             ) {
               caseUpdate.validToDate = nowFactory()
             }
@@ -104,7 +104,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
               caseUpdate: {},
               appealCaseUpdate: {
                 appealState: AppealCaseState.WITHDRAWN,
-                appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+                appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
               },
             }
           }

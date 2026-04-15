@@ -23,8 +23,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseTransition,
   InstitutionType,
   NotificationType,
@@ -50,23 +50,23 @@ const renderLinkButton = (text: string, href: string) => {
 
 export const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
-  appealRulingDecision?: CaseAppealRulingDecision | null,
+  appealRulingDecision?: AppealCaseRulingDecision | null,
 ) => {
   switch (appealRulingDecision) {
-    case CaseAppealRulingDecision.ACCEPTING:
+    case AppealCaseRulingDecision.ACCEPTING:
       return formatMessage(appealRuling.decisionAccept)
-    case CaseAppealRulingDecision.REPEAL:
+    case AppealCaseRulingDecision.REPEAL:
       return formatMessage(appealRuling.decisionRepeal)
-    case CaseAppealRulingDecision.CHANGED:
-    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+    case AppealCaseRulingDecision.CHANGED:
+    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
       return formatMessage(appealRuling.decisionChanged)
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
       return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
       return formatMessage(appealRuling.decisionDismissedFromCourt)
-    case CaseAppealRulingDecision.REMAND:
+    case AppealCaseRulingDecision.REMAND:
       return formatMessage(appealRuling.decisionRemand)
-    case CaseAppealRulingDecision.DISCONTINUED:
+    case AppealCaseRulingDecision.DISCONTINUED:
       return formatMessage(appealRuling.decisionDiscontinued)
     default:
       return undefined
