@@ -57,8 +57,7 @@ export const m = defineMessages({
     id: 'sp.applications:intro.copyOlder',
     defaultMessage:
       'Hér sérðu yfirlit yfir eldri umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
-    description:
-      'Intro copy to introduce to older (pruned) applications',
+    description: 'Intro copy to introduce to older (pruned) applications',
   },
   error: {
     id: 'sp.applications:error',
