@@ -506,4 +506,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
   },
+  [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
 }
