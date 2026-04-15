@@ -515,28 +515,28 @@ export interface UpdateCase
         | 'appealedByNationalId'
       >
     > {
-  type?: CaseType
-  state?: CaseState
-  policeCaseNumbers?: string[]
-  defendantWaivesRightToCounsel?: boolean
-  rulingDate?: Date | null
-  courtCaseNumber?: string | null
-  judgeId?: string | null
-  registrarId?: string | null
-  courtRecordSignatoryId?: string | null
-  courtRecordSignatureDate?: Date | null
-  parentCaseId?: string | null
-  indictmentDeniedExplanation?: string | null
-  indictmentHash?: string | null
+  type?: Case['type']
+  state?: Case['state']
+  policeCaseNumbers?: Case['policeCaseNumbers']
+  defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
+  rulingDate?: Case['rulingDate'] | null
+  courtCaseNumber?: Case['courtCaseNumber'] | null
+  judgeId?: Case['judgeId'] | null
+  registrarId?: Case['registrarId'] | null
+  courtRecordSignatoryId?: Case['courtRecordSignatoryId'] | null
+  courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
+  parentCaseId?: Case['parentCaseId'] | null
+  indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
+  indictmentHash?: Case['indictmentHash'] | null
+  rulingSignatureDate?: Case['rulingSignatureDate'] | null
+  withCourtSessions?: Case['withCourtSessions']
+  courtRecordHash?: Case['courtRecordHash'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
-  rulingSignatureDate?: Date | null
-  withCourtSessions?: boolean
-  courtRecordHash?: string | null
 }
 
 export const appealCaseFields: (keyof UpdateAppealCase)[] = [
@@ -562,7 +562,6 @@ export const appealCaseFields: (keyof UpdateAppealCase)[] = [
 export interface UpdateAppealCase
   extends Pick<
     AppealCase,
-    | 'appealState'
     | 'appealCaseNumber'
     | 'appealReceivedByCourtDate'
     | 'prosecutorStatementDate'
@@ -579,4 +578,6 @@ export interface UpdateAppealCase
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
     | 'appealedByNationalId'
-  > {}
+  > {
+  appealState?: AppealCase['appealState']
+}
