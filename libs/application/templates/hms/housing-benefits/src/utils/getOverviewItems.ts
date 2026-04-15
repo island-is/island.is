@@ -642,7 +642,9 @@ export const extraDataChangedCircumstancesOverviewItems = (
     })
   }
 
-  items.push(...extraDataOverviewItemsForDocType(answers, 'changedCircumstances'))
+  items.push(
+    ...extraDataOverviewItemsForDocType(answers, 'changedCircumstances'),
+  )
   return items
 }
 
