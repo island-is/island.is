@@ -15,8 +15,6 @@ import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgr
 
 export const wrongHomeSection = buildSection({
   condition: (answers, externalData, user) => {
-    console.log('answers: ', answers)
-    console.log('externalData: ', externalData)
     return !doesAssigneeAddressMatchRentalContract(answers, externalData, user)
   },
   id: 'wrongHomeSection',
