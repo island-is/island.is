@@ -4,9 +4,9 @@ import { Test } from '@nestjs/testing'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  CaseType,
-  CaseState,
   CaseOrigin,
+  CaseState,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'

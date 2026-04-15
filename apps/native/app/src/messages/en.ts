@@ -62,6 +62,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
+  'pinCode.updated': 'PIN code updated',
 
   // personal info screen
   'personalInfo.screenTitle': 'Personal info',
@@ -138,6 +139,8 @@ export const en: TranslatedMessages = {
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',
+  'user.natreg.description':
+    'Below is data about you retrieved from Registers Iceland',
   'user.natreg.displayName': 'Full name',
   'user.natreg.nationalId': 'Social ID',
   'user.natreg.birthPlace': 'Birthplace',
@@ -203,6 +206,7 @@ export const en: TranslatedMessages = {
   'homeOptions.applications': 'Applications',
   'homeOptions.vehicles': 'Vehicles',
   'homeOptions.airDiscount': 'Air discount scheme',
+  'homeOptions.appointments': 'Doctor appointments',
 
   // inbox
   'inbox.screenTitle': 'Inbox',
@@ -462,6 +466,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
   'vehicleDetail.noInfo': 'No information received',
+  'vehicleDetail.moreOptions': 'More options',
 
   // vehicle mileage
   'vehicle.mileage.errorTitle': 'Error',
@@ -488,7 +493,7 @@ export const en: TranslatedMessages = {
   // vehicle links
   'vehicle.links.ownerLookup': 'Vehicle registry lookup',
   'vehicle.links.vehicleHistory': 'Vehicle history',
-  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.reportOwnerChange': 'Report ownership change',
   'vehicle.links.returnCertificate': 'Return certificate',
   'vehicle.links.nameConfidentiality':
     'Name confidentiality in vehicle registry',
