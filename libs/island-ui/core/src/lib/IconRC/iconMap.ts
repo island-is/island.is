@@ -247,7 +247,7 @@ export default {
     dots: 'Dots',
     download: 'DownloadOutline',
     upload: 'UploadOutline',
-    election: 'ElectionOutline',
+    election: 'Election',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
