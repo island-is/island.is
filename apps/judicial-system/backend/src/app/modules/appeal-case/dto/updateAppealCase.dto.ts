@@ -14,6 +14,14 @@ export class UpdateAppealCaseDto {
   readonly appealCaseNumber?: string
 
   @IsOptional()
+  @ApiPropertyOptional({ type: Date })
+  readonly prosecutorStatementDate?: Date
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: Date })
+  readonly defendantStatementDate?: Date
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly appealAssistantId?: string

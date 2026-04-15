@@ -529,7 +529,7 @@ export interface UpdateCase
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
-  withCourtSessions?: Case['withCourtSessions'] | null
+  withCourtSessions?: Case['withCourtSessions']
   courtRecordHash?: Case['courtRecordHash'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
