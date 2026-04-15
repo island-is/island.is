@@ -351,7 +351,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
             },
             {
-              id: Roles.DELIGATE,
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/InReviewForm/index').then((val) =>
                   Promise.resolve(val.ApplicantReview),
