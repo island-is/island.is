@@ -59,6 +59,14 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
+      - name: Cache server health check
+        run: |
+          if curl -sf --max-time 3 "${ACTIONS_CACHE_URL:-http://gha-cache.internal:3000/}" > /dev/null 2>&1; then
+            echo "✅ Cache server reachable at ${ACTIONS_CACHE_URL:-not set}"
+          else
+            echo "⚠️ Cache server unreachable — falling back to GitHub hosted cache"
+          fi
+
       - name: Get git branch
         id: git-branch
         run: |
