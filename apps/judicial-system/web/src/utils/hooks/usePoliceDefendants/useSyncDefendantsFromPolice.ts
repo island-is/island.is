@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react'
 
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -43,9 +44,14 @@ export const useSyncDefendantsFromPolice = () => {
         .filter((id): id is string => Boolean(id)),
     )
 
-    const toAdd = policeDefendants.filter(
-      (p) => p.nationalId && !existingNationalIds.has(p.nationalId),
-    )
+    if (isRestrictionCase(workingCase.type) && existingNationalIds.size > 0) {
+      return
+    }
+
+    // For restriction cases, ensure we only persist the first defendant.
+    const toAdd = policeDefendants
+      .filter((p) => p.nationalId && !existingNationalIds.has(p.nationalId))
+      .slice(0, isRestrictionCase(workingCase.type) ? 1 : undefined)
     if (toAdd.length === 0) {
       return
     }
@@ -85,6 +91,7 @@ export const useSyncDefendantsFromPolice = () => {
     sync()
   }, [
     workingCase.id,
+    workingCase.type,
     workingCase.defendants,
     policeDefendantsData?.policeDefendants,
     createDefendant,
