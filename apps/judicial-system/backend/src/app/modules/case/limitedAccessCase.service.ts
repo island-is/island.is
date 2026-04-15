@@ -768,6 +768,7 @@ export class LimitedAccessCaseService {
     const cutoffDate = getDefenceUserCutoffDate(
       user.nationalId,
       theCase.defendants,
+      theCase.civilClaimants,
     )
 
     const allowedCaseFiles =

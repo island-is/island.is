@@ -75,7 +75,17 @@ const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
 export const getDefenceUserCutoffDate = (
   nationalId: string,
   defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
 ): Date | undefined => {
+  if (
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+      nationalId,
+      civilClaimants,
+    )
+  ) {
+    return undefined
+  }
+
   const myDefendants = defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
@@ -186,7 +196,11 @@ const canDefenceUserViewCaseFile = ({
   }
 
   if (isIndictmentCase(caseType)) {
-    const cutoffDate = getDefenceUserCutoffDate(nationalId, defendants)
+    const cutoffDate = getDefenceUserCutoffDate(
+      nationalId,
+      defendants,
+      civilClaimants,
+    )
 
     if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
       return false

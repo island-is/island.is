@@ -1,6 +1,6 @@
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
-import { Defendant, DefendantEventLog } from '../../../repository'
+import { CivilClaimant, Defendant, DefendantEventLog } from '../../../repository'
 import { getDefenceUserCutoffDate } from '../caseFileCategory'
 
 const nationalId = '0101010101'
@@ -24,6 +24,15 @@ const makeDefendant = (
     defenderNationalId,
     eventLogs,
   } as unknown as Defendant)
+
+const makeCivilClaimant = (
+  spokespersonNationalId: string | undefined,
+): CivilClaimant =>
+  ({
+    hasSpokesperson: true,
+    isSpokespersonConfirmed: true,
+    spokespersonNationalId,
+  } as unknown as CivilClaimant)
 
 describe('getDefenceUserCutoffDate', () => {
   describe('when defendants is undefined', () => {
@@ -141,6 +150,21 @@ describe('getDefenceUserCutoffDate', () => {
       expect(getDefenceUserCutoffDate(nationalId, defendants)).toEqual(
         dismissedAt,
       )
+    })
+  })
+
+  describe('when the defender is also a confirmed spokesperson for a civil claimant', () => {
+    it('returns undefined even if all of the defender\'s defendants are dismissed', () => {
+      const defendants = [
+        makeDefendant(nationalId, [
+          makeEventLog(DefendantEventType.INDICTMENT_DISMISSED, dismissedAt),
+        ]),
+      ]
+      const civilClaimants = [makeCivilClaimant(nationalId)]
+
+      expect(
+        getDefenceUserCutoffDate(nationalId, defendants, civilClaimants),
+      ).toBeUndefined()
     })
   })
 })
