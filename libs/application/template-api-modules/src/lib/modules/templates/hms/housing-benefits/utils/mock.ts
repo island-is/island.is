@@ -127,9 +127,7 @@ export const getAssigneePersonalTaxMockMode = (
 ): PersonalTaxMockMode => {
   const answers = application?.answers
   const prefix = `${nationalId}.assigneeDevMockSettings`
-  if (
-    getValueViaPath<string>(answers ?? {}, `${prefix}.useMock`) !== YES
-  ) {
+  if (getValueViaPath<string>(answers ?? {}, `${prefix}.useMock`) !== YES) {
     return 'none'
   }
   const tax = getValueViaPath<string[]>(
