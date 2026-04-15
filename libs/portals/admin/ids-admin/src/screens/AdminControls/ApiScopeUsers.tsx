@@ -8,21 +8,17 @@ import {
   Box,
   Button,
   Checkbox,
-  DialogPrompt,
   FilterInput,
   Input,
   InputError,
-  Pagination,
   Select,
   Stack,
-  Table as T,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { Modal } from '@island.is/react/components'
-import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
@@ -38,36 +34,19 @@ import {
   type GetApiScopeUserQueryVariables,
   useCreateApiScopeUserMutation,
 } from './ApiScopeUsers.generated'
-
-interface ApiScopeUserRow {
-  nationalId: string
-  name?: string | null
-  email: string
-}
-
-const PAGE_SIZE = 20
-
-interface ApiScopeUserFormData {
-  nationalId: string
-  name: string
-  email: string
-}
-
-const emptyForm: ApiScopeUserFormData = {
-  nationalId: '',
-  name: '',
-  email: '',
-}
-
-interface FormErrors {
-  name?: string
-  nationalId?: string
-  email?: string
-  environments?: string
-}
-
-const NATIONAL_ID_REGEX = /^\d{10}$/
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+import {
+  emptyForm,
+  type ApiScopeUserFormData,
+  type ApiScopeUserRow,
+  type FormErrors,
+  type ScopeOption,
+} from './ApiScopeUsers.types'
+import {
+  validateApiScopeUserForm,
+  hasErrors,
+  PAGE_SIZE,
+} from './ApiScopeUsers.utils'
+import { ApiScopeUsersTable } from './components/ApiScopeUsersTable'
 
 const ApiScopeUsers = () => {
   const { formatMessage } = useLocale()
@@ -132,9 +111,16 @@ const ApiScopeUsers = () => {
     }
   }, [])
 
+  const resetModalState = useCallback(() => {
+    setModalVisible(false)
+    setFormData(emptyForm)
+    setActiveScopes([])
+    setSelectedEnvironments([])
+    setUserAvailableEnvironments([])
+    setFormErrors({})
+  }, [])
+
   useEffect(() => {
-    // only handle the fetcher data if it's different from the last handled fetcher data
-    // to avoid a loop of re-rendering the component
     if (!fetcher.data || fetcher.data === lastHandledFetcherData.current) {
       return
     }
@@ -152,15 +138,11 @@ const ApiScopeUsers = () => {
           toast.success(formatMessage(m.apiScopeUsersDeleteSuccess))
           break
       }
-      setModalVisible(false)
-      setFormData(emptyForm)
-      setActiveScopes([])
-      setSelectedEnvironments([])
-      setUserAvailableEnvironments([])
+      resetModalState()
     } else {
       toast.error(formatMessage(m.apiScopeUsersError))
     }
-  }, [fetcher.data, formatMessage])
+  }, [fetcher.data, formatMessage, resetModalState])
 
   const commitSearch = useCallback(
     (value: string) => {
@@ -241,8 +223,6 @@ const ApiScopeUsers = () => {
     setLoadingUser(false)
   }
 
-  type ScopeOption = { label: string; value: string; description?: string }
-
   const scopeOptions: ScopeOption[] = useMemo(
     () =>
       accessControlledScopes.map(
@@ -264,37 +244,16 @@ const ApiScopeUsers = () => {
     [scopeOptions, activeScopes],
   )
 
-  const validateForm = useCallback((): FormErrors => {
-    const errors: FormErrors = {}
-
-    if (formData.name.length < 2) {
-      errors.name = formatMessage(m.apiScopeUsersErrorNameMinLength)
-    }
-
-    if (!NATIONAL_ID_REGEX.test(formData.nationalId)) {
-      errors.nationalId = formatMessage(m.apiScopeUsersErrorNationalId)
-    }
-
-    if (!formData.email.trim()) {
-      errors.email = formatMessage(m.apiScopeUsersErrorEmailRequired)
-    } else if (!EMAIL_REGEX.test(formData.email)) {
-      errors.email = formatMessage(m.apiScopeUsersErrorEmailFormat)
-    }
-
-    if (!isEditing && selectedEnvironments.length === 0) {
-      errors.environments = formatMessage(
-        m.apiScopeUsersErrorEnvironmentRequired,
-      )
-    }
-
-    return errors
-  }, [formData, isEditing, selectedEnvironments, formatMessage])
-
   const handleSubmit = () => {
-    const errors = validateForm()
+    const errors = validateApiScopeUserForm({
+      formData,
+      isEditing,
+      selectedEnvironments,
+      formatMessage,
+    })
     setFormErrors(errors)
 
-    if (Object.keys(errors).length > 0) {
+    if (hasErrors(errors)) {
       return
     }
 
@@ -408,97 +367,14 @@ const ApiScopeUsers = () => {
         </Button>
       </Box>
 
-      {data.users.rows.length === 0 ? (
-        <Box
-          padding={4}
-          textAlign="center"
-          border="standard"
-          borderRadius="large"
-        >
-          <Problem
-            type="no_data"
-            title={formatMessage(m.apiScopeUsersNoResults)}
-            titleSize="h3"
-          />
-        </Box>
-      ) : (
-        <Stack space={3}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>{formatMessage(m.apiScopeUsersName)}</T.HeadData>
-                <T.HeadData>
-                  {formatMessage(m.apiScopeUsersNationalId)}
-                </T.HeadData>
-                <T.HeadData>{formatMessage(m.apiScopeUsersEmail)}</T.HeadData>
-                <T.HeadData>{/* Actions */}</T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {data.users.rows.map((user: ApiScopeUserRow) => (
-                <T.Row key={user.nationalId}>
-                  <T.Data>{user.name}</T.Data>
-                  <T.Data>{user.nationalId}</T.Data>
-                  <T.Data>{user.email}</T.Data>
-                  <T.Data>
-                    <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        icon="pencil"
-                        onClick={() => openEditModal(user)}
-                      />
-                      <DialogPrompt
-                        baseId={`delete-${user.nationalId}`}
-                        title={formatMessage(m.apiScopeUsersDeleteConfirmTitle)}
-                        description={formatMessage(
-                          m.apiScopeUsersDeleteConfirmMessage,
-                        )}
-                        ariaLabel={formatMessage(
-                          m.apiScopeUsersDeleteConfirmTitle,
-                        )}
-                        buttonTextConfirm={formatMessage(
-                          m.apiScopeUsersDeleteButton,
-                        )}
-                        buttonPropsConfirm={{ colorScheme: 'destructive' }}
-                        buttonTextCancel={formatMessage(
-                          m.apiScopeUsersCancelButton,
-                        )}
-                        onConfirm={() => handleDelete(user.nationalId)}
-                        disclosureElement={
-                          <Button
-                            variant="ghost"
-                            size="small"
-                            icon="trash"
-                            colorScheme="destructive"
-                          />
-                        }
-                      />
-                    </Box>
-                  </T.Data>
-                </T.Row>
-              ))}
-            </T.Body>
-          </T.Table>
-
-          {totalPages > 1 && (
-            <Box display="flex" justifyContent="center">
-              <Pagination
-                page={currentPage}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
-          )}
-        </Stack>
-      )}
+      <ApiScopeUsersTable
+        rows={data.users.rows}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onEdit={openEditModal}
+        onDelete={handleDelete}
+        onPageChange={handlePageChange}
+      />
 
       {modalVisible && (
         <Modal
@@ -509,13 +385,7 @@ const ApiScopeUsers = () => {
               ? formatMessage(m.apiScopeUsersEditTitle)
               : formatMessage(m.apiScopeUsersCreateTitle)
           }
-          onClose={() => {
-            setModalVisible(false)
-            setFormData(emptyForm)
-            setActiveScopes([])
-            setSelectedEnvironments([])
-            setUserAvailableEnvironments([])
-          }}
+          onClose={resetModalState}
           closeButtonLabel={formatMessage(m.apiScopeUsersCancelButton)}
           scrollType="outside"
         >
@@ -693,16 +563,7 @@ const ApiScopeUsers = () => {
                   justifyContent="spaceBetween"
                   columnGap={2}
                 >
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      setModalVisible(false)
-                      setFormData(emptyForm)
-                      setActiveScopes([])
-                      setSelectedEnvironments([])
-                      setUserAvailableEnvironments([])
-                    }}
-                  >
+                  <Button variant="ghost" onClick={resetModalState}>
                     {formatMessage(m.apiScopeUsersCancelButton)}
                   </Button>
                   <Button onClick={handleSubmit} loading={isSubmitting}>
