@@ -144,7 +144,7 @@ describe('PoliceController - Get police case info', () => {
       ).toBe(false)
     })
 
-    it('should upsert defendant-linked police case numbers from LÖKE case units', () => {
+    it('should upsert defendant-linked police case numbers from police case units', () => {
       expect(upsertAssignedDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
       expect(upsertAssignedDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
         caseId,
