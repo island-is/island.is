@@ -26,9 +26,7 @@ describe('checkEnvironmentsSync', () => {
       makeEnv({ environment: 'Production' }),
     ]
 
-    expect(checkEnvironmentsSync(envs, ['boolField', 'stringField'])).toBe(
-      true,
-    )
+    expect(checkEnvironmentsSync(envs, ['boolField', 'stringField'])).toBe(true)
   })
 
   it('should return false when a scalar field differs', () => {

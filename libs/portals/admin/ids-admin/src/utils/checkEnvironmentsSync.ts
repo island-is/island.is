@@ -22,10 +22,7 @@ export const checkEnvironmentsSync = <T extends DynamicEnvironmentResult<T>>(
 
       if (
         Array.isArray(referenceValue) && Array.isArray(currentValue)
-          ? !isEqual(
-              [...referenceValue].sort(),
-              [...currentValue].sort(),
-            )
+          ? !isEqual([...referenceValue].sort(), [...currentValue].sort())
           : !isEqual(currentValue, referenceValue)
       ) {
         return false
