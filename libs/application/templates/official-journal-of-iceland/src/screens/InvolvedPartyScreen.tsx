@@ -252,9 +252,7 @@ export const InvolvedPartyScreen = ({
               name="showAdditionalParties"
               label={f(requirements.additionalParties.checkbox)}
               checked={showAdditionalParties}
-              onChange={(e) =>
-                handleAdditionalPartiesToggle(e.target.checked)
-              }
+              onChange={(e) => handleAdditionalPartiesToggle(e.target.checked)}
               backgroundColor="blue"
               large
             />
@@ -274,9 +272,7 @@ export const InvolvedPartyScreen = ({
                 options={additionalPartyOptions}
                 value={selectedPartyOptions}
                 onChange={(selectedOptions) => {
-                  const parties = selectedOptions.map(
-                    (option) => option.value,
-                  )
+                  const parties = selectedOptions.map((option) => option.value)
                   setSelectedParties(parties)
                   updateApplicationV2({
                     path: InputFields.requirements.additionalParties,

@@ -76,13 +76,10 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
       if (regNames.size === 0) return
 
       // Existing law chapter slugs already in the draft
-      const existingChapters = (
-        (raw as Record<string, unknown>).lawChapters ?? []
-      ) as Array<string | { slug: string; name: string }>
+      const existingChapters = ((raw as Record<string, unknown>).lawChapters ??
+        []) as Array<string | { slug: string; name: string }>
       const existingSlugs = new Set(
-        existingChapters.map((ch) =>
-          typeof ch === 'string' ? ch : ch.slug,
-        ),
+        existingChapters.map((ch) => (typeof ch === 'string' ? ch : ch.slug)),
       )
 
       // Fetch law chapters from each impacted regulation
@@ -96,8 +93,7 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
 
       const newChapters: Array<{ slug: string; name: string }> = []
       for (const result of results) {
-        const reg = result.data
-          ?.OJOIAGetRegulationFromApi as Regulation | null
+        const reg = result.data?.OJOIAGetRegulationFromApi as Regulation | null
         if (!reg?.lawChapters) continue
         for (const ch of reg.lawChapters as LawChapter[]) {
           if (!existingSlugs.has(ch.slug)) {
@@ -142,7 +138,14 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
     }
 
     init()
-  }, [draftId, loadDraft, isAmending, fetchRegulation, updateDraftMut, updateDraftField])
+  }, [
+    draftId,
+    loadDraft,
+    isAmending,
+    fetchRegulation,
+    updateDraftMut,
+    updateDraftField,
+  ])
 
   const { lawChapters, loading: lawChaptersLoading } = useLawChapters()
 
