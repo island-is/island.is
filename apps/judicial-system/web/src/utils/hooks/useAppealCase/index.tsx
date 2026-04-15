@@ -23,8 +23,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseTransition,
   InstitutionType,
   NotificationType,
@@ -140,7 +140,7 @@ const useAppealCase = () => {
   ).date
 
   // WITHDRAWN APPEAL BANNER IS HANDLED HERE:
-  if (appealState === CaseAppealState.WITHDRAWN) {
+  if (appealState === AppealCaseState.WITHDRAWN) {
     title = 'Úrskurður kærður'
     description = 'Afturkallað'
   }
@@ -150,7 +150,7 @@ const useAppealCase = () => {
     user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
     isSharedWithProsecutor
   ) {
-    if (appealState === CaseAppealState.COMPLETED) {
+    if (appealState === AppealCaseState.COMPLETED) {
       title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
@@ -163,7 +163,7 @@ const useAppealCase = () => {
 
   // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
-  else if (appealState === CaseAppealState.RECEIVED) {
+  else if (appealState === AppealCaseState.RECEIVED) {
     title = 'Úrskurður kærður'
     description = `Frestur til að skila greinargerð ${
       isStatementDeadlineExpired ? 'rann' : 'rennur'
@@ -208,7 +208,7 @@ const useAppealCase = () => {
         )
       )
     }
-  } else if (appealState === CaseAppealState.COMPLETED) {
+  } else if (appealState === AppealCaseState.COMPLETED) {
     title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }
