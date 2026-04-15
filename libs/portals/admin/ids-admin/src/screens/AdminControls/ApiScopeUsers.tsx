@@ -1,15 +1,16 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFetcher, useLoaderData, useSearchParams } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
+import { MultiValue } from 'react-select'
 
 import {
   Box,
   Button,
-  Checkbox,
   DialogPrompt,
   FilterInput,
   Input,
   Pagination,
+  Select,
   Stack,
   Table as T,
   Text,
@@ -30,6 +31,7 @@ import {
   type GetApiScopeUserQuery,
   type GetApiScopeUserQueryVariables,
 } from './ApiScopeUsers.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface ApiScopeUserRow {
   nationalId: string
@@ -72,7 +74,10 @@ const ApiScopeUsers = () => {
   const currentPage = Number(searchParams.get('page') ?? 1)
   const searchValue = searchParams.get('search') ?? ''
   const totalPages = Math.ceil((data?.users.totalCount ?? 0) / PAGE_SIZE)
-  const accessControlledScopes = data?.accessControlledScopes ?? []
+  const accessControlledScopes = useMemo(
+    () => data?.accessControlledScopes ?? [],
+    [data?.accessControlledScopes],
+  )
 
   const [localSearch, setLocalSearch] = useState(searchValue)
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -187,11 +192,30 @@ const ApiScopeUsers = () => {
     setLoadingUser(false)
   }
 
-  const handleScopeChange = (scopeName: string, checked: boolean) => {
-    setActiveScopes((prev) =>
-      checked ? [...prev, scopeName] : prev.filter((s) => s !== scopeName),
-    )
-  }
+  type ScopeOption = { label: string; value: string; description?: string }
+
+  const scopeOptions: ScopeOption[] = useMemo(
+    () =>
+      accessControlledScopes.map(
+        (scope: {
+          name: string
+          displayName?: string | null
+          description?: string | null
+        }) => ({
+          label: `${scope.displayName ?? scope.name} (${scope.name})`,
+          value: scope.name,
+          description: `${scope.name}${scope.description ? ' - ' : ''}${
+            scope.description ?? ''
+          }`,
+        }),
+      ),
+    [accessControlledScopes],
+  )
+
+  const selectedScopeOptions = useMemo(
+    () => scopeOptions.filter((opt) => activeScopes.includes(opt.value)),
+    [scopeOptions, activeScopes],
+  )
 
   const handleSubmit = () => {
     const intent = isEditing
@@ -247,8 +271,17 @@ const ApiScopeUsers = () => {
       </Box>
 
       {data.users.rows.length === 0 ? (
-        <Box padding={4} textAlign="center">
-          <Text>{formatMessage(m.apiScopeUsersNoResults)}</Text>
+        <Box
+          padding={4}
+          textAlign="center"
+          border="standard"
+          borderRadius="large"
+        >
+          <Problem
+            type="no_data"
+            title={formatMessage(m.apiScopeUsersNoResults)}
+            titleSize="h3"
+          />
         </Box>
       ) : (
         <Stack space={3}>
@@ -270,15 +303,13 @@ const ApiScopeUsers = () => {
                   <T.Data>{user.nationalId}</T.Data>
                   <T.Data>{user.email}</T.Data>
                   <T.Data>
-                    <Box display="flex" columnGap={1} justifyContent="flexEnd">
+                    <Box display="flex" columnGap={2} justifyContent="flexEnd">
                       <Button
-                        variant="text"
+                        variant="ghost"
                         size="small"
                         icon="pencil"
                         onClick={() => openEditModal(user)}
-                      >
-                        {formatMessage(m.apiScopeUserEditButton)}
-                      </Button>
+                      />
                       <DialogPrompt
                         baseId={`delete-${user.nationalId}`}
                         title={formatMessage(m.apiScopeUsersDeleteConfirmTitle)}
@@ -297,13 +328,11 @@ const ApiScopeUsers = () => {
                         onConfirm={() => handleDelete(user.nationalId)}
                         disclosureElement={
                           <Button
-                            variant="text"
+                            variant="ghost"
                             size="small"
                             icon="trash"
                             colorScheme="destructive"
-                          >
-                            {formatMessage(m.apiScopeUsersDeleteButton)}
-                          </Button>
+                          />
                         }
                       />
                     </Box>
@@ -352,9 +381,9 @@ const ApiScopeUsers = () => {
             setActiveScopes([])
           }}
           closeButtonLabel={formatMessage(m.apiScopeUsersCancelButton)}
-          scrollType="inside"
+          scrollType="outside"
         >
-          <Box padding={4}>
+          <Box paddingTop={4}>
             <Stack space={3}>
               <Input
                 name="nationalId"
@@ -368,6 +397,7 @@ const ApiScopeUsers = () => {
                 }
                 disabled={isEditing}
                 size="sm"
+                backgroundColor="blue"
               />
               <Input
                 name="name"
@@ -380,6 +410,7 @@ const ApiScopeUsers = () => {
                   }))
                 }
                 size="sm"
+                backgroundColor="blue"
               />
               <Input
                 name="email"
@@ -392,38 +423,30 @@ const ApiScopeUsers = () => {
                   }))
                 }
                 size="sm"
+                backgroundColor="blue"
               />
 
               {accessControlledScopes.length > 0 && (
                 <Box>
-                  <Text variant="h5" marginBottom={2}>
-                    {formatMessage(m.apiScopeUsersScopes)}
-                  </Text>
                   {loadingUser ? (
                     <Text>{formatMessage(m.apiScopeUsersScopesLoading)}</Text>
                   ) : (
-                    <Stack space={2}>
-                      {accessControlledScopes.map(
-                        (scope: {
-                          name: string
-                          displayName?: string | null
-                          description?: string | null
-                        }) => (
-                          <Checkbox
-                            key={scope.name}
-                            name={scope.name}
-                            label={`${scope.displayName ?? scope.name} (${
-                              scope.name
-                            })`}
-                            checked={activeScopes.includes(scope.name)}
-                            onChange={(e) =>
-                              handleScopeChange(scope.name, e.target.checked)
-                            }
-                            tooltip={scope.description ?? undefined}
-                          />
-                        ),
-                      )}
-                    </Stack>
+                    <Select
+                      label={formatMessage(m.apiScopeUsersScopes)}
+                      value={selectedScopeOptions}
+                      options={scopeOptions}
+                      onChange={(value) => {
+                        setActiveScopes(
+                          (value as MultiValue<ScopeOption>).map(
+                            (opt) => opt.value,
+                          ),
+                        )
+                      }}
+                      placeholder={formatMessage(m.apiScopeUsersScopes)}
+                      isMulti
+                      size="sm"
+                      backgroundColor="blue"
+                    />
                   )}
                 </Box>
               )}
