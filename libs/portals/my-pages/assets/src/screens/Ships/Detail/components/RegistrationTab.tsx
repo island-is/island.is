@@ -1,6 +1,10 @@
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import { TableGrid } from '@island.is/portals/my-pages/core'
+import {
+  TableGrid,
+  createTableData,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
 import { shipsMessages } from '../../../../lib/messages'
 import type { ShipDetailQuery } from '../ShipDetail.generated'
 import { isDefined } from '@island.is/shared/utils'
@@ -17,6 +21,8 @@ interface Props {
 
 export const RegistrationTab = ({ ship, loading }: Props) => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
+  const chunkSize = isMobile ? 1 : 2
   const renderableEngines = (ship?.engines ?? []).filter((e) => e.name.value)
 
   return (
@@ -25,7 +31,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
         <TableGrid
           title={formatMessage(shipsMessages.operatorTitle)}
           loading={loading}
-          dataArray={[
+          dataArray={createTableData(
             [
               {
                 title:
@@ -39,8 +45,6 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMessage(shipsMessages.operatorAddress),
                 value: ship.fishery.address?.value ?? '-',
               },
-            ],
-            [
               {
                 title:
                   ship.fishery.municipality?.label ??
@@ -48,14 +52,15 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                 value: ship.fishery.municipality?.value ?? '-',
               },
             ],
-          ]}
+            chunkSize,
+          )}
         />
       )}
       <TableGrid
         title={formatMessage(shipsMessages.constructionTitle)}
         loading={loading}
         mt={!!ship?.fishery}
-        dataArray={[
+        dataArray={createTableData(
           [
             {
               title:
@@ -69,8 +74,6 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                 formatMessage(shipsMessages.constructionYear),
               value: ship?.constructionYear?.value ?? '-',
             },
-          ],
-          [
             {
               title:
                 ship?.hullMaterial?.label ??
@@ -84,14 +87,15 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
               value: ship?.classificationSociety?.value ?? '-',
             },
           ],
-        ]}
+          chunkSize,
+        )}
       />
       {ship?.measurements && (
         <TableGrid
           title={formatMessage(shipsMessages.measurementsTitle)}
           loading={loading}
           mt
-          dataArray={[
+          dataArray={createTableData(
             [
               {
                 title:
@@ -113,8 +117,6 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                     ship.measurements.maxLength?.unit,
                   ) ?? '-',
               },
-            ],
-            [
               {
                 title:
                   ship.measurements.width?.label ??
@@ -135,8 +137,6 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                     ship.measurements.bruttoGrossTonnage?.unit,
                   ) ?? '-',
               },
-            ],
-            [
               {
                 title:
                   ship.measurements.bruttoWeight?.label ??
@@ -158,7 +158,8 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   ) ?? '-',
               },
             ],
-          ]}
+            chunkSize,
+          )}
         />
       )}
       {renderableEngines.length > 0 && (
@@ -179,7 +180,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                     <TableGrid
                       title={`${engine.name.label}: ${engine.name.value}`}
                       loading={loading}
-                      dataArray={[
+                      dataArray={createTableData(
                         [
                           {
                             title:
@@ -198,7 +199,8 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                             value: engine.year?.value ?? '-',
                           },
                         ],
-                      ]}
+                        chunkSize,
+                      )}
                     />
                   </Box>
                 )

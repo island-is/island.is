@@ -505,6 +505,9 @@ export class CaseController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get([
     'case/:caseId/caseFilesRecord/:policeCaseNumber',
@@ -703,6 +706,9 @@ export class CaseController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get([
     'case/:caseId/indictment',

@@ -8,9 +8,9 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   Case,
   CaseAppealDecision,
-  CaseAppealState,
   CaseCustodyRestrictions,
   CivilClaimant,
   Defendant,
@@ -105,11 +105,11 @@ export const hasSentNotification = (
 }
 
 export const isReopenedCOACase = (
-  appealState?: CaseAppealState | null,
+  appealState?: AppealCaseState | null,
   notifications?: Notification[] | null,
 ): boolean => {
   return (
-    appealState !== CaseAppealState.COMPLETED &&
+    appealState !== AppealCaseState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
       .hasSent
   )
@@ -133,7 +133,7 @@ export const getDefendantPleaText = (
 
 export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
   return (
-    theCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
     (!theCase.appealCase?.appealAssistant ||
       !theCase.appealCase?.appealCaseNumber ||
       !theCase.appealCase?.appealJudge1 ||

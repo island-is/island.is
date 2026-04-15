@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
@@ -21,14 +21,14 @@ import { transitionCase } from './case.state'
 
 // Builds appealCase props for a Case object.
 // undefined = no appeal case record exists in DB.
-// CaseAppealState value = appeal case record exists with that state.
-const withAppealCase = (appealState?: CaseAppealState) =>
+// AppealCaseState value = appeal case record exists with that state.
+const withAppealCase = (appealState?: AppealCaseState) =>
   appealState !== undefined ? { appealCase: { appealState } as AppealCase } : {}
 
 // All possible appeal state options including "no appeal case"
-const allAppealOptions: (CaseAppealState | undefined)[] = [
+const allAppealOptions: (AppealCaseState | undefined)[] = [
   undefined,
-  ...Object.values(CaseAppealState),
+  ...Object.values(AppealCaseState),
 ]
 
 describe('Transition Case', () => {
@@ -70,7 +70,7 @@ describe('Transition Case', () => {
           expect(res).toMatchObject({ state: CaseState.DRAFT })
         })
 
-        it.each(Object.values(CaseAppealState))(
+        it.each(Object.values(AppealCaseState))(
           'appeal state %s - should not open',
           (fromAppealState) => {
             // Arrange
@@ -148,7 +148,7 @@ describe('Transition Case', () => {
         })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not ask for confirmation',
         (fromAppealState) => {
           // Arrange
@@ -251,7 +251,7 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.DRAFT })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not deny indictment',
         (fromAppealState) => {
           // Arrange
@@ -342,7 +342,7 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.SUBMITTED })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not submit',
         (fromAppealState) => {
           // Arrange
@@ -420,7 +420,7 @@ describe('Transition Case', () => {
           expect(res).toMatchObject({ state: CaseState.SUBMITTED })
         })
 
-        it.each(Object.values(CaseAppealState))(
+        it.each(Object.values(AppealCaseState))(
           'appeal state %s - should not submit',
           (fromAppealState) => {
             // Arrange
@@ -491,7 +491,7 @@ describe('Transition Case', () => {
         })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not ask for cancellation',
         (fromAppealState) => {
           // Arrange
@@ -577,7 +577,7 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.RECEIVED })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not receive',
         (fromAppealState) => {
           // Arrange
@@ -635,7 +635,7 @@ describe('Transition Case', () => {
           expect(res).toMatchObject({ state: CaseState.RECEIVED })
         })
 
-        it.each(Object.values(CaseAppealState))(
+        it.each(Object.values(AppealCaseState))(
           'appeal state %s - should not receive',
           (fromAppealState) => {
             // Arrange
@@ -708,7 +708,7 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.COMPLETED })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not complete',
         (fromAppealState) => {
           // Arrange
@@ -1025,7 +1025,7 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.DELETED })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not delete',
         (fromAppealState) => {
           // Arrange
@@ -1088,7 +1088,7 @@ describe('Transition Case', () => {
           expect(res).toMatchObject({ state: CaseState.DELETED })
         })
 
-        it.each(Object.values(CaseAppealState))(
+        it.each(Object.values(AppealCaseState))(
           'appeal state %s - should not delete',
           (fromAppealState) => {
             // Arrange
@@ -1330,7 +1330,7 @@ describe('Transition Case', () => {
         )
 
         // Assert
-        expect(res).toMatchObject({ appealState: CaseAppealState.APPEALED })
+        expect(res).toMatchObject({ appealState: AppealCaseState.APPEALED })
         expect(res.prosecutorPostponedAppealDate).toBeDefined()
         expect(res.appealedByNationalId).toBeUndefined()
       })
@@ -1356,7 +1356,7 @@ describe('Transition Case', () => {
         )
 
         // Assert
-        expect(res).toMatchObject({ appealState: CaseAppealState.APPEALED })
+        expect(res).toMatchObject({ appealState: AppealCaseState.APPEALED })
         expect(res.accusedPostponedAppealDate).toBeDefined()
         expect(res.appealedByNationalId).toBe(defenderNationalId)
       })
@@ -1409,7 +1409,7 @@ describe('Transition Case', () => {
         expect(act).toThrow('Current user cannot appeal an indictment case')
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not appeal',
         (fromAppealState) => {
           // Arrange
@@ -1505,11 +1505,11 @@ describe('Transition Case', () => {
           )
 
           // Assert
-          expect(res).toMatchObject({ appealState: CaseAppealState.APPEALED })
+          expect(res).toMatchObject({ appealState: AppealCaseState.APPEALED })
           expect(res.appealedByNationalId).toBeUndefined()
         })
 
-        it.each(Object.values(CaseAppealState))(
+        it.each(Object.values(AppealCaseState))(
           'appeal state %s - should not appeal',
           (fromAppealState) => {
             // Arrange
@@ -1577,11 +1577,11 @@ describe('Transition Case', () => {
   describe.each(indictmentCases)('withdraw appeal %s', (type) => {
     const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [
-      CaseAppealState.APPEALED,
-      CaseAppealState.RECEIVED,
+      AppealCaseState.APPEALED,
+      AppealCaseState.RECEIVED,
     ]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1602,7 +1602,7 @@ describe('Transition Case', () => {
 
           // Assert
           expect(res).toMatchObject({
-            appealState: CaseAppealState.WITHDRAWN,
+            appealState: AppealCaseState.WITHDRAWN,
           })
         },
       )
@@ -1614,7 +1614,7 @@ describe('Transition Case', () => {
           {
             id: uuid(),
             state: fromState,
-            ...withAppealCase(CaseAppealState.RECEIVED),
+            ...withAppealCase(AppealCaseState.RECEIVED),
             type,
           } as Case,
           { id: uuid() } as User,
@@ -1622,7 +1622,7 @@ describe('Transition Case', () => {
 
         // Assert
         expect(res).toMatchObject({
-          appealState: CaseAppealState.WITHDRAWN,
+          appealState: AppealCaseState.WITHDRAWN,
           appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
         })
       })
@@ -1634,7 +1634,7 @@ describe('Transition Case', () => {
           {
             id: uuid(),
             state: fromState,
-            ...withAppealCase(CaseAppealState.APPEALED),
+            ...withAppealCase(AppealCaseState.APPEALED),
             type,
           } as Case,
           { id: uuid() } as User,
@@ -1642,7 +1642,7 @@ describe('Transition Case', () => {
 
         // Assert
         expect(res).toMatchObject({
-          appealState: CaseAppealState.WITHDRAWN,
+          appealState: AppealCaseState.WITHDRAWN,
         })
         expect(res.appealRulingDecision).toBeUndefined()
       })
@@ -1655,7 +1655,7 @@ describe('Transition Case', () => {
             id: uuid(),
             state: fromState,
             appealCase: {
-              appealState: CaseAppealState.RECEIVED,
+              appealState: AppealCaseState.RECEIVED,
               appealRulingDecision: CaseAppealRulingDecision.CHANGED,
             } as AppealCase,
             type,
@@ -1665,7 +1665,7 @@ describe('Transition Case', () => {
 
         // Assert
         expect(res).toMatchObject({
-          appealState: CaseAppealState.WITHDRAWN,
+          appealState: AppealCaseState.WITHDRAWN,
         })
         expect(res.appealRulingDecision).toBeUndefined()
       })
@@ -1729,11 +1729,11 @@ describe('Transition Case', () => {
         CaseState.DISMISSED,
       ]
       const allowedFromAppealStates = [
-        CaseAppealState.APPEALED,
-        CaseAppealState.RECEIVED,
+        AppealCaseState.APPEALED,
+        AppealCaseState.RECEIVED,
       ]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1754,7 +1754,7 @@ describe('Transition Case', () => {
 
             // Assert
             expect(res).toMatchObject({
-              appealState: CaseAppealState.WITHDRAWN,
+              appealState: AppealCaseState.WITHDRAWN,
             })
           },
         )
@@ -1766,7 +1766,7 @@ describe('Transition Case', () => {
             {
               id: uuid(),
               state: fromState,
-              ...withAppealCase(CaseAppealState.RECEIVED),
+              ...withAppealCase(AppealCaseState.RECEIVED),
               type,
             } as Case,
             { id: uuid() } as User,
@@ -1774,7 +1774,7 @@ describe('Transition Case', () => {
 
           // Assert
           expect(res).toMatchObject({
-            appealState: CaseAppealState.WITHDRAWN,
+            appealState: AppealCaseState.WITHDRAWN,
             appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
           })
         })
@@ -1786,7 +1786,7 @@ describe('Transition Case', () => {
             {
               id: uuid(),
               state: fromState,
-              ...withAppealCase(CaseAppealState.APPEALED),
+              ...withAppealCase(AppealCaseState.APPEALED),
               type,
             } as Case,
             { id: uuid() } as User,
@@ -1794,7 +1794,7 @@ describe('Transition Case', () => {
 
           // Assert
           expect(res).toMatchObject({
-            appealState: CaseAppealState.WITHDRAWN,
+            appealState: AppealCaseState.WITHDRAWN,
           })
           expect(res.appealRulingDecision).toBeUndefined()
         })
@@ -1807,7 +1807,7 @@ describe('Transition Case', () => {
               id: uuid(),
               state: fromState,
               appealCase: {
-                appealState: CaseAppealState.RECEIVED,
+                appealState: AppealCaseState.RECEIVED,
                 appealRulingDecision: CaseAppealRulingDecision.CHANGED,
               } as AppealCase,
               type,
@@ -1817,7 +1817,7 @@ describe('Transition Case', () => {
 
           // Assert
           expect(res).toMatchObject({
-            appealState: CaseAppealState.WITHDRAWN,
+            appealState: AppealCaseState.WITHDRAWN,
           })
           expect(res.appealRulingDecision).toBeUndefined()
         })
@@ -1877,9 +1877,9 @@ describe('Transition Case', () => {
 
   describe.each(indictmentCases)('receive appeal %s', (type) => {
     const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
-    const allowedFromAppealStates = [CaseAppealState.APPEALED]
+    const allowedFromAppealStates = [AppealCaseState.APPEALED]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1899,7 +1899,7 @@ describe('Transition Case', () => {
           )
 
           // Assert
-          expect(res).toMatchObject({ appealState: CaseAppealState.RECEIVED })
+          expect(res).toMatchObject({ appealState: AppealCaseState.RECEIVED })
           expect(res.appealReceivedByCourtDate).toBeDefined()
         },
       )
@@ -1962,9 +1962,9 @@ describe('Transition Case', () => {
         CaseState.REJECTED,
         CaseState.DISMISSED,
       ]
-      const allowedFromAppealStates = [CaseAppealState.APPEALED]
+      const allowedFromAppealStates = [AppealCaseState.APPEALED]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -1985,7 +1985,7 @@ describe('Transition Case', () => {
 
             // Assert
             expect(res).toMatchObject({
-              appealState: CaseAppealState.RECEIVED,
+              appealState: AppealCaseState.RECEIVED,
             })
           },
         )
@@ -2046,11 +2046,11 @@ describe('Transition Case', () => {
   describe.each(indictmentCases)('complete appeal %s', (type) => {
     const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
     const allowedFromAppealStates = [
-      CaseAppealState.RECEIVED,
-      CaseAppealState.WITHDRAWN,
+      AppealCaseState.RECEIVED,
+      AppealCaseState.WITHDRAWN,
     ]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2071,7 +2071,7 @@ describe('Transition Case', () => {
 
           // Assert
           expect(res).toMatchObject({
-            appealState: CaseAppealState.COMPLETED,
+            appealState: AppealCaseState.COMPLETED,
           })
         },
       )
@@ -2135,11 +2135,11 @@ describe('Transition Case', () => {
         CaseState.DISMISSED,
       ]
       const allowedFromAppealStates = [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.WITHDRAWN,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.WITHDRAWN,
       ]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2160,7 +2160,7 @@ describe('Transition Case', () => {
 
             // Assert
             expect(res).toMatchObject({
-              appealState: CaseAppealState.COMPLETED,
+              appealState: AppealCaseState.COMPLETED,
             })
           },
         )
@@ -2220,9 +2220,9 @@ describe('Transition Case', () => {
 
   describe.each(indictmentCases)('reopen appeal %s', (type) => {
     const allowedFromStates = [CaseState.COMPLETED, CaseState.CORRECTING]
-    const allowedFromAppealStates = [CaseAppealState.COMPLETED]
+    const allowedFromAppealStates = [AppealCaseState.COMPLETED]
     const disallowedAppealStates = allAppealOptions.filter(
-      (s) => !allowedFromAppealStates.includes(s),
+      (s) => s && !allowedFromAppealStates.includes(s),
     )
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2242,7 +2242,7 @@ describe('Transition Case', () => {
           )
 
           // Assert
-          expect(res).toMatchObject({ appealState: CaseAppealState.RECEIVED })
+          expect(res).toMatchObject({ appealState: AppealCaseState.RECEIVED })
         },
       )
 
@@ -2304,9 +2304,9 @@ describe('Transition Case', () => {
         CaseState.REJECTED,
         CaseState.DISMISSED,
       ]
-      const allowedFromAppealStates = [CaseAppealState.COMPLETED]
+      const allowedFromAppealStates = [AppealCaseState.COMPLETED]
       const disallowedAppealStates = allAppealOptions.filter(
-        (s) => !allowedFromAppealStates.includes(s),
+        (s) => s && !allowedFromAppealStates.includes(s),
       )
 
       describe.each(allowedFromStates)('state %s', (fromState) => {
@@ -2327,7 +2327,7 @@ describe('Transition Case', () => {
 
             // Assert
             expect(res).toMatchObject({
-              appealState: CaseAppealState.RECEIVED,
+              appealState: AppealCaseState.RECEIVED,
             })
           },
         )
@@ -2401,7 +2401,7 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.SUBMITTED })
       })
 
-      it.each(Object.values(CaseAppealState))(
+      it.each(Object.values(AppealCaseState))(
         'appeal state %s - should not move',
         (fromAppealState) => {
           // Arrange
@@ -2459,7 +2459,7 @@ describe('Transition Case', () => {
           expect(res).toMatchObject({ state: CaseState.SUBMITTED })
         })
 
-        it.each(Object.values(CaseAppealState))(
+        it.each(Object.values(AppealCaseState))(
           'appeal state %s - should not move',
           (fromAppealState) => {
             // Arrange

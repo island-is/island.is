@@ -19,7 +19,6 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseScheduledCard,
-  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   MarkdownWrapper,
@@ -32,7 +31,7 @@ import {
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   IndictmentCaseReviewDecision,
@@ -41,7 +40,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
@@ -61,7 +59,6 @@ const IndictmentOverview: FC = () => {
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
-  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
   const shouldDisplayReviewDecision =
     caseIsClosed && workingCase.indictmentReviewer?.id === user?.id
@@ -87,8 +84,8 @@ const IndictmentOverview: FC = () => {
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
       workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
-      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
+      workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
   const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
     Record<string, IndictmentCaseReviewDecision | null | undefined>
@@ -221,9 +218,7 @@ const IndictmentOverview: FC = () => {
                   judgeName={workingCase.judge?.name}
                 />
               )}
-            <AllIndictmentCaseFiles
-              displayGeneratedPDFs={displayGeneratedPDFs}
-            />
+            <AllIndictmentCaseFiles />
             <Box component="section">
               <InputPenalties />
             </Box>

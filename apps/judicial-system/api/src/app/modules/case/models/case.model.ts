@@ -7,9 +7,9 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseAppealDecision,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -50,7 +50,7 @@ registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 registerEnumType(CaseDecision, { name: 'CaseDecision' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
-registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
+registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseIndictmentRulingDecision, {
   name: 'CaseIndictmentRulingDecision',
