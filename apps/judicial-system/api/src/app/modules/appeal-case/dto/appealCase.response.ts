@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
   AppealCaseState,
@@ -7,6 +7,9 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
+
+registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
+registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 
 @ObjectType()
 export class AppealCase {
