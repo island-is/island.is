@@ -38,7 +38,6 @@ import {
   useListLicensesQuery,
   validateLicensesInitialData,
 } from '@/components/home/licenses-module'
-import { OnboardingModule } from '@/components/home/onboarding-module'
 import {
   useListVehiclesV2Query,
   validateVehiclesInitialData,
@@ -303,10 +302,6 @@ export default function HomeScreen() {
     {
       id: 'hello',
       component: <HelloModule />,
-    },
-    {
-      id: 'onboarding',
-      component: <OnboardingModule />,
     },
     {
       id: 'inbox',

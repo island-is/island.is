@@ -189,14 +189,6 @@ export const en: TranslatedMessages = {
   'home.allApplications': 'Digital applications',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
-  'home.onboardingModule.card1':
-    'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
-  'home.onboardingModule.card2':
-    'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
-  'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
-  'home.onboardingModule.card4':
-    'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',

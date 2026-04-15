@@ -1,4 +1,4 @@
-import { Typography } from '@/ui'
+import { Typography } from '../typography/typography'
 import React from 'react'
 import {
   ImageSourcePropType,
