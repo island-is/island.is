@@ -8,7 +8,7 @@ import {
   getV1IslandisassignmentresultsByStudentIdAssessmentTypeByAssessmentTypeIdSimple,
   getV1IslandisassignmentresultsByStudentIdResultByAssignmentResultIdPdf,
   getV1Islandisstudents,
-  IslandIsStudentResultsDto,
+  type IslandIsStudentResultsDto,
   type IslandIsAssessmentSubjectDto,
   type IslandIsAssessmentTypeDto,
   type IslandIsSimpleAssignmentResultDto,
