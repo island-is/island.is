@@ -200,6 +200,7 @@ export const isDefendantStepValidRC = (
   return Boolean(
     policeCaseNumbers &&
       policeCaseNumbers.length > 0 &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
@@ -219,7 +220,8 @@ export const isDefendantStepValidRC = (
 
 export const isDefendantStepValidIC = (workingCase: Case): boolean => {
   return Boolean(
-    !someDefendantIsInvalid(workingCase) &&
+    (workingCase.defendants?.length ?? 0) > 0 &&
+      !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
