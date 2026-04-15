@@ -16,6 +16,12 @@ import {
 import { FormGroup } from '../components/form/FormGroup'
 import { useLawChapters } from '../hooks/useLawChapters'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  REGULATION_FROM_API_QUERY,
+  UPDATE_DRAFT_REGULATION_MUTATION,
+} from '../graphql/queries'
+import type { Regulation, LawChapter } from '@island.is/regulations'
 
 export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -33,13 +39,110 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
     answers: application.answers as unknown as Record<string, unknown>,
   })
 
-  // Load regulation-specific fields from DB on mount
+  const isAmending =
+    application.answers?.applicationType === 'amending_regulation'
+
+  const [fetchRegulation] = useLazyQuery<{
+    OJOIAGetRegulationFromApi: Regulation | null
+  }>(REGULATION_FROM_API_QUERY, { fetchPolicy: 'no-cache' })
+  const [updateDraftMut] = useMutation(UPDATE_DRAFT_REGULATION_MUTATION)
+
+  // Load regulation-specific fields from DB on mount.
+  // For amending regulations, also pre-select law chapters from
+  // the impacted base regulations (set in the impacts screen).
   const loadRef = useRef(false)
   useEffect(() => {
     if (loadRef.current || !draftId) return
     loadRef.current = true
-    loadDraft()
-  }, [draftId, loadDraft])
+
+    const init = async () => {
+      const raw = await loadDraft()
+      if (!isAmending || !raw) return
+
+      // Extract unique regulation names from impacts
+      const impactsObj = (raw as Record<string, unknown>).impacts as
+        | Record<string, Array<Record<string, unknown>>>
+        | undefined
+      if (!impactsObj || typeof impactsObj !== 'object') return
+
+      const regNames = new Set<string>()
+      for (const impactList of Object.values(impactsObj)) {
+        if (!Array.isArray(impactList)) continue
+        for (const impact of impactList) {
+          const name = String(impact.name ?? '')
+          if (name && name !== 'self') regNames.add(name)
+        }
+      }
+      if (regNames.size === 0) return
+
+      // Existing law chapter slugs already in the draft
+      const existingChapters = (
+        (raw as Record<string, unknown>).lawChapters ?? []
+      ) as Array<string | { slug: string; name: string }>
+      const existingSlugs = new Set(
+        existingChapters.map((ch) =>
+          typeof ch === 'string' ? ch : ch.slug,
+        ),
+      )
+
+      // Fetch law chapters from each impacted regulation
+      const results = await Promise.all(
+        Array.from(regNames).map((name) =>
+          fetchRegulation({
+            variables: { input: { regulation: name } },
+          }),
+        ),
+      )
+
+      const newChapters: Array<{ slug: string; name: string }> = []
+      for (const result of results) {
+        const reg = result.data
+          ?.OJOIAGetRegulationFromApi as Regulation | null
+        if (!reg?.lawChapters) continue
+        for (const ch of reg.lawChapters as LawChapter[]) {
+          if (!existingSlugs.has(ch.slug)) {
+            existingSlugs.add(ch.slug)
+            newChapters.push({ slug: ch.slug, name: ch.name })
+          }
+        }
+      }
+
+      if (newChapters.length === 0) return
+
+      // Persist merged law chapters to DB
+      const rawObj = raw as Record<string, unknown>
+      const mergedSlugs = [
+        ...existingChapters.map((ch) =>
+          typeof ch === 'string' ? ch : ch.slug,
+        ),
+        ...newChapters.map((ch) => ch.slug),
+      ]
+
+      await updateDraftMut({
+        variables: {
+          input: {
+            draftId,
+            title: rawObj.title ?? '',
+            text: rawObj.text ?? '',
+            draftingStatus: rawObj.draftingStatus ?? 'draft',
+            draftingNotes: rawObj.draftingNotes ?? '',
+            lawChapters: mergedSlugs,
+          },
+        },
+      })
+
+      // Update local state so the UI reflects the merged chapters
+      const mergedChapters = [
+        ...existingChapters.map((ch) =>
+          typeof ch === 'string' ? { slug: ch, name: ch } : ch,
+        ),
+        ...newChapters,
+      ]
+      updateDraftField('lawChapters', mergedChapters)
+    }
+
+    init()
+  }, [draftId, loadDraft, isAmending, fetchRegulation, updateDraftMut, updateDraftField])
 
   const { lawChapters, loading: lawChaptersLoading } = useLawChapters()
 
