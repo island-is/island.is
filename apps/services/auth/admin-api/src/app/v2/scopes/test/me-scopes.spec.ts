@@ -441,6 +441,7 @@ const patchExpectedOutput = {
   showInDiscoveryDocument: true,
   supportedDelegationTypes: [],
   tagIds: [],
+  modified: expect.any(String),
   ...inputPatch,
 }
 
@@ -726,6 +727,7 @@ describe('MeScopesController', () => {
             requiresConfirmation: false,
             showInDiscoveryDocument: true,
             tagIds: [],
+            modified: expect.any(String),
           })
 
           // Assert - db record
