@@ -69,12 +69,12 @@ export class ScopeResolver {
     return this.scopeService.publishScope(user, input)
   }
 
-  @Query(() => Scope, { name: 'authAdminScope' })
+  @Query(() => Scope, { name: 'authAdminScope', nullable: true })
   getScope(
     @CurrentUser() user: User,
     @Args('input', { type: () => ScopeInput })
     input: ScopeInput,
-  ): Promise<Scope> {
+  ): Promise<Scope | null> {
     return this.scopeService.getScope(user, input)
   }
 
