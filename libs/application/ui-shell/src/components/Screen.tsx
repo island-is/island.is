@@ -123,7 +123,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     shouldUnregister: false,
     resolver: (formValue, context) =>
       resolver({ formValue, context, formatMessage }),
-    context: { dataSchema, formNode: screen },
+    context: { dataSchema, formNode: screen, application },
   })
   const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(
     null,

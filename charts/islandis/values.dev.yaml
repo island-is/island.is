@@ -19,6 +19,7 @@ air-discount-scheme-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -37,6 +38,17 @@ air-discount-scheme-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.dev01.devland.is'
+        - 'loftbru-cf.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -127,6 +139,18 @@ air-discount-scheme-backend:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.dev01.devland.is'
+        - 'loftbru-cf.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/api/swagger'
+            - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -218,6 +242,7 @@ air-discount-scheme-web:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -236,6 +261,17 @@ air-discount-scheme-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.dev01.devland.is'
+        - 'loftbru-cf.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -315,6 +351,7 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+    HH_COURSES_ZENDESK_ENV_TAG: 'hh_env_dev'
     HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
     HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
     HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
@@ -430,6 +467,7 @@ api:
     XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
     XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
+    XROAD_SHIP_REGISTRY_V2_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
@@ -466,6 +504,7 @@ api:
     - 'services-payments'
     - 'payments'
     - 'contentful-apps'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -484,6 +523,17 @@ api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+        - 'api-catalogue.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -676,6 +726,7 @@ application-system-api:
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+    HH_COURSES_ZENDESK_ENV_TAG: 'hh_env_dev'
     HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
     HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
     HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
@@ -790,6 +841,7 @@ application-system-api:
     - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -808,6 +860,18 @@ application-system-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'application-payment-callback-xrd.internal.dev01.devland.is'
+        - 'application-callback-xrd.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/application-payment'
+            - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -891,7 +955,6 @@ application-system-api:
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
-    HH_ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL'
     HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -981,6 +1044,7 @@ application-system-api-worker:
     - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1058,6 +1122,8 @@ application-system-form:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1076,6 +1142,16 @@ application-system-form:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -1279,7 +1355,7 @@ cms-importer-web-sitemap:
     requests:
       cpu: '100m'
       memory: '128Mi'
-  schedule: '0 * * * *'
+  schedule: '0 0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1363,6 +1439,7 @@ consultation-portal:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1381,6 +1458,16 @@ consultation-portal:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
   ingress:
@@ -1435,6 +1522,7 @@ contentful-apps:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1453,6 +1541,16 @@ contentful-apps:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'contentful-apps.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
   ingress:
@@ -1500,6 +1598,7 @@ contentful-entry-tagger-service:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1518,6 +1617,16 @@ contentful-entry-tagger-service:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'contentful-entry-tagger-service.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
   ingress:
@@ -1602,6 +1711,7 @@ download-service:
     - 'islandis'
     - 'nginx-ingress-external'
     - 'services-bff-portals-admin'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1620,6 +1730,16 @@ download-service:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'api.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -1799,6 +1919,7 @@ form-system-web:
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1817,6 +1938,16 @@ form-system-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
   ingress:
@@ -1892,6 +2023,16 @@ github-actions-cache:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'cache.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/github-actions-cache'
   ingress:
@@ -2049,6 +2190,7 @@ island-ui-storybook:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2067,6 +2209,16 @@ island-ui-storybook:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'ui.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -2123,6 +2275,7 @@ license-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2141,6 +2294,16 @@ license-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'license-api-xrd.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
   ingress:
@@ -2249,6 +2412,8 @@ payments:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2267,6 +2432,16 @@ payments:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
   ingress:
@@ -2325,6 +2500,7 @@ portals-admin:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2343,6 +2519,16 @@ portals-admin:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -2414,6 +2600,7 @@ regulations-admin-backend:
     - 'islandis'
     - 'download-service'
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2432,6 +2619,16 @@ regulations-admin-backend:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'regulations-admin-backend-xrd.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
   ingress:
@@ -2519,6 +2716,7 @@ search-indexer-service:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2537,6 +2735,16 @@ search-indexer-service:
       replicas:
         max: 1
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'search-indexer-service.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
@@ -2651,6 +2859,8 @@ service-portal:
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2669,6 +2879,16 @@ service-portal:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -2746,6 +2966,7 @@ service-portal-api:
     - 'user-notification'
     - 'identity-server'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2764,6 +2985,16 @@ service-portal-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'service-portal-api.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -2863,6 +3094,7 @@ services-bff-portals-admin:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2881,6 +3113,16 @@ services-bff-portals-admin:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2950,6 +3192,7 @@ services-bff-portals-my-pages:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2968,6 +3211,16 @@ services-bff-portals-my-pages:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -3101,6 +3354,7 @@ services-documents:
 services-form-system-api:
   enabled: true
   env:
+    CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/form'
     CODE_OWNER: 'Advania'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -3118,12 +3372,16 @@ services-form-system-api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+    PAYMENT_API_CALLBACK_URL: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -3131,6 +3389,8 @@ services-form-system-api:
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3149,6 +3409,16 @@ services-form-system-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-form-system-api.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
   ingress:
@@ -3247,6 +3517,8 @@ services-form-system-api-worker:
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3312,6 +3584,7 @@ services-payment-flow-update-handler:
   grantNamespaces:
     - 'services-payments'
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3330,6 +3603,16 @@ services-payment-flow-update-handler:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payment-flow-update-handler.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
   ingress:
@@ -3399,6 +3682,7 @@ services-payments:
     - 'application-system'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3417,6 +3701,25 @@ services-payments:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payments.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'services-payments-xrd.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
   ingress:
@@ -3539,6 +3842,7 @@ services-payments-worker:
     - 'application-system'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3615,6 +3919,7 @@ services-sessions:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3633,6 +3938,16 @@ services-sessions:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'sessions-api.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   ingress:
@@ -3693,6 +4008,7 @@ services-sessions-cleanup:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3760,6 +4076,7 @@ services-sessions-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3867,6 +4184,7 @@ services-university-gateway:
     - 'islandis'
     - 'nginx-ingress-internal'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3885,6 +4203,16 @@ services-university-gateway:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-university-gateway.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   ingress:
@@ -3998,6 +4326,7 @@ services-university-gateway-worker:
     - 'islandis'
     - 'nginx-ingress-internal'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4059,6 +4388,7 @@ skilavottord-web:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4077,6 +4407,16 @@ skilavottord-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -4155,6 +4495,16 @@ skilavottord-ws:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -4280,6 +4630,7 @@ user-notification:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4298,6 +4649,25 @@ user-notification:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'user-notification.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'user-notification-xrd.internal.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -4345,6 +4715,8 @@ user-notification:
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    NOVA_LANDLAEKNIR_PASSWORD: '/k8s/NOVA_LANDLAEKNIR_PASSWORD'
+    NOVA_LANDLAEKNIR_USERNAME: '/k8s/NOVA_LANDLAEKNIR_USERNAME'
     NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
     NOVA_URL: '/k8s/NOVA_URL_V1'
     NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
@@ -4409,6 +4781,7 @@ user-notification-birthday-worker:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4456,6 +4829,8 @@ user-notification-birthday-worker:
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    NOVA_LANDLAEKNIR_PASSWORD: '/k8s/NOVA_LANDLAEKNIR_PASSWORD'
+    NOVA_LANDLAEKNIR_USERNAME: '/k8s/NOVA_LANDLAEKNIR_USERNAME'
     NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
     NOVA_URL: '/k8s/NOVA_URL_V1'
     NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
@@ -4488,6 +4863,7 @@ user-notification-cleanup-worker:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4615,6 +4991,7 @@ user-notification-worker:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4684,6 +5061,8 @@ user-notification-worker:
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    NOVA_LANDLAEKNIR_PASSWORD: '/k8s/NOVA_LANDLAEKNIR_PASSWORD'
+    NOVA_LANDLAEKNIR_USERNAME: '/k8s/NOVA_LANDLAEKNIR_USERNAME'
     NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
     NOVA_URL: '/k8s/NOVA_URL_V1'
     NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
@@ -4717,6 +5096,7 @@ web:
     - 'application-system'
     - 'consultation-portal'
     - 'search-indexer'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4735,6 +5115,16 @@ web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.dev01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:

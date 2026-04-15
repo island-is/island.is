@@ -1,17 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { VehicleSearchApi } from '@island.is/clients/vehicles'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
 
 import {
   CarCategoryRecord,
-  CurrentVehicleWithMilage,
+  CarMap,
   RateCategory,
   UploadSelection,
   buildCurrentCarMap,
@@ -25,7 +23,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
-    private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
     private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -33,118 +30,41 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
   }
 
-  private vehiclesApiWithAuth(auth: Auth) {
-    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
   private rentalsApiWithAuth(auth: Auth) {
     return this.rentalDayRateClient.defaultApiWithAuth(auth)
   }
 
-  async getCurrentVehicles({
+  async getVehicleCarMap({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
-    try {
-      const pageSize = 500
-      const concurrency = 3
+  }: TemplateApiModuleActionProps): Promise<CarMap> {
+    const api = this.rentalsApiWithAuth(auth)
 
-      const carsWithMilageData: Array<{
-        permno?: string | null
-        latestMileage?: number | null
-      }> = []
-
-      const fetchPage = (page: number) =>
-        this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
-          showOwned: true,
-          showCoowned: true,
-          showOperated: true,
-          page,
-          pageSize,
-          onlyMileageRequiredVehicles: false,
-          onlyMileageRegisterableVehicles: false,
+    const [vehicles, rates] = await Promise.all([
+      api
+        .apiDayRateEntriesEntityIdEligibleVehiclesGet({
+          entityId: auth.nationalId,
         })
-
-      const firstResponse = await fetchPage(1)
-      const firstPageData = firstResponse.data ?? []
-      carsWithMilageData.push(...firstPageData)
-
-      const totalPages = Math.max(1, firstResponse.totalPages ?? 1)
-      const startPage = firstResponse.pageNumber ?? 1
-
-      if (totalPages > startPage) {
-        const remainingPages = Array.from(
-          { length: totalPages - startPage },
-          (_, index) => startPage + 1 + index,
-        )
-
-        for (let i = 0; i < remainingPages.length; i += concurrency) {
-          const batch = remainingPages.slice(i, i + concurrency)
-          const responses = await Promise.all(batch.map(fetchPage))
-
-          for (const response of responses) {
-            const pageData = response.data ?? []
-            if (pageData.length === 0) {
-              continue
-            }
-            carsWithMilageData.push(...pageData)
-          }
-        }
-      }
-
-      const carsWithStatuses = await this.vehiclesApiWithAuth(
-        auth,
-      ).currentVehiclesGet({
-        persidNo: auth.nationalId,
-        showOwned: true,
-        showCoowned: true,
-        showOperated: true,
-      })
-
-      const carIsOutOfUseDict = carsWithStatuses.reduce((acc, vehicle) => {
-        if (vehicle.permno) {
-          acc[vehicle.permno] = vehicle.outOfUse ?? false
-        }
-        return acc
-      }, {} as Record<string, boolean>)
-
-      return (
-        carsWithMilageData
-          ?.filter(
-            (vehicle) =>
-              vehicle.permno &&
-              typeof vehicle.latestMileage === 'number' &&
-              vehicle.latestMileage >= 0 &&
-              vehicle.permno in carIsOutOfUseDict &&
-              !carIsOutOfUseDict[vehicle.permno],
+        .catch((error) => {
+          this.logger.error(
+            'Error getting vehicles with mileage from Skatturinn',
+            error,
           )
-          .map((vehicle) => ({
-            permno: vehicle.permno ?? null,
-            milage: vehicle.latestMileage ?? null,
-          })) || []
-      )
-    } catch (error) {
-      this.logger.error(
-        'Error getting vehicles with milage and statuses',
-        error,
-      )
-      throw error
-    }
-  }
+          throw error
+        }),
+      api
+        .apiDayRateEntriesEntityIdGet({
+          entityId: auth.nationalId,
+        })
+        .catch((error) => {
+          this.logger.error(
+            'Error getting current vehicles rate category from Skatturinn',
+            error,
+          )
+          throw error
+        }),
+    ])
 
-  async getCurrentVehiclesRateCategory({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
-    try {
-      const resp = await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdGet({
-        entityId: auth.nationalId,
-      })
-      return resp
-    } catch (error) {
-      this.logger.error('Error getting current vehicles rate category', error)
-      throw error
-    }
+    return buildCurrentCarMap(vehicles, rates)
   }
 
   async postDataToSkatturinn({
@@ -170,17 +90,11 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         400,
       )
     }
-    const currentVehicles = getValueViaPath<CurrentVehicleWithMilage[]>(
-      application.externalData,
-      'getCurrentVehicles.data',
-    )
-
-    const currentRates = getValueViaPath<EntryModel[]>(
-      application.externalData,
-      'getCurrentVehiclesRateCategory.data',
-    )
-
-    const currentCarData = buildCurrentCarMap(currentVehicles, currentRates)
+    const currentCarData =
+      getValueViaPath<CarMap>(
+        application.externalData,
+        'getVehicleCarMap.data',
+      ) ?? {}
 
     let data: CarCategoryRecord[] = []
 
@@ -223,7 +137,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
             return null
           }
 
-          if (newMilage < currentCar.milage) {
+          if (newMilage < currentCar.mileage) {
             invalidRows.push(permno)
             return null
           }
@@ -238,7 +152,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
           return {
             vehicleId: permno,
-            oldMileage: currentCar.milage,
+            oldMileage: currentCar.mileage,
             newMilage,
             rateCategory: rateToChangeTo as string,
           }
@@ -411,9 +325,25 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   }
 
   private formatSkatturinnErrorBody(body: unknown): string | undefined {
-    if (!body || typeof body !== 'object') return undefined
+    if (!body) return undefined
 
-    const messages = Object.entries(body as Record<string, unknown>)
+    let parsed: Record<string, unknown>
+
+    if (typeof body === 'object') {
+      parsed = body as Record<string, unknown>
+    } else if (typeof body === 'string') {
+      try {
+        const json = JSON.parse(body)
+        if (!json || typeof json !== 'object') return undefined
+        parsed = json as Record<string, unknown>
+      } catch {
+        return undefined
+      }
+    } else {
+      return undefined
+    }
+
+    const messages = Object.entries(parsed)
       .flatMap(([field, value]) => {
         if (Array.isArray(value)) {
           return value

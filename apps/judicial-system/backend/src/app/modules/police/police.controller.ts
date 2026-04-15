@@ -84,6 +84,12 @@ export class PoliceController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<PoliceDefendant[]> {
+    if (theCase.policeDefendantNationalId) {
+      // Case was created with the deprecated create case method where a single defendant is set on the case
+      // We don't need to fetch defendants from the police API in this case
+      return Promise.resolve([])
+    }
+
     this.logger.debug(`Getting defendants for case ${caseId} from police API`)
 
     return this.policeService.getDefendantsFromPolice(theCase.id, user)
@@ -125,7 +131,13 @@ export class PoliceController {
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting info for police case ${caseId}`)
 
-    return this.policeService.getPoliceCaseInfo(theCase.id, user)
+    return this.policeService.getPoliceCaseInfo(
+      theCase.id,
+      user,
+      theCase.defendants
+        ?.map((defendant) => defendant.nationalId)
+        .filter((nationalId): nationalId is string => nationalId !== undefined),
+    )
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

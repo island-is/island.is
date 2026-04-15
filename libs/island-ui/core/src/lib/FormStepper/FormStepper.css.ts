@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const head = style({
   display: 'none',
@@ -29,7 +29,8 @@ export const list = style({
   padding: '20px 24px',
 
   backgroundColor: theme.color.purple100,
-  overflowX: 'hidden',
+  overflowX: 'auto',
+  scrollbarWidth: 'none',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
@@ -38,8 +39,13 @@ export const list = style({
       padding: 0,
 
       backgroundColor: 'transparent',
+      overflowX: 'hidden',
     },
   },
+})
+
+globalStyle(`${list}::-webkit-scrollbar`, {
+  display: 'none',
 })
 
 export const historyList = style({

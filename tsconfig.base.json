@@ -2,6 +2,7 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
+      "@/*": ["${configDir}/src/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -902,6 +903,9 @@
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
+      ],
+      "@island.is/clients/ship-registry-v2": [
+        "libs/clients/ship-registry-v2/src/index.ts"
       ],
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"

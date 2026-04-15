@@ -18,8 +18,11 @@ import {
 
 const cache = storageFactory(() => localStorage)
 
-const createCacheKey = (instanceId: string): string =>
+const creatChargeItemCodeCacheKey = (instanceId: string): string =>
   `hhCourseInstanceChargeItemCode:${instanceId}`
+
+const createCourseListPageIdCacheKey = (courseId: string): string =>
+  `hhCourseListPageId:${courseId}`
 
 /**
  * Checks if the course instance has a charge item code.
@@ -30,7 +33,7 @@ export const doesCourseInstanceHaveChargeItemCode = (
   instanceId: string | undefined | null,
 ): boolean => {
   if (!instanceId) return true
-  const cachedValue = cache.getItem(createCacheKey(instanceId))
+  const cachedValue = cache.getItem(creatChargeItemCodeCacheKey(instanceId))
   if (cachedValue === 'true') return true
   if (cachedValue === 'false') return false
   return true
@@ -58,6 +61,13 @@ export const loadCourseSelectOptions = async ({
   }))
 }
 
+export const getCachedCourseListPageId = (
+  courseId: string | undefined | null,
+): string | null => {
+  if (!courseId) return null
+  return cache.getItem(createCourseListPageIdCacheKey(courseId)) ?? null
+}
+
 export const loadDateSelectOptions = async ({
   apolloClient,
   selectedValues,
@@ -76,9 +86,16 @@ export const loadDateSelectOptions = async ({
   })
   if (!data?.getCourseById?.course) return []
 
+  if (data.getCourseById.course.courseListPageId) {
+    cache.setItem(
+      createCourseListPageIdCacheKey(courseId),
+      data.getCourseById.course.courseListPageId,
+    )
+  }
+
   for (const instance of data.getCourseById.course.instances)
     cache.setItem(
-      createCacheKey(instance.id),
+      creatChargeItemCodeCacheKey(instance.id),
       String(Boolean(instance.chargeItemCode)),
     )
 

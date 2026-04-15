@@ -52,18 +52,6 @@ const getApplicationName = (application: Application) => {
     return general.applicationName
   }
 
-  const applicationType = getValueViaPath<string>(
-    application.answers,
-    'applicationType',
-  )
-
-  if (applicationType === 'amending_regulation') {
-    return `${type} (breytingareglugerð) ${title}`
-  }
-  if (applicationType === 'base_regulation') {
-    return `${type} (stofnreglugerð) ${title}`
-  }
-
   return `${type} ${title}`
 }
 
@@ -100,10 +88,21 @@ const OJOITemplate: ApplicationTemplate<
     actions: {
       assignToInstitution: assign((context) => {
         const { application } = context
+        const assignees: string[] = [InstitutionNationalIds.DOMSMALA_RADUNEYTID]
 
-        set(application, 'assignees', [
-          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-        ])
+        const additionalParties =
+          getValueViaPath<Array<{ nationalId?: string }>>(
+            application.answers as Record<string, unknown>,
+            InputFields.requirements.additionalParties,
+          ) ?? []
+
+        additionalParties.forEach(({ nationalId }) => {
+          if (nationalId && !assignees.includes(nationalId)) {
+            assignees.push(nationalId)
+          }
+        })
+
+        set(application, 'assignees', assignees)
 
         return context
       }),
@@ -240,6 +239,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
@@ -250,12 +250,7 @@ const OJOITemplate: ApplicationTemplate<
               action: TemplateApiActions.postApplication,
               shouldPersistToExternalData: true,
               externalDataId: 'successfullyPosted',
-              throwOnError: false,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.syncRegulationDraft,
-              shouldPersistToExternalData: false,
-              throwOnError: false,
+              throwOnError: true,
             }),
           ],
           actionCard: {
@@ -363,9 +358,14 @@ const OJOITemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
     if (application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
+      if (id === InstitutionNationalIds.DOMSMALA_RADUNEYTID) {
+        return Roles.ASSIGNEE
+      }
+      return Roles.APPLICANT
     }
+
     return undefined
   },
 }

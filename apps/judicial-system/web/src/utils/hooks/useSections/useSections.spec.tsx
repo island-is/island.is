@@ -5,9 +5,9 @@ import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   Case,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -110,8 +110,11 @@ describe('useSections getSections', () => {
       id: faker.datatype.uuid(),
       state: CaseState.ACCEPTED,
       policeCaseNumbers: [],
-      appealState: CaseAppealState.COMPLETED,
-      appealRulingDecision: CaseAppealRulingDecision.REMAND,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+        appealRulingDecision: CaseAppealRulingDecision.REMAND,
+      },
     }
 
     expect(result.current.getSections(c, u)).toStrictEqual([

@@ -269,7 +269,6 @@ query Case($input: CaseQueryInput!) {
       defendantId
     }
     isAppealDeadlineExpired
-    isAppealGracePeriodExpired
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
@@ -379,7 +378,6 @@ query Case($input: CaseQueryInput!) {
       generatedPdfUri
     }
     requestDriversLicenseSuspension
-    appealState
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
@@ -388,35 +386,39 @@ query Case($input: CaseQueryInput!) {
     appealedByRole
     appealedDate
     appealDeadline
-    prosecutorStatementDate
-    defendantStatementDate
-    appealReceivedByCourtDate
-    appealConclusion
-    appealRulingDecision
-    appealCaseNumber
-    appealAssistant {
+    appealCase {
       id
-      name
+      appealState
+      appealedByNationalId
+      appealCaseNumber
+      appealReceivedByCourtDate
+      prosecutorStatementDate
+      defendantStatementDate
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealRulingDecision
+      appealConclusion
+      appealRulingModifiedHistory
+      requestAppealRulingNotToBePublished
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
     }
-    appealJudge1 {
-      id
-      name
-    }
-    appealJudge2 {
-      id
-      name
-    }
-    appealJudge3 {
-      id
-      name
-    }
-    appealRulingModifiedHistory
-    appealValidToDate
-    isAppealCustodyIsolation
-    appealIsolationToDate
-    requestAppealRulingNotToBePublished
     indictmentDeniedExplanation
-    indictmentReturnedExplanation
     arraignmentDate {
       date
       location

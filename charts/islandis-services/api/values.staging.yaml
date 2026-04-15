@@ -52,6 +52,7 @@ env:
   FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
   FISKISTOFA_ZENTER_CLIENT_ID: '1114'
   FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+  HH_COURSES_ZENDESK_ENV_TAG: 'hh_env_staging'
   HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
   HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
   HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
@@ -167,6 +168,7 @@ env:
   XROAD_SECONDARY_SCHOOL_PATH: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt'
   XROAD_SEMINARS_VER_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
   XROAD_SHIP_REGISTRY_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
+  XROAD_SHIP_REGISTRY_V2_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
   XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
@@ -203,6 +205,7 @@ grantNamespaces:
   - 'services-payments'
   - 'payments'
   - 'contentful-apps'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -221,6 +224,16 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'beta.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/api'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
 ingress:

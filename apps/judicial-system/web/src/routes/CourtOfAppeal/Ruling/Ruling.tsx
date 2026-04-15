@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -102,7 +102,7 @@ const CourtOfAppealRuling = () => {
   const isStepValid =
     allFilesDoneOrError &&
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-    (workingCase.appealRulingDecision ===
+    (workingCase.appealCase?.appealRulingDecision ===
       CaseAppealRulingDecision.DISCONTINUED ||
       uploadFiles.some(
         (file) =>
@@ -205,7 +205,10 @@ const CourtOfAppealRuling = () => {
                   name="case-decision"
                   id={option.id}
                   label={formatMessage(option.message)}
-                  checked={workingCase.appealRulingDecision === option.decision}
+                  checked={
+                    workingCase.appealCase?.appealRulingDecision ===
+                    option.decision
+                  }
                   onChange={() => handleRulingDecisionChange(option.decision)}
                   backgroundColor="white"
                   large
@@ -214,7 +217,7 @@ const CourtOfAppealRuling = () => {
             ))}
           </BlueBox>
         </Box>
-        {workingCase.appealRulingDecision ===
+        {workingCase.appealCase?.appealRulingDecision ===
         CaseAppealRulingDecision.DISCONTINUED ? (
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
@@ -249,9 +252,9 @@ const CourtOfAppealRuling = () => {
               workingCase.state === CaseState.ACCEPTED &&
               (workingCase.decision === CaseDecision.ACCEPTING ||
                 workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-              (workingCase.appealRulingDecision ===
+              (workingCase.appealCase?.appealRulingDecision ===
                 CaseAppealRulingDecision.CHANGED ||
-                workingCase.appealRulingDecision ===
+                workingCase.appealCase?.appealRulingDecision ===
                   CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY) && (
                 <RestrictionLength
                   workingCase={workingCase}
@@ -312,7 +315,7 @@ const CourtOfAppealRuling = () => {
               <Input
                 label={formatMessage(strings.conclusionHeading)}
                 name="rulingConclusion"
-                value={workingCase.appealConclusion || ''}
+                value={workingCase.appealCase?.appealConclusion || ''}
                 placeholder={formatMessage(strings.conclusionPlaceholder)}
                 onChange={(event) => {
                   removeTabsValidateAndSet(

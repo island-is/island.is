@@ -316,27 +316,10 @@ const MobileCustomDelegationsPermissionsTable = ({
           background={idx % 2 === 0 ? 'white' : 'transparent'}
         >
           <Box marginBottom={1}>
-            <Text variant="h5">
-              {formatMessage(m.delegationNr, { index: idx + 1 })}
-            </Text>
+            <Text variant="h5">{scope.domain?.displayName}</Text>
           </Box>
           <Box>
             <Stack space={0}>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Box
-                  width="half"
-                  display="flex"
-                  alignItems="center"
-                  paddingY={1}
-                >
-                  <Text fontWeight="semiBold" variant="medium">
-                    {formatMessage(m.headerDomain)}
-                  </Text>
-                </Box>
-                <Box width="half">
-                  <Text variant="medium">{scope.domain?.displayName}</Text>
-                </Box>
-              </Box>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <Box
                   width="half"

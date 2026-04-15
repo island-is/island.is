@@ -3,11 +3,14 @@ import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
 
+import { Environment } from '@island.is/shared/types'
+
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
+import { ScopeClient } from './models/scope-client.model'
 import { ScopesPayload } from './dto/scopes.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
@@ -224,5 +227,24 @@ export class ScopeService extends MultiEnvironmentService {
       scopeName: input.scopeName,
       environments: environmentsScopes,
     }
+  }
+
+  async getScopeClients(
+    user: User,
+    input: ScopeInput,
+    environment: Environment,
+  ): Promise<ScopeClient[]> {
+    const clients = await this.makeRequest(user, environment, (api) =>
+      api.meScopeClientsControllerFindAllRaw({
+        tenantId: input.tenantId,
+        scopeName: input.scopeName,
+      }),
+    )
+
+    return (clients ?? []).map((client) => ({
+      clientId: client.clientId,
+      clientType: client.clientType,
+      displayName: client.displayName,
+    }))
   }
 }

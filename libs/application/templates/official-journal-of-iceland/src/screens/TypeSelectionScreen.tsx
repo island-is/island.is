@@ -56,6 +56,15 @@ export const TypeSelectionScreen = ({
     }
   }, [currentType, setValue, updateApplicationV2])
 
+  // Sync local state with persisted answers when the application prop updates
+  // (e.g. navigating back to this screen after the answers have loaded).
+  useEffect(() => {
+    if (currentType) {
+      setSelected(currentType)
+      setValue('applicationType', currentType)
+    }
+  }, [currentType, setValue])
+
   const { departments } = useDepartments()
 
   const [fetchMainTypes] = useLazyQuery<{
@@ -70,6 +79,18 @@ export const TypeSelectionScreen = ({
   useEffect(() => {
     setSubmitButtonDisabled && setSubmitButtonDisabled(!selected)
   }, [selected, setSubmitButtonDisabled])
+
+  // Auto-select 'ad' when the regulations feature flag is off
+  const autoSelectedRef = useRef(false)
+  useEffect(() => {
+    if (!regulationsEnabled && !autoSelectedRef.current) {
+      autoSelectedRef.current = true
+      if (selected !== ApplicationTypes.AD) {
+        handleSelect(ApplicationTypes.AD)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regulationsEnabled])
 
   const autoSelectRegulationType = async (answers: Record<string, unknown>) => {
     const departmentB = departments?.find((d) => d.slug === DEPARTMENT_B)
@@ -181,8 +202,9 @@ export const TypeSelectionScreen = ({
               borderColor={selected === option.value ? 'blue300' : 'blue200'}
               borderWidth="standard"
               padding={3}
-              cursor="pointer"
-              onClick={() => handleSelect(option.value)}
+              onClick={() => {
+                handleSelect(option.value)
+              }}
             >
               <RadioButton
                 id={`applicationType-${option.value}`}

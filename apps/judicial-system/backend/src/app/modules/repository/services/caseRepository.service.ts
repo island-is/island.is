@@ -1,3 +1,4 @@
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import {
   CountOptions,
@@ -363,7 +364,9 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
-      const result = await this.caseModel.create(data, options)
+      const caseData = omit(data, appealCaseFields)
+
+      const result = await this.caseModel.create(caseData, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
 
@@ -421,7 +424,6 @@ export class CaseRepositoryService {
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
-        'indictmentReturnedExplanation',
         'indictmentHash',
         'hasCivilClaims',
       ]
@@ -696,23 +698,46 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
-        ...updateOptions,
-        returning: true,
-      })
+      const caseData = omit(data, appealCaseFields)
 
-      if (numberOfAffectedRows < 1) {
-        throw new InternalServerErrorException(
-          `Could not update case ${caseId}`,
-        )
-      }
+      let updatedCase: Case
 
-      if (numberOfAffectedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
-          { data: Object.keys(data) },
+      if (Object.keys(caseData).length > 0) {
+        const [numberOfAffectedRows, cases] = await this.caseModel.update(
+          caseData,
+          {
+            ...updateOptions,
+            returning: true,
+          },
         )
+
+        if (numberOfAffectedRows < 1) {
+          throw new InternalServerErrorException(
+            `Could not update case ${caseId}`,
+          )
+        }
+
+        if (numberOfAffectedRows > 1) {
+          // Tolerate failure, but log error
+          this.logger.error(
+            `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
+            { data: Object.keys(data) },
+          )
+        }
+
+        updatedCase = cases[0]
+      } else {
+        const theCase = await this.caseModel.findByPk(caseId, {
+          transaction: options.transaction,
+        })
+
+        if (!theCase) {
+          throw new InternalServerErrorException(
+            `Could not update case ${caseId}`,
+          )
+        }
+
+        updatedCase = theCase
       }
 
       this.logger.debug(`Updated case ${caseId}`)
@@ -728,7 +753,7 @@ export class CaseRepositoryService {
         })
       }
 
-      return cases[0]
+      return updatedCase
     } catch (error) {
       this.logger.error(`Error updating case ${caseId} with data:`, {
         data: Object.keys(data),

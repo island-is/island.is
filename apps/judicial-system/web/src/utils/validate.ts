@@ -4,9 +4,9 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   Case,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
@@ -680,13 +680,16 @@ export const isAdminUserFormValid = (user: User): boolean => {
 
 export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   return Boolean(
-    (workingCase.appealState === CaseAppealState.WITHDRAWN ||
-      (workingCase.appealJudge1 &&
-        workingCase.appealJudge2 &&
-        workingCase.appealJudge3 &&
-        workingCase.appealAssistant)) &&
+    (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN ||
+      (workingCase.appealCase?.appealJudge1 &&
+        workingCase.appealCase?.appealJudge2 &&
+        workingCase.appealCase?.appealJudge3 &&
+        workingCase.appealCase?.appealAssistant)) &&
       validate([
-        [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+        [
+          workingCase.appealCase?.appealCaseNumber,
+          ['empty', 'appeal-case-number-format'],
+        ],
       ]).isValid,
   )
 }
@@ -695,17 +698,18 @@ export const isCourtOfAppealRulingStepFieldsValid = (
   workingCase: Case,
 ): boolean => {
   return Boolean(
-    workingCase.appealRulingDecision &&
-      (workingCase.appealRulingDecision ===
+    workingCase.appealCase?.appealRulingDecision &&
+      (workingCase.appealCase?.appealRulingDecision ===
         CaseAppealRulingDecision.DISCONTINUED ||
-        validate([[workingCase.appealConclusion, ['empty']]]).isValid),
+        validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
+          .isValid),
   )
 }
 
 export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
   return Boolean(
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-      (workingCase.appealRulingDecision ===
+      (workingCase.appealCase?.appealRulingDecision ===
         CaseAppealRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,
@@ -717,7 +721,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
   return validate([
-    [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+    [
+      workingCase.appealCase?.appealCaseNumber,
+      ['empty', 'appeal-case-number-format'],
+    ],
   ]).isValid
 }
 

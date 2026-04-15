@@ -37,7 +37,7 @@ const asset = z
   )
   .refine(
     ({ share }) => {
-      return share ? share > 0 && share <= 100 : true
+      return share ? share >= 0.01 && share <= 100 : true
     },
     {
       path: ['share'],

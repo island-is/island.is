@@ -19,7 +19,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -98,23 +98,10 @@ export const attributes: (keyof Case)[] = [
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
-  'appealState',
   'accusedAppealDecision',
   'prosecutorAppealDecision',
   'accusedPostponedAppealDate',
   'prosecutorPostponedAppealDate',
-  'prosecutorStatementDate',
-  'defendantStatementDate',
-  'appealCaseNumber',
-  'appealAssistantId',
-  'appealJudge1Id',
-  'appealJudge2Id',
-  'appealJudge3Id',
-  'appealConclusion',
-  'appealRulingDecision',
-  'appealReceivedByCourtDate',
-  'appealRulingModifiedHistory',
-  'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
   'indictmentDecision',
   'indictmentRulingDecision',
@@ -128,14 +115,16 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export interface LimitedAccessUpdateCase
-  extends Pick<
-    Case,
-    | 'accusedPostponedAppealDate'
-    | 'appealState'
-    | 'defendantStatementDate'
-    | 'openedByDefender'
-    | 'appealRulingDecision'
-  > {}
+  extends Pick<Case, 'accusedPostponedAppealDate' | 'openedByDefender'>,
+    Partial<
+      Pick<
+        AppealCase,
+        | 'appealState'
+        | 'defendantStatementDate'
+        | 'appealRulingDecision'
+        | 'appealedByNationalId'
+      >
+    > {}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -158,26 +147,6 @@ export const include: Includeable[] = [
   {
     model: User,
     as: 'courtRecordSignatory',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -333,6 +302,9 @@ export const include: Includeable[] = [
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
@@ -392,6 +364,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
+    attributes,
     where: { state: completedIndictmentCaseStates },
     include: [
       {
@@ -572,7 +545,7 @@ export class LimitedAccessCaseService {
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
-    if (update.appealState === CaseAppealState.APPEALED) {
+    if (update.appealState === AppealCaseState.APPEALED) {
       for (const caseFile of theCase.caseFiles ?? []) {
         if (
           caseFile.state === CaseFileState.STORED_IN_RVG &&
@@ -600,7 +573,7 @@ export class LimitedAccessCaseService {
       })
     }
 
-    if (update.appealState === CaseAppealState.WITHDRAWN) {
+    if (update.appealState === AppealCaseState.WITHDRAWN) {
       addMessagesToQueue({
         type: MessageType.NOTIFICATION,
         user,

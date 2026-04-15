@@ -32,11 +32,9 @@ export const Section: FC<
   onSectionClick,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const { height: activeHeight, width: activeWidth } =
-    useComponentSize(containerRef)
+  const { height: activeHeight } = useComponentSize(containerRef)
   const { width } = useWindowSize()
   const [containerHeight, setContainerHeight] = useState(0)
-  const [containerWidth, setContainerWidth] = useState(0)
   const isClient = typeof window === 'object'
   const isSmallScreen = width <= islandUITheme.breakpoints.md
 
@@ -49,21 +47,17 @@ export const Section: FC<
   }, [isActive, isClient, activeHeight])
 
   useEffect(() => {
-    if (!isClient) return
+    if (!isClient || !isSmallScreen || !isActive) return
 
-    if (containerRef.current) {
-      setContainerWidth(activeWidth)
-    }
-  }, [isComplete, isActive, activeWidth, isClient])
+    containerRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    })
+  }, [isActive, isSmallScreen, isClient])
 
   return (
-    <Box
-      ref={containerRef}
-      className={styles.container}
-      style={{
-        marginLeft: isSmallScreen && isComplete ? `-${containerWidth}px` : '0',
-      }}
-    >
+    <Box ref={containerRef} className={styles.container}>
       <Box display="flex" alignItems="center" marginBottom={[0, 0, 1]}>
         <Box paddingTop={[0, 0, 2]}>
           <SectionNumber
