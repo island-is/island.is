@@ -1032,7 +1032,7 @@ export class SdfGetScreenInput {
   @Field()
   applicationId!: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, { nullable: true, description: 'Optional override for deep-linking. Omit to use the persisted page index.', deprecationReason: 'The backend now tracks page index in the database. Only use for deep-link overrides.' })
   step?: number
 }
 
@@ -1047,8 +1047,8 @@ export class SdfExecuteActionInput {
   @Field({ nullable: true })
   answers?: string
 
-  @Field(() => Int)
-  lastKnownPageIndex!: number
+  @Field(() => Int, { nullable: true, deprecationReason: 'The backend now tracks page index in the database.' })
+  lastKnownPageIndex?: number
 
   @Field(() => [String], { nullable: true })
   fieldIds?: string[]

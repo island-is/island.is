@@ -34,7 +34,7 @@ export class SdfService {
     applicationId: string,
     actionType: string,
     answers: Record<string, unknown> | undefined,
-    lastKnownPageIndex: number,
+    lastKnownPageIndex: number | undefined,
     locale: Locale,
     auth: Auth,
     fieldIds?: string[],

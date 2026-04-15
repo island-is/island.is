@@ -96,7 +96,7 @@ export class SdfResolver {
       input.applicationId,
       input.actionType,
       answers,
-      input.lastKnownPageIndex,
+      input.lastKnownPageIndex ?? undefined,
       locale,
       user,
       input.fieldIds,

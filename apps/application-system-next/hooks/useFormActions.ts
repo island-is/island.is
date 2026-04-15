@@ -7,7 +7,8 @@ import { executeAction as gqlExecuteAction, SdfScreen } from '../lib/graphql'
  * Hook for dispatching SDF form actions (NEXT_PAGE, PREV_PAGE, SUBMIT,
  * REFETCH, VALIDATE).
  *
- * Every action includes lastKnownPageIndex for idempotency (§8, Constraint 18).
+ * The backend tracks the current page index in the database. The frontend
+ * simply sends actions and renders whatever screen the backend returns.
  * Custom components must use onAnswerChange to route answer changes through
  * executeAction rather than mutating local state directly (§8, Constraint 5).
  */
@@ -19,8 +20,6 @@ export function useFormActions(
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const answersRef = useRef<Record<string, unknown>>({})
-
-  const currentPageIndex = screen.page.index
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
@@ -55,7 +54,6 @@ export function useFormActions(
           const result = await gqlExecuteAction(
             applicationId,
             actionType,
-            currentPageIndex,
             Object.keys(mergedAnswers).length > 0 ? mergedAnswers : undefined,
             'is',
             fieldIds,
@@ -68,7 +66,7 @@ export function useFormActions(
         }
       })
     },
-    [applicationId, currentPageIndex],
+    [applicationId],
   )
 
   const nextPage = useCallback(

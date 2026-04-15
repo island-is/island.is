@@ -531,9 +531,9 @@ export const EXECUTE_ACTION_MUTATION = `
   }
 `
 
-export function normalizeAliasedComponentValues(
+export const normalizeAliasedComponentValues = (
   components: SdfComponentData[],
-): SdfComponentData[] {
+) : SdfComponentData[] => {
   return components.map((component) => {
     let normalized = component
 
@@ -570,9 +570,9 @@ export function normalizeAliasedComponentValues(
   })
 }
 
-export function buildGraphqlHeaders(
+export const buildGraphqlHeaders = (
   forwardedHeaders?: ForwardAuthHeaders,
-): Record<string, string> {
+): Record<string, string> => {
   return {
     'Content-Type': 'application/json',
     ...(forwardedHeaders?.cookie
@@ -620,10 +620,10 @@ const getGraphqlEndpoint = (
   return `${baseEndpoint}?op=${operationName}`
 }
 
-export function extractOperationResult<T>(
+export const extractOperationResult = <T>(
   payload: unknown,
   operationField: string,
-): T {
+): T => {
   const wrapped = payload as {
     data?: Record<string, T>
   }
@@ -650,12 +650,12 @@ const throwIfHttpError = (res: Response, payload: unknown): void => {
   )
 }
 
-export async function fetchScreen(
+export const fetchScreen = async (
   applicationId: string,
   step?: number,
   locale = 'is',
   forwardedHeaders?: ForwardAuthHeaders,
-): Promise<SdfScreen> {
+): Promise<SdfScreen> => {
   const res = await fetch(
     getGraphqlEndpoint('ApplicationSdfScreen', forwardedHeaders),
     {
@@ -697,15 +697,14 @@ export async function fetchScreen(
   }
 }
 
-export async function executeAction(
+export const executeAction = async (
   applicationId: string,
   actionType: string,
-  lastKnownPageIndex: number,
   answers?: Record<string, unknown>,
   locale = 'is',
   fieldIds?: string[],
   event?: string,
-): Promise<SdfScreen> {
+): Promise<SdfScreen> => {
   const res = await fetch(getGraphqlEndpoint('ApplicationSdfAction'), {
     method: 'POST',
     headers: buildGraphqlHeaders(),
@@ -716,7 +715,6 @@ export async function executeAction(
           applicationId,
           actionType,
           answers: answers ? JSON.stringify(answers) : undefined,
-          lastKnownPageIndex,
           fieldIds,
           event,
         },

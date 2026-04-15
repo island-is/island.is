@@ -64,7 +64,7 @@ export class AstAdapterService {
 
   async getScreen(
     applicationId: string,
-    pageIndex: number | undefined,
+    pageIndexOverride: number | undefined,
     locale: Locale,
     user: User,
     options: AdapterOptions = {},
@@ -138,12 +138,30 @@ export class AstAdapterService {
     this.logTiming('Step 4: Compile Form to Screens', step4Start)
 
     // Step 5: Resolve Current Screen
+    // Priority: explicit override > persisted DB value > answer-based inference
     const step5Start = Date.now()
     let resolvedIndex: number
-    if (pageIndex !== undefined && pageIndex >= 0) {
-      resolvedIndex = moveToScreen(screens, pageIndex, true)
+    if (pageIndexOverride !== undefined && pageIndexOverride >= 0) {
+      resolvedIndex = moveToScreen(screens, pageIndexOverride, true)
+      if ((application as any).pageIndex !== pageIndexOverride) {
+        await this.applicationService.update(applicationId, {
+          pageIndex: resolvedIndex,
+        })
+      }
     } else {
-      resolvedIndex = findCurrentScreen(screens, filteredAnswers)
+      const persistedPageIndex: number = (application as any).pageIndex ?? 0
+      const hasAnswers =
+        Object.keys(application.answers ?? {}).length > 0
+      if (persistedPageIndex === 0 && hasAnswers) {
+        // Migration fallback: existing app with no persisted page index.
+        // Infer from answers and persist so this only runs once.
+        resolvedIndex = findCurrentScreen(screens, filteredAnswers)
+        await this.applicationService.update(applicationId, {
+          pageIndex: resolvedIndex,
+        })
+      } else {
+        resolvedIndex = moveToScreen(screens, persistedPageIndex, true)
+      }
     }
     const currentScreen = screens[resolvedIndex]
     this.logTiming('Step 5: Resolve Current Screen', step5Start)
@@ -303,7 +321,6 @@ export class AstAdapterService {
   async persistAnswersAndAdvance(
     applicationId: string,
     answers: Record<string, unknown>,
-    lastKnownPageIndex: number,
     locale: Locale,
     user: User,
   ): Promise<ScreenDto> {
@@ -311,40 +328,25 @@ export class AstAdapterService {
       applicationId,
     )) as ApplicationWithAttachments
 
-    const currentPageIndex =
-      (application as any).pageIndex ?? lastKnownPageIndex
-
-    if (
-      currentPageIndex !== undefined &&
-      currentPageIndex !== lastKnownPageIndex
-    ) {
-      throw new Error(
-        `Idempotency check failed: lastKnownPageIndex ${lastKnownPageIndex} does not match persisted ${currentPageIndex}`,
-      )
-    }
+    const currentPageIndex: number = (application as any).pageIndex ?? 0
 
     const mergedAnswers = { ...application.answers, ...answers } as FormValue
 
-    // Validate answers before persisting (§6.3: scoped Zod + answerValidators)
     const template = await getApplicationTemplateByTypeId(application.typeId)
     const validationErrors = await this.validateAnswersForPage(
       application,
       template,
       mergedAnswers,
       answers,
-      lastKnownPageIndex,
+      currentPageIndex,
       locale,
       user,
     )
 
     if (validationErrors.length > 0) {
-      const resolver = await this.i18nResolverService.createResolver(
-        application as Application,
-        locale,
-      )
       const screen = await this.getScreen(
         applicationId,
-        lastKnownPageIndex,
+        undefined,
         locale,
         user,
       )
@@ -352,12 +354,34 @@ export class AstAdapterService {
       return screen
     }
 
+    const newPageIndex = currentPageIndex + 1
     await this.applicationService.update(applicationId, {
       answers: mergedAnswers,
-    } as any)
+      pageIndex: newPageIndex,
+    })
 
-    const newPageIndex = lastKnownPageIndex + 1
-    return this.getScreen(applicationId, newPageIndex, locale, user)
+    return this.getScreen(applicationId, undefined, locale, user)
+  }
+
+  async goToPreviousPage(
+    applicationId: string,
+    locale: Locale,
+    user: User,
+  ): Promise<ScreenDto> {
+    const application = (await this.applicationService.findOneById(
+      applicationId,
+    )) as ApplicationWithAttachments
+
+    const currentPageIndex: number = (application as any).pageIndex ?? 0
+    const newPageIndex = Math.max(0, currentPageIndex - 1)
+
+    if (newPageIndex !== currentPageIndex) {
+      await this.applicationService.update(applicationId, {
+        pageIndex: newPageIndex,
+      })
+    }
+
+    return this.getScreen(applicationId, undefined, locale, user)
   }
 
   private async validateAnswersForPage(
@@ -458,7 +482,7 @@ export class AstAdapterService {
       const mergedAnswers = { ...application.answers, ...answers }
       await this.applicationService.update(applicationId, {
         answers: mergedAnswers,
-      } as any)
+      })
     }
 
     const template = await getApplicationTemplateByTypeId(
@@ -483,7 +507,11 @@ export class AstAdapterService {
       )
     }
 
-    return this.getScreen(applicationId, 0, locale, user)
+    await this.applicationService.update(applicationId, {
+      pageIndex: 0,
+    })
+
+    return this.getScreen(applicationId, undefined, locale, user)
   }
 
   private async loadForm(

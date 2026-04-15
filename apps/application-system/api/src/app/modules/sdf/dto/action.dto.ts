@@ -30,12 +30,14 @@ export class ExecuteActionDto {
   @ApiProperty()
   readonly locale!: string
 
+  @IsOptional()
   @IsNumber()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
-      'The page index the client believes is current. Rejects writes on mismatch for idempotency.',
+      'Deprecated. The backend now tracks page index in the database.',
+    deprecated: true,
   })
-  readonly lastKnownPageIndex!: number
+  readonly lastKnownPageIndex?: number
 
   @IsOptional()
   @IsArray()

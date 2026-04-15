@@ -8,7 +8,6 @@ import {
   ParseUUIDPipe,
   UseGuards,
   BadRequestException,
-  ConflictException,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -41,7 +40,7 @@ export class SdfController {
   @Scopes(ApplicationScope.read)
   @Get(':applicationId/screen')
   @ApiParam({ name: 'applicationId', type: String })
-  @ApiQuery({ name: 'step', required: false, type: Number })
+  @ApiQuery({ name: 'step', required: false, type: Number, description: 'Optional override for deep-linking. Omit to use the persisted page index.' })
   @ApiQuery({ name: 'locale', required: false, type: String })
   @ApiOkResponse({ type: ScreenDto })
   async getScreen(
@@ -50,10 +49,10 @@ export class SdfController {
     @Query('locale') locale?: string,
     @CurrentUser() user?: User,
   ): Promise<ScreenDto> {
-    const pageIndex = step !== undefined ? parseInt(step, 10) : undefined
+    const pageIndexOverride = step !== undefined ? parseInt(step, 10) : undefined
     return this.astAdapter.getScreen(
       applicationId,
-      pageIndex,
+      pageIndexOverride,
       (locale ?? 'is') as Locale,
       user!,
     )
@@ -86,35 +85,24 @@ export class SdfController {
         )
 
       case SdfActionType.NEXT_PAGE:
-        try {
-          return await this.astAdapter.persistAnswersAndAdvance(
-            applicationId,
-            dto.answers ?? {},
-            dto.lastKnownPageIndex,
-            locale,
-            user!,
-          )
-        } catch (e: any) {
-          if (e.message?.includes('Idempotency check failed')) {
-            throw new ConflictException(e.message)
-          }
-          throw e
-        }
-
-      case SdfActionType.PREV_PAGE: {
-        const prevIndex = Math.max(0, dto.lastKnownPageIndex - 1)
-        return this.astAdapter.getScreen(
+        return this.astAdapter.persistAnswersAndAdvance(
           applicationId,
-          prevIndex,
+          dto.answers ?? {},
           locale,
           user!,
         )
-      }
+
+      case SdfActionType.PREV_PAGE:
+        return this.astAdapter.goToPreviousPage(
+          applicationId,
+          locale,
+          user!,
+        )
 
       case SdfActionType.REFETCH:
         return this.astAdapter.getScreen(
           applicationId,
-          dto.lastKnownPageIndex,
+          undefined,
           locale,
           user!,
           { ephemeral: true },
