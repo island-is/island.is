@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { GlobalStylesProvider } from '../components/GlobalStylesProvider'
+import { Providers } from '../components/Providers'
+import { HeaderInfoProvider } from '../components/HeaderInfoProvider'
 import { AppHeader } from '../components/AppHeader'
 
 export const metadata: Metadata = {
@@ -16,11 +18,12 @@ export default function RootLayout({
     <html lang="is">
       <body>
         <GlobalStylesProvider>
-          <AppHeader
-            institutionName="Stafrænt Ísland"
-            applicationName="Example Inputs"
-          />
-          {children}
+          <Providers>
+            <HeaderInfoProvider>
+              <AppHeader />
+              {children}
+            </HeaderInfoProvider>
+          </Providers>
         </GlobalStylesProvider>
       </body>
     </html>

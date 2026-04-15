@@ -15,6 +15,7 @@ import {
 
 import { useFormActions } from '../hooks/useFormActions'
 import { FormRenderer } from './FormRenderer'
+import { useHeaderInfo } from './HeaderInfoProvider'
 import type { SdfScreen } from '../lib/graphql'
 import * as styles from './ApplicationShell.css'
 
@@ -37,6 +38,17 @@ export function ApplicationShell({
     prevPage,
     submit,
   } = useFormActions(applicationId, initialScreen)
+
+  const { setInfo } = useHeaderInfo()
+
+  React.useEffect(() => {
+    if (screen.header.title) {
+      setInfo({
+        institutionName: screen.header.description ?? undefined,
+        applicationName: screen.header.title,
+      })
+    }
+  }, [screen.header.title, screen.header.description, setInfo])
 
   return (
     <Box className={styles.root}>

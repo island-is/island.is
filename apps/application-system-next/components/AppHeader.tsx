@@ -6,25 +6,20 @@ import {
   GridContainer,
   Header as UIHeader,
 } from '@island.is/island-ui/core'
+import { useHeaderInfo } from './HeaderInfoProvider'
 
-interface AppHeaderProps {
-  institutionName?: string
-  applicationName?: string
-}
+export function AppHeader() {
+  const { info } = useHeaderInfo()
 
-export function AppHeader({
-  institutionName,
-  applicationName,
-}: AppHeaderProps) {
   return (
     <Box background="white">
       <GridContainer>
         <UIHeader
           info={
-            applicationName && institutionName
+            info.applicationName && info.institutionName
               ? {
-                  title: institutionName,
-                  description: applicationName,
+                  title: info.institutionName,
+                  description: info.applicationName,
                 }
               : undefined
           }
