@@ -74,6 +74,13 @@ jobs:
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
     steps:
+      - name: Cache server health check
+        run: |
+          if curl -sf --max-time 3 "${ACTIONS_RESULTS_URL:-http://gha-cache.internal:3000/}" > /dev/null 2>&1; then
+            echo "✅ Cache server: ${ACTIONS_RESULTS_URL:-not set}"
+          else
+            echo "⚠️ Cache server unreachable (${ACTIONS_RESULTS_URL:-not set}) — using GitHub cache"
+          fi
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
