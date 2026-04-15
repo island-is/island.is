@@ -1,71 +1,75 @@
+import { useMemo } from 'react'
 import { EducationPrimarySchoolAssessmentResult } from '@island.is/api/schema'
-import { Box, Button, Table as T } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formSubmit, m } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
+import {
+  Table,
+  createColumnHelper,
+  formSubmit,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 
 interface Props {
   results: EducationPrimarySchoolAssessmentResult[]
+  loading?: boolean
 }
 
-export const AssessmentTable = ({ results }: Props) => {
-  const { formatMessage } = useLocale()
+const columnHelper =
+  createColumnHelper<EducationPrimarySchoolAssessmentResult>()
 
-  if (results.length === 0) {
-    return (
-      <Box paddingY={2}>
-        <Problem
-          type="no_data"
-          noBorder
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-        />
-      </Box>
-    )
-  }
+export const AssessmentTable = ({ results, loading }: Props) => {
+  const { formatMessage, locale } = useLocale()
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('schoolYear', {
+        header: formatMessage(psm.schoolYear),
+        cell: ({ getValue }) => getValue() ?? '',
+      }),
+      columnHelper.accessor((row) => row.grade?.level, {
+        id: 'gradeLevel',
+        header: formatMessage(psm.gradeLevel),
+        cell: ({ getValue }) => {
+          const level = getValue()
+          return level != null
+            ? formatMessage(psm.gradeLevelFormatted, { grade: level })
+            : ''
+        },
+      }),
+      columnHelper.accessor((row) => row.period?.startDateString, {
+        id: 'examSitting',
+        header: formatMessage(psm.examSitting),
+        cell: ({ getValue }) => getValue() ?? '',
+      }),
+      columnHelper.display({
+        id: 'download',
+        header: formatMessage(psm.downloadResults),
+        enableSorting: false,
+        cell: ({ row }) =>
+          row.original.downloadServiceUrl ? (
+            <Button
+              variant="text"
+              size="small"
+              icon="download"
+              iconType="outline"
+              onClick={() => formSubmit(row.original.downloadServiceUrl!)}
+            >
+              {formatMessage(psm.downloadResults)}
+            </Button>
+          ) : null,
+      }),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale],
+  )
 
   return (
-    <T.Table>
-      <T.Head>
-        <T.Row>
-          <T.HeadData>{formatMessage(psm.schoolYear)}</T.HeadData>
-          <T.HeadData>{formatMessage(psm.gradeLevel)}</T.HeadData>
-          <T.HeadData>{formatMessage(psm.examSitting)}</T.HeadData>
-          <T.HeadData>{formatMessage(psm.downloadResults)}</T.HeadData>
-        </T.Row>
-      </T.Head>
-      <T.Body>
-        {results.map((result) => {
-          const { id, downloadServiceUrl, schoolYear, grade, period } = result
-          return (
-            <T.Row key={id}>
-              <T.Data>{schoolYear ?? ''}</T.Data>
-              <T.Data>
-                {grade?.level != null
-                  ? formatMessage(psm.gradeLevelFormatted, {
-                      grade: grade.level,
-                    })
-                  : ''}
-              </T.Data>
-              <T.Data>{period?.startDateString ?? ''}</T.Data>
-              <T.Data>
-                {downloadServiceUrl && (
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon="download"
-                    iconType="outline"
-                    onClick={() => formSubmit(downloadServiceUrl)}
-                  >
-                    {formatMessage(psm.downloadResults)}
-                  </Button>
-                )}
-              </T.Data>
-            </T.Row>
-          )
-        })}
-      </T.Body>
-    </T.Table>
+    <Table
+      columns={columns}
+      data={results}
+      loading={loading}
+      emptyMessage={formatMessage(m.noDataFoundDetail)}
+    />
   )
 }
