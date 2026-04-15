@@ -46,19 +46,6 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í "undirritun þingbókar" skrefi eftir misheppnaða undirritun á yfirlitsskjá afgreiddra mála.',
       },
-      controlCode: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.control_code',
-        defaultMessage: 'Öryggistala: {controlCode}',
-        description:
-          'Notaður sem texti í "undirritun þingbókar" skrefi á meðan á undirritun stendur á yfirlitsskjá afgreiddra mála.',
-      },
-      controlCodeDisclaimer: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.control_code_disclaimer',
-        defaultMessage:
-          'Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama öryggistala birtist í símanum þínum.',
-        description:
-          'Notaður sem vivörunartexti í "undirritun þingbókar" skrefi á meðan á undirritun stendur á yfirlitsskjá afgreiddra mála.',
-      },
       completed: {
         id: 'judicial.system.core:signed_verdict_overview.court_record_signature.completed',
         defaultMessage:
@@ -138,53 +125,6 @@ export const signedVerdictOverview = {
         defaultMessage: 'Einangrun til',
         description:
           'Notaður sem texti í "Einangrun til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-    }),
-    confirmAppealAfterDeadlineModal: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.confirm_appeal_after_deadline_modal.title',
-        defaultMessage: 'Kærufrestur er liðinn',
-        description:
-          'Notaður sem titill modal glugga þegar kært er eftir að kærufrestur rennur út.',
-      },
-      text: {
-        id: 'judicial.system.core:signed_verdict_overview.confirm_appeal_after_deadline_modal.text',
-        defaultMessage: 'Viltu halda áfram og senda kæru?',
-        description:
-          'Notaður sem texti í modal glugga þegar kært er eftir að kærufrestur rennur út.',
-      },
-      primaryButtonText: {
-        id: 'judicial.system.core:signed_verdict_overview.confirm_appeal_after_deadline_modal.primary_button_text',
-        defaultMessage: 'Já, senda kæru',
-        description:
-          'Notaður sem texti í staðfesta takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
-      },
-      secondaryButtonText: {
-        id: 'judicial.system.core:signed_verdict_overview.confirm_appeal_after_deadline_modal.secondary_button_text',
-        defaultMessage: 'Hætta við',
-        description:
-          'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
-      },
-    }),
-    appealReceived: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal_received.title',
-        defaultMessage: 'Tilkynningar sendar á málsaðila',
-        description:
-          'Notaður sem titill í upplýsingaboxi sem birtist þegar að héraðsdómur hefur móttekið kæru.',
-      },
-      text: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal_received.text',
-        defaultMessage:
-          'Tilkynning um móttöku kæru hefur verið send Landsrétti, sækjanda og verjanda.',
-        description:
-          'Notaður sem texti í upplýsingaboxi sem birtist þegar að héraðsdómur hefur móttekið kæru.',
-      },
-      primaryButtonText: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal_received.primary_button_text',
-        defaultMessage: 'Loka glugga',
-        description:
-          'Notaður sem texti á takka sem lokar upplýsingaboxi eftir að héraðsdómur hefur móttekið kæru.',
       },
     }),
     modifyDatesInfo: defineMessages({

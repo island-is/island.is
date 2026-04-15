@@ -1,11 +1,14 @@
-import { ApplicationConfigurations } from '@island.is/application/types'
+// import { ApplicationConfigurations } from '@island.is/application/types'
 import { getConfig } from '../config'
 import {
   Application,
   SearchArticleFragmentFragment,
 } from '../graphql/types/schema'
 
-export const getSlugFromType = (type: string) => {
+export const getSlugFromType = async (type: string) => {
+  const ApplicationConfigurations = await import(
+    '@island.is/application/types'
+  ).then((module) => module.ApplicationConfigurations)
   for (const [key, value] of Object.entries(ApplicationConfigurations)) {
     if (type === key) {
       return value.slug
@@ -15,10 +18,10 @@ export const getSlugFromType = (type: string) => {
   return undefined
 }
 
-export const getApplicationUrl = (
+export const getApplicationUrl = async (
   application: Pick<Application, 'typeId' | 'id'>,
 ) => {
-  const slug = getSlugFromType(application.typeId)
+  const slug = await getSlugFromType(application.typeId)
   const uri = `${getConfig().apiUrl.replace(/api$/, 'umsoknir')}/${slug}/${
     application.id
   }`

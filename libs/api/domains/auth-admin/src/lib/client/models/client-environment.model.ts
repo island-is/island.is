@@ -99,4 +99,7 @@ export class ClientEnvironment {
 
   @Field(() => Date, { nullable: true })
   modified?: Date
+
+  @Field(() => [String])
+  allowedCorsOrigins!: string[]
 }

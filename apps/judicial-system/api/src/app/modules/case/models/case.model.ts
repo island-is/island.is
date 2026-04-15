@@ -7,9 +7,9 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseAppealDecision,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -50,7 +50,7 @@ registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 registerEnumType(CaseDecision, { name: 'CaseDecision' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
-registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
+registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseIndictmentRulingDecision, {
   name: 'CaseIndictmentRulingDecision',
@@ -270,9 +270,6 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly isAppealDeadlineExpired?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  readonly isAppealGracePeriodExpired?: boolean
-
   @Field(() => String, { nullable: true })
   readonly rulingDate?: string
 
@@ -377,9 +374,6 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly indictmentDeniedExplanation?: string
-
-  @Field(() => String, { nullable: true })
-  readonly indictmentReturnedExplanation?: string
 
   @Field(() => String, { nullable: true })
   readonly postponedIndefinitelyExplanation?: string

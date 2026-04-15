@@ -95,7 +95,7 @@ export const IndictmentCaseSubtypes: CourtIndictmentSubtypes = {
   POLICE_REGULATIONS: 'Brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'Brot í nánu sambandi',
   ANIMAL_PROTECTION: 'Brot á lögum um dýravernd',
-  FOREIGN_NATIONALS: 'Brot á lögum um útlendinga',
+  FOREIGN_NATIONALS: 'Brot gegn útlendingalögum',
   PUBLIC_SERVICE_VIOLATION: 'Brot í opinberu starfi',
   PROPERTY_DAMAGE: 'Eignaspjöll',
   NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
@@ -227,7 +227,7 @@ export enum RequestCaseState {
   DELETED = CaseState.DELETED,
 }
 
-export enum CaseAppealState {
+export enum AppealCaseState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
   COMPLETED = 'COMPLETED',
@@ -251,7 +251,6 @@ export enum CaseTransition {
   REJECT = 'REJECT',
   REOPEN = 'REOPEN',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
-  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   SUBMIT = 'SUBMIT',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
@@ -269,7 +268,6 @@ export enum IndictmentCaseTransition {
   RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REOPEN = CaseTransition.REOPEN,
   REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
-  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
   WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
@@ -336,6 +334,7 @@ export enum IndictmentDecision {
   REDISTRIBUTING = 'REDISTRIBUTING',
   SCHEDULING = 'SCHEDULING',
   SPLITTING = 'SPLITTING',
+  COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
 }
 
 export enum CaseAppealRulingDecision {
@@ -536,4 +535,11 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
+}
+
+export enum AppealCaseTransition {
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }

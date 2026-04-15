@@ -123,6 +123,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
       (type) => type.delegationType,
     ),
     allowedAcr: [defaultAcrValue],
+    allowedCorsOrigins: [],
     sso: ClientSso.Enabled,
     modified: expect.any(String),
   }
@@ -356,6 +357,7 @@ describe('MeClientsController with auth', () => {
         customClaims: [],
         singleSession: false,
         allowedAcr: [defaultAcrValue],
+        allowedCorsOrigins: [],
         supportedDelegationTypes: [],
         sso: ClientSso.Enabled,
         modified: expect.any(String),
@@ -462,6 +464,7 @@ describe('MeClientsController with auth', () => {
         sso: ClientSso.Enabled,
         allowedAcr: typeSpecificDefaults.allowedAcr ?? [defaultAcrValue],
         modified: expect.any(String),
+        allowedCorsOrigins: [],
       })
 
       // Assert - db record
@@ -591,6 +594,7 @@ describe('MeClientsController with auth', () => {
         customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: typeSpecificDefaults.singleSession ?? false,
         allowedAcr: [defaultAcrValue],
+        allowedCorsOrigins: [],
         supportedDelegationTypes: [],
         sso: ClientSso.Enabled,
         modified: expect.any(String),
