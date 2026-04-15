@@ -50,9 +50,7 @@ export const useSyncDefendantsFromPolice = () => {
         }
 
         const toAdd = policeDefendants
-          .filter(
-            (p) => p.nationalId && !existingNationalIds.has(p.nationalId),
-          )
+          .filter((p) => p.nationalId && !existingNationalIds.has(p.nationalId))
           .slice(0, isRestrictionCase(workingCase.type) ? 1 : undefined)
 
         if (toAdd.length === 0) {
