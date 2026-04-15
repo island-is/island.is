@@ -1,10 +1,6 @@
 import { Typography } from '../typography/typography'
 import React from 'react'
-import {
-  ImageSourcePropType,
-  Pressable,
-  ViewProps
-} from 'react-native'
+import { ImageSourcePropType, Pressable, ViewProps } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor, font } from '../../utils'
@@ -35,20 +31,20 @@ const LogoImage = styled.Image`
 
 const Title = styled.Text`
   ${font({
-  fontWeight: '600',
-  fontSize: 22,
-  lineHeight: 28,
-})}
+    fontWeight: '600',
+    fontSize: 22,
+    lineHeight: 28,
+  })}
   text-align: center;
   margin-bottom: 12px;
 `
 
 const Body = styled.Text`
   ${font({
-  fontWeight: '300',
-  fontSize: 16,
-  lineHeight: 22,
-})}
+    fontWeight: '300',
+    fontSize: 16,
+    lineHeight: 22,
+  })}
   text-align: center;
   margin-bottom: 12px;
   padding: 0 8px;
@@ -67,10 +63,10 @@ const LinkRow = styled.View`
 
 const LinkText = styled.Text`
   ${font({
-  fontWeight: '600',
-  fontSize: 14,
-  color: ({ theme }) => theme.color.blue400,
-})}
+    fontWeight: '600',
+    fontSize: 14,
+    color: ({ theme }) => theme.color.blue400,
+  })}
   margin-right: 6px;
 `
 
@@ -88,8 +84,8 @@ const IllustrationWrapper = styled.View`
 `
 
 const IllustrationImage = styled.Image`
-    width: 75%;
-    height: 75%;
+  width: 75%;
+  height: 75%;
 `
 
 const ButtonStack = styled.View`
@@ -123,25 +119,18 @@ export function Onboarding({
     <Host {...rest}>
       <Content>
         <LogoImage source={logo} resizeMode="contain" />
-        <Typography
-          weight="600"
-          size={26}
-          lineHeight={32}
-        >{title}</Typography>
-        <Typography
-          textAlign="center"
-          weight="300"
-          size={16}
-          lineHeight={24}
-        >{body}</Typography>
+        <Typography weight="600" size={26} lineHeight={32}>
+          {title}
+        </Typography>
+        <Typography textAlign="center" weight="300" size={16} lineHeight={24}>
+          {body}
+        </Typography>
         {link && (
           <Pressable onPress={link.onPress}>
             <LinkRow>
-              <Typography
-                weight="600"
-                size={14}
-                color={theme.color.blue400}
-              >{link.title}</Typography>
+              <Typography weight="600" size={14} color={theme.color.blue400}>
+                {link.title}
+              </Typography>
               <LinkIcon source={externalLink} resizeMode="contain" />
             </LinkRow>
           </Pressable>

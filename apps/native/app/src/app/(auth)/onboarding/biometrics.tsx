@@ -1,7 +1,4 @@
-import {
-  authenticateAsync,
-  isEnrolledAsync,
-} from 'expo-local-authentication'
+import { authenticateAsync, isEnrolledAsync } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { AppState } from 'react-native'
