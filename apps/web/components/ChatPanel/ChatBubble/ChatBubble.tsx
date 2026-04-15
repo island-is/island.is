@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react'
 import cn from 'classnames'
 
 import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+import { blue200, blue400 } from '@island.is/island-ui/theme'
 
 import {
   EmbedDisclaimer,
@@ -42,6 +43,15 @@ const DefaultVariant = ({
         data-testid="chatbot"
         tabIndex={0}
         className={cn(styles.message, pushUp && styles.messagePushUp)}
+        style={{
+          // Keep critical visuals even if class-based CSS is delayed on route changes.
+          appearance: 'none',
+          WebkitAppearance: 'none',
+          background: blue400,
+          backgroundColor: blue400,
+          border: `1px solid ${blue200}`,
+          color: 'white',
+        }}
         onClick={handleClick}
       >
         <Box position="relative">
