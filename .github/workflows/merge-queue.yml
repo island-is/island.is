@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
   ACTIONS_STEP_DEBUG: 'true'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public

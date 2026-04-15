@@ -19,6 +19,7 @@ on:
         value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
 
 env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
