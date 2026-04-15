@@ -16,7 +16,7 @@ jobs:
   check-unicorn:
     name: Is this a unicorn PR
     if: github.event.pull_request.merged == true
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4

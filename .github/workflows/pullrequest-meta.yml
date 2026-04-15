@@ -14,7 +14,7 @@ defaults:
 
 jobs:
   actionlint:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     env:
       ACTIONLINT_VERSION: '1.7.7'
       ACTIONLINT_DIR: '.cache/actionlint'
@@ -67,7 +67,7 @@ jobs:
 
   collect:
     name: CI workflow success
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     if: ${{ !cancelled() }}
     needs: [actionlint]
     steps:
