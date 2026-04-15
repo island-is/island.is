@@ -31,10 +31,11 @@ export const is = {
   'applock.attempt': 'tilraun eftir',
 
   // onboarding
-  'onboarding.notifications.title':
-    'Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.',
+  'onboarding.notifications.title': 'Leyfa tilkynningar',
+  'onboarding.notifications.body':
+    'Fáðu tilkynningar um ný skjöl eða annað mikilvægt.',
   'onboarding.notifications.allowNotificationsButtonText': 'Leyfa tilkynningar',
-  'onboarding.notifications.decideLaterButtonText': 'Ákveða seinna',
+  'onboarding.notifications.decideLaterButtonText': 'Sleppa því í bili',
   'onboarding.appLock.title':
     'Skjálæsing tryggir að enginn geti opnað appið nema þú.',
   'onboarding.appLock.choosePinButtonText': 'Velja PIN',
@@ -43,13 +44,14 @@ export const is = {
   'onboarding.pinCode.goBackButtonText': 'Til baka',
   'onboarding.pinCode.cancelButtonText': 'Hætta við',
   'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
-  'onboarding.biometrics.title':
-    'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
+  'onboarding.biometrics.title': 'Leyfa lífkenni',
+  'onboarding.biometrics.body':
+    'Þú getur einnig notað lífkenni til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.noAuthenticationTypes':
     'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
-  'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
+  'onboarding.biometrics.useBiometricsButtonText': 'Leyfa lífkenni',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'lífkenni',
@@ -60,6 +62,11 @@ export const is = {
     'Nota fingrafarsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
+  'onboarding.privacy.title': 'Persónuvernd',
+  'onboarding.privacy.body':
+    'Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is',
+  'onboarding.privacy.linkText': 'Persónuverndastefna Ísland.is',
+  'onboarding.privacy.continueButtonText': 'Halda áfram',
   'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen

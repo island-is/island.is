@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Platform } from 'react-native'
 import { create } from 'zustand'
 import { useStore } from 'zustand/react'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -14,6 +15,7 @@ export interface PreferencesStore {
   hasOnboardedPinCode: boolean
   hasOnboardedBiometrics: boolean
   hasOnboardedNotifications: boolean
+  hasOnboardedPrivacy: boolean
   hasAcceptedNotifications: boolean
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
@@ -56,6 +58,7 @@ const defaultPreferences = {
   hasOnboardedBiometrics: false,
   hasOnboardedPinCode: false,
   hasOnboardedNotifications: false,
+  hasOnboardedPrivacy: false,
   hasAcceptedNotifications: false,
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
@@ -120,6 +123,21 @@ export const preferencesStore = create<PreferencesStore>()(
     {
       name: PREFERENCES_KEY,
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      migrate: (persistedState: any, version) => {
+        if (version === 0) {
+          const wasFullyOnboarded =
+            persistedState?.hasOnboardedPinCode &&
+            persistedState?.hasOnboardedBiometrics &&
+            (Platform.OS === 'android' ||
+              persistedState?.hasOnboardedNotifications)
+          return {
+            ...persistedState,
+            hasOnboardedPrivacy: !!wasFullyOnboarded,
+          }
+        }
+        return persistedState
+      },
     },
   ),
 )
