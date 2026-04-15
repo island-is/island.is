@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  Asset,
+  AssetProps,
   ClientAPI,
   Collection,
   ContentType,
@@ -30,6 +32,23 @@ export class ManagementClientService {
       .then((space) => space.getEnvironment(ENVIRONMENT))
       .then((environment) => environment.getEntries(queryWithLimit))
       .then((entries) => ({ ok: true as const, data: entries }))
+      .catch((e) => ({
+        ok: false as const,
+        error: e,
+      }))
+  }
+
+  getAssets = async (
+    query?: QueryOptions,
+    environment?: string,
+  ): Promise<ContentfulFetchResponse<Collection<Asset, AssetProps>>> => {
+    const queryWithLimit = { limit: 1000, ...query }
+
+    return this.client
+      .getSpace(SPACE_ID)
+      .then((space) => space.getEnvironment(environment ?? ENVIRONMENT))
+      .then((environment) => environment.getAssets(queryWithLimit))
+      .then((assets) => ({ ok: true as const, data: assets }))
       .catch((e) => ({
         ok: false as const,
         error: e,
@@ -70,6 +89,16 @@ export class ManagementClientService {
       .then((space) => space.getEnvironment(ENVIRONMENT))
       .then((env) => env.getContentType(contentType))
       .then((contentType) => ({ ok: true as const, data: contentType }))
+      .catch((e) => ({
+        ok: false as const,
+        error: e,
+      }))
+
+  getEnvironments = async () =>
+    this.client
+      .getSpace(SPACE_ID)
+      .then((space) => space.getEnvironments())
+      .then((environments) => ({ ok: true as const, data: environments }))
       .catch((e) => ({
         ok: false as const,
         error: e,

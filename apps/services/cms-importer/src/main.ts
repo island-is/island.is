@@ -48,6 +48,17 @@ switch (job) {
       })
     break
   }
+  case 'cms-cleanup': {
+    import('./app/cms-cleanup/cms-cleanup-worker')
+      .then((app) => app.cmsCleanupWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the cms cleanup worker:',
+          error,
+        )
+      })
+    break
+  }
   default: {
     console.debug('No argument provided, nothing executed')
   }
