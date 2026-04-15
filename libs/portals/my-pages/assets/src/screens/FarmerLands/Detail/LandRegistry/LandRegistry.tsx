@@ -1,14 +1,15 @@
 import { useMemo } from 'react'
 import { ApolloError } from '@apollo/client'
-import { Column, Row } from 'react-table'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  Table,
+  createColumnHelper,
   m,
   formatNationalId,
   EmptyTable,
+  type Row,
 } from '@island.is/portals/my-pages/core'
-import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
 import {
   FarmerLandRegistryEntry,
   FarmerLandRegistryEntryProperty,
@@ -21,25 +22,23 @@ interface Props {
   error?: ApolloError
 }
 
-export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
-  const { formatMessage } = useLocale()
+const columnHelper = createColumnHelper<FarmerLandRegistryEntry>()
 
-  const columns = useMemo<Column<FarmerLandRegistryEntry>[]>(
+export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
+  const { formatMessage, locale } = useLocale()
+
+  const columns = useMemo(
     () => [
-      {
-        Header: formatMessage(fm.landRegistryEntry),
-        accessor: 'name',
-        sortType: 'basic',
-      },
-      {
-        Header: formatMessage(m.natreg),
-        accessor: 'nationalId',
-        sortType: 'basic',
-        Cell: ({ value }: { value: string | null | undefined }) =>
-          formatNationalId(value ?? ''),
-      },
+      columnHelper.accessor('name', {
+        header: formatMessage(fm.landRegistryEntry),
+      }),
+      columnHelper.accessor('nationalId', {
+        header: formatMessage(m.natreg),
+        cell: ({ getValue }) => formatNationalId(getValue() ?? ''),
+      }),
     ],
-    [formatMessage],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandRegistryEntry>) => {
@@ -84,12 +83,13 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
 
   return (
     <Box marginTop={4}>
-      <FarmerLandsTable
+      <Table
         columns={columns}
         data={landRegistry}
         loading={loading}
         error={error}
         emptyMessage={formatMessage(m.noData)}
+        mobileTitleKey="name"
         renderExpandedRow={renderExpandedRow}
       />
     </Box>

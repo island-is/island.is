@@ -249,8 +249,15 @@ export const Table = <TData extends object>({
                     header.column.columnDef.header,
                     header.getContext(),
                   )}
-                  {header.column.getIsSorted() && (
-                    <Box marginLeft={1}>
+                  {header.column.getCanSort() && (
+                    <Box
+                      marginLeft={1}
+                      style={{
+                        visibility: header.column.getIsSorted()
+                          ? 'visible'
+                          : 'hidden',
+                      }}
+                    >
                       <Icon
                         color="blue400"
                         icon={
@@ -278,7 +285,16 @@ export const Table = <TData extends object>({
               <T.Row>
                 {row.getVisibleCells().map((cell, i) =>
                   i === 0 && renderExpandedRow ? (
-                    <T.Data key={cell.id} box={{ position: 'relative' }}>
+                    <T.Data
+                      key={cell.id}
+                      box={{
+                        position: 'relative',
+                        background:
+                          isExpanded || isCollapsing ? 'blue100' : undefined,
+                        borderBottomWidth:
+                          isExpanded || isCollapsing ? undefined : 'standard',
+                      }}
+                    >
                       {(isExpanded || isCollapsing) && (
                         <div className={styles.line} />
                       )}
@@ -307,7 +323,15 @@ export const Table = <TData extends object>({
                       </Box>
                     </T.Data>
                   ) : (
-                    <T.Data key={cell.id}>
+                    <T.Data
+                      key={cell.id}
+                      box={{
+                        background:
+                          isExpanded || isCollapsing ? 'blue100' : undefined,
+                        borderBottomWidth:
+                          isExpanded || isCollapsing ? undefined : 'standard',
+                      }}
+                    >
                       <Text variant="small">
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -323,7 +347,11 @@ export const Table = <TData extends object>({
                   <T.Data
                     colSpan={columns.length}
                     style={{ padding: 0 }}
-                    box={{ position: 'relative' }}
+                    box={{
+                      position: 'relative',
+                      background:
+                        isExpanded || isCollapsing ? 'blue100' : undefined,
+                    }}
                   >
                     <AnimateHeight
                       duration={300}
@@ -341,7 +369,7 @@ export const Table = <TData extends object>({
                       {(isExpanded || isCollapsing) && (
                         <>
                           <div className={styles.line} />
-                          {renderExpandedRow(row)}
+                          <Box marginLeft={3} marginBottom={3}>{renderExpandedRow(row)}</Box>
                         </>
                       )}
                     </AnimateHeight>

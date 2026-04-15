@@ -1,13 +1,16 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Column, Row } from 'react-table'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  Table,
+  createColumnHelper,
   m,
   formatNationalId,
   amountFormat,
+  type Row,
+  type SortingState,
+  type OnChangeFn,
 } from '@island.is/portals/my-pages/core'
-import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
 import { SubsidiesFilter } from './SubsidiesFilter'
 import { farmerLandsMessages as fm } from '../../../../lib/messages'
 import {
@@ -64,10 +67,18 @@ const DetailRow = ({ children }: { children: React.ReactNode }) => (
   </Box>
 )
 
+const columnHelper = createColumnHelper<FarmerLandSubsidy>()
+
+const fieldMap: Partial<Record<string, FarmerLandSubsidyOrderField>> = {
+  paymentDate: FarmerLandSubsidyOrderField.PaymentDate,
+  contract: FarmerLandSubsidyOrderField.Contract,
+}
+
 export const Subsidies = ({ farmId }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
 
   const [filters, setFilters] = useState<SubsidiesState>({})
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data, previousData, loading, error } = useFarmerLandSubsidiesQuery({
     variables: {
@@ -101,35 +112,31 @@ export const Subsidies = ({ farmId }: Props) => {
     [filterOptions?.paymentCategories],
   )
 
-  const handleSortChange = useCallback(
-    (sortBy: Array<{ id: string; desc: boolean }>) => {
-      const fieldMap: Partial<Record<string, FarmerLandSubsidyOrderField>> = {
-        paymentDate: FarmerLandSubsidyOrderField.PaymentDate,
-        contract: FarmerLandSubsidyOrderField.Contract,
-      }
-      setFilters((prev) => {
-        if (sortBy.length === 0) {
-          return {
-            ...prev,
+  const handleSortingChange: OnChangeFn<SortingState> = useCallback(
+    (updater) => {
+      setSorting((prev) => {
+        const next = typeof updater === 'function' ? updater(prev) : updater
+        if (next.length === 0) {
+          setFilters((f) => ({
+            ...f,
             orderField: undefined,
             orderDirection: undefined,
             cursor: undefined,
+          }))
+        } else {
+          const field = fieldMap[next[0].id]
+          if (field) {
+            setFilters((f) => ({
+              ...f,
+              cursor: undefined,
+              orderField: field,
+              orderDirection: next[0].desc
+                ? FarmerLandSubsidyOrderDirection.Descending
+                : FarmerLandSubsidyOrderDirection.Ascending,
+            }))
           }
         }
-
-        const field = fieldMap[sortBy[0].id]
-        if (!field) {
-          return prev
-        }
-
-        return {
-          ...prev,
-          cursor: undefined,
-          orderField: field,
-          orderDirection: sortBy[0].desc
-            ? FarmerLandSubsidyOrderDirection.Descending
-            : FarmerLandSubsidyOrderDirection.Ascending,
-        }
+        return next
       })
     },
     [],
@@ -141,38 +148,36 @@ export const Subsidies = ({ farmId }: Props) => {
     filters.dateFrom ?? filters.dateTo,
   ].filter((v) => v != null).length
 
-  const columns = useMemo<Column<FarmerLandSubsidy>[]>(
+  const columns = useMemo(
     () => [
-      {
-        Header: formatMessage(m.date),
-        accessor: 'paymentDate',
-        Cell: ({ value }) =>
-          value ? new Date(value).toLocaleDateString('is-IS') : '',
-      },
-      {
-        Header: formatMessage(m.contract),
-        accessor: 'contract',
-      },
-      {
-        Header: formatMessage(m.amount),
-        accessor: 'grossAmount',
-        disableSortBy: true,
-        Cell: ({ value }) => amountFormat(value),
-      },
-      {
-        Header: formatMessage(fm.subsidyOffset),
-        accessor: 'offset',
-        disableSortBy: true,
-        Cell: ({ value }) => amountFormat(value ?? 0),
-      },
-      {
-        Header: formatMessage(fm.subsidyNetPaid),
-        accessor: 'netPaid',
-        disableSortBy: true,
-        Cell: ({ value }) => amountFormat(value),
-      },
+      columnHelper.accessor('paymentDate', {
+        header: formatMessage(m.date),
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value ? new Date(value).toLocaleDateString('is-IS') : ''
+        },
+      }),
+      columnHelper.accessor('contract', {
+        header: formatMessage(m.contract),
+      }),
+      columnHelper.accessor('grossAmount', {
+        header: formatMessage(m.amount),
+        enableSorting: false,
+        cell: ({ getValue }) => amountFormat(getValue()),
+      }),
+      columnHelper.accessor('offset', {
+        header: formatMessage(fm.subsidyOffset),
+        enableSorting: false,
+        cell: ({ getValue }) => amountFormat(getValue() ?? 0),
+      }),
+      columnHelper.accessor('netPaid', {
+        header: formatMessage(fm.subsidyNetPaid),
+        enableSorting: false,
+        cell: ({ getValue }) => amountFormat(getValue()),
+      }),
     ],
-    [formatMessage],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandSubsidy>) => (
@@ -243,19 +248,24 @@ export const Subsidies = ({ farmId }: Props) => {
               cursor: undefined,
             })
           }}
-          onClear={() => setFilters({})}
+          onClear={() => {
+            setFilters({})
+            setSorting([])
+          }}
         />
       </Box>
-      <FarmerLandsTable
+      <Table
         columns={columns}
         data={subsidies}
         loading={loading}
         error={error}
         emptyMessage={formatMessage(m.noData)}
+        mobileTitleKey="paymentDate"
         renderExpandedRow={renderExpandedRow}
         getRowId={(row) => row.id}
-        manualSort
-        onSortChange={handleSortChange}
+        manualSorting
+        sorting={sorting}
+        onSortingChange={handleSortingChange}
       />
       {(pageInfo?.hasPreviousPage || pageInfo?.hasNextPage) && (
         <Box display="flex" justifyContent="spaceBetween" marginTop={3}>

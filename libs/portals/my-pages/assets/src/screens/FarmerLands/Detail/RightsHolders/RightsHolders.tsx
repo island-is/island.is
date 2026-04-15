@@ -1,14 +1,15 @@
 import { useMemo } from 'react'
 import { ApolloError } from '@apollo/client'
-import { Column, Row } from 'react-table'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  Table,
+  createColumnHelper,
   m,
   formatNationalId,
   EmptyTable,
+  type Row,
 } from '@island.is/portals/my-pages/core'
-import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
 import {
   FarmerLandBeneficiary,
   FarmerLandBeneficiaryPayment,
@@ -29,40 +30,32 @@ const formatDateRange = (from?: string | null, to?: string | null): string => {
   return `${start} - ${end}`
 }
 
-export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
-  const { formatMessage } = useLocale()
+const columnHelper = createColumnHelper<FarmerLandBeneficiary>()
 
-  const columns = useMemo<Column<FarmerLandBeneficiary>[]>(
+export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
+  const { formatMessage, locale } = useLocale()
+
+  const columns = useMemo(
     () => [
-      {
-        Header: formatMessage(fm.rightsHolder),
-        accessor: 'name',
-        sortType: 'basic',
-      },
-      {
-        Header: formatMessage(m.natreg),
-        accessor: 'nationalId',
-        sortType: 'basic',
-        Cell: ({ value }: { value: string | null | undefined }) =>
-          formatNationalId(value ?? ''),
-      },
-      {
-        Header: formatMessage(fm.bankInfo),
-        accessor: 'bankInfo',
-        sortType: 'basic',
-      },
-      {
-        Header: formatMessage(fm.isatNumber),
-        accessor: 'isat',
-        sortType: 'basic',
-      },
-      {
-        Header: formatMessage(fm.vatNumber),
-        accessor: 'vatNumber',
-        sortType: 'basic',
-      },
+      columnHelper.accessor('name', {
+        header: formatMessage(fm.rightsHolder),
+      }),
+      columnHelper.accessor('nationalId', {
+        header: formatMessage(m.natreg),
+        cell: ({ getValue }) => formatNationalId(getValue() ?? ''),
+      }),
+      columnHelper.accessor('bankInfo', {
+        header: formatMessage(fm.bankInfo),
+      }),
+      columnHelper.accessor('isat', {
+        header: formatMessage(fm.isatNumber),
+      }),
+      columnHelper.accessor('vatNumber', {
+        header: formatMessage(fm.vatNumber),
+      }),
     ],
-    [formatMessage],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandBeneficiary>) => {
@@ -127,12 +120,13 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
 
   return (
     <Box marginTop={4}>
-      <FarmerLandsTable
+      <Table
         columns={columns}
         data={beneficiaries}
         loading={loading}
         error={error}
         emptyMessage={formatMessage(m.noData)}
+        mobileTitleKey="name"
         renderExpandedRow={renderExpandedRow}
       />
     </Box>
