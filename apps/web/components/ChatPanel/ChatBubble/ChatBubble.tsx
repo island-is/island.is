@@ -41,7 +41,7 @@ const DefaultVariant = ({
         component="button"
         data-testid="chatbot"
         tabIndex={0}
-        className={cn(styles.message, pushUp && styles.messagePushUp)}
+        className={cn(styles.message, { [styles.messagePushUp]: pushUp })}
         onClick={handleClick}
       >
         <Box position="relative">

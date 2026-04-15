@@ -253,7 +253,7 @@ import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
-
+// TODO: remove this comment
 const environment = getConfig
 
 @Module({
