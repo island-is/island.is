@@ -45,8 +45,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseDecision,
   CaseState,
   Institution,
@@ -364,7 +364,7 @@ export const SignedVerdictOverview: FC = () => {
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
-    workingCase.appealCase?.appealState === CaseAppealState.COMPLETED
+    workingCase.appealCase?.appealState === AppealCaseState.COMPLETED
 
   return (
     <>
@@ -526,7 +526,7 @@ export const SignedVerdictOverview: FC = () => {
               judgeName={workingCase.judge?.name}
             />
             {workingCase.appealCase?.appealState ===
-              CaseAppealState.COMPLETED &&
+              AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title={formatMessage(conclusion.appealTitle)}

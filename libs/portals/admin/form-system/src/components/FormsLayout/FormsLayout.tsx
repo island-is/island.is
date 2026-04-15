@@ -1,5 +1,5 @@
 import { InfoButton, m } from '@island.is/form-system/ui'
-import { Box, Breadcrumbs } from '@island.is/island-ui/core'
+import { Box, Breadcrumbs, ToastContainer } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FormsContext } from '../../context/FormsContext'
@@ -28,6 +28,7 @@ export const FormsLayout = () => {
       ) : location === 'admin' ? (
         <Admin />
       ) : null}
+      <ToastContainer useKeyframeStyles={false} closeButton timeout={10000} />
     </>
   )
 }
