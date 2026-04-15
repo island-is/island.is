@@ -28,5 +28,6 @@ mutation UpdateClient($input: AuthAdminPatchClientInput!) {
       type
       value
     }
+    allowedCorsOrigins
   }
 }

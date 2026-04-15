@@ -4,7 +4,6 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import omit from 'lodash/omit'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -12,7 +11,6 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { validateClientId } from '@island.is/auth/shared'
 import { NoContentException } from '@island.is/nest/problem'
-import { AuthDelegationType } from '@island.is/shared/types'
 
 import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
@@ -28,6 +26,7 @@ import {
   translateRefreshTokenExpiration,
 } from '../../types'
 import { ClientsService } from '../clients.service'
+import { ClientAllowedCorsOrigin } from '../models/client-allowed-cors-origin.model'
 import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
@@ -42,10 +41,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { ClientDelegationType } from '../models/client-delegation-type.model'
-import {
-  delegationTypeSuperUserFilter,
-  SUPER_USER_DELEGATION_TYPES,
-} from '../../resources/utils/filters'
+import { SUPER_USER_DELEGATION_TYPES } from '../../resources/utils/filters'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -75,6 +71,8 @@ export class AdminClientsService {
     private clientRedirectUriModel: typeof ClientRedirectUri,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutRedirectUriModel: typeof ClientPostLogoutRedirectUri,
+    @InjectModel(ClientAllowedCorsOrigin)
+    private clientAllowedCorsOriginModel: typeof ClientAllowedCorsOrigin,
     @InjectModel(ClientClaim)
     private clientClaimModel: typeof ClientClaim,
     @InjectModel(ClientGrantType)
@@ -296,6 +294,7 @@ export class AdminClientsService {
       displayName,
       redirectUris,
       postLogoutRedirectUris,
+      allowedCorsOrigins,
       supportTokenExchange,
       refreshTokenExpiration,
       addedScopes,
@@ -312,6 +311,7 @@ export class AdminClientsService {
         clientAttributes,
         redirectUris,
         postLogoutRedirectUris,
+        allowedCorsOrigins,
         customClaims,
         supportTokenExchange,
         addedScopes,
@@ -345,6 +345,31 @@ export class AdminClientsService {
         clientId,
         redirectUri: {
           [Op.notIn]: uris,
+        },
+      },
+      transaction,
+    })
+  }
+
+  private async updateAllowedCorsOrigins(
+    clientId: string,
+    origins: string[],
+    transaction: Transaction,
+  ) {
+    await Promise.all(
+      origins.map((origin) =>
+        this.clientAllowedCorsOriginModel.upsert(
+          { clientId, origin },
+          { transaction },
+        ),
+      ),
+    )
+
+    await this.clientAllowedCorsOriginModel.destroy({
+      where: {
+        clientId,
+        origin: {
+          [Op.notIn]: origins,
         },
       },
       transaction,
@@ -393,11 +418,13 @@ export class AdminClientsService {
         | 'displayName'
         | 'redirectUris'
         | 'postLogoutRedirectUris'
+        | 'allowedCorsOrigins'
         | 'supportTokenExchange'
         | 'refreshTokenExpiration'
       >
       redirectUris?: string[]
       postLogoutRedirectUris?: string[]
+      allowedCorsOrigins?: string[]
       customClaims?: AdminClientClaimDto[]
       supportTokenExchange?: boolean
       addedScopes?: string[]
@@ -452,6 +479,14 @@ export class AdminClientsService {
         ClientPostLogoutRedirectUri,
         data.clientId,
         data.postLogoutRedirectUris,
+        transaction,
+      )
+    }
+
+    if (data.allowedCorsOrigins) {
+      await this.updateAllowedCorsOrigins(
+        data.clientId,
+        data.allowedCorsOrigins,
         transaction,
       )
     }
@@ -588,6 +623,8 @@ export class AdminClientsService {
         client.supportedDelegationTypes?.map(
           (clientDelegationType) => clientDelegationType.delegationType,
         ) ?? [],
+      allowedCorsOrigins:
+        client.allowedCorsOrigins?.map((cors) => cors.origin) ?? [],
       allowedAcr: client.allowedAcr.map((v) => v.toString()) ?? [],
     }
   }
@@ -651,6 +688,7 @@ export class AdminClientsService {
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
       { model: ClientDelegationType, as: 'supportedDelegationTypes' },
+      { model: ClientAllowedCorsOrigin, as: 'allowedCorsOrigins' },
     ]
   }
 

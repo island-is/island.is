@@ -227,7 +227,7 @@ export enum RequestCaseState {
   DELETED = CaseState.DELETED,
 }
 
-export enum CaseAppealState {
+export enum AppealCaseState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
   COMPLETED = 'COMPLETED',
@@ -535,4 +535,11 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
+}
+
+export enum AppealCaseTransition {
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
