@@ -28,6 +28,7 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
+import { defenderRule } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
 import { CaseCompletedGuard } from '../case/guards/caseCompleted.guard'
 import { CaseTypeGuard } from '../case/guards/caseType.guard'
@@ -39,11 +40,7 @@ import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import { CurrentAppealCase } from './guards/appealCase.decorator'
 import { AppealCaseExistsGuard } from './guards/appealCaseExists.guard'
-import {
-  defenderCreateRule,
-  defenderTransitionRule,
-  defenderUpdateRule,
-} from './guards/rolesRules'
+import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -68,7 +65,7 @@ export class LimitedAccessAppealCaseController {
     CaseWriteGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderCreateRule)
+  @RolesRules(defenderRule)
   @Post('case/:caseId/limitedAccess/appealCase')
   @ApiCreatedResponse({
     type: AppealCase,

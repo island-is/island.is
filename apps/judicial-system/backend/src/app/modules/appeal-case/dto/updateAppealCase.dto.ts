@@ -1,4 +1,12 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -14,10 +22,14 @@ export class UpdateAppealCaseDto {
   readonly appealCaseNumber?: string
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly prosecutorStatementDate?: Date
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly defendantStatementDate?: Date
 
@@ -57,6 +69,8 @@ export class UpdateAppealCaseDto {
   readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly appealValidToDate?: Date
 
@@ -66,10 +80,13 @@ export class UpdateAppealCaseDto {
   readonly isAppealCustodyIsolation?: boolean
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly appealIsolationToDate?: Date
 
   @IsOptional()
+  @IsArray()
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]

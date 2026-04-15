@@ -1,0 +1,10 @@
+query GetScopeClients($input: ScopeClientsInput!) {
+  authAdminScopeClients(input: $input) {
+    clientId
+    clientType
+    displayName {
+      value
+      locale
+    }
+  }
+}
