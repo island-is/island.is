@@ -288,26 +288,15 @@ export const householdMembersOverviewItems = (
     ]
   }
 
-  return members.flatMap((member, index) => {
+  return members.map((member) => {
     const answerRow = answerByNationalId.get(normalizeId(member.nationalId))
     const displayName = answerRow?.name || member.name
     const displayNationalId = answerRow?.nationalId || member.nationalId
-    const items: Array<KeyValueItem> = [
-      {
-        width: 'half',
-        keyText: {
-          ...m.draftMessages.overviewSection.nameIndex,
-          values: { index: index + 1 },
-        },
-        valueText: displayName,
-      },
-      {
-        width: 'half',
-        keyText: m.draftMessages.overviewSection.nationalId,
-        valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
-      },
-    ]
-    return items
+    return {
+      width: 'full' as const,
+      keyText: displayName,
+      valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
+    }
   })
 }
 

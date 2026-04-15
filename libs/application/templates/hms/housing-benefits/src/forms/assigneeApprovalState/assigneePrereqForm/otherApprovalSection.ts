@@ -1,6 +1,5 @@
 import {
   buildCheckboxField,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   YES,
@@ -10,29 +9,26 @@ import { nationalIdPreface } from '../../../utils/assigneeUtils'
 
 export const otherApprovalSection = buildSection({
   id: 'assigneePrereqSection',
-  title: m.assigneeApproval.prereqSectionTitle,
+  title: m.assigneeApproval.prereqMunicipalitySectionTitle,
   children: [
     buildMultiField({
       id: 'assigneePrereqMultiField',
-      title: m.assigneeApproval.prereqSectionTitle,
-      description: m.assigneeApproval.prereqDescription,
+      title: m.assigneeApproval.prereqMunicipalitySectionTitle,
+      description: m.assigneeApproval.prereqMunicipalityDescription,
       children: [
-        buildDescriptionField({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneePrereqIntro'),
-          description: m.assigneeApproval.prereqDescription,
-          marginBottom: 4,
-        }),
         buildCheckboxField({
           id: (application, user) =>
-            nationalIdPreface(application, user, 'confirmRead'),
+            nationalIdPreface(
+              application,
+              user,
+              'confirmMunicipalityDataFetch',
+            ),
           options: [
             {
               label: m.assigneeApproval.prereqConfirmRead,
               value: YES,
             },
           ],
-          marginBottom: 4,
           required: true,
         }),
       ],

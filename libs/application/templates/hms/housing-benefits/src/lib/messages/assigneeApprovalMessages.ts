@@ -43,21 +43,21 @@ export const assigneeApproval = defineMessages({
     defaultMessage: 'Staðfesta',
     description: 'Approve button',
   },
-  prereqSectionTitle: {
-    id: 'hb.application:assigneeApproval.prereqSectionTitle',
-    defaultMessage: 'Forkröfur heimilismanns',
-    description: 'Assignee prerequisite step title',
+  prereqMunicipalitySectionTitle: {
+    id: 'hb.application:assigneeApproval.prereqMunicipalitySectionTitle',
+    defaultMessage: 'Sérstakur húsnæðisstuðningur',
+    description: 'Assignee prerequisite municipality section title',
   },
-  prereqDescription: {
-    id: 'hb.application:assigneeApproval.prereqDescription#markdown',
+  prereqMunicipalityDescription: {
+    id: 'hb.application:assigneeApproval.prereqMunicipalityDescription#markdown',
     defaultMessage:
-      'Til að halda áfram þarftu fyrst að staðfesta auðkenni þitt með gögnum úr Þjóðskrá og sækja skattframtal frá Skattinum.',
-    description: 'Assignee prerequisite description',
+      'Flest sveitarfélög bjóða upp á sérstakan húsnæðisstuðning. Til að ákvarða hvort þú getir fengið stuðning þarf sveitarfélagið að sækja upplýsingar um þig til að ákvarða hvort þú getir fengið stuðning.',
+    description: 'Assignee prerequisite municipality description',
   },
   prereqConfirmRead: {
     id: 'hb.application:assigneeApproval.prereqConfirmRead',
     defaultMessage:
-      'Ég hef kynnt mér upplýsingarnar og vil halda áfram við samþykki umsóknarinnar.',
+      'Ég samþykki að að sveitarfélagið mitt sæki upplýsingar um mig til að ákvarða sérstakan húsnæðisstuðning.',
     description: 'Checkbox after assignee external data',
   },
   prereqContinueButton: {

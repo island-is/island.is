@@ -3,73 +3,11 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  ExternalData,
-  FormValue,
-  KeyValueItem,
-} from '@island.is/application/types'
-import { format as formatKennitala } from 'kennitala'
+import { DefaultEvents } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
 import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
-import {
-  assigneePersonalInfoOverviewItems,
-  assigneeAssetDeclarationOverviewItems,
-  assigneeAddressMatchOverviewItems,
-} from '../../../utils/getOverviewItems'
-
-const getSignedAssigneeOverviewItems = (
-  answers: FormValue,
-  externalData: ExternalData,
-): KeyValueItem[] => {
-  const signed =
-    getValueViaPath<string[]>(answers, 'signedAssignees') ?? ([] as string[])
-  const items: KeyValueItem[] = []
-
-  signed.forEach((nationalId, index) => {
-    const personalItems = assigneePersonalInfoOverviewItems(
-      answers,
-      externalData,
-      nationalId,
-    )
-    const assetItems = assigneeAssetDeclarationOverviewItems(
-      answers,
-      externalData,
-      nationalId,
-    )
-    const addressItems = assigneeAddressMatchOverviewItems(
-      answers,
-      externalData,
-      nationalId,
-    )
-
-    if (index > 0) {
-      items.push({
-        width: 'full',
-        keyText: '',
-        valueText: '',
-      })
-    }
-
-    items.push(
-      {
-        width: 'full',
-        keyText: {
-          ...m.draftMessages.overviewSection.nameIndex,
-          values: { index: index + 1 },
-        },
-        valueText: formatKennitala(nationalId),
-      },
-      ...personalItems,
-      ...assetItems,
-      ...addressItems,
-    )
-  })
-
-  return items
-}
+import { getSignedAssigneeOverviewItems } from '../../../utils/assigneeUtil'
 
 export const assigneeOverviewSection = buildSection({
   id: 'applicantSubmitAssigneeOverviewSection',

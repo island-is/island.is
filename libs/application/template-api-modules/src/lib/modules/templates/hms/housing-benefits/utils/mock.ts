@@ -119,3 +119,27 @@ export const getPersonalTaxMockMode = (application: {
   )
   return variant === 'emptySuccess' ? 'empty' : 'sample'
 }
+
+/** Assignee variant: reads from `<nationalId>.assigneeDevMockSettings.*`. */
+export const getAssigneePersonalTaxMockMode = (
+  application: { answers?: Record<string, unknown> },
+  nationalId: string,
+): PersonalTaxMockMode => {
+  const answers = application?.answers
+  const prefix = `${nationalId}.assigneeDevMockSettings`
+  if (
+    getValueViaPath<string>(answers ?? {}, `${prefix}.useMock`) !== YES
+  ) {
+    return 'none'
+  }
+  const tax = getValueViaPath<string[]>(
+    answers ?? {},
+    `${prefix}.mockTaxReturn`,
+  )
+  if (!Array.isArray(tax) || !tax.includes(YES)) return 'none'
+  const variant = getValueViaPath<string>(
+    answers ?? {},
+    `${prefix}.mockTaxReturnVariant`,
+  )
+  return variant === 'emptySuccess' ? 'empty' : 'sample'
+}

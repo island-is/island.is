@@ -15,6 +15,7 @@ import { mockGetRentalAgreements } from '../terminate-rental-agreement/mockedRen
 import { filterContractsForHousingBenefits } from './utils'
 import {
   applyMockAssigneeNationalRegistryAddress,
+  getAssigneePersonalTaxMockMode,
   getPersonalTaxMockMode,
   shouldOverlayMockAssigneeNationalRegistryAddress,
   useMockRentalAgreements,
@@ -106,8 +107,27 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
-  async getAssigneePersonalTaxReturn(props: TemplateApiModuleActionProps) {
-    return this.getPersonalTaxReturn(props)
+  async getAssigneePersonalTaxReturn({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const lastYear = new Date().getFullYear() - 1
+
+    const taxMockMode = getAssigneePersonalTaxMockMode(
+      application,
+      auth.nationalId,
+    )
+
+    const taxReturnFiled = taxMockMode !== 'empty'
+
+    this.logger.debug(
+      `Mocking assignee tax return status for ${lastYear}: filed=${taxReturnFiled}`,
+    )
+
+    return {
+      year: lastYear,
+      taxReturnFiled,
+    }
   }
 
   async getHouseholdMembers(props: TemplateApiModuleActionProps) {
