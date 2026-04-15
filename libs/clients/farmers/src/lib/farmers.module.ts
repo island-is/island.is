@@ -45,8 +45,7 @@ export class FarmersClientModule {
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,
-              // TODO: confirm required scope with Afurd API owner (e.g. '@afurd.is/farmers:read')
-              scope: [],
+              scope: ['@atrn.is/afurd'],
             }
           : undefined,
       }),
