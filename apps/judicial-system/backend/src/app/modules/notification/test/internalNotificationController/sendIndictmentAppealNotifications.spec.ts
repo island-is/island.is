@@ -4,8 +4,8 @@ import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseType,
@@ -111,7 +111,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
             civilClaimants,
             appealCase: {
               appealedByNationalId: defender1NationalId,
-              appealState: CaseAppealState.APPEALED,
+              appealState: AppealCaseState.APPEALED,
             },
           } as Case,
           {
@@ -333,7 +333,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
             civilClaimants,
             appealCase: {
               appealReceivedByCourtDate: receivedDate,
-              appealState: CaseAppealState.RECEIVED,
+              appealState: AppealCaseState.RECEIVED,
             },
           } as Case,
           {
@@ -670,7 +670,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
             defendants,
             civilClaimants,
             appealCase: {
-              appealState: CaseAppealState.COMPLETED,
+              appealState: AppealCaseState.COMPLETED,
               appealCaseNumber,
               appealRulingDecision: CaseAppealRulingDecision.ACCEPTING,
             },
@@ -807,7 +807,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
             civilClaimants,
             appealCase: {
               appealedByNationalId: defender1NationalId,
-              appealState: CaseAppealState.APPEALED,
+              appealState: AppealCaseState.APPEALED,
             },
           } as Case,
           {
