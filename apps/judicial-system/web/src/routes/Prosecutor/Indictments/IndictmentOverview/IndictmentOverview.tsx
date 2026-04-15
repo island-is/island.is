@@ -31,7 +31,7 @@ import {
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   IndictmentCaseReviewDecision,
@@ -84,8 +84,8 @@ const IndictmentOverview: FC = () => {
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
       workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
-      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
+      workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
   const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
     Record<string, IndictmentCaseReviewDecision | null | undefined>

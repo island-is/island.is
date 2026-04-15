@@ -28,7 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
@@ -194,8 +194,8 @@ const Completed: FC = () => {
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
-      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
+      workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
   return (
     <>

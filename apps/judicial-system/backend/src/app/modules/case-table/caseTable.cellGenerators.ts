@@ -9,8 +9,8 @@ import {
   getInitials,
 } from '@island.is/judicial-system/formatters'
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -143,11 +143,11 @@ const generateAppealStateTag = (
   }
 
   switch (c.appealCase?.appealState) {
-    case CaseAppealState.WITHDRAWN:
+    case AppealCaseState.WITHDRAWN:
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'L')
-    case CaseAppealState.APPEALED:
+    case AppealCaseState.APPEALED:
       return generateCell({ color: 'red', text: 'Kært' }, 'A')
-    case CaseAppealState.RECEIVED:
+    case AppealCaseState.RECEIVED:
       if (isCourtOfAppealsUser(user)) {
         if (!c.appealCase?.appealCaseNumber) {
           return generateCell({ color: 'purple', text: 'Nýtt' }, 'B')
@@ -164,7 +164,7 @@ const generateAppealStateTag = (
       }
 
       return generateCell({ color: 'darkerBlue', text: 'Móttekið' }, 'C')
-    case CaseAppealState.COMPLETED:
+    case AppealCaseState.COMPLETED:
       return generateCell(
         {
           color: getCompletedColor(),

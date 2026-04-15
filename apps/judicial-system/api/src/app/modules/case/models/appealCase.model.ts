@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -19,8 +19,8 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field(() => CaseAppealState, { nullable: true })
-  readonly appealState?: CaseAppealState
+  @Field(() => AppealCaseState, { nullable: true })
+  readonly appealState?: AppealCaseState
 
   @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string

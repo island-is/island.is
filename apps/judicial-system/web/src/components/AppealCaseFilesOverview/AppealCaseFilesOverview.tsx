@@ -23,8 +23,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseFile,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -116,11 +116,11 @@ const AppealCaseFilesOverview = () => {
                 CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
               ].includes(caseFile.category) ||
               ((workingCase.appealCase?.appealState ===
-                CaseAppealState.COMPLETED ||
+                AppealCaseState.COMPLETED ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_RULING) ||
               (((workingCase.appealCase?.appealState ===
-                CaseAppealState.COMPLETED &&
+                AppealCaseState.COMPLETED &&
                 isDefenceUser(user)) ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
@@ -241,7 +241,7 @@ const AppealCaseFilesOverview = () => {
         </Box>
         {(isProsecutionUser(user) || isDefenceUser(user)) &&
           workingCase.appealCase?.appealState &&
-          workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED && (
+          workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED && (
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 icon="add"
@@ -254,7 +254,7 @@ const AppealCaseFilesOverview = () => {
                 }}
                 disabled={
                   workingCase.appealCase?.appealState ===
-                  CaseAppealState.WITHDRAWN
+                  AppealCaseState.WITHDRAWN
                 }
               >
                 {formatMessage(strings.addFiles)}

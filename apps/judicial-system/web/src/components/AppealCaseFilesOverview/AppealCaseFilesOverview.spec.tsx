@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseFileCategory,
   CaseState,
   CaseType,
@@ -28,7 +28,7 @@ describe('<AppealCaseFilesOverview />', () => {
       state: CaseState.ACCEPTED,
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       },
     } as Case
 
@@ -55,7 +55,7 @@ describe('<AppealCaseFilesOverview />', () => {
       state: CaseState.ACCEPTED,
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       },
     } as Case
 
@@ -84,7 +84,7 @@ describe('<AppealCaseFilesOverview />', () => {
       prosecutorPostponedAppealDate: '2021-09-01T00:00:00Z',
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       },
     } as Case
 
@@ -115,7 +115,7 @@ describe('<AppealCaseFilesOverview />', () => {
       state: CaseState.ACCEPTED,
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       },
     } as Case
 
@@ -146,7 +146,7 @@ describe('<AppealCaseFilesOverview />', () => {
       state: CaseState.ACCEPTED,
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       },
     } as Case
 

@@ -5,9 +5,9 @@ import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   Case,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -112,7 +112,7 @@ describe('useSections getSections', () => {
       policeCaseNumbers: [],
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
         appealRulingDecision: CaseAppealRulingDecision.REMAND,
       },
     }
