@@ -25,6 +25,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
 
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
 import { CaseExistsGuard } from '../case/guards/caseExists.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
@@ -44,7 +45,8 @@ import {
   courtOfAppealsRegistrarUpdateRule,
   districtCourtJudgeTransitionRule,
   districtCourtRegistrarTransitionRule,
-  prosecutorCreateRule,
+  prosecutorRepresentativeTransitionRule,
+  prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
 } from './guards/rolesRules'
@@ -76,7 +78,7 @@ export class AppealCaseController {
   }
 
   @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
-  @RolesRules(prosecutorCreateRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('case/:caseId/appealCase')
   @ApiCreatedResponse({
     type: AppealCase,
@@ -101,6 +103,7 @@ export class AppealCaseController {
   @UseGuards(CaseExistsGuard, AppealCaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
+    prosecutorRepresentativeUpdateRule,
     courtOfAppealsJudgeUpdateRule,
     courtOfAppealsRegistrarUpdateRule,
     courtOfAppealsAssistantUpdateRule,
@@ -151,6 +154,7 @@ export class AppealCaseController {
   @UseGuards(CaseExistsGuard, AppealCaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
+    prosecutorRepresentativeTransitionRule,
     districtCourtJudgeTransitionRule,
     districtCourtRegistrarTransitionRule,
     courtOfAppealsJudgeTransitionRule,
