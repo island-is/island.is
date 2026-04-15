@@ -369,7 +369,9 @@ export const Table = <TData extends object>({
                       {(isExpanded || isCollapsing) && (
                         <>
                           <div className={styles.line} />
-                          <Box marginLeft={3} marginBottom={3}>{renderExpandedRow(row)}</Box>
+                          <Box marginLeft={3} marginBottom={3}>
+                            {renderExpandedRow(row)}
+                          </Box>
                         </>
                       )}
                     </AnimateHeight>
