@@ -350,6 +350,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               write: 'all',
               shouldBeListedForRole: false,
             },
+            {
+              id: Roles.DELIGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
+            },
           ],
         },
         on: {
