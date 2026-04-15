@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
@@ -26,21 +26,15 @@ const usePoliceDigitalCaseFile = (
   const [deleteMutation, { loading: isDeleting }] =
     useDeletePoliceDigitalCaseFileMutation()
 
-  const [getTokenUrlQuery, { loading: tokenUrlLoading }] =
-    usePoliceDigitalCaseFileTokenUrlLazyQuery({
-      fetchPolicy: 'no-cache',
-    })
+  const [getTokenUrlQuery] = usePoliceDigitalCaseFileTokenUrlLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
+
+  const [loadingFileId, setLoadingFileId] = useState<string | null>(null)
 
   const openDigitalCaseFileUrl = useCallback(
     async (policeDigitalFileId: string) => {
-      const newTab = window.open('', '_blank')
-
-      if (!newTab) {
-        toast.error('Ekki tókst að opna nýjan flipa fyrir rafrænt skjal')
-        return
-      }
-
-      newTab.opener = null
+      setLoadingFileId(policeDigitalFileId)
 
       try {
         const result = await getTokenUrlQuery({
@@ -48,16 +42,18 @@ const usePoliceDigitalCaseFile = (
             input: { caseId, policeDigitalFileId },
           },
         })
+
         const url = result.data?.policeDigitalCaseFileTokenUrl
+
         if (url) {
-          newTab.location.assign(url)
+          window.open(url, '_blank', 'noopener')
         } else {
-          newTab.close()
           toast.error('Tengill á rafrænt skjal fannst ekki')
         }
       } catch {
-        newTab.close()
         toast.error('Upp kom villa við að sækja tengil á rafrænt skjal')
+      } finally {
+        setLoadingFileId(null)
       }
     },
     [caseId, getTokenUrlQuery],
@@ -88,7 +84,7 @@ const usePoliceDigitalCaseFile = (
     digitalCaseFilesLoading,
     digitalCaseFilesError,
     isDeleting,
-    tokenUrlLoading,
+    loadingFileId,
     openDigitalCaseFileUrl,
     deletePoliceDigitalCaseFile,
   }

@@ -1,8 +1,14 @@
 import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Icon,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -287,7 +293,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
-  const { digitalCaseFiles, openDigitalCaseFileUrl, tokenUrlLoading } =
+  const { digitalCaseFiles, openDigitalCaseFileUrl, loadingFileId } =
     usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const showPoliceDigitalCaseFiles =
@@ -474,7 +480,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onClick={() =>
                       openDigitalCaseFileUrl(file.policeDigitalFileId)
                     }
-                    disabled={tokenUrlLoading}
+                    disabled={loadingFileId === file.policeDigitalFileId}
                     cursor="pointer"
                     background="transparent"
                     width="full"
@@ -488,12 +494,32 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     >
                       {file.name}
                     </Text>
-                    <Icon
-                      icon="open"
-                      type="outline"
-                      size="small"
-                      color="blue400"
-                    />
+                    <AnimatePresence mode="wait" initial={false}>
+                      {loadingFileId !== file.policeDigitalFileId ? (
+                        <motion.span
+                          key="loading"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          <LoadingDots single size="small" />
+                        </motion.span>
+                      ) : (
+                        <motion.span
+                          key="icon"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          <Icon
+                            icon="open"
+                            type="outline"
+                            size="small"
+                            color="blue400"
+                          />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </Box>
                 ))}
               </Box>
