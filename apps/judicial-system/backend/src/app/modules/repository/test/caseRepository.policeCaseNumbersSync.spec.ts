@@ -177,10 +177,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
       const res = await caseRepositoryService.findById('c1')
 
-      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
-        [built],
-        { transaction: undefined },
-      )
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith([built], {
+        transaction: undefined,
+      })
       expect(findDistinctPoliceCaseNumbersByCaseIds).toHaveBeenCalledWith(
         ['c1'],
         { transaction: undefined },

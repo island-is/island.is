@@ -815,7 +815,7 @@ const Search: Screen<CategoryProps> = ({
                         dataTestId="search-result"
                         image={thumbnail ? thumbnail : image}
                         subTitle={parentTitle}
-                        highlightedResults={true}
+                        highlightedResults={false}
                         link={{ href: linkHref }}
                         {...rest}
                       />
@@ -928,7 +928,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           countTypes: true,
           size: PERPAGE,
           page,
-          highlightResults: true,
+          highlightResults: false,
         },
       },
     }),

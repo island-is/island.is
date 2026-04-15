@@ -46,7 +46,7 @@ import { RegulationsService } from '@island.is/clients/regulations'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { RegulationViewTypes } from '@island.is/regulations/web'
 import { ensureRegName, nameToSlug } from '@island.is/regulations'
-import type { Year, ISODate } from '@island.is/regulations'
+import type { Year, ISODate, RegName } from '@island.is/regulations'
 import { OJOIAGetRegulationsSearchInput } from '../models/getRegulationsSearch.input'
 import { OJOIAGetRegulationFromApiInput } from '../models/getRegulationFromApi.input'
 import {
@@ -429,6 +429,15 @@ export class OfficialJournalOfIcelandApplicationService {
     }
 
     return { regulations: results }
+  }
+
+  async getRegulationOptionList(
+    names: string[],
+  ): Promise<OJOIARegulationOptionSearchResponse> {
+    const regulations = await this.regulationsService.getRegulationOptionList(
+      names as RegName[],
+    )
+    return { regulations: regulations ?? [] }
   }
 
   async getRegulationFromApi(input: OJOIAGetRegulationFromApiInput) {

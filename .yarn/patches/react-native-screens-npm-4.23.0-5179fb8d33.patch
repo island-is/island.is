@@ -1,0 +1,28 @@
+diff --git a/ios/RNSBarButtonItem.mm b/ios/RNSBarButtonItem.mm
+index 3f4a5e11c44e5206a92edc7e9d7b29f94a4b4211..3f87edb9dd0021ee6e52fa77178e9b4c3d0053ed 100644
+--- a/ios/RNSBarButtonItem.mm
++++ b/ios/RNSBarButtonItem.mm
+@@ -100,6 +100,8 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+     NSDictionary *badgeConfig = dict[@"badge"];
+     if (badgeConfig != nil) {
+       [self setBadgeFromConfig:badgeConfig];
++    } else {
++      self.badge = nil;
+     }
+   }
+ #endif
+@@ -311,6 +313,14 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+ - (void)setBadgeFromConfig:(NSDictionary *)badgeObj
+ {
+   if (@available(iOS 26.0, *)) {
++    NSString *value = badgeObj[@"value"];
++    
++    // Hide badge when value is nil, empty, or "0"
++    if (value == nil || [value isEqualToString:@""] || [value isEqualToString:@"0"]) {
++      self.badge = nil;
++      return;
++    }
++
+     UIBarButtonItemBadge *badge = [UIBarButtonItemBadge badgeWithString:badgeObj[@"value"]];
+     NSDictionary *style = badgeObj[@"style"];
+     if (style) {

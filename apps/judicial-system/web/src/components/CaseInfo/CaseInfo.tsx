@@ -18,6 +18,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './CaseInfo.strings'
 
@@ -146,6 +147,13 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
               rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
             })}
           </Text>
+          {workingCase.appealedDate && (
+            <Box marginBottom={1}>
+              <Text as="h5" variant="h5">
+                {getAppealActorText(workingCase)}
+              </Text>
+            </Box>
+          )}
         </Box>
       ) : (
         <ProsecutorAndDefendantsEntries workingCase={workingCase} />

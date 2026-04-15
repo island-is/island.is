@@ -1,6 +1,6 @@
 import QuickActions, { ShortcutItem } from 'react-native-quick-actions'
 import { bundleId } from '../config'
-import { navigateTo } from '../lib/deep-linking'
+import { router } from 'expo-router'
 
 const shortcutItems = [
   {
@@ -44,6 +44,6 @@ export function setupQuickActions() {
 export function handleQuickAction({ type }: ShortcutItem) {
   const shortcut = shortcutItems.find((s) => s.type === type)
   if (shortcut) {
-    navigateTo(shortcut.userInfo.url.replace(`${bundleId}:/`, ''))
+    router.navigate(shortcut.userInfo.url.replace(`${bundleId}:/`, '') as any)
   }
 }

@@ -75,10 +75,6 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
   }
 
-  /**
-   * Distinct LÖKE numbers per case from the junction table (unassigned + defendant-linked).
-   * Used as the read path for `Case.policeCaseNumbers` while the legacy array column remains.
-   */
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },
@@ -108,7 +104,10 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
 
     for (const [caseId, set] of byCase) {
-      result.set(caseId, [...set].sort((a, b) => a.localeCompare(b)))
+      result.set(
+        caseId,
+        [...set].sort((a, b) => a.localeCompare(b)),
+      )
     }
 
     return result
@@ -145,6 +144,63 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     } catch (error) {
       this.logger.error(
         'Error resolving police case numbers from junction for cases',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * Assigns police case numbers to defendants by inserting
+   * (case_id, defendant_id, police_case_number) rows, skipping duplicates
+   * via the partial unique index, then removes redundant unassigned rows
+   * for the same police case numbers on this case.
+   */
+  async assignDefendantPoliceCaseNumbers(
+    caseId: string,
+    links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
+  ): Promise<void> {
+    if (links.length === 0) {
+      return
+    }
+
+    const sequelize = this.model.sequelize
+    if (!sequelize) {
+      throw new Error('Sequelize instance unavailable')
+    }
+
+    try {
+      await sequelize.transaction(async (transaction) => {
+        await this.model.bulkCreate(
+          links.map(({ defendantId, policeCaseNumber }) => ({
+            caseId,
+            defendantId,
+            policeCaseNumber,
+          })),
+          { transaction, ignoreDuplicates: true },
+        )
+
+        const policeCaseNumbers = [
+          ...new Set(links.map((l) => l.policeCaseNumber)),
+        ]
+
+        await this.model.destroy({
+          where: {
+            caseId,
+            defendantId: { [Op.is]: null },
+            policeCaseNumber: { [Op.in]: policeCaseNumbers },
+          },
+          transaction,
+        })
+      })
+
+      this.logger.debug(
+        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error assigning defendant-linked police case number rows for case ${caseId}`,
         { error },
       )
 
