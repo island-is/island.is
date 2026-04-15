@@ -45,7 +45,7 @@ export const Forms = () => {
     name: '',
     formState: defaultFormState,
   })
-
+  console.log('Forms', forms)
   const categories = [
     {
       id: 'formState',
@@ -235,6 +235,7 @@ export const Forms = () => {
                 status={f?.status}
                 lastModified={f?.modified}
                 url={f?.submissionServiceUrl ?? ''}
+                lastModifiedBy={f?.lastModifiedBy ?? ''}
               />
             )
           })}

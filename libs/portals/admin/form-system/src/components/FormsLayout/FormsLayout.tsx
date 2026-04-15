@@ -10,7 +10,6 @@ import { FormsHeader } from './components/FormsHeader'
 export const FormsLayout = () => {
   const { location, isAdmin } = useContext(FormsContext)
   const { formatMessage } = useIntl()
-
   return (
     <>
       <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
