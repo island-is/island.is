@@ -19,6 +19,7 @@ import {
   CourseChargesModule,
   CourseChargesConfig,
 } from '@island.is/api/domains/course-charges'
+import { ApiDomainsCustomsCalculatorModule } from '@island.is/api/domains/customs-calculator'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -279,6 +280,7 @@ const environment = getConfig
     ContentSearchModule,
     ConsultationPortalModule,
     CourseChargesModule,
+    ApiDomainsCustomsCalculatorModule,
     FormSystemModule,
     CmsModule,
     DrivingLicenseModule,

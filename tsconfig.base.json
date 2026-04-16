@@ -51,6 +51,9 @@
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
       ],
+      "@island.is/api/domains/customs-calculator": [
+        "libs/api/domains/customs-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/consultation-portal": [
         "libs/api/domains/consultation-portal/src/index.ts"
       ],
@@ -687,6 +690,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients-rental-day-rate": [
         "libs/clients/rsk/rental-day-rate/src/index.ts"
+      ],
+      "@island.is/clients-rsk-customs-calculator": [
+        "libs/clients/rsk/customs-calculator/src/index.ts"
       ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
