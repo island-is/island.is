@@ -381,7 +381,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
-  isPublished: boolean
+  isReadOnly: boolean
 }
 
 export const controlReducer = (

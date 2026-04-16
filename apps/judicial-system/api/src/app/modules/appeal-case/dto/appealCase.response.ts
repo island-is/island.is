@@ -1,15 +1,15 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
-registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
+registerEnumType(AppealCaseRulingDecision, { name: 'AppealCaseRulingDecision' })
 
 @ObjectType()
 export class AppealCase {
@@ -49,8 +49,8 @@ export class AppealCase {
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
 
-  @Field(() => CaseAppealRulingDecision, { nullable: true })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @Field(() => AppealCaseRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @Field(() => String, { nullable: true })
   readonly appealConclusion?: string

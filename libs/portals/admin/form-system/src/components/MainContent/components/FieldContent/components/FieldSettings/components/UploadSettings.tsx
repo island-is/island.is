@@ -1,27 +1,27 @@
+import { FormSystemField } from '@island.is/api/schema'
+import { m } from '@island.is/form-system/ui'
 import {
-  GridRow as Row,
-  GridColumn as Column,
-  Checkbox,
-  Stack,
   Box,
-  Select,
-  Text,
+  Checkbox,
+  GridColumn as Column,
   Option,
+  GridRow as Row,
+  Select,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import {
-  fileSizes,
-  FILE_TYPE_MAP,
-} from '../../../../../../../lib/utils/fileTypes'
-import { ControlContext } from '../../../../../../../context/ControlContext'
-import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
+import { ControlContext } from '../../../../../../../context/ControlContext'
+import {
+  FILE_TYPE_MAP,
+  fileSizes,
+} from '../../../../../../../lib/utils/fileTypes'
 
 export const FileUploadSettings = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
-  const { activeItem, isPublished } = control
+  const { activeItem, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
 
@@ -49,7 +49,7 @@ export const FileUploadSettings = () => {
             name="maxFileSize"
             placeholder={formatMessage(m.selectMaxFileSize)}
             backgroundColor="blue"
-            isDisabled={isPublished}
+            isDisabled={isReadOnly}
             value={fileSizeOptions.find(
               (f) => f.value === fieldSettings?.fileMaxSize,
             )}
@@ -72,7 +72,7 @@ export const FileUploadSettings = () => {
             name="maxAmount"
             placeholder={formatMessage(m.selectMaxFileAmount)}
             backgroundColor="blue"
-            isDisabled={isPublished}
+            isDisabled={isReadOnly}
             value={fileAmountOptions.find(
               (f) => f.value === fieldSettings?.maxFiles,
             )}
@@ -103,7 +103,7 @@ export const FileUploadSettings = () => {
                 label={key}
                 value={key}
                 checked={types?.includes(key)}
-                disabled={isPublished}
+                disabled={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_FILE_UPLOAD_SETTINGS',

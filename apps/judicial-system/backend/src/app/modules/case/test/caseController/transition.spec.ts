@@ -8,8 +8,8 @@ import { ConfigType } from '@island.is/nest/config'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -646,7 +646,7 @@ describe('CaseController - Transition', () => {
                 appealRulingDecision:
                   transition === CaseTransition.WITHDRAW_APPEAL &&
                   currentAppealState === AppealCaseState.RECEIVED
-                    ? CaseAppealRulingDecision.DISCONTINUED
+                    ? AppealCaseRulingDecision.DISCONTINUED
                     : undefined,
               },
               { transaction },
