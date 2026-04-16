@@ -30,10 +30,10 @@ export const PrimarySchoolStudentWrapper = ({
   const title = loaderData?.studentName ?? psm.schoolLabel
 
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
-    studentId: studentId!,
+    studentId: studentId ?? '',
   })
   const assessmentPath = generatePath(EducationPaths.PrimarySchoolAssessment, {
-    studentId: studentId!,
+    studentId: studentId ?? '',
   })
 
   const tabItems = [

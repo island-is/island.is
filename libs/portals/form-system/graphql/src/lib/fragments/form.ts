@@ -59,6 +59,7 @@ export const FormFragment = gql`
       ...Dependency
     }
     status
+    lastModifiedBy
   }
   ${LanguageFields}
   ${FormApplicantFragment}

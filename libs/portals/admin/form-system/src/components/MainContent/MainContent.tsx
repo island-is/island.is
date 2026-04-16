@@ -33,7 +33,7 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem, form, isPublished } = control
+  const { activeItem, form, isReadOnly } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
@@ -80,7 +80,7 @@ export const MainContent = () => {
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -102,7 +102,7 @@ export const MainContent = () => {
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -140,7 +140,7 @@ export const MainContent = () => {
                 <Column span="12/12">
                   <Checkbox
                     name="multi"
-                    disabled={isPublished}
+                    disabled={isReadOnly}
                     label={formatMessage(m.allowMultiple)}
                     checked={
                       (activeItem.data as FormSystemScreen).isMulti ?? false
@@ -172,7 +172,7 @@ export const MainContent = () => {
                       <Select
                         name="multiMax"
                         label={formatMessage(m.multiMax)}
-                        isDisabled={isPublished}
+                        isDisabled={isReadOnly}
                         backgroundColor="blue"
                         options={Array.from({ length: 35 - 2 + 1 }, (_, i) => {
                           const n = i + 2

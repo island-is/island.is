@@ -76,7 +76,10 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         })
         .apiDayRateEntriesEntityIdPeriodsPeriodGet({
           entityId: auth.nationalId,
-          period: lastMonthDate,
+          period: `${String(targetMonthIndex + 1).padStart(
+            2,
+            '0',
+          )}-${targetYear}`,
         })
 
       const entries: Array<DayRateRecord> = resp
