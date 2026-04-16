@@ -29,7 +29,7 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import type { Locale } from '@island.is/shared/types'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
-import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 
 @UseGuards(IdsUserGuard)

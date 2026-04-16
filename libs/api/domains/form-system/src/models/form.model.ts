@@ -119,6 +119,9 @@ export class Form {
 
   @Field(() => String)
   status!: string
+
+  @Field(() => String, { nullable: true })
+  lastModifiedBy?: string
 }
 
 @ObjectType('FormSystemFormResponse')
