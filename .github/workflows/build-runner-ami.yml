@@ -2,7 +2,7 @@ name: Build Runner AMI
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/ci-improvements]
     paths: [yarn.lock]
   workflow_dispatch:
     inputs:
