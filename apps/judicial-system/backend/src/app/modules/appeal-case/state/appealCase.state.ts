@@ -44,12 +44,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       {
         fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
         transition: (theCase: Case): AppealTransitionResult => {
-          const newAppealCaseUpdate = {
-            appealState: AppealCaseState.COMPLETED,
-          }
-
           const caseUpdate: UpdateCase = {}
-
           const currentDecision = theCase.decision
 
           if (
@@ -81,7 +76,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
 
           return {
             caseUpdate,
-            appealCaseUpdate: newAppealCaseUpdate,
+            appealCaseUpdate: { appealState: AppealCaseState.COMPLETED },
           }
         },
       },
@@ -92,9 +87,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
         fromAppealStates: [AppealCaseState.COMPLETED],
         transition: (): AppealTransitionResult => ({
           caseUpdate: {},
-          appealCaseUpdate: {
-            appealState: AppealCaseState.RECEIVED,
-          },
+          appealCaseUpdate: { appealState: AppealCaseState.RECEIVED },
         }),
       },
     ],
@@ -118,9 +111,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
 
           return {
             caseUpdate: {},
-            appealCaseUpdate: {
-              appealState: AppealCaseState.WITHDRAWN,
-            },
+            appealCaseUpdate: { appealState: AppealCaseState.WITHDRAWN },
           }
         },
       },
