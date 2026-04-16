@@ -192,30 +192,37 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     let lastResult: ApiScopeUser | null = null
 
     for (const environment of targetEnvironments) {
-      const result = await this.typedRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerCreateRaw({
-          apiScopeUserDTO: {
-            nationalId: input.nationalId,
-            name: input.name,
-            email: input.email,
-            userAccess: input.userAccess?.map((access) => ({
+      try {
+        const result = await this.typedRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerCreateRaw({
+            apiScopeUserDTO: {
+              nationalId: input.nationalId,
+              name: input.name,
+              email: input.email,
+              userAccess: input.userAccess?.map((access) => ({
+                nationalId: access.nationalId,
+                scope: access.scope,
+              })),
+            },
+          }),
+        )
+
+        if (result) {
+          lastResult = {
+            nationalId: result.nationalId,
+            name: result.name ?? undefined,
+            email: result.email,
+            userAccess: result.userAccess?.map((access) => ({
               nationalId: access.nationalId,
               scope: access.scope,
             })),
-          },
-        }),
-      )
-
-      if (result) {
-        lastResult = {
-          nationalId: result.nationalId,
-          name: result.name ?? undefined,
-          email: result.email,
-          userAccess: result.userAccess?.map((access) => ({
-            nationalId: access.nationalId,
-            scope: access.scope,
-          })),
+          }
         }
+      } catch (error) {
+        this.logger.error(
+          `Failed to create API scope user in ${environment}`,
+          error as Error,
+        )
       }
     }
 
@@ -238,30 +245,37 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     let lastResult: ApiScopeUser | null = null
 
     for (const environment of targetEnvironments) {
-      const result = await this.typedRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerUpdateRaw({
-          nationalId: input.nationalId,
-          apiScopeUserUpdateDTO: {
-            name: input.name ?? undefined,
-            email: input.email ?? undefined,
-            userAccess: input.userAccess?.map((access) => ({
+      try {
+        const result = await this.typedRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerUpdateRaw({
+            nationalId: input.nationalId,
+            apiScopeUserUpdateDTO: {
+              name: input.name ?? undefined,
+              email: input.email ?? undefined,
+              userAccess: input.userAccess?.map((access) => ({
+                nationalId: access.nationalId,
+                scope: access.scope,
+              })),
+            },
+          }),
+        )
+
+        if (result) {
+          lastResult = {
+            nationalId: result.nationalId,
+            name: result.name ?? undefined,
+            email: result.email,
+            userAccess: result.userAccess?.map((access) => ({
               nationalId: access.nationalId,
               scope: access.scope,
             })),
-          },
-        }),
-      )
-
-      if (result) {
-        lastResult = {
-          nationalId: result.nationalId,
-          name: result.name ?? undefined,
-          email: result.email,
-          userAccess: result.userAccess?.map((access) => ({
-            nationalId: access.nationalId,
-            scope: access.scope,
-          })),
+          }
         }
+      } catch (error) {
+        this.logger.error(
+          `Failed to update API scope user in ${environment}`,
+          error as Error,
+        )
       }
     }
 
