@@ -21,6 +21,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { additionalPartySchema } from '../lib/dataSchema'
 import { z } from 'zod'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 type AdditionalParty = z.infer<typeof additionalPartySchema>
 
@@ -38,6 +40,11 @@ export const InvolvedPartyScreen = ({
   setSubmitButtonDisabled,
   refetch,
 }: OJOIFieldBaseProps) => {
+  const { value: regulationsEnabled } = useFeatureFlag(
+    Features.officialJournalOfIcelandRegulations,
+    false,
+  )
+
   const { updateApplication, updateApplicationV2, submitApplication } =
     useApplication({
       applicationId: application.id,
@@ -245,7 +252,7 @@ export const InvolvedPartyScreen = ({
             setSubmitButtonDisabled && setSubmitButtonDisabled(false)
           }}
         />
-        {isCurrentPartyMinistry && (
+        {isCurrentPartyMinistry && regulationsEnabled !== false && (
           <Box marginTop={3}>
             <Checkbox
               id="showAdditionalParties"
@@ -258,7 +265,7 @@ export const InvolvedPartyScreen = ({
             />
           </Box>
         )}
-        {isCurrentPartyMinistry && showAdditionalParties && (
+        {isCurrentPartyMinistry && regulationsEnabled !== false && showAdditionalParties && (
           <Box marginTop={3}>
             {additionalPartyOptions.length > 0 ? (
               <Select<AdditionalParty, true>
