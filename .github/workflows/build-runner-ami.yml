@@ -46,6 +46,7 @@ jobs:
       - name: Build AMI
         working-directory: packer/runner-ami
         run: |
+          set -euo pipefail
           HASH=$(sha256sum ../../yarn.lock | cut -c1-8)
           ARGS=(-var "yarn_lock_hash=${HASH}")
 
@@ -56,9 +57,18 @@ jobs:
             ARGS+=(-var "node_version=${{ inputs.node_version }}")
           fi
 
-          packer build "${ARGS[@]}" -color=false runner.pkr.hcl | tee /tmp/packer.log
+          packer build "${ARGS[@]}" -color=false runner.pkr.hcl 2>&1 | tee /tmp/packer.log
+          PACKER_EXIT=${PIPESTATUS[0]}
+          if [[ $PACKER_EXIT -ne 0 ]]; then
+            echo "ERROR: Packer build failed with exit code $PACKER_EXIT"
+            exit $PACKER_EXIT
+          fi
 
-          AMI_ID=$(grep -oP 'ami-[a-z0-9]+' /tmp/packer.log | tail -1)
+          AMI_ID=$(grep 'AMIs were created' /tmp/packer.log | grep -oP 'ami-[a-z0-9]+')
+          if [[ -z "$AMI_ID" ]]; then
+            echo "ERROR: No AMI created"
+            exit 1
+          fi
           echo "Built AMI: ${AMI_ID}"
 
           aws ssm put-parameter \

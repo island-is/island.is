@@ -75,59 +75,46 @@ source "amazon-ebs" "runner" {
 build {
   sources = ["source.amazon-ebs.runner"]
 
-  # System packages
+  # Everything runs as root to avoid sudo issues
   provisioner "shell" {
+    execute_command = "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
-      "sudo dnf update -y",
-      "sudo dnf install -y docker git jq tar gzip unzip",
-      "sudo dnf install -y gcc-c++ make python3 python3-pip",
-      "sudo dnf install -y xorg-x11-server-Xvfb gtk3 nss alsa-lib libXScrnSaver libXtst",
-      "sudo dnf install -y java-21-amazon-corretto-headless",
-      "sudo systemctl enable docker",
-      "sudo systemctl start docker",
-      "sudo usermod -aG docker ec2-user",
-    ]
-  }
+      "dnf update -y",
+      "dnf install -y docker git jq tar gzip unzip gcc-c++ make python3 python3-pip",
+      "dnf install -y xorg-x11-server-Xvfb gtk3 nss alsa-lib libXScrnSaver libXtst",
+      "dnf install -y java-21-amazon-corretto-headless",
+      "systemctl enable docker",
+      "systemctl start docker",
+      "usermod -aG docker ec2-user",
 
-  # AWS CLI v2
-  provisioner "shell" {
-    inline = [
+      # AWS CLI v2
       "curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip",
       "unzip -q /tmp/awscliv2.zip -d /tmp",
       "/tmp/aws/install",
       "rm -rf /tmp/aws /tmp/awscliv2.zip",
+
+      # GitHub CLI
+      "dnf install -y 'dnf-command(config-manager)'",
+      "dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo || dnf-3 config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo",
+      "dnf install -y gh",
+
+      # GitHub Actions runner
+      "mkdir -p /opt/actions-runner",
+      "curl -fL https://github.com/actions/runner/releases/download/v${var.runner_version}/actions-runner-linux-x64-${var.runner_version}.tar.gz | tar xz -C /opt/actions-runner",
+      "chown -R ec2-user:ec2-user /opt/actions-runner",
     ]
   }
 
-  # GitHub CLI
-  provisioner "shell" {
-    inline = [
-      "sudo dnf install -y 'dnf-command(config-manager)'",
-      "sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo",
-      "sudo dnf install -y gh",
-    ]
-  }
-
-  # Node.js via nvm
+  # Node.js via nvm (as ec2-user)
   provisioner "shell" {
     inline = [
       "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash",
-      "source ~/.nvm/nvm.sh && nvm install ${var.node_version}",
-      "source ~/.nvm/nvm.sh && nvm alias default ${var.node_version}",
+      "source ~/.nvm/nvm.sh && nvm install ${var.node_version} && nvm alias default ${var.node_version}",
       "source ~/.nvm/nvm.sh && corepack enable",
     ]
   }
 
-  # GitHub Actions runner
-  provisioner "shell" {
-    inline = [
-      "sudo mkdir -p /opt/actions-runner",
-      "curl -fL https://github.com/actions/runner/releases/download/v${var.runner_version}/actions-runner-linux-x64-${var.runner_version}.tar.gz | sudo tar xz -C /opt/actions-runner",
-      "sudo chown -R ec2-user:ec2-user /opt/actions-runner",
-    ]
-  }
-
-  # Warm yarn/node_modules cache
+  # Warm yarn/node_modules cache (as ec2-user)
   provisioner "shell" {
     inline = [
       "source ~/.nvm/nvm.sh",
@@ -143,10 +130,11 @@ build {
 
   # Cleanup
   provisioner "shell" {
+    execute_command = "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
-      "sudo docker system prune -af || true",
-      "sudo dnf clean all",
-      "sudo rm -rf /tmp/* /var/tmp/*",
+      "docker system prune -af || true",
+      "dnf clean all",
+      "rm -rf /tmp/* /var/tmp/*",
     ]
   }
 }
