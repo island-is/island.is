@@ -3,7 +3,7 @@ import { Allow, IsArray, IsEnum, IsOptional } from 'class-validator'
 import { Field, ID, InputType } from '@nestjs/graphql'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -49,8 +49,8 @@ export class UpdateAppealCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => CaseAppealRulingDecision, { nullable: true })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @Field(() => AppealCaseRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @Allow()
   @IsOptional()
