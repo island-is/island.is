@@ -9,8 +9,6 @@ export const VerdictsApiModuleConfig = defineConfig({
   name: 'VerdictsApiModuleConfig',
   schema,
   load: (env) => ({
-    courtOfAppealAppealsUrl: env.required(
-      'VERDICTS_COURT_OF_APPEAL_APPEALS_URL',
-    ),
+    courtOfAppealAppealsUrl: env.required('VERDICTS_LANDSRETTUR_APPEALS_URL'),
   }),
 })
