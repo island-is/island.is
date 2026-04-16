@@ -33,6 +33,8 @@ import { States } from './types'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import { CodeOwners } from '@island.is/shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -53,6 +55,18 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.EuropeanHealthInsuranceCard.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+    {
+      type: AuthDelegationType.LegalRepresentative,
+    },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+  ],
+  requiredScopes: [ApiScope.icelandHealth],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
