@@ -90,7 +90,7 @@ export const getProcuringHolderTableData = (
   formatMessage: FormatMessage,
 ) => {
   const headerArray = [
-    formatMessage(m.headerName),
+    formatMessage(m.headerCompanyName),
     formatMessage(m.headerDelegationType),
     formatMessage(m.headerDomain),
     '',

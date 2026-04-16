@@ -2,6 +2,7 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
+      "@/*": ["${configDir}/src/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -841,6 +842,9 @@
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
       "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
+      "@island.is/clients/mms/primary-school": [
+        "libs/clients/mms/primary-school/src/index.ts"
+      ],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -902,6 +906,9 @@
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
+      ],
+      "@island.is/clients/ship-registry-v2": [
+        "libs/clients/ship-registry-v2/src/index.ts"
       ],
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"

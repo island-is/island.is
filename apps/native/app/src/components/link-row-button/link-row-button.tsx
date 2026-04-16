@@ -2,13 +2,12 @@ import { ImageSourcePropType, Pressable, TextStyle, View } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import cheveronForwardIcon from '../../assets/icons/chevron-forward.png'
 import styled from 'styled-components/native'
-import { useBrowser } from '../../lib/use-browser'
+import { useBrowser } from '../../hooks/use-browser'
 import { Icon, theme, Typography } from '../../ui'
-import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
-import { navigateTo } from '../../lib/deep-linking'
+import { Href, useRouter } from 'expo-router'
 
 export interface LinkItem {
-  link: string
+  link: Href | string
   title: string
   icon?: ImageSourcePropType
   isExternal?: boolean
@@ -20,7 +19,6 @@ export interface LinkRowButtonProps {
   fontWeight?: TextStyle['fontWeight']
   borderBottom?: boolean
   fontSize?: number
-  componentId: string
   subLinks?: LinkItem[]
   isSubLink?: boolean
 }
@@ -84,28 +82,17 @@ export const LinkRowButton = ({
   fontWeight = '300',
   borderBottom = true,
   fontSize = 16,
-  componentId,
   subLinks,
   isSubLink = false,
 }: LinkRowButtonProps) => {
   const { openBrowser } = useBrowser()
-  const overlay = useDropdownOverlay()
+  const router = useRouter()
 
   const handlePress = () => {
-    if (overlay?.componentId) {
-      overlay.close()
-    }
-
     if (link.isExternal) {
-      openBrowser(link.link, componentId)
+      openBrowser(link.link as string)
     } else {
-      const extraProps: { parentComponentId: string; activeTabId?: string } = {
-        parentComponentId: componentId,
-      }
-      if (link.tabId) {
-        extraProps.activeTabId = link.tabId
-      }
-      navigateTo(link.link, extraProps)
+      router.navigate(link.link as Href)
     }
   }
 
@@ -150,7 +137,6 @@ export const LinkRowButton = ({
                 tabId: subLink.tabId,
               }}
               key={subLink.title}
-              componentId={componentId}
               borderBottom={false}
               isSubLink={true}
             />

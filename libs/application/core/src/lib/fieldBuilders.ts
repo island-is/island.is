@@ -1258,6 +1258,7 @@ export const buildAccordionField = (
     component: FieldComponents.ACCORDION,
   }
 }
+
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
