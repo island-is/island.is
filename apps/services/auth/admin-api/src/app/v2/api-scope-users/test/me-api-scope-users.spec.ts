@@ -43,7 +43,11 @@ describe('MeApiScopeUsersController', () => {
     })
 
     afterEach(async () => {
-      await apiScopeUserModel.destroy({ where: {}, truncate: true })
+      await apiScopeUserModel.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+      })
     })
 
     describe('GET /v2/me/api-scope-users', () => {
