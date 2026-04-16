@@ -157,19 +157,14 @@ export const JudgeOverview = () => {
             <Text>{workingCase.demands}</Text>
           </Box>
           <Box marginBottom={5}>
-            <Accordion>
+            <Accordion variant="large">
               <AccordionItem
-                labelVariant="h3"
                 id="id_1"
                 label={formatMessage(lawsBrokenAccordion.heading)}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_2"
-                label="Lagaákvæði sem krafan er byggð á"
-              >
+              <AccordionItem id="id_2" label="Lagaákvæði sem krafan er byggð á">
                 {workingCase.legalProvisions &&
                   workingCase.legalProvisions.map(
                     (legalProvision: CaseLegalProvisions, index: number) => {
@@ -187,7 +182,6 @@ export const JudgeOverview = () => {
                 )}
               </AccordionItem>
               <AccordionItem
-                labelVariant="h3"
                 id="id_3"
                 label={formatMessage(restrictionsV2.title, {
                   caseType: workingCase.type,
@@ -210,7 +204,6 @@ export const JudgeOverview = () => {
               </AccordionItem>
               {(workingCase.caseFacts || workingCase.legalArguments) && (
                 <AccordionItem
-                  labelVariant="h3"
                   id="id_4"
                   label="Greinargerð um málsatvik og lagarök"
                 >

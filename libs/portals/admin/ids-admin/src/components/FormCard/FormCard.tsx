@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { Form, useActionData } from 'react-router-dom'
 
 import {
+  Accordion,
   AccordionItem,
   Box,
   Button,
@@ -221,9 +222,11 @@ export const FormCard = <Intent extends string>({
           trueWrapper={(cld) => (
             <div className={accordionWrapper}>
               <Box marginTop={3}>
-                <AccordionItem label={accordionLabel} id={intent as string}>
-                  {cld}
-                </AccordionItem>
+                <Accordion dividerOnTop={false} dividerOnBottom={false}>
+                  <AccordionItem label={accordionLabel} id={intent as string}>
+                    {cld}
+                  </AccordionItem>
+                </Accordion>
               </Box>
             </div>
           )}

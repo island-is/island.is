@@ -1,4 +1,4 @@
-import { Meta, Story, Canvas, Controls, Description } from '@storybook/blocks'
+import { Meta, Story, Canvas, Controls, ArgTypes } from '@storybook/blocks'
 import * as AccordionStories from './Accordion.stories'
 
 import { DescriptionFigma } from '../../utils/withFigma'
@@ -19,66 +19,126 @@ import { Stack } from '../Stack/Stack'
 
 <DescriptionFigma name="Accordion" />
 
-The **Accordion** component has three different type of items that can be rendered.
+The **Accordion** component has three types of items:
 
-- `<AccordionItem />` rendered inside the **Accordion** component
-- `<AccordionCard />` and `<SidebarAccordion />` rendered as standalone
+- `<AccordionItem />` used inside an `<Accordion />` wrapper
+- `<AccordionCard />` standalone card with a bordered container
+- `<SidebarAccordion />` compact mini-style for sidebars
 
-### Basic usage
+---
 
-We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
+## Accordion + AccordionItem
 
-<Canvas>
-  <Story of={AccordionStories.Default} />
-</Canvas>
+Wrap `<AccordionItem />` elements inside `<Accordion />`. The `variant` prop on `<Accordion />` is inherited by all child items and controls the label size and icon size.
 
-### With small icon variant
+### Small (default)
 
-Additionally we can use `labelUse`, `labelVariant` and `iconVariant` to
-control the size.
+`variant="small"` — h4 label, 40×40 icon.
 
 <Canvas>
   <Story of={AccordionStories.SmallVariant} />
 </Canvas>
 
+### Large
+
+`variant="large"` — h3 label, 40×40 icon.
+
+<Canvas>
+  <Story of={AccordionStories.LargeVariant} />
+</Canvas>
+
+### Mini
+
+`variant="mini"` — h5 label, 20×20 icon.
+
+<Canvas>
+  <Story of={AccordionStories.MiniVariant} />
+</Canvas>
+
+### Single expand
+
+With `singleExpand` (the default), only one item can be open at a time. Set `singleExpand={false}` to allow multiple items open simultaneously.
+
+<Canvas>
+  <Story of={AccordionStories.SingleExpand} />
+</Canvas>
+
+### No dividers
+
+<Canvas>
+  <Story of={AccordionStories.NoDividers} />
+</Canvas>
+
+### Start expanded
+
+Use `startExpanded` on an `<AccordionItem />` to open it on mount (uncontrolled mode only).
+
+<Canvas>
+  <Story of={AccordionStories.StartExpanded} />
+</Canvas>
+
 ### With colored label
 
-We can use `labelColor` to change the color on the label for the `AccordionItem`
+Use `labelColor` to change the label color on an `<AccordionItem />`.
 
 <Canvas>
   <Story of={AccordionStories.ColoredLabel} />
 </Canvas>
 
-### With single card
+---
 
-We use the standalone `<AccordionCard />` component
+## AccordionCard
 
-<Canvas>
-  <Story of={AccordionStories.SingleCard} />
-</Canvas>
+`<AccordionCard />` is a standalone bordered card. It does not require an `<Accordion />` wrapper. Use `variant` to choose between `"small"` (default) and `"large"`, and `colorVariant` for `"blue"` (default) or `"red"` theming.
 
-### With single red card
-
-We use the standalone `<AccordionCard />` component
+### Card — Small (default)
 
 <Canvas>
-  <Story of={AccordionStories.SingleRedCard} />
+  <Story of={AccordionStories.CardSmall} />
 </Canvas>
 
-### As a sidebar
+### Card — Large
 
-We use the standalone `<SidebarAccordion />` component
+<Canvas>
+  <Story of={AccordionStories.CardLarge} />
+</Canvas>
+
+### Card — Red
+
+<Canvas>
+  <Story of={AccordionStories.CardRed} />
+</Canvas>
+
+### Card — With visible content
+
+`visibleContent` renders a subtitle below the label that is always visible regardless of expanded state.
+
+<Canvas>
+  <Story of={AccordionStories.CardWithVisibleContent} />
+</Canvas>
+
+---
+
+## SidebarAccordion
+
+`<SidebarAccordion />` is a convenience wrapper around `<AccordionItem variant="mini" sidebar />`. It does not require an `<Accordion />` wrapper.
 
 <Canvas>
   <Story of={AccordionStories.Sidebar} />
 </Canvas>
 
+---
+
 # Props
 
 ## Accordion
 
-<Controls />
+<Controls of={AccordionStories.SmallVariant} />
 
 ## AccordionItem
 
-<Controls />
+<ArgTypes of={AccordionItem} />
+
+## AccordionCard
+
+<ArgTypes of={AccordionCard} />

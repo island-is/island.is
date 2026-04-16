@@ -22,7 +22,6 @@ const RulingAccordionItem: FC<Props> = ({
     <AccordionItem
       id="rulingAccordionItem"
       label={formatMessage(m.heading)}
-      labelVariant="h3"
       labelUse="h3"
       startExpanded={startExpanded}
     >

@@ -145,6 +145,7 @@ const DocumentScreen = ({
                 <Box className={styles.dateFilterSingle} paddingX={3}>
                   <Box marginTop={1}>
                     <Accordion
+                      variant="mini"
                       dividerOnBottom={false}
                       dividerOnTop={false}
                       singleExpand={false}
@@ -155,8 +156,6 @@ const DocumentScreen = ({
                         label={formatMessage(m.datesLabel)}
                         labelColor="dark400"
                         labelUse="h5"
-                        labelVariant="h5"
-                        iconVariant="small"
                         startExpanded
                       >
                         <Box

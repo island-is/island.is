@@ -71,6 +71,16 @@ export const card = recipe({
       [`&:focus:hover`]: {
         borderColor: theme.color.white,
       },
+      [`&:focus-within::before`]: {
+        borderWidth: 3,
+        borderStyle: 'solid',
+        borderColor: theme.color.mint400,
+        opacity: 1,
+        outline: 0,
+      },
+      [`&:focus-within:hover`]: {
+        borderColor: theme.color.white,
+      },
     },
   },
   variants: {
@@ -94,23 +104,9 @@ export const card = recipe({
   },
 })
 
-export const focused = style({
-  '::before': {
-    borderWidth: 3,
-    borderStyle: 'solid',
-    borderColor: theme.color.mint400,
-    opacity: 1,
-    outline: 0,
-  },
-  ':hover': {
-    borderColor: theme.color.white,
-  },
-})
-
 const iconWrapSizes = {
   default: 40,
-  small: 24,
-  sidebar: 20,
+  mini: 24,
 }
 
 export const plusIconWrap = recipe({
@@ -137,24 +133,20 @@ export const plusIconWrap = recipe({
         color: theme.color.purple400,
       },
     },
-    iconVariant: {
-      default: {
+    mini: {
+      true: {
+        width: iconWrapSizes.mini,
+        height: iconWrapSizes.mini,
+      },
+      false: {
         width: iconWrapSizes.default,
         height: iconWrapSizes.default,
-      },
-      small: {
-        width: iconWrapSizes.small,
-        height: iconWrapSizes.small,
-      },
-      sidebar: {
-        width: iconWrapSizes.sidebar,
-        height: iconWrapSizes.sidebar,
       },
     },
   },
   defaultVariants: {
     color: 'blue',
-    iconVariant: 'default',
+    mini: false,
   },
 })
 

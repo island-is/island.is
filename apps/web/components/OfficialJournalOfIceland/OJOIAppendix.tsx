@@ -46,7 +46,6 @@ export const Appendixes = memo((props: AppendixesProps) => {
               <div id={id} key={id}>
                 <AccordionItem
                   id={id + '-internals'}
-                  labelVariant="h4"
                   labelUse="h3"
                   label={appendix.title}
                 >

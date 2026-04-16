@@ -268,12 +268,11 @@ export const Ruling = () => {
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <Accordion>
+          <Accordion variant="large">
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
               label={`Rannsóknargögn (${caseFiles.length})`}
-              labelVariant="h3"
             >
               <CaseFileList caseId={workingCase.id} files={caseFiles} />
             </AccordionItem>

@@ -703,7 +703,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             )}
                             labelUse="p"
                             labelVariant="h5"
-                            iconVariant="small"
                             expanded={isOpen[index]}
                             onToggle={() => toggleIsOpen(index, !isOpen[index])}
                           >

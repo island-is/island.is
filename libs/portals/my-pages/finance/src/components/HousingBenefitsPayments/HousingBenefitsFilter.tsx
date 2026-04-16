@@ -137,8 +137,9 @@ const HousingBenefitsFilter = ({
             borderColor="blue200"
             width="full"
           />
-          <Box marginTop={1}>
+          <Box>
             <Accordion
+              variant="mini"
               dividerOnBottom={false}
               dividerOnTop={false}
               singleExpand={false}
@@ -149,15 +150,13 @@ const HousingBenefitsFilter = ({
                 label={formatMessage(messages.hbRentalMonthYear)}
                 labelColor="dark400"
                 labelUse="h5"
-                labelVariant="h5"
-                iconVariant="small"
               >
                 <Box
                   className={cn(financeStyles.accordionBox, styles.selectBox)}
                   display="flex"
                   flexDirection="column"
                 >
-                  <Stack space="smallGutter">
+                  <Stack space={2}>
                     <Select
                       label={formatMessage(m.month)}
                       placeholder={formatMessage(m.month)}
@@ -169,7 +168,7 @@ const HousingBenefitsFilter = ({
                       }
                       options={monthOptions}
                       isClearable
-                      size="sm"
+                      size="xs"
                     />
                     <Select
                       label={formatMessage(m.year)}
@@ -182,7 +181,7 @@ const HousingBenefitsFilter = ({
                       }
                       options={yearOptions}
                       isClearable
-                      size="sm"
+                      size="xs"
                     />
                   </Stack>
                 </Box>
@@ -192,7 +191,6 @@ const HousingBenefitsFilter = ({
               borderBottomWidth="standard"
               borderColor="blue200"
               width="full"
-              marginTop={1}
               marginBottom={1}
             />
             <Box paddingY={2}>
