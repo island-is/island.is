@@ -45,7 +45,6 @@ export const Forms = () => {
     name: '',
     formState: defaultFormState,
   })
-  console.log('Forms', forms)
   const categories = [
     {
       id: 'formState',
@@ -120,8 +119,6 @@ export const Forms = () => {
 
     return matchesStatus && matchesName
   }
-
-  const env = process.env.NODE_ENV
 
   return (
     <>
