@@ -53,9 +53,16 @@ import { NotificationDto } from './models/dto/notification.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
+import { trim } from 'lodash'
+import {
+  ApplicationXroadFieldDto,
+  ApplicationXroadValueDto,
+  ValidationScreenDto,
+} from './models/dto/application.xroad.dto'
+import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -1095,44 +1102,104 @@ export class ApplicationsService {
       )
     }
 
+    const screen = notificationDto.screen
+
+    if (
+      notificationDto.command === NotificationCommands.VALIDATE &&
+      notificationDto.screen
+    ) {
+      notificationDto.validationScreen = this.mapScreenToValidationScreenDto(
+        notificationDto.screen,
+      )
+      notificationDto.screen = undefined
+    }
+
     const response = await this.notifyService.sendNotification(
       notificationDto,
       submissionUrl,
     )
 
-    if (!response.operationSuccessful) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'Please try again later or send an email to island@island.is',
-          },
-        }
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-            en: 'Please try to refresh the page or send an email to island@island.is',
-          },
-        }
-      }
-      response.screen = notificationDto.screen
-      this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
-      )
+    response.screen = screen
+
+    response.screen.screenError = {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
     }
 
+    if (!response.operationSuccessful) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        response.screen.screenError = this.getDefaultScreenErrorValidate()
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        response.screen.screenError = this.getDefaultScreenErrorPopulate()
+      }
+    } else if (response.screenError?.hasError) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorValidate()
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorPopulate()
+      }
+    }
+
+    this.logger.error(
+      `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+    )
+
     return response
+  }
+
+  private getDefaultScreenErrorValidate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að tengjast ytri þjónustu',
+        en: 'Could not connect to external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+        en: 'Please try again later or send an email to island@island.is',
+      },
+    }
+  }
+
+  private getDefaultScreenErrorPopulate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að sækja gögn frá ytri þjónustu',
+        en: 'Could not fetch data from external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
+        en: 'Please try to refresh the page or send an email to island@island.is',
+      },
+    }
+  }
+
+  private mapScreenToValidationScreenDto(
+    screen: ScreenDto,
+  ): ValidationScreenDto {
+    return {
+      screenIdentifier: screen.identifier,
+      fields: (screen.fields ?? []).map(
+        (field): ApplicationXroadFieldDto => ({
+          identifier: field.identifier,
+          fieldType: field.fieldType,
+          values: (field.values ?? []).map(
+            (value): ApplicationXroadValueDto => ({
+              order: value.order,
+              json: (value.json ?? {}) as unknown as Record<string, unknown>,
+            }),
+          ),
+        }),
+      ),
+    }
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
