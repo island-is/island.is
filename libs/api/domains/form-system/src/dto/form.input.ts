@@ -97,6 +97,9 @@ export class UpdateFormDtoInput {
 
   @Field(() => String, { nullable: true })
   status?: string
+
+  @Field(() => String, { nullable: true })
+  lastModifiedBy?: string
 }
 
 @InputType('FormSystemUpdateFormInput')

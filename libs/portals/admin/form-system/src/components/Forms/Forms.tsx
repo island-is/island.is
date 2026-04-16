@@ -283,6 +283,7 @@ export const Forms = () => {
               status={f?.status}
               lastModified={f?.modified}
               url={f?.submissionServiceUrl ?? ''}
+              lastModifiedBy={f?.lastModifiedBy ?? ''}
             />
           ))}
     </>
