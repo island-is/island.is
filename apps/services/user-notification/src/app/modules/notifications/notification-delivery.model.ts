@@ -21,7 +21,10 @@ export enum NotificationChannel {
 @Table({
   tableName: 'notification_delivery',
   timestamps: false,
-  indexes: [{ fields: ['user_notification_id'] }],
+  indexes: [
+    { fields: ['user_notification_id'] },
+    { fields: ['actor_notification_id'] },
+  ],
 })
 export class NotificationDelivery extends Model<
   InferAttributes<NotificationDelivery>,

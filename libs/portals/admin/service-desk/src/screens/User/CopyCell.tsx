@@ -17,6 +17,10 @@ export const CopyCell = ({ value, maxWidth = 220 }: Props) => {
     navigator.clipboard
       .writeText(value)
       .then(() => toast.success(formatMessage(m.copyValueSuccess)))
+      .catch(() => {
+        // Swallow clipboard rejections (denied permission, insecure context)
+        // so they don't surface as unhandled promise errors.
+      })
   }
 
   return (
