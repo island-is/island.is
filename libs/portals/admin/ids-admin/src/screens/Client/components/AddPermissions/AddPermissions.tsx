@@ -116,7 +116,7 @@ export const AddPermissions = ({
 
       setDefaultTenant(availableTenants)
     }
-  }, [tenants, locale])
+  }, [tenants, locale, environment, tenant])
 
   useEffect(() => {
     if (authAdminScopes?.data) {
