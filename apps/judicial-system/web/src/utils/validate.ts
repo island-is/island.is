@@ -139,24 +139,31 @@ export const validate = (items: ValidateItem[]): IsValid => {
     : { isValid: true, errorMessage: '' }
 }
 
+const isDefendantInvalid = (defendant: Defendant): boolean => {
+  return (
+    (!isBusiness(defendant.nationalId) && !defendant.gender) ||
+    !validate([
+      [
+        defendant.nationalId,
+        defendant.noNationalId ? ['date-of-birth'] : ['empty', 'national-id'],
+      ],
+      [defendant.name, ['empty']],
+      [defendant.address, ['empty']],
+    ]).isValid
+  )
+}
+
+/** Restriction cases only show the first defendant in the UI (police may sync more). */
+const firstDefendantIsInvalid = (workingCase: Case): boolean => {
+  const first = workingCase.defendants?.[0]
+  return Boolean(first && isDefendantInvalid(first))
+}
+
 const someDefendantIsInvalid = (workingCase: Case): boolean => {
   return Boolean(
     workingCase.defendants &&
       workingCase.defendants.length > 0 &&
-      workingCase.defendants.some(
-        (defendant) =>
-          (!isBusiness(defendant.nationalId) && !defendant.gender) ||
-          !validate([
-            [
-              defendant.nationalId,
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-            ],
-            [defendant.name, ['empty']],
-            [defendant.address, ['empty']],
-          ]).isValid,
-      ),
+      workingCase.defendants.some((defendant) => isDefendantInvalid(defendant)),
   )
 }
 
@@ -193,6 +200,10 @@ export const isRegistrationStepValid = (
   )
 }
 
+/**
+ * Restriction / travel-ban prosecutor defendant step. The form only edits
+ * `defendants[0]`; Police system may sync additional defendants, so only the first is validated here.
+ */
 export const isDefendantStepValidRC = (
   workingCase: Case,
   policeCaseNumbers?: string[] | null,
@@ -201,7 +212,7 @@ export const isDefendantStepValidRC = (
     policeCaseNumbers &&
       policeCaseNumbers.length > 0 &&
       (workingCase.defendants?.length ?? 0) > 0 &&
-      !someDefendantIsInvalid(workingCase) &&
+      !firstDefendantIsInvalid(workingCase) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&

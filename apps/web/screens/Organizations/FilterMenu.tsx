@@ -1,8 +1,7 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 import {
   Filter,
-  FilterInput,
   FilterMultiChoice,
   FilterProps,
 } from '@island.is/island-ui/core'
@@ -18,6 +17,8 @@ interface FilterMenuProps {
   setFilter: Dispatch<SetStateAction<FilterOptions>>
   resultCount: number
   onBeforeUpdate: () => void
+  onSortChange?: (value: string) => void
+  onSortClear?: () => void
 }
 
 export type FilterLabels = Pick<
@@ -28,13 +29,14 @@ export type FilterLabels = Pick<
   | 'labelTitle'
   | 'labelResult'
   | 'labelClearAll'
-> & { inputPlaceholder?: string }
+>
 
 export type CategoriesProps = {
   id: string
   label: string
   selected: Array<string>
   filters: Array<{ value: string; label: string }>
+  singleOption?: boolean
 }
 
 export const FilterMenu = ({
@@ -43,13 +45,14 @@ export const FilterMenu = ({
   setFilter,
   resultCount,
   onBeforeUpdate,
+  onSortChange,
+  onSortClear,
   labelClear = 'Hreinsa síu',
   labelClearAll = 'Hreinsa allar síur',
-  labelOpen = 'Sía niðurstöður',
+  labelOpen = 'Sía',
   labelClose = 'Loka síu',
   labelTitle = 'Sía stofnanir',
   labelResult = 'Sýna niðurstöður',
-  inputPlaceholder = 'Sía eftir leitarorði',
   variant,
   align,
 }: FilterMenuProps & FilterLabels & Pick<FilterProps, 'variant' | 'align'>) => (
@@ -63,25 +66,24 @@ export const FilterMenu = ({
     resultCount={resultCount}
     variant={variant}
     align={align}
-    filterInput={
-      <FilterInput
-        name="filter-input"
-        placeholder={inputPlaceholder}
-        value={filter.input}
-        onChange={(value) => setFilter({ ...filter, input: value })}
-      />
-    }
-    onFilterClear={() =>
+    onFilterClear={() => {
       setFilter({
         raduneyti: [],
         input: '',
       })
-    }
+      onSortClear?.()
+    }}
   >
     <FilterMultiChoice
       labelClear={labelClear}
       categories={categories}
       onChange={(event) => {
+        const category = categories.find((c) => c.id === event.categoryId)
+        if (category?.singleOption && onSortChange) {
+          onBeforeUpdate()
+          onSortChange(event.selected[0])
+          return
+        }
         onBeforeUpdate()
         setFilter({
           ...filter,
@@ -89,6 +91,12 @@ export const FilterMenu = ({
         })
       }}
       onClear={(categoryId) => {
+        const category = categories.find((c) => c.id === categoryId)
+        if (category?.singleOption && onSortClear) {
+          onBeforeUpdate()
+          onSortClear()
+          return
+        }
         onBeforeUpdate()
         setFilter({
           ...filter,
@@ -99,5 +107,3 @@ export const FilterMenu = ({
     />
   </Filter>
 )
-
-export default FilterMenu

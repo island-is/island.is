@@ -1093,6 +1093,16 @@ export const SecondarySchool = new XroadConf({
   },
 })
 
+export const MmsPrimarySchool = new XroadConf({
+  env: {
+    XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      prod: 'IS/GOV/6601241280/MMS-Protected/data-gateway-backend-internal',
+    },
+  },
+})
+
 export const LSH = new XroadConf({
   env: {
     XROAD_LSH_PATH: {

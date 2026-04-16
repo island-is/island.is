@@ -28,6 +28,7 @@ import {
   AnchorPage,
   Article,
   ContentLanguage,
+  Course,
   GetSearchResultsQuery,
   LifeEventPage,
   News,
@@ -135,6 +136,7 @@ const useSearch = (
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
                   SearchableContentTypes['WebManual'],
                   SearchableContentTypes['WebOrganizationParentSubpage'],
+                  SearchableContentTypes['WebCourse'],
                 ],
                 highlightResults: false,
                 useQuery: 'suggestions',
@@ -176,11 +178,7 @@ type SubmitType = {
   string: string
 }
 
-const useSubmit = (
-  locale: Locale,
-  onRouting?: () => void,
-  organization?: string,
-) => {
+const useSubmit = (onRouting?: () => void, organization?: string) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -262,7 +260,7 @@ export const SearchInput = forwardRef<
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete, organization)
 
-    const onSubmit = useSubmit(locale, undefined, organization)
+    const onSubmit = useSubmit(undefined, organization)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
@@ -414,6 +412,7 @@ type SearchResultItem =
   | SubArticle
   | OrganizationSubpage
   | OrganizationParentSubpage
+  | Course
 
 type ResultsProps = {
   search: SearchState
@@ -471,9 +470,10 @@ const Results = ({
                   | LinkType
                   | 'anchorpage'
                   | 'organizationparentsubpage'
+                  | 'course'
                 let variables: string[] = []
 
-                if ('slug' in item) {
+                if ('slug' in item && item.slug) {
                   variables = item.slug.split('/')
                 }
 
@@ -481,21 +481,27 @@ const Results = ({
                   variables = (item as OrganizationSubpage).url
                 }
 
+                let href: string | undefined
+                if (typename === 'course') {
+                  href = (item as Course).courseHref || undefined
+                } else if (typename === 'organizationparentsubpage') {
+                  href = (item as OrganizationParentSubpage).href ?? undefined
+                } else {
+                  href = linkResolver(
+                    typename === 'anchorpage'
+                      ? extractAnchorPageLinkType(item as AnchorPage)
+                      : typename === 'organizationsubpage' &&
+                        (item as OrganizationSubpage)?.url?.length === 3
+                      ? 'organizationparentsubpagechild'
+                      : typename,
+                    variables,
+                  )?.href
+                }
+
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string:
-                      typename === 'organizationparentsubpage'
-                        ? (item as OrganizationParentSubpage).href
-                        : linkResolver(
-                            typename === 'anchorpage'
-                              ? extractAnchorPageLinkType(item as AnchorPage)
-                              : typename === 'organizationsubpage' &&
-                                (item as OrganizationSubpage)?.url?.length === 3
-                              ? 'organizationparentsubpagechild'
-                              : typename,
-                            variables,
-                          )?.href,
+                    string: href,
                   },
                 })
                 return (
