@@ -4,6 +4,7 @@ query GetClient($input: AuthAdminClientInput!) {
     clientId
     clientType
     availableEnvironments
+    modified
     environments {
       id
       environment
@@ -51,6 +52,7 @@ query GetClient($input: AuthAdminClientInput!) {
         }
         domainName
       }
+      modified
       allowedCorsOrigins
     }
   }
