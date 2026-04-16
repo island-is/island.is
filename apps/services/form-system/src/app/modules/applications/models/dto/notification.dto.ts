@@ -7,6 +7,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
+import { ValidationScreenDto } from './application.xroad.dto'
 
 export class NotificationDto {
   @IsString()
@@ -45,4 +46,11 @@ export class NotificationDto {
   @ValidateNested()
   @ApiPropertyOptional({ type: ScreenDto })
   screen?: ScreenDto
+
+  @Type(() => ValidationScreenDto)
+  @IsOptional()
+  @Expose()
+  @ValidateNested()
+  @ApiPropertyOptional({ type: ValidationScreenDto })
+  validationScreen?: ValidationScreenDto
 }
