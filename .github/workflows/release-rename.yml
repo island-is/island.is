@@ -2,7 +2,7 @@ name: Release branch Rename Monitor
 on:
   push:
     branches:
-      - "release/*" # Triggers when pushing to this branch
+      - 'release/*' # Triggers when pushing to this branch
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
