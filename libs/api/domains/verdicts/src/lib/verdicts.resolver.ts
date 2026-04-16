@@ -111,7 +111,7 @@ export class VerdictsResolver {
     return this.verdictsService.getSupremeCourtAppeals(input)
   }
 
-  @CacheControl(defaultCache)
+  @CacheControl({ maxAge: 900 })
   @Query(() => CourtOfAppealAppealsResponse, {
     name: 'webCourtOfAppealAppeals',
   })
