@@ -48,6 +48,7 @@ jobs:
         run: packer init .
 
       - name: Build AMI
+        id: build
         working-directory: packer/runner-ami
         run: |
           set -euo pipefail
@@ -74,16 +75,21 @@ jobs:
             exit 1
           fi
           echo "Built AMI: ${AMI_ID}"
+          echo "AMI_ID=${AMI_ID}" >> "$GITHUB_OUTPUT"
 
+      - name: Promote AMI
+        if: github.ref == 'refs/heads/main'
+        run: |
           aws ssm put-parameter \
             --name "/actions_runner/shared/ami_id" \
-            --value "${AMI_ID}" \
+            --value "${{ steps.build.outputs.AMI_ID }}" \
             --type String \
             --data-type aws:ec2:image \
             --overwrite \
             --region eu-west-1
 
       - name: Roll runners to new AMI
+        if: github.ref == 'refs/heads/main'
         run: |
           aws lambda invoke \
             --function-name shared-v2-scale-down \
