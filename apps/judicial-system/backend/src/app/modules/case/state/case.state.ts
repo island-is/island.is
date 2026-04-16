@@ -1,9 +1,9 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   CaseAppealDecision,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -38,13 +38,13 @@ type Transition = (
 
 interface IndictmentCaseRule {
   fromStates: IndictmentCaseState[]
-  fromAppealStates: (CaseAppealState | undefined)[]
+  fromAppealStates: (AppealCaseState | undefined)[]
   transition: Transition
 }
 
 interface RequestCaseRule {
   fromStates: RequestCaseState[]
-  fromAppealStates: (CaseAppealState | undefined)[]
+  fromAppealStates: (AppealCaseState | undefined)[]
   transition: Transition
 }
 
@@ -60,7 +60,6 @@ const indictmentCaseStateMachine: Map<
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.WAITING_FOR_CONFIRMATION,
-        indictmentReturnedExplanation: null,
       }),
     },
   ],
@@ -129,19 +128,6 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
-    IndictmentCaseTransition.RETURN_INDICTMENT,
-    {
-      fromStates: [IndictmentCaseState.RECEIVED],
-      fromAppealStates: [undefined],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.DRAFT,
-        courtCaseNumber: null,
-        indictmentHash: null,
-      }),
-    },
-  ],
-  [
     IndictmentCaseTransition.COMPLETE,
     {
       fromStates: [
@@ -179,10 +165,10 @@ const indictmentCaseStateMachine: Map<
       fromStates: [IndictmentCaseState.COMPLETED],
       fromAppealStates: [
         undefined,
-        CaseAppealState.APPEALED,
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
-        CaseAppealState.WITHDRAWN,
+        AppealCaseState.APPEALED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+        AppealCaseState.WITHDRAWN,
       ],
       transition: (update: UpdateCase, theCase: Case): UpdateCase => {
         if (
@@ -228,7 +214,7 @@ const indictmentCaseStateMachine: Map<
         if (actor === 'Prosecution') {
           return {
             ...update,
-            appealState: CaseAppealState.APPEALED,
+            appealState: AppealCaseState.APPEALED,
             prosecutorPostponedAppealDate:
               update.prosecutorPostponedAppealDate ?? nowFactory(),
           }
@@ -237,7 +223,7 @@ const indictmentCaseStateMachine: Map<
         if (actor === 'Defence') {
           return {
             ...update,
-            appealState: CaseAppealState.APPEALED,
+            appealState: AppealCaseState.APPEALED,
             accusedPostponedAppealDate:
               update.accusedPostponedAppealDate ?? nowFactory(),
             appealedByNationalId: nationalId,
@@ -257,10 +243,10 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.COMPLETED,
         IndictmentCaseState.CORRECTING,
       ],
-      fromAppealStates: [CaseAppealState.APPEALED],
+      fromAppealStates: [AppealCaseState.APPEALED],
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
-        appealState: CaseAppealState.RECEIVED,
+        appealState: AppealCaseState.RECEIVED,
         appealReceivedByCourtDate: nowFactory(),
       }),
     },
@@ -272,10 +258,10 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.COMPLETED,
         IndictmentCaseState.CORRECTING,
       ],
-      fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+      fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
-        appealState: CaseAppealState.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       }),
     },
   ],
@@ -286,10 +272,10 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.COMPLETED,
         IndictmentCaseState.CORRECTING,
       ],
-      fromAppealStates: [CaseAppealState.COMPLETED],
+      fromAppealStates: [AppealCaseState.COMPLETED],
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
-        appealState: CaseAppealState.RECEIVED,
+        appealState: AppealCaseState.RECEIVED,
       }),
     },
   ],
@@ -300,7 +286,7 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.COMPLETED,
         IndictmentCaseState.CORRECTING,
       ],
-      fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+      fromAppealStates: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
       transition: (update: UpdateCase, theCase: Case): UpdateCase => {
         // We only want to set the appeal ruling decision if the
         // case has already been received.
@@ -312,16 +298,16 @@ const indictmentCaseStateMachine: Map<
             theCase.appealCase?.appealRulingDecision
           ) &&
           (update.appealState ?? theCase.appealCase?.appealState) ===
-            CaseAppealState.RECEIVED
+            AppealCaseState.RECEIVED
         ) {
           return {
             ...update,
-            appealState: CaseAppealState.WITHDRAWN,
+            appealState: AppealCaseState.WITHDRAWN,
             appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
           }
         }
 
-        return { ...update, appealState: CaseAppealState.WITHDRAWN }
+        return { ...update, appealState: AppealCaseState.WITHDRAWN }
       },
     },
   ],
@@ -432,10 +418,10 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         fromStates: [RequestCaseState.RECEIVED],
         fromAppealStates: [
           undefined,
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-          CaseAppealState.WITHDRAWN,
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+          AppealCaseState.COMPLETED,
+          AppealCaseState.WITHDRAWN,
         ],
         transition: requestCaseCompletionSideEffect(CaseState.ACCEPTED),
       },
@@ -446,10 +432,10 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         fromStates: [RequestCaseState.RECEIVED],
         fromAppealStates: [
           undefined,
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-          CaseAppealState.WITHDRAWN,
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+          AppealCaseState.COMPLETED,
+          AppealCaseState.WITHDRAWN,
         ],
         transition: requestCaseCompletionSideEffect(CaseState.REJECTED),
       },
@@ -460,10 +446,10 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         fromStates: [RequestCaseState.RECEIVED],
         fromAppealStates: [
           undefined,
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-          CaseAppealState.WITHDRAWN,
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+          AppealCaseState.COMPLETED,
+          AppealCaseState.WITHDRAWN,
         ],
         transition: requestCaseCompletionSideEffect(CaseState.DISMISSED),
       },
@@ -495,10 +481,10 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         ],
         fromAppealStates: [
           undefined,
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-          CaseAppealState.WITHDRAWN,
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+          AppealCaseState.COMPLETED,
+          AppealCaseState.WITHDRAWN,
         ],
         transition: (update: UpdateCase): UpdateCase => ({
           ...update,
@@ -528,7 +514,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           if (actor === 'Prosecution') {
             return {
               ...update,
-              appealState: CaseAppealState.APPEALED,
+              appealState: AppealCaseState.APPEALED,
               // We don't want to overwrite an already set appeal date
               prosecutorPostponedAppealDate:
                 update.prosecutorPostponedAppealDate ?? nowFactory(),
@@ -538,7 +524,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           if (actor === 'Defence') {
             return {
               ...update,
-              appealState: CaseAppealState.APPEALED,
+              appealState: AppealCaseState.APPEALED,
               // We don't want to overwrite an already set appeal date
               accusedPostponedAppealDate:
                 update.accusedPostponedAppealDate ?? nowFactory(),
@@ -559,10 +545,10 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.REJECTED,
           RequestCaseState.DISMISSED,
         ],
-        fromAppealStates: [CaseAppealState.APPEALED],
+        fromAppealStates: [AppealCaseState.APPEALED],
         transition: (update: UpdateCase): UpdateCase => ({
           ...update,
-          appealState: CaseAppealState.RECEIVED,
+          appealState: AppealCaseState.RECEIVED,
           appealReceivedByCourtDate: nowFactory(),
         }),
       },
@@ -575,11 +561,11 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.REJECTED,
           RequestCaseState.DISMISSED,
         ],
-        fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+        fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
         transition: (update: UpdateCase, theCase: Case): UpdateCase => {
           const newUpdate = {
             ...update,
-            appealState: CaseAppealState.COMPLETED,
+            appealState: AppealCaseState.COMPLETED,
           }
 
           const currentState = update.state ?? theCase.state
@@ -633,10 +619,10 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.REJECTED,
           RequestCaseState.DISMISSED,
         ],
-        fromAppealStates: [CaseAppealState.COMPLETED],
+        fromAppealStates: [AppealCaseState.COMPLETED],
         transition: (update: UpdateCase): UpdateCase => ({
           ...update,
-          appealState: CaseAppealState.RECEIVED,
+          appealState: AppealCaseState.RECEIVED,
         }),
       },
     ],
@@ -648,7 +634,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.REJECTED,
           RequestCaseState.DISMISSED,
         ],
-        fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+        fromAppealStates: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
         transition: (update: UpdateCase, theCase: Case): UpdateCase => {
           // We only want to set the appeal ruling decision if the
           // case has already been received.
@@ -660,16 +646,16 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
               theCase.appealCase?.appealRulingDecision
             ) &&
             (update.appealState ?? theCase.appealCase?.appealState) ===
-              CaseAppealState.RECEIVED
+              AppealCaseState.RECEIVED
           ) {
             return {
               ...update,
-              appealState: CaseAppealState.WITHDRAWN,
+              appealState: AppealCaseState.WITHDRAWN,
               appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
             }
           }
 
-          return { ...update, appealState: CaseAppealState.WITHDRAWN }
+          return { ...update, appealState: AppealCaseState.WITHDRAWN }
         },
       },
     ],

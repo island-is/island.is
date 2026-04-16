@@ -835,13 +835,6 @@ export class Case extends Model {
   indictmentDeniedExplanation?: string
 
   /**********
-   * The explanation given for the return of an indictment by the district court
-   **********/
-  @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  indictmentReturnedExplanation?: string
-
-  /**********
    * The case's notifications
    **********/
   @HasMany(() => Notification, 'caseId')

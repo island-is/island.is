@@ -3,7 +3,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -43,7 +43,7 @@ describe('Overview', () => {
               ...mockCase(CaseType.CUSTODY),
               appealCase: {
                 id: 'test_appeal_case_id',
-                appealState: CaseAppealState.RECEIVED,
+                appealState: AppealCaseState.RECEIVED,
                 requestAppealRulingNotToBePublished: [UserRole.PROSECUTOR],
               },
             }}

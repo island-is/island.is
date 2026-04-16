@@ -23,7 +23,7 @@ export const AccessPeriod = ({
 
   return (
     <Box display="flex" flexDirection="column" alignItems="flexStart">
-      <Text variant="h4" marginBottom={2}>
+      <Text variant="h3" marginBottom={2}>
         {formatMessage(m.choosePeriodTitle)}
       </Text>
       <RecipientsTag />

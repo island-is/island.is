@@ -14,6 +14,7 @@ import { defaultEnvironmentSchema } from '../../utils/schemas'
 export enum ClientFormTypes {
   advancedSettings = 'advancedSettings',
   applicationUrls = 'applicationUrls',
+  corsOrigins = 'corsOrigins',
   delegations = 'delegations',
   lifeTime = 'lifeTime',
   permissions = 'permissions',
@@ -203,11 +204,17 @@ export const schema = {
       removedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
     })
     .merge(defaultEnvironmentSchema),
+  [ClientFormTypes.corsOrigins]: z
+    .object({
+      allowedCorsOrigins: zfd.repeatable(z.array(z.string()).default([])),
+    })
+    .merge(defaultEnvironmentSchema),
 }
 
 export type MergedFormDataSchema =
   typeof schema[ClientFormTypes.advancedSettings] &
     typeof schema[ClientFormTypes.applicationUrls] &
+    typeof schema[ClientFormTypes.corsOrigins] &
     typeof schema[ClientFormTypes.delegations] &
     typeof schema[ClientFormTypes.lifeTime] &
     typeof schema[ClientFormTypes.permissions] &

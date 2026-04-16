@@ -68,11 +68,13 @@ const createNamespace = (id: string, messages: MessageDict, locales: Locales) =>
     .then((space) => space.getEnvironment(environmentId))
     .then(async (environment) => {
       const namespace = { [DEFAULT_LOCALE]: id }
+      const internalTitle = namespace
       const defaults = { [DEFAULT_LOCALE]: createDefaultsObject(messages) }
       const strings = createStringsObject(locales, messages)
 
       const entry = await environment.createEntryWithId('namespace', id, {
         fields: {
+          internalTitle,
           namespace,
           defaults,
           strings,
@@ -92,6 +94,10 @@ export const updateNamespace = async (
   messages: MessageDict,
   locales: Locales,
 ) => {
+  namespace.fields.internalTitle = {
+    [DEFAULT_LOCALE]: namespace.fields.namespace[DEFAULT_LOCALE],
+  }
+
   namespace.fields.defaults[DEFAULT_LOCALE] = updateDefaultsObject(
     namespace,
     messages,

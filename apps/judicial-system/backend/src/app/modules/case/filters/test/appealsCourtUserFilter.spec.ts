@@ -1,5 +1,5 @@
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   completedIndictmentCaseStates,
@@ -45,15 +45,15 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
       describe.each(accessibleCaseStates)(
         'accessible case state %s',
         (state) => {
-          const accessibleCaseAppealStates = [
-            CaseAppealState.RECEIVED,
-            CaseAppealState.COMPLETED,
-            CaseAppealState.WITHDRAWN,
+          const accessibleAppealCaseStates = [
+            AppealCaseState.RECEIVED,
+            AppealCaseState.COMPLETED,
+            AppealCaseState.WITHDRAWN,
           ]
 
           describe.each(
-            [undefined, ...Object.values(CaseAppealState)].filter(
-              (state) => !state || !accessibleCaseAppealStates.includes(state),
+            [undefined, ...Object.values(AppealCaseState)].filter(
+              (state) => !state || !accessibleAppealCaseStates.includes(state),
             ),
           )('inaccessible case appeal state %s', (appealState) => {
             const theCase = {
@@ -65,7 +65,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
             verifyNoAccess(theCase, user)
           })
 
-          describe.each(accessibleCaseAppealStates)(
+          describe.each(accessibleAppealCaseStates)(
             'accessible case appeal state %s',
             (appealState) => {
               const theCase = {
@@ -120,7 +120,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
                 state,
                 indictmentRulingDecision: rulingDecision,
                 appealCase: {
-                  appealState: CaseAppealState.RECEIVED,
+                  appealState: AppealCaseState.RECEIVED,
                   appealReceivedByCourtDate: nowFactory(),
                 },
               } as Case
@@ -130,16 +130,16 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
           )
 
           describe('dismissal ruling decision', () => {
-            const accessibleCaseAppealStates = [
-              CaseAppealState.RECEIVED,
-              CaseAppealState.COMPLETED,
-              CaseAppealState.WITHDRAWN,
+            const accessibleAppealCaseStates = [
+              AppealCaseState.RECEIVED,
+              AppealCaseState.COMPLETED,
+              AppealCaseState.WITHDRAWN,
             ]
 
             describe.each(
-              [undefined, ...Object.values(CaseAppealState)].filter(
+              [undefined, ...Object.values(AppealCaseState)].filter(
                 (state) =>
-                  !state || !accessibleCaseAppealStates.includes(state),
+                  !state || !accessibleAppealCaseStates.includes(state),
               ),
             )('inaccessible case appeal state %s', (appealState) => {
               const theCase = {
@@ -153,7 +153,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
               verifyNoAccess(theCase, user)
             })
 
-            describe.each(accessibleCaseAppealStates)(
+            describe.each(accessibleAppealCaseStates)(
               'accessible case appeal state %s',
               (appealState) => {
                 const theCase = {

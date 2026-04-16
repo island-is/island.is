@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   completedIndictmentCaseStates,
@@ -51,7 +51,7 @@ export const districtCourtRequestCasesAppealedWhereOptions = (
       attributes: [],
       required: true,
       where: {
-        appeal_state: CaseAppealState.APPEALED,
+        appeal_state: AppealCaseState.APPEALED,
       },
     },
   },
@@ -142,7 +142,7 @@ export const districtCourtIndictmentsAppealedWhereOptions = (
       attributes: [],
       required: true,
       where: {
-        appeal_state: CaseAppealState.APPEALED,
+        appeal_state: AppealCaseState.APPEALED,
       },
     },
   },
