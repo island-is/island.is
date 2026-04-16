@@ -1,4 +1,7 @@
-import { type EnhancedFetchAPI, createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  type EnhancedFetchAPI,
+  createEnhancedFetch,
+} from '@island.is/clients/middlewares'
 import { LazyDuringDevScope } from '@island.is/nest/config'
 
 export const VERDICTS_FETCH = 'VerdictsEnhancedFetch'
