@@ -415,7 +415,8 @@ const CreateDelegationScreen = () => {
                     if (detail?.toLowerCase().includes('deceased')) {
                       return formatMessage(m.deceasedIndividualError)
                     }
-                    const mapped = FORM_ERRORS[title as keyof typeof FORM_ERRORS]
+                    const mapped =
+                      FORM_ERRORS[title as keyof typeof FORM_ERRORS]
                     return mapped
                       ? formatMessage(mapped)
                       : formatMessage(m.errorDefault)

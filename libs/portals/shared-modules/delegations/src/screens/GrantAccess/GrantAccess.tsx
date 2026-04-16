@@ -149,9 +149,7 @@ const GrantAccess = () => {
 
   const formErrorOverrides = useMemo(() => {
     const problem = (formError as ApolloError | undefined)?.graphQLErrors?.[0]
-      ?.extensions?.problem as
-      | { status?: number; detail?: string }
-      | undefined
+      ?.extensions?.problem as { status?: number; detail?: string } | undefined
     if (
       problem?.status === 400 &&
       problem.detail?.toLowerCase().includes('deceased')
