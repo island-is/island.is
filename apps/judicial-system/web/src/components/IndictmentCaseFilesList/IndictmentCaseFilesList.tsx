@@ -44,6 +44,7 @@ import {
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
 
@@ -293,11 +294,16 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
-  const { digitalCaseFiles, openDigitalCaseFileUrl, loadingFileId } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+  const {
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+    openDigitalCaseFileUrl,
+    loadingFileId,
+  } = usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
-  const showPoliceDigitalCaseFiles =
-    (digitalCaseFiles?.length ?? 0) > 0 && isDistrictCourtUser(user)
+  const showDigitalCaseFilesSection =
+    isDistrictCourtUser(user) &&
+    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
   return (
     <>
@@ -451,7 +457,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         )}
         {(showFiles ||
           hasGeneratedCourtRecord ||
-          showPoliceDigitalCaseFiles) && (
+          showDigitalCaseFilesSection) && (
           <>
             <FileSection
               title={formatMessage(strings.civilClaimsTitle)}
@@ -459,7 +465,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
-            {showPoliceDigitalCaseFiles && (
+            {showDigitalCaseFilesSection && (
               <Box marginBottom={3}>
                 <SectionHeading
                   title="Rafræn gögn"
@@ -467,61 +473,88 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                <Text marginBottom={2}>
-                  Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
-                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
-                </Text>
-                {digitalCaseFiles?.map((file, index) => (
-                  <Box
-                    key={index}
-                    component="button"
-                    type="button"
-                    className={styles.electronicFileRow}
-                    onClick={() =>
-                      openDigitalCaseFileUrl(file.policeDigitalFileId)
-                    }
-                    disabled={loadingFileId === file.policeDigitalFileId}
-                    cursor="pointer"
-                    background="transparent"
-                    width="full"
-                    textAlign="left"
-                  >
-                    <Text
-                      as="span"
-                      color="blue400"
-                      variant="h4"
-                      className={styles.electronicFileLinkContainer}
+                <AnimatePresence mode="wait" initial={false}>
+                  {digitalCaseFilesLoading ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      {file.name}
-                    </Text>
-                    <AnimatePresence mode="wait" initial={false}>
-                      {loadingFileId !== file.policeDigitalFileId ? (
-                        <motion.span
-                          key="loading"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
+                      <Box display="flex" justifyContent="center">
+                        <LoadingDots />
+                      </Box>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="files"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Text marginBottom={2}>
+                        Tenglarnir færa þig yfir á öruggt gagnasvæði
+                        lögreglunnar. Allar heimsóknir á þann vef eru skráðar og
+                        rekjanlegar.
+                      </Text>
+                      {digitalCaseFiles?.map((file, index) => (
+                        <Box
+                          key={index}
+                          component="button"
+                          type="button"
+                          className={styles.electronicFileRow}
+                          onClick={() =>
+                            openDigitalCaseFileUrl(file.policeDigitalFileId)
+                          }
+                          disabled={loadingFileId === file.policeDigitalFileId}
+                          cursor="pointer"
+                          background="transparent"
+                          width="full"
+                          textAlign="left"
                         >
-                          <LoadingDots single size="small" />
-                        </motion.span>
-                      ) : (
-                        <motion.span
-                          key="icon"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                        >
-                          <Icon
-                            icon="open"
-                            type="outline"
-                            size="small"
+                          <Text
+                            as="span"
                             color="blue400"
-                          />
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </Box>
-                ))}
+                            variant="h4"
+                            className={styles.electronicFileLinkContainer}
+                          >
+                            {file.name}
+                          </Text>
+                          <AnimatePresence mode="wait" initial={false}>
+                            {loadingFileId === file.policeDigitalFileId ? (
+                              <motion.span
+                                key="loading"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{ display: 'flex' }}
+                              >
+                                <LoadingDots single size="small" />
+                              </motion.span>
+                            ) : (
+                              <motion.span
+                                key="icon"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{ display: 'flex' }}
+                              >
+                                <Icon
+                                  icon="open"
+                                  type="outline"
+                                  size="small"
+                                  color="blue400"
+                                />
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </Box>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </Box>
             )}
             {(filteredFiles.courtRecords.length > 0 ||
