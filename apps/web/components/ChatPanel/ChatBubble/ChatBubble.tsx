@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import cn from 'classnames'
 
-import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 
 import {
   EmbedDisclaimer,
