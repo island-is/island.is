@@ -2,7 +2,13 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Environment } from '@island.is/shared/types'
 
 import { ApiScopeUser } from './models/api-scope-user.model'
@@ -14,7 +20,8 @@ import { UpdateApiScopeUserInput } from './dto/update-api-scope-user.input'
 import { DeleteApiScopeUserInput } from './dto/delete-api-scope-user.input'
 import { ApiScopeUserService } from './api-scope-user.service'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.idsAdminSuperUser)
 @Resolver(() => ApiScopeUser)
 export class ApiScopeUserResolver {
   constructor(private readonly apiScopeUserService: ApiScopeUserService) {}

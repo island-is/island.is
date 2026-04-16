@@ -1076,6 +1076,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-error-email-format',
     defaultMessage: 'Email must be a valid email address',
   },
+  apiScopeUsersErrorNationalIdExists: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id-exists',
+    defaultMessage: 'A user with this national ID already exists',
+  },
   apiScopeUsersErrorEnvironmentRequired: {
     id: 'ap.ids-admin:api-scope-users-error-environment-required',
     defaultMessage: 'Select at least one environment',

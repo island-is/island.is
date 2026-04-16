@@ -230,7 +230,14 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     input: UpdateApiScopeUserInput,
   ): Promise<ApiScopeUser> {
-    for (const environment of environments) {
+    const inputEnvironments = input.environments
+    const targetEnvironments = inputEnvironments?.length
+      ? environments.filter((env) => inputEnvironments.includes(env))
+      : environments
+
+    let lastResult: ApiScopeUser | null = null
+
+    for (const environment of targetEnvironments) {
       const result = await this.typedRequest(user, environment, (api) =>
         api.meApiScopeUsersControllerUpdateRaw({
           nationalId: input.nationalId,
@@ -246,7 +253,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       )
 
       if (result) {
-        return {
+        lastResult = {
           nationalId: result.nationalId,
           name: result.name ?? undefined,
           email: result.email,
@@ -258,10 +265,16 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       }
     }
 
+    if (lastResult) {
+      return lastResult
+    }
+
     throw new Error('Failed to update API scope user')
   }
 
   async deleteApiScopeUser(user: User, nationalId: string): Promise<boolean> {
+    let anyRequestMade = false
+
     for (const environment of environments) {
       let requestMade = false
 
@@ -271,8 +284,12 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       })
 
       if (requestMade) {
-        return true
+        anyRequestMade = true
       }
+    }
+
+    if (anyRequestMade) {
+      return true
     }
 
     throw new Error('Failed to delete API scope user')

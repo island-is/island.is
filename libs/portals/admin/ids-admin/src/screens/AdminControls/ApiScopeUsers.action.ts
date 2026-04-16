@@ -97,6 +97,7 @@ export const apiScopeUsersAction: WrappedActionFn =
                 name: (formData.get('name') as string) || undefined,
                 email: (formData.get('email') as string) || undefined,
                 userAccess: parseUserAccess(formData, nationalId),
+                environments: parseEnvironments(formData),
               },
             },
           })

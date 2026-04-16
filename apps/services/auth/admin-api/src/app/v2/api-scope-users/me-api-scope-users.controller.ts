@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -147,15 +148,16 @@ export class MeApiScopeUsersController {
   }
 
   @Delete(':nationalId')
+  @HttpCode(204)
   @Documentation({
     description: 'Delete an API scope user.',
     response: { status: 204 },
   })
-  delete(
+  async delete(
     @CurrentUser() user: User,
     @Param('nationalId') nationalId: string,
-  ): Promise<number> {
-    return this.auditService.auditPromise(
+  ): Promise<void> {
+    await this.auditService.auditPromise(
       {
         namespace,
         auth: user,

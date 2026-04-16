@@ -244,13 +244,23 @@ const ApiScopeUsers = () => {
     [scopeOptions, activeScopes],
   )
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errors = validateApiScopeUserForm({
       formData,
       isEditing,
       selectedEnvironments,
       formatMessage,
     })
+
+    if (!isEditing) {
+      const { data } = await fetchUser({
+        variables: { nationalId: formData.nationalId },
+      })
+      if (data?.authAdminApiScopeUser) {
+        errors.nationalId = formatMessage(m.apiScopeUsersErrorNationalIdExists)
+      }
+    }
+
     setFormErrors(errors)
 
     if (hasErrors(errors)) {
@@ -270,6 +280,8 @@ const ApiScopeUsers = () => {
 
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
+    } else if (isEditing && userAvailableEnvironments.length > 0) {
+      submitData.set('environments', JSON.stringify(userAvailableEnvironments))
     }
 
     fetcher.submit(submitData, { method: 'post' })
