@@ -112,10 +112,7 @@ export const ApiScopeUsersTable = ({
             page={currentPage}
             totalPages={totalPages}
             renderLink={(page, className, children) => (
-              <button
-                className={className}
-                onClick={() => onPageChange(page)}
-              >
+              <button className={className} onClick={() => onPageChange(page)}>
                 {children}
               </button>
             )}
