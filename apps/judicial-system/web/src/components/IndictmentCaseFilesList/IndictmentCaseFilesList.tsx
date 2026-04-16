@@ -292,8 +292,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
       sentToPrisonAdminDate,
     )
 
-  const hasNoFiles = !showFiles && !displayGeneratedPDFs
-
   const {
     digitalCaseFiles,
     digitalCaseFilesLoading,
@@ -304,6 +302,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const showDigitalCaseFilesSection =
     isDistrictCourtUser(user) &&
     (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+
+  const hasNoFiles =
+    !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection
 
   return (
     <>
