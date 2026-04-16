@@ -52,13 +52,7 @@ const AppointmentsOverview = () => {
     const search = searchTerm.trim().toLowerCase()
 
     return appointments.data.filter((a) =>
-      [
-        a.title,
-        a.date,
-        a.location?.address,
-        a.location?.name,
-        ...(a.practitioners ?? []),
-      ]
+      [a.title, a.date, a.location?.address, a.location?.name]
         .filter(Boolean)
         .some((value) => value?.toLowerCase().includes(search)),
     )

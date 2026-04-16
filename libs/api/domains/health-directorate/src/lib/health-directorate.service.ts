@@ -36,7 +36,8 @@ import {
 } from './mappers/medicineMapper'
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
-import { PermitStatusEnum } from './models/enums'
+import { AppointmentDetail } from './models/appointment-detail.model'
+import { AppointmentStatusEnum, PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
@@ -572,36 +573,71 @@ export class HealthDirectorateService {
         return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
       })
 
-      const appointments: Array<Appointment> =
-        sortedData.map((item) => {
-          const data: Appointment = {
-            id: item.id,
-            date: item.startTime?.toISOString(),
-            title: item.description,
-            status: item.status,
-            instruction: item.patientInstruction,
-            duration: item.duration,
-            location: item.location
-              ? {
-                  name: item.location.name,
-                  organization: item.location.organization || '',
-                  address: item.location.address,
-                  directions: item.location.directions || '',
-                  city: item.location.city || '',
-                  postalCode: item.location.postalCode || '',
-                  country: item.location.country || '',
-                  latitude: item.location.latitude || undefined,
-                  longitude: item.location.longitude || undefined,
-                }
-              : undefined,
-            practitioners: item.practitioners || [],
-          }
-          return data
-        }) ?? []
+      const appointments: Array<Appointment> = sortedData.map((item) => ({
+        id: item.id,
+        date: item.startTime?.toISOString(),
+        title: item.description,
+        status: item.status as AppointmentStatusEnum,
+        duration: item.duration,
+        location: item.location
+          ? {
+              name: item.location.name,
+              organization: item.location.organization,
+              address: item.location.address,
+              city: item.location.city,
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }
+          : undefined,
+        // Deprecated: not available from the list endpoint — use healthDirectorateAppointment for full details
+        instruction: undefined,
+        practitioners: [],
+      }))
       return { data: appointments }
     } catch (error) {
       this.logger.warn(
         'Error fetching appointments from Health Directorate API',
+        error,
+      )
+      return null
+    }
+  }
+
+  public async getAppointmentById(
+    auth: Auth,
+    id: string,
+  ): Promise<AppointmentDetail | null> {
+    try {
+      const item = await this.healthApi.getAppointmentById(auth, id)
+      if (!item) {
+        return null
+      }
+
+      return {
+        id: item.id,
+        date: item.startTime?.toISOString(),
+        title: item.description,
+        status: item.status as AppointmentStatusEnum,
+        instruction: item.patientInstruction,
+        duration: item.duration,
+        location: item.location
+          ? {
+              name: item.location.name,
+              organization: item.location.organization,
+              address: item.location.address,
+              directions: item.location.directions,
+              city: item.location.city,
+              postalCode: item.location.postalCode,
+              country: item.location.country,
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }
+          : undefined,
+        practitioners: item.practitioners ?? [],
+      }
+    } catch (error) {
+      this.logger.warn(
+        'Error fetching appointment by id from Health Directorate API',
         error,
       )
       return null

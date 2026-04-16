@@ -2447,10 +2447,6 @@ export const messages = defineMessages({
     id: 'sp.health:no-appointments',
     defaultMessage: 'Engar tímabókanir framundan',
   },
-  appointmentAt: {
-    id: 'sp.health:appointment-at',
-    defaultMessage: 'Tími hjá: {arg} ',
-  },
   appointmentAtSimple: {
     id: 'sp.health:appointment-at-simple',
     defaultMessage: 'Tími hjá',
