@@ -24,10 +24,10 @@ interface ApplicationShellProps {
   initialScreen: SdfScreen
 }
 
-export function ApplicationShell({
+export const ApplicationShell = ({
   applicationId,
   initialScreen,
-}: ApplicationShellProps) {
+}: ApplicationShellProps) => {
   const {
     screen,
     isPending,
@@ -37,6 +37,7 @@ export function ApplicationShell({
     nextPage,
     prevPage,
     submit,
+    dispatch,
   } = useFormActions(applicationId, initialScreen)
 
   const { setInfo } = useHeaderInfo()
@@ -94,6 +95,7 @@ export function ApplicationShell({
                         errors={screen.page.errors}
                         answers={answers.current}
                         onAnswerChange={onAnswerChange}
+                        dispatch={dispatch}
                       />
                     </Box>
                   </GridColumn>

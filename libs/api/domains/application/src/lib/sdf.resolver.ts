@@ -104,6 +104,7 @@ export class SdfResolver {
       user,
       input.fieldIds,
       input.event,
+      input.refetchTemplateApiActions,
     )
     return mapRestScreenToGql(dto)
   }

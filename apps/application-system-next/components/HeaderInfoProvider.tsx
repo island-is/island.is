@@ -19,7 +19,11 @@ const HeaderInfoContext = createContext<HeaderInfoContextType>({
   clearInfo: () => undefined,
 })
 
-export function HeaderInfoProvider({ children }: { children: React.ReactNode }) {
+export const HeaderInfoProvider = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
   const [info, setInfoState] = useState<HeaderInfo>({})
 
   const setInfo = useCallback((next: HeaderInfo) => {
@@ -37,6 +41,6 @@ export function HeaderInfoProvider({ children }: { children: React.ReactNode }) 
   )
 }
 
-export function useHeaderInfo() {
+export const useHeaderInfo = () => {
   return useContext(HeaderInfoContext)
 }

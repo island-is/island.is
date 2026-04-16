@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useHeaderInfo } from './HeaderInfoProvider'
 
-export function AppHeader() {
+export const AppHeader = () => {
   const { info } = useHeaderInfo()
 
   return (

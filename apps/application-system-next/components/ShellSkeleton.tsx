@@ -1,4 +1,4 @@
-export function ShellSkeleton() {
+export const ShellSkeleton = () => {
   return (
     <div
       style={{

@@ -53,4 +53,14 @@ export class ExecuteActionDto {
   @IsString()
   @ApiPropertyOptional({ description: 'Event name for SUBMIT transitions.' })
   readonly event?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({
+    description:
+      'Template API action names to run on REFETCH (must be allowed for the current role).',
+    type: [String],
+  })
+  readonly refetchTemplateApiActions?: string[]
 }

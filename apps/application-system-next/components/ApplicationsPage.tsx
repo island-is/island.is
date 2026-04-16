@@ -28,7 +28,7 @@ interface ApplicationsPageProps {
   slug: string
 }
 
-export function ApplicationsPage({ slug }: ApplicationsPageProps) {
+export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
   const router = useRouter()
   const { formatMessage } = useLocale()
   const { clearInfo } = useHeaderInfo()

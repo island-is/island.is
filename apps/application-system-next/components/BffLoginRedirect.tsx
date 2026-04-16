@@ -8,9 +8,9 @@ interface BffLoginRedirectProps {
   targetLinkUri: string
 }
 
-export function BffLoginRedirect({
+export const BffLoginRedirect = ({
   targetLinkUri,
-}: BffLoginRedirectProps) {
+}: BffLoginRedirectProps) => {
   const loginUrl = buildBffLoginUrl(targetLinkUri)
 
   useEffect(() => {

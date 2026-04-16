@@ -13,7 +13,7 @@ import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import { DefaultStateLifeCycle, defineWorkflow } from '@island.is/application/core'
-import { MyPlotsApi } from '../dataProviders'
+import { MyPlotsApi, PlotDetailsApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 
 const ExampleSdfWorkflow = defineWorkflow<Events>({
@@ -67,6 +67,7 @@ const ExampleSdfWorkflow = defineWorkflow<Events>({
           ],
           write: 'all',
           read: 'all',
+          api: [PlotDetailsApi],
           delete: true,
         },
       ],

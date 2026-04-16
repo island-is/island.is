@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { executeAction as gqlExecuteAction, SdfScreen } from '../lib/graphql'
 
-export function useFormActions(
+export const useFormActions = (
   applicationId: string,
   initialScreen: SdfScreen,
-) {
+) => {
   const [screen, setScreen] = useState<SdfScreen>(initialScreen)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -16,10 +16,12 @@ export function useFormActions(
   const pageIndexRef = useRef(initialScreen.page.index)
   const [, forceRender] = useState(0)
 
+  // When the page index changes, merge the server snapshot for that screen.
+  // Server values must win over answersRef — ref can still hold stale choices from
+  // before PREV_PAGE / NEXT_PAGE (e.g. needsWaterAccess) and would break Tier 1/2 showWhen.
   useEffect(() => {
     if (screen.answers) {
-      const merged = { ...screen.answers, ...answersRef.current }
-      answersRef.current = merged
+      answersRef.current = { ...answersRef.current, ...screen.answers }
       forceRender((n) => n + 1)
     }
   }, [screen.page.index])
@@ -42,6 +44,7 @@ export function useFormActions(
       extraAnswers?: Record<string, unknown>,
       fieldIds?: string[],
       event?: string,
+      refetchTemplateApiActions?: string[],
     ) => {
       setError(null)
       const mergedAnswers = { ...answersRef.current, ...extraAnswers }
@@ -55,14 +58,18 @@ export function useFormActions(
             'is',
             fieldIds,
             event,
+            refetchTemplateApiActions,
           )
-          const pageChanged = result.page.index !== pageIndexRef.current
           pageIndexRef.current = result.page.index
           setScreen(result)
-          if (pageChanged) {
-            answersRef.current = result.answers ?? {}
-            forceRender((n) => n + 1)
+          // Always merge; never replace with result.answers alone — it only contains
+          // fields present on the current page in the DB snapshot, and would drop keys
+          // needed for client-side showWhen on the page we navigate to.
+          answersRef.current = {
+            ...answersRef.current,
+            ...(result.answers ?? {}),
           }
+          forceRender((n) => n + 1)
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Action failed')
         }

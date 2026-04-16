@@ -59,6 +59,10 @@ const mapFieldToComponent = (
     component.options = opts
   }
 
+  if (raw.type === FieldTypes.SELECT && raw.inlineRefetchTemplateApis?.length) {
+    component.onSelectRefetchTemplateApis = raw.inlineRefetchTemplateApis
+  }
+
   switch (raw.type) {
     case FieldTypes.CUSTOM:
       component.componentName = raw.component

@@ -52,7 +52,11 @@ export const ParentalLeaveWorkflow = defineWorkflow({
     draft: {
       name: 'Draft',
       status: 'draft',
-      lifecycle: { shouldBeListed: true, shouldBePruned: true, whenToPrune: 30 * 24 * 3600 * 1000 },
+      lifecycle: {
+        shouldBeListed: true,
+        shouldBePruned: true,
+        whenToPrune: 30 * 24 * 3600 * 1000,
+      },
       roles: [
         {
           id: 'applicant',
@@ -65,16 +69,15 @@ export const ParentalLeaveWorkflow = defineWorkflow({
           //    conditionally built at runtime (used by ~10+ templates today)
           //
           // Simple case — no feature flags:
-          formLoader: () => import('./forms/DraftForm').then((m) => m.DraftForm),
+          formLoader: () =>
+            import('./forms/DraftForm').then((m) => m.DraftForm),
           //
           // Feature-flag case (e.g. driving-license, estate, marriage-conditions):
           // formLoader: async ({ featureFlagClient }) => {
           //   const flags = await getFeatureFlags(featureFlagClient as FeatureFlagClient)
           //   return flags.showNewFlow ? NewDraftForm : LegacyDraftForm
           // },
-          actions: [
-            { event: 'SUBMIT', name: 'Submit', type: 'primary' },
-          ],
+          actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
           api: [fetchNationalRegistryData],
         },
       ],
@@ -105,13 +108,18 @@ export const ParentalLeaveWorkflow = defineWorkflow({
           id: 'applicant',
           read: 'all',
           write: { answers: [], externalData: [] },
-          formLoader: () => import('./forms/InReviewForm').then((m) => m.InReviewForm),
+          formLoader: () =>
+            import('./forms/InReviewForm').then((m) => m.InReviewForm),
         },
         {
           id: 'assignee',
-          read: { answers: ['applicantName'], externalData: ['nationalRegistry'] },
+          read: {
+            answers: ['applicantName'],
+            externalData: ['nationalRegistry'],
+          },
           write: { answers: ['reviewDecision'] },
-          formLoader: () => import('./forms/ReviewForm').then((m) => m.ReviewForm),
+          formLoader: () =>
+            import('./forms/ReviewForm').then((m) => m.ReviewForm),
           actions: [
             { event: 'APPROVE', name: 'Approve', type: 'primary' },
             { event: 'REJECT', name: 'Reject', type: 'reject' },
@@ -137,13 +145,18 @@ export const ParentalLeaveWorkflow = defineWorkflow({
     done: {
       name: 'Completed',
       status: 'completed',
-      lifecycle: { shouldBeListed: true, shouldBePruned: true, whenToPrune: 365 * 24 * 3600 * 1000 },
+      lifecycle: {
+        shouldBeListed: true,
+        shouldBePruned: true,
+        whenToPrune: 365 * 24 * 3600 * 1000,
+      },
       roles: [
         {
           id: 'applicant',
           read: 'all',
           write: { answers: [], externalData: [] },
-          formLoader: () => import('./forms/SuccessForm').then((m) => m.SuccessForm),
+          formLoader: () =>
+            import('./forms/SuccessForm').then((m) => m.SuccessForm),
         },
       ],
     },
@@ -158,17 +171,17 @@ export const ParentalLeaveWorkflow = defineWorkflow({
 
 **`defineWorkflow` MUST preserve all `ApplicationStateMeta` capabilities.** The current XState `stateMachineConfig` stores rich per-state metadata in `meta` on each state node. The new `defineWorkflow` phases MUST support all of these as first-class fields — they are not optional, they are load-bearing for the admin portal, Mínar síður, lifecycle management, and the SDF engine:
 
-| Field | Type | What It Controls |
-|-------|------|------------------|
-| `name` | `string` | Human-readable state name (admin portal, history) |
-| `status` | `'draft' \| 'inprogress' \| 'completed' \| 'approved' \| 'rejected'` | Application status badge, action card tag |
-| `lifecycle` | `StateLifeCycle` | Visibility in Mínar síður (`shouldBeListed`), auto-pruning (`shouldBePruned`, `whenToPrune`, `pruneMessage`), charge deletion |
-| `roles` | `RoleInState[]` | Per-role: `read`/`write` permissions, `formLoader`, `actions` (CallToAction), `api` (TemplateApi[]), `shouldBeListedForRole`, `delete` |
-| `actionCard` | object | `historyLogs` (HistoryEventMessage[]), `pendingAction` (PendingAction or function), `displayPruneAt` |
-| `progress` | `number` | Progress bar percentage |
-| `onEntry` | `TemplateApi[]` | Backend actions triggered on entering the phase |
-| `onExit` | `TemplateApi[]` | Backend actions triggered on leaving the phase |
-| `onDelete` | `TemplateApi[]` | Backend actions triggered when application is deleted in this phase |
+| Field        | Type                                                                 | What It Controls                                                                                                                       |
+| ------------ | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`       | `string`                                                             | Human-readable state name (admin portal, history)                                                                                      |
+| `status`     | `'draft' \| 'inprogress' \| 'completed' \| 'approved' \| 'rejected'` | Application status badge, action card tag                                                                                              |
+| `lifecycle`  | `StateLifeCycle`                                                     | Visibility in Mínar síður (`shouldBeListed`), auto-pruning (`shouldBePruned`, `whenToPrune`, `pruneMessage`), charge deletion          |
+| `roles`      | `RoleInState[]`                                                      | Per-role: `read`/`write` permissions, `formLoader`, `actions` (CallToAction), `api` (TemplateApi[]), `shouldBeListedForRole`, `delete` |
+| `actionCard` | object                                                               | `historyLogs` (HistoryEventMessage[]), `pendingAction` (PendingAction or function), `displayPruneAt`                                   |
+| `progress`   | `number`                                                             | Progress bar percentage                                                                                                                |
+| `onEntry`    | `TemplateApi[]`                                                      | Backend actions triggered on entering the phase                                                                                        |
+| `onExit`     | `TemplateApi[]`                                                      | Backend actions triggered on leaving the phase                                                                                         |
+| `onDelete`   | `TemplateApi[]`                                                      | Backend actions triggered when application is deleted in this phase                                                                    |
 
 **Implementation rules for `defineWorkflow`:**
 
@@ -233,15 +246,15 @@ export default {
 
 **Fields that the implementing agent MUST understand:**
 
-| Field | Purpose | Consumed By |
-|-------|---------|-------------|
-| `dataSchema` (Zod) | Server-side answer validation on every `NEXT_PAGE` and `SUBMIT`. The SDF engine calls `dataSchema.parse(answers)` scoped to the current screen's field IDs. | SDF Controller (`POST /sdf/:id/action`), `ApplicationTemplateValidationService` |
-| `mapUserToRole` | Given a `nationalId` and `Application`, returns the user's role string (e.g., `'applicant'`, `'assignee'`). The SDF engine uses this to select the correct `RoleInState`, which determines the form, permissions, and actions. | SDF Controller, `AstAdapterService` (Step 3 in §5.3), `ApplicationAccessService`, delegation guard |
-| `answerValidators` | Per-field custom validation beyond Zod (e.g., cross-field checks, external lookups). Keyed by field ID. | `ApplicationTemplateValidationService.validateIncomingAnswers` |
-| `adminDataConfig` | After an application is pruned (auto-deleted past its `whenToPrune`), these answer/externalData fields are retained for admin portal visibility. `postPruneDelayOverride` controls how long they survive. | `ApplicationLifeCycleService.pruneApplication`, admin portal serializer |
-| `allowedDelegations` | Defines which delegation types can act on behalf of the applicant. | `DelegationGuard`, `ApplicationAccessService.isDelegationAllowed` |
-| `featureFlag` | ConfigCat feature flag name. If set, the template is only available when the flag is enabled for the user. | `ApplicationTemplateValidationService.isTemplateReady` |
-| `translationNamespaces` | CMS translation namespace keys loaded for i18n. Merged with `ApplicationConfigurations[type].translation`. | `getApplicationTranslationNamespaces`, `IntlService` |
+| Field                   | Purpose                                                                                                                                                                                                                        | Consumed By                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `dataSchema` (Zod)      | Server-side answer validation on every `NEXT_PAGE` and `SUBMIT`. The SDF engine calls `dataSchema.parse(answers)` scoped to the current screen's field IDs.                                                                    | SDF Controller (`POST /sdf/:id/action`), `ApplicationTemplateValidationService`                    |
+| `mapUserToRole`         | Given a `nationalId` and `Application`, returns the user's role string (e.g., `'applicant'`, `'assignee'`). The SDF engine uses this to select the correct `RoleInState`, which determines the form, permissions, and actions. | SDF Controller, `AstAdapterService` (Step 3 in §5.3), `ApplicationAccessService`, delegation guard |
+| `answerValidators`      | Per-field custom validation beyond Zod (e.g., cross-field checks, external lookups). Keyed by field ID.                                                                                                                        | `ApplicationTemplateValidationService.validateIncomingAnswers`                                     |
+| `adminDataConfig`       | After an application is pruned (auto-deleted past its `whenToPrune`), these answer/externalData fields are retained for admin portal visibility. `postPruneDelayOverride` controls how long they survive.                      | `ApplicationLifeCycleService.pruneApplication`, admin portal serializer                            |
+| `allowedDelegations`    | Defines which delegation types can act on behalf of the applicant.                                                                                                                                                             | `DelegationGuard`, `ApplicationAccessService.isDelegationAllowed`                                  |
+| `featureFlag`           | ConfigCat feature flag name. If set, the template is only available when the flag is enabled for the user.                                                                                                                     | `ApplicationTemplateValidationService.isTemplateReady`                                             |
+| `translationNamespaces` | CMS translation namespace keys loaded for i18n. Merged with `ApplicationConfigurations[type].translation`.                                                                                                                     | `getApplicationTranslationNamespaces`, `IntlService`                                               |
 
 **The SDF engine does NOT change how these fields work.** They are read by the same services (`ApplicationTemplateHelper`, `ApplicationAccessService`, `ApplicationLifeCycleService`, `DelegationGuard`) regardless of whether the template uses XState or `defineWorkflow`. The `defineWorkflow` builder only replaces the `stateMachineConfig` construction — everything else on the `ApplicationTemplate` is set by the template author directly.
 
@@ -1052,6 +1065,16 @@ If a user selects a vehicle from a dropdown, the UI must update to show that veh
 
 - **Solution:** The dropdown field emits a `REFETCH` action. NestJS receives the delta, executes the `VehicleDebtApi` integration, updates the `externalData` JSON in PostgreSQL, re-evaluates the Fluent Form conditions, and returns the updated `Screen` object. Next.js simply diffs the DOM and updates.
 
+**Declarative linkage (form owns which integration runs):** The Fluent `PageBuilder` can attach `onSelectRefetch: string[]` on `addSelectField`, where each string is a `TemplateApi.action` (same identifier as `defineTemplateApi({ action: '…' })`). The AST carries this as `inlineRefetchTemplateApis`, the GraphQL `SdfSelectField` exposes `onSelectRefetchTemplateApis`, and the Next shell dispatches `REFETCH` with `refetchTemplateApiActions` so the backend runs **only** those template APIs allowed for the current role — not every API on the role.
+
+**`handleRefetch` contract:** `REFETCH` persists merged answers first (so template APIs can read the new selection from `application.answers`), then optionally runs the requested template APIs via `performActionOnApplication`, then returns `getScreen()` so `convertFormToScreens` / `shouldShowFormItem` see up-to-date `externalData`.
+
+#### 6.1.1. Tier 3 `showWhen` and `externalData` (failure payloads vs. “loaded”)
+
+Fields that should appear **only after** a successful inline fetch MUST use **Tier 3** `showWhen: (answers, externalData) => boolean` (see §6.5). The screen compiler evaluates these on the server; **`ClientCondition` is not emitted** for closures (`extractClientCondition` returns `null`). The Next.js `FormRenderer` treats a missing `clientCondition` as “always visible” (`evaluateClientCondition` returns `true` when the hint is absent). Therefore **omitting** non-applicable fields from the `Screen` is entirely the responsibility of **server-side** `shouldShowFormItem` + fresh `externalData` after `REFETCH` — not client-side hiding.
+
+**Required pattern for “show after successful fetch”:** Tier 3 conditions MUST distinguish success from failure and validate the expected payload shape — for example:
+
 ### 6.2. Custom Bespoke Components (The Escape Hatch)
 
 For highly interactive UI (e.g., Parental Leave Timeline allocation).
@@ -1300,6 +1323,7 @@ This section addresses a critical implementation gap: how a browser URL like `/u
 ```
 
 Key files in this flow:
+
 - `libs/application/core/src/lib/configurationUtils.ts` — `getTypeFromSlug` / `getSlugFromType`
 - `libs/application/template-loader/src/index.ts` — `getApplicationTemplateByTypeId`, `loadTemplateLib`
 - `libs/application/template-loader/src/lib/templateLoaders.ts` — dynamic import map
@@ -1343,13 +1367,13 @@ Each phase is a dependency chain. Actions within a phase can be parallelized. Ac
 
 These are leaf libraries with no runtime dependencies on each other.
 
-| Step | Action | Output |
-|------|--------|--------|
-| 1.1 | Create `libs/application/screen-compiler`. Extract pure functions from `libs/application/ui-shell/src/reducer/reducerUtils.ts`: `convertFormToScreens`, `getNavigableSectionsInForm`, `moveToScreen`, `findCurrentScreen`, `canGoBack`, `convertRepeaterToScreens`, `convertMultiFieldToScreen`. Also extract `shouldShowFormItem` from `libs/application/core/src/lib/conditionUtils.ts` and `getFormNodeFieldIds` from `libs/application/ui-shell/src/validation/resolver.ts`. | `@island.is/application/screen-compiler` library |
-| 1.2 | Create `libs/application/sdf-types`. Define GraphQL schema (`sdf.graphql`) from §4C. Configure `graphql-codegen` as an Nx target. Generate TypeScript types. Ensure zero execution logic. This library MUST also export a `SdfComparators` constant map that is the single source of truth for comparator strings (e.g., `EQUALS → 'eq'`, `NOT_EQUAL → 'neq'`). Both backend `condition-hint.ts` and frontend `evaluateClientCondition.ts` MUST import from here — see §8, Constraint 12. | `@island.is/application/sdf-types` library |
-| 1.3 | Implement `defineWorkflow` in `libs/application/core`. The builder MUST produce a valid `ApplicationTemplate` object — same shape as the XState-based templates. All `ApplicationStateMeta` fields listed in §4A must be first-class. Write unit tests that verify the output matches a known XState config. | `defineWorkflow` function in `@island.is/application/core` |
-| 1.4 | Implement `FormBuilder` / `PageBuilder` fluent API in `libs/application/core`. `FormBuilder.build()` must return a `Form` AST identical to `buildForm()` output. Write unit tests that verify structural equivalence. | `FormBuilder` classes in `@island.is/application/core` |
-| 1.5 | Add `useSdf?: boolean` to the `ApplicationConfigurations` type in `libs/application/types/src/lib/ApplicationTypes.ts`. | Type update only — no runtime changes |
+| Step | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Output                                                     |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| 1.1  | Create `libs/application/screen-compiler`. Extract pure functions from `libs/application/ui-shell/src/reducer/reducerUtils.ts`: `convertFormToScreens`, `getNavigableSectionsInForm`, `moveToScreen`, `findCurrentScreen`, `canGoBack`, `convertRepeaterToScreens`, `convertMultiFieldToScreen`. Also extract `shouldShowFormItem` from `libs/application/core/src/lib/conditionUtils.ts` and `getFormNodeFieldIds` from `libs/application/ui-shell/src/validation/resolver.ts`.          | `@island.is/application/screen-compiler` library           |
+| 1.2  | Create `libs/application/sdf-types`. Define GraphQL schema (`sdf.graphql`) from §4C. Configure `graphql-codegen` as an Nx target. Generate TypeScript types. Ensure zero execution logic. This library MUST also export a `SdfComparators` constant map that is the single source of truth for comparator strings (e.g., `EQUALS → 'eq'`, `NOT_EQUAL → 'neq'`). Both backend `condition-hint.ts` and frontend `evaluateClientCondition.ts` MUST import from here — see §8, Constraint 12. | `@island.is/application/sdf-types` library                 |
+| 1.3  | Implement `defineWorkflow` in `libs/application/core`. The builder MUST produce a valid `ApplicationTemplate` object — same shape as the XState-based templates. All `ApplicationStateMeta` fields listed in §4A must be first-class. Write unit tests that verify the output matches a known XState config.                                                                                                                                                                              | `defineWorkflow` function in `@island.is/application/core` |
+| 1.4  | Implement `FormBuilder` / `PageBuilder` fluent API in `libs/application/core`. `FormBuilder.build()` must return a `Form` AST identical to `buildForm()` output. Write unit tests that verify structural equivalence.                                                                                                                                                                                                                                                                     | `FormBuilder` classes in `@island.is/application/core`     |
+| 1.5  | Add `useSdf?: boolean` to the `ApplicationConfigurations` type in `libs/application/types/src/lib/ApplicationTypes.ts`.                                                                                                                                                                                                                                                                                                                                                                   | Type update only — no runtime changes                      |
 
 **Phase 1 Gate — the following MUST pass before merging any Phase 1 PR:**
 
@@ -1363,12 +1387,12 @@ These are leaf libraries with no runtime dependencies on each other.
 
 Depends on: Phase 1 outputs (screen-compiler, sdf-types, defineWorkflow).
 
-| Step | Action | Output |
-|------|--------|--------|
-| 2.1 | Create `apps/application-system/api/src/app/modules/sdf/` NestJS module. Implement `sdf.controller.ts` with `GET /sdf/:id/screen?step=&locale=` and `POST /sdf/:id/action`. Swagger-decorate DTOs. The `POST /action` DTO MUST include a `lastKnownPageIndex: number` field for idempotency — the backend rejects writes where this doesn't match the persisted page index (§8, Constraint 18). The `POST /action` handler MUST also define explicit behavior for `VALIDATE`: accept `{ actionType: 'VALIDATE', answers, fieldIds, locale }` and return `{ errors: ValidationError[] }` (NOT a full Screen) — see §8, Constraint 14. | REST endpoints on `application-system-api` |
-| 2.2 | Implement `AstAdapterService` inside the SDF module. Follow the pipeline from §5.3 (including Step 3.5: role-based data filtering). Use `screen-compiler` for AST-to-screen conversion. Implement `screen-mapper`, `footer-builder`, `stepper-builder`, `condition-hint` extraction, `i18n-resolver`. The service MUST accept an `ephemeral: boolean` parameter. When `true` (REFETCH actions), the pipeline MUST skip all `TemplateApiActionRunner` execution — no `onEntry` hooks, no X-Road calls, no email sends (§8, Constraint 1). The `condition-hint.ts` module MUST import comparator strings from `SdfComparators` in `@island.is/application/sdf-types`, never hardcode them (§8, Constraint 12). | `AstAdapterService` producing `Screen` payloads |
-| 2.3 | Validate AstAdapter against `parental-leave` template. This template uses repeaters, custom fields, multi-role workflows, dynamic conditions, and `adminDataConfig` with pruning rules. Write integration tests that assert `Screen` output for known application states. Tests MUST include: (a) a multi-role assertion — the assignee's Screen for `inReview` must NOT contain applicant-only answer fields (§8, Constraint 4), (b) a REFETCH assertion — calling with `ephemeral: true` must NOT trigger any TemplateApi actions (§8, Constraint 1), (c) an answer-shape invariant assertion — answers persisted via `POST /action NEXT_PAGE` must be byte-compatible with what the legacy SPA would write for the same input (§8, Constraint 13). | Integration test suite for AstAdapter |
-| 2.4 | Update OpenAPI spec generation. Run Swagger codegen to produce the spec from the new endpoints. Verify spec includes `SdfApi` operations. | Updated `openapi.yaml` for `application-system-api` |
+| Step | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Output                                              |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| 2.1  | Create `apps/application-system/api/src/app/modules/sdf/` NestJS module. Implement `sdf.controller.ts` with `GET /sdf/:id/screen?step=&locale=` and `POST /sdf/:id/action`. Swagger-decorate DTOs. The `POST /action` DTO MUST include a `lastKnownPageIndex: number` field for idempotency — the backend rejects writes where this doesn't match the persisted page index (§8, Constraint 18). The `POST /action` handler MUST also define explicit behavior for `VALIDATE`: accept `{ actionType: 'VALIDATE', answers, fieldIds, locale }` and return `{ errors: ValidationError[] }` (NOT a full Screen) — see §8, Constraint 14.                                                                                                                  | REST endpoints on `application-system-api`          |
+| 2.2  | Implement `AstAdapterService` inside the SDF module. Follow the pipeline from §5.3 (including Step 3.5: role-based data filtering). Use `screen-compiler` for AST-to-screen conversion. Implement `screen-mapper`, `footer-builder`, `stepper-builder`, `condition-hint` extraction, `i18n-resolver`. The service MUST accept an `ephemeral: boolean` parameter. When `true` (REFETCH actions), the pipeline MUST skip all `TemplateApiActionRunner` execution — no `onEntry` hooks, no X-Road calls, no email sends (§8, Constraint 1). The `condition-hint.ts` module MUST import comparator strings from `SdfComparators` in `@island.is/application/sdf-types`, never hardcode them (§8, Constraint 12).                                          | `AstAdapterService` producing `Screen` payloads     |
+| 2.3  | Validate AstAdapter against `parental-leave` template. This template uses repeaters, custom fields, multi-role workflows, dynamic conditions, and `adminDataConfig` with pruning rules. Write integration tests that assert `Screen` output for known application states. Tests MUST include: (a) a multi-role assertion — the assignee's Screen for `inReview` must NOT contain applicant-only answer fields (§8, Constraint 4), (b) a REFETCH assertion — calling with `ephemeral: true` must NOT trigger any TemplateApi actions (§8, Constraint 1), (c) an answer-shape invariant assertion — answers persisted via `POST /action NEXT_PAGE` must be byte-compatible with what the legacy SPA would write for the same input (§8, Constraint 13). | Integration test suite for AstAdapter               |
+| 2.4  | Update OpenAPI spec generation. Run Swagger codegen to produce the spec from the new endpoints. Verify spec includes `SdfApi` operations.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Updated `openapi.yaml` for `application-system-api` |
 
 **Phase 2 Gate — the following MUST pass before merging any Phase 2 PR:**
 
@@ -1382,11 +1406,11 @@ Depends on: Phase 1 outputs (screen-compiler, sdf-types, defineWorkflow).
 
 Depends on: Phase 2 outputs (REST endpoints with OpenAPI spec).
 
-| Step | Action | Output |
-|------|--------|--------|
-| 3.1 | Regenerate fetch client in `libs/api/domains/application/src/gen/fetch/` from the updated OpenAPI spec. Verify `SdfApi` class is generated with `getScreen` and `executeAction` methods. | Generated `SdfApi` fetch client |
-| 3.2 | Create `sdf.resolver.ts`, `sdf.service.ts`, `sdf.model.ts` in `libs/api/domains/application/src/lib/`. Register `SdfApi` provider in `application.module.ts`. Implement `getScreen` and `executeAction` GQL queries/mutations. | GQL resolvers in shared gateway |
-| 3.3 | Test end-to-end: GQL query → REST call → AstAdapter → Screen response. Use the integration tests from 2.3 extended to go through the GQL layer. | End-to-end test coverage |
+| Step | Action                                                                                                                                                                                                                         | Output                          |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| 3.1  | Regenerate fetch client in `libs/api/domains/application/src/gen/fetch/` from the updated OpenAPI spec. Verify `SdfApi` class is generated with `getScreen` and `executeAction` methods.                                       | Generated `SdfApi` fetch client |
+| 3.2  | Create `sdf.resolver.ts`, `sdf.service.ts`, `sdf.model.ts` in `libs/api/domains/application/src/lib/`. Register `SdfApi` provider in `application.module.ts`. Implement `getScreen` and `executeAction` GQL queries/mutations. | GQL resolvers in shared gateway |
+| 3.3  | Test end-to-end: GQL query → REST call → AstAdapter → Screen response. Use the integration tests from 2.3 extended to go through the GQL layer.                                                                                | End-to-end test coverage        |
 
 **Phase 3 Gate — the following MUST pass before merging any Phase 3 PR:**
 
@@ -1396,13 +1420,13 @@ Depends on: Phase 2 outputs (REST endpoints with OpenAPI spec).
 
 Depends on: Phase 3 outputs (working GQL endpoint).
 
-| Step | Action | Output |
-|------|--------|--------|
-| 4.1 | Create `apps/application-system-next` (Next.js App Router). Set up Nx project config (`project.json`), infra chart (reference `apps/application-system/api/infra/application-system-api.ts`), BFF proxy for auth tokens. | Next.js app skeleton with infra |
-| 4.2 | Implement `FormRenderer` component that maps the `Screen` GQL payload to Island UI components. Implement `evaluateClientCondition.ts` for instant field toggling — this function MUST import `SdfComparators` from `@island.is/application/sdf-types` and switch on those constants, never hardcoded strings (§8, Constraint 12). Implement `useFormActions` hook for `NEXT_PAGE`, `PREV_PAGE`, `REFETCH`, `SUBMIT`, `VALIDATE`. The hook MUST include `lastKnownPageIndex` in every `POST /action` request for idempotency (§8, Constraint 18). Custom components MUST use the `onAnswerChange(fieldId, value)` callback that routes through `executeAction` — no direct local state mutation that bypasses server validation (§8, Constraint 5). The dynamic component registry MUST validate received `CustomComponent.props` against a Zod schema per component at runtime; log `console.warn` in dev, `Sentry.captureMessage` in prod on mismatch (§8, Constraint 15). | Core rendering pipeline |
-| 4.3 | Configure ingress routing: requests for `/umsoknir/<slug>` check `ApplicationConfigurations[slug].useSdf` to decide which frontend receives traffic. Implement as BFF middleware or Nginx/ingress annotation. (§8, Constraint 10) | Routing layer |
-| 4.4 | Create a POC template using `defineWorkflow` + `FormBuilder` (e.g., `EXAMPLE_INPUTS`). Set `useSdf: true`. Verify it renders on the Next.js frontend end-to-end. | First SDF-native template running |
-| 4.5 | Verify a legacy template (`parental-leave`) renders through the AstAdapter on the Next.js frontend by setting `useSdf: true` in dev. | Legacy template running on new frontend |
+| Step | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Output                                  |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 4.1  | Create `apps/application-system-next` (Next.js App Router). Set up Nx project config (`project.json`), infra chart (reference `apps/application-system/api/infra/application-system-api.ts`), BFF proxy for auth tokens.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Next.js app skeleton with infra         |
+| 4.2  | Implement `FormRenderer` component that maps the `Screen` GQL payload to Island UI components. Implement `evaluateClientCondition.ts` for instant field toggling — this function MUST import `SdfComparators` from `@island.is/application/sdf-types` and switch on those constants, never hardcoded strings (§8, Constraint 12). Implement `useFormActions` hook for `NEXT_PAGE`, `PREV_PAGE`, `REFETCH`, `SUBMIT`, `VALIDATE`. The hook MUST include `lastKnownPageIndex` in every `POST /action` request for idempotency (§8, Constraint 18). Custom components MUST use the `onAnswerChange(fieldId, value)` callback that routes through `executeAction` — no direct local state mutation that bypasses server validation (§8, Constraint 5). The dynamic component registry MUST validate received `CustomComponent.props` against a Zod schema per component at runtime; log `console.warn` in dev, `Sentry.captureMessage` in prod on mismatch (§8, Constraint 15). | Core rendering pipeline                 |
+| 4.3  | Configure ingress routing: requests for `/umsoknir/<slug>` check `ApplicationConfigurations[slug].useSdf` to decide which frontend receives traffic. Implement as BFF middleware or Nginx/ingress annotation. (§8, Constraint 10)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Routing layer                           |
+| 4.4  | Create a POC template using `defineWorkflow` + `FormBuilder` (e.g., `EXAMPLE_INPUTS`). Set `useSdf: true`. Verify it renders on the Next.js frontend end-to-end.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | First SDF-native template running       |
+| 4.5  | Verify a legacy template (`parental-leave`) renders through the AstAdapter on the Next.js frontend by setting `useSdf: true` in dev.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Legacy template running on new frontend |
 
 **Phase 4 Gate — the following MUST pass before merging any Phase 4 PR:**
 
@@ -1414,14 +1438,14 @@ Depends on: Phase 3 outputs (working GQL endpoint).
 
 Depends on: Phase 4 proven stable.
 
-| Step | Action | Output |
-|------|--------|--------|
-| 5.1 | Migrate templates one at a time. For each: optionally rewrite to `defineWorkflow` + `FormBuilder`, set `useSdf: true` in `ApplicationConfigurations`, and deploy. Legacy templates can also be routed to SDF without rewrite (via AstAdapter). | Per-template migration |
-| 5.2 | **Session continuity validation (forward AND rollback).** Both frontends write to the same PostgreSQL `applications` table. For each migrated template, run the cross-frontend integration test: (a) create an application via the legacy SPA, advance to page 3, switch routing to SDF (`useSdf: true`), verify the SDF frontend can load and continue it; (b) create an application via SDF, advance to page 3, set `useSdf: false` (rolling back to legacy SPA), verify the legacy SPA can load and continue it without Zod validation errors. The SDF engine MUST NOT alter the `answers` JSON schema — this is a hard invariant. (§8, Constraint 13) | Cross-frontend compatibility |
-| 5.3 | **Tree-shaking audit.** When a template is migrated, verify it no longer pulls `xstate` into the Next.js bundle. Both code paths must be tree-shakeable. | Bundle size validation |
-| 5.4 | **Component union review.** If the `Component` GraphQL union has grown past 15 dedicated types, refactor the long tail of simple field types into a `GenericField { id, fieldType: FieldTypeEnum, label, placeholder, required, disabled, config: JSON, clientCondition }` type. Keep dedicated types only for structurally unique fields (Repeater, CustomComponent, FileUpload, TableRepeater). This reduces ongoing maintenance burden. (§8, Constraint 11) | Schema simplification (if triggered) |
-| 5.5 | **Latency re-evaluation.** Re-measure p95 latency from the Phase 3 baseline against real production traffic. If REFETCH p95 exceeds 300ms, evaluate whether the GQL gateway SDF resolver should import `screen-compiler` in-process for read-only `getScreen` operations, bypassing the REST hop. (§8, Constraint 17) | Performance optimization (if triggered) |
-| 5.6 | When all templates are migrated, decommission the legacy React SPA (`application-system-form`) and remove XState dependencies. | Legacy SPA removed |
+| Step | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Output                                  |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 5.1  | Migrate templates one at a time. For each: optionally rewrite to `defineWorkflow` + `FormBuilder`, set `useSdf: true` in `ApplicationConfigurations`, and deploy. Legacy templates can also be routed to SDF without rewrite (via AstAdapter).                                                                                                                                                                                                                                                                                                                                                                                                            | Per-template migration                  |
+| 5.2  | **Session continuity validation (forward AND rollback).** Both frontends write to the same PostgreSQL `applications` table. For each migrated template, run the cross-frontend integration test: (a) create an application via the legacy SPA, advance to page 3, switch routing to SDF (`useSdf: true`), verify the SDF frontend can load and continue it; (b) create an application via SDF, advance to page 3, set `useSdf: false` (rolling back to legacy SPA), verify the legacy SPA can load and continue it without Zod validation errors. The SDF engine MUST NOT alter the `answers` JSON schema — this is a hard invariant. (§8, Constraint 13) | Cross-frontend compatibility            |
+| 5.3  | **Tree-shaking audit.** When a template is migrated, verify it no longer pulls `xstate` into the Next.js bundle. Both code paths must be tree-shakeable.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Bundle size validation                  |
+| 5.4  | **Component union review.** If the `Component` GraphQL union has grown past 15 dedicated types, refactor the long tail of simple field types into a `GenericField { id, fieldType: FieldTypeEnum, label, placeholder, required, disabled, config: JSON, clientCondition }` type. Keep dedicated types only for structurally unique fields (Repeater, CustomComponent, FileUpload, TableRepeater). This reduces ongoing maintenance burden. (§8, Constraint 11)                                                                                                                                                                                            | Schema simplification (if triggered)    |
+| 5.5  | **Latency re-evaluation.** Re-measure p95 latency from the Phase 3 baseline against real production traffic. If REFETCH p95 exceeds 300ms, evaluate whether the GQL gateway SDF resolver should import `screen-compiler` in-process for read-only `getScreen` operations, bypassing the REST hop. (§8, Constraint 17)                                                                                                                                                                                                                                                                                                                                     | Performance optimization (if triggered) |
+| 5.6  | When all templates are migrated, decommission the legacy React SPA (`application-system-form`) and remove XState dependencies.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Legacy SPA removed                      |
 
 ---
 

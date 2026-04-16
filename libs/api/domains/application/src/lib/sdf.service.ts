@@ -39,6 +39,7 @@ export class SdfService {
     auth: Auth,
     fieldIds?: string[],
     event?: string,
+    refetchTemplateApiActions?: string[],
   ): Promise<ScreenDto> {
     return this.sdfApiWithAuth(auth).sdfControllerExecuteAction({
       applicationId,
@@ -49,6 +50,7 @@ export class SdfService {
         lastKnownPageIndex,
         fieldIds,
         event,
+        refetchTemplateApiActions,
       },
     })
   }

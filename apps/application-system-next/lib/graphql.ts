@@ -144,6 +144,7 @@ export interface SdfComponentData {
   subTitle?: string
   checkboxLabel?: string
   dataProviders?: { id: string; title: string; subTitle?: string }[]
+  onSelectRefetchTemplateApis?: string[]
 }
 
 export const GET_SCREEN_QUERY = `
@@ -210,6 +211,7 @@ export const GET_SCREEN_QUERY = `
             disabled
             options { label value }
             width
+            onSelectRefetchTemplateApis
             clientCondition {
               ... on SdfSingleClientCondition { questionId comparator value }
               ... on SdfMultiClientCondition { on checks { questionId comparator value } }
@@ -508,7 +510,7 @@ export const EXECUTE_ACTION_MUTATION = `
         components {
           __typename
           ... on SdfTextField { id label placeholder required disabled maxLength defaultValue width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfSelectField { id label placeholder required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfSelectField { id label placeholder required disabled options { label value } width onSelectRefetchTemplateApis clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfRadioField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfCheckboxField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
@@ -718,6 +720,7 @@ export const executeAction = async (
   locale = 'is',
   fieldIds?: string[],
   event?: string,
+  refetchTemplateApiActions?: string[],
 ): Promise<SdfScreen> => {
   const res = await fetch(getGraphqlEndpoint('ApplicationSdfAction'), {
     method: 'POST',
@@ -731,6 +734,7 @@ export const executeAction = async (
           answers: answers ? JSON.stringify(answers) : undefined,
           fieldIds,
           event,
+          refetchTemplateApiActions,
         },
         locale,
       },

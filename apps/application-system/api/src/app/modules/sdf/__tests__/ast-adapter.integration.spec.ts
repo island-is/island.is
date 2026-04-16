@@ -124,34 +124,10 @@ function filterDataByRole(
   return { answers: filteredAnswers, externalData: filteredExternalData }
 }
 
-describe('Phase 2 Gate #1: REFETCH is side-effect-free', () => {
-  it('AstAdapterService accepts ephemeral flag and does not trigger side effects', () => {
-    const mockApplicationService = {
-      findOneById: jest.fn(),
-      update: jest.fn(),
-      updateApplicationState: jest.fn(),
-    }
-    const mockTemplateApiActionRunner = { run: jest.fn() }
-
-    // When REFETCH is processed, the controller passes { ephemeral: true }
-    // The adapter only calls getScreen (read path) — no writes, no API actions.
-    // We verify:
-    // 1. The ephemeral option exists in the type contract
-    const options = { ephemeral: true }
-    expect(options.ephemeral).toBe(true)
-
-    // 2. The TemplateApiActionRunner is NOT invoked
-    expect(mockTemplateApiActionRunner.run).not.toHaveBeenCalled()
-
-    // 3. No DB writes happen on REFETCH
-    expect(mockApplicationService.update).not.toHaveBeenCalled()
-    expect(mockApplicationService.updateApplicationState).not.toHaveBeenCalled()
-  })
-
-  it('REFETCH action type maps to ephemeral=true in controller', () => {
+describe('Phase 2 Gate #1: REFETCH', () => {
+  it('REFETCH action type is defined for inline data fetch', () => {
     expect(SdfActionType.REFETCH).toBe('REFETCH')
-    // The controller sets ephemeral: true for REFETCH
-    // and calls getScreen (not persistAnswersAndAdvance or handleSubmit)
+    // Controller routes REFETCH to handleRefetch: merge answers, optional template APIs, then getScreen.
   })
 })
 

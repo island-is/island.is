@@ -11,7 +11,7 @@ interface ProvidersProps {
   children: React.ReactNode
 }
 
-export function Providers({ locale = 'is', children }: ProvidersProps) {
+export const Providers = ({ locale = 'is', children }: ProvidersProps) => {
   return (
     <ApolloProvider client={client}>
       <LocaleProvider locale={locale} skipPolyfills>

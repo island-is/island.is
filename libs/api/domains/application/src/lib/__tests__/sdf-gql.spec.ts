@@ -238,6 +238,7 @@ describe('SDF GraphQL Layer', () => {
         mockUser,
         undefined,
         undefined,
+        undefined,
       )
 
       expect(result.page.index).toBe(1)
@@ -264,10 +265,11 @@ describe('SDF GraphQL Layer', () => {
         mockUser,
         undefined,
         undefined,
+        undefined,
       )
     })
 
-    it('should handle REFETCH action (ephemeral, side-effect-free)', async () => {
+    it('should handle REFETCH action', async () => {
       sdfService.executeAction.mockResolvedValue(createMockScreenDto())
 
       const input: SdfExecuteActionInput = {
@@ -285,6 +287,7 @@ describe('SDF GraphQL Layer', () => {
         0,
         'is',
         mockUser,
+        undefined,
         undefined,
         undefined,
       )
@@ -327,6 +330,7 @@ describe('SDF GraphQL Layer', () => {
         mockUser,
         ['applicantName'],
         undefined,
+        undefined,
       )
 
       expect(result.page.errors).toHaveLength(1)
@@ -365,6 +369,7 @@ describe('SDF GraphQL Layer', () => {
         mockUser,
         undefined,
         'APPROVE',
+        undefined,
       )
     })
 
@@ -386,6 +391,7 @@ describe('SDF GraphQL Layer', () => {
         0,
         'is',
         mockUser,
+        undefined,
         undefined,
         undefined,
       )
@@ -552,6 +558,7 @@ describe('SdfService', () => {
         lastKnownPageIndex: 0,
         fieldIds: undefined,
         event: undefined,
+        refetchTemplateApiActions: undefined,
       },
     })
   })

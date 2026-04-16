@@ -6,7 +6,11 @@ import { ShellSkeleton } from './ShellSkeleton'
 
 type AuthState = 'checking' | 'authenticated' | 'redirecting'
 
-export function BffAuthGuard({ children }: { children: React.ReactNode }) {
+export const BffAuthGuard = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
   const [authState, setAuthState] = useState<AuthState>('checking')
 
   useEffect(() => {

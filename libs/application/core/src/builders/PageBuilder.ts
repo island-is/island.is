@@ -48,6 +48,11 @@ interface RadioSelectOptions extends FieldOptions {
   options: OptionList | DynamicOptions
 }
 
+/** Select-only: template API `action` names to run on SDF REFETCH when the value changes. */
+interface SelectFieldOptions extends RadioSelectOptions {
+  onSelectRefetch?: string[]
+}
+
 function toStaticCheck(c: SimpleCondition): StaticCheck {
   const comparator =
     c.equals !== undefined
@@ -199,10 +204,13 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
-  addSelectField(id: string, title: FormText, opts?: RadioSelectOptions): this {
+  addSelectField(id: string, title: FormText, opts?: SelectFieldOptions): this {
     const field = makeBaseField(id, title, FieldTypes.SELECT, 'SelectFormField', opts)
     if (opts?.options) {
       ;(field as any).options = normalizeOptions(opts.options)
+    }
+    if (opts?.onSelectRefetch?.length) {
+      ;(field as any).inlineRefetchTemplateApis = opts.onSelectRefetch
     }
     this.fields.push(field)
     return this

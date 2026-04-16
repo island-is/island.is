@@ -100,12 +100,12 @@ export class SdfController {
         )
 
       case SdfActionType.REFETCH:
-        return this.astAdapter.getScreen(
+        return this.astAdapter.handleRefetch(
           applicationId,
-          undefined,
+          dto.answers,
+          dto.refetchTemplateApiActions,
           locale,
           user!,
-          { ephemeral: true },
         )
 
       case SdfActionType.SUBMIT:

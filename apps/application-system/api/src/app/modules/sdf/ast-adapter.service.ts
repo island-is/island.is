@@ -7,6 +7,7 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import {
   Application,
   ApplicationWithAttachments,
+  DefaultEvents,
   ExternalData,
   FormItemTypes,
   FormValue,
@@ -264,6 +265,79 @@ export class AstAdapterService {
       locale,
       answers: Object.keys(pageAnswers).length > 0 ? pageAnswers : undefined,
     }
+  }
+
+  /**
+   * Persists answer deltas, optionally runs allowed template APIs, then returns the current screen.
+   */
+  async handleRefetch(
+    applicationId: string,
+    answers: Record<string, unknown> | undefined,
+    refetchTemplateApiActions: string[] | undefined,
+    locale: Locale,
+    user: User,
+  ): Promise<ScreenDto> {
+    const application = (await this.applicationService.findOneById(
+      applicationId,
+    )) as ApplicationWithAttachments
+
+    const mergedAnswers = {
+      ...(application.answers ?? {}),
+      ...(answers ?? {}),
+    } as FormValue
+
+    await this.applicationService.update(applicationId, {
+      answers: mergedAnswers,
+    })
+
+    let workingApplication = (await this.applicationService.findOneById(
+      applicationId,
+    )) as ApplicationWithAttachments
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const role = template.mapUserToRole(
+      user.nationalId,
+      workingApplication as Application,
+    )
+    if (!role) {
+      throw new Error(
+        `User ${user.nationalId} has no role for application ${applicationId} in state ${workingApplication.state}`,
+      )
+    }
+
+    const helper = new ApplicationTemplateHelper(
+      workingApplication as Application,
+      template,
+    )
+    const apisFromRole = helper.getApisFromRoleInState(role)
+
+    const requested = (refetchTemplateApiActions ?? []).filter(Boolean)
+    if (requested.length > 0) {
+      const apisToRun = apisFromRole.filter((api) =>
+        requested.includes(api.action),
+      )
+      if (apisToRun.length > 0) {
+        const result =
+          await this.applicationActionService.performActionOnApplication(
+            workingApplication,
+            template,
+            user,
+            apisToRun,
+            locale,
+            DefaultEvents.SUBMIT,
+          )
+        if (result.hasError) {
+          throw new Error(
+            typeof result.error === 'string'
+              ? result.error
+              : 'Template API failed during REFETCH',
+          )
+        }
+        workingApplication = result.updatedApplication as ApplicationWithAttachments
+      }
+    }
+
+    return this.getScreen(applicationId, undefined, locale, user)
   }
 
   async validateFields(

@@ -61,6 +61,13 @@ export class ComponentDto {
   @ApiPropertyOptional()
   options?: unknown
 
+  @ApiPropertyOptional({
+    description:
+      'Template API actions to run when this select changes (SDF inline REFETCH).',
+    type: [String],
+  })
+  onSelectRefetchTemplateApis?: string[]
+
   @ApiPropertyOptional()
   title?: string
 

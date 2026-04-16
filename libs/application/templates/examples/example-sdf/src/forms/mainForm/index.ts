@@ -1,5 +1,7 @@
 import { FormBuilder } from '@island.is/application/core'
+import type { DynamicCheck } from '@island.is/application/types'
 import { dataSchema } from '../../lib/dataSchema'
+import { PlotDetailsApi } from '../../dataProviders'
 
 interface Plot {
   id: string
@@ -14,6 +16,35 @@ const getPlots = (app: any): Plot[] =>
 const getSelectedPlot = (app: any): Plot | undefined => {
   const plots = getPlots(app)
   return plots.find((p: Plot) => p.id === app.answers?.selectedPlot)
+}
+
+type PlotDetailsData = {
+  soilType: string
+  sunlightExposure: string
+  availableTools: string
+  neighboringPlots: string
+  leaseExpires: string
+}
+
+const getPlotDetailsData = (app: any): PlotDetailsData | null =>
+  app.externalData?.getPlotDetails?.data ?? null
+
+/**
+ * Server-evaluated: only show after a successful getPlotDetails payload.
+ * Note: failed template API runs persist `data: {}` — a plain truthy check on `data` would wrongly show this block.
+ */
+const showWhenPlotDetailsLoaded: DynamicCheck = (_answers, externalData) => {
+  const entry = externalData?.getPlotDetails as
+    | { status?: string; data?: unknown }
+    | undefined
+  if (entry?.status !== 'success') return false
+  const data = entry.data
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'soilType' in data &&
+    typeof (data as { soilType?: unknown }).soilType === 'string'
+  )
 }
 
 export const MainForm = new FormBuilder<typeof dataSchema>(
@@ -35,7 +66,43 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
             })),
           placeholder: 'Select a plot...',
           required: true,
+          onSelectRefetch: [PlotDetailsApi.action],
         })
+        .addDescriptionField(
+          'plotInlineDetailsIntro',
+          'Details for the selected plot (loaded when you choose a plot):',
+          { showWhen: showWhenPlotDetailsLoaded },
+        )
+        .addKeyValueField(
+          'plotSoilType',
+          'Soil',
+          (app: any) => getPlotDetailsData(app)?.soilType ?? '—',
+          { showWhen: showWhenPlotDetailsLoaded },
+        )
+        .addKeyValueField(
+          'plotSunlight',
+          'Sunlight',
+          (app: any) => getPlotDetailsData(app)?.sunlightExposure ?? '—',
+          { showWhen: showWhenPlotDetailsLoaded },
+        )
+        .addKeyValueField(
+          'plotTools',
+          'Available tools',
+          (app: any) => getPlotDetailsData(app)?.availableTools ?? '—',
+          { showWhen: showWhenPlotDetailsLoaded },
+        )
+        .addKeyValueField(
+          'plotNeighbors',
+          'Neighboring plots',
+          (app: any) => getPlotDetailsData(app)?.neighboringPlots ?? '—',
+          { showWhen: showWhenPlotDetailsLoaded },
+        )
+        .addKeyValueField(
+          'plotLease',
+          'Lease until',
+          (app: any) => getPlotDetailsData(app)?.leaseExpires ?? '—',
+          { showWhen: showWhenPlotDetailsLoaded },
+        )
     })
 
     section.addPage('plotDetails', 'Plot Details', (page) => {
@@ -54,14 +121,10 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
           'Address',
           (app: any) => getSelectedPlot(app)?.address ?? '—',
         )
-        .addKeyValueField(
-          'plotCurrentSize',
-          'Current size',
-          (app: any) => {
-            const plot = getSelectedPlot(app)
-            return plot ? `${plot.sizeSqm} sqm` : '—'
-          },
-        )
+        .addKeyValueField('plotCurrentSize', 'Current size', (app: any) => {
+          const plot = getSelectedPlot(app)
+          return plot ? `${plot.sizeSqm} sqm` : '—'
+        })
     })
   })
   .addSection('enlargement', 'Enlargement Request', (section) => {
@@ -82,13 +145,17 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
             'e.g. I need more space for a greenhouse, raised beds, composting area...',
           required: true,
         })
-        .addRadioField('needsWaterAccess', 'Do you need water access for the expanded area?', {
-          options: [
-            { label: 'Yes - I need a water connection', value: 'yes' },
-            { label: 'No - I will manage without', value: 'no' },
-          ],
-          required: true,
-        })
+        .addRadioField(
+          'needsWaterAccess',
+          'Do you need water access for the expanded area?',
+          {
+            options: [
+              { label: 'Yes - I need a water connection', value: 'yes' },
+              { label: 'No - I will manage without', value: 'no' },
+            ],
+            required: true,
+          },
+        )
         .addSelectField(
           'irrigationType',
           'What type of irrigation do you plan to use?',

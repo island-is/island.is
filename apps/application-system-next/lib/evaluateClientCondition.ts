@@ -33,16 +33,16 @@ interface MultiCheck {
 
 type ClientCondition = SingleCheck | MultiCheck
 
-function isMultiCheck(
+const isMultiCheck = (
   condition: ClientCondition,
-): condition is MultiCheck {
+): condition is MultiCheck => {
   return 'checks' in condition && Array.isArray(condition.checks)
 }
 
-export function evaluateClientCondition(
+export const evaluateClientCondition = (
   condition: ClientCondition | null | undefined,
   answers: Record<string, unknown>,
-): boolean {
+): boolean => {
   if (!condition) return true
 
   if (isMultiCheck(condition)) {
@@ -55,10 +55,10 @@ export function evaluateClientCondition(
   return evaluateSingle(condition, answers)
 }
 
-function evaluateSingle(
+const evaluateSingle = (
   check: SingleCheck,
   answers: Record<string, unknown>,
-): boolean {
+): boolean => {
   const actual = answers[check.questionId]
   const expected = check.value
 

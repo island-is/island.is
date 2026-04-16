@@ -39,7 +39,7 @@ const registry: Record<string, RegistryEntry> = {
   // },
 }
 
-export function getCustomComponent(componentName: string): RegistryEntry {
+export const getCustomComponent = (componentName: string): RegistryEntry => {
   return (
     registry[componentName] ?? {
       component: FallbackComponent,
@@ -48,10 +48,10 @@ export function getCustomComponent(componentName: string): RegistryEntry {
   )
 }
 
-export function validateCustomComponentProps(
+export const validateCustomComponentProps = (
   componentName: string,
   rawProps: string,
-): { valid: boolean; parsed: Record<string, unknown> } {
+): { valid: boolean; parsed: Record<string, unknown> } => {
   const entry = registry[componentName]
   let parsed: Record<string, unknown>
   try {
@@ -79,7 +79,7 @@ export function validateCustomComponentProps(
   return { valid: true, parsed: result.data as Record<string, unknown> }
 }
 
-function reportPropsMismatch(componentName: string, message: string) {
+const reportPropsMismatch = (componentName: string, message: string) => {
   const fullMessage = `[SDF] CustomComponent "${componentName}": ${message}`
 
   if (process.env.NODE_ENV === 'development') {

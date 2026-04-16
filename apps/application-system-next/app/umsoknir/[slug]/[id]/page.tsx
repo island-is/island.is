@@ -7,10 +7,10 @@ interface ApplicationPageProps {
   searchParams: { step?: string }
 }
 
-export default async function ApplicationPage({
+const ApplicationPage = async ({
   params,
   searchParams,
-}: ApplicationPageProps) {
+}: ApplicationPageProps) => {
   return (
     <Suspense fallback={<ShellSkeleton />}>
       <ApplicationContent
@@ -21,12 +21,14 @@ export default async function ApplicationPage({
   )
 }
 
-async function ApplicationContent({
+export default ApplicationPage
+
+const ApplicationContent = async ({
   id,
   step,
 }: {
   id: string
   step?: number
-}) {
+}) => {
   return <InitialScreenGate applicationId={id} step={step} />
 }

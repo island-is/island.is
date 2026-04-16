@@ -147,6 +147,9 @@ export class SdfSelectField {
 
   @Field(() => SdfClientCondition, { nullable: true })
   clientCondition?: typeof SdfClientCondition
+
+  @Field(() => [String], { nullable: true })
+  onSelectRefetchTemplateApis?: string[]
 }
 
 @ObjectType('SdfRadioField')
@@ -1089,4 +1092,7 @@ export class SdfExecuteActionInput {
 
   @Field({ nullable: true })
   event?: string
+
+  @Field(() => [String], { nullable: true })
+  refetchTemplateApiActions?: string[]
 }

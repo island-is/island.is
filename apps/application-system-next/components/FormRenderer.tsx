@@ -48,13 +48,12 @@ const FULL_ROW_TYPES = new Set([
   'SdfExternalDataProviderField',
 ])
 
-function isHalfWidthCandidate(comp: SdfComponentData): boolean {
-  return comp.width === 'HALF' && !FULL_ROW_TYPES.has(comp.__typename)
-}
+const isHalfWidthCandidate = (comp: SdfComponentData): boolean =>
+  comp.width === 'HALF' && !FULL_ROW_TYPES.has(comp.__typename)
 
-function groupComponentsIntoRows(
+const groupComponentsIntoRows = (
   components: SdfComponentData[],
-): SdfComponentData[][] {
+): SdfComponentData[][] => {
   const rows: SdfComponentData[][] = []
   let i = 0
 
@@ -81,19 +80,29 @@ function groupComponentsIntoRows(
   return rows
 }
 
+export type SdfFormDispatch = (
+  actionType: string,
+  extraAnswers?: Record<string, unknown>,
+  fieldIds?: string[],
+  event?: string,
+  refetchTemplateApiActions?: string[],
+) => void | Promise<void>
+
 interface FormRendererProps {
   components: SdfComponentData[]
   errors: SdfValidationError[]
   answers: Record<string, unknown>
   onAnswerChange: (fieldId: string, value: unknown) => void
+  dispatch?: SdfFormDispatch
 }
 
-export function FormRenderer({
+export const FormRenderer = ({
   components,
   errors,
   answers,
   onAnswerChange,
-}: FormRendererProps) {
+  dispatch,
+}: FormRendererProps) => {
   const errorMap = useMemo(() => {
     const map: Record<string, string> = {}
     for (const err of errors) {
@@ -116,6 +125,7 @@ export function FormRenderer({
               error={component.id ? errorMap[component.id] : undefined}
               answers={answers}
               onAnswerChange={onAnswerChange}
+              dispatch={dispatch}
             />
           )
         }
@@ -133,6 +143,7 @@ export function FormRenderer({
                   error={component.id ? errorMap[component.id] : undefined}
                   answers={answers}
                   onAnswerChange={onAnswerChange}
+                  dispatch={dispatch}
                 />
               </GridColumn>
             ))}
@@ -148,14 +159,16 @@ interface ComponentSwitchProps {
   error?: string
   answers: Record<string, unknown>
   onAnswerChange: (fieldId: string, value: unknown) => void
+  dispatch?: SdfFormDispatch
 }
 
-function ComponentSwitch({
+const ComponentSwitch = ({
   component,
   error,
   answers,
   onAnswerChange,
-}: ComponentSwitchProps) {
+  dispatch,
+}: ComponentSwitchProps) => {
   const handleChange = useCallback(
     (value: unknown) => {
       if (component.id) {
@@ -227,7 +240,21 @@ function ComponentSwitch({
                   }
                 : undefined
             }
-            onChange={(opt) => handleChange(opt?.value)}
+            onChange={(opt) => {
+              handleChange(opt?.value)
+              if (
+                component.onSelectRefetchTemplateApis?.length &&
+                dispatch
+              ) {
+                void dispatch(
+                  'REFETCH',
+                  undefined,
+                  undefined,
+                  undefined,
+                  component.onSelectRefetchTemplateApis,
+                )
+              }
+            }}
           />
         </Box>
       )
@@ -797,7 +824,7 @@ function ComponentSwitch({
   }
 }
 
-function CustomComponentRenderer({
+const CustomComponentRenderer = ({
   componentName,
   rawProps,
   onAnswerChange,
@@ -805,7 +832,7 @@ function CustomComponentRenderer({
   componentName: string
   rawProps: string
   onAnswerChange: (fieldId: string, value: unknown) => void
-}) {
+}) => {
   const { component: Component } = getCustomComponent(componentName)
   const { parsed } = validateCustomComponentProps(componentName, rawProps)
 

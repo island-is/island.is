@@ -26,7 +26,7 @@ const SDF_ENABLED_SLUGS: Set<string> = new Set([
 const LEGACY_SPA_BASE =
   process.env.LEGACY_SPA_URL ?? 'http://localhost:4242'
 
-export function middleware(request: NextRequest) {
+export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl
 
   const match = pathname.match(/^\/umsoknir\/([^/]+)/)

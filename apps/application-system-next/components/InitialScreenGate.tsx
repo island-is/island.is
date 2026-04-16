@@ -11,10 +11,10 @@ interface InitialScreenGateProps {
   step?: number
 }
 
-export function InitialScreenGate({
+export const InitialScreenGate = ({
   applicationId,
   step,
-}: InitialScreenGateProps) {
+}: InitialScreenGateProps) => {
   const [screen, setScreen] = useState<SdfScreen | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loginTarget, setLoginTarget] = useState<string | null>(null)
