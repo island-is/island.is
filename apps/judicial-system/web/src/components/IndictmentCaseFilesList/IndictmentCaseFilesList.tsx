@@ -292,11 +292,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
       sentToPrisonAdminDate,
     )
 
-  const {
-    digitalCaseFiles,
-    digitalCaseFilesLoading,
-    openDigitalCaseFileUrl,
-  } = usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const showDigitalCaseFilesSection =
     isDistrictCourtUser(user) &&
