@@ -13,6 +13,13 @@ export const processContainer = style({
 export const formStepperContainer = style({
   position: 'sticky',
   top: theme.spacing[4],
+  marginTop: 0,
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginTop: theme.spacing[9],
+    },
+  },
 })
 
 export const processContent = style({

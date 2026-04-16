@@ -14,10 +14,12 @@ import { Environment } from '@island.is/shared/types'
 import { CmsContentfulService } from '@island.is/cms'
 
 import { Scope } from './models/scope.model'
+import { ScopeClient } from './models/scope-client.model'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { ScopeService } from './scope.service'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { ScopeInput } from './dto/scope.input'
+import { ScopeClientsInput } from './dto/scope-clients.input'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { ScopesInput } from './dto/scopes.input'
 import { ScopesPayload } from './dto/scopes.payload'
@@ -67,12 +69,12 @@ export class ScopeResolver {
     return this.scopeService.publishScope(user, input)
   }
 
-  @Query(() => Scope, { name: 'authAdminScope' })
+  @Query(() => Scope, { name: 'authAdminScope', nullable: true })
   getScope(
     @CurrentUser() user: User,
     @Args('input', { type: () => ScopeInput })
     input: ScopeInput,
-  ): Promise<Scope> {
+  ): Promise<Scope | null> {
     return this.scopeService.getScope(user, input)
   }
 
@@ -108,6 +110,18 @@ export class ScopeResolver {
     }
 
     return Array.from(availableEnvironments)
+  }
+
+  @Query(() => [ScopeClient], {
+    name: 'authAdminScopeClients',
+    description: 'Get all clients that use the specified scope',
+  })
+  getScopeClients(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeClientsInput })
+    input: ScopeClientsInput,
+  ): Promise<ScopeClient[]> {
+    return this.scopeService.getScopeClients(user, input, input.environment)
   }
 
   @Query(() => [ScopeCategory], {

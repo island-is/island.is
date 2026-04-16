@@ -15,6 +15,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../appeal-case'
 import {
   Case,
   RequestSignatureResponse,
@@ -307,6 +308,32 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/state`,
       transitionCase,
       caseTransformer,
+    )
+  }
+
+  createAppealCase(caseId: string): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase`)
+  }
+
+  updateAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    updateAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}`,
+      updateAppealCase,
+    )
+  }
+
+  transitionAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    transitionAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/state`,
+      transitionAppealCase,
     )
   }
 
@@ -783,6 +810,32 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/limitedAccess/state`,
       transitionCase,
       caseTransformer,
+    )
+  }
+
+  limitedAccessCreateAppealCase(caseId: string): Promise<AppealCase> {
+    return this.post(`case/${caseId}/limitedAccess/appealCase`)
+  }
+
+  limitedAccessUpdateAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    updateAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}`,
+      updateAppealCase,
+    )
+  }
+
+  limitedAccessTransitionAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    transitionAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/state`,
+      transitionAppealCase,
     )
   }
 

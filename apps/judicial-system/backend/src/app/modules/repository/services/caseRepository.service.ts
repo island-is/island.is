@@ -486,7 +486,6 @@ export class CaseRepositoryService {
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
-        'indictmentReturnedExplanation',
         'indictmentHash',
         'hasCivilClaims',
       ]
@@ -834,7 +833,7 @@ export class CaseRepositoryService {
         })
       }
 
-      if (Object.hasOwn(data as object, 'policeCaseNumbers')) {
+      if ('policeCaseNumbers' in data) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
           caseId,
           updatedCase.policeCaseNumbers ?? [],

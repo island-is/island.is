@@ -34,8 +34,8 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseAppealDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -1086,18 +1086,6 @@ export class CaseService {
     })
   }
 
-  private addMessagesForReturnedIndictmentCaseToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_RETURNED },
-    })
-  }
-
   private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
     user: TUser,
@@ -1210,12 +1198,6 @@ export class CaseService {
         isIndictment
       ) {
         this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
-      } else if (
-        updatedCase.state === CaseState.DRAFT &&
-        theCase.state === CaseState.RECEIVED &&
-        isIndictment
-      ) {
-        this.addMessagesForReturnedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
         this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
@@ -1225,19 +1207,19 @@ export class CaseService {
     if (
       updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
     ) {
-      if (updatedCase.appealCase?.appealState === CaseAppealState.APPEALED) {
+      if (updatedCase.appealCase?.appealState === AppealCaseState.APPEALED) {
         this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (
-        theCase.appealCase?.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
-        updatedCase.appealCase?.appealState === CaseAppealState.RECEIVED
+        theCase.appealCase?.appealState === AppealCaseState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealCase?.appealState === AppealCaseState.RECEIVED
       ) {
         this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (
-        updatedCase.appealCase?.appealState === CaseAppealState.COMPLETED
+        updatedCase.appealCase?.appealState === AppealCaseState.COMPLETED
       ) {
         this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
       } else if (
-        updatedCase.appealCase?.appealState === CaseAppealState.WITHDRAWN
+        updatedCase.appealCase?.appealState === AppealCaseState.WITHDRAWN
       ) {
         this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }

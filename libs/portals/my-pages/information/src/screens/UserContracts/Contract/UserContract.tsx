@@ -76,13 +76,17 @@ const UserContract = () => {
         >
           {formatMessage(cm.downloadAsPdf)}
         </Button>,
-        <LinkButton
-          key="terminate-button"
-          to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
-          text={formatMessage(cm.terminateRentalAgreement)}
-          icon="open"
-          variant="utility"
-        />,
+        ...(contract?.status === HmsRentalAgreementStatusType.VALID
+          ? [
+              <LinkButton
+                key="terminate-button"
+                to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
+                text={formatMessage(cm.terminateRentalAgreement)}
+                icon="open"
+                variant="utility"
+              />,
+            ]
+          : []),
       ]}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

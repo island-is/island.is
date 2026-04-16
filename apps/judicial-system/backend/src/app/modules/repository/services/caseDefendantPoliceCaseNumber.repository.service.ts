@@ -20,10 +20,6 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  /**
-   * Replaces only rows with defendant_id NULL for this case (PR 1: array-derived links).
-   * Rows with a defendant_id set are left unchanged for future PRs.
-   */
   async replaceUnassignedFromPoliceCaseNumbersArray(
     caseId: string,
     policeCaseNumbers: string[],
