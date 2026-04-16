@@ -415,9 +415,14 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
-      const caseData = omit(data, appealCaseFields)
+      const { policeCaseNumbers, ...caseFields } = omit(
+        data,
+        appealCaseFields,
+      ) as Omit<typeof data, (typeof appealCaseFields)[number]> & {
+        policeCaseNumbers?: string[]
+      }
 
-      const result = await this.caseModel.create(caseData, options)
+      const result = await this.caseModel.create(caseFields, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
 
@@ -434,7 +439,7 @@ export class CaseRepositoryService {
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         result.id,
-        result.policeCaseNumbers ?? [],
+        policeCaseNumbers ?? [],
         { transaction: options.transaction },
       )
 
@@ -469,7 +474,6 @@ export class CaseRepositoryService {
         'type',
         'indictmentSubtypes',
         'description',
-        'policeCaseNumbers',
         'courtId',
         'demands',
         'comments',
@@ -524,7 +528,7 @@ export class CaseRepositoryService {
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         splitCaseId,
-        result.policeCaseNumbers ?? [],
+        caseToSplit.policeCaseNumbers ?? [],
         { transaction },
       )
 
@@ -778,7 +782,8 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const caseData = omit(data, appealCaseFields)
+      const hasPoliceCaseNumbersUpdate = 'policeCaseNumbers' in data
+      const caseData = omit(data, [...appealCaseFields, 'policeCaseNumbers'])
 
       let updatedCase: Case
 
@@ -833,10 +838,10 @@ export class CaseRepositoryService {
         })
       }
 
-      if ('policeCaseNumbers' in data) {
+      if (hasPoliceCaseNumbersUpdate) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
           caseId,
-          updatedCase.policeCaseNumbers ?? [],
+          data.policeCaseNumbers ?? [],
           { transaction: options.transaction },
         )
       }
