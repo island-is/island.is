@@ -22,14 +22,12 @@ interface Props {
   isActor: boolean
 }
 
-const channelVariant: Record<
-  NotificationChannel,
-  'blue' | 'purple' | 'mint'
-> = {
-  [NotificationChannel.EMAIL]: 'blue',
-  [NotificationChannel.SMS]: 'purple',
-  [NotificationChannel.PUSH]: 'mint',
-}
+const channelVariant: Record<NotificationChannel, 'blue' | 'purple' | 'mint'> =
+  {
+    [NotificationChannel.EMAIL]: 'blue',
+    [NotificationChannel.SMS]: 'purple',
+    [NotificationChannel.PUSH]: 'mint',
+  }
 
 export const NotificationDeliveriesPanel = ({
   notificationId,

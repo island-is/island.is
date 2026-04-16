@@ -67,7 +67,9 @@ query GetAdminNotifications($nationalId: String!, $input: NotificationsInput!) {
   }
 }
 
-query GetAdminNotificationDeliveries($input: AdminNotificationDeliveriesInput!) {
+query GetAdminNotificationDeliveries(
+  $input: AdminNotificationDeliveriesInput!
+) {
   adminNotificationDeliveries(input: $input) {
     id
     channel

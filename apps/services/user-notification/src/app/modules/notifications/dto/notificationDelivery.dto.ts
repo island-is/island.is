@@ -8,7 +8,10 @@ export class NotificationDeliveryDto {
   @IsInt()
   id!: number
 
-  @ApiProperty({ enum: NotificationChannel, example: NotificationChannel.Email })
+  @ApiProperty({
+    enum: NotificationChannel,
+    example: NotificationChannel.Email,
+  })
   @IsEnum(NotificationChannel)
   channel!: NotificationChannel
 
