@@ -13,6 +13,10 @@ on:
         description: 'Node.js version'
         required: false
 
+concurrency:
+  group: build-runner-ami
+  cancel-in-progress: true
+
 permissions:
   id-token: write
   contents: read
@@ -64,7 +68,7 @@ jobs:
             exit $PACKER_EXIT
           fi
 
-          AMI_ID=$(grep 'AMIs were created' /tmp/packer.log | grep -oP 'ami-[a-z0-9]+')
+          AMI_ID=$(grep -A1 'AMIs were created' /tmp/packer.log | grep -oP 'ami-[a-z0-9]+')
           if [[ -z "$AMI_ID" ]]; then
             echo "ERROR: No AMI created"
             exit 1
@@ -77,3 +81,12 @@ jobs:
             --type String \
             --overwrite \
             --region eu-west-1
+
+      - name: Roll runners to new AMI
+        run: |
+          aws lambda invoke \
+            --function-name shared-v2-scale-down \
+            --invocation-type Event \
+            --region eu-west-1 \
+            /dev/null
+          echo "Scale-down triggered — idle runners will be replaced with new AMI"

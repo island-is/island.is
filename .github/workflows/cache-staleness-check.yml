@@ -1,0 +1,53 @@
+name: Cache Staleness Check
+
+on:
+  push:
+    branches: [main]
+    paths: [yarn.lock]
+
+jobs:
+  notify:
+    runs-on: [self-hosted, ec2-runners, shared-v2]
+    continue-on-error: true
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: yarn.lock
+          sparse-checkout-cone-mode: false
+
+      - name: Notify stale PRs
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          MAIN_HASH=$(sha256sum yarn.lock | cut -c1-16)
+
+          MESSAGE=$(cat <<'MSG'
+          ### ⚡ CI Dependency Cache Updated
+
+          Dependencies on `main` have changed and a new runner image is being built with updated caches.
+
+          **To get faster CI builds**, rebase your branch on `main`:
+          ```
+          git fetch origin main && git rebase origin/main
+          ```
+
+          Builds will continue to work without rebasing, but dependency installation steps may take longer until your branch is up to date.
+
+          ---
+          <sub>🤖 Automated message from CI cache monitoring</sub>
+          MSG
+          )
+
+          gh pr list --state open --json number,headRefName --limit 200 -q '.[].number' | while read -r PR; do
+            PR_HASH=$(gh api "repos/${{ github.repository }}/contents/yarn.lock?ref=$(gh pr view "$PR" --json headRefName -q .headRefName)" \
+              --jq '.content' 2>/dev/null | base64 -d | sha256sum | cut -c1-16) || continue
+
+            if [[ -n "$PR_HASH" && "$PR_HASH" != "$MAIN_HASH" ]]; then
+              gh pr comment "$PR" --body "$MESSAGE" --edit-last 2>/dev/null || \
+              gh pr comment "$PR" --body "$MESSAGE" 2>/dev/null || true
+            fi
+          done
