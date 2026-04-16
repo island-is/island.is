@@ -98,87 +98,91 @@ const AnnualReportChapter: Screen<
       }}
       minimal
       mainContent={
-        <GridContainer>
-          <Box paddingBottom={[2, 2, 4]}>
-            <Breadcrumbs
-              items={[
-                {
-                  title: 'Ísland.is',
-                  href: linkResolver('homepage').href,
-                },
-                {
-                  title: organizationPage?.title ?? '',
-                  href: linkResolver('organizationpage', [
-                    organizationPage?.slug ?? '',
-                  ]).href,
-                },
-                {
-                  title: 'Ársskýrslur',
-                  href: linkResolver('annualreport', [
-                    organizationPage?.slug ?? '',
-                    annualReport.slug,
-                  ]).href,
-                },
-              ]}
-            />
-          </Box>
-          <GridRow>
-            <GridColumn
-              span={
-                showNavigation
-                  ? ['12/12', '12/12', '12/12', '8/12', '9/12']
-                  : ['12/12']
-              }
-            >
-              <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
-                {annualReportChapter.title}
-              </Text>
-              <Webreader
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                readId={null}
-                readClass="rs_read"
+        <Box paddingBottom={9} paddingTop={3}>
+          <GridContainer>
+            <Box paddingBottom={[2, 2, 4]}>
+              <Breadcrumbs
+                items={[
+                  {
+                    title: 'Ísland.is',
+                    href: linkResolver('homepage').href,
+                  },
+                  {
+                    title: organizationPage?.title ?? '',
+                    href: linkResolver('organizationpage', [
+                      organizationPage?.slug ?? '',
+                    ]).href,
+                  },
+                  {
+                    title: 'Ársskýrslur',
+                    href: linkResolver('annualreport', [
+                      organizationPage?.slug ?? '',
+                      annualReport.slug,
+                    ]).href,
+                  },
+                ]}
               />
-              {annualReportChapter.intro && (
-                <Text variant="intro" as="p" paddingTop={2}>
-                  <span
-                    className="rs_read"
-                    id={slugify(annualReportChapter.intro)}
-                  >
-                    {annualReportChapter.intro}
-                  </span>
-                </Text>
-              )}
-
-              {annualReportChapter.content &&
-                annualReportChapter.content.length > 0 && (
-                  <Box paddingY={4}>
-                    {webRichText(
-                      annualReportChapter.content as SliceType[],
-                      undefined,
-                      activeLocale,
-                    )}
-                  </Box>
-                )}
-            </GridColumn>
-            {showNavigation && navigation && (
+            </Box>
+            <GridRow>
               <GridColumn
-                hiddenBelow="lg"
-                span={['0', '0', '0', '4/12', '3/12']}
+                span={
+                  showNavigation
+                    ? ['12/12', '12/12', '12/12', '8/12', '9/12']
+                    : ['12/12']
+                }
               >
-                <Box printHidden height="full" marginTop={10} paddingLeft={4}>
-                  <Sticky>
-                    <AnchorNavigation
-                      title={'Á þessari síðu'}
-                      navigation={navigation}
-                      position="right"
-                    />
-                  </Sticky>
-                </Box>
+                <Text variant="h1" as="h1" marginBottom={2}>
+                  {annualReportChapter.title}
+                </Text>
+                <Webreader
+                  marginTop={0}
+                  marginBottom={3}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  readId={null}
+                  readClass="rs_read"
+                />
+                {annualReportChapter.intro && (
+                  <Text variant="intro" as="p" paddingTop={2}>
+                    <span
+                      className="rs_read"
+                      id={slugify(annualReportChapter.intro)}
+                    >
+                      {annualReportChapter.intro}
+                    </span>
+                  </Text>
+                )}
+
+                {annualReportChapter.content &&
+                  annualReportChapter.content.length > 0 && (
+                    <Box paddingY={4}>
+                      {webRichText(
+                        annualReportChapter.content as SliceType[],
+                        undefined,
+                        activeLocale,
+                      )}
+                    </Box>
+                  )}
               </GridColumn>
-            )}
-          </GridRow>
-        </GridContainer>
+              {showNavigation && navigation && (
+                <GridColumn
+                  hiddenBelow="lg"
+                  span={['0', '0', '0', '4/12', '3/12']}
+                >
+                  <Box printHidden height="full" marginTop={10} paddingLeft={4}>
+                    <Sticky>
+                      <AnchorNavigation
+                        title={'Á þessari síðu'}
+                        navigation={navigation}
+                        position="right"
+                      />
+                    </Sticky>
+                  </Box>
+                </GridColumn>
+              )}
+            </GridRow>
+          </GridContainer>
+        </Box>
       }
     >
       {organizationPage.organization && (

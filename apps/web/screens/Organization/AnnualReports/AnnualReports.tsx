@@ -116,130 +116,136 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
       }}
       minimal
       mainContent={
-        <Stack space={2}>
-          <GridContainer>
-            <Box paddingBottom={[2, 2, 4]}>
-              <Breadcrumbs
-                items={[
-                  {
-                    title: 'Ísland.is',
-                    href: linkResolver('homepage').href,
-                  },
-                  {
-                    title: organizationPage?.title ?? '',
-                    href: linkResolver('organizationpage', [
-                      organizationPage?.slug ?? '',
-                    ]).href,
-                  },
-                ]}
-              />
-            </Box>
-            <GridRow>
-              <GridColumn span="12/12">
-                <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
-                  {pageTitle}
-                </Text>
-                <Webreader
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  readId={null}
-                  readClass="rs_read"
+        <Box paddingBottom={9} paddingTop={3}>
+          <Stack space={2}>
+            <GridContainer>
+              <Box paddingBottom={[2, 2, 4]}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: linkResolver('homepage').href,
+                    },
+                    {
+                      title: organizationPage?.title ?? '',
+                      href: linkResolver('organizationpage', [
+                        organizationPage?.slug ?? '',
+                      ]).href,
+                    },
+                  ]}
                 />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-
-          <Stack space={4}>
-            {showDropdown && (
+              </Box>
               <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12', '6/12', '5/12']}>
-                  <Select
-                    label="Veldu ársskýrslu"
-                    name="select-annual-report"
-                    size="sm"
+                <GridColumn span="12/12">
+                  <Text variant="h1" as="h1" marginBottom={2}>
+                    {pageTitle}
+                  </Text>
+                  <Webreader
+                    marginTop={0}
+                    marginBottom={3}
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore make web strict
-                    onChange={({ value }: Option) => {
-                      const slug = dropdownOptions.find(
-                        (x) => x.value === value,
-                      )?.slug
-                      setSelectedId(String(value))
-                      router.push(
-                        {
-                          pathname: router.asPath.split('#')[0],
-                          hash: slug,
-                        },
-                        undefined,
-                        { shallow: true },
-                      )
-                    }}
-                    value={dropdownOptions.find((x) => x.value === selectedId)}
-                    options={dropdownOptions}
+                    readId={null}
+                    readClass="rs_read"
                   />
                 </GridColumn>
               </GridRow>
-            )}
+            </GridContainer>
 
-            {!!selectedReport && (
-              <>
+            <Stack space={4}>
+              {showDropdown && (
                 <GridRow>
-                  <GridColumn span="12/12">
-                    <Text variant="h2" as="h2">
-                      {selectedReport.title}
-                    </Text>
-
-                    {selectedReport.intro && (
-                      <Text variant="intro" as="p" paddingTop={2}>
-                        <span
-                          className="rs_read"
-                          id={slugify(selectedReport.intro)}
-                        >
-                          {selectedReport.intro}
-                        </span>
-                      </Text>
-                    )}
-                  </GridColumn>
-                </GridRow>
-
-                <GridRow>
-                  <GridColumn span="12/12">
-                    <Stack space={4}>
-                      {selectedReport?.chapters && (
-                        <Box className={styles.profileCardContainer}>
-                          {selectedReport.chapters.map((chapter) => {
-                            const href = linkResolver('annualreportchapter', [
-                              organizationPage?.slug ?? '',
-                              selectedReport.slug,
-                              chapter.slug,
-                            ]).href
-
-                            return (
-                              <LinkV2 key={chapter.id} href={href}>
-                                <ProfileCard
-                                  heightFull={true}
-                                  title={chapter.title}
-                                  link={{
-                                    text:
-                                      activeLocale === 'is'
-                                        ? 'Skoða'
-                                        : 'See more',
-                                    url: href,
-                                  }}
-                                  description={chapter.intro || ''}
-                                  image={chapter.thumbnailImage.url}
-                                />
-                              </LinkV2>
-                            )
-                          })}
-                        </Box>
+                  <GridColumn span={['12/12', '12/12', '6/12', '6/12', '5/12']}>
+                    <Select
+                      label="Veldu ársskýrslu"
+                      name="select-annual-report"
+                      size="sm"
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      onChange={({ value }: Option) => {
+                        const slug = dropdownOptions.find(
+                          (x) => x.value === value,
+                        )?.slug
+                        setSelectedId(String(value))
+                        router.push(
+                          {
+                            pathname: router.asPath.split('#')[0],
+                            hash: slug,
+                          },
+                          undefined,
+                          { shallow: true },
+                        )
+                      }}
+                      value={dropdownOptions.find(
+                        (x) => x.value === selectedId,
                       )}
-                    </Stack>
+                      options={dropdownOptions}
+                    />
                   </GridColumn>
                 </GridRow>
-              </>
-            )}
+              )}
+
+              {!!selectedReport && (
+                <>
+                  <GridRow>
+                    <GridColumn span="12/12">
+                      <Text variant="h2" as="h2">
+                        {selectedReport.title}
+                      </Text>
+
+                      {selectedReport.intro && (
+                        <Text variant="intro" as="p" paddingTop={2}>
+                          <span
+                            className="rs_read"
+                            id={slugify(selectedReport.intro)}
+                          >
+                            {selectedReport.intro}
+                          </span>
+                        </Text>
+                      )}
+                    </GridColumn>
+                  </GridRow>
+
+                  <GridRow>
+                    <GridColumn span="12/12">
+                      <Stack space={4}>
+                        {selectedReport?.chapters && (
+                          <Box className={styles.profileCardContainer}>
+                            {selectedReport.chapters.map((chapter) => {
+                              const href = linkResolver('annualreportchapter', [
+                                organizationPage?.slug ?? '',
+                                selectedReport.slug,
+                                chapter.slug,
+                              ]).href
+
+                              return (
+                                <LinkV2 key={chapter.id} href={href}>
+                                  <ProfileCard
+                                    heightFull={true}
+                                    title={chapter.title}
+                                    link={{
+                                      text:
+                                        activeLocale === 'is'
+                                          ? 'Skoða'
+                                          : 'See more',
+                                      url: href,
+                                    }}
+                                    description={chapter.intro || ''}
+                                    image={chapter.thumbnailImage.url}
+                                  />
+                                </LinkV2>
+                              )
+                            })}
+                          </Box>
+                        )}
+                      </Stack>
+                    </GridColumn>
+                  </GridRow>
+                </>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
+        </Box>
       }
     >
       {organizationPage.organization && (
