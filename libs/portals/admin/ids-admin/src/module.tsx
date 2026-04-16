@@ -2,6 +2,7 @@ import { lazy } from 'react'
 
 import { ModuleErrorScreen, PortalModule } from '@island.is/portals/core'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
@@ -63,10 +64,17 @@ export const idsAdminModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes(props) {
-    const isSuperUser = props.userInfo.scopes.includes(
+  async routes(props) {
+    const { userInfo, featureFlagClient } = props
+    const isSuperUser = userInfo.scopes.includes(
       AdminPortalScope.idsAdminSuperUser,
     )
+    const showAdminControls =
+      isSuperUser &&
+      (await featureFlagClient.getValue(Features.showIdsAdminControls, false, {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      }))
 
     return [
       {
@@ -74,7 +82,7 @@ export const idsAdminModule: PortalModule = {
         path: IDSAdminPaths.IDSAdmin,
         element: <IDSAdmin />,
         children: [
-          ...(isSuperUser
+          ...(showAdminControls
             ? [
                 {
                   name: m.adminControls,
