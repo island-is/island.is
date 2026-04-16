@@ -12,7 +12,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CivilClaimant,
+  CaseFile,
   Defendant,
   DefendantPlea,
   Gender,
@@ -211,10 +211,10 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * 3. Empty object (prosecutor or no match)
  */
 export const getDefenceUserPartyIds = (
-  user?: User,
-  workingCase?: Case,
+  workingCase: Case,
+  user: User | undefined,
 ): { defendantId?: string; civilClaimantId?: string } => {
-  if (!user || !workingCase || !isIndictmentCase(workingCase.type)) {
+  if (!user || !isIndictmentCase(workingCase.type)) {
     return {}
   }
 
@@ -268,8 +268,8 @@ export const getAppealActorText = (workingCase: Case): string => {
   }
 
   const party = getAppealingPartyInfo(
-    workingCase.appealCase?.appealedByNationalId,
     workingCase,
+    workingCase.appealCase?.appealedByNationalId,
   )
 
   return party
@@ -287,10 +287,10 @@ export const getAppealActorText = (workingCase: Case): string => {
  * Returns the role label and name, or undefined if not found.
  */
 export const getAppealingPartyInfo = (
+  workingCase: Case,
   appealedByNationalId?: string | null,
-  workingCase?: Case,
 ): { role: string; name: string } | undefined => {
-  if (!appealedByNationalId || !workingCase) {
+  if (!appealedByNationalId) {
     return undefined
   }
 
@@ -327,6 +327,43 @@ export const getAppealingPartyInfo = (
   }
 
   return undefined
+}
+
+export const isUserCaseFile = (
+  workingCase: Case,
+  file: CaseFile,
+  user: User | undefined,
+): boolean => {
+  if (!user?.nationalId) {
+    return false
+  }
+
+  if (file.defendantId && workingCase.defendants) {
+    return workingCase.defendants.some(
+      (defendant) =>
+        defendant.id === file.defendantId &&
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(user.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
+  if (file.civilClaimantId && workingCase.civilClaimants) {
+    return workingCase.civilClaimants.some(
+      (cc) =>
+        cc.id === file.civilClaimantId &&
+        cc.hasSpokesperson &&
+        cc.isSpokespersonConfirmed &&
+        cc.spokespersonNationalId &&
+        normalizeAndFormatNationalId(user.nationalId).includes(
+          cc.spokespersonNationalId,
+        ),
+    )
+  }
+
+  return false
 }
 
 // Use the gender of the single defendant if there is only one,

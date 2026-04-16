@@ -52,8 +52,8 @@ const AppealFiles = () => {
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
-    user,
     workingCase,
+    user,
   )
   const {
     uploadFiles,

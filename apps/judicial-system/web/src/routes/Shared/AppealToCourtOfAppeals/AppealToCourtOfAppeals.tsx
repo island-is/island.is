@@ -49,8 +49,8 @@ const AppealToCourtOfAppeals = () => {
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
-    user,
     workingCase,
+    user,
   )
   const {
     uploadFiles,
