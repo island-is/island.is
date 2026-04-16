@@ -252,7 +252,7 @@ export const InvolvedPartyScreen = ({
             setSubmitButtonDisabled && setSubmitButtonDisabled(false)
           }}
         />
-        {isCurrentPartyMinistry && regulationsEnabled !== false && (
+        {isCurrentPartyMinistry && regulationsEnabled && (
           <Box marginTop={3}>
             <Checkbox
               id="showAdditionalParties"
@@ -265,7 +265,7 @@ export const InvolvedPartyScreen = ({
             />
           </Box>
         )}
-        {isCurrentPartyMinistry && regulationsEnabled !== false && showAdditionalParties && (
+        {isCurrentPartyMinistry && regulationsEnabled && showAdditionalParties && (
           <Box marginTop={3}>
             {additionalPartyOptions.length > 0 ? (
               <Select<AdditionalParty, true>
