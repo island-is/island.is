@@ -109,10 +109,6 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     return result
   }
 
-  /**
-   * Sets `policeCaseNumbers` on each case from the junction table when rows exist;
-   * otherwise leaves the value loaded from the legacy `case.police_case_numbers` column.
-   */
   async resolvePoliceCaseNumbersForCases(
     cases: Case[],
     options?: { transaction?: Transaction },
@@ -132,10 +128,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       )
 
       for (const c of cases) {
-        const fromJunction = map.get(c.id) ?? []
-        if (fromJunction.length > 0) {
-          c.setDataValue('policeCaseNumbers', fromJunction)
-        }
+        c.setDataValue('policeCaseNumbers', map.get(c.id) ?? [])
       }
     } catch (error) {
       this.logger.error(

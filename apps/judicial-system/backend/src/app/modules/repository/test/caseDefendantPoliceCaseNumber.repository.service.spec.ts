@@ -123,19 +123,18 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       expect(caseA.policeCaseNumbers).toEqual(['007-1', '007-2'])
     })
 
-    it('does not overwrite when junction has no rows for the case', async () => {
+    it('sets empty array when junction has no rows for the case', async () => {
       mockModel.findAll.mockResolvedValue([])
 
       const caseA = {
         id: 'case-a',
-        policeCaseNumbers: ['keep-me'],
+        policeCaseNumbers: ['stale-value'],
         setDataValue: jest.fn(),
       } as unknown as Case
 
       await service.resolvePoliceCaseNumbersForCases([caseA], { transaction })
 
-      expect(caseA.policeCaseNumbers).toEqual(['keep-me'])
-      expect(caseA.setDataValue).not.toHaveBeenCalled()
+      expect(caseA.setDataValue).toHaveBeenCalledWith('policeCaseNumbers', [])
     })
   })
 
