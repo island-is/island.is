@@ -721,6 +721,7 @@ export const executeAction = async (
   fieldIds?: string[],
   event?: string,
   refetchTemplateApiActions?: string[],
+  lastKnownPageIndex?: number,
 ): Promise<SdfScreen> => {
   const res = await fetch(getGraphqlEndpoint('ApplicationSdfAction'), {
     method: 'POST',
@@ -735,6 +736,7 @@ export const executeAction = async (
           fieldIds,
           event,
           refetchTemplateApiActions,
+          lastKnownPageIndex,
         },
         locale,
       },

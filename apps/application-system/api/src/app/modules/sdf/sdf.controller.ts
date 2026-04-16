@@ -49,7 +49,14 @@ export class SdfController {
     @Query('locale') locale?: string,
     @CurrentUser() user?: User,
   ): Promise<ScreenDto> {
-    const pageIndexOverride = step !== undefined ? parseInt(step, 10) : undefined
+    let pageIndexOverride: number | undefined
+    if (step !== undefined) {
+      const n = parseInt(step, 10)
+      if (!Number.isFinite(n) || n < 0) {
+        throw new BadRequestException('step must be a non-negative integer')
+      }
+      pageIndexOverride = n
+    }
     return this.astAdapter.getScreen(
       applicationId,
       pageIndexOverride,
@@ -90,6 +97,7 @@ export class SdfController {
           dto.answers ?? {},
           locale,
           user!,
+          dto.lastKnownPageIndex,
         )
 
       case SdfActionType.PREV_PAGE:

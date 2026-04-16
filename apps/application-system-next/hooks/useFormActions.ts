@@ -10,6 +10,7 @@ export const useFormActions = (
   const [screen, setScreen] = useState<SdfScreen>(initialScreen)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const localeRef = useRef(initialScreen.locale ?? 'is')
   const answersRef = useRef<Record<string, unknown>>(
     initialScreen.answers ?? {},
   )
@@ -45,6 +46,7 @@ export const useFormActions = (
       fieldIds?: string[],
       event?: string,
       refetchTemplateApiActions?: string[],
+      lastKnownPageIndex?: number,
     ) => {
       setError(null)
       const mergedAnswers = { ...answersRef.current, ...extraAnswers }
@@ -55,12 +57,14 @@ export const useFormActions = (
             applicationId,
             actionType,
             Object.keys(mergedAnswers).length > 0 ? mergedAnswers : undefined,
-            'is',
+            localeRef.current,
             fieldIds,
             event,
             refetchTemplateApiActions,
+            lastKnownPageIndex,
           )
           pageIndexRef.current = result.page.index
+          localeRef.current = result.locale ?? localeRef.current
           setScreen(result)
           // Always merge; never replace with result.answers alone — it only contains
           // fields present on the current page in the DB snapshot, and would drop keys
@@ -79,8 +83,16 @@ export const useFormActions = (
   )
 
   const nextPage = useCallback(
-    () => dispatch('NEXT_PAGE'),
-    [dispatch],
+    () =>
+      dispatch(
+        'NEXT_PAGE',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        screen.page.index,
+      ),
+    [dispatch, screen.page.index],
   )
 
   const prevPage = useCallback(

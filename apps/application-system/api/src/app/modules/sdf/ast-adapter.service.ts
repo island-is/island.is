@@ -1,4 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common'
+import {
+  Injectable,
+  Inject,
+  ForbiddenException,
+  ConflictException,
+} from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -28,6 +33,7 @@ import type { Locale } from '@island.is/shared/types'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApplicationActionService } from '../application/application-action.service'
+import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
 import { buildStepper } from './stepper-builder'
@@ -60,10 +66,27 @@ export class AstAdapterService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationService: ApplicationService,
+    private readonly applicationAccessService: ApplicationAccessService,
     private readonly i18nResolverService: I18nResolverService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly applicationActionService: ApplicationActionService,
   ) {}
+
+  /**
+   * Same access rules as GET /applications/:id — applicant, assignee, actor edge
+   * cases, and template role fallback (see ApplicationAccessService).
+   */
+  private async requireApplicationForUser(
+    applicationId: string,
+    user: User,
+  ): Promise<ApplicationWithAttachments> {
+    const application =
+      await this.applicationAccessService.findOneByIdAndNationalId(
+        applicationId,
+        user,
+      )
+    return application as ApplicationWithAttachments
+  }
 
   async getScreen(
     applicationId: string,
@@ -75,9 +98,10 @@ export class AstAdapterService {
     const startTime = Date.now()
 
     // Step 1: Load Application
-    const application = (await this.applicationService.findOneById(
+    const application = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
+      user,
+    )
     this.logTiming('Step 1: Load Application', startTime)
 
     // Step 2: Load Template
@@ -94,9 +118,7 @@ export class AstAdapterService {
       application as Application,
     )
     if (!role) {
-      throw new Error(
-        `User ${user.nationalId} has no role for application ${applicationId} in state ${application.state}`,
-      )
+      throw new ForbiddenException('Access denied')
     }
 
     const helper = new ApplicationTemplateHelper(
@@ -277,12 +299,24 @@ export class AstAdapterService {
     locale: Locale,
     user: User,
   ): Promise<ScreenDto> {
-    const application = (await this.applicationService.findOneById(
+    let workingApplication = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
+      user,
+    )
+
+    const template = await getApplicationTemplateByTypeId(
+      workingApplication.typeId,
+    )
+    const role = template.mapUserToRole(
+      user.nationalId,
+      workingApplication as Application,
+    )
+    if (!role) {
+      throw new ForbiddenException('Access denied')
+    }
 
     const mergedAnswers = {
-      ...(application.answers ?? {}),
+      ...(workingApplication.answers ?? {}),
       ...(answers ?? {}),
     } as FormValue
 
@@ -290,20 +324,10 @@ export class AstAdapterService {
       answers: mergedAnswers,
     })
 
-    let workingApplication = (await this.applicationService.findOneById(
+    workingApplication = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
-
-    const template = await getApplicationTemplateByTypeId(application.typeId)
-    const role = template.mapUserToRole(
-      user.nationalId,
-      workingApplication as Application,
+      user,
     )
-    if (!role) {
-      throw new Error(
-        `User ${user.nationalId} has no role for application ${applicationId} in state ${workingApplication.state}`,
-      )
-    }
 
     const helper = new ApplicationTemplateHelper(
       workingApplication as Application,
@@ -347,13 +371,22 @@ export class AstAdapterService {
     locale: Locale,
     user: User,
   ): Promise<ValidateResponseDto> {
-    const application = (await this.applicationService.findOneById(
+    const application = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
+      user,
+    )
 
     const template = await getApplicationTemplateByTypeId(
       application.typeId,
     )
+
+    const role = template.mapUserToRole(
+      user.nationalId,
+      application as Application,
+    )
+    if (!role) {
+      throw new ForbiddenException('Access denied')
+    }
 
     const errors: ValidationErrorDto[] = []
 
@@ -377,28 +410,22 @@ export class AstAdapterService {
       }
     }
 
-    const role = template.mapUserToRole(
-      user.nationalId,
+    const helper = new ApplicationTemplateHelper(
       application as Application,
+      template,
     )
-    if (role) {
-      const helper = new ApplicationTemplateHelper(
-        application as Application,
-        template,
-      )
-      const formatResolver = await this.i18nResolverService.createResolver(
-        application as Application,
-        locale,
-      )
-      const validatorErrors = await helper.applyAnswerValidators(
-        answers as FormValue,
-        (descriptor, values) => formatResolver.resolve(descriptor as any),
-      )
-      if (validatorErrors) {
-        for (const [path, message] of Object.entries(validatorErrors)) {
-          if (fieldIds.includes(path)) {
-            errors.push({ componentId: path, message })
-          }
+    const formatResolver = await this.i18nResolverService.createResolver(
+      application as Application,
+      locale,
+    )
+    const validatorErrors = await helper.applyAnswerValidators(
+      answers as FormValue,
+      (descriptor, values) => formatResolver.resolve(descriptor as any),
+    )
+    if (validatorErrors) {
+      for (const [path, message] of Object.entries(validatorErrors)) {
+        if (fieldIds.includes(path)) {
+          errors.push({ componentId: path, message })
         }
       }
     }
@@ -411,12 +438,22 @@ export class AstAdapterService {
     answers: Record<string, unknown>,
     locale: Locale,
     user: User,
+    lastKnownPageIndex?: number,
   ): Promise<ScreenDto> {
-    const application = (await this.applicationService.findOneById(
+    const application = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
+      user,
+    )
 
     const currentPageIndex: number = (application as any).pageIndex ?? 0
+
+    if (lastKnownPageIndex !== undefined) {
+      if (currentPageIndex !== lastKnownPageIndex) {
+        throw new ConflictException(
+          `Idempotency check failed: lastKnownPageIndex ${lastKnownPageIndex} does not match persisted ${currentPageIndex}`,
+        )
+      }
+    }
 
     const mergedAnswers = { ...application.answers, ...answers } as FormValue
 
@@ -561,9 +598,10 @@ export class AstAdapterService {
     locale: Locale,
     user: User,
   ): Promise<ScreenDto> {
-    const application = (await this.applicationService.findOneById(
+    const application = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
+      user,
+    )
 
     const currentPageIndex: number = (application as any).pageIndex ?? 0
     const newPageIndex = Math.max(0, currentPageIndex - 1)
@@ -667,16 +705,10 @@ export class AstAdapterService {
     locale: Locale,
     user: User,
   ): Promise<ScreenDto> {
-    const application = (await this.applicationService.findOneById(
+    let application = await this.requireApplicationForUser(
       applicationId,
-    )) as ApplicationWithAttachments
-
-    if (answers && Object.keys(answers).length > 0) {
-      const mergedAnswers = { ...application.answers, ...answers }
-      await this.applicationService.update(applicationId, {
-        answers: mergedAnswers,
-      })
-    }
+      user,
+    )
 
     const template = await getApplicationTemplateByTypeId(
       application.typeId,
@@ -686,22 +718,35 @@ export class AstAdapterService {
       user.nationalId,
       application as Application,
     )
-    if (role) {
-      const helper = new ApplicationTemplateHelper(
-        application as Application,
-        template,
+    if (!role) {
+      throw new ForbiddenException('Access denied')
+    }
+
+    if (answers && Object.keys(answers).length > 0) {
+      const mergedAnswers = { ...application.answers, ...answers }
+      await this.applicationService.update(applicationId, {
+        answers: mergedAnswers,
+      })
+      application = await this.requireApplicationForUser(
+        applicationId,
+        user,
       )
-      const apisFromRole = helper.getApisFromRoleInState(role)
-      if (apisFromRole.length > 0) {
-        await this.applicationActionService.performActionOnApplication(
-          application,
-          template,
-          user,
-          apisFromRole,
-          locale,
-          event || 'SUBMIT',
-        )
-      }
+    }
+
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+    const apisFromRole = helper.getApisFromRoleInState(role)
+    if (apisFromRole.length > 0) {
+      await this.applicationActionService.performActionOnApplication(
+        application,
+        template,
+        user,
+        apisFromRole,
+        locale,
+        event || 'SUBMIT',
+      )
     }
 
     const eventStr = event || 'SUBMIT'

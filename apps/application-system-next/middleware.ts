@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 /**
  * Middleware that validates the incoming slug against ApplicationConfigurations.
@@ -9,19 +10,16 @@ import { NextRequest, NextResponse } from 'next/server'
  * - If useSdf is true for the slug, the request proceeds to Next.js.
  * - If useSdf is false or absent, the request is redirected to the legacy SPA.
  *
- * The canonical useSdf source is the ApplicationConfigurations map in
- * libs/application/types/src/lib/ApplicationTypes.ts.
- *
- * For the initial deployment, this middleware imports a static copy of the
- * slug→useSdf mapping. In Phase 5+, this could be replaced with a runtime
- * ConfigCat lookup for instant rollback (§8, Constraint 10).
+ * Slugs are derived from ApplicationConfigurations (single source of truth).
+ * In Phase 5+, this could be replaced with a runtime ConfigCat lookup for
+ * instant rollback (§8, Constraint 10).
  */
 
-const SDF_ENABLED_SLUGS: Set<string> = new Set([
-  'example-inputs',
-  'example-sdf',
-  'faedingarorlof',
-])
+const SDF_ENABLED_SLUGS = new Set(
+  Object.values(ApplicationConfigurations)
+    .filter((c) => c.useSdf)
+    .map((c) => c.slug),
+)
 
 const LEGACY_SPA_BASE =
   process.env.LEGACY_SPA_URL ?? 'http://localhost:4242'
