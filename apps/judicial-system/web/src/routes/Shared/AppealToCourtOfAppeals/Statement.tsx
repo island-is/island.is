@@ -39,6 +39,7 @@ import {
 import {
   getAppealActorText,
   getDefenceUserPartyIds,
+  isUserCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const Statement = () => {
@@ -131,9 +132,17 @@ const Statement = () => {
     addUploadFiles(files, {
       category,
       status: FileUploadStatus.done,
+      defendantId,
+      civilClaimantId,
     })
   }
 
+  const appealStatementFiles = uploadFiles.filter(
+    (file) =>
+      file.category === appealStatementType &&
+      (isProsecutionUser(user) || isUserCaseFile(workingCase, file, user)),
+  )
+  console.log(workingCase.defendants, appealStatementFiles, user)
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
@@ -162,9 +171,7 @@ const Statement = () => {
 
               <InputFileUpload
                 name="appealStatement"
-                files={uploadFiles.filter(
-                  (file) => file.category === appealStatementType,
-                )}
+                files={appealStatementFiles}
                 accept={'application/pdf'}
                 title={formatMessage(core.uploadBoxTitle)}
                 description={formatMessage(core.uploadBoxDescription, {
@@ -194,7 +201,10 @@ const Statement = () => {
               <InputFileUpload
                 name="appealCaseFiles"
                 files={uploadFiles.filter(
-                  (file) => file.category === appealCaseFilesType,
+                  (file) =>
+                    file.category === appealCaseFilesType &&
+                    (isProsecutionUser(user) ||
+                      isUserCaseFile(workingCase, file, user)),
                 )}
                 accept={'application/pdf'}
                 title={formatMessage(core.uploadBoxTitle)}
@@ -222,7 +232,7 @@ const Statement = () => {
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
-          nextIsDisabled={uploadFiles.length === 0 || isUpdatingCase}
+          nextIsDisabled={appealStatementFiles.length === 0 || isUpdatingCase}
           nextIsLoading={!allFilesDoneOrError || isUpdatingCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}

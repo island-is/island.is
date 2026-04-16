@@ -77,18 +77,6 @@ const AppealFiles = () => {
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
     : CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE
 
-  const caseFilesTypesToDisplay = isDefenceUser(user)
-    ? [
-        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-      ]
-    : [
-        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-      ]
-
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
@@ -166,11 +154,7 @@ const AppealFiles = () => {
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
-            files={uploadFiles.filter(
-              (file) =>
-                file.category &&
-                caseFilesTypesToDisplay.includes(file.category),
-            )}
+            files={uploadFiles}
             accept={'application/pdf'}
             title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {

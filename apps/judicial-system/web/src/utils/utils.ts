@@ -331,7 +331,7 @@ export const getAppealingPartyInfo = (
 
 export const isUserCaseFile = (
   workingCase: Case,
-  file: CaseFile,
+  file: { defendantId?: string | null; civilClaimantId?: string | null },
   user: User | undefined,
 ): boolean => {
   if (!user?.nationalId) {

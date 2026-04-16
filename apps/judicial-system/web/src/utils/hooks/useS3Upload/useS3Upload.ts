@@ -99,6 +99,8 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   submissionDate: file.submissionDate,
   fileRepresentative: file.fileRepresentative,
   isKeyAccessible: file.isKeyAccessible,
+  defendantId: file.defendantId,
+  civilClaimantId: file.civilClaimantId,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
