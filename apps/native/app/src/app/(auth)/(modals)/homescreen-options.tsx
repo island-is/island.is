@@ -58,6 +58,17 @@ export default function HomeOptionsScreen() {
       },
     },
     {
+      enabled: appointmentsWidgetEnabled,
+      label: intl.formatMessage({
+        id: 'homeOptions.appointments',
+      }),
+      onValueChange: (value: boolean) => {
+        preferencesStore.setState({
+          appointmentsWidgetEnabled: value,
+        })
+      },
+    },
+    {
       enabled: licensesWidgetEnabled,
       label: intl.formatMessage({
         id: 'homeOptions.licenses',
@@ -98,17 +109,6 @@ export default function HomeOptionsScreen() {
       onValueChange: (value: boolean) => {
         preferencesStore.setState({
           airDiscountWidgetEnabled: value,
-        })
-      },
-    },
-    {
-      enabled: appointmentsWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.appointments',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          appointmentsWidgetEnabled: value,
         })
       },
     },

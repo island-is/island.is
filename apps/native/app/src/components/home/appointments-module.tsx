@@ -1,6 +1,6 @@
 import { ApolloError } from '@apollo/client'
 import React from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import { TouchableOpacity, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -11,9 +11,9 @@ import {
 } from '@/graphql/types/schema'
 import {
   ChevronRight,
-  EmptyState,
   GeneralCardSkeleton,
   Heading,
+  Problem,
   Typography,
   ViewPager,
 } from '@/ui'
@@ -57,7 +57,6 @@ const validateAppointmentsInitialData = ({
 const AppointmentsModule = React.memo(
   ({ data, loading, error }: AppointmentsModuleProps) => {
     const theme = useTheme()
-    const intl = useIntl()
 
     if (error && !data) {
       return null
@@ -132,16 +131,7 @@ const AppointmentsModule = React.memo(
             <GeneralCardSkeleton height={100} />
           ) : (
             <>
-              {count === 0 && (
-                <EmptyState
-                  title={intl.formatMessage({
-                    id: 'health.appointments.noAppointmentsTitle',
-                  })}
-                  description={intl.formatMessage({
-                    id: 'health.appointments.noAppointmentsText',
-                  })}
-                />
-              )}
+              {count === 0 && <Problem type="no_data" size="small" />}
               {count === 1 && items}
               {count >= 2 && (
                 <ViewPager itemWidth={viewPagerItemWidth}>{items}</ViewPager>
