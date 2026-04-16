@@ -133,6 +133,7 @@ const NewMedicineDelegation = () => {
                 toDate: formState?.dateTo?.toLocaleDateString(),
               })}
               heading={formState?.name}
+              headingVariant="h4"
               text={
                 formState?.lookup
                   ? formatMessage(messages.pickupMedicineAndLookup)

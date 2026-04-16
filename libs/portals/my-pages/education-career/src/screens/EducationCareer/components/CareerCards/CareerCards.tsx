@@ -88,6 +88,7 @@ const CareerCards = () => {
               outlined: false,
             }}
             heading={member.organizationName}
+            headingVariant="h4"
             text={member.yearInterval}
           />
         </Box>

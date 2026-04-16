@@ -46,6 +46,7 @@ const OwnerView = ({
                 key={list.id}
                 backgroundColor="white"
                 heading={list.title}
+                headingVariant="h4"
                 eyebrow={`${formatMessage(m.endTime)} ${format(
                   new Date(list.endTime),
                   'dd.MM.yyyy',

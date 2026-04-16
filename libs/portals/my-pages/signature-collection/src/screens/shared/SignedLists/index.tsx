@@ -81,6 +81,7 @@ const SignedLists = ({
                   ? list.candidate.name
                   : list.title.split(' - ')[0]
               }
+              headingVariant="h4"
               eyebrow={`${formatMessage(m.endTime)} ${format(
                 new Date(list.endTime),
                 'dd.MM.yyyy',

@@ -64,6 +64,7 @@ const PoliceCases = () => {
               heading={formatMessage(messages.policeCaseCardTitle, {
                 arg: c.number,
               })}
+              headingVariant="h4"
               text={
                 c.modified
                   ? formatMessage(messages.policeCaseCardText, {
