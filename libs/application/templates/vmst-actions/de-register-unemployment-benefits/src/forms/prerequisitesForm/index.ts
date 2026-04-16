@@ -7,8 +7,9 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
 import { prerequisitesForm } from '../../lib/messages'
+import { getSupportDataApi } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -24,7 +25,7 @@ export const Prerequisites = buildForm({
           title: prerequisitesForm.general.externalDataTitle,
           dataProviders: [
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: getSupportDataApi,
               title: prerequisitesForm.dataProviders.vmstTitle,
               subTitle: prerequisitesForm.dataProviders.vmstSubTitle,
             }),

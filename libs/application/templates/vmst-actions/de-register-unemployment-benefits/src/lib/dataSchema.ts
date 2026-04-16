@@ -2,15 +2,7 @@ import { z } from 'zod'
 
 export const DeregisterUnemploymentBenefitsSchema = z.object({
   deregistrationDate: z.string().min(1),
-  reason: z.enum([
-    'movingCountries',
-    'education',
-    'foundJob',
-    'maternityLeave',
-    'cancelled',
-    'unable',
-    'other',
-  ]),
+  reason: z.string().min(1),
   otherReason: z.string().optional(),
 })
 

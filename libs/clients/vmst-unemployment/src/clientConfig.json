@@ -8,7 +8,9 @@
   "paths": {
     "/ping": {
       "get": {
-        "tags": ["Diagnostic"],
+        "tags": [
+          "Diagnostic"
+        ],
         "operationId": "Diagnostic_Ping",
         "responses": {
           "200": {
@@ -26,7 +28,9 @@
     },
     "/status": {
       "get": {
-        "tags": ["Diagnostic"],
+        "tags": [
+          "Diagnostic"
+        ],
         "operationId": "Diagnostic_Status",
         "responses": {
           "200": {
@@ -44,7 +48,9 @@
     },
     "/OpenApi": {
       "get": {
-        "tags": ["OpenApi"],
+        "tags": [
+          "OpenApi"
+        ],
         "operationId": "OpenApi_Get",
         "responses": {
           "200": {
@@ -63,7 +69,9 @@
     },
     "/api/ActivationGrant": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_CreateActivationGrant",
         "requestBody": {
           "x-name": "command",
@@ -98,7 +106,9 @@
     },
     "/api/ActivationGrant/{applicationId}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetSingleActivationGrant",
         "parameters": [
           {
@@ -133,7 +143,9 @@
     },
     "/api/ActivationGrant/empty": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetEmptyActivationGrant",
         "responses": {
           "200": {
@@ -156,7 +168,9 @@
     },
     "/api/ActivationGrant/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetEmptyActivationGrantWithProfile",
         "parameters": [
           {
@@ -190,7 +204,9 @@
     },
     "/api/ActivationGrant/latestbyapplicant/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetLatestApplicationByApplicant",
         "parameters": [
           {
@@ -233,7 +249,9 @@
     },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_CanApply",
         "parameters": [
           {
@@ -267,7 +285,9 @@
     },
     "/api/ActivationGrant/validate": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateApplication",
         "requestBody": {
           "x-name": "command",
@@ -302,7 +322,9 @@
     },
     "/api/ActivationGrant/validatebankinformation": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateBankInformation",
         "requestBody": {
           "x-name": "command",
@@ -337,7 +359,9 @@
     },
     "/api/ActivationGrant/validateincomepage": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateIncomePage",
         "requestBody": {
           "x-name": "incomeForm",
@@ -370,9 +394,60 @@
         ]
       }
     },
+    "/api/ActivationGrant/{applicationId}/withdraw": {
+      "post": {
+        "tags": [
+          "ActivationGrant"
+        ],
+        "operationId": "ActivationGrant_WithdrawApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applicants/resolve": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "operationId": "Applicant_Resolve",
         "requestBody": {
           "x-name": "request",
@@ -405,9 +480,93 @@
         ]
       }
     },
+    "/api/applicants/{id}/overview": {
+      "get": {
+        "tags": [
+          "Applicant"
+        ],
+        "operationId": "Applicant_Overview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantOverviewResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{ssn}/withdraw": {
+      "get": {
+        "tags": [
+          "Applicant"
+        ],
+        "operationId": "Applicant_CanWithdrawApplication",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantInfoForRSK",
         "parameters": [
           {
@@ -442,7 +601,9 @@
     },
     "/api/ApplicantInfo/getApplicantInfoForSI/{ssn}": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantInfoForSI",
         "parameters": [
           {
@@ -477,7 +638,9 @@
     },
     "/api/ApplicantInfo/getApplicantStatusForSI/{ssn}": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantStatusForSI",
         "parameters": [
           {
@@ -520,7 +683,9 @@
     },
     "/api/ApplicantInfo/{ssn}": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantInfo",
         "parameters": [
           {
@@ -552,7 +717,9 @@
         ]
       },
       "patch": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_UpdateApplicant",
         "parameters": [
           {
@@ -598,7 +765,9 @@
     },
     "/api/ApplicantInfo/supportData": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantInfoSupportData",
         "responses": {
           "200": {
@@ -621,7 +790,9 @@
     },
     "/api/applications/overview": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "operationId": "Application_Overview",
         "requestBody": {
           "x-name": "request",
@@ -656,7 +827,9 @@
     },
     "/api/Attachment": {
       "post": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_CreateAttachment",
         "requestBody": {
           "x-name": "request",
@@ -691,7 +864,9 @@
     },
     "/api/Attachment/{id}": {
       "get": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_GetAttachment",
         "parameters": [
           {
@@ -735,7 +910,9 @@
     },
     "/api/Attachment/attachmenttypes": {
       "get": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_AttachmentTypes",
         "parameters": [
           {
@@ -769,7 +946,9 @@
     },
     "/api/Auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "operationId": "Auth_Login",
         "requestBody": {
           "x-name": "credentials",
@@ -799,7 +978,9 @@
     },
     "/api/jobadvertisements/{id}": {
       "get": {
-        "tags": ["JobAdvertisement"],
+        "tags": [
+          "JobAdvertisement"
+        ],
         "operationId": "JobAdvertisement_GetSingleJobAdvertisement",
         "parameters": [
           {
@@ -843,7 +1024,9 @@
     },
     "/api/jobadvertisements": {
       "get": {
-        "tags": ["JobAdvertisement"],
+        "tags": [
+          "JobAdvertisement"
+        ],
         "operationId": "JobAdvertisement_GetAllJobAdvertisements",
         "parameters": [
           {
@@ -1015,7 +1198,9 @@
     },
     "/api/JobSearchConfirmations": {
       "post": {
-        "tags": ["JobSearchConfirmation"],
+        "tags": [
+          "JobSearchConfirmation"
+        ],
         "operationId": "JobSearchConfirmation_Create",
         "requestBody": {
           "x-name": "request",
@@ -1049,9 +1234,39 @@
         ]
       }
     },
+    "/api/SupportData/delistingReasons": {
+      "get": {
+        "tags": [
+          "SupportData"
+        ],
+        "operationId": "SupportData_GetDelistingReasons",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_DelistingReasonDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/UnemploymentApplication": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_CreateUnemploymentApplication",
         "requestBody": {
           "x-name": "command",
@@ -1086,7 +1301,9 @@
     },
     "/api/UnemploymentApplication/overview/{ssn}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetLatestUnemploymentApplicationOverview",
         "parameters": [
           {
@@ -1097,6 +1314,15 @@
               "type": "string"
             },
             "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
           }
         ],
         "responses": {
@@ -1120,7 +1346,9 @@
     },
     "/api/UnemploymentApplication/{applicationId}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetSingleUnemploymentApplication",
         "parameters": [
           {
@@ -1155,7 +1383,9 @@
     },
     "/api/UnemploymentApplication/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplicationWithProfile",
         "parameters": [
           {
@@ -1189,7 +1419,9 @@
     },
     "/api/UnemploymentApplication/latestbyapplicant/{applicantSSN}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetLatestApplicationByApplicant",
         "parameters": [
           {
@@ -1232,7 +1464,9 @@
     },
     "/api/UnemploymentApplication/deleteAttachment": {
       "delete": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_DeleteAttachment",
         "requestBody": {
           "x-name": "command",
@@ -1268,7 +1502,9 @@
     },
     "/api/UnemploymentApplication/validatepaymentpage": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_ValidatePaymentPage",
         "requestBody": {
           "x-name": "command",
@@ -1303,7 +1539,9 @@
     },
     "/api/UnemploymentApplication/validateunpaidvacation": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_ValidatePaymentPage2",
         "requestBody": {
           "x-name": "command",
@@ -1324,6 +1562,55 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/{applicationId}/withdraw": {
+      "post": {
+        "tags": [
+          "UnemploymentApplication"
+        ],
+        "operationId": "UnemploymentApplication_WithdrawApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
@@ -2356,7 +2643,12 @@
           "JobAdvertisement",
           "DontKnow"
         ],
-        "enum": [0, 1, 2, 3]
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "Galdur_Domain_Models_Settings_AttachmentStatus_AttachmentStatusDTO": {
         "allOf": [
@@ -2603,8 +2895,18 @@
       "Galdur_Domain_Enumerations_EWSApplicantCurrentStatus": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["HasNoJob", "HasJob", "IsInSchool", "Other"],
-        "enum": [0, 1, 2, 3]
+        "x-enumNames": [
+          "HasNoJob",
+          "HasJob",
+          "IsInSchool",
+          "Other"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_OtherInformationDTO": {
         "type": "object",
@@ -3341,8 +3643,14 @@
       "Galdur_Domain_Enumerations_PensionType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["PensionFund", "PrivatePensionFund"],
-        "enum": [0, 1]
+        "x-enumNames": [
+          "PensionFund",
+          "PrivatePensionFund"
+        ],
+        "enum": [
+          0,
+          1
+        ]
       },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Union": {
         "type": "object",
@@ -4293,7 +4601,16 @@
           "Suðurland",
           "Suðurnes"
         ],
-        "enum": [0, 1, 2, 3, 4, 5, 6, 7]
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
       },
       "Galdur_Domain_Enumerations_PostcodeDistrict": {
         "type": "integer",
@@ -4307,7 +4624,15 @@
           "Hafnarfjörður",
           "Mosfellsbær"
         ],
-        "enum": [0, 1, 2, 3, 4, 5, 6]
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       },
       "Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO": {
         "allOf": [
@@ -5006,6 +5331,23 @@
           }
         }
       },
+      "Galdur_External_Domain_Requests_WithdrawApplicationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantSSN": {
+            "type": "string"
+          },
+          "withdrawDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reasonId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
       "Galdur_XRoad_API_Models_ResolveApplicantResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -5022,6 +5364,94 @@
         "properties": {
           "ssn": {
             "type": "string"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_ApplicantOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "passCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredJobs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bankAccount": {
+            "type": "string",
+            "nullable": true
+          },
+          "union": {
+            "type": "string",
+            "nullable": true
+          },
+          "pensionFund": {
+            "type": "string",
+            "nullable": true
+          },
+          "usedPersonalTaxCredit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfChildren": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "employmentHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "educationHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "drivingLicenses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languageAbilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_LanguageOverviewDTO"
+            }
+          },
+          "serviceArea": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentAddressDifferent": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "savedToEures": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_LanguageOverviewDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "proficiency": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -5120,13 +5550,6 @@
             "type": "number",
             "format": "decimal",
             "nullable": true
-          },
-          "rskEmploymentHistory": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer"
-            }
           }
         }
       },
@@ -5232,56 +5655,6 @@
           },
           "abilityId": {
             "type": "string"
-          }
-        }
-      },
-      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "nullable": true
-              },
-              "ssn": {
-                "type": "string",
-                "nullable": true
-              },
-              "periods": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Entities_RskPeriod": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "employerSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "startDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "endDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "ratio": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
@@ -5399,13 +5772,6 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_External_Domain_Models_EducationDTO"
-            }
-          },
-          "employmentHistory": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_External_Domain_Models_EmploymentDTO"
             }
           },
           "drivingLicenses": {
@@ -6305,8 +6671,14 @@
       "Galdur_Domain_Enumerations_SkillType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["Driving", "HeavyMachinery"],
-        "enum": [0, 1]
+        "x-enumNames": [
+          "Driving",
+          "HeavyMachinery"
+        ],
+        "enum": [
+          0,
+          1
+        ]
       },
       "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementJobSkillDTO": {
         "type": "object",
@@ -7182,6 +7554,41 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Galdur_External_Domain_Models_SupportData_SettingsBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "otherId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "orderNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "english": {
+            "type": "string"
           }
         }
       },
@@ -8948,6 +9355,56 @@
           "serviceAreas": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_RSK_Queries_GetRSKEmployerList_RskEmployer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "ssn": {
+                "type": "string",
+                "nullable": true
+              },
+              "periods": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Entities_RskPeriod"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_RskPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "ratio": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

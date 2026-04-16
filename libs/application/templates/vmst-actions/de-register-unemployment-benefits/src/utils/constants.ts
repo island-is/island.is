@@ -16,12 +16,6 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export enum Reasons {
-  MOVING_COUNTRIES = 'movingCountries',
-  EDUCATION = 'education',
-  FOUND_JOB = 'foundJob',
-  MATERNITY_LEAVE = 'maternityLeave',
-  CANCELLED = 'cancelled',
-  UNABLE = 'unable',
-  OTHER = 'other',
+export enum ApiActions {
+  submitApplication = 'submitApplication',
 }

@@ -6,10 +6,11 @@ import {
   buildRadioField,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { mainForm } from '../../lib/messages'
-import { Reasons } from '../../utils/constants'
+import { GaldurExternalDomainModelsSupportDataDelistingReasonDTO } from '@island.is/clients/vmst-unemployment'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -38,21 +39,21 @@ export const MainForm = buildForm({
         buildRadioField({
           id: 'reason',
           title: mainForm.reason.title,
-          options: [
-            {
-              value: Reasons.MOVING_COUNTRIES,
-              label: mainForm.reason.movingCountries,
-            },
-            { value: Reasons.EDUCATION, label: mainForm.reason.education },
-            { value: Reasons.FOUND_JOB, label: mainForm.reason.foundJob },
-            {
-              value: Reasons.MATERNITY_LEAVE,
-              label: mainForm.reason.maternityLeave,
-            },
-            { value: Reasons.CANCELLED, label: mainForm.reason.cancelled },
-            { value: Reasons.UNABLE, label: mainForm.reason.unable },
-            { value: Reasons.OTHER, label: mainForm.reason.other },
-          ],
+          options: (application, _, locale) => {
+            const reasons = getValueViaPath<
+              Array<GaldurExternalDomainModelsSupportDataDelistingReasonDTO>
+            >(application.externalData, 'supportData.data.delistingReasons', [])
+
+            return (
+              reasons?.map((reason) => ({
+                value: reason.id || '',
+                label:
+                  locale === 'is'
+                    ? reason.name || ''
+                    : reason.english || reason.name || '',
+              })) || []
+            )
+          },
           required: true,
         }),
         buildTextField({
@@ -60,7 +61,8 @@ export const MainForm = buildForm({
           title: mainForm.reason.otherReasonTitle,
           variant: 'textarea',
           required: true,
-          condition: (formValue) => formValue.reason === Reasons.OTHER,
+          condition: (formValue) =>
+            formValue.reason === 'e39681d9-f953-46b1-aff9-08d7f72f9c0e', //this is the id of other reasons
         }),
         buildSubmitField({
           id: 'submit',

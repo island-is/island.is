@@ -147,3 +147,41 @@ export const completedForm = defineMessages({
     description: 'completed form description field description',
   },
 })
+
+export const applicationMessages = {
+  actionCardPrerequisites: {
+    id: 'vmst.dub.application:applicationMessages.actionCardPrerequisites',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Action card tag for prerequisites',
+  },
+  actionCardDraft: {
+    id: 'vmst.dub.application:applicationMessages.actionCardDraft',
+    defaultMessage: 'Í vinnslu',
+    description: 'Action card tag for draft application',
+  },
+  actionCardSubmitted: {
+    id: 'vmst.dub.application:applicationMessages.actionCardSubmitted',
+    defaultMessage: 'Umsókn send inn',
+    description: 'Action card tag for submitted application',
+  },
+}
+
+export const errorMessages = defineMessages({
+  cannotApplyErrorTitle: {
+    id: 'vmst.dub.application:errorMessages.cannotApplyErrorTitle',
+    defaultMessage: 'Vinsamlegast athugið',
+    description: `Error title when user can not apply`,
+  },
+  cannotApplyErrorSummary: {
+    id: 'vmst.dub.application:errorMessages.cannotApplyErrorSummary',
+    defaultMessage:
+      'Samkvæmt sóttum gögnum getur viðkomandi ekki afskráð sig af atvinnuleysisbótum, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
+    description: `Error summary when user can not apply`,
+  },
+  submitError: {
+    id: 'vmst.dub.application:errorMessages.submitError',
+    defaultMessage:
+      'Villa við að skila inn umsókn. Reyndu aftur eða hafðuð samband við Ísland.is',
+    description: 'Error message when submit fails',
+  },
+})

@@ -7,17 +7,20 @@ import {
   Application,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
+import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { DeregisterUnemploymentBenefitsSchema } from './dataSchema'
 import {
+  coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
+import { applicationMessages } from './messages'
+import { getSupportDataApi } from '../dataProviders'
 
 const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -31,6 +34,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.DeregisterUnemploymentBenefits.translation,
   dataSchema: DeregisterUnemploymentBenefitsSchema,
+  featureFlag: Features.isDeregisterUnemploymentBenefitsEnabled,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -40,6 +44,18 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -51,8 +67,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              read: 'all',
-              api: [UserProfileApi],
+              api: [getSupportDataApi],
               delete: true,
             },
           ],
@@ -69,6 +84,21 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -79,8 +109,8 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+
               write: 'all',
-              read: 'all',
               delete: true,
             },
           ],
@@ -97,6 +127,12 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardSubmitted,
+              variant: 'mint',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
