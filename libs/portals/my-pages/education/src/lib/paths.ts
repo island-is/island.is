@@ -3,6 +3,12 @@ export enum EducationPaths {
   EducationGrunnskoli = '/menntun/grunnskoli',
   EducationAssessment = '/menntun/grunnskoli/namsmat',
 
+  // Primary school (guardian-facing)
+  PrimarySchoolList = '/menntun/grunnskoli/nemendur',
+  PrimarySchoolStudent = '/menntun/grunnskoli/nemendur/:studentId',
+  PrimarySchoolOverview = '/menntun/grunnskoli/nemendur/:studentId/yfirlit',
+  PrimarySchoolAssessment = '/menntun/grunnskoli/nemendur/:studentId/namsmat',
+
   EducationFramhskoli = '/menntun/framhaldsskoli',
   EducationFramhskoliCareer = '/menntun/framhaldsskoli/namsferill',
   EducationFramhskoliGraduationOverview = '/menntun/framhaldsskoli/utskrift',

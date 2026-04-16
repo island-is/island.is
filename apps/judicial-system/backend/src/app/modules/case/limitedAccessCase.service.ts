@@ -19,7 +19,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -37,7 +37,11 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
-import { FileService, getDefenceUserCaseFileCategories } from '../file'
+import {
+  FileService,
+  getDefenceUserCaseFileCategories,
+  getDefenceUserCutoffDate,
+} from '../file'
 import {
   AppealCase,
   Case,
@@ -302,6 +306,9 @@ export const include: Includeable[] = [
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
@@ -542,7 +549,7 @@ export class LimitedAccessCaseService {
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
-    if (update.appealState === CaseAppealState.APPEALED) {
+    if (update.appealState === AppealCaseState.APPEALED) {
       for (const caseFile of theCase.caseFiles ?? []) {
         if (
           caseFile.state === CaseFileState.STORED_IN_RVG &&
@@ -570,7 +577,7 @@ export class LimitedAccessCaseService {
       })
     }
 
-    if (update.appealState === CaseAppealState.WITHDRAWN) {
+    if (update.appealState === AppealCaseState.WITHDRAWN) {
       addMessagesToQueue({
         type: MessageType.NOTIFICATION,
         user,
@@ -758,6 +765,12 @@ export class LimitedAccessCaseService {
       theCase.civilClaimants,
     )
 
+    const cutoffDate = getDefenceUserCutoffDate(
+      user.nationalId,
+      theCase.defendants,
+      theCase.civilClaimants,
+    )
+
     const allowedCaseFiles =
       theCase.caseFiles?.filter((file) => {
         if (!file.isKeyAccessible || !file.category) {
@@ -765,6 +778,10 @@ export class LimitedAccessCaseService {
         }
 
         if (!allowedCaseFileCategories.includes(file.category)) {
+          return false
+        }
+
+        if (cutoffDate && file.created > cutoffDate) {
           return false
         }
 

@@ -4,14 +4,10 @@ import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import {
-  CaseAppealDecision,
-  CaseAppealState,
-  InstitutionType,
-  UserRole,
-} from '../../graphql/schema'
+import { AppealCaseState, InstitutionType } from '../../graphql/schema'
 import { CaseNumbers } from '../../routes/CourtOfAppeal/components'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
+import { getAppealActorText } from '../../utils/utils'
 import DateLabel from '../DateLabel/DateLabel'
 import RulingDateLabel from '../DateLabel/RulingDateLabel'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -50,26 +46,12 @@ const CaseTitleInfoAndTags: FC = () => {
           <>
             <Box marginTop={1}>
               <Text as="h5" variant="h5">
-                {workingCase.prosecutorAppealDecision ===
-                  CaseAppealDecision.APPEAL ||
-                workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-                  ? formatMessage(strings.appealedByInCourt, {
-                      appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.PROSECUTOR,
-                    })
-                  : formatMessage(strings.appealedBy, {
-                      appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.PROSECUTOR,
-                      appealedDate: `${formatDate(
-                        workingCase.appealedDate,
-                        'PPPp',
-                      )}`,
-                    })}
+                {getAppealActorText(workingCase)}
               </Text>
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
               workingCase.appealCase?.appealState ===
-                CaseAppealState.COMPLETED) ||
+                AppealCaseState.COMPLETED) ||
               user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
               workingCase.appealCase?.appealReceivedByCourtDate && (
                 <Box marginTop={1}>

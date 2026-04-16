@@ -138,7 +138,7 @@ export const IntroWrapperV2 = ({
           </GridColumn>
         </GridRow>
       )}
-      <GridRow>
+      <GridRow marginTop={2}>
         <GridColumn span={effectiveContentSpan}>{children}</GridColumn>
       </GridRow>
       <FootNote serviceProviderSlug={serviceProvider?.slug} />

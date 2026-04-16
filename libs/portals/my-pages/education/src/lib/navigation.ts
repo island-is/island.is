@@ -1,6 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { EducationPaths } from './paths'
+import { primarySchoolMessages as psm } from './messages'
 
 export const educationNavigation: PortalNavigationItem = {
   name: m.education,
@@ -12,15 +13,53 @@ export const educationNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      // Old assessment screen — hidden from nav and breadcrumb; kept as sibling
+      // (not under Grunnskoli) so that when the primary-school feature flag is
+      // off and the EducationGrunnskoli route is filtered out, the Grunnskoli
+      // nav item has no descendant routes and is removed from the tree entirely.
+      name: m.educationAssessment,
+      navHide: true,
+      breadcrumbHide: true,
+      searchHide: true,
+      path: EducationPaths.EducationAssessment,
+    },
+    {
       name: m.educationGrunnskoli,
       description: m.educationPrimarySchoolIntro,
       searchTags: [m.educationAssessment],
       path: EducationPaths.EducationGrunnskoli,
+      // No subnav in sidebar for grunnskóli
       children: [
         {
-          name: m.educationAssessment,
+          // Student list — same content as grunnskoli root via wrapper, hide from both
+          name: m.educationGrunnskoli,
+          navHide: true,
+          breadcrumbHide: true,
           searchHide: true,
-          path: EducationPaths.EducationAssessment,
+          path: EducationPaths.PrimarySchoolList,
+          children: [
+            {
+              // Student hub — "Nemandi" in breadcrumb
+              name: psm.studentLabel,
+              navHide: true,
+              searchHide: true,
+              path: EducationPaths.PrimarySchoolStudent,
+              children: [
+                {
+                  name: m.overview,
+                  navHide: true,
+                  searchHide: true,
+                  path: EducationPaths.PrimarySchoolOverview,
+                },
+                {
+                  name: psm.assessmentTitle,
+                  navHide: true,
+                  searchHide: true,
+                  path: EducationPaths.PrimarySchoolAssessment,
+                },
+              ],
+            },
+          ],
         },
       ],
     },

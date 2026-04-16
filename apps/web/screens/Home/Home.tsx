@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
+import { theme } from '@island.is/island-ui/theme'
 import {
   CategoryItems,
   DigitalIcelandLatestNewsSlice,
@@ -35,11 +35,22 @@ import { Screen } from '@island.is/web/types'
 
 import { GET_WEB_CHAT } from '../queries/WebChat'
 
+const LIFE_EVENTS_INDICATOR = {
+  outerColor: theme.color.purple200,
+  activeColor: theme.color.purple400,
+  inactiveColor: theme.color.white,
+}
+
+const CATEGORIES_INDICATOR = {
+  outerColor: theme.color.blue200,
+  activeColor: theme.color.blue400,
+  inactiveColor: theme.color.blue300,
+}
+
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
   page?: GetFrontpageQuery['getFrontpage']
-  locale: Locale
   webChat: GetWebChatQuery['getWebChat']
 }
 
@@ -55,13 +66,14 @@ const Home: Screen<HomeProps> = ({ categories, news, page, webChat }) => {
   }
 
   return (
-    <Box id="main-content" width="full" overflow="hidden">
+    // overflow: clip prevents scroll container creation unlike overflow: hidden
+    <Box id="main-content" width="full" style={{ overflow: 'clip' }}>
       <Box
         component="section"
         aria-labelledby="search-section-title"
         borderBottomWidth="standard"
         borderStyle="solid"
-        borderColor="blue200"
+        borderColor="purple100"
       >
         <SearchSection
           headingId="search-section-title"
@@ -82,10 +94,10 @@ const Home: Screen<HomeProps> = ({ categories, news, page, webChat }) => {
       </Box>
       <Box
         component="section"
-        paddingTop={6}
-        paddingBottom={3}
+        paddingTop={[6, 6, 8]}
+        paddingBottom={[3, 3, 8]}
         position="relative"
-        background="white"
+        background="purple100"
         aria-labelledby="life-events-title"
       >
         <LifeEventsSection
@@ -105,12 +117,14 @@ const Home: Screen<HomeProps> = ({ categories, news, page, webChat }) => {
             'LifeEventsCardsButtonTitle',
             activeLocale === 'is' ? 'Skoða lífsviðburð' : 'See life event',
           )}
+          whiteCards
+          indicator={LIFE_EVENTS_INDICATOR}
         />
       </Box>
       <Box
         component="section"
         paddingTop={[5, 5, 8]}
-        paddingBottom={[2, 2, 5]}
+        paddingBottom={[2, 2, 8]}
         background="blue100"
         aria-labelledby="categories-title"
       >
@@ -121,6 +135,14 @@ const Home: Screen<HomeProps> = ({ categories, news, page, webChat }) => {
           )}
           headingId="categories-title"
           items={categories}
+          seeMoreText={n(
+            'seeAllCategories',
+            activeLocale === 'is'
+              ? 'Skoða alla þjónustuflokka'
+              : 'See all categories',
+          )}
+          seeMoreHref="/flokkur"
+          indicator={CATEGORIES_INDICATOR}
         />
       </Box>
       <Box paddingTop={[8, 8, 6]}>
@@ -220,7 +242,6 @@ Home.getProps = async ({ apolloClient, locale }) => {
     categories: getArticleCategories,
     page: getFrontpage,
     showSearchInHeader: false,
-    locale: locale as Locale,
     webChat,
   }
 }

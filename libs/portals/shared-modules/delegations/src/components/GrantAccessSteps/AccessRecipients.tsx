@@ -30,11 +30,11 @@ export const AccessRecipients = ({
 
   return (
     <FormProvider {...methods}>
-      <Text variant="h4" marginBottom={4}>
+      <Text variant="h3" marginBottom={4}>
         {formatMessage(m.chooseRecipientsTitle)}
       </Text>
 
-      <Box display="flex" flexDirection="column" rowGap={4}>
+      <Box display="flex" flexDirection="column" rowGap={3}>
         {fields.map((field, index) => (
           <IdentityLookup
             key={field.id}
@@ -56,9 +56,11 @@ export const AccessRecipients = ({
           </Button>
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
-        {formError && <Problem error={formError} size="small" />}
-      </Box>
+      {formError && (
+        <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+          <Problem error={formError} size="small" />
+        </Box>
+      )}
     </FormProvider>
   )
 }

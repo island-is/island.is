@@ -2,9 +2,10 @@ import { FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { IconMapIcon } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseListEntry,
   CaseTransition,
 } from '../../graphql/schema'
@@ -33,10 +34,13 @@ export const useWithdrawAppealMenuOption = () => {
     }
   }
 
-  const shouldDisplayWithdrawAppealOption = (caseEntry: CaseListEntry) => {
+  const shouldDisplayWithdrawAppealOption = (
+    caseEntry: CaseListEntry,
+    userNationalId?: string | null,
+  ) => {
     const withdrawableCaseStates = [
-      CaseAppealState.APPEALED,
-      CaseAppealState.RECEIVED,
+      AppealCaseState.APPEALED,
+      AppealCaseState.RECEIVED,
     ]
 
     if (
@@ -46,7 +50,19 @@ export const useWithdrawAppealMenuOption = () => {
       return false
     }
 
-    return Boolean(caseEntry.accusedPostponedAppealDate)
+    if (!caseEntry.accusedPostponedAppealDate) {
+      return false
+    }
+
+    // For indictment cases, only the specific defender who appealed can withdraw
+    if (isIndictmentCase(caseEntry.type)) {
+      return (
+        Boolean(caseEntry.appealedByNationalId) &&
+        caseEntry.appealedByNationalId === userNationalId
+      )
+    }
+
+    return true
   }
 
   return {
@@ -72,7 +88,7 @@ const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
     if (transitionResult === true) {
       const transitionedCase = cases.find((tc) => caseId === tc.id)
       if (transitionedCase) {
-        transitionedCase.appealState = CaseAppealState.WITHDRAWN
+        transitionedCase.appealState = AppealCaseState.WITHDRAWN
       }
       onClose()
     }
