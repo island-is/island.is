@@ -28,6 +28,8 @@ import { ExampleInputsModule } from './examples/example-inputs/example-inputs.mo
 import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
 import { ExampleNoInputsModule } from './examples/example-no-inputs/example-no-inputs.module'
 import { ExampleNoInputsService } from './examples/example-no-inputs/example-no-inputs-service'
+import { ExampleSdfModule } from './examples/example-sdf/example-sdf.module'
+import { ExampleSdfService } from './examples/example-sdf/example-sdf.service'
 import { AccidentNotificationModule } from './iceland-health/accident-notification/accident-notification.module'
 import { AccidentNotificationService } from './iceland-health/accident-notification/accident-notification.service'
 import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
@@ -190,6 +192,7 @@ export const modules = [
   ExampleStateTransfersModule,
   ExampleInputsModule,
   ExampleNoInputsModule,
+  ExampleSdfModule,
   ExamplePaymentActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
@@ -283,6 +286,7 @@ export const services = [
   ExampleStateTransfersService,
   ExampleInputsService,
   ExampleNoInputsService,
+  ExampleSdfService,
   ExamplePaymentActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,

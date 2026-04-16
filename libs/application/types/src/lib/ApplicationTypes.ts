@@ -4,6 +4,7 @@ export enum ApplicationTypes {
   EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
+  EXAMPLE_SDF = 'ExampleSdf',
   EXAMPLE_PAYMENT = 'ExamplePayment',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   PASSPORT = 'Passport',
@@ -124,6 +125,11 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',
     translation: 'eni.application',
+  },
+  [ApplicationTypes.EXAMPLE_SDF]: {
+    slug: 'example-sdf',
+    translation: 'exsdf.application',
+    useSdf: true,
   },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'example-payment',

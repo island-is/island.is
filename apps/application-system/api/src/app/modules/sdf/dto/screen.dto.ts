@@ -236,6 +236,12 @@ export class HeaderDto {
 
   @ApiPropertyOptional()
   description?: string
+
+  @ApiPropertyOptional()
+  applicationName?: string
+
+  @ApiPropertyOptional()
+  institutionName?: string
 }
 
 export class ScreenDto {
@@ -256,6 +262,9 @@ export class ScreenDto {
 
   @ApiProperty()
   locale!: string
+
+  @ApiPropertyOptional({ description: 'Persisted answers for the current page fields' })
+  answers?: Record<string, unknown>
 }
 
 export class ValidateResponseDto {

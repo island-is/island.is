@@ -23,6 +23,8 @@ const mapRestScreenToGql = (dto: ScreenDto): SdfScreen => {
     header: {
       title: dto.header.title,
       description: dto.header.description,
+      applicationName: dto.header.applicationName,
+      institutionName: dto.header.institutionName,
     },
     stepper: {
       sections: dto.stepper.sections.map((s) => ({
@@ -57,6 +59,7 @@ const mapRestScreenToGql = (dto: ScreenDto): SdfScreen => {
       })),
       canGoBack: dto.footer.canGoBack,
     },
+    answers: dto.answers,
   }
 }
 

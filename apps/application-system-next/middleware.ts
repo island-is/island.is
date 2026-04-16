@@ -19,6 +19,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const SDF_ENABLED_SLUGS: Set<string> = new Set([
   'example-inputs',
+  'example-sdf',
   'faedingarorlof',
 ])
 

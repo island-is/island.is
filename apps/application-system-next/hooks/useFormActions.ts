@@ -1,17 +1,8 @@
 'use client'
 
-import { useCallback, useRef, useState, useTransition } from 'react'
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { executeAction as gqlExecuteAction, SdfScreen } from '../lib/graphql'
 
-/**
- * Hook for dispatching SDF form actions (NEXT_PAGE, PREV_PAGE, SUBMIT,
- * REFETCH, VALIDATE).
- *
- * The backend tracks the current page index in the database. The frontend
- * simply sends actions and renders whatever screen the backend returns.
- * Custom components must use onAnswerChange to route answer changes through
- * executeAction rather than mutating local state directly (§8, Constraint 5).
- */
 export function useFormActions(
   applicationId: string,
   initialScreen: SdfScreen,
@@ -19,19 +10,25 @@ export function useFormActions(
   const [screen, setScreen] = useState<SdfScreen>(initialScreen)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const answersRef = useRef<Record<string, unknown>>({})
+  const answersRef = useRef<Record<string, unknown>>(
+    initialScreen.answers ?? {},
+  )
+  const pageIndexRef = useRef(initialScreen.page.index)
+  const [, forceRender] = useState(0)
+
+  useEffect(() => {
+    if (screen.answers) {
+      const merged = { ...screen.answers, ...answersRef.current }
+      answersRef.current = merged
+      forceRender((n) => n + 1)
+    }
+  }, [screen.page.index])
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
+    forceRender((n) => n + 1)
   }, [])
 
-  /**
-   * onAnswerChange is the ONLY way custom components are allowed to persist
-   * answer changes. It queues the change locally and the next NEXT_PAGE
-   * or SUBMIT sends all accumulated answers to the server for validation.
-   *
-   * This ensures no answer bypasses server-side Zod validation (§8, Constraint 5).
-   */
   const onAnswerChange = useCallback(
     (fieldId: string, value: unknown) => {
       setAnswer(fieldId, value)
@@ -59,8 +56,13 @@ export function useFormActions(
             fieldIds,
             event,
           )
+          const pageChanged = result.page.index !== pageIndexRef.current
+          pageIndexRef.current = result.page.index
           setScreen(result)
-          answersRef.current = {}
+          if (pageChanged) {
+            answersRef.current = result.answers ?? {}
+            forceRender((n) => n + 1)
+          }
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Action failed')
         }

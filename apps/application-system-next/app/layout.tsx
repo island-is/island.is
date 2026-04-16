@@ -3,6 +3,8 @@ import { GlobalStylesProvider } from '../components/GlobalStylesProvider'
 import { Providers } from '../components/Providers'
 import { HeaderInfoProvider } from '../components/HeaderInfoProvider'
 import { AppHeader } from '../components/AppHeader'
+import { BffAuthGuard } from '../components/BffAuthGuard'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Ísland.is - Umsóknir',
@@ -19,10 +21,12 @@ export default function RootLayout({
       <body>
         <GlobalStylesProvider>
           <Providers>
-            <HeaderInfoProvider>
-              <AppHeader />
-              {children}
-            </HeaderInfoProvider>
+            <BffAuthGuard>
+              <HeaderInfoProvider>
+                <AppHeader />
+                {children}
+              </HeaderInfoProvider>
+            </BffAuthGuard>
           </Providers>
         </GlobalStylesProvider>
       </body>

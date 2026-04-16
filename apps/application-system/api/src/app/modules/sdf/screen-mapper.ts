@@ -48,7 +48,9 @@ const mapFieldToComponent = (
     clientCondition: extractClientCondition(raw.condition),
   }
 
-  if (raw.description) {
+  if (raw.placeholder) {
+    component.placeholder = resolver.resolve(raw.placeholder)
+  } else if (raw.description) {
     component.placeholder = resolver.resolve(raw.description)
   }
 
@@ -221,11 +223,33 @@ const mapExternalDataProviderToComponent = (
   screen: ExternalDataProviderScreen,
   resolver: FormTextResolver,
 ): ComponentDto => {
-  return {
+  const raw = screen as any
+  const dataProviders = raw.dataProviders?.map((dp: any) => ({
+    id: dp.id,
+    title: resolver.resolve(dp.title) || dp.id,
+    subTitle: dp.subTitle ? resolver.resolve(dp.subTitle) : undefined,
+  }))
+
+  const component: any = {
     id: screen.id ?? 'external-data',
     type: 'EXTERNAL_DATA_PROVIDER',
-    label: resolver.resolve((screen as any).title),
+    label: resolver.resolve(raw.title),
   }
+
+  if (raw.subTitle) {
+    component.subTitle = resolver.resolve(raw.subTitle)
+  }
+  if (raw.description) {
+    component.description = resolver.resolve(raw.description)
+  }
+  if (raw.checkboxLabel) {
+    component.checkboxLabel = resolver.resolve(raw.checkboxLabel)
+  }
+  if (dataProviders && dataProviders.length > 0) {
+    component.dataProviders = dataProviders
+  }
+
+  return component as ComponentDto
 }
 
 export const mapScreenToComponents = (

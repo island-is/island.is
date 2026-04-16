@@ -25,13 +25,13 @@ interface TransitionTarget {
 
 type TransitionDef = string | TransitionTarget | TransitionTarget[]
 
-interface PhaseDefinition<R = unknown> {
+interface PhaseDefinition<TEvent extends EventObject = EventObject, R = unknown> {
   name: string
   status: PhaseStatus
   lifecycle: StateLifeCycle
   progress?: number
 
-  roles?: RoleInState<EventObject, R>[]
+  roles?: RoleInState<TEvent, R>[]
 
   actionCard?: {
     historyLogs?: HistoryEventMessage[] | HistoryEventMessage
@@ -58,14 +58,14 @@ interface PhaseDefinition<R = unknown> {
 
 type GuardFn = (context: ApplicationContext) => boolean
 
-interface WorkflowDefinition<R = unknown> {
+interface WorkflowDefinition<TEvent extends EventObject = EventObject, R = unknown> {
   initialPhase: string
-  phases: Record<string, PhaseDefinition<R>>
+  phases: Record<string, PhaseDefinition<TEvent, R>>
   guards?: Record<string, GuardFn>
 }
 
-interface StateNode {
-  meta: ApplicationStateMeta<EventObject, unknown>
+interface StateNode<TEvent extends EventObject = EventObject, R = unknown> {
+  meta: ApplicationStateMeta<TEvent, R>
   entry?: string | string[]
   exit?: string | string[]
   on?: Record<
@@ -76,10 +76,10 @@ interface StateNode {
   >
 }
 
-interface WorkflowOutput {
+interface WorkflowOutput<TEvent extends EventObject = EventObject, R = unknown> {
   stateMachineConfig: {
     initial: string
-    states: Record<string, StateNode>
+    states: Record<string, StateNode<TEvent, R>>
   }
   stateMachineOptions: {
     guards?: Record<string, (context: ApplicationContext) => boolean>
@@ -111,13 +111,16 @@ const compileTransition = (
  * `stateMachineConfig` + `stateMachineOptions` shape that XState-based
  * templates use. The output is spread onto an `ApplicationTemplate` object.
  */
-export const defineWorkflow = <R = unknown>(
-  definition: WorkflowDefinition<R>,
-): WorkflowOutput => {
-  const states: Record<string, StateNode> = {}
+export const defineWorkflow = <
+  TEvent extends EventObject = EventObject,
+  R = unknown,
+>(
+  definition: WorkflowDefinition<TEvent, R>,
+): WorkflowOutput<TEvent, R> => {
+  const states: Record<string, StateNode<TEvent, R>> = {}
 
   for (const [phaseId, phase] of Object.entries(definition.phases)) {
-    const meta: ApplicationStateMeta<EventObject, R> = {
+    const meta: ApplicationStateMeta<TEvent, R> = {
       name: phase.name,
       status: phase.status,
       lifecycle: phase.lifecycle,
@@ -147,7 +150,7 @@ export const defineWorkflow = <R = unknown>(
       meta.onDelete = phase.onDelete
     }
 
-    const stateNode: StateNode = { meta }
+    const stateNode: StateNode<TEvent, R> = { meta }
 
     if (phase.entry) {
       stateNode.entry = phase.entry
@@ -168,7 +171,7 @@ export const defineWorkflow = <R = unknown>(
     states[phaseId] = stateNode
   }
 
-  const output: WorkflowOutput = {
+  const output: WorkflowOutput<TEvent, R> = {
     stateMachineConfig: {
       initial: definition.initialPhase,
       states,

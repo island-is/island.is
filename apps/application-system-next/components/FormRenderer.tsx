@@ -19,6 +19,7 @@ import {
   Box,
   Text,
   Button,
+  Icon,
   Input,
   Select,
   RadioButton,
@@ -44,6 +45,7 @@ const FULL_ROW_TYPES = new Set([
   'SdfDividerField',
   'SdfTitleField',
   'SdfDescriptionField',
+  'SdfExternalDataProviderField',
 ])
 
 function isHalfWidthCandidate(comp: SdfComponentData): boolean {
@@ -186,7 +188,7 @@ function ComponentSwitch({
             required={component.required}
             hasError={!!error}
             errorMessage={error}
-            defaultValue={
+            value={
               (currentValue as string) ?? component.defaultValue ?? ''
             }
             onChange={(e) => handleChange(e.target.value)}
@@ -246,6 +248,7 @@ function ComponentSwitch({
                 paddingTop={2}
               >
                 <RadioButton
+                  id={`${component.id}-${opt.value}`}
                   name={component.id ?? ''}
                   label={opt.label}
                   value={opt.value}
@@ -287,6 +290,7 @@ function ComponentSwitch({
             return (
               <Box key={opt.value} marginBottom={1}>
                 <Checkbox
+                  id={`${component.id}-${opt.value}`}
                   name={component.id ?? ''}
                   label={opt.label}
                   value={opt.value}
@@ -348,7 +352,7 @@ function ComponentSwitch({
             hasError={!!error}
             errorMessage={error}
             type="tel"
-            defaultValue={(currentValue as string) ?? ''}
+            value={(currentValue as string) ?? ''}
             onChange={(e) => handleChange(e.target.value)}
             size={component.width === 'HALF' ? 'xs' : 'md'}
           />
@@ -367,7 +371,7 @@ function ComponentSwitch({
             required={component.required}
             hasError={!!error}
             errorMessage={error}
-            defaultValue={(currentValue as string) ?? ''}
+            value={(currentValue as string) ?? ''}
             onChange={(e) => handleChange(e.target.value)}
             size="xs"
           />
@@ -545,7 +549,7 @@ function ComponentSwitch({
             disabled={component.disabled}
             hasError={!!error}
             errorMessage={error}
-            defaultValue={(currentValue as string) ?? ''}
+            value={(currentValue as string) ?? ''}
             onChange={(e) => handleChange(e.target.value)}
           />
         </Box>
@@ -705,9 +709,65 @@ function ComponentSwitch({
     case 'SdfHiddenInputWithWatchedValueField':
       return null
 
+    case 'SdfExternalDataProviderField': {
+      const isApproved = currentValue === true
+      return (
+        <Box>
+          <Box marginTop={2} marginBottom={5}>
+            <Box display="flex" alignItems="center" justifyContent="flexStart">
+              <Box marginRight={1}>
+                <Icon
+                  icon="fileTrayFull"
+                  size="medium"
+                  color="blue400"
+                  type="outline"
+                />
+              </Box>
+              <Text variant="h4">
+                {component.subTitle ??
+                  'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
+              </Text>
+            </Box>
+            {component.description && (
+              <Box marginTop={4}>
+                <Text>{component.description}</Text>
+              </Box>
+            )}
+          </Box>
+          <Box marginBottom={5}>
+            {component.dataProviders?.map((dp: any) => (
+              <Box key={dp.id} marginBottom={3}>
+                <Text variant="h4" color="blue400">
+                  {dp.title}
+                </Text>
+                {dp.subTitle && <Text>{dp.subTitle}</Text>}
+              </Box>
+            ))}
+          </Box>
+          <Checkbox
+            name={component.id ?? ''}
+            label={
+              component.checkboxLabel ?? 'Ég samþykki'
+            }
+            checked={isApproved}
+            onChange={(e) => handleChange(e.target.checked)}
+            hasError={!!error}
+            large
+            backgroundColor="blue"
+          />
+          {error && (
+            <Box marginTop={1}>
+              <Text variant="small" color="red600">
+                {error}
+              </Text>
+            </Box>
+          )}
+        </Box>
+      )
+    }
+
     case 'SdfRedirectToServicePortalField':
     case 'SdfPaymentPendingField':
-    case 'SdfExternalDataProviderField':
     case 'SdfTitleField':
     case 'SdfPaginatedSearchableTableField':
     case 'SdfNationalIdWithNameField':

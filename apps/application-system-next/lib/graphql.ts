@@ -40,6 +40,8 @@ export interface SdfScreen {
   header: {
     title: string
     description?: string
+    applicationName?: string
+    institutionName?: string
   }
   stepper: {
     sections: SdfStepperSection[]
@@ -58,6 +60,7 @@ export interface SdfScreen {
     buttons: SdfFooterButton[]
     canGoBack: boolean
   }
+  answers?: Record<string, unknown>
 }
 
 export interface SdfStepperSection {
@@ -138,6 +141,9 @@ export interface SdfComponentData {
   event?: string
   actions?: { event: string; name: string; type: string }[]
   placement?: string
+  subTitle?: string
+  checkboxLabel?: string
+  dataProviders?: { id: string; title: string; subTitle?: string }[]
 }
 
 export const GET_SCREEN_QUERY = `
@@ -148,6 +154,8 @@ export const GET_SCREEN_QUERY = `
       header {
         title
         description
+        applicationName
+        institutionName
       }
       stepper {
         sections {
@@ -356,6 +364,10 @@ export const GET_SCREEN_QUERY = `
           ... on SdfExternalDataProviderField {
             id
             label
+            subTitle
+            description
+            checkboxLabel
+            dataProviders { id title subTitle }
           }
           ... on SdfTitleField {
             id
@@ -472,6 +484,7 @@ export const GET_SCREEN_QUERY = `
         }
         canGoBack
       }
+      answers
     }
   }
 `
@@ -481,7 +494,7 @@ export const EXECUTE_ACTION_MUTATION = `
     applicationSdfAction(input: $input, locale: $locale) {
       applicationId
       locale
-      header { title description }
+      header { title description applicationName institutionName }
       stepper {
         sections { id title isComplete children { id title } }
         activeSectionIndex
@@ -510,7 +523,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfLinkField { id label url clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfDisplayField { id label displayValue: value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSliderField { id label min max step clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfExternalDataProviderField { id label }
+          ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } }
           ... on SdfTitleField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfPaginatedSearchableTableField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfNationalIdWithNameField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
@@ -527,6 +540,7 @@ export const EXECUTE_ACTION_MUTATION = `
         errors { componentId message }
       }
       footer { buttons { id text variant actionType } canGoBack }
+      answers
     }
   }
 `

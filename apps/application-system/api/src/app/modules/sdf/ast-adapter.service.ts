@@ -8,6 +8,7 @@ import {
   Application,
   ApplicationWithAttachments,
   ExternalData,
+  FormItemTypes,
   FormValue,
   RoleInState,
 } from '@island.is/application/types'
@@ -18,6 +19,7 @@ import {
   findCurrentScreen,
   canGoBack,
   FormScreen,
+  ExternalDataProviderScreen,
   getFormNodeFieldIds,
 } from '@island.is/application/screen-compiler'
 import type { User } from '@island.is/auth-nest-tools'
@@ -237,9 +239,20 @@ export class AstAdapterService {
       description: (currentScreen as any)?.description
         ? resolver.resolve((currentScreen as any).description)
         : undefined,
+      applicationName: resolver.resolve(form.title),
+      institutionName: (application as any).institution ?? undefined,
     }
 
-    // Step 10: Assemble & Return Screen
+    // Step 10: Extract persisted answers for current page fields
+    const pageFieldIds = getFormNodeFieldIds(currentScreen as any)
+    const pageAnswers: Record<string, unknown> = {}
+    for (const fid of pageFieldIds) {
+      if (fid in (application.answers ?? {})) {
+        pageAnswers[fid] = (application.answers as Record<string, unknown>)[fid]
+      }
+    }
+
+    // Step 11: Assemble & Return Screen
     this.logTiming('Total pipeline', startTime)
 
     return {
@@ -249,6 +262,7 @@ export class AstAdapterService {
       page,
       footer,
       locale,
+      answers: Object.keys(pageAnswers).length > 0 ? pageAnswers : undefined,
     }
   }
 
@@ -333,6 +347,70 @@ export class AstAdapterService {
     const mergedAnswers = { ...application.answers, ...answers } as FormValue
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    const currentScreen = await this.getCurrentScreen(
+      application,
+      template,
+      currentPageIndex,
+      locale,
+      user,
+    )
+
+    if (
+      currentScreen &&
+      'type' in currentScreen &&
+      currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+    ) {
+      const edpScreen = currentScreen as ExternalDataProviderScreen
+      const dataProviders = (edpScreen as any).dataProviders ?? []
+      const relevantProviders = dataProviders.filter((p: any) => p.action)
+
+      if (relevantProviders.length > 0) {
+        const role = template.mapUserToRole(
+          user.nationalId,
+          application as Application,
+        )
+        const helper = new ApplicationTemplateHelper(
+          application as Application,
+          template,
+        )
+        const apisFromRole = role
+          ? helper.getApisFromRoleInState(role)
+          : []
+
+        const templateApis = relevantProviders
+          .map((p: any) => apisFromRole.find((a) => a.actionId === p.action))
+          .filter(Boolean)
+
+        if (templateApis.length > 0) {
+          const result =
+            await this.applicationActionService.performActionOnApplication(
+              application,
+              template,
+              user,
+              templateApis,
+              locale,
+              'SUBMIT',
+            )
+          if (result.hasError) {
+            throw new Error(
+              typeof result.error === 'string'
+                ? result.error
+                : 'Failed to fetch external data',
+            )
+          }
+        }
+      }
+
+      const newPageIndex = currentPageIndex + 1
+      await this.applicationService.update(applicationId, {
+        answers: mergedAnswers,
+        pageIndex: newPageIndex,
+      })
+
+      return this.getScreen(applicationId, undefined, locale, user)
+    }
+
     const validationErrors = await this.validateAnswersForPage(
       application,
       template,
@@ -361,6 +439,47 @@ export class AstAdapterService {
     })
 
     return this.getScreen(applicationId, undefined, locale, user)
+  }
+
+  private async getCurrentScreen(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    pageIndex: number,
+    locale: Locale,
+    user: User,
+  ): Promise<FormScreen | undefined> {
+    const role = template.mapUserToRole(
+      user.nationalId,
+      application as Application,
+    )
+    if (!role) return undefined
+
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+    const roleInState = helper.getRoleInState(role)
+    if (!roleInState?.formLoader) return undefined
+
+    const form = await roleInState.formLoader({
+      featureFlagClient: this.featureFlagService,
+    } as any)
+
+    const bffUser = {
+      nationalId: user.nationalId,
+      profile: { nationalId: user.nationalId, name: '', locale },
+    }
+    const { answers: filteredAnswers, externalData: filteredExternalData } =
+      this.filterDataByRole(application as Application, roleInState)
+
+    const screens = convertFormToScreens(
+      form,
+      filteredAnswers,
+      filteredExternalData,
+      bffUser as any,
+    )
+    const resolvedIndex = moveToScreen(screens, pageIndex, true)
+    return screens[resolvedIndex]
   }
 
   async goToPreviousPage(
@@ -488,6 +607,28 @@ export class AstAdapterService {
     const template = await getApplicationTemplateByTypeId(
       application.typeId,
     )
+
+    const role = template.mapUserToRole(
+      user.nationalId,
+      application as Application,
+    )
+    if (role) {
+      const helper = new ApplicationTemplateHelper(
+        application as Application,
+        template,
+      )
+      const apisFromRole = helper.getApisFromRoleInState(role)
+      if (apisFromRole.length > 0) {
+        await this.applicationActionService.performActionOnApplication(
+          application,
+          template,
+          user,
+          apisFromRole,
+          locale,
+          event || 'SUBMIT',
+        )
+      }
+    }
 
     const eventStr = event || 'SUBMIT'
 

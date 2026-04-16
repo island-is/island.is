@@ -6,6 +6,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
 
 // ---------------------------------------------------------------------------
 // Enums
@@ -652,6 +653,18 @@ export class SdfSliderField {
   clientCondition?: typeof SdfClientCondition
 }
 
+@ObjectType('SdfExternalDataProviderItem')
+export class SdfExternalDataProviderItem {
+  @Field()
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field({ nullable: true })
+  subTitle?: string
+}
+
 @ObjectType('SdfExternalDataProviderField')
 export class SdfExternalDataProviderField {
   @Field()
@@ -659,6 +672,18 @@ export class SdfExternalDataProviderField {
 
   @Field()
   label!: string
+
+  @Field({ nullable: true })
+  subTitle?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  checkboxLabel?: string
+
+  @Field(() => [SdfExternalDataProviderItem], { nullable: true })
+  dataProviders?: SdfExternalDataProviderItem[]
 }
 
 @ObjectType('SdfTitleField')
@@ -1000,6 +1025,12 @@ export class SdfHeader {
 
   @Field({ nullable: true })
   description?: string
+
+  @Field({ nullable: true })
+  applicationName?: string
+
+  @Field({ nullable: true })
+  institutionName?: string
 }
 
 @ObjectType('SdfScreen')
@@ -1021,6 +1052,9 @@ export class SdfScreen {
 
   @Field()
   locale!: string
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  answers?: Record<string, unknown>
 }
 
 // ---------------------------------------------------------------------------

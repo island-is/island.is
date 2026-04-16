@@ -38,10 +38,14 @@ interface FieldOptions {
   description?: FormText
   placeholder?: FormText
   required?: boolean
+  variant?: 'text' | 'email' | 'number' | 'currency' | 'tel' | 'textarea'
 }
 
+type OptionList = Array<string | { label: string; value: string }>
+type DynamicOptions = (application: any) => OptionList
+
 interface RadioSelectOptions extends FieldOptions {
-  options: Array<string | { label: string; value: string }>
+  options: OptionList | DynamicOptions
 }
 
 function toStaticCheck(c: SimpleCondition): StaticCheck {
@@ -91,6 +95,22 @@ function resolveShowWhen(showWhen: ShowWhen): Condition {
   }
 
   return toStaticCheck(showWhen as SimpleCondition)
+}
+
+function normalizeOptions(
+  options: OptionList | DynamicOptions,
+): OptionList | DynamicOptions {
+  if (typeof options === 'function') {
+    return (app: any) => {
+      const resolved = options(app)
+      return resolved.map((o: string | { label: string; value: string }) =>
+        typeof o === 'string' ? { label: o, value: o } : o,
+      )
+    }
+  }
+  return options.map((o) =>
+    typeof o === 'string' ? { label: o, value: o } : o,
+  )
 }
 
 function resolveWidth(
@@ -146,6 +166,10 @@ function makeBaseField(
     ;(field as any).required = opts.required
   }
 
+  if (opts?.variant !== undefined) {
+    ;(field as any).variant = opts.variant
+  }
+
   return field
 }
 
@@ -169,9 +193,7 @@ export class PageBuilder<TSchema = unknown> {
   addRadioField(id: string, title: FormText, opts?: RadioSelectOptions): this {
     const field = makeBaseField(id, title, FieldTypes.RADIO, 'RadioFormField', opts)
     if (opts?.options) {
-      ;(field as any).options = opts.options.map((o) =>
-        typeof o === 'string' ? { label: o, value: o } : o,
-      )
+      ;(field as any).options = normalizeOptions(opts.options)
     }
     this.fields.push(field)
     return this
@@ -180,9 +202,7 @@ export class PageBuilder<TSchema = unknown> {
   addSelectField(id: string, title: FormText, opts?: RadioSelectOptions): this {
     const field = makeBaseField(id, title, FieldTypes.SELECT, 'SelectFormField', opts)
     if (opts?.options) {
-      ;(field as any).options = opts.options.map((o) =>
-        typeof o === 'string' ? { label: o, value: o } : o,
-      )
+      ;(field as any).options = normalizeOptions(opts.options)
     }
     this.fields.push(field)
     return this
@@ -191,9 +211,7 @@ export class PageBuilder<TSchema = unknown> {
   addCheckboxField(id: string, title: FormText, opts?: RadioSelectOptions): this {
     const field = makeBaseField(id, title, FieldTypes.CHECKBOX, 'CheckboxFormField', opts)
     if (opts?.options) {
-      ;(field as any).options = opts.options.map((o) =>
-        typeof o === 'string' ? { label: o, value: o } : o,
-      )
+      ;(field as any).options = normalizeOptions(opts.options)
     }
     this.fields.push(field)
     return this
@@ -238,6 +256,36 @@ export class PageBuilder<TSchema = unknown> {
     this.fields.push(
       makeBaseField(id, title, FieldTypes.PHONE, 'PhoneFormField', opts),
     )
+    return this
+  }
+
+  addKeyValueField(
+    id: string,
+    title: FormText,
+    value: FormText | ((app: any) => string),
+    opts?: FieldOptions,
+  ): this {
+    const field = makeBaseField(id, title, FieldTypes.KEY_VALUE, 'KeyValueFormField', {
+      ...opts,
+      doesNotRequireAnswer: true,
+    })
+    ;(field as any).value = value
+    this.fields.push(field)
+    return this
+  }
+
+  addDisplayField(
+    id: string,
+    title: FormText,
+    value: FormText | ((app: any) => string),
+    opts?: FieldOptions,
+  ): this {
+    const field = makeBaseField(id, title, FieldTypes.DISPLAY, 'DisplayFormField', {
+      ...opts,
+      doesNotRequireAnswer: true,
+    })
+    ;(field as any).value = value
+    this.fields.push(field)
     return this
   }
 
