@@ -3,7 +3,7 @@ name: Build Runner AMI
 on:
   push:
     branches: [main]
-    paths: [yarn.lock]
+    paths: [yarn.lock, packer/runner-ami/**]
   workflow_dispatch:
     inputs:
       runner_version:
