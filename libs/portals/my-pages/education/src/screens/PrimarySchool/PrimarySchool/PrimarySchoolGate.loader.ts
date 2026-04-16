@@ -10,8 +10,6 @@ export const primarySchoolGateLoader: WrappedLoaderFn =
       .getValue(Features.isServicePortalPrimarySchoolPageEnabled, false)
       .catch(() => false)
 
-    console.log('am i under the flag?')
-
     if (!enabled) {
       return redirect(EducationPaths.EducationAssessment)
     }
