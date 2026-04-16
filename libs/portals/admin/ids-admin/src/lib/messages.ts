@@ -69,6 +69,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:advanced-settings',
     defaultMessage: 'Advanced settings',
   },
+  modified: {
+    id: 'ap.ids-admin:modified',
+    defaultMessage: 'Last modified: {date}',
+  },
   back: {
     id: 'ap.ids-admin:back',
     defaultMessage: 'Back',
@@ -614,6 +618,22 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-modal-no-scopes',
     defaultMessage: 'No scopes available',
   },
+  permissionApplicationsDescription: {
+    id: 'ap.ids-admin:permission-applications-description',
+    defaultMessage: 'Applications that are currently using this permission.',
+  },
+  permissionApplicationsEmpty: {
+    id: 'ap.ids-admin:permission-applications-empty',
+    defaultMessage: 'No applications are using this permission.',
+  },
+  permissionApplicationsName: {
+    id: 'ap.ids-admin:permission-applications-name',
+    defaultMessage: 'Application',
+  },
+  permissionApplicationsType: {
+    id: 'ap.ids-admin:permission-applications-type',
+    defaultMessage: 'Type',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -844,6 +864,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tags-description',
     defaultMessage:
       'Select which tags this permission is relevant for. This helps users understand when they might need this permission.',
+  },
+  categoryRequired: {
+    id: 'ap.ids-admin:category-required',
+    defaultMessage: 'At least one category must be selected',
   },
   noCategories: {
     id: 'ap.ids-admin:no-categories',

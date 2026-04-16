@@ -97,6 +97,9 @@ export class ClientEnvironment {
   @Field(() => [ClientClaim], { nullable: true })
   customClaims?: ClientClaim[]
 
+  @Field(() => Date, { nullable: true })
+  modified?: Date
+
   @Field(() => [String])
   allowedCorsOrigins!: string[]
 }

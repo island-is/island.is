@@ -37,6 +37,7 @@ import { useClient } from './ClientContext'
 
 import * as styles from './Client.css'
 import { IDSAdminExternalPaths } from '../../lib/paths'
+import format from 'date-fns/format'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -60,22 +61,37 @@ export const EditClient = () => {
     >
       <StickyLayout
         header={(isSticky) => (
-          <EnvironmentHeader
-            title={getTranslatedValue(selectedEnvironment.displayName, locale)}
-            selectedEnvironment={selectedEnvironment.environment}
-            availableEnvironments={client.availableEnvironments}
-            onChange={onEnvironmentChange}
-            preHeader={
-              <div
-                className={classNames(
-                  styles.tagWrapper,
-                  isSticky && styles.tagHide,
-                )}
-              >
-                <ClientType client={client} />
-              </div>
-            }
-          />
+          <div className={styles.editHeaderContainer}>
+            <EnvironmentHeader
+              title={getTranslatedValue(
+                selectedEnvironment.displayName,
+                locale,
+              )}
+              selectedEnvironment={selectedEnvironment.environment}
+              availableEnvironments={client.availableEnvironments}
+              onChange={onEnvironmentChange}
+              preHeader={
+                <div
+                  className={classNames(
+                    styles.tagWrapper,
+                    isSticky && styles.tagHide,
+                  )}
+                >
+                  <ClientType client={client} />
+                </div>
+              }
+            />
+            {selectedEnvironment.modified && (
+              <Text variant="small">
+                {formatMessage(m.modified, {
+                  date: format(
+                    new Date(selectedEnvironment.modified),
+                    'dd.MM.yyyy HH:mm',
+                  ),
+                })}
+              </Text>
+            )}
+          </div>
         )}
       >
         <Stack space={3}>
