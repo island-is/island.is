@@ -1,11 +1,10 @@
-import { lazy, useState, useEffect } from 'react'
+import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
-import { CardLoader } from '@island.is/portals/my-pages/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { primarySchoolGateLoader } from './screens/PrimarySchool/PrimarySchool/PrimarySchoolGate.loader'
 
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
@@ -71,27 +70,6 @@ const PrimarySchoolAssessment = lazy(() =>
 
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
 
-const EducationRootRedirect = () => {
-  const featureFlagClient = useFeatureFlagClient()
-  const [target, setTarget] = useState<string | null>(null)
-
-  useEffect(() => {
-    featureFlagClient
-      .getValue(Features.isServicePortalPrimarySchoolPageEnabled, false)
-      .then((enabled) =>
-        setTarget(
-          enabled
-            ? EducationPaths.EducationGrunnskoli
-            : EducationPaths.EducationAssessment,
-        ),
-      )
-      .catch(() => setTarget(EducationPaths.EducationAssessment))
-  }, [featureFlagClient])
-
-  if (!target) return <CardLoader />
-  return <Navigate to={target} replace />
-}
-
 export const educationModule: PortalModule = {
   name: 'Menntun',
   enabled: ({ isCompany }) => !isCompany,
@@ -100,15 +78,15 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <EducationRootRedirect />,
+      element: <Navigate to={EducationPaths.EducationPrimarySchool} replace />,
     },
 
-    // Grunnskóli - Elementary
+    // Grunnskóli - Primary school
     {
       name: 'Grunnskóli',
-      path: EducationPaths.EducationGrunnskoli,
-      key: PRIMARY_SCHOOL_FLAG,
+      path: EducationPaths.EducationPrimarySchool,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: primarySchoolGateLoader({ userInfo, ...rest }),
       element: <PrimarySchool />,
     },
     {
@@ -192,7 +170,7 @@ export const educationModule: PortalModule = {
       element: <SecondarySchoolGraduationDetail />,
     },
 
-    // Haskoli - Univeristy
+    // Haskoli - University
     {
       name: 'Háskóli',
       path: EducationPaths.EducationHaskoli,
