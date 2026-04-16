@@ -273,12 +273,18 @@ export const Table = <TData extends object>({
           const isExpanded = row.getIsExpanded()
           const isCollapsing = collapsingRows.has(row.id)
 
+          const rowBackground =
+            isExpanded || isCollapsing ? 'blue100' : undefined
+
           return (
             <Fragment key={row.id}>
               <T.Row>
                 {row.getVisibleCells().map((cell, i) =>
                   i === 0 && renderExpandedRow ? (
-                    <T.Data key={cell.id} box={{ position: 'relative' }}>
+                    <T.Data
+                      key={cell.id}
+                      box={{ background: rowBackground, position: 'relative' }}
+                    >
                       {(isExpanded || isCollapsing) && (
                         <div className={styles.line} />
                       )}
@@ -307,7 +313,7 @@ export const Table = <TData extends object>({
                       </Box>
                     </T.Data>
                   ) : (
-                    <T.Data key={cell.id}>
+                    <T.Data key={cell.id} box={{ background: rowBackground }}>
                       <Text variant="small">
                         {flexRender(
                           cell.column.columnDef.cell,

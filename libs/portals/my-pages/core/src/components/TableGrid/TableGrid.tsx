@@ -8,7 +8,7 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { tableStyles } from '../../utils/utils'
-import { EmptyTable } from '../EmptyTable/EmptyTable'
+import { EmptyTable } from '@island.is/portals/core'
 import { MessageDescriptor } from 'react-intl'
 
 export interface TableItem {

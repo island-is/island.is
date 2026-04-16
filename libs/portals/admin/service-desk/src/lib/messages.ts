@@ -163,6 +163,34 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:actor-notifications',
     defaultMessage: 'Vegna umboðs',
   },
+  notificationsEmpty: {
+    id: 'admin-portal.service-desk:notifications-empty',
+    defaultMessage: 'Engar tilkynningar fundust',
+  },
+  copyValue: {
+    id: 'admin-portal.service-desk:copy-value',
+    defaultMessage: 'Afrita',
+  },
+  copyValueSuccess: {
+    id: 'admin-portal.service-desk:copy-value-success',
+    defaultMessage: 'Afritað á klippiborð',
+  },
+  notificationDeliveriesEmpty: {
+    id: 'admin-portal.service-desk:notification-deliveries-empty',
+    defaultMessage: 'Engar afhendingar skráðar fyrir þessa tilkynningu',
+  },
+  deliveryChannel: {
+    id: 'admin-portal.service-desk:delivery-channel',
+    defaultMessage: 'Rás',
+  },
+  deliverySentTo: {
+    id: 'admin-portal.service-desk:delivery-sent-to',
+    defaultMessage: 'Sent á',
+  },
+  deliveryCreated: {
+    id: 'admin-portal.service-desk:delivery-created',
+    defaultMessage: 'Tímasetning',
+  },
   deleteEmailConfirmTitle: {
     id: 'admin-portal.service-desk:delete-email-confirm-title',
     defaultMessage: 'Eyða netfangi',

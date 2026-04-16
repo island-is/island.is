@@ -12,6 +12,8 @@ import {
   HttpStatus,
   Inject,
   Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -25,6 +27,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
+import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { NotificationsService } from './notifications.service'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -133,6 +136,23 @@ export class NotificationsController {
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedActorNotificationDto> {
     return this.notificationsService.findActorNotifications(nationalId, query)
+  }
+
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/:id/deliveries')
+  @Documentation({
+    summary:
+      'Returns delivery records (email/sms/push) for a notification. ' +
+      'If `isActor` is true, looks up by actor_notification_id; ' +
+      'otherwise returns direct deliveries for the user notification.',
+    response: { status: HttpStatus.OK, type: [NotificationDeliveryDto] },
+  })
+  findDeliveries(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('isActor', new ParseBoolPipe({ optional: true })) isActor?: boolean,
+  ): Promise<NotificationDeliveryDto[]> {
+    return this.notificationsService.findDeliveries(id, isActor ?? false)
   }
 
   @Documentation({

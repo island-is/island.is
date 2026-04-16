@@ -7,11 +7,14 @@ import type { Locale } from '@island.is/shared/types'
 import {
   AdminNotificationsResponse,
   ActorNotificationsResponse,
+  AdminNotificationDeliveriesInput,
+  NotificationDelivery,
   NotificationsInput,
 } from './notifications.model'
 import {
   adminNotificationMapper,
   actorNotificationMapper,
+  notificationDeliveryMapper,
 } from '../utils/helpers'
 
 @Injectable()
@@ -82,5 +85,19 @@ export class NotificationsAdminService {
         endCursor: null,
       },
     }
+  }
+
+  async getNotificationDeliveries(
+    user: User,
+    input: AdminNotificationDeliveriesInput,
+  ): Promise<NotificationDelivery[]> {
+    const deliveries = await this.notificationsWAuth(
+      user,
+    ).notificationsControllerFindDeliveries({
+      id: input.notificationId,
+      isActor: input.isActor,
+    })
+
+    return deliveries.map(notificationDeliveryMapper)
   }
 }
