@@ -17,39 +17,35 @@ import {
 } from '@island.is/island-ui/core'
 import {
   getThemeConfig,
+  HeadWithSocialSharing,
   OrganizationFooter,
-  OrganizationWrapper,
+  OrganizationHeader,
   Webreader,
 } from '@island.is/web/components'
 import {
   AnnualReport,
   ContentLanguage,
-  GetNamespaceQuery,
   OrganizationPage,
   Query,
   QueryGetAnnualReportsArgs,
-  QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { linkResolver, useNamespace } from '@island.is/web/hooks'
+import { linkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 
 import {
   GET_ANNUAL_REPORTS_QUERY,
-  GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../../queries'
 import * as styles from './AnnualReports.css'
 
 export interface AnnualReportsProps {
   organizationPage: OrganizationPage
-  namespace: Record<string, string>
   annualReports: AnnualReport[]
 }
 
@@ -59,15 +55,12 @@ type AnnualReportsScreenContext = ScreenContext & {
 
 const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
   organizationPage,
-  namespace,
   annualReports,
 }) => {
   useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver('annualreports')
 
-  const n = useNamespace(namespace)
   const router = useRouter()
-  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
   const { activeLocale } = useI18n()
 
   const [selectedId, setSelectedId] = useState<string>('')
@@ -100,158 +93,170 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
   const selectedReport = annualReports.find((x) => x.id === selectedId)
 
   return (
-    <OrganizationWrapper
-      pageTitle={pageTitle}
-      organizationPage={organizationPage}
-      showReadSpeaker={false}
-      navigationData={{
-        title: n(
-          'navigationTitle',
-          activeLocale === 'is' ? 'Efnisyfirlit' : 'Menu',
-        ),
-        items: getOrganizationSidebarNavigationItems(
-          organizationPage,
-          baseRouterPath,
-        ),
-      }}
-      minimal
-      mainContent={
-        <Box paddingBottom={9} paddingTop={3}>
-          <Stack space={2}>
-            <GridContainer>
-              <Box paddingBottom={[2, 2, 4]}>
-                <Breadcrumbs
-                  items={[
-                    {
-                      title: 'Ísland.is',
-                      href: linkResolver('homepage').href,
-                    },
-                    {
-                      title: organizationPage?.title ?? '',
-                      href: linkResolver('organizationpage', [
-                        organizationPage?.slug ?? '',
-                      ]).href,
-                    },
-                  ]}
-                />
-              </Box>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Text variant="h1" as="h1" marginBottom={2}>
-                    {pageTitle}
-                  </Text>
-                  <Webreader
-                    marginTop={0}
-                    marginBottom={3}
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    readId={null}
-                    readClass="rs_read"
+    <>
+      <HeadWithSocialSharing
+        title={`${pageTitle} | ${organizationPage.title}`}
+      />
+      <Box>
+        <OrganizationHeader organizationPage={organizationPage} isSubpage />
+      </Box>
+      <GridContainer>
+        <GridRow>
+          <GridColumn
+            paddingTop={[2, 2, 9]}
+            paddingBottom={[6, 6, 9]}
+            span={['12/12', '12/12', '10/12']}
+            offset={['0', '0', '1/12']}
+            className="rs_read"
+          >
+            <Stack space={2}>
+              <GridContainer>
+                <Box paddingBottom={[2, 2, 4]}>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: linkResolver('homepage').href,
+                      },
+                      {
+                        title: organizationPage?.title ?? '',
+                        href: linkResolver('organizationpage', [
+                          organizationPage?.slug ?? '',
+                        ]).href,
+                      },
+                    ]}
                   />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-
-            <Stack space={4}>
-              {showDropdown && (
+                </Box>
                 <GridRow>
-                  <GridColumn span={['12/12', '12/12', '6/12', '6/12', '5/12']}>
-                    <Select
-                      label="Veldu ársskýrslu"
-                      name="select-annual-report"
-                      size="sm"
+                  <GridColumn span="12/12">
+                    <Text variant="h1" as="h1" marginBottom={2}>
+                      {pageTitle}
+                    </Text>
+                    <Webreader
+                      marginTop={0}
+                      marginBottom={3}
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
-                      onChange={({ value }: Option) => {
-                        const slug = dropdownOptions.find(
-                          (x) => x.value === value,
-                        )?.slug
-                        setSelectedId(String(value))
-                        router.push(
-                          {
-                            pathname: router.asPath.split('#')[0],
-                            hash: slug,
-                          },
-                          undefined,
-                          { shallow: true },
-                        )
-                      }}
-                      value={dropdownOptions.find(
-                        (x) => x.value === selectedId,
-                      )}
-                      options={dropdownOptions}
+                      readId={null}
+                      readClass="rs_read"
                     />
                   </GridColumn>
                 </GridRow>
-              )}
+              </GridContainer>
 
-              {!!selectedReport && (
-                <>
+              <Stack space={4}>
+                {showDropdown && (
                   <GridRow>
-                    <GridColumn span="12/12">
-                      <Text variant="h2" as="h2">
-                        {selectedReport.title}
-                      </Text>
-
-                      {selectedReport.intro && (
-                        <Text variant="intro" as="p" paddingTop={2}>
-                          <span
-                            className="rs_read"
-                            id={slugify(selectedReport.intro)}
-                          >
-                            {selectedReport.intro}
-                          </span>
-                        </Text>
-                      )}
-                    </GridColumn>
-                  </GridRow>
-
-                  <GridRow>
-                    <GridColumn span="12/12">
-                      <Stack space={4}>
-                        {selectedReport?.chapters && (
-                          <Box className={styles.profileCardContainer}>
-                            {selectedReport.chapters.map((chapter) => {
-                              const href = linkResolver('annualreportchapter', [
-                                organizationPage?.slug ?? '',
-                                selectedReport.slug,
-                                chapter.slug,
-                              ]).href
-
-                              return (
-                                <LinkV2 key={chapter.id} href={href}>
-                                  <ProfileCard
-                                    heightFull={true}
-                                    title={chapter.title}
-                                    link={{
-                                      text:
-                                        activeLocale === 'is'
-                                          ? 'Skoða'
-                                          : 'See more',
-                                      url: href,
-                                    }}
-                                    description={chapter.intro || ''}
-                                    image={chapter.thumbnailImage.url}
-                                  />
-                                </LinkV2>
-                              )
-                            })}
-                          </Box>
+                    <GridColumn
+                      span={['12/12', '12/12', '6/12', '6/12', '5/12']}
+                    >
+                      <Select
+                        label="Veldu ársskýrslu"
+                        name="select-annual-report"
+                        size="sm"
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        onChange={({ value }: Option) => {
+                          const slug = dropdownOptions.find(
+                            (x) => x.value === value,
+                          )?.slug
+                          setSelectedId(String(value))
+                          router.push(
+                            {
+                              pathname: router.asPath.split('#')[0],
+                              hash: slug,
+                            },
+                            undefined,
+                            { shallow: true },
+                          )
+                        }}
+                        value={dropdownOptions.find(
+                          (x) => x.value === selectedId,
                         )}
-                      </Stack>
+                        options={dropdownOptions}
+                      />
                     </GridColumn>
                   </GridRow>
-                </>
-              )}
+                )}
+
+                {!!selectedReport && (
+                  <>
+                    <GridRow>
+                      <GridColumn span="12/12">
+                        <Text variant="h2" as="h2">
+                          {selectedReport.title}
+                        </Text>
+
+                        {selectedReport.intro && (
+                          <Text variant="intro" as="p" paddingTop={2}>
+                            <span
+                              className="rs_read"
+                              id={slugify(selectedReport.intro)}
+                            >
+                              {selectedReport.intro}
+                            </span>
+                          </Text>
+                        )}
+                      </GridColumn>
+                    </GridRow>
+
+                    <GridRow>
+                      <GridColumn span="12/12">
+                        <Stack space={4}>
+                          {selectedReport?.chapters && (
+                            <Box className={styles.profileCardContainer}>
+                              {selectedReport.chapters.map((chapter) => {
+                                const href = linkResolver(
+                                  'annualreportchapter',
+                                  [
+                                    organizationPage?.slug ?? '',
+                                    selectedReport.slug,
+                                    chapter.slug,
+                                  ],
+                                ).href
+
+                                return (
+                                  <LinkV2 key={chapter.id} href={href}>
+                                    <ProfileCard
+                                      heightFull={true}
+                                      title={chapter.title}
+                                      link={{
+                                        text:
+                                          activeLocale === 'is'
+                                            ? 'Skoða'
+                                            : 'See more',
+                                        url: href,
+                                      }}
+                                      description={chapter.intro || ''}
+                                      image={chapter.thumbnailImage.url}
+                                    />
+                                  </LinkV2>
+                                )
+                              })}
+                            </Box>
+                          )}
+                        </Stack>
+                      </GridColumn>
+                    </GridRow>
+                  </>
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-        </Box>
-      }
-    >
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+
       {organizationPage.organization && (
-        <OrganizationFooter organizations={[organizationPage.organization]} />
+        <Box className="rs_read" marginTop="auto">
+          <OrganizationFooter
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            organizations={[organizationPage.organization]}
+            force={true}
+          />
+        </Box>
       )}
-    </OrganizationWrapper>
+    </>
   )
 }
 
@@ -270,7 +275,6 @@ AnnualReports.getProps = async ({
     {
       data: { getAnnualReports },
     },
-    namespace,
   ] = await Promise.all([
     !organizationPage
       ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -293,22 +297,6 @@ AnnualReports.getProps = async ({
         },
       },
     }),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
-            namespace: 'OrganizationPages',
-          },
-        },
-      })
-      // map data here to reduce data processing in component
-      .then((variables) =>
-        variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
   ])
 
   if (!getOrganizationPage) {
@@ -321,7 +309,6 @@ AnnualReports.getProps = async ({
 
   return {
     organizationPage: getOrganizationPage,
-    namespace,
     annualReports: getAnnualReports,
     ...getThemeConfig(
       getOrganizationPage?.theme,
