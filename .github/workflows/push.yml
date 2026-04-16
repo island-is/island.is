@@ -40,7 +40,7 @@ env:
   MAX_JOBS: '2'
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
-  NODE_IMAGE_VERSION: 20
+  NODE_IMAGE_VERSION: 24
   RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
