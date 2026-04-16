@@ -2,7 +2,7 @@ name: Build Runner AMI
 
 on:
   push:
-    branches: [main, feat/ci-improvements]
+    branches: [main]
     paths: [yarn.lock]
   workflow_dispatch:
     inputs:
@@ -79,6 +79,7 @@ jobs:
             --name "/actions_runner/shared/ami_id" \
             --value "${AMI_ID}" \
             --type String \
+            --data-type aws:ec2:image \
             --overwrite \
             --region eu-west-1
 
