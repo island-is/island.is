@@ -64,6 +64,7 @@ const ApiScopeUsers = () => {
   const [userAvailableEnvironments, setUserAvailableEnvironments] = useState<
     AuthAdminEnvironment[]
   >([])
+  const [originalHadName, setOriginalHadName] = useState(false)
   const [loadingUser, setLoadingUser] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
   const lastHandledFetcherData = useRef<ApiScopeUsersActionResult | null>(null)
@@ -118,6 +119,7 @@ const ApiScopeUsers = () => {
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setFormErrors({})
+    setOriginalHadName(false)
   }, [])
 
   useEffect(() => {
@@ -190,11 +192,13 @@ const ApiScopeUsers = () => {
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setFormErrors({})
+    setOriginalHadName(false)
     setModalVisible(true)
   }
 
   const openEditModal = async (user: ApiScopeUserRow) => {
     setIsEditing(true)
+    setOriginalHadName(!!user.name)
     setFormData({
       nationalId: user.nationalId,
       name: user.name ?? '',
@@ -253,6 +257,7 @@ const ApiScopeUsers = () => {
     const errors = validateApiScopeUserForm({
       formData,
       isEditing,
+      originalHadName,
       selectedEnvironments,
       formatMessage,
     })

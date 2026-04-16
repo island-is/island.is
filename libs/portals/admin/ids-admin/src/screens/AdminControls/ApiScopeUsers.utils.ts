@@ -11,6 +11,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 interface ValidateFormParams {
   formData: ApiScopeUserFormData
   isEditing: boolean
+  originalHadName?: boolean
   selectedEnvironments: AuthAdminEnvironment[]
   formatMessage: (descriptor: { id: string; defaultMessage: string }) => string
 }
@@ -18,12 +19,14 @@ interface ValidateFormParams {
 export const validateApiScopeUserForm = ({
   formData,
   isEditing,
+  originalHadName,
   selectedEnvironments,
   formatMessage,
 }: ValidateFormParams): FormErrors => {
   const errors: FormErrors = {}
 
-  if ((!isEditing || formData.name) && formData.name.length < 2) {
+  const nameRequired = !isEditing || originalHadName || !!formData.name
+  if (nameRequired && formData.name.length < 2) {
     errors.name = formatMessage(m.apiScopeUsersErrorNameMinLength)
   }
 
