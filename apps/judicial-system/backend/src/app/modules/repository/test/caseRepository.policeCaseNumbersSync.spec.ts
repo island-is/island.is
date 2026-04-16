@@ -292,9 +292,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       caseModel.create.mockResolvedValue(splitCase)
 
       findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
-        new Map([
-          ['parent-case-id', ['007-2024-1', '007-2024-2']],
-        ]),
+        new Map([['parent-case-id', ['007-2024-1', '007-2024-2']]]),
       )
 
       await caseRepositoryService.split('parent-case-id', 'defendant-id', {

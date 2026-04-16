@@ -418,7 +418,7 @@ export class CaseRepositoryService {
       const { policeCaseNumbers, ...caseFields } = omit(
         data,
         appealCaseFields,
-      ) as Omit<typeof data, (typeof appealCaseFields)[number]> & {
+      ) as Omit<typeof data, typeof appealCaseFields[number]> & {
         policeCaseNumbers?: string[]
       }
 
