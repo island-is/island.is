@@ -2,7 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -488,6 +488,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     >
                       {file.name}
                     </Text>
+                    {file.isNew && (
+                      <Tag variant="mint" outlined disabled>
+                        Nýtt
+                      </Tag>
+                    )}
                     <Icon
                       icon="open"
                       type="outline"
