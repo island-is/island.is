@@ -36,6 +36,8 @@ import {
 } from '../utils/assigneeUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -48,6 +50,24 @@ const template: ApplicationTemplate<
   institution: m.miscMessages.institutionName,
   translationNamespaces: ApplicationConfigurations.HousingBenefits.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.LegalGuardian,
+    },
+    {
+      type: AuthDelegationType.LegalRepresentative,
+    },
+    {
+      type: AuthDelegationType.PersonalRepresentative,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [HmsScope.properties, HmsScope.housingBenefits, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
