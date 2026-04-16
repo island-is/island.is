@@ -370,6 +370,166 @@
         ]
       }
     },
+    "/api/ActivationGrant/{applicationId}/withdraw": {
+      "post": {
+        "tags": ["ActivationGrant"],
+        "operationId": "ActivationGrant_WithdrawApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/resolve": {
+      "post": {
+        "tags": ["Applicant"],
+        "operationId": "Applicant_Resolve",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ResolveApplicantRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ResolveApplicantResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/overview": {
+      "get": {
+        "tags": ["Applicant"],
+        "operationId": "Applicant_Overview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantOverviewResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{ssn}/withdraw": {
+      "get": {
+        "tags": ["Applicant"],
+        "operationId": "Applicant_CanWithdrawApplication",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
         "tags": ["ApplicantInfo"],
@@ -428,6 +588,185 @@
                 "schema": {
                   "type": "string",
                   "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/ApplicantInfo/getApplicantStatusForSI/{ssn}": {
+      "get": {
+        "tags": ["ApplicantInfo"],
+        "operationId": "ApplicantInfo_GetApplicantStatusForSI",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/ApplicantInfo/{ssn}": {
+      "get": {
+        "tags": ["ApplicantInfo"],
+        "operationId": "ApplicantInfo_GetApplicantInfo",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ApplicantInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["ApplicantInfo"],
+        "operationId": "ApplicantInfo_UpdateApplicant",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "applicantInformation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_UpdateApplicantRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ApplicantInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/ApplicantInfo/supportData": {
+      "get": {
+        "tags": ["ApplicantInfo"],
+        "operationId": "ApplicantInfo_GetApplicantInfoSupportData",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ApplicantInfoSupportDataResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applications/overview": {
+      "post": {
+        "tags": ["Application"],
+        "operationId": "Application_Overview",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Application_GetApplicationsOverviewRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Application_GetApplicationsOverviewResponse"
                 }
               }
             }
@@ -799,6 +1138,68 @@
         ]
       }
     },
+    "/api/JobSearchConfirmations": {
+      "post": {
+        "tags": ["JobSearchConfirmation"],
+        "operationId": "JobSearchConfirmation_Create",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_CreateJobSearchConfirmationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/SupportData/delistingReasons": {
+      "get": {
+        "tags": ["SupportData"],
+        "operationId": "SupportData_GetDelistingReasons",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_DelistingReasonDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/UnemploymentApplication": {
       "post": {
         "tags": ["UnemploymentApplication"],
@@ -822,6 +1223,49 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/overview/{ssn}": {
+      "get": {
+        "tags": ["UnemploymentApplication"],
+        "operationId": "UnemploymentApplication_GetLatestUnemploymentApplicationOverview",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_UnemploymentApplicationOverviewResponse"
                 }
               }
             }
@@ -1040,6 +1484,53 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/{applicationId}/withdraw": {
+      "post": {
+        "tags": ["UnemploymentApplication"],
+        "operationId": "UnemploymentApplication_WithdrawApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
@@ -4257,10 +4748,115 @@
               },
               "isInTheEUAndOrEEA": {
                 "type": "boolean"
+              },
+              "riskGroupTypeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "riskGroupType": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Galdur_Domain_Entities_SupportEntities_NationalityRiskGroupType"
+                  }
+                ]
               }
             }
           }
         ]
+      },
+      "Galdur_Domain_Entities_SupportEntities_NationalityRiskGroupType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Entities_SupportEntities_SupportEntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "point": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_SupportEntities_SupportEntityBase": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Entities_EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "orderNumber": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "hiddenOnMyPages": {
+                "type": "boolean"
+              },
+              "english": {
+                "type": "string",
+                "nullable": true
+              },
+              "polish": {
+                "type": "string",
+                "nullable": true
+              },
+              "otherId": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_EntityBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "format": ""
+          },
+          "changedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "changed": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "deletedWhen": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        }
       },
       "Galdur_Domain_Models_Settings_IntroductoryMeetingLanguage_IntroductoryMeetingLanguageDTO": {
         "type": "object",
@@ -4279,6 +4875,9 @@
             "nullable": true
           },
           "selectableInWorkList": {
+            "type": "boolean"
+          },
+          "isActive": {
             "type": "boolean"
           }
         }
@@ -4614,6 +5213,521 @@
           }
         }
       },
+      "Galdur_External_Domain_Requests_WithdrawApplicationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantSSN": {
+            "type": "string"
+          },
+          "withdrawDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reasonId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_ResolveApplicantResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_ResolveApplicantRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ssn": {
+            "type": "string"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_ApplicantOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "passCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredJobs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bankAccount": {
+            "type": "string",
+            "nullable": true
+          },
+          "union": {
+            "type": "string",
+            "nullable": true
+          },
+          "pensionFund": {
+            "type": "string",
+            "nullable": true
+          },
+          "usedPersonalTaxCredit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfChildren": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "employmentHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "educationHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "drivingLicenses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languageAbilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_LanguageOverviewDTO"
+            }
+          },
+          "serviceArea": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentAddressDifferent": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "savedToEures": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_LanguageOverviewDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "proficiency": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_ApplicantInfoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "serviceAreaId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "currentAddressDifferent": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "currentAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentPostCodeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "passCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankAccount": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Models_BankAccountDTO"
+              }
+            ]
+          },
+          "preferredJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Applicant_PreferredJobDTO"
+            }
+          },
+          "educationHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_EducationDTO"
+            }
+          },
+          "employmentHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_EmploymentDTO"
+            }
+          },
+          "drivingLicenses": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "workMachineRights": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "languageAbility": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Applicant_LanguageAbilityDTO"
+            }
+          },
+          "saveEURES": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "unionIds": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "pensionId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "childCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "usedPersonalTaxCredit": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_BankAccountDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bankId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "ledgerId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Applicant_PreferredJobDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "jobCodeId": {
+            "type": "string"
+          },
+          "orderOfPreference": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_EducationDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "educationProgramId": {
+            "type": "string"
+          },
+          "educationDegreeId": {
+            "type": "string"
+          },
+          "educationSubjectId": {
+            "type": "string"
+          },
+          "yearStarted": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "yearFinished": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "orderNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_EmploymentDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employer": {
+            "type": "string"
+          },
+          "employerSSN": {
+            "type": "string"
+          },
+          "jobCodeId": {
+            "type": "string"
+          },
+          "ratio": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Applicant_LanguageAbilityDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "languageId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "abilityId": {
+            "type": "string"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_ApplicantInfoSupportDataResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "serviceAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ServiceAreas_ServiceAreaDTO"
+            }
+          },
+          "postCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDTO"
+            }
+          },
+          "jobCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobCodes_JobCodeDTO"
+            }
+          },
+          "preferredJobCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobCodes_JobCodeDTO"
+            }
+          },
+          "education": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationProgramDTO"
+            }
+          },
+          "drivingLicenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_DrivingLicenses_DrivingLicensesDTO"
+            }
+          },
+          "workMachineRights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_HeavyMachineryLicenses_HeavyMachineryLicensesDTO"
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
+            }
+          },
+          "languageAbilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
+            }
+          },
+          "banks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Banks_BankDTO"
+            }
+          },
+          "ledgers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Ledgers_LedgerDTO"
+            }
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_UpdateApplicantRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "serviceAreaId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "currentAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentPostCodeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "passCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankAccount": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Models_BankAccountDTO"
+              }
+            ]
+          },
+          "preferredJobs": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Applicant_PreferredJobDTO"
+            }
+          },
+          "educationHistory": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_EducationDTO"
+            }
+          },
+          "drivingLicenses": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "workMachineRights": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "languageAbility": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Applicant_LanguageAbilityDTO"
+            }
+          },
+          "saveEURES": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Application_GetApplicationsOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "unemploymentApplication": {
+            "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Application_ApplicationOverviewItem"
+          },
+          "activationGrant": {
+            "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Application_ApplicationOverviewItem"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Application_ApplicationOverviewItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicationId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "statusId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "statusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVisible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Application_GetApplicationsOverviewRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
       "Galdur_Domain_Models_Attachments_AttachmentViewModel": {
         "allOf": [
           {
@@ -4669,6 +5783,13 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO"
+            }
+          },
+          "attachmentTypeCategories": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypeCategories_AttachmentTypeCategoryDTO"
             }
           }
         }
@@ -6296,6 +7417,57 @@
           }
         ]
       },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_CreateJobSearchConfirmationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "appliedCompanies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Galdur_External_Domain_Models_SupportData_SettingsBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "otherId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "orderNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "english": {
+            "type": "string"
+          }
+        }
+      },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel": {
         "allOf": [
           {
@@ -7273,6 +8445,10 @@
           "unionSSN": {
             "type": "string",
             "description": "UnionSSN",
+            "nullable": true
+          },
+          "periodString": {
+            "type": "string",
             "nullable": true
           }
         }
@@ -8414,6 +9590,81 @@
             "type": "string",
             "description": "Staðfesting á atvinnuleit í hverjum mánuði",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_UnemploymentApplicationOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "unemploymentApplicationId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatusId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataRequested": {
+            "type": "boolean"
+          },
+          "availableActions": {
+            "$ref": "#/components/schemas/Galdur_XRoad_API_Models_AvailableActions"
+          },
+          "overviewItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_OverviewItem"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_AvailableActions": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "canContact": {
+            "type": "boolean"
+          },
+          "canSubmitDocuments": {
+            "type": "boolean"
+          },
+          "canReportWork": {
+            "type": "boolean"
+          },
+          "canReportTravel": {
+            "type": "boolean"
+          },
+          "canUnregister": {
+            "type": "boolean"
+          },
+          "canConfirmJobSearch": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_OverviewItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
           }
         }
       },

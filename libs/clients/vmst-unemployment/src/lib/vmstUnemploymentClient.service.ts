@@ -14,6 +14,10 @@ import {
   UnemploymentApplicationValidatePaymentPageRequest,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
+  ApplicantInfoApi,
+  GaldurXRoadAPIModelsApplicantInfoResponse,
+  GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
+  ApplicantInfoUpdateApplicantRequest,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -24,7 +28,11 @@ import { VmstUnemploymentClientConfig } from './vmstUnemploymentClient.config'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
-type VmstApis = UnemploymentApplicationApi | ActivationGrantApi | AttachmentApi
+type VmstApis =
+  | UnemploymentApplicationApi
+  | ActivationGrantApi
+  | AttachmentApi
+  | ApplicantInfoApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -202,5 +210,36 @@ export class VmstUnemploymentClientService {
     return await api.unemploymentApplicationCreateUnemploymentApplication(
       request,
     )
+  }
+
+  async getCurrentApplicationForActions(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantInfoApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantInfoGetApplicantInfo({ ssn: auth.nationalId })
+  }
+
+  async getCurrentApplicationSupportDataForActions(): Promise<GaldurXRoadAPIModelsApplicantInfoSupportDataResponse> {
+    const api = await this.createApiClient(
+      ApplicantInfoApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantInfoGetApplicantInfoSupportData()
+  }
+
+  async updateCurrentApplicationForActions(
+    requestParameters: ApplicantInfoUpdateApplicantRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantInfoApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantInfoUpdateApplicant(requestParameters)
   }
 }
