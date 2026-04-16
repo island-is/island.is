@@ -113,7 +113,7 @@ export {
   IndictmentCaseSubtypes,
   type Subtype,
   courtSubtypes,
-  CaseAppealState,
+  AppealCaseState,
   RequestCaseState,
   CaseTransition,
   IndictmentCaseTransition,
@@ -147,6 +147,7 @@ export {
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
+  AppealCaseTransition,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'

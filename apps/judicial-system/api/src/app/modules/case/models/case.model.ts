@@ -8,8 +8,6 @@ import type {
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
-  CaseAppealRulingDecision,
-  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -25,6 +23,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../../appeal-case'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
@@ -35,7 +34,6 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { Victim } from '../../victim'
-import { AppealCase } from './appealCase.model'
 import { CaseRepresentative } from './caseRepresentative.model'
 import { Notification } from './notification.model'
 
@@ -50,8 +48,6 @@ registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 registerEnumType(CaseDecision, { name: 'CaseDecision' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
-registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
-registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseIndictmentRulingDecision, {
   name: 'CaseIndictmentRulingDecision',
 })
