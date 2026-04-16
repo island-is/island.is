@@ -1,0 +1,69 @@
+name: Build Runner AMI
+
+on:
+  push:
+    branches: [main]
+    paths: [yarn.lock]
+  workflow_dispatch:
+    inputs:
+      runner_version:
+        description: 'GitHub runner version (no v prefix)'
+        required: false
+      node_version:
+        description: 'Node.js version'
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Packer Build
+    runs-on: [self-hosted, ec2-runners, shared-v2]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            yarn.lock
+            packer/runner-ami
+          sparse-checkout-cone-mode: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Packer Init
+        working-directory: packer/runner-ami
+        run: packer init .
+
+      - name: Build AMI
+        working-directory: packer/runner-ami
+        run: |
+          HASH=$(sha256sum ../../yarn.lock | cut -c1-8)
+          ARGS=(-var "yarn_lock_hash=${HASH}")
+
+          if [[ -n "${{ inputs.runner_version }}" ]]; then
+            ARGS+=(-var "runner_version=${{ inputs.runner_version }}")
+          fi
+          if [[ -n "${{ inputs.node_version }}" ]]; then
+            ARGS+=(-var "node_version=${{ inputs.node_version }}")
+          fi
+
+          packer build "${ARGS[@]}" -color=false runner.pkr.hcl | tee /tmp/packer.log
+
+          AMI_ID=$(grep -oP 'ami-[a-z0-9]+' /tmp/packer.log | tail -1)
+          echo "Built AMI: ${AMI_ID}"
+
+          aws ssm put-parameter \
+            --name "/actions_runner/shared/ami_id" \
+            --value "${AMI_ID}" \
+            --type String \
+            --overwrite \
+            --region eu-west-1
