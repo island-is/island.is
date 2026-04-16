@@ -30,6 +30,7 @@ import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroa
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 import {
   workerSetup as cmsImporterSetup,
+  cmsCleanupSetup as cmsImporterCmsCleanupSetup,
   energyFundImportSetup as cmsImporterEnergyFundImportSetup,
   fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
   webSitemapImportSetup as cmsImporterWebSitemapImportSetup,
@@ -172,6 +173,7 @@ const cmsImporter = cmsImporterSetup()
 const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
 const cmsImporterFsreBuildingsImport = cmsImporterFsreBuildingsImportSetup()
 const cmsImporterWebSitemapImport = cmsImporterWebSitemapImportSetup()
+const cmsImporterCmsCleanup = cmsImporterCmsCleanupSetup()
 
 const storybook = storybookSetup({})
 
@@ -222,6 +224,7 @@ export const Services: EnvironmentServices = {
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
     cmsImporterWebSitemapImport,
+    cmsImporterCmsCleanup,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -319,6 +322,7 @@ export const Services: EnvironmentServices = {
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
     cmsImporterWebSitemapImport,
+    cmsImporterCmsCleanup,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -352,4 +356,6 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   cmsImporter,
   cmsImporterEnergyGrantImport,
   cmsImporterFsreBuildingsImport,
+  cmsImporterWebSitemapImport,
+  cmsImporterCmsCleanup,
 ]

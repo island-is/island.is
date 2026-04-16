@@ -1,4 +1,10 @@
-import { AccordionCard, Box, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  AccordionCard,
+  Box,
+  Checkbox,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ScopesTable } from './ScopesTable/ScopesTable'
 import { m } from '../lib/messages'
@@ -21,10 +27,12 @@ export const ScopesCategoriesList = ({
   onSelectCategory?: (scopes: AuthApiScope[]) => void
 }) => {
   const { formatMessage } = useLocale()
-  return (
-    !loading &&
-    !error &&
-    categories.length > 0 && (
+  return loading ? (
+    <Box width="full">
+      <SkeletonLoader space={1} height={145} repeat={8} borderRadius="large" />
+    </Box>
+  ) : (
+    !error && categories.length > 0 && (
       <Box display="flex" flexDirection="column" rowGap={2}>
         {categories.map((cat) => {
           const selectedScopesInCategory =
@@ -42,17 +50,19 @@ export const ScopesCategoriesList = ({
               variant="large"
               label={
                 <Box display="flex" alignItems="center" zIndex={10}>
-                  <Checkbox
-                    name={`mobile-category-${cat.id}`}
-                    checked={
-                      selectedScopesInCategory?.length === cat.scopes.length
-                    }
-                    indeterminate={isIndeterminate}
-                    onChange={() =>
-                      onSelectCategory?.(cat.scopes as AuthApiScope[])
-                    }
-                  />
-                  <Text variant="h3">{cat.title}</Text>
+                  <Box onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      name={`mobile-category-${cat.id}`}
+                      checked={
+                        selectedScopesInCategory?.length === cat.scopes.length
+                      }
+                      indeterminate={isIndeterminate}
+                      onChange={() =>
+                        onSelectCategory?.(cat.scopes as AuthApiScope[])
+                      }
+                    />
+                  </Box>
+                  <Text variant="h4">{cat.title}</Text>
                 </Box>
               }
               labelUse="h2"

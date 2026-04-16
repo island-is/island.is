@@ -1,8 +1,7 @@
 import { Keyboard } from 'react-native'
-import { Navigation } from 'react-native-navigation'
+import { router } from 'expo-router'
 import { authStore } from '../stores/auth-store'
 import { preferencesStore } from '../stores/preferences-store'
-import { ComponentRegistry } from './component-registry'
 import { isOnboarded } from './onboarding'
 
 export function skipAppLock() {
@@ -20,43 +19,27 @@ export function skipAppLock() {
 
 export function showAppLockOverlay({
   enforceActivated = false,
-  status = 'active',
 }: {
   enforceActivated?: boolean
-  status?: string
-}) {
+} = {}) {
   if (skipAppLock()) {
-    return Promise.resolve()
+    return
   }
 
-  // dismiss keyboard
   Keyboard.dismiss()
 
-  // set now
   let lockScreenActivatedAt = Date.now()
   if (enforceActivated) {
-    // set yesterday
     lockScreenActivatedAt -= 86400 * 1000
   }
-  authStore.setState({
-    lockScreenActivatedAt,
-  })
-
-  return Navigation.showOverlay({
-    component: {
-      name: ComponentRegistry.AppLockScreen,
-      passProps: { status, lockScreenActivatedAt },
-    },
-  })
+  authStore.setState({ lockScreenActivatedAt })
+  router.push('/app-lock')
 }
 
-export function hideAppLockOverlay(lockScreenComponentId: string) {
-  // Dismiss the lock screen
-  void Navigation.dismissOverlay(lockScreenComponentId)
-
-  // reset lockscreen parameters
+export function hideAppLockOverlay() {
   authStore.setState({
     lockScreenActivatedAt: undefined,
     lockScreenComponentId: undefined,
   })
+  router.back()
 }

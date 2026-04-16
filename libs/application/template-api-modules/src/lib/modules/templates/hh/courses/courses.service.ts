@@ -84,8 +84,15 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { name, email, phone, healthcenter, nationalId } =
-        await this.extractApplicantInfo(application)
+      const {
+        name,
+        email,
+        phone,
+        healthcenter,
+        nationalId,
+        workplace,
+        jobTitle,
+      } = await this.extractApplicantInfo(application)
 
       if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
@@ -109,6 +116,8 @@ export class CoursesService extends BaseTemplateApiService {
         email,
         phone,
         healthcenter,
+        workplace,
+        jobTitle,
       )
 
       const success = await this.zendeskService.submitTicket({
@@ -427,6 +436,8 @@ export class CoursesService extends BaseTemplateApiService {
       application.answers,
       'userInformation.healthcenter',
     )
+    const workplace = getValueViaPath<string>(application.answers, 'workplace')
+    const jobTitle = getValueViaPath<string>(application.answers, 'jobTitle')
 
     return {
       nationalId,
@@ -434,6 +445,8 @@ export class CoursesService extends BaseTemplateApiService {
       email,
       phone,
       healthcenter,
+      workplace,
+      jobTitle,
     }
   }
 
@@ -469,6 +482,8 @@ export class CoursesService extends BaseTemplateApiService {
     email: string,
     phone: string,
     healthcenter?: string,
+    workplace?: string,
+    jobTitle?: string,
   ): Promise<string> {
     const courseHasChargeItemCode = Boolean(courseInstance.chargeItemCode)
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
@@ -505,6 +520,8 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
     message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
+    if (workplace) message += `Vinnustaður umsækjanda: ${workplace}\n`
+    if (jobTitle) message += `Starfsheiti umsækjanda: ${jobTitle}\n`
 
     if (courseHasChargeItemCode) {
       const payer =
@@ -525,6 +542,14 @@ export class CoursesService extends BaseTemplateApiService {
       message += `Kennitala þátttakanda ${index + 1}: ${p.nationalId}\n`
       message += `Netfang þátttakanda ${index + 1}: ${p.email}\n`
       message += `Símanúmer þátttakanda ${index + 1}: ${p.phone}\n`
+      if (participant.workplace)
+        message += `Vinnustaður þátttakanda ${index + 1}: ${
+          participant.workplace
+        }\n`
+      if (participant.jobTitle)
+        message += `Starfsheiti þátttakanda ${index + 1}: ${
+          participant.jobTitle
+        }\n`
     })
 
     return message

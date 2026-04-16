@@ -32,11 +32,14 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
   # Categories and Tags
   categoryIds
   tagIds
+
+  modified
 }
 
 query AuthAdminScope($input: ScopeInput!) {
   authAdminScope(input: $input) {
     scopeName
+    modified
     environments {
       ...AuthAdminScopeEnvironmentFragment
     }

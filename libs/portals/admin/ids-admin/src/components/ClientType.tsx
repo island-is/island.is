@@ -1,6 +1,5 @@
 import { Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthAdminClient } from '../screens/Client/Client.loader'
 import { m } from '../lib/messages'
 
 const typeMessages = {
@@ -11,7 +10,7 @@ const typeMessages = {
 }
 
 interface Props {
-  client: { clientType: AuthAdminClient['clientType'] }
+  client: { clientType: string }
 }
 
 export const ClientType = ({ client }: Props) => {

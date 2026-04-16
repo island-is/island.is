@@ -56,6 +56,11 @@ type FormCardProps<Intent> = {
    * Note: This function should be memoized to prevent unnecessary re-renders.
    */
   customValidation?(currentValue: FormData, originalValue: FormData): boolean
+  /**
+   * When true, the Save button is disabled regardless of dirty state.
+   * Useful when the form has pending input that must be resolved before submission.
+   */
+  submitDisabled?: boolean
   headerMarginBottom?: 3 | 5
 }
 
@@ -68,6 +73,7 @@ export const FormCard = <Intent extends string>({
   accordionLabel,
   description,
   customValidation,
+  submitDisabled,
   headerMarginBottom = 5,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
@@ -254,7 +260,7 @@ export const FormCard = <Intent extends string>({
                   type="submit"
                   name="intent"
                   value={intent}
-                  disabled={!dirty}
+                  disabled={!dirty || submitDisabled}
                   loading={loading}
                   dataTestId={`button-save-${title}`}
                 >
