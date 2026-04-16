@@ -26,9 +26,10 @@ const usePoliceDigitalCaseFile = (
   const [deleteMutation, { loading: isDeleting }] =
     useDeletePoliceDigitalCaseFileMutation()
 
-  const [getTokenUrlQuery] = usePoliceDigitalCaseFileTokenUrlLazyQuery({
-    fetchPolicy: 'no-cache',
-  })
+  const [getTokenUrlQuery, { loading: isLoading }] =
+    usePoliceDigitalCaseFileTokenUrlLazyQuery({
+      fetchPolicy: 'no-cache',
+    })
 
   const [loadingFileId, setLoadingFileId] = useState<string | null>(null)
 
@@ -84,6 +85,7 @@ const usePoliceDigitalCaseFile = (
     digitalCaseFilesLoading,
     digitalCaseFilesError,
     isDeleting,
+    isLoading,
     loadingFileId,
     openDigitalCaseFileUrl,
     deletePoliceDigitalCaseFile,

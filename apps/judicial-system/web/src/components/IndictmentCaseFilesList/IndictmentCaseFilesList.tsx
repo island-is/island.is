@@ -297,6 +297,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     digitalCaseFilesLoading,
     openDigitalCaseFileUrl,
     loadingFileId,
+    isLoading,
   } = usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const showDigitalCaseFilesSection =
@@ -509,7 +510,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                           onClick={() =>
                             openDigitalCaseFileUrl(file.policeDigitalFileId)
                           }
-                          disabled={loadingFileId === file.policeDigitalFileId}
+                          disabled={isLoading}
                           cursor="pointer"
                           background="transparent"
                           width="full"
