@@ -1,0 +1,6 @@
+mutation CreateAppealCase($input: CreateAppealCaseInput!) {
+  createAppealCase(input: $input) {
+    id
+    appealState
+  }
+}

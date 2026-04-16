@@ -73,7 +73,7 @@ export const getAppealDecision = (
   }
 }
 
-const useAppealCase = () => {
+const useAppealCaseUI = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
@@ -330,4 +330,4 @@ const useAppealCase = () => {
   }
 }
 
-export default useAppealCase
+export default useAppealCaseUI
