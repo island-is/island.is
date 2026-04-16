@@ -62,11 +62,11 @@ const template: ApplicationTemplate<
                     id: 1986,
                   },
                 }),
-                NationalRegistryApi.configure({
-                  params: {
-                    ageToValidate: 18,
-                  },
-                }),
+                // NationalRegistryApi.configure({
+                //   params: {
+                //     ageToValidate: 18,
+                //   },
+                // }),
                 UserProfileApi,
               ],
               delete: true,

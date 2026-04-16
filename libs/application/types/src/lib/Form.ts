@@ -100,6 +100,7 @@ export enum FormModes {
 }
 
 export interface Form {
+  allowStepperNavigation?: boolean
   children: FormChildren[]
   icon?: string
   id: string

@@ -65,6 +65,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   title: applicationMessage.general.name,
   mode: FormModes.DRAFT,
   logo: AlthingiOmbudsmanLogo,
+  allowStepperNavigation: true,
   children: [
     buildSection({
       id: 'information',

@@ -13,6 +13,7 @@ export const MainForm: Form = buildForm({
   mode: FormModes.DRAFT,
   logo: CoatOfArms,
   renderLastScreenButton: true,
+  allowStepperNavigation: true,
   renderLastScreenBackButton: true,
   children: [
     introSection,

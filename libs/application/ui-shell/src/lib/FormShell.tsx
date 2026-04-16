@@ -152,6 +152,7 @@ export const FormShell: FC<
                   totalDraftScreens={getDraftSectionTotalScreens()}
                   screen={currentScreen}
                   mode={mode}
+                  allowStepperNavigation={form.allowStepperNavigation}
                 />
               </Box>
             </GridColumn>
@@ -174,6 +175,16 @@ export const FormShell: FC<
                   screens={screens}
                   currentScreen={currentScreen}
                   application={application}
+                  onNavigate={
+                    form.allowStepperNavigation
+                      ? (screenIndex: number) => {
+                          dispatch({
+                            type: ActionTypes.GO_TO_SCREEN_INDEX,
+                            payload: screenIndex,
+                          })
+                        }
+                      : undefined
+                  }
                 />
                 {FormLogo && (
                   <Box
