@@ -13,6 +13,7 @@ export const GET_PHARMACIES = gql`
         fax
         email
         licenseHolder
+        region
         operator {
           name
           address

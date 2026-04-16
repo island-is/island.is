@@ -36,4 +36,54 @@ export const m = defineMessages({
     defaultMessage: 'kt.',
     description: 'Prefix shown before national ID (kennitala)',
   },
+  searchPlaceholder: {
+    id: 'web.lyfjastofnunPharmacies:searchPlaceholder',
+    defaultMessage: 'Leita að apóteki',
+    description: 'Placeholder for pharmacy name search input',
+  },
+  regionLabel: {
+    id: 'web.lyfjastofnunPharmacies:regionLabel',
+    defaultMessage: 'Landshluti',
+    description: 'Label for region filter dropdown',
+  },
+  regionCapital: {
+    id: 'web.lyfjastofnunPharmacies:regionCapital',
+    defaultMessage: 'Höfuðborgarsvæðið',
+    description: 'Region name: Capital Region',
+  },
+  regionSouth: {
+    id: 'web.lyfjastofnunPharmacies:regionSouth',
+    defaultMessage: 'Suðurland og Reykjanes',
+    description: 'Region name: South Iceland and Reykjanes',
+  },
+  regionWest: {
+    id: 'web.lyfjastofnunPharmacies:regionWest',
+    defaultMessage: 'Vesturland og Vestfirðir',
+    description: 'Region name: West Iceland and Westfjords',
+  },
+  regionNorth: {
+    id: 'web.lyfjastofnunPharmacies:regionNorth',
+    defaultMessage: 'Norðurland',
+    description: 'Region name: North Iceland',
+  },
+  regionEast: {
+    id: 'web.lyfjastofnunPharmacies:regionEast',
+    defaultMessage: 'Austurland',
+    description: 'Region name: East Iceland',
+  },
+  noResults: {
+    id: 'web.lyfjastofnunPharmacies:noResults',
+    defaultMessage: 'Engar niðurstöður fundust',
+    description: 'Message shown when no pharmacies match the current filters',
+  },
+  filterOpen: {
+    id: 'web.lyfjastofnunPharmacies:filterOpen',
+    defaultMessage: 'Sía',
+    description: 'Label for filter button',
+  },
+  filterClear: {
+    id: 'web.lyfjastofnunPharmacies:filterClear',
+    defaultMessage: 'Hreinsa síu',
+    description: 'Label for clear filter button',
+  },
 })

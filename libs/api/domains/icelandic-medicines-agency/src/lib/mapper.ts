@@ -5,6 +5,7 @@ import {
 
 import { IcelandicMedicinesAgencyPharmacy } from './models/pharmacy.model'
 import { IcelandicMedicinesAgencyPharmacyBranch } from './models/pharmacyBranch.model'
+import { POSTAL_CODE_TO_REGION } from './postalCodeToRegion'
 
 const mapToPharmacyBranch = (
   dto: LyfjaUtibu,
@@ -32,6 +33,8 @@ export const mapToPharmacy = (
     return undefined
   }
 
+  const postalCodeNum = dto.postnumer ? parseInt(dto.postnumer, 10) : NaN
+
   return {
     id: dto.nafn,
     name: dto.nafn,
@@ -42,6 +45,9 @@ export const mapToPharmacy = (
     fax: dto.fax ?? undefined,
     email: dto.netfang ?? undefined,
     licenseHolder: dto.lyfsoluleyfishafi ?? undefined,
+    region: isNaN(postalCodeNum)
+      ? undefined
+      : POSTAL_CODE_TO_REGION[postalCodeNum],
     operator: dto.rekstraradili
       ? {
           name: dto.rekstraradili,
