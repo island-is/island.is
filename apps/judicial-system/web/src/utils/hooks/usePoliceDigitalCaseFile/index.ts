@@ -1,11 +1,10 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
 
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
-import { usePoliceDigitalCaseFileTokenUrlLazyQuery } from './policeDigitalCaseFileTokenUrl.generated'
 
 const usePoliceDigitalCaseFile = (
   caseId: string,
@@ -26,38 +25,15 @@ const usePoliceDigitalCaseFile = (
   const [deleteMutation, { loading: isDeleting }] =
     useDeletePoliceDigitalCaseFileMutation()
 
-  const [getTokenUrlQuery, { loading: isLoading }] =
-    usePoliceDigitalCaseFileTokenUrlLazyQuery({
-      fetchPolicy: 'no-cache',
-    })
-
-  const [loadingFileId, setLoadingFileId] = useState<string | null>(null)
-
   const openDigitalCaseFileUrl = useCallback(
-    async (policeDigitalFileId: string) => {
-      setLoadingFileId(policeDigitalFileId)
-
-      try {
-        const result = await getTokenUrlQuery({
-          variables: {
-            input: { caseId, policeDigitalFileId },
-          },
-        })
-
-        const url = result.data?.policeDigitalCaseFileTokenUrl
-
-        if (url) {
-          window.open(url, '_blank', 'noopener')
-        } else {
-          toast.error('Tengill á rafrænt skjal fannst ekki')
-        }
-      } catch {
-        toast.error('Upp kom villa við að sækja tengil á rafrænt skjal')
-      } finally {
-        setLoadingFileId(null)
-      }
+    (policeDigitalFileId: string) => {
+      window.open(
+        `/akaera/rafraen-gogn?caseId=${caseId}&fileId=${policeDigitalFileId}`,
+        '_blank',
+        'noopener',
+      )
     },
-    [caseId, getTokenUrlQuery],
+    [caseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
@@ -85,8 +61,6 @@ const usePoliceDigitalCaseFile = (
     digitalCaseFilesLoading,
     digitalCaseFilesError,
     isDeleting,
-    isLoading,
-    loadingFileId,
     openDigitalCaseFileUrl,
     deletePoliceDigitalCaseFile,
   }

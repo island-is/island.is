@@ -296,8 +296,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
     digitalCaseFiles,
     digitalCaseFilesLoading,
     openDigitalCaseFileUrl,
-    loadingFileId,
-    isLoading,
   } = usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const showDigitalCaseFilesSection =
@@ -510,7 +508,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
                           onClick={() =>
                             openDigitalCaseFileUrl(file.policeDigitalFileId)
                           }
-                          disabled={isLoading}
                           cursor="pointer"
                           background="transparent"
                           width="full"
@@ -524,34 +521,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                           >
                             {file.name}
                           </Text>
-                          <AnimatePresence mode="wait" initial={false}>
-                            {loadingFileId === file.policeDigitalFileId ? (
-                              <motion.span
-                                key="loading"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                style={{ display: 'flex' }}
-                              >
-                                <LoadingDots single size="small" />
-                              </motion.span>
-                            ) : (
-                              <motion.span
-                                key="icon"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                style={{ display: 'flex' }}
-                              >
-                                <Icon
-                                  icon="open"
-                                  type="outline"
-                                  size="small"
-                                  color="blue400"
-                                />
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
+                          <Icon
+                            icon="open"
+                            type="outline"
+                            size="small"
+                            color="blue400"
+                          />
                         </Box>
                       ))}
                     </motion.div>
