@@ -80,7 +80,7 @@ build {
     execute_command = "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
       "dnf update -y",
-      "dnf install -y docker git jq tar gzip unzip gcc-c++ make python3 python3-pip",
+      "dnf install -y docker git jq tar gzip unzip gcc-c++ make python3 python3-pip amazon-cloudwatch-agent",
       "dnf install -y xorg-x11-server-Xvfb gtk3 nss alsa-lib libXScrnSaver libXtst",
       "dnf install -y java-21-amazon-corretto-headless",
       "systemctl enable docker",
@@ -111,6 +111,7 @@ build {
       "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash",
       "source ~/.nvm/nvm.sh && nvm install ${var.node_version} && nvm alias default ${var.node_version}",
       "source ~/.nvm/nvm.sh && corepack enable",
+      "sudo ln -sf /home/ec2-user/.nvm/versions/node/v${var.node_version}/bin/* /usr/local/bin/",
     ]
   }
 
