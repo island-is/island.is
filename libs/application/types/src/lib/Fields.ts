@@ -319,7 +319,7 @@ export interface Option extends TestSupport {
   subLabel?: FormText
   tooltip?: FormText
   excludeOthers?: boolean
-  illustration?: React.FC<React.PropsWithChildren<unknown>>
+  illustration?: React.FC<React.PropsWithChildren<unknown>> | ImageField
   rightContent?: React.ReactNode
   disabled?: boolean
   tag?: {

@@ -7,7 +7,11 @@ import {
   buildFieldOptions,
   formatTextWithLocale,
 } from '@island.is/application/core'
-import { FieldBaseProps, RadioField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  Option as FieldOption,
+  RadioField,
+} from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
@@ -18,6 +22,16 @@ import {
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
 import { Markdown } from '@island.is/shared/components'
+
+const resolveIllustration = (
+  illustration: FieldOption['illustration'],
+): React.FC<React.PropsWithChildren<unknown>> | undefined => {
+  if (!illustration) return undefined
+  if (typeof illustration === 'function') return illustration
+  const { image: Image, alt } = illustration
+  return () =>
+    typeof Image === 'string' ? <img src={Image} alt={alt ?? ''} /> : <Image />
+}
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -105,22 +119,25 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
               getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
-          options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
-            ...o,
-            label: (
-              <Markdown>
-                {formatText(label, application, formatMessage)}
-              </Markdown>
-            ),
-            subLabel:
-              subLabel &&
-              HtmlParser(formatText(subLabel, application, formatMessage)),
-            ...(tooltip && {
-              tooltip: HtmlParser(
-                formatText(tooltip, application, formatMessage),
+          options={finalOptions.map(
+            ({ label, subLabel, tooltip, illustration, ...o }) => ({
+              ...o,
+              illustration: resolveIllustration(illustration),
+              label: (
+                <Markdown>
+                  {formatText(label, application, formatMessage)}
+                </Markdown>
               ),
+              subLabel:
+                subLabel &&
+                HtmlParser(formatText(subLabel, application, formatMessage)),
+              ...(tooltip && {
+                tooltip: HtmlParser(
+                  formatText(tooltip, application, formatMessage),
+                ),
+              }),
             }),
-          }))}
+          )}
           onSelect={field.onSelect}
           hasIllustration={hasIllustration}
           paddingBottom={0}
