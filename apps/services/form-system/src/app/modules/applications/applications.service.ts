@@ -56,7 +56,6 @@ import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
-import { trim } from 'lodash'
 import {
   ApplicationXroadFieldDto,
   ApplicationXroadValueDto,
@@ -1146,10 +1145,6 @@ export class ApplicationsService {
             : this.getDefaultScreenErrorPopulate()
       }
     }
-
-    this.logger.error(
-      `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
-    )
 
     return response
   }
