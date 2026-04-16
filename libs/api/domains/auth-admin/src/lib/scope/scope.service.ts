@@ -185,6 +185,7 @@ export class ScopeService extends MultiEnvironmentService {
     const scopeModels: Scope[] = Object.entries(groupedScopes)
       .map(([scopeName, scopes]) => ({
         scopeName,
+        modified: scopes[0].modified,
         environments: scopes,
       }))
       .sort((a, b) => a.scopeName.localeCompare(b.scopeName))
@@ -201,7 +202,7 @@ export class ScopeService extends MultiEnvironmentService {
   /**
    * Gets a specific scope by scope name for all available environments
    */
-  async getScope(user: User, input: ScopeInput): Promise<Scope> {
+  async getScope(user: User, input: ScopeInput): Promise<Scope | null> {
     const scopeSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
@@ -223,8 +224,11 @@ export class ScopeService extends MultiEnvironmentService {
       },
     )
 
+    if (environmentsScopes.length === 0) return null
+
     return {
       scopeName: input.scopeName,
+      modified: environmentsScopes[0].modified,
       environments: environmentsScopes,
     }
   }

@@ -144,7 +144,7 @@ export const Card = ({
             <Text>{description}</Text>
           )}
 
-          {visibleTags.length > 0 && highlightedResults && (
+          {visibleTags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
                 {visibleTags.map(

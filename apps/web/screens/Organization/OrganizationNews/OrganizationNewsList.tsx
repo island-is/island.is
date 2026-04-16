@@ -162,9 +162,9 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     [organizationPage.organization],
   )
 
-  const hideNewsListOverviewCardImages: boolean | undefined =
-    typeof organizationNamespace?.hideNewsListOverviewCardImages === 'boolean'
-      ? organizationNamespace.hideNewsListOverviewCardImages
+  const hideNewsListOverviewCardImages =
+    organizationPage.newsOverviewCardVariant === 'All cards have an image'
+      ? false
       : undefined
 
   return (

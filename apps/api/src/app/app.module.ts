@@ -231,6 +231,7 @@ import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-heal
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { GradeClientConfig } from '@island.is/clients/mms/grade'
+import { PrimarySchoolClientConfig } from '@island.is/clients/mms/primary-school'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
@@ -510,6 +511,7 @@ const environment = getConfig
         JudicialSystemSPClientConfig,
         FriggClientConfig,
         GradeClientConfig,
+        PrimarySchoolClientConfig,
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
