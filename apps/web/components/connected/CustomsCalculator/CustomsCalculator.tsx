@@ -1,20 +1,29 @@
-import { useState } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 
 import {
-  AlertMessage,
   Box,
   Button,
+  Filter,
+  FilterMultiChoice,
   Input,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { ConnectedComponent } from '@island.is/web/graphql/schema'
+import {
+  ConnectedComponent,
+  CustomsCalculatorProductCategoriesQuery,
+} from '@island.is/web/graphql/schema'
 import {
   CALCULATE_CUSTOMS,
   GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
   GET_CUSTOMS_CALCULATOR_UNITS,
 } from '@island.is/web/screens/queries/CustomsCalculator'
+
+import { translation as translationStrings } from './translation.strings'
+import { extractFilterCategories } from './utils'
+import * as styles from './CustomsCalculator.css'
 
 interface CustomsCalculatorProps {
   slice: ConnectedComponent
@@ -28,8 +37,11 @@ interface UnitsQueryResult {
   customsCalculatorUnits: unknown
 }
 
-interface ProductCategoriesQueryResult {
-  customsCalculatorProductCategories: unknown
+interface ProductCategory {
+  parentCategory?: string | null
+  category?: string | null
+  tariffNumber?: string | null
+  description?: string | null
 }
 
 const DEFAULT_INPUT = {
@@ -55,6 +67,7 @@ const DEFAULT_INPUT = {
 }
 
 const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
+  const { formatMessage } = useIntl()
   const [tariffNumber, setTariffNumber] = useState(
     (slice?.configJson?.tariffNumber as string) ?? DEFAULT_INPUT.tariffNumber,
   )
@@ -65,17 +78,21 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   const [getUnits, unitsState] = useLazyQuery<UnitsQueryResult>(
     GET_CUSTOMS_CALCULATOR_UNITS,
   )
-  const [getProductCategories, productCategoriesState] =
-    useLazyQuery<ProductCategoriesQueryResult>(
+  const productCategoriesResponse =
+    useQuery<CustomsCalculatorProductCategoriesQuery>(
       GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
     )
-  const [calculate, calculationState] = useMutation<CalculateMutationResult>(
-    CALCULATE_CUSTOMS,
-  )
+  const [calculate, calculationState] =
+    useMutation<CalculateMutationResult>(CALCULATE_CUSTOMS)
 
-  const fetchProductCategories = () => {
-    getProductCategories()
-  }
+  const filterCategories = useMemo(() => {
+    return (
+      extractFilterCategories(
+        productCategoriesResponse.data?.customsCalculatorProductCategories
+          ?.categories ?? [],
+      ) ?? []
+    )
+  }, [productCategoriesResponse.data?.customsCalculatorProductCategories])
 
   const fetchUnits = () => {
     getUnits({
@@ -101,20 +118,20 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   return (
     <Box background="blue100" padding={[3, 3, 4]}>
       <Stack space={3}>
-        <Text variant="h3">Customs calculator (connected)</Text>
+        <Text variant="h3">{formatMessage(translationStrings.title)}</Text>
         <Text variant="small">
-          Simple test component wired to the customs calculator GraphQL domain.
+          {formatMessage(translationStrings.description)}
         </Text>
 
         <Input
           name="tariffNumber"
-          label="Tariff number"
+          label={formatMessage(translationStrings.tariffNumberLabel)}
           value={tariffNumber}
           onChange={(event) => setTariffNumber(event.target.value)}
         />
         <Input
           name="referenceDate"
-          label="Reference date (ISO)"
+          label={formatMessage(translationStrings.referenceDateLabel)}
           value={referenceDate}
           onChange={(event) => setReferenceDate(event.target.value)}
         />
@@ -122,14 +139,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         <Box display="flex" columnGap={2}>
           <Button
             size="small"
-            variant="text"
-            onClick={fetchProductCategories}
-            loading={productCategoriesState.loading}
+            onClick={fetchUnits}
+            loading={unitsState.loading}
           >
-            Fetch product categories
-          </Button>
-          <Button size="small" onClick={fetchUnits} loading={unitsState.loading}>
-            Fetch units
+            {formatMessage(translationStrings.fetchUnits)}
           </Button>
           <Button
             size="small"
@@ -137,46 +150,44 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             onClick={runCalculation}
             loading={calculationState.loading}
           >
-            Run calculation
+            {formatMessage(translationStrings.runCalculation)}
           </Button>
         </Box>
 
-        {(productCategoriesState.error ||
-          unitsState.error ||
-          calculationState.error) && (
-          <AlertMessage
-            type="error"
-            title="Request failed"
-            message={
-              productCategoriesState.error?.message ??
-              unitsState.error?.message ??
-              calculationState.error?.message ??
-              'Unknown error'
-            }
-          />
-        )}
-
-        {Boolean(
-          productCategoriesState.data?.customsCalculatorProductCategories,
-        ) && (
-          <Box>
-            <Text variant="h5" marginBottom={1}>
-              Product categories response
-            </Text>
-            <pre>
-              {JSON.stringify(
-                productCategoriesState.data?.customsCalculatorProductCategories,
-                null,
-                2,
-              )}
-            </pre>
+        <Filter
+          labelClear={formatMessage(translationStrings.filterClear)}
+          labelClearAll={formatMessage(translationStrings.filterClearAll)}
+          labelOpen={formatMessage(translationStrings.filterOpen)}
+          labelClose={formatMessage(translationStrings.filterClose)}
+          labelTitle={formatMessage(translationStrings.filterTitle)}
+          labelResult={formatMessage(translationStrings.filterApply)}
+          align="left"
+          variant="popover"
+          reverse
+          onFilterClear={() => {
+            setTariffNumber('')
+          }}
+        >
+          <Box className={styles.dialog}>
+            <FilterMultiChoice
+              labelClear={formatMessage(translationStrings.filterClear)}
+              categories={filterCategories}
+              onChange={(event) => {
+                const nextTariffNumber = event.selected[0] ?? ''
+                setTariffNumber(nextTariffNumber)
+              }}
+              onClear={() => {
+                setTariffNumber('')
+              }}
+              singleExpand
+            />
           </Box>
-        )}
+        </Filter>
 
         {Boolean(unitsState.data?.customsCalculatorUnits) && (
           <Box>
             <Text variant="h5" marginBottom={1}>
-              Units response
+              {formatMessage(translationStrings.unitsResponse)}
             </Text>
             <pre>
               {JSON.stringify(unitsState.data?.customsCalculatorUnits, null, 2)}
@@ -187,7 +198,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         {Boolean(calculationState.data?.customsCalculatorCalculate) && (
           <Box>
             <Text variant="h5" marginBottom={1}>
-              Calculation response
+              {formatMessage(translationStrings.calculationResponse)}
             </Text>
             <pre>
               {JSON.stringify(

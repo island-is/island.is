@@ -9,7 +9,9 @@ import { CustomsCalculatorService } from './customsCalculator.service'
 
 @Resolver()
 export class CustomsCalculatorResolver {
-  constructor(private readonly customsCalculatorService: CustomsCalculatorService) {}
+  constructor(
+    private readonly customsCalculatorService: CustomsCalculatorService,
+  ) {}
 
   @Query(() => CustomsCalculatorProductCategoriesResponse, {
     name: 'customsCalculatorProductCategories',
@@ -18,7 +20,9 @@ export class CustomsCalculatorResolver {
     return this.customsCalculatorService.getProductCategories()
   }
 
-  @Query(() => CustomsCalculatorUnitsResponse, { name: 'customsCalculatorUnits' })
+  @Query(() => CustomsCalculatorUnitsResponse, {
+    name: 'customsCalculatorUnits',
+  })
   getUnits(
     @Args('tariffNumber') tariffNumber: string,
     @Args('referenceDate') referenceDate: string,

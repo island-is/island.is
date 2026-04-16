@@ -101,4 +101,3 @@ export class CustomsCalculatorCalculationResponse {
   @Field({ nullable: true })
   errors?: string
 }
-
