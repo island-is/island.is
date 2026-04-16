@@ -20,7 +20,7 @@ import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
 import { PermissionsLoaderData } from './Permissions.loader'
 import { useLooseSearch } from '../../hooks/useLooseSearch'
 
-function Permissions() {
+const Permissions = () => {
   const { formatMessage, locale } = useLocale()
   const permissionsList = useLoaderData() as PermissionsLoaderData
   const isEmpty = permissionsList.data.length === 0

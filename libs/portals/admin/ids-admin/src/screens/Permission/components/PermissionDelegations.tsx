@@ -156,6 +156,12 @@ export const PermissionDelegations = ({
     ],
   )
 
+  const categoryRequired =
+    showCategoriesAndTags &&
+    !categoriesLoading &&
+    categories.length > 0 &&
+    selectedCategories.length === 0
+
   const loadingCategoriesAndTags = categoriesLoading || tagsLoading
 
   const toggleDelegationType = (field: string, checked: boolean) => {
@@ -215,22 +221,16 @@ export const PermissionDelegations = ({
     }
   }
 
-  const supportsCustomDelegation =
-    selectedPermission.supportedDelegationTypes?.includes(
-      AuthDelegationType.Custom,
-    ) ?? false
-
   return (
     <FormCard
       title={formatMessage(m.delegations)}
       intent={PermissionFormTypes.DELEGATIONS}
       inSync={checkEnvironmentsSync(permission.environments, [
         'supportedDelegationTypes',
-        ...(supportsCustomDelegation
-          ? (['categoryIds', 'tagIds'] as const)
-          : []),
+        ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
       customValidation={customValidation}
+      submitDisabled={categoryRequired}
     >
       <Stack space={4}>
         {providers.map((provider) =>
@@ -319,6 +319,10 @@ export const PermissionDelegations = ({
                                     }}
                                     placeholder={formatMessage(
                                       m.selectCategoriesPlaceholder,
+                                    )}
+                                    hasError={categoryRequired}
+                                    errorMessage={formatMessage(
+                                      m.categoryRequired,
                                     )}
                                     isMulti
                                     size="sm"

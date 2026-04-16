@@ -1,0 +1,560 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Gagnamidlunargatt MMS - Island.is API",
+    "description": "Gagnamidlunargatt MMS - API for Island.is - Beta1",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/islandisassessments/{studentId}/subjects": {
+      "get": {
+        "tags": ["IslandIsAssessments"],
+        "summary": "Gets all assessment subjects that have completed assignment results for the specified student.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/islandisassessments/{studentId}/subject/{assessmentSubjectId}/types": {
+      "get": {
+        "tags": ["IslandIsAssessments"],
+        "summary": "Gets all assessment types for a specific subject that have completed assignment results for the specified student.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "assessmentSubjectId",
+            "in": "path",
+            "description": "The unique identifier of the assessment subject.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsAssessmentTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/islandisassignmentresults/{studentId}/assessment-type/{assessmentTypeId}": {
+      "get": {
+        "tags": ["IslandIsAssignmentResults"],
+        "summary": "Gets all assignment results for a specific student and assessment type.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "assessmentTypeId",
+            "in": "path",
+            "description": "The unique identifier of the assessment type.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsStudentResultsDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/islandisassignmentresults/{studentId}/assessment-type/{assessmentTypeId}/simple": {
+      "get": {
+        "tags": ["IslandIsAssignmentResults"],
+        "summary": "Gets all assignment results for a specific student and assessment type.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "assessmentTypeId",
+            "in": "path",
+            "description": "The unique identifier of the assessment type.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsSimpleAssignmentResultDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/islandisassignmentresults/{studentId}/result/{assignmentResultId}/pdf": {
+      "get": {
+        "tags": ["IslandIsAssignmentResults"],
+        "summary": "Gets the assignment result PDF for a specific student, assessment type and assignment result.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "assignmentResultId",
+            "in": "path",
+            "description": "The unique identifier of the assignment result.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/islandisstudents": {
+      "get": {
+        "tags": ["IslandIsStudents"],
+        "summary": "Gets a batch of students that the calling user has access to based on their national ID.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/IslandIsStudentDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentType": {
+        "enum": [
+          "Guardian",
+          "Relative",
+          "Sibling",
+          "Parent",
+          "EmergencyContact"
+        ],
+        "type": "string"
+      },
+      "IslandIsAssessmentSubjectDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assessment subject, used for mapping to the database and ensuring consistency across systems.",
+            "format": "uuid"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "The human readable identifier for the entity.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the assessment subject.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the assessment subject, providing additional context or details about the subject. This can be used for display purposes or to provide more information to users about what the subject entails.",
+            "nullable": true
+          },
+          "assessmentTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IslandIsAssessmentTypeDto"
+            },
+            "description": "List of AssessmentTypes that belong to this AssessmentSubject, representing the different types of assessments that can be associated with this subject. This allows for a hierarchical relationship where each subject can have multiple assessment types, and each assessment type can be linked back to its parent subject.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Assessment subject from matsferill ie. math, reading, language etc."
+      },
+      "IslandIsAssessmentTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assessment type.",
+            "format": "uuid"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Unique identifier string for the assessment type.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the assessment type, e.g. \"Algebra\", \"Reading ability\", etc.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the assessment type, providing additional context or details.",
+            "nullable": true
+          },
+          "testType": { "$ref": "#/components/schemas/TestType" },
+          "assessmentSubject": {
+            "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IslandIsAssignmentResultDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assignment result",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the assignment",
+            "nullable": true
+          },
+          "batchNumber": {
+            "type": "integer",
+            "description": "The batch number of assignment ie, for reading ability batch number 1 is in september, 2 is in january and 3 is in may \nthey each have their own mapping so we need to include the batch number when creating the map",
+            "format": "int32"
+          },
+          "scheduleStart": {
+            "type": "string",
+            "description": "Gets or sets the start date and time of the scheduled task.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "scheduleString": {
+            "type": "string",
+            "description": "Gets or sets the schedule string that defines the timing of the scheduled task.",
+            "nullable": true
+          },
+          "evaluationDate": {
+            "type": "string",
+            "description": "Date of the evaluation",
+            "format": "date-time",
+            "nullable": true
+          },
+          "evaluationScore": {
+            "type": "number",
+            "description": "EvaluationScore (mælitala) fully mapped to a final result",
+            "format": "double",
+            "nullable": true
+          },
+          "evaluationScoreRangeString": {
+            "type": "string",
+            "description": "Gets or sets the evaluation score range represented as a string.",
+            "nullable": true
+          },
+          "score": {
+            "type": "number",
+            "description": "Result score relative to the assignment, ie. words per minute for reading ability, number of correct answers for math etc. \nThis is the score that is shown to the user in island.is and is the score that is used for the mapping to a final result (mælitala)",
+            "format": "double",
+            "nullable": true
+          },
+          "schoolName": {
+            "type": "string",
+            "description": "School name associated with the assignment result",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IslandIsSimpleAssignmentResultDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assignment result",
+            "format": "uuid"
+          },
+          "schoolYear": {
+            "type": "string",
+            "description": "School year of the assignment result, e.g., \"2023-2024\"",
+            "nullable": true
+          },
+          "gradeLevel": {
+            "type": "integer",
+            "description": "Grade level of the assignment",
+            "format": "int32"
+          },
+          "gradeLevelName": {
+            "type": "string",
+            "description": "Grade level of the assignment",
+            "nullable": true
+          },
+          "scheduleStart": {
+            "type": "string",
+            "description": "Gets or sets the start date and time of the scheduled task.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "scheduleString": {
+            "type": "string",
+            "description": "Gets or sets the schedule string that defines the timing of the scheduled task.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IslandIsStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the student or calling user.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the student or calling user.",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National Id (kennitala) of the student or calling user.",
+            "nullable": true
+          },
+          "schoolName": {
+            "type": "string",
+            "description": "School name. null if no current school.",
+            "nullable": true
+          },
+          "contactTeacherName": {
+            "type": "string",
+            "description": "Contact  teacher name for the student. Null if the calling user is the student themselves or if no contact teacher is assigned.",
+            "nullable": true
+          },
+          "homeRoomName": {
+            "type": "string",
+            "description": "The name of the homeroom associated with the student.",
+            "nullable": true
+          },
+          "relationType": { "$ref": "#/components/schemas/AgentType" }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student returned by the Island.is student list API."
+      },
+      "IslandIsStudentResultsDto": {
+        "type": "object",
+        "properties": {
+          "schoolYear": {
+            "type": "string",
+            "description": "School year of the assignment result, e.g., \"2023-2024\"",
+            "nullable": true
+          },
+          "gradeLevel": {
+            "type": "integer",
+            "description": "Grade level of the assignment",
+            "format": "int32"
+          },
+          "studentId": {
+            "type": "string",
+            "description": "Id of student",
+            "format": "uuid"
+          },
+          "assessmentType": {
+            "$ref": "#/components/schemas/IslandIsAssessmentTypeDto"
+          },
+          "assignmentResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IslandIsAssignmentResultDto"
+            },
+            "description": "List of the student's results for assignments.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": {}
+      },
+      "TestType": {
+        "enum": ["SupportTest", "StatusAndProgressTest"],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Enter your token below (without 'Bearer ' prefix).",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    { "name": "IslandIsAssessments" },
+    { "name": "IslandIsAssignmentResults" },
+    { "name": "IslandIsStudents" }
+  ]
+}

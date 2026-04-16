@@ -242,14 +242,17 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         <GridContainer className={styles.container}>
           <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              <Box marginY={3} marginX={[3, 3, 0, 0]}>
-                <BreadCrumbs />
-              </Box>
+              {!isDefenceUser(user) && (
+                <Box marginY={3} marginX={[3, 3, 0, 0]}>
+                  <BreadCrumbs />
+                </Box>
+              )}
               <Box
                 background="white"
                 borderColor="white"
                 paddingTop={[3, 3, 10, 10]}
                 className={styles.processContent}
+                marginTop={isDefenceUser(user) ? 10 : 0}
               >
                 {children}
               </Box>
