@@ -38,6 +38,12 @@ variable "yarn_lock_hash" {
   default = "manual"
 }
 
+variable "source_ref" {
+  description = "Git ref to checkout for warming caches"
+  type        = string
+  default     = "main"
+}
+
 source "amazon-ebs" "runner" {
   ami_name      = "gha-runner-al2023-x64-${formatdate("YYYYMMDDhhmm", timestamp())}-${var.yarn_lock_hash}"
   instance_type = var.instance_type
@@ -119,7 +125,7 @@ build {
   provisioner "shell" {
     inline = [
       "source ~/.nvm/nvm.sh",
-      "cd /tmp && git clone --depth 1 https://github.com/island-is/island.is.git",
+      "cd /tmp && git clone --depth 1 --branch ${var.source_ref} https://github.com/island-is/island.is.git",
       "cd /tmp/island.is && yarn install --immutable",
       "sudo mkdir -p /opt/warm-cache",
       "sudo cp -r /tmp/island.is/.yarn/cache /opt/warm-cache/yarn-cache",
