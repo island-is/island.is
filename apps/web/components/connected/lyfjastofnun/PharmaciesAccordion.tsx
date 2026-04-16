@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import { parseAsStringEnum, useQueryState } from 'next-usequerystate'
+import { useQuery } from '@apollo/client'
 
 import {
   Accordion,
@@ -17,13 +17,12 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { isDefined } from '@island.is/shared/utils'
 import {
   ConnectedComponent,
   IcelandicMedicinesAgencyPharmacyRegion,
   Query,
 } from '@island.is/web/graphql/schema'
-
-import { isDefined } from '@island.is/shared/utils'
 
 import { GET_PHARMACIES } from './queries'
 import { m } from './translation.strings'
