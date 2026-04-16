@@ -1146,6 +1146,12 @@ export class ApplicationsService {
       }
     }
 
+    if (!response.operationSuccessful || response.screenError?.hasError) {
+      this.logger.error(
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
+      )
+    }
+
     return response
   }
 
