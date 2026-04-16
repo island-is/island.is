@@ -2,13 +2,22 @@ import {
   AccordionField,
   AccordionItem as AccordionItemType,
   FieldBaseProps,
+  FieldTypes,
 } from '@island.is/application/types'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
 import { useEffect, useState } from 'react'
 
+const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO, FieldTypes.CHECKBOX]
 interface Props extends FieldBaseProps {
   field: AccordionField
 }
@@ -20,6 +29,7 @@ export const AccordionFormField = ({
   const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage, lang: locale } = useLocale()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
+
   useEffect(() => {
     if (typeof accordionItems === 'function') {
       setItems(accordionItems(application))
@@ -55,20 +65,31 @@ export const AccordionFormField = ({
                 </Markdown>
               )}
               {hasChildren && (
-                <Box
-                  style={{ overflow: 'visible' }}
-                  marginTop={hasContent ? 2 : 0}
-                >
+                <GridRow marginTop={hasContent ? 2 : 0}>
                   {item.children!.map((childField) => {
                     const rendered = renderField?.(childField)
+                    const isHalfColumn =
+                      !IGNORED_HALF_TYPES.includes(childField.type) &&
+                      childField?.width === 'half'
+                    const span = isHalfColumn ? '1/2' : '1/1'
+                    const isLastChild = index === item.children!.length - 1
+                    const paddingBottom = isLastChild ? 0 : 2
                     if (!rendered) return null
                     return (
-                      <Box key={childField.id} marginBottom={2}>
-                        {rendered}
-                      </Box>
+                      <GridColumn
+                        key={field.id || index}
+                        span={
+                          field?.colSpan
+                            ? field?.colSpan
+                            : ['1/1', '1/1', '1/1', span]
+                        }
+                        paddingBottom={paddingBottom}
+                      >
+                        <Box>{rendered}</Box>
+                      </GridColumn>
                     )
                   })}
-                </Box>
+                </GridRow>
               )}
             </AccordionItem>
           )

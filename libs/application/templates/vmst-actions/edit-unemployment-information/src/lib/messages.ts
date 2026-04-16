@@ -42,6 +42,11 @@ export const application = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: `Address label`,
   },
+  addressCheckbox: {
+    id: 'vmst.eui.application:addressCheckbox',
+    defaultMessage: 'Nota lögheimili sem dvalarstað',
+    description: `Address checkbox`,
+  },
   postCodeLabel: {
     id: 'vmst.eui.application:postCodeLabel',
     defaultMessage: 'Póstnúmer',

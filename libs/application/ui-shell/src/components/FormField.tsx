@@ -69,6 +69,7 @@ const FormField: FC<
         <FormField
           key={childField.id}
           application={application}
+          showFieldName
           field={childDef}
           errors={errors}
           goToScreen={goToScreen}

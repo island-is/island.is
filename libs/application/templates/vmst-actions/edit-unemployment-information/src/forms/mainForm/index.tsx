@@ -61,6 +61,7 @@ export const MainForm = buildForm({
           id: 'mainFormTitle',
           title: applicationMessages.pageTitle,
           description: applicationMessages.pageDescription,
+          marginBottom: 'gutter',
         }),
         buildAccordionField({
           id: 'mainFormAccordion',
@@ -71,6 +72,28 @@ export const MainForm = buildForm({
               itemTitle: applicationMessages.addressTitle,
               itemContent: applicationMessages.addressDescription,
               children: [
+                buildCheckboxField({
+                  id: 'otherAddress.useNationalRegistryAddress',
+                  options: [
+                    {
+                      value: YES,
+                      label: applicationMessages.addressCheckbox,
+                    },
+                  ],
+                  condition: (formValue) =>
+                    getValueViaPath<boolean>(
+                      formValue,
+                      'otherAddress.currentAddressIsDifferent',
+                    ) === true,
+                  width: 'full',
+                  defaultValue: (application: Application) =>
+                    getValueViaPath<boolean>(
+                      application.externalData,
+                      'currentApplicationInformation.data.currentApplication.useNationalRegistryAddress',
+                    ) === true
+                      ? [YES]
+                      : [],
+                }),
                 buildTextField({
                   id: 'otherAddress.otherAddress',
                   title: applicationMessages.addressLabel,
