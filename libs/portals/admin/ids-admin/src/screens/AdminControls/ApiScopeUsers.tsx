@@ -258,11 +258,21 @@ const ApiScopeUsers = () => {
     })
 
     if (!isEditing) {
-      const { data } = await fetchUser({
-        variables: { nationalId: formData.nationalId },
-      })
-      if (data?.authAdminApiScopeUser) {
-        errors.nationalId = formatMessage(m.apiScopeUsersErrorNationalIdExists)
+      try {
+        const { data } = await fetchUser({
+          variables: { nationalId: formData.nationalId },
+        })
+        if (data?.authAdminApiScopeUser) {
+          errors.nationalId = formatMessage(
+            m.apiScopeUsersErrorNationalIdExists,
+          )
+        }
+      } catch {
+        errors.nationalId = formatMessage(
+          m.apiScopeUsersErrorNationalIdCheckFailed,
+        )
+        setFormErrors(errors)
+        return
       }
     }
 

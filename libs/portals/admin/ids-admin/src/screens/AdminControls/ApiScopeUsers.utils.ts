@@ -23,7 +23,7 @@ export const validateApiScopeUserForm = ({
 }: ValidateFormParams): FormErrors => {
   const errors: FormErrors = {}
 
-  if (formData.name.length < 2) {
+  if ((!isEditing || formData.name) && formData.name.length < 2) {
     errors.name = formatMessage(m.apiScopeUsersErrorNameMinLength)
   }
 

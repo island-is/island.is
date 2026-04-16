@@ -1088,6 +1088,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-error-national-id-exists',
     defaultMessage: 'A user with this national ID already exists',
   },
+  apiScopeUsersErrorNationalIdCheckFailed: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id-check-failed',
+    defaultMessage: 'Unable to verify national ID. Please try again.',
+  },
   apiScopeUsersErrorEnvironmentRequired: {
     id: 'ap.ids-admin:api-scope-users-error-environment-required',
     defaultMessage: 'Select at least one environment',
