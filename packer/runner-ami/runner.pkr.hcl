@@ -80,7 +80,7 @@ build {
     execute_command = "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
       "dnf update -y",
-      "dnf install -y docker git jq tar gzip unzip gcc-c++ make python3 python3-pip amazon-cloudwatch-agent",
+      "dnf install -y docker git jq tar gzip unzip gcc-c++ make python3 python3-pip amazon-cloudwatch-agent parallel",
       "dnf install -y xorg-x11-server-Xvfb gtk3 nss alsa-lib libXScrnSaver libXtst",
       "dnf install -y java-21-amazon-corretto-headless",
       "systemctl enable docker",
