@@ -31,12 +31,8 @@ const parseUserAccess = (
 ): Array<{ nationalId: string; scope: string }> | undefined => {
   const raw = formData.get('userAccess') as string | null
   if (!raw) return undefined
-  try {
-    const scopes = JSON.parse(raw) as string[]
-    return scopes.map((scope) => ({ nationalId, scope }))
-  } catch {
-    return undefined
-  }
+  const scopes = JSON.parse(raw) as string[]
+  return scopes.map((scope) => ({ nationalId, scope }))
 }
 
 const parseEnvironments = (
@@ -44,11 +40,7 @@ const parseEnvironments = (
 ): AuthAdminEnvironment[] | undefined => {
   const raw = formData.get('environments') as string | null
   if (!raw) return undefined
-  try {
-    return JSON.parse(raw) as AuthAdminEnvironment[]
-  } catch {
-    return undefined
-  }
+  return JSON.parse(raw) as AuthAdminEnvironment[]
 }
 
 export const apiScopeUsersAction: WrappedActionFn =

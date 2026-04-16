@@ -206,21 +206,26 @@ const ApiScopeUsers = () => {
     setLoadingUser(true)
     setModalVisible(true)
 
-    const result = await fetchUser({
-      variables: { nationalId: user.nationalId },
-    })
-    const userData = result.data?.authAdminApiScopeUser
-    if (userData?.userAccess) {
-      setActiveScopes(
-        userData.userAccess.map(
-          (access: { nationalId: string; scope: string }) => access.scope,
-        ),
-      )
+    try {
+      const result = await fetchUser({
+        variables: { nationalId: user.nationalId },
+      })
+      const userData = result.data?.authAdminApiScopeUser
+      if (userData?.userAccess) {
+        setActiveScopes(
+          userData.userAccess.map(
+            (access: { nationalId: string; scope: string }) => access.scope,
+          ),
+        )
+      }
+      if (userData?.availableEnvironments) {
+        setUserAvailableEnvironments(userData.availableEnvironments)
+      }
+    } catch (e) {
+      setModalVisible(false)
+    } finally {
+      setLoadingUser(false)
     }
-    if (userData?.availableEnvironments) {
-      setUserAvailableEnvironments(userData.availableEnvironments)
-    }
-    setLoadingUser(false)
   }
 
   const scopeOptions: ScopeOption[] = useMemo(

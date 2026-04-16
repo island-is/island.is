@@ -274,17 +274,26 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
   async deleteApiScopeUser(user: User, nationalId: string): Promise<boolean> {
     let anyRequestMade = false
+    let lastError: unknown = null
 
     for (const environment of environments) {
       let requestMade = false
 
-      await this.typedRequest(user, environment, (api) => {
-        requestMade = true
-        return api.meApiScopeUsersControllerDeleteRaw({ nationalId })
-      })
+      try {
+        await this.typedRequest(user, environment, (api) => {
+          requestMade = true
+          return api.meApiScopeUsersControllerDeleteRaw({ nationalId })
+        })
 
-      if (requestMade) {
-        anyRequestMade = true
+        if (requestMade) {
+          anyRequestMade = true
+        }
+      } catch (error) {
+        lastError = error
+        this.logger.error(
+          `Failed to delete API scope user in ${environment}`,
+          error as Error,
+        )
       }
     }
 
@@ -292,6 +301,6 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       return true
     }
 
-    throw new Error('Failed to delete API scope user')
+    throw lastError ?? new Error('Failed to delete API scope user')
   }
 }

@@ -61,7 +61,7 @@ const IDSAdmin = () => {
 
   const showBackButton =
     location.pathname !== IDSAdminPaths.IDSAdmin &&
-    !location.pathname.startsWith(IDSAdminPaths.IDSAdminControls)
+    !location.pathname.startsWith(`${IDSAdminPaths.IDSAdminControls}/`)
 
   return (
     <DelegationProvidersProvider>

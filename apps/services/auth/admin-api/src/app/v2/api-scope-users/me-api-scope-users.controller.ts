@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -86,8 +87,8 @@ export class MeApiScopeUsersController {
   })
   findAndCountAll(
     @Query('searchString') searchString: string,
-    @Query('page') page: number,
-    @Query('count') count: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('count', ParseIntPipe) count: number,
   ): Promise<PagedRowsDto<ApiScopeUser>> {
     return this.accessService.findAndCountAll(searchString, page, count)
   }
