@@ -1392,6 +1392,10 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
     lawyers: lawyersResponse.data.webVerdictLawyers?.lawyers ?? [],
     scheduleTypes: scheduleTypesResponse.data.webCourtScheduleTypes,
     caseTypes: caseTypesResponse.data.webVerdictCaseFilterOptionsPerCourt,
+    languageToggleHrefOverride: {
+      is: '/dagskra-domstola',
+      en: customPageData?.configJson?.englishFallbackUrl ?? '',
+    },
   }
 }
 
