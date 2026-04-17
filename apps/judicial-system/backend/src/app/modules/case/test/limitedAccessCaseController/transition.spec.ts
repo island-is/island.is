@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -212,7 +212,7 @@ describe('LimitedAccessCaseController - Transition', () => {
           caseId,
           {
             appealState: AppealCaseState.WITHDRAWN,
-            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+            appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
           },
           { transaction },
         )
