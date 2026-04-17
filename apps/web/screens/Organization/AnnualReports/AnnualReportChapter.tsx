@@ -142,6 +142,20 @@ const AnnualReportChapter: Screen<
                     </Text>
                   )}
 
+                  {showNavigation && navigation && (
+                    <Box
+                      printHidden
+                      display={['block', 'block', 'block', 'none']}
+                      paddingTop={6}
+                      paddingBottom={2}
+                    >
+                      <AnchorNavigation
+                        title={'Á þessari síðu'}
+                        navigation={navigation}
+                        position="right"
+                      />
+                    </Box>
+                  )}
                   {annualReportChapter.content &&
                     annualReportChapter.content.length > 0 && (
                       <Box paddingY={4}>
