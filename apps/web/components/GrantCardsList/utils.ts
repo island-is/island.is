@@ -84,14 +84,24 @@ export const parseGrantStatus = (
       return translationFunction('applicationAlwaysOpen')
     }
     case GrantStatus.Open: {
-      const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale, 'dd. MMMM.')
-        : undefined
+      const dateVal = grant.dateTo
+      if (!dateVal) {
+        return translationFunction('applicationOpen')
+      }
+      const hasTime = containsTimePart(dateVal)
+      const dateFormat = hasTime
+        ? locale === 'en'
+          ? "dd MMMM, 'at' HH:mm"
+          : "dd. MMMM, 'kl.' HH:mm"
+        : locale === 'en'
+        ? 'dd MMMM'
+        : 'dd. MMMM'
+
+      const date = formatDate(new Date(dateVal), locale, dateFormat)
+
       return date
         ? translationFunction(
-            containsTimePart(date)
-              ? 'applicationOpensToWithDay'
-              : 'applicationOpensTo',
+            hasTime ? 'applicationOpensToWithDay' : 'applicationOpensTo',
             date,
           )
         : translationFunction('applicationOpen')
