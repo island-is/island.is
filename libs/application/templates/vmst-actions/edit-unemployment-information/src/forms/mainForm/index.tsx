@@ -333,6 +333,7 @@ export const MainForm = buildForm({
                   defaultValue: (application: Application) =>
                     getDefaultDrivingLicenses(application.externalData),
                   condition: (answers) => {
+                    console.log('answers', answers)
                     const val = getValueViaPath<string[]>(
                       answers,
                       'licenses.hasDrivingLicense',

@@ -9,6 +9,7 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { generateAnswers } from './edit-unemployment-information.utils'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 interface ApplicationInformationWithSupportData {
   currentApplication: GaldurXRoadAPIModelsApplicantInfoResponse
@@ -46,11 +47,19 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
     const reqObject: GaldurExternalDomainRequestsUpdateApplicantRequest =
       answerObject
 
-    await this.vmstUnemploymentClientService.updateCurrentApplicationForActions(
+    console.log('reqObject', reqObject)
+    throw new TemplateApiError(
       {
-        ssn: auth.nationalId,
-        galdurExternalDomainRequestsUpdateApplicantRequest: reqObject,
+        title: 'Not implemented',
+        summary: 'This feature is not yet implemented',
       },
+      400,
     )
+    // await this.vmstUnemploymentClientService.updateCurrentApplicationForActions(
+    //   {
+    //     ssn: auth.nationalId,
+    //     galdurExternalDomainRequestsUpdateApplicantRequest: reqObject,
+    //   },
+    // )
   }
 }
