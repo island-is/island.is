@@ -866,6 +866,7 @@ export class CmsElasticsearchService {
       types,
       organizations,
       funds,
+      filterOutDateToPassed = false,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -945,6 +946,50 @@ export class CmsElasticsearchService {
         },
       })
     })
+
+    if (filterOutDateToPassed) {
+      must.push({
+        bool: {
+          should: [
+            {
+              bool: {
+                filter: [
+                  {
+                    range: {
+                      //date to
+                      dateCreated: {
+                        gt: 'now',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              nested: {
+                path: 'tags',
+                query: {
+                  bool: {
+                    must: [
+                      {
+                        term: {
+                          'tags.type': 'status',
+                        },
+                      },
+                      {
+                        terms: {
+                          'tags.key': ['Open with note', 'Always open'],
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+        },
+      })
+    }
 
     if (status !== undefined) {
       if (status === GrantsAvailabilityStatus.CLOSED) {

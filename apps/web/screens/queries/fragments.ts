@@ -873,6 +873,30 @@ export const slices = gql`
     }
   }
 
+  fragment LastCallsForGrantsFields on LastCallsForGrants {
+    __typename
+    id
+    title
+    namespace
+    resolvedGrantsList {
+      total
+      items {
+        id
+        name
+        description
+        applicationId
+        dateFrom
+        dateTo
+        status
+        statusText
+        fund {
+          id
+          title
+        }
+      }
+    }
+  }
+
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
     events {
@@ -1145,6 +1169,7 @@ export const slices = gql`
     ...LatestGenericListItemsFields
     ...FeaturedLinksFields
     ...GrantCardsListFields
+    ...LastCallsForGrantsFields
     ...OrganizationParentSubpageListFields
     ...IntroLinkImageFields
     ...FeaturedGenericListItemsFields
