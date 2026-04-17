@@ -1,6 +1,7 @@
 import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { GrantType } from './models/grant-type.model'
@@ -57,6 +58,39 @@ export class GrantTypeService {
       where: includeArchived
         ? { name: searchString }
         : { name: searchString, archived: null },
+      order: ['name'],
+    })
+  }
+
+  /** Searches grant types by name or description with pagination */
+  async search(
+    searchString: string,
+    page: number,
+    count: number,
+    includeArchived: boolean,
+  ): Promise<{
+    rows: GrantType[]
+    count: number
+  }> {
+    page--
+    const offset = page * count
+    const whereClause = {
+      ...(searchString
+        ? {
+            [Op.or]: ['name', 'description'].map((key) => ({
+              [key]: {
+                [Op.iLike]: `%${searchString.toLowerCase()}%`,
+              },
+            })),
+          }
+        : {}),
+      ...(includeArchived ? {} : { archived: null }),
+    }
+
+    return this.grantTypeModel.findAndCountAll({
+      limit: count,
+      offset,
+      where: whereClause,
       order: ['name'],
     })
   }

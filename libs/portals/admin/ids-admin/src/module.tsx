@@ -18,6 +18,8 @@ import { permissionLoader } from './screens/Permission/Permission.loader'
 import { editPermissionAction } from './screens/Permission/EditPermission.action'
 import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.loader'
 import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.action'
+import { grantTypesLoader } from './screens/AdminControls/GrantTypes/GrantTypes.loader'
+import { grantTypesAction } from './screens/AdminControls/GrantTypes/GrantTypes.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -46,7 +48,9 @@ const AdminControls = lazy(() =>
 const ApiScopeUsers = lazy(() =>
   import('./screens/AdminControls/ApiScopeUsers/ApiScopeUsers'),
 )
-const GrantTypes = lazy(() => import('./screens/AdminControls/GrantTypes'))
+const GrantTypes = lazy(
+  () => import('./screens/AdminControls/GrantTypes/GrantTypes'),
+)
 const IdpProviders = lazy(() => import('./screens/AdminControls/IdpProviders'))
 
 const allowedScopes: string[] = [
@@ -113,14 +117,16 @@ export const idsAdminModule: PortalModule = {
                         backPath: IDSAdminPaths.IDSAdmin,
                       },
                     },
-                    // {
-                    //   name: m.grantTypes,
-                    //   path: IDSAdminPaths.IDSAdminControlsGrantTypes,
-                    //   element: <GrantTypes />,
-                    //   handle: {
-                    //     backPath: IDSAdminPaths.IDSAdmin,
-                    //   },
-                    // },
+                    {
+                      name: m.grantTypes,
+                      path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+                      element: <GrantTypes />,
+                      loader: grantTypesLoader(props),
+                      action: grantTypesAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
                     // {
                     //   name: m.idpProviders,
                     //   path: IDSAdminPaths.IDSAdminControlsIdpProviders,

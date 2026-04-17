@@ -19,6 +19,8 @@ import { DelegationProviderService } from './delegationProvider/delegation-provi
 import { DelegationProviderResolver } from './delegationProvider/delegation-provider.resolver'
 import { DelegationAdminResolver } from './delegationAdmin/delegation-admin.resolver'
 import { DelegationAdminService } from './delegationAdmin/delegation-admin.service'
+import { GrantTypeResolver } from './grant-type/grant-type.resolver'
+import { GrantTypeService } from './grant-type/grant-type.service'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 
 @Module({
@@ -40,6 +42,8 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     DelegationProviderResolver,
     DelegationAdminResolver,
     DelegationAdminService,
+    GrantTypeResolver,
+    GrantTypeService,
   ],
 })
 export class AuthAdminModule {}

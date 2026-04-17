@@ -1100,6 +1100,115 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types',
     defaultMessage: 'Grant Types',
   },
+  grantTypesIntro: {
+    id: 'ap.ids-admin:grant-types-intro',
+    defaultMessage: 'Manage grant types',
+  },
+  grantTypesSearchPlaceholder: {
+    id: 'ap.ids-admin:grant-types-search-placeholder',
+    defaultMessage: 'Search by name or description',
+  },
+  grantTypesCreateNew: {
+    id: 'ap.ids-admin:grant-types-create-new',
+    defaultMessage: 'Create Grant Type',
+  },
+  grantTypesCreateTitle: {
+    id: 'ap.ids-admin:grant-types-create-title',
+    defaultMessage: 'Create Grant Type',
+  },
+  grantTypesEditTitle: {
+    id: 'ap.ids-admin:grant-types-edit-title',
+    defaultMessage: 'Edit Grant Type',
+  },
+  grantTypesName: {
+    id: 'ap.ids-admin:grant-types-name',
+    defaultMessage: 'Name',
+  },
+  grantTypesDescription: {
+    id: 'ap.ids-admin:grant-types-description',
+    defaultMessage: 'Description',
+  },
+  grantTypesSaveButton: {
+    id: 'ap.ids-admin:grant-types-save-button',
+    defaultMessage: 'Save',
+  },
+  grantTypesCreateButton: {
+    id: 'ap.ids-admin:grant-types-create-button',
+    defaultMessage: 'Create',
+  },
+  grantTypesCancelButton: {
+    id: 'ap.ids-admin:grant-types-cancel-button',
+    defaultMessage: 'Cancel',
+  },
+  grantTypesDeleteButton: {
+    id: 'ap.ids-admin:grant-types-delete-button',
+    defaultMessage: 'Archive',
+  },
+  grantTypesDeleteConfirmTitle: {
+    id: 'ap.ids-admin:grant-types-delete-confirm-title',
+    defaultMessage: 'Archive Grant Type',
+  },
+  grantTypesDeleteConfirmMessage: {
+    id: 'ap.ids-admin:grant-types-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to archive this grant type?',
+  },
+  grantTypesCreateSuccess: {
+    id: 'ap.ids-admin:grant-types-create-success',
+    defaultMessage: 'Grant type created successfully',
+  },
+  grantTypesUpdateSuccess: {
+    id: 'ap.ids-admin:grant-types-update-success',
+    defaultMessage: 'Grant type updated successfully',
+  },
+  grantTypesDeleteSuccess: {
+    id: 'ap.ids-admin:grant-types-delete-success',
+    defaultMessage: 'Grant type archived successfully',
+  },
+  grantTypesPublishSuccess: {
+    id: 'ap.ids-admin:grant-types-publish-success',
+    defaultMessage: 'Grant type published to {environment}',
+  },
+  grantTypesError: {
+    id: 'ap.ids-admin:grant-types-error',
+    defaultMessage: 'An error occurred',
+  },
+  grantTypesNoResults: {
+    id: 'ap.ids-admin:grant-types-no-results',
+    defaultMessage: 'No grant types found',
+  },
+  grantTypesArchived: {
+    id: 'ap.ids-admin:grant-types-archived',
+    defaultMessage: 'Archived',
+  },
+  grantTypesErrorNameRequired: {
+    id: 'ap.ids-admin:grant-types-error-name-required',
+    defaultMessage: 'Name is required',
+  },
+  grantTypesErrorNamePattern: {
+    id: 'ap.ids-admin:grant-types-error-name-pattern',
+    defaultMessage:
+      'Name must start and end with a lowercase letter and contain only lowercase letters, underscores, colons, dots, and hyphens',
+  },
+  grantTypesErrorNameExists: {
+    id: 'ap.ids-admin:grant-types-error-name-exists',
+    defaultMessage: 'A grant type with this name already exists',
+  },
+  grantTypesErrorNameCheckFailed: {
+    id: 'ap.ids-admin:grant-types-error-name-check-failed',
+    defaultMessage: 'Could not verify grant type name',
+  },
+  grantTypesErrorDescriptionRequired: {
+    id: 'ap.ids-admin:grant-types-error-description-required',
+    defaultMessage: 'Description is required',
+  },
+  grantTypesErrorDescriptionChars: {
+    id: 'ap.ids-admin:grant-types-error-description-chars',
+    defaultMessage: 'Description must not contain < > % $ characters',
+  },
+  grantTypesErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:grant-types-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
     defaultMessage: 'IDP Providers',
