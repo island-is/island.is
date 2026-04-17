@@ -29,12 +29,9 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
+  useAppealCase,
   useFileList,
   useS3Upload,
   useUploadFiles,
@@ -68,7 +65,7 @@ const AppealToCourtOfAppeals = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { createAppealCase, isCreatingAppealCase } = useAppealCase()
 
   const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
@@ -96,17 +93,14 @@ const AppealToCourtOfAppeals = () => {
       return
     }
 
-    const caseTransitioned = await transitionCase(
-      workingCase.id,
-      CaseTransition.APPEAL,
-    )
+    const appealCase = await createAppealCase(workingCase.id)
 
-    if (caseTransitioned) {
+    if (appealCase) {
       setVisibleModal('APPEAL_SENT')
     }
   }, [
     handleUpload,
-    transitionCase,
+    createAppealCase,
     updateUploadFile,
     uploadFiles,
     workingCase.id,
@@ -125,7 +119,11 @@ const AppealToCourtOfAppeals = () => {
   }
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={isCreatingAppealCase}
+      notFound={false}
+    >
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
         <PageTitle previousUrl={previousUrl}>Kæra til Landsréttar</PageTitle>
@@ -203,9 +201,9 @@ const AppealToCourtOfAppeals = () => {
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda kæru'}
           nextIsDisabled={
             !uploadFiles.find((file) => file.category === appealBriefType) ||
-            isTransitioningCase
+            isCreatingAppealCase
           }
-          nextIsLoading={!allFilesDoneOrError || isTransitioningCase}
+          nextIsLoading={!allFilesDoneOrError || isCreatingAppealCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />

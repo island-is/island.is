@@ -25,7 +25,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealCase,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   hasSentNotification,
   isReopenedCOACase,
@@ -42,11 +45,11 @@ type AssistantSelectOption = ReactSelectOption & { assistant: User }
 const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const {
-    updateCase,
     sendNotification,
     sendNotificationError,
     isSendingNotification,
   } = useCase()
+  const { updateAppealCase } = useAppealCase()
 
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -118,21 +121,23 @@ const AppealCase: FC = () => {
   }
 
   const handleChange = async (coaJudgeId: string, coaJudgeProperty: string) => {
-    if (workingCase) {
-      const updatedCase = await updateCase(workingCase.id, {
-        [coaJudgeProperty]: coaJudgeId,
-      })
+    if (workingCase?.appealCase?.id) {
+      const updatedAppealCase = await updateAppealCase(
+        workingCase.id,
+        workingCase.appealCase.id,
+        { [coaJudgeProperty]: coaJudgeId },
+      )
 
-      if (!updatedCase) {
+      if (!updatedAppealCase) {
         return
       }
 
       const coaJudge =
         coaJudgeProperty === 'appealJudge1Id'
-          ? { appealJudge1: updatedCase?.appealCase?.appealJudge1 }
+          ? { appealJudge1: updatedAppealCase.appealJudge1 }
           : coaJudgeProperty === 'appealJudge2Id'
-          ? { appealJudge2: updatedCase?.appealCase?.appealJudge2 }
-          : { appealJudge3: updatedCase?.appealCase?.appealJudge3 }
+          ? { appealJudge2: updatedAppealCase.appealJudge2 }
+          : { appealJudge3: updatedAppealCase.appealJudge3 }
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
@@ -145,12 +150,14 @@ const AppealCase: FC = () => {
   }
 
   const handleAssistantChange = async (appealAssistantId: string) => {
-    if (workingCase) {
-      const updatedCase = await updateCase(workingCase.id, {
-        appealAssistantId,
-      })
+    if (workingCase?.appealCase?.id) {
+      const updatedAppealCase = await updateAppealCase(
+        workingCase.id,
+        workingCase.appealCase.id,
+        { appealAssistantId },
+      )
 
-      if (!updatedCase) {
+      if (!updatedAppealCase) {
         return
       }
 
@@ -158,7 +165,7 @@ const AppealCase: FC = () => {
         ...prevWorkingCase,
         appealCase: {
           ...prevWorkingCase.appealCase,
-          appealAssistant: updatedCase?.appealCase?.appealAssistant,
+          appealAssistant: updatedAppealCase.appealAssistant,
         } as TAppealCase,
       }))
     }
