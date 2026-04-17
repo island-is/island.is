@@ -7,7 +7,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Application } from '@island.is/application/api/core'
 
 export enum NotificationStatus {
@@ -93,4 +93,11 @@ export class ScheduledNotification extends Model {
   })
   @ApiProperty({ enum: NotificationStatus })
   schedule_status!: NotificationStatus
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: Object })
+  args?: Record<string, string>
 }
