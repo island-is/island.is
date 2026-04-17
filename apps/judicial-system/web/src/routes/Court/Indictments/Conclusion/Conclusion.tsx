@@ -1007,11 +1007,14 @@ const Conclusion: FC = () => {
               selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
               selectedAction === IndictmentDecision.SPLITTING
             ) {
-              setModalVisible(
+              if (
                 selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
-                  ? 'COMPLETING_FOR_SOME'
-                  : 'SPLIT',
-              )
+              ) {
+                setConclusionDate(formatDate(new Date()))
+                setModalVisible('COMPLETING_FOR_SOME')
+              } else {
+                setModalVisible('SPLIT')
+              }
               return
             }
 
@@ -1149,7 +1152,7 @@ const Conclusion: FC = () => {
               <InputDate
                 onChange={(date) => setConclusionDate(date)}
                 onBlur={(date) => setConclusionDate(date)}
-                defaultValue={formatDate(new Date())}
+                value={conclusionDate}
               />
             </Box>
           </Modal>
