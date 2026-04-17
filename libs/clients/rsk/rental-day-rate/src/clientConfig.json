@@ -138,8 +138,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "date"
+              "type": "string"
             }
           },
           {

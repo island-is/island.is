@@ -32,7 +32,7 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -3641,7 +3641,7 @@ export class CaseNotificationService extends BaseNotificationService {
     let recipients: Recipient[] = []
     if (
       theCase.appealCase?.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED
+      AppealCaseRulingDecision.DISCONTINUED
     ) {
       recipients = await this.sendAppealDiscontinuedNotifications(theCase)
     } else {
