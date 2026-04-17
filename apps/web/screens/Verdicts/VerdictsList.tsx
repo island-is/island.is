@@ -1673,6 +1673,10 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
       caseFilterOptionsPerCourtResponse.data
         .webVerdictCaseFilterOptionsPerCourt,
     keywords: keywordsResponse.data.webVerdictKeywords.keywords,
+    languageToggleHrefOverride: {
+      is: '/domar',
+      en: customPageData?.configJson?.englishFallbackUrl ?? '',
+    },
   }
 }
 
