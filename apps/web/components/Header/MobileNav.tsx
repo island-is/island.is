@@ -40,6 +40,7 @@ export const MobileNav = ({
   const { activeLocale, t } = useI18n()
   const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [drilldownKey, setDrilldownKey] = useState<HeaderNavKey | null>(null)
@@ -65,16 +66,25 @@ export const MobileNav = ({
     }
   }, [isOpen])
 
+  // On close we only flip isOpen — drilldownKey and isPanelScrolled are
+  // preserved so the current view stays rendered during the fade-out.
+  // They get reset in `openPanel` instead, so the next open starts fresh.
   const close = useCallback(() => {
     setIsOpen(false)
-    setDrilldownKey(null)
-    setIsPanelScrolled(false)
   }, [])
 
   const openPanel = useCallback(
     (focusSearch: boolean) => {
+      // Scroll the page to the top before locking scroll so the header
+      // (where the trigger button lives) is flush with the viewport top
+      // and the fixed panel anchors seamlessly against the header bottom.
+      window.scrollTo({ top: 0, left: 0 })
+      // The panel stays mounted across open/close now, so explicitly reset
+      // its internal scroll — previously a fresh mount did this for free.
+      if (panelRef.current) panelRef.current.scrollTop = 0
       setIsOpen(true)
       setDrilldownKey(null)
+      setIsPanelScrolled(false)
       if (focusSearch) {
         // Wait for the panel (and SearchInput) to mount before focusing.
         setTimeout(() => {
@@ -171,12 +181,13 @@ export const MobileNav = ({
         </span>
       </button>
 
-      {isOpen && (
-        <div
+      <div
+          ref={panelRef}
           id={panelId}
           role="region"
           aria-label={menuLabel}
-          className={styles.panel}
+          aria-hidden={!isOpen}
+          className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
           onScroll={(event) =>
             setIsPanelScrolled(event.currentTarget.scrollTop > 10)
           }
@@ -284,7 +295,6 @@ export const MobileNav = ({
             </ul>
           )}
         </div>
-      )}
     </Box>
   )
 }

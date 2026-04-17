@@ -25,6 +25,11 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
   const router = useRouter()
   const [openKey, setOpenKey] = useState<DropdownKey | null>(null)
+  // Sticks to the last non-null openKey so the dropdown's CONTENT stays
+  // rendered during the fade-out transition. Without this, closing the
+  // dropdown would unmount the title/list instantly while the container
+  // was still fading to opacity 0.
+  const [displayKey, setDisplayKey] = useState<DropdownKey | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const reactId = useId()
@@ -36,6 +41,10 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   useEffect(() => {
     onOpenChange?.(openKey !== null)
   }, [openKey, onOpenChange])
+
+  useEffect(() => {
+    if (openKey) setDisplayKey(openKey)
+  }, [openKey])
 
   const close = useCallback(() => setOpenKey(null), [])
 
@@ -106,7 +115,8 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
     setOpenKey((current) => (current === key ? null : key))
   }
 
-  const active = openKey ? HEADER_NAV_MOCK_DATA[openKey] : null
+  // Render content from displayKey (sticky across fade-out), not openKey.
+  const active = displayKey ? HEADER_NAV_MOCK_DATA[displayKey] : null
   const panelId = `desktop-nav-panel-${reactId}`
 
   return (
@@ -135,62 +145,67 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
         )
       })}
 
-      {active && openKey && (
-        <div
-          ref={dropdownRef}
-          id={panelId}
-          role="region"
-          aria-labelledby={`desktop-nav-tab-${reactId}-${openKey}`}
-          className={styles.dropdown}
-          style={
-            fullWidthOffsets
-              ? {
-                  left: `${fullWidthOffsets.left}px`,
-                  right: `${fullWidthOffsets.right}px`,
-                  width: 'auto',
-                  maxWidth: 'none',
-                }
-              : undefined
-          }
-        >
-          <div className={styles.dropdownTitle}>{active.title}</div>
-          <ul className={styles.dropdownList}>
-            {active.items.slice(0, HEADER_NAV_MAX_ITEMS).map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={
-                    activeLocale === 'en' && !item.href.startsWith('/en')
-                      ? `/en${item.href}`
-                      : item.href
-                  }
-                  className={styles.dropdownLink}
-                >
-                  {item.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <Box className={styles.seeAllRow}>
-            <Link
-              href={
-                activeLocale === 'en' && !active.seeAllHref.startsWith('/en')
-                  ? `/en${active.seeAllHref}`
-                  : active.seeAllHref
+      <div
+        ref={dropdownRef}
+        id={panelId}
+        role="region"
+        aria-labelledby={
+          openKey ? `desktop-nav-tab-${reactId}-${openKey}` : undefined
+        }
+        aria-hidden={!openKey}
+        className={`${styles.dropdown} ${openKey ? styles.dropdownOpen : ''}`}
+        style={
+          fullWidthOffsets
+            ? {
+                left: `${fullWidthOffsets.left}px`,
+                right: `${fullWidthOffsets.right}px`,
+                width: 'auto',
+                maxWidth: 'none',
               }
-            >
-              <Button
-                icon="arrowForward"
-                iconType="filled"
-                variant="text"
-                size="small"
-                as="span"
+            : undefined
+        }
+      >
+        {active && (
+          <>
+            <div className={styles.dropdownTitle}>{active.title}</div>
+            <ul className={styles.dropdownList}>
+              {active.items.slice(0, HEADER_NAV_MAX_ITEMS).map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={
+                      activeLocale === 'en' && !item.href.startsWith('/en')
+                        ? `/en${item.href}`
+                        : item.href
+                    }
+                    className={styles.dropdownLink}
+                  >
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <Box className={styles.seeAllRow}>
+              <Link
+                href={
+                  activeLocale === 'en' && !active.seeAllHref.startsWith('/en')
+                    ? `/en${active.seeAllHref}`
+                    : active.seeAllHref
+                }
               >
-                {active.seeAllLabel}
-              </Button>
-            </Link>
-          </Box>
-        </div>
-      )}
+                <Button
+                  icon="arrowForward"
+                  iconType="filled"
+                  variant="text"
+                  size="small"
+                  as="span"
+                >
+                  {active.seeAllLabel}
+                </Button>
+              </Link>
+            </Box>
+          </>
+        )}
+      </div>
     </Box>
   )
 }
