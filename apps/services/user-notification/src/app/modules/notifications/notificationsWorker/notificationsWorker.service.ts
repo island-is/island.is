@@ -731,7 +731,7 @@ export class NotificationsWorkerService {
     } catch (error) {
       this.logger.warn(
         'Failed to check deceased status from national registry, proceeding with notification',
-        { messageId, error },
+        { messageId },
       )
       return false
     }
