@@ -1,0 +1,4395 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "LS.SerlyfjaskraAPIService",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Application/MedicineShortage": {
+      "post": {
+        "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageNewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Application/Comment/{id}": {
+      "post": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LyfjaskorturCommentPost"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LyfjaskorturCommentPost"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LyfjaskorturCommentPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Application/MedicineShortage/{id}": {
+      "patch": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageEditModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageEditModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageEditModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicineShortageModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicineShortageModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicineShortageModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ATC/atc/{domainCode}/{resultLevel}/{pageNumber}/{pageSize}/{searchString}": {
+      "get": {
+        "tags": ["ATC"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCodeHumanVet"
+            }
+          },
+          {
+            "name": "resultLevel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResultLevel"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "searchString",
+            "in": "path",
+            "description": "Must check \"Send empty value\" or Swagger passes a comma for empty values otherwise",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Atc"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Atc"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Atc"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ATC/atcList/{domainCode}/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["ATC"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCodeHumanVet"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Atc"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Atc"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Atc"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ATC/atcNodes/{domainCode}": {
+      "get": {
+        "tags": ["ATC"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCodeHumanVet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AtcNode"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AtcNode"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AtcNode"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ATC/atcalphabet/{domainCode}": {
+      "get": {
+        "tags": ["ATC"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCodeHumanVet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Eftirlit/lyfjabudir": {
+      "get": {
+        "tags": ["Eftirlit"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjabud"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjabud"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjabud"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Eftirlit/lyfjabudirogutibu/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["Eftirlit"],
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LyfjabudOgUtibu"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LyfjabudOgUtibu"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LyfjabudOgUtibu"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Eftirlit/lyfjaskortur": {
+      "get": {
+        "tags": ["Eftirlit"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjaskortur"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjaskortur"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjaskortur"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Eftirlit/laeknastodvar": {
+      "get": {
+        "tags": ["Eftirlit"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Laeknastod"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Laeknastod"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Laeknastod"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Eftirlit/lyfjaheildsolur": {
+      "get": {
+        "tags": ["Eftirlit"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjaheildsala"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjaheildsala"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyfjaheildsala"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Login/getToken/{user}/{secret}": {
+      "get": {
+        "tags": ["Login"],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "secret",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Lyf/lyfjaheitileit/{lyfjaheiti}": {
+      "get": {
+        "tags": ["Lyf"],
+        "parameters": [
+          {
+            "name": "lyfjaheiti",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyf"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyf"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyf"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Lyf/norraentvorunumerleit/{norraentVorunumer}": {
+      "get": {
+        "tags": ["Lyf"],
+        "parameters": [
+          {
+            "name": "norraentVorunumer",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyf"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyf"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lyf"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Medicine/get/{medicinalProductId}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "medicinalProductId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Medicine"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Medicine"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Medicine"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/getMedicine/{identifier}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Medicine"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Medicine"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Medicine"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/list/{domainCode}/{pageNumber}/{pageSize}/{lastUpdatedTime}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCode"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "lastUpdatedTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/listForHAVA/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineHAVA"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineHAVA"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineHAVA"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/listForHAVASearch/{pageNumber}/{pageSize}({searchString}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "searchString",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineHAVA"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineHAVA"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineHAVA"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/search/{domainCode}/{searchSetting}/{pageNumber}/{pageSize}/{searchString}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCode"
+            }
+          },
+          {
+            "name": "searchSetting",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SearchSetting"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "searchString",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/searchReferencePriceCategory/{domainCode}/{pageNumber}/{pageSize}/{referencePriceCategory}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCode"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "referencePriceCategory",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferencePriceCategory"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferencePriceCategory"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferencePriceCategory"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/searchReferencePriceCategoryAll/{domainCode}/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCode"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferencePriceCategory"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferencePriceCategory"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferencePriceCategory"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/search": {
+      "post": {
+        "tags": ["Medicine"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/keywords/{domainCode}/{pageNumber}/{pageSize}/{searchString}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCode"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "searchString",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KeyWordResult"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KeyWordResult"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KeyWordResult"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/domaincodedescriptions": {
+      "get": {
+        "tags": ["Medicine"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DomainCodeDescription"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DomainCodeDescription"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DomainCodeDescription"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/Medicine/inprocesslist/{searchCategory}/{name}": {
+      "get": {
+        "tags": ["Medicine"],
+        "parameters": [
+          {
+            "name": "searchCategory",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SearchCategory"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Medicine"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/MedicineInteraction/ReleaseDate": {
+      "get": {
+        "tags": ["MedicineInteraction"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/MedicineInteraction/FestInteractionXml": {
+      "get": {
+        "tags": ["MedicineInteraction"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/MedicineInteraction/SearchInteraction": {
+      "post": {
+        "tags": ["MedicineInteraction"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MedicineInfo"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MedicineInfo"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MedicineInfo"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchInteractionResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchInteractionResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchInteractionResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Regulatory/manufacturer/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["Regulatory"],
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Manufacturer"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Manufacturer"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Manufacturer"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Regulatory/pharmaciesAndBranches/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["Regulatory"],
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PharmacyAndBranch"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PharmacyAndBranch"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PharmacyAndBranch"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Regulatory/medicineShortageCauses": {
+      "get": {
+        "tags": ["Regulatory"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageCause"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageCause"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageCause"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Regulatory/medicineShortageDetails/{domainCode}/{pageNumber}/{pageSize}": {
+      "get": {
+        "tags": ["Regulatory"],
+        "parameters": [
+          {
+            "name": "domainCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DomainCode"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageDetail"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/Regulatory/medicineShortageDetails": {
+      "post": {
+        "tags": ["Regulatory"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageSearchModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageSearchModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineShortageSearchModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicineShortageDetail"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/SystemInfo/Version": {
+      "get": {
+        "tags": ["SystemInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SystemInfo/RuntimeEnvironment": {
+      "get": {
+        "tags": ["SystemInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ActionResult": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Atc": {
+        "type": "object",
+        "properties": {
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "atc": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "englishName": {
+            "type": "string",
+            "nullable": true
+          },
+          "addictiveDrugs": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AtcNode": {
+        "type": "object",
+        "properties": {
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "atc": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "englishName": {
+            "type": "string",
+            "nullable": true
+          },
+          "addictiveDrugs": {
+            "type": "boolean"
+          },
+          "atcNodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AtcNode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DisplayRule": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "recipient": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "externalFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalFileNameExtension": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "useExternalUrl": {
+            "type": "boolean"
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomainCode": {
+        "enum": ["All", "Human", "Vet", "HumanAndVet"],
+        "type": "string"
+      },
+      "DomainCodeDescription": {
+        "type": "object",
+        "properties": {
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomainCodeHumanVet": {
+        "enum": ["Human", "Vet", "HumanAndVet"],
+        "type": "string"
+      },
+      "FoundInteractionNotAssessed": {
+        "type": "object",
+        "properties": {
+          "atc": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FoundMedicineGroup": {
+        "type": "object",
+        "properties": {
+          "medicineA": {
+            "$ref": "#/components/schemas/MedicineInfo"
+          },
+          "medicineB": {
+            "$ref": "#/components/schemas/MedicineInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ingredient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IngredientHAVA": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "substanceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "smsPreferredTerm": {
+            "type": "string",
+            "nullable": true
+          },
+          "strength": {
+            "type": "string",
+            "nullable": true
+          },
+          "strengthUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "strengthUnitId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Innihaldsefni": {
+        "type": "object",
+        "properties": {
+          "innihaldsefniNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InteractionFound": {
+        "type": "object",
+        "properties": {
+          "interactionId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "relevance": {
+            "$ref": "#/components/schemas/Relevance"
+          },
+          "displayRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DisplayRule"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "sourceBase": {
+            "$ref": "#/components/schemas/SourceBasis"
+          },
+          "sourceBasisReferences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceBasisReference"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "foundMedicines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FoundMedicineGroup"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "clinicalConsequence": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "situationCriterion": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "interactionMechanism": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "handlingDoseAdjustment": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "handlingAdministrationAdjustment": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "handlingMonitoring": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "handlingAlternativeMedicines": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "interactionSubstanceText": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InteractionNotFound": {
+        "type": "object",
+        "properties": {
+          "medicineA": {
+            "$ref": "#/components/schemas/MedicineInfo"
+          },
+          "medicineB": {
+            "$ref": "#/components/schemas/MedicineInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "KeyWordResult": {
+        "type": "object",
+        "properties": {
+          "keyWord": {
+            "type": "string",
+            "nullable": true
+          },
+          "searchCategory": {
+            "$ref": "#/components/schemas/SearchCategory"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Laeknastod": {
+        "type": "object",
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "rekstraradili": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Kennitala": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Lyf": {
+        "type": "object",
+        "properties": {
+          "lyfjaheiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "flokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "markadsleyfisnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "markadsleyfishafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "umbodsadili": {
+            "type": "string",
+            "nullable": true
+          },
+          "lyfjaform": {
+            "type": "string",
+            "nullable": true
+          },
+          "styrkleiki": {
+            "type": "string",
+            "nullable": true
+          },
+          "styrkleikiEining": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcFlokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcHeiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsetningAMarkad": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dagsetningAfMarkadi": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stadaMarkadsleyfis": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsetningSamthykktar": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dagsetningNidurfellingar": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ikomuleid": {
+            "type": "string",
+            "nullable": true
+          },
+          "ikomuleid2": {
+            "type": "string",
+            "nullable": true
+          },
+          "athugasemdVTakmarkana": {
+            "type": "string",
+            "nullable": true
+          },
+          "avanaOgFiknilyf": {
+            "type": "boolean"
+          },
+          "afurdanyting": {
+            "type": "string",
+            "nullable": true
+          },
+          "maVelskammta": {
+            "type": "boolean"
+          },
+          "innihaldsefni": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Innihaldsefni"
+            },
+            "nullable": true
+          },
+          "pakkningar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pakkning"
+            },
+            "nullable": true
+          },
+          "skjol": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skjal"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LyfjaUtibu": {
+        "type": "object",
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "gotuheiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "flokkur": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Lyfjabud": {
+        "type": "object",
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "lyfsoluleyfishafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rekstraradili": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "netverslun": {
+            "type": "string",
+            "nullable": true
+          },
+          "utibu": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LyfjaUtibu"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LyfjabudOgUtibu": {
+        "type": "object",
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "lyfsoluleyfishafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rekstraradili": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rek_Kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "netverslun": {
+            "type": "string",
+            "nullable": true
+          },
+          "erUtibu": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Lyfjaheildsala": {
+        "type": "object",
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "gotuheiti1": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Lyfjaskortur": {
+        "type": "object",
+        "properties": {
+          "lyfjaheiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "lyfjaform": {
+            "type": "string",
+            "nullable": true
+          },
+          "styrkleiki": {
+            "type": "string",
+            "nullable": true
+          },
+          "styrkleikaeining": {
+            "type": "string",
+            "nullable": true
+          },
+          "magn": {
+            "type": "string",
+            "nullable": true
+          },
+          "magneining": {
+            "type": "string",
+            "nullable": true
+          },
+          "flokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "vorunumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "atCflokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "markadsleyfishafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "umbodsadili": {
+            "type": "string",
+            "nullable": true
+          },
+          "aaetludLok": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "aaetladUpphaf": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tilkynnt": {
+            "type": "string",
+            "nullable": true
+          },
+          "astaeda": {
+            "type": "string",
+            "nullable": true
+          },
+          "astaedaEfAnnad": {
+            "type": "string",
+            "nullable": true
+          },
+          "radleggingar": {
+            "type": "string",
+            "nullable": true
+          },
+          "radleggingarTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "frett": {
+            "type": "string",
+            "nullable": true
+          },
+          "innihaldsefni": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Innihaldsefni"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LyfjaskorturComment": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LyfjaskorturCommentPost": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Manufacturer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Medicine": {
+        "type": "object",
+        "properties": {
+          "medicinalProductId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "pharmaceuticalForm": {
+            "type": "string",
+            "nullable": true
+          },
+          "strength": {
+            "type": "string",
+            "nullable": true
+          },
+          "strengthUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcName": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationHolder": {
+            "type": "string",
+            "nullable": true
+          },
+          "representative": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "withdrawalFromMarketDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "authorizationStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "marketingAuthorizationWithdrawalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "routeOfAdministration": {
+            "type": "string",
+            "nullable": true
+          },
+          "routeOfAdministration2": {
+            "type": "string",
+            "nullable": true
+          },
+          "productUsability": {
+            "type": "string",
+            "nullable": true
+          },
+          "machineDoseDispensation": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isNarcotic": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "redTriangle": {
+            "type": "boolean"
+          },
+          "legalStatusOfSupply": {
+            "type": "string",
+            "nullable": true
+          },
+          "limitedToHospitalUse": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "legalStatusOfPrescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "referenceMedicinalProduct": {
+            "type": "string",
+            "nullable": true
+          },
+          "additionalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialistRestrictions": {
+            "type": "string",
+            "nullable": true
+          },
+          "legalStatusOfPrescription2": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketRestrictionNoyes": {
+            "type": "boolean"
+          },
+          "marketRestrictionEM": {
+            "type": "boolean"
+          },
+          "marketRestrictionCDS": {
+            "type": "boolean"
+          },
+          "marketRestrictionCAP": {
+            "type": "boolean"
+          },
+          "marketRestrictionPPP": {
+            "type": "boolean"
+          },
+          "marketRestrictionOther": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicinesUnderAdditionalMonitoring": {
+            "type": "boolean"
+          },
+          "essentialMedicines": {
+            "type": "boolean"
+          },
+          "nursesCanPrescribe": {
+            "type": "boolean"
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ingredient"
+            },
+            "nullable": true
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Package"
+            },
+            "nullable": true
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            },
+            "nullable": true
+          },
+          "otherStrengthsAndFormulations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StrengthAndFormulation"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineHAVA": {
+        "type": "object",
+        "properties": {
+          "medicinalProductId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pmsId": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullname": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "pharmaceuticalForm": {
+            "type": "string",
+            "nullable": true
+          },
+          "pharmaceuticalFormId": {
+            "type": "string",
+            "nullable": true
+          },
+          "strength": {
+            "type": "string",
+            "nullable": true
+          },
+          "strengthUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "strengthUnitId": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationHolder": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationHolderORGId": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationHolderLOCId": {
+            "type": "string",
+            "nullable": true
+          },
+          "authorisationCountrycode": {
+            "type": "string",
+            "nullable": true
+          },
+          "authorisationCountryID": {
+            "type": "string",
+            "nullable": true
+          },
+          "representative": {
+            "type": "string",
+            "nullable": true
+          },
+          "representativeORGId": {
+            "type": "string",
+            "nullable": true
+          },
+          "representativeHolderLOCId": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcName": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcId": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "withdrawalFromMarketDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "authorizationStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "marketingAuthorizationWithdrawalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "routeOfAdministration": {
+            "type": "string",
+            "nullable": true
+          },
+          "routeOfAdministrationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "routeOfAdministration2": {
+            "type": "string",
+            "nullable": true
+          },
+          "routeOfAdministration2Id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "isNarcotic": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "redTriangle": {
+            "type": "boolean"
+          },
+          "legalStatusOfSupply": {
+            "type": "string",
+            "nullable": true
+          },
+          "limitedToHospitalUse": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "referenceMedicinalProduct": {
+            "type": "string",
+            "nullable": true
+          },
+          "additionalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicinesUnderAdditionalMonitoring": {
+            "type": "boolean"
+          },
+          "essentialMedicines": {
+            "type": "boolean"
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IngredientHAVA"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineInfo": {
+        "type": "object",
+        "properties": {
+          "atc": {
+            "type": "string",
+            "nullable": true
+          },
+          "drugName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectedStart": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "projectedEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reasonId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortageCauseId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "reasonIfOther": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "advice": {
+            "type": "string",
+            "nullable": true
+          },
+          "adviceText": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicineName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nordicProductNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationHolder": {
+            "type": "string",
+            "nullable": true
+          },
+          "pharmaceuticalForm": {
+            "type": "string",
+            "nullable": true
+          },
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "representative": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkToShortageArticle": {
+            "type": "string",
+            "nullable": true
+          },
+          "recommendationsForDoctors": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortagePriority": {
+            "type": "string",
+            "nullable": true
+          },
+          "lawArticle52Activated": {
+            "type": "boolean"
+          },
+          "lawArticle52ActivatedFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lawArticle52ActivatedTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortageCause": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "englishName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortageDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectedStart": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "projectedEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reasonId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortageCauseId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "reasonIfOther": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "advice": {
+            "type": "string",
+            "nullable": true
+          },
+          "adviceText": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicineName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nordicProductNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "marketingAuthorizationHolder": {
+            "type": "string",
+            "nullable": true
+          },
+          "pharmaceuticalForm": {
+            "type": "string",
+            "nullable": true
+          },
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "representative": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkToShortageArticle": {
+            "type": "string",
+            "nullable": true
+          },
+          "recommendationsForDoctors": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortagePriority": {
+            "type": "string",
+            "nullable": true
+          },
+          "lawArticle52Activated": {
+            "type": "boolean"
+          },
+          "lawArticle52ActivatedFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lawArticle52ActivatedTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ingredient"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortageEditModel": {
+        "type": "object",
+        "properties": {
+          "projectedStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "projectedEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "shortageCauseId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortageModel": {
+        "type": "object",
+        "properties": {
+          "nordicProductNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectedStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "projectedEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "shortageCauseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "apiNotandi": {
+            "type": "string",
+            "nullable": true
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LyfjaskorturComment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortageNewModel": {
+        "type": "object",
+        "properties": {
+          "nordicProductNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectedStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "projectedEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "shortageCauseId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedicineShortageSearchModel": {
+        "type": "object",
+        "properties": {
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "searchString": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "searchCategory": {
+            "$ref": "#/components/schemas/SearchCategory"
+          },
+          "reasonId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "projectedStart": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "projectedEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Package": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nordicProductNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "packaging": {
+            "type": "string",
+            "nullable": true
+          },
+          "volumeMass": {
+            "type": "string",
+            "nullable": true
+          },
+          "volumeMassUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "retailPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "packageMarketingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "packageWithdrawalFromMarketDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "euAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "packagingType": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberOfContainers": {
+            "type": "string",
+            "nullable": true
+          },
+          "legalStatusOfSupply": {
+            "type": "string",
+            "nullable": true
+          },
+          "reimbursementStatus": {
+            "type": "boolean"
+          },
+          "legalStatusOfSupplySubCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "dddPerPackage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "saleAllowedOutsidePharmacies": {
+            "type": "boolean"
+          },
+          "additionalInformationOnPackaging": {
+            "type": "string",
+            "nullable": true
+          },
+          "onlyForDoseDispensation": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "referencePriceCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "referencePrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "wholesalerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "wholesalerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "referencePriceLastUpdated": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            },
+            "nullable": true
+          },
+          "medicineShortages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedicineShortage"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Pakkning": {
+        "type": "object",
+        "properties": {
+          "fulltHeiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "norraentVorunumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "umbudir": {
+            "type": "string",
+            "nullable": true
+          },
+          "magn": {
+            "type": "string",
+            "nullable": true
+          },
+          "magneining": {
+            "type": "string",
+            "nullable": true
+          },
+          "smasoluverd": {
+            "type": "string",
+            "nullable": true
+          },
+          "afgreidslutilhogun": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsAMarkadi": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dagsAfMarkadi": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evropumarkadsLeyfisNumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "umbudagerd": {
+            "type": "string",
+            "nullable": true
+          },
+          "skjol": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skjal"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PharmacyAndBranch": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "authorizationHolder": {
+            "type": "string",
+            "nullable": true
+          },
+          "operationalEntity": {
+            "type": "string",
+            "nullable": true
+          },
+          "op_Address": {
+            "type": "string",
+            "nullable": true
+          },
+          "op_PostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "op_City": {
+            "type": "string",
+            "nullable": true
+          },
+          "op_Telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "op_SSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "onlineShopping": {
+            "type": "boolean"
+          },
+          "orgId": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchLicenseValidTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "countryPart": {
+            "type": "string",
+            "nullable": true
+          },
+          "typeOfPharmacy": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentPharmacy": {
+            "type": "string",
+            "nullable": true
+          },
+          "webSiteURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "isBranch": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
+      },
+      "ReferencePriceCategory": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Medicine"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Relevance": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResultLevel": {
+        "enum": [
+          "ExactMatch",
+          "SubLevelOnly",
+          "CurrentLevelAndChildren",
+          "CurrentLevelAndParents"
+        ],
+        "type": "string"
+      },
+      "SearchCategory": {
+        "enum": [
+          "MedicineName",
+          "ATC",
+          "MarketingHolder",
+          "MedicineText",
+          "NordicLabel",
+          "ActiveIngredient",
+          "Excipient"
+        ],
+        "type": "string"
+      },
+      "SearchInteractionResult": {
+        "type": "object",
+        "properties": {
+          "interactionNotAssesseds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FoundInteractionNotAssessed"
+            },
+            "nullable": true
+          },
+          "foundInteractions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InteractionFound"
+            },
+            "nullable": true
+          },
+          "notFoundInteractions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InteractionNotFound"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchModel": {
+        "type": "object",
+        "properties": {
+          "domainCode": {
+            "$ref": "#/components/schemas/DomainCode"
+          },
+          "searchString": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "searchCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchCategory"
+            },
+            "nullable": true
+          },
+          "searchSetting": {
+            "$ref": "#/components/schemas/SearchSetting"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchSetting": {
+        "enum": ["ExactWordMatch", "StartsWith"],
+        "type": "string"
+      },
+      "Skjal": {
+        "type": "object",
+        "properties": {
+          "tegundId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tegundNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "slod": {
+            "type": "string",
+            "nullable": true
+          },
+          "iByrtingu": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "athugasemd": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourceBasis": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourceBasisReference": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StrengthAndFormulation": {
+        "type": "object",
+        "properties": {
+          "medicinalProductId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pharmaceuticalForm": {
+            "type": "string",
+            "nullable": true
+          },
+          "strength": {
+            "type": "string",
+            "nullable": true
+          },
+          "strengthUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemInfoViewModel": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenResult": {
+        "type": "object",
+        "properties": {
+          "expiresIn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notBefore": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accessToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Input bearer token to access this API",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
