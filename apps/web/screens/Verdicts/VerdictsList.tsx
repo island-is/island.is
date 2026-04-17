@@ -1146,7 +1146,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   <Hidden below="xl">
                     <Box
                       display="flex"
-                      justifyContent="center"
+                      justifyContent="flexStart"
                       alignItems="center"
                       width="full"
                       paddingTop={2}
