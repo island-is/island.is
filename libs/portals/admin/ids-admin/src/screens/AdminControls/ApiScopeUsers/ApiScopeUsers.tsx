@@ -227,6 +227,7 @@ const ApiScopeUsers = () => {
         setUserAvailableEnvironments(userData.availableEnvironments)
       }
     } catch (e) {
+      toast.error(formatMessage(m.apiScopeUsersError))
       setModalVisible(false)
     } finally {
       setLoadingUser(false)

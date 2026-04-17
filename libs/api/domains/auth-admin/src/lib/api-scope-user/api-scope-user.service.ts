@@ -240,7 +240,15 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     const inputEnvironments = input.environments
     const targetEnvironments = inputEnvironments?.length
       ? environments.filter((env) => inputEnvironments.includes(env))
-      : environments
+      : undefined
+
+    if (!targetEnvironments) {
+      const existing = await this.getApiScopeUser(user, input.nationalId)
+      if (!existing) {
+        throw new Error('API scope user not found')
+      }
+      return existing
+    }
 
     let lastResult: ApiScopeUser | null = null
 
