@@ -1,7 +1,7 @@
 {
   "name": "de-register-unemployment-benefits",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/application/templates/de-register-unemployment-benefits/src",
+  "sourceRoot": "libs/application/templates/vmst-actions/de-register-unemployment-benefits/src",
   "projectType": "library",
   "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
@@ -12,13 +12,13 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/application/templates/de-register-unemployment-benefits/jest.config.ts"
+        "jestConfig": "libs/application/templates/vmst-actions/de-register-unemployment-benefits/jest.config.ts"
       }
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/de-register-unemployment-benefits/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/vmst-actions/de-register-unemployment-benefits/src/lib/messages.ts"
       }
     }
   }

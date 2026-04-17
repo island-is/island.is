@@ -56,14 +56,6 @@ export const MainForm = buildForm({
           },
           required: true,
         }),
-        buildTextField({
-          id: 'otherReason',
-          title: mainForm.reason.otherReasonTitle,
-          variant: 'textarea',
-          required: true,
-          condition: (formValue) =>
-            formValue.reason === 'e39681d9-f953-46b1-aff9-08d7f72f9c0e', //this is the id of other reasons
-        }),
         buildSubmitField({
           id: 'submit',
           title: 'Submit',

@@ -29,7 +29,7 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
 
     if (!canWithdraw.success) {
       this.logger.warn(
-        '[VMST-Unemployment]: User cannot apply, creating application returned canApply: False',
+        '[VMST-Unemployment]: User cannot withdraw, creating application returned canWithdraw: False',
         canWithdraw.errorMessage,
       )
       throw new TemplateApiError(
