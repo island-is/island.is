@@ -16,7 +16,6 @@ import {
   AccordionItem,
   Box,
   type BoxProps,
-  Breadcrumbs,
   Button,
   Filter,
   GridContainer,
@@ -1121,7 +1120,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
           <GridContainer>
             <Stack space={5}>
               <Stack space={3}>
-                <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
                 <Stack space={2}>
                   <Text variant="h1" as="h1">
                     {heading}
@@ -1673,6 +1671,10 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
       caseFilterOptionsPerCourtResponse.data
         .webVerdictCaseFilterOptionsPerCourt,
     keywords: keywordsResponse.data.webVerdictKeywords.keywords,
+    languageToggleHrefOverride: {
+      is: '/domar',
+      en: customPageData?.configJson?.englishFallbackUrl ?? '',
+    },
   }
 }
 
