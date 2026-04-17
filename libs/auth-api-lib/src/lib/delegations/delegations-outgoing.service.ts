@@ -235,7 +235,9 @@ export class DelegationsOutgoingService {
     if (!delegation) {
       const [fromDisplayName, toName] = await Promise.all([
         this.namesService.getUserName(user),
-        this.namesService.getPersonName(createDelegation.toNationalId),
+        this.namesService.validateRecipientNotDeceased(
+          createDelegation.toNationalId,
+        ),
       ])
 
       delegation = await this.delegationModel.create({

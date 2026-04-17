@@ -1,6 +1,7 @@
+import { ApolloError } from '@apollo/client'
 import cn from 'classnames'
 import * as kennitala from 'kennitala'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Control, FormProvider, useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -155,6 +156,21 @@ const GrantAccess = () => {
     }
   })
 
+  const formErrorOverrides = useMemo(() => {
+    const problem = (formError as ApolloError | undefined)?.graphQLErrors?.[0]
+      ?.extensions?.problem as { status?: number; detail?: string } | undefined
+    if (
+      problem?.status === 400 &&
+      problem.detail?.toLowerCase().includes('deceased')
+    ) {
+      return {
+        title: formatMessage(m.grantDeceasedTitle),
+        message: formatMessage(m.grantDeceasedMessage),
+      }
+    }
+    return {}
+  }, [formError, formatMessage])
+
   const clearPersonState = () => {
     setName('')
     setValue('toNationalId', '')
@@ -289,7 +305,14 @@ const GrantAccess = () => {
               </div>
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
-              {formError && <Problem error={formError} size="small" />}
+              {formError && (
+                <Problem
+                  error={formError}
+                  size="small"
+                  title={formErrorOverrides.title}
+                  message={formErrorOverrides.message}
+                />
+              )}
               <Text variant="small">
                 {formatMessage(m.grantNextStepDescription)}
               </Text>

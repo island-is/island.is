@@ -410,19 +410,17 @@ const CreateDelegationScreen = () => {
               <GridColumn span={['12/12', '12/12', '7/12']}>
                 <AlertMessage
                   title=""
-                  message={
-                    // if problem title is object extract code and use it as key
-                    FORM_ERRORS[
-                      actionData?.problem?.title as keyof typeof FORM_ERRORS
-                    ]
-                      ? formatMessage(
-                          FORM_ERRORS[
-                            actionData?.problem
-                              ?.title as keyof typeof FORM_ERRORS
-                          ],
-                        )
+                  message={(() => {
+                    const { title, detail } = actionData?.problem ?? {}
+                    if (detail?.toLowerCase().includes('deceased')) {
+                      return formatMessage(m.deceasedIndividualError)
+                    }
+                    const mapped =
+                      FORM_ERRORS[title as keyof typeof FORM_ERRORS]
+                    return mapped
+                      ? formatMessage(mapped)
                       : formatMessage(m.errorDefault)
-                  }
+                  })()}
                   type="error"
                 />
               </GridColumn>
