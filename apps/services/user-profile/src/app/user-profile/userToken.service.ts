@@ -53,10 +53,7 @@ export class UserTokenService {
 
       if (tokenWithDifferentUser) {
         // Same device, different user: reassign to current user
-        this.logger.info('Device token reassigned to different user', {
-          fromNationalId: tokenWithDifferentUser.nationalId,
-          toNationalId: user.nationalId,
-        })
+        this.logger.info('Device token reassigned to different user')
 
         await tokenWithDifferentUser.update({
           nationalId: user.nationalId,
