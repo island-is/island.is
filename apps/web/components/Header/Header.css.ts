@@ -4,7 +4,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const header = style({
   background: theme.color.white,
-  transition: 'box-shadow 150ms ease',
 })
 
 export const headerWithShadow = style({

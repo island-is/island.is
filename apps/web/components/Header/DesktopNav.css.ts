@@ -48,7 +48,6 @@ export const chevron = style({
   width: 16,
   height: 16,
   transformOrigin: 'center center',
-  transition: 'transform 150ms ease',
 })
 
 export const chevronOpen = style({
@@ -75,6 +74,20 @@ export const dropdown = style({
   clipPath: 'inset(0 -40px -40px -40px)',
   padding: '24px 48px 40px 48px',
   zIndex: 10,
+
+  // Below 1100px the dropdown spans the full viewport width (DesktopNav
+  // measures offsetParent and sets left/right/width inline). Only the
+  // visual tweaks that go along with that live here.
+  '@media': {
+    'screen and (max-width: 1099px)': {
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
+      // Panel now touches the viewport edges — clip shadow flush on the sides
+      // so it doesn't render off-screen, keep vertical bleed for the drop
+      // shadow below.
+      clipPath: 'inset(0 0 -40px 0)',
+    },
+  },
 })
 
 export const dropdownTitle = style({

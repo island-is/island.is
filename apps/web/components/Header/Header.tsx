@@ -59,10 +59,16 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   const { activeLocale, t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
   const [isDesktopNavOpen, setIsDesktopNavOpen] = useState(false)
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const handleDesktopNavOpenChange = useCallback(
     (isOpen: boolean) => setIsDesktopNavOpen(isOpen),
     [],
   )
+  const handleMobileNavOpenChange = useCallback(
+    (isOpen: boolean) => setIsMobileNavOpen(isOpen),
+    [],
+  )
+  const isNavOpen = isDesktopNavOpen || isMobileNavOpen
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -71,7 +77,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   return (
     <header
       className={`${styles.header} ${
-        isDesktopNavOpen ? styles.headerWithShadow : ''
+        isNavOpen ? styles.headerWithShadow : ''
       }`}
     >
       <Hidden print={true}>
@@ -156,6 +162,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         <MobileNav
                           organizationSearchFilter={organizationSearchFilter}
                           searchPlaceholder={searchPlaceholder}
+                          onOpenChange={handleMobileNavOpenChange}
                         />
                       </Box>
                     </Hidden>

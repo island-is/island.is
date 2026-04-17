@@ -29,11 +29,13 @@ import {
 interface MobileNavProps {
   organizationSearchFilter?: string
   searchPlaceholder?: string
+  onOpenChange?: (isOpen: boolean) => void
 }
 
 export const MobileNav = ({
   organizationSearchFilter,
   searchPlaceholder,
+  onOpenChange,
 }: MobileNavProps) => {
   const { activeLocale, t } = useI18n()
   const router = useRouter()
@@ -41,12 +43,32 @@ export const MobileNav = ({
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [drilldownKey, setDrilldownKey] = useState<HeaderNavKey | null>(null)
+  const [isPanelScrolled, setIsPanelScrolled] = useState(false)
   const reactId = useId()
   const panelId = `mobile-nav-panel-${reactId}`
+
+  useEffect(() => {
+    onOpenChange?.(isOpen)
+  }, [isOpen, onOpenChange])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const hasScrollbar =
+      window.innerWidth > document.documentElement.clientWidth
+    document.body.style.overflow = 'hidden'
+    if (hasScrollbar) {
+      document.documentElement.style.scrollbarGutter = 'stable'
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.documentElement.style.scrollbarGutter = ''
+    }
+  }, [isOpen])
 
   const close = useCallback(() => {
     setIsOpen(false)
     setDrilldownKey(null)
+    setIsPanelScrolled(false)
   }, [])
 
   const openPanel = useCallback(
@@ -155,7 +177,16 @@ export const MobileNav = ({
           role="region"
           aria-label={menuLabel}
           className={styles.panel}
+          onScroll={(event) =>
+            setIsPanelScrolled(event.currentTarget.scrollTop > 10)
+          }
         >
+          <div
+            aria-hidden="true"
+            className={`${styles.scrollShadow} ${
+              isPanelScrolled ? styles.scrollShadowVisible : ''
+            }`}
+          />
           <Box className={styles.searchWrapper}>
             <SearchInput
               ref={searchInputRef}
