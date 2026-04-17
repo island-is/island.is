@@ -159,6 +159,16 @@ export const applicationMessages = {
     defaultMessage: 'Umsókn send inn',
     description: 'Action card tag for submitted application',
   },
+  institutionName: {
+    id: 'vmst.dub.application:institution',
+    defaultMessage: 'Vinnumálastofnun',
+    description: `Institution's name`,
+  },
+  name: {
+    id: 'vmst.dub.application:name',
+    defaultMessage: 'Breyting á upplýsingum um atvinnuleysisbætur',
+    description: `Application's name`,
+  },
 }
 
 export const errorMessages = defineMessages({

@@ -28,9 +28,9 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS,
-  name: 'de-register-unemployment-benefits template',
-  codeOwner: CodeOwners.Origo, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
+  name: applicationMessages.name,
+  codeOwner: CodeOwners.Origo,
+  institution: applicationMessages.institutionName,
   translationNamespaces:
     ApplicationConfigurations.DeregisterUnemploymentBenefits.translation,
   dataSchema: DeregisterUnemploymentBenefitsSchema,

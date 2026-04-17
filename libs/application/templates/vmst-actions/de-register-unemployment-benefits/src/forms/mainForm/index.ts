@@ -11,11 +11,13 @@ import {
 import { FormModes } from '@island.is/application/types'
 import { mainForm } from '../../lib/messages'
 import { GaldurExternalDomainModelsSupportDataDelistingReasonDTO } from '@island.is/clients/vmst-unemployment'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
+  logo: DirectorateOfLabourLogo,
   children: [
     buildMultiField({
       id: 'deregisterMultiField',

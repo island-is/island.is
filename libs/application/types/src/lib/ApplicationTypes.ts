@@ -509,6 +509,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
     slug: 'afskraning-atvinnuleysisbota',
-    translation: ['dub.ub.application', 'uiForms.application'],
+    translation: ['vmst.dub.application', 'uiForms.application'],
   },
 }
