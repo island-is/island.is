@@ -32,6 +32,7 @@ import {
   SavedVerificationPendingData,
 } from '../../types/cardPayment'
 import { generateMd, getPayloadFromMd } from './cardPayment.utils'
+import * as cardPaymentUtils from './cardPayment.utils'
 import { ChargeCardInput, VerificationCallbackInput } from './dtos'
 import { RefundPaymentInput } from '../refund/dtos/refundPayment.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
@@ -98,6 +99,8 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = TOKEN_SIGNING_ALGORITHM
     process.env.PAYMENTS_APPLE_PAY_DOMAIN = 'island.is'
     process.env.PAYMENTS_APPLE_PAY_DISPLAY_NAME = 'island.is'
+    process.env.APPLE_PAY_PAYMENT_PROCESSING_CERT = 'test-processing-cert'
+    process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY = 'test-processing-key'
 
     app = await testServer({
       appModule: AppModule,
@@ -176,6 +179,8 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_GATEWAY_API_URL = previousPaymentGatewayApiUrl
     process.env.PAYMENTS_TOKEN_SIGNING_SECRET = previousTokenSigningSecret
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = previousTokenSigningAlgorithm
+    delete process.env.APPLE_PAY_PAYMENT_PROCESSING_CERT
+    delete process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY
 
     jest.clearAllMocks()
     jest.restoreAllMocks()
@@ -948,111 +953,56 @@ describe('CardPaymentController', () => {
   })
 
   describe('Apple Pay', () => {
-    describe('GET /apple-pay/session', () => {
-      it('should successfully get an Apple Pay session', async () => {
-        const mockSession = 'eyJlcG9jaFRpbWVzdGFtcCI6MTY3ODg5...' // Mock session token
+    describe('POST /apple-pay/validate-merchant', () => {
+      const validValidationUrl =
+        'https://apple-pay-gateway.apple.com/paymentservices/startSession'
 
-        const fetchSpy = jest
-          .spyOn(global, 'fetch')
-          .mockImplementation(async (url) => {
-            if (
-              typeof url === 'string' &&
-              url.includes('/ApplePay/GetSession')
-            ) {
-              return {
-                json: async () => ({
-                  isSuccess: true,
-                  session: mockSession,
-                  responseCode: 'W0',
-                  responseDescription: 'Success',
-                  responseTime: '00:00:03',
-                  correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
-                }),
-                status: 200,
-                ok: true,
-              } as Response
-            }
+      it('should successfully validate merchant and return session', async () => {
+        const mockSession = 'eyJlcG9jaFRpbWVzdGFtcCI6MTY3ODg5...'
 
-            return {
-              json: async () => ({ error: 'Missing handler' }),
-              status: 500,
-              ok: false,
-            } as Response
-          })
+        process.env.APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.test'
+        process.env.APPLE_PAY_MERCHANT_IDENTITY_CERT = '-----BEGIN CERTIFICATE-----\ntest\n-----END CERTIFICATE-----'
+        process.env.APPLE_PAY_MERCHANT_IDENTITY_KEY =
+          '-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----'
 
-        const response = await server.get('/v1/payments/card/apple-pay/session')
+        const validateSpy = jest
+          .spyOn(CardPaymentService.prototype, 'validateApplePayMerchant')
+          .mockResolvedValue({ session: mockSession })
+
+        const response = await server
+          .post('/v1/payments/card/apple-pay/validate-merchant')
+          .send({ validationURL: validValidationUrl })
 
         expect(response.status).toBe(200)
         expect(response.body.session).toBe(mockSession)
+        expect(validateSpy).toHaveBeenCalledWith(validValidationUrl)
 
-        fetchSpy.mockRestore()
+        validateSpy.mockRestore()
+        delete process.env.APPLE_PAY_MERCHANT_IDENTIFIER
+        delete process.env.APPLE_PAY_MERCHANT_IDENTITY_CERT
+        delete process.env.APPLE_PAY_MERCHANT_IDENTITY_KEY
       })
 
-      it('should throw an error if the gateway returns an error', async () => {
-        const fetchSpy = jest
-          .spyOn(global, 'fetch')
-          .mockImplementation(async (url) => {
-            if (
-              typeof url === 'string' &&
-              url.includes('/ApplePay/GetSession')
-            ) {
-              return {
-                text: async () => 'Gateway error',
-                json: async () => ({}),
-                status: 500,
-                ok: false,
-                statusText: 'Internal Server Error',
-              } as Response
-            }
+      it('should throw an error if validation fails', async () => {
+        const validateSpy = jest
+          .spyOn(CardPaymentService.prototype, 'validateApplePayMerchant')
+          .mockRejectedValue(new Error('Validation failed'))
 
-            return {
-              json: async () => ({ error: 'Missing handler' }),
-              status: 500,
-              ok: false,
-            } as Response
-          })
-
-        const response = await server.get('/v1/payments/card/apple-pay/session')
+        const response = await server
+          .post('/v1/payments/card/apple-pay/validate-merchant')
+          .send({ validationURL: validValidationUrl })
 
         expect(response.status).toBe(400)
 
-        fetchSpy.mockRestore()
+        validateSpy.mockRestore()
       })
 
-      it('should throw an error if isSuccess is false', async () => {
-        const fetchSpy = jest
-          .spyOn(global, 'fetch')
-          .mockImplementation(async (url) => {
-            if (
-              typeof url === 'string' &&
-              url.includes('/ApplePay/GetSession')
-            ) {
-              return {
-                json: async () => ({
-                  isSuccess: false,
-                  responseCode: 'W2',
-                  responseDescription: 'Error getting Apple Pay session',
-                  responseTime: '00:00:01',
-                  correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
-                }),
-                status: 200,
-                ok: true,
-              } as Response
-            }
-
-            return {
-              json: async () => ({ error: 'Missing handler' }),
-              status: 500,
-              ok: false,
-            } as Response
-          })
-
-        const response = await server.get('/v1/payments/card/apple-pay/session')
+      it('should throw an error if validation URL is not in allowlist', async () => {
+        const response = await server
+          .post('/v1/payments/card/apple-pay/validate-merchant')
+          .send({ validationURL: 'https://evil.com/paymentservices/start' })
 
         expect(response.status).toBe(400)
-        expect(response.body.detail).toBe('ErrorGettingApplePaySession')
-
-        fetchSpy.mockRestore()
       })
     })
 
@@ -1074,6 +1024,23 @@ describe('CardPaymentController', () => {
           network: 'Visa',
         },
         transactionIdentifier: 'transaction-identifier',
+      })
+
+      let decryptSpy: jest.SpyInstance
+
+      beforeEach(() => {
+        decryptSpy = jest
+          .spyOn(cardPaymentUtils, 'decryptApplePayPaymentToken')
+          .mockReturnValue({
+            cardNumber: '4761340000054693',
+            expirationMonth: 12,
+            expirationYear: 2050,
+            paymentCryptogram: 'YwAAAGYAW9X4QucEhjf0gEBgAgB=',
+          })
+      })
+
+      afterEach(() => {
+        decryptSpy.mockRestore()
       })
 
       it('should successfully charge with Apple Pay', async () => {

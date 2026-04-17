@@ -32,6 +32,7 @@ import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { GetApplePaySessionResponse } from './dto/getApplePaySession.response'
+import { ValidateApplePayMerchantInput } from './dto/validateApplePayMerchant.input'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 
@@ -146,12 +147,15 @@ export class PaymentsResolver {
     }
   }
 
-  @Query(() => GetApplePaySessionResponse, {
-    name: 'paymentsGetApplePaySession',
+  @Mutation(() => GetApplePaySessionResponse, {
+    name: 'paymentsValidateApplePayMerchant',
   })
-  async getApplePaySession(): Promise<GetApplePaySessionResponse> {
+  async validateApplePayMerchant(
+    @Args('input', { type: () => ValidateApplePayMerchantInput })
+    input: ValidateApplePayMerchantInput,
+  ): Promise<GetApplePaySessionResponse> {
     try {
-      return this.paymentsService.getApplePaySession()
+      return this.paymentsService.validateApplePayMerchant(input.validationURL)
     } catch (e) {
       throw new ApolloError(e.message)
     }

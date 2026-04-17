@@ -148,8 +148,12 @@ export class PaymentsService {
     }
   }
 
-  async getApplePaySession(): Promise<GetApplePaySessionResponse> {
-    return this.paymentsApi.cardPaymentControllerGetApplePaySession()
+  async validateApplePayMerchant(
+    validationURL: string,
+  ): Promise<GetApplePaySessionResponse> {
+    return this.paymentsApi.cardPaymentControllerValidateApplePayMerchant({
+      validateApplePayMerchantInput: { validationURL },
+    })
   }
 
   async chargeApplePay(

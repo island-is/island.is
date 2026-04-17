@@ -48,6 +48,14 @@ export const CreateInvoiceMutation = gql`
   }
 `
 
+export const ValidateApplePayMerchantMutation = gql`
+  mutation validateApplePayMerchant($input: PaymentsValidateApplePayMerchantInput!) {
+    paymentsValidateApplePayMerchant(input: $input) {
+      session
+    }
+  }
+`
+
 export const ChargeApplePayMutation = gql`
   mutation chargeApplePay($input: PaymentsApplePayChargeInput!) {
     paymentsChargeApplePay(input: $input) {

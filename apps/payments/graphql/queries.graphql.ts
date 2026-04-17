@@ -60,10 +60,3 @@ export const GetJwks = gql`
   }
 `
 
-export const GetApplePaySession = gql`
-  query getApplePaySession {
-    paymentsGetApplePaySession {
-      session
-    }
-  }
-`

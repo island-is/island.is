@@ -35,13 +35,15 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import {
-  generateApplePayChargeRequestOptions,
-  generateApplePaySessionRequestOptions,
+  decryptApplePayPaymentToken,
+  generateApplePayDecryptedChargeRequestOptions,
+  generateApplePayValidationRequestOptions,
   generateChargeRequestOptions,
   generateMd,
   generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
+  redactCardNumber,
 } from './cardPayment.utils'
 import {
   ApplePayChargeInput,
@@ -290,40 +292,105 @@ export class CardPaymentService {
 
   // APPLE PAY METHODS ------------------------------------------------------------------------------------------------
 
-  async getApplePaySession(): Promise<ApplePaySessionResponse> {
+  private requireMerchantIdentityConfig() {
     const {
-      paymentGateway: {
-        applePayDomainName,
-        applePayDisplayName,
-        paymentsGatewayApiUrl,
-      },
-    } = this.config
+      applePayMerchantIdentifier,
+      applePayMerchantIdentityCert,
+      applePayMerchantIdentityKey,
+      applePayDomainName,
+      applePayDisplayName,
+    } = this.config.paymentGateway
 
-    const requestOptions = generateApplePaySessionRequestOptions({
-      domainName: applePayDomainName,
-      displayName: applePayDisplayName,
-      paymentApiConfig: this.config.paymentGateway,
-    })
-
-    const response = await fetch(
-      `${paymentsGatewayApiUrl}/ApplePay/GetSession`,
-      requestOptions,
-    )
-
-    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
-      response,
-      schema: ApplePaySessionSuccessSchema,
-      errorSchema: ApplePaySessionErrorSchema,
-      errorMessage: 'Failed to get Apple Pay session',
-    })
-
-    if (!data.session) {
-      throw new BadRequestException(CardErrorCode.ErrorGettingApplePaySession)
+    if (
+      !applePayMerchantIdentifier ||
+      !applePayMerchantIdentityCert ||
+      !applePayMerchantIdentityKey
+    ) {
+      throw new BadRequestException(
+        CardErrorCode.ApplePayNotConfigured,
+      )
     }
 
     return {
-      session: data.session,
+      applePayMerchantIdentifier,
+      applePayMerchantIdentityCert,
+      applePayMerchantIdentityKey,
+      applePayDomainName,
+      applePayDisplayName,
     }
+  }
+
+  private requirePaymentProcessingConfig() {
+    const {
+      applePayPaymentProcessingCert,
+      applePayPaymentProcessingKey,
+    } = this.config.paymentGateway
+
+    if (!applePayPaymentProcessingCert || !applePayPaymentProcessingKey) {
+      throw new BadRequestException(
+        CardErrorCode.ApplePayNotConfigured,
+      )
+    }
+
+    return { applePayPaymentProcessingCert, applePayPaymentProcessingKey }
+  }
+
+  async validateApplePayMerchant(
+    validationURL: string,
+  ): Promise<ApplePaySessionResponse> {
+    this.logger.info('Apple Pay merchant validation started', {
+      validationURL,
+    })
+
+    const {
+      applePayMerchantIdentifier,
+      applePayMerchantIdentityCert,
+      applePayMerchantIdentityKey,
+      applePayDomainName,
+      applePayDisplayName,
+    } = this.requireMerchantIdentityConfig()
+
+    this.logger.info('Apple Pay merchant validation config present', {
+      merchantIdentifier: applePayMerchantIdentifier,
+      displayName: applePayDisplayName,
+      initiativeContext: applePayDomainName,
+      hasCert: !!applePayMerchantIdentityCert,
+      hasKey: !!applePayMerchantIdentityKey,
+    })
+
+    const requestOptions = generateApplePayValidationRequestOptions({
+      validationURL,
+      merchantIdentifier: applePayMerchantIdentifier,
+      displayName: applePayDisplayName,
+      initiativeContext: applePayDomainName,
+      merchantIdentityCert: applePayMerchantIdentityCert,
+      merchantIdentityKey: applePayMerchantIdentityKey,
+    })
+
+    const response = await fetch(validationURL, requestOptions)
+
+    if (!response.ok) {
+      const responseBody = await response.text()
+      this.logger.error('Apple Pay merchant validation failed', {
+        validationURL,
+        status: response.status,
+        statusText: response.statusText,
+        responseBody,
+      })
+      throw new BadRequestException(
+        `Apple Pay validation failed: ${response.status} ${responseBody}`,
+      )
+    }
+
+    const data = await response.json()
+    const session = JSON.stringify(data)
+
+    this.logger.info('Apple Pay merchant validation succeeded', {
+      validationURL,
+      sessionLength: session.length,
+    })
+
+    return { session }
   }
 
   // CHARGE METHODS ------------------------------------------------------------------------------------------------
@@ -405,13 +472,67 @@ export class CardPaymentService {
   async chargeApplePay(
     input: ApplePayChargeInput,
     paymentTrackingData: PaymentTrackingData,
+    totalPrice: number,
   ): Promise<CardPaymentSuccessResponse> {
+    const { paymentFlowId } = input
+    const logPrefix = `[${paymentFlowId}]`
+
+    this.logger.info(`${logPrefix} Apple Pay charge started`, {
+      paymentFlowId,
+      totalPrice,
+      tokenVersion: input.paymentData.version,
+      correlationId: paymentTrackingData.correlationId,
+    })
+
+    const { applePayPaymentProcessingCert, applePayPaymentProcessingKey } =
+      this.requirePaymentProcessingConfig()
+
+    this.logger.info(`${logPrefix} Apple Pay Payment Processing config present`, {
+      paymentFlowId,
+      hasCert: !!applePayPaymentProcessingCert,
+      hasKey: !!applePayPaymentProcessingKey,
+    })
+
+    this.logger.info(`${logPrefix} Apple Pay token pre-decrypt`, {
+      paymentFlowId,
+      version: input.paymentData.version,
+      hasData: !!input.paymentData.data,
+      hasSignature: !!input.paymentData.signature,
+      hasEphemeralPublicKey: !!input.paymentData.header?.ephemeralPublicKey,
+      hasPublicKeyHash: !!input.paymentData.header?.publicKeyHash,
+      hasTransactionId: !!input.paymentData.header?.transactionId,
+    })
+
+    const decryptedData = decryptApplePayPaymentToken({
+      paymentData: input.paymentData,
+      paymentProcessingCert: applePayPaymentProcessingCert,
+      paymentProcessingKey: applePayPaymentProcessingKey,
+    })
+
+    this.logger.info(`${logPrefix} Apple Pay token decrypted`, {
+      paymentFlowId,
+      maskedCardNumber: redactCardNumber(decryptedData.cardNumber),
+      expirationMonth: decryptedData.expirationMonth,
+      expirationYear: decryptedData.expirationYear,
+      cryptogramLength: decryptedData.paymentCryptogram.length,
+    })
+
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
-    const requestOptions = generateApplePayChargeRequestOptions({
-      input,
+    const requestOptions = generateApplePayDecryptedChargeRequestOptions({
+      decryptedData,
       paymentApiConfig: this.config.paymentGateway,
       paymentTrackingData,
+      amount: totalPrice,
+    })
+
+    this.logger.info(`${logPrefix} Apple Pay gateway request prepared`, {
+      paymentFlowId,
+      gatewayUrl: `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
+      maskedCardNumber: redactCardNumber(decryptedData.cardNumber),
+      amount: totalPrice,
+      correlationId: paymentTrackingData.correlationId,
+      merchantReferenceData: paymentTrackingData.merchantReferenceData,
     })
 
     const response = await fetch(
@@ -419,12 +540,28 @@ export class CardPaymentService {
       requestOptions,
     )
 
+    this.logger.info(`${logPrefix} Apple Pay gateway response received`, {
+      paymentFlowId,
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+    })
+
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
-      paymentFlowId: input.paymentFlowId,
+      paymentFlowId,
       response,
       schema: CardPaymentSuccessSchema,
       errorSchema: CardPaymentErrorSchema,
       errorMessage: 'Failed to charge Apple Pay payment',
+    })
+
+    this.logger.info(`${logPrefix} Apple Pay charge succeeded`, {
+      paymentFlowId,
+      isSuccess: data.isSuccess,
+      responseCode: data.responseCode,
+      correlationID: data.correlationID,
+      maskedCardNumber: data.maskedCardNumber,
+      acquirerReferenceNumber: data.acquirerReferenceNumber,
     })
 
     return data

@@ -1,5 +1,7 @@
+import crypto from 'crypto'
 import { sign, verify, Algorithm } from 'jsonwebtoken'
 import { z } from 'zod'
+import { Agent } from 'undici'
 
 import {
   Charge,
@@ -12,14 +14,15 @@ import {
   MdNormalised,
   MdSerialized,
   SavedVerificationCompleteData,
+  ApplePayDecryptedWalletPaymentPayload,
 } from '../../types/cardPayment'
 
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentTrackingData, ApplePayPaymentInput } from '../../types'
-import { ApplePayChargeInput } from './dtos'
+import { PaymentTrackingData } from '../../types'
+import { APPLE_PAY_ALLOWED_VALIDATION_HOSTS } from './applePay.constants'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),
@@ -253,56 +256,189 @@ export const generateApplePayRequestHeaders = (
   }
 }
 
-export const generateApplePaySessionRequestOptions = ({
-  domainName,
-  displayName,
-  paymentApiConfig,
+export const validateAndParseApplePayValidationUrl = (
+  validationURL: string,
+): URL => {
+  let parsed: URL
+
+  try {
+    parsed = new URL(validationURL)
+  } catch {
+    throw new Error('Invalid Apple Pay validation URL')
+  }
+
+  if (parsed.protocol !== 'https:') {
+    throw new Error('Apple Pay validation URL must use HTTPS')
+  }
+
+  const host = parsed.hostname.toLowerCase()
+  if (
+    !APPLE_PAY_ALLOWED_VALIDATION_HOSTS.some(
+      (allowed) => host === allowed.toLowerCase(),
+    )
+  ) {
+    throw new Error(
+      `Apple Pay validation URL host "${host}" is not in the allowlist`,
+    )
+  }
+
+  return parsed
+}
+
+/** Decrypt Apple Pay payment token to get card data for Valitor DecryptedPaymentTokenData flow */
+export const decryptApplePayPaymentToken = ({
+  paymentData,
+  paymentProcessingCert,
+  paymentProcessingKey,
 }: {
-  domainName: string
-  displayName: string
-  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
-}) => {
+  paymentData: {
+    version: string
+    data: string
+    signature: string
+    header: {
+      ephemeralPublicKey: string
+      publicKeyHash: string
+      transactionId: string
+    }
+  }
+  paymentProcessingCert: string
+  paymentProcessingKey: string
+}): {
+  cardNumber: string
+  expirationMonth: number
+  expirationYear: number
+  paymentCryptogram: string
+} => {
+  if (paymentData.version !== 'EC_v1') {
+    throw new Error(
+      `Unsupported Apple Pay token version: ${paymentData.version}. Only EC_v1 is supported.`,
+    )
+  }
+
+  const ephemeralPublicKey = Buffer.from(
+    paymentData.header.ephemeralPublicKey,
+    'base64',
+  )
+  const encryptedData = Buffer.from(paymentData.data, 'base64')
+
+  const ecdh = crypto.createECDH('prime256v1')
+  ecdh.setPrivateKey(paymentProcessingKey, 'utf8')
+
+  const sharedSecret = ecdh.computeSecret(ephemeralPublicKey)
+
+  const aesKey = crypto.createHash('sha256').update(sharedSecret).digest()
+
+  const iv = Buffer.alloc(16, 0)
+  const authTag = encryptedData.subarray(-16)
+  const ciphertext = encryptedData.subarray(0, -16)
+
+  const decipher = crypto.createDecipheriv('aes-256-gcm', aesKey, iv)
+  decipher.setAuthTag(authTag)
+
+  const decrypted = Buffer.concat([
+    decipher.update(ciphertext),
+    decipher.final(),
+  ]).toString('utf8')
+
+  const parsed = JSON.parse(decrypted) as {
+    applicationPrimaryAccountNumber: string
+    applicationExpirationDate: string
+    paymentData?: {
+      onlinePaymentCryptogram: string
+      eciIndicator?: string
+    }
+  }
+
+  const expirationStr = parsed.applicationExpirationDate
+  const expirationYear = 2000 + parseInt(expirationStr.slice(0, 2), 10)
+  const expirationMonth = parseInt(expirationStr.slice(2, 4), 10)
+
+  const paymentCryptogram = parsed.paymentData?.onlinePaymentCryptogram ?? ''
+  if (!paymentCryptogram) {
+    throw new Error('Apple Pay decrypted token missing onlinePaymentCryptogram')
+  }
+
   return {
-    method: 'POST',
-    headers: generateApplePayRequestHeaders(paymentApiConfig),
-    body: JSON.stringify({
-      domainName,
-      displayName,
-    }),
+    cardNumber: parsed.applicationPrimaryAccountNumber,
+    expirationMonth,
+    expirationYear,
+    paymentCryptogram,
   }
 }
 
-export const generateApplePayChargeRequestOptions = ({
-  input,
+export const generateApplePayValidationRequestOptions = ({
+  validationURL,
+  merchantIdentifier,
+  displayName,
+  initiativeContext,
+  merchantIdentityCert,
+  merchantIdentityKey,
+}: {
+  validationURL: string
+  merchantIdentifier: string
+  displayName: string
+  initiativeContext: string
+  merchantIdentityCert: string
+  merchantIdentityKey: string
+}): RequestInit & { dispatcher?: Agent } => {
+  validateAndParseApplePayValidationUrl(validationURL)
+
+  const body = JSON.stringify({
+    merchantIdentifier,
+    displayName,
+    initiative: 'web',
+    initiativeContext,
+  })
+
+  // undici Agent enables mTLS (client cert + key) for fetch - required by Apple Pay validation
+  const dispatcher = new Agent({
+    connect: {
+      cert: merchantIdentityCert,
+      key: merchantIdentityKey,
+    },
+  })
+
+  return {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': String(Buffer.byteLength(body)),
+    },
+    body,
+    dispatcher,
+  }
+}
+
+/** Valitor WalletPayment with DecryptedPaymentTokenData (merchant-decrypted flow) */
+export const generateApplePayDecryptedChargeRequestOptions = ({
+  decryptedData,
   paymentApiConfig,
   paymentTrackingData,
+  amount,
 }: {
-  input: ApplePayChargeInput
+  decryptedData: {
+    cardNumber: string
+    expirationMonth: number
+    expirationYear: number
+    paymentCryptogram: string
+  }
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   paymentTrackingData: PaymentTrackingData
+  amount: number
 }) => {
   const { systemCalling } = paymentApiConfig
 
-  const body: ApplePayPaymentInput = {
-    Operation: 'Sale',
-    WalletPaymentType: 'ApplePay',
-    ApplePayWalletPayment: {
-      PaymentToken: {
-        PaymentData: {
-          Version: input.paymentData.version,
-          Data: input.paymentData.data,
-          Signature: input.paymentData.signature,
-          Header: {
-            EphemeralPublicKey: input.paymentData.header.ephemeralPublicKey,
-            PublicKeyHash: input.paymentData.header.publicKeyHash,
-            TransactionId: input.paymentData.header.transactionId,
-          },
-        },
-        PaymentMethod: {
-          DisplayName: input.paymentMethod.displayName,
-          Network: input.paymentMethod.network,
-        },
-        TransactionIdentifier: input.transactionIdentifier,
+  const body: ApplePayDecryptedWalletPaymentPayload = {
+    operation: 'Sale',
+    walletPaymentType: 'ApplePay',
+    applePayWalletPayment: {
+      decryptedPaymentTokenData: {
+        amount: String(iskToAur(amount)),
+        cardNumber: decryptedData.cardNumber,
+        currency: 'ISK',
+        expirationMonth: decryptedData.expirationMonth,
+        expirationYear: decryptedData.expirationYear,
+        paymentCryptogram: decryptedData.paymentCryptogram,
       },
     },
     paymentAdditionalData: {
@@ -313,8 +449,14 @@ export const generateApplePayChargeRequestOptions = ({
   }
 
   return {
-    method: 'POST',
+    method: 'POST' as const,
     headers: generateApplePayRequestHeaders(paymentApiConfig),
     body: JSON.stringify(body),
   }
+}
+
+/** Masks all but the last 4 digits for safe logging */
+export const redactCardNumber = (cardNumber: string): string => {
+  if (cardNumber.length <= 4) return '****'
+  return '*'.repeat(cardNumber.length - 4) + cardNumber.slice(-4)
 }
