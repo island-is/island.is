@@ -4,8 +4,13 @@ import { SharedTemplateAPIModule } from '../../../shared'
 
 import { ConfirmJobSearchService } from './confirm-job-search.service'
 import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
+import { VmstUnemploymentClientModule } from '@island.is/clients/vmst-unemployment'
 @Module({
-  imports: [SharedTemplateAPIModule, ApplicationsNotificationsModule],
+  imports: [
+    SharedTemplateAPIModule,
+    ApplicationsNotificationsModule,
+    VmstUnemploymentClientModule,
+  ],
   providers: [ConfirmJobSearchService],
   exports: [ConfirmJobSearchService],
 })

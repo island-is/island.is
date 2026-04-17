@@ -14,6 +14,10 @@ import {
   UnemploymentApplicationValidatePaymentPageRequest,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
+  JobSearchConfirmationApi,
+  JobSearchConfirmationCreateRequest,
+  ApplicantApi,
+  GaldurXRoadAPIModelsResolveApplicantResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -24,7 +28,12 @@ import { VmstUnemploymentClientConfig } from './vmstUnemploymentClient.config'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
-type VmstApis = UnemploymentApplicationApi | ActivationGrantApi | AttachmentApi
+type VmstApis =
+  | UnemploymentApplicationApi
+  | ActivationGrantApi
+  | AttachmentApi
+  | ApplicantApi
+  | JobSearchConfirmationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -202,5 +211,32 @@ export class VmstUnemploymentClientService {
     return await api.unemploymentApplicationCreateUnemploymentApplication(
       request,
     )
+  }
+
+  async resolveApplicant(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantResolve({
+      galdurXRoadAPIModelsResolveApplicantRequest: {
+        ssn: auth.nationalId,
+      },
+    })
+  }
+
+  async submitJobSearchConfirmation(
+    request: JobSearchConfirmationCreateRequest,
+  ): Promise<Blob> {
+    const api = await this.createApiClient(
+      JobSearchConfirmationApi,
+      'clients-vmst-unemployment',
+      'JobSearchConfirmation API auth failed',
+    )
+    return await api.jobSearchConfirmationCreate(request)
   }
 }

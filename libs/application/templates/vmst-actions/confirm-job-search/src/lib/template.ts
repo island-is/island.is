@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   InstitutionTypes,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -17,6 +18,7 @@ import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { application as am } from './messages'
 
@@ -69,7 +71,10 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(1),
+          onExit: defineTemplateApi({
+            action: 'completeApplication',
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
