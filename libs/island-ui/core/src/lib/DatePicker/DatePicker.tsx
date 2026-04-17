@@ -169,11 +169,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           ref={datePickerRef}
           popperClassName={cn(styles.popper, {
             [styles.popperInline]: appearInline,
-            [styles.popperXsmall]: size === 'xs' && !appearInline,
-            [styles.popperSmall]: size === 'sm' && !appearInline,
-            [styles.popperSmallWithoutLabel]: size === 'sm' && !label && !appearInline,
-            [styles.popperWithoutLabel]: size === 'md' && !label && !appearInline,
-            [styles.popperAlignEnd]: shouldAlignEnd && !appearInline,
+            [styles.popperXsmall]: size === 'xs',
+            [styles.popperSmall]: size === 'sm',
+            [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
+            [styles.popperWithoutLabel]: size === 'md' && !label,
+            [styles.popperAlignEnd]: shouldAlignEnd,
           })}
           id={id}
           name={name}

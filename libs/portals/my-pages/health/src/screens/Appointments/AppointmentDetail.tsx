@@ -66,6 +66,16 @@ const AppointmentDetail = () => {
             loading={loading}
             label={formatMessage(messages.locationAddress)}
             content={appointment?.location?.name}
+            button={
+              appointment?.location?.link
+                ? {
+                    type: 'link',
+                    to: appointment.location.link,
+                    icon: 'link',
+                    label: formatMessage(messages.seeMore),
+                  }
+                : undefined
+            }
           />
           <InfoLine
             loading={loading}

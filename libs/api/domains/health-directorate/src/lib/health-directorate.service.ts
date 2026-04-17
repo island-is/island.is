@@ -631,6 +631,7 @@ export class HealthDirectorateService {
               organization: item.location.organization,
               address: item.location.address,
               directions: item.location.directions,
+              link: item.location.link,
               city: item.location.city,
               postalCode: item.location.postalCode,
               country: item.location.country,

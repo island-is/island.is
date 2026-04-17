@@ -157,7 +157,6 @@ const AppointmentsOverview = () => {
                         placeholderText={formatMessage(m.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
-                        size="xs"
                         selected={filter.dates?.from}
                         handleChange={(from) => {
                           setFilter((prev) => ({

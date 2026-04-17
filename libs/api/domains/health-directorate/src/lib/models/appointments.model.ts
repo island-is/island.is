@@ -24,6 +24,9 @@ export class AppointmentLocation {
   @Field({ nullable: true })
   country?: string
 
+  @Field({ nullable: true })
+  link?: string
+
   @Field(() => Float, { nullable: true })
   latitude?: number
 
