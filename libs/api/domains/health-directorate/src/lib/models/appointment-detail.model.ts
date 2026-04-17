@@ -11,18 +11,18 @@ export class AppointmentDetail {
   title?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  date?: string
+  date?: Date
 
-  @Field(() => AppointmentStatusEnum)
-  status!: AppointmentStatusEnum
+  @Field(() => AppointmentStatusEnum, { nullable: true })
+  status?: AppointmentStatusEnum
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, description: 'Patient preparation instructions for the appointment' })
   instruction?: string
 
   @Field(() => AppointmentLocation, { nullable: true })
   location?: AppointmentLocation
 
-  @Field(() => [String])
+  @Field(() => [String], { description: 'Names of practitioners assigned to the appointment' })
   practitioners!: string[]
 
   @Field(() => Int, { nullable: true, description: 'Duration in minutes' })

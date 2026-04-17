@@ -66,8 +66,6 @@ query getAppointmentsOverview(
       id
       title
       date
-      status
-      duration
       location {
         __typename
         name

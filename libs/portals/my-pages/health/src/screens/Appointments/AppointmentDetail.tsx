@@ -1,6 +1,6 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  CardLoader,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -39,21 +39,13 @@ const AppointmentDetail = () => {
     <IntroWrapper
       title={appointment?.title ?? messages.appointmentDetail}
       intro={messages.appointmentsDetailIntro}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      )}
       loading={loading}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
+      {loading && !appointment && <CardLoader />}
       {!loading && !error && !appointment && <Problem type="no_data" />}
       {!error && appointment && (
         <InfoLineStack label={formatMessage(m.info)} space={1}>
-          <InfoLine
-            label={formatMessage(messages.type)}
-            content={appointment?.title ?? undefined}
-            loading={loading}
-          />
           <InfoLine
             label={formatMessage(messages.dateAndTime)}
             content={

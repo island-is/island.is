@@ -32,7 +32,6 @@ const AppointmentsOverview = () => {
     dates: {},
   })
   const [searchTerm, setSearchTerm] = useState<string>('')
-
   const { data, loading, error } = useGetAppointmentsQuery({
     variables: {
       from: filter.dates?.from,
@@ -75,7 +74,7 @@ const AppointmentsOverview = () => {
         flexWrap={['wrap', 'wrap', 'nowrap']}
         rowGap={2}
       >
-        {!loading && !error && (hasAppointments || filter.statuses.length > 0) && (
+        {!loading && !error && (hasAppointments || filter.statuses.length > 0 || filter.dates?.from) && (
           <Box marginBottom={[1, 1, 3]}>
             <Filter
               labelClearAll={formatMessage(m.clearAllFilters)}
@@ -171,7 +170,7 @@ const AppointmentsOverview = () => {
         )}
       </Box>
       {!loading && error && (
-        <Problem type="internal_service_error" noBorder={false} />
+        <Problem type="internal_service_error" noBorder={false} error={error} />
       )}
       {!loading && !error && !hasAppointments && (
         <Problem

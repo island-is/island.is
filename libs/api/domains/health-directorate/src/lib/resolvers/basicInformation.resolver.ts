@@ -194,6 +194,6 @@ export class BasicInformationResolver {
     @Args() input: HealthDirectorateAppointmentInput,
     @CurrentUser() user: User,
   ): Promise<AppointmentDetail | null> {
-    return this.api.getAppointmentById(user, input.id)
+    return this.api.getAppointmentById(user, input)
   }
 }

@@ -40,10 +40,10 @@ export class Appointment {
   title?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  date?: string
+  date?: Date
 
-  @Field(() => AppointmentStatusEnum)
-  status!: AppointmentStatusEnum
+  @Field(() => AppointmentStatusEnum, { nullable: true })
+  status?: AppointmentStatusEnum
 
   @Field(() => AppointmentLocation, { nullable: true })
   location?: AppointmentLocation

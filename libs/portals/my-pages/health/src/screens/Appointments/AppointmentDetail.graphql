@@ -5,7 +5,6 @@ query getAppointmentDetail($id: String!) {
     title
     instruction
     date
-    status
     duration
     practitioners
     location {

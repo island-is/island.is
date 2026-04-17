@@ -14,7 +14,10 @@ import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
-import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
+import {
+  HealthDirectorateAppointmentInput,
+  HealthDirectorateAppointmentsInput,
+} from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -23,6 +26,7 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  toAppointmentStatusEnum,
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
@@ -575,9 +579,9 @@ export class HealthDirectorateService {
 
       const appointments: Array<Appointment> = sortedData.map((item) => ({
         id: item.id,
-        date: item.startTime?.toISOString(),
+        date: item.startTime,
         title: item.description,
-        status: item.status as AppointmentStatusEnum,
+        status: toAppointmentStatusEnum(item.status),
         duration: item.duration,
         location: item.location
           ? {
@@ -605,8 +609,9 @@ export class HealthDirectorateService {
 
   public async getAppointmentById(
     auth: Auth,
-    id: string,
+    input: HealthDirectorateAppointmentInput,
   ): Promise<AppointmentDetail | null> {
+    const { id } = input
     try {
       const item = await this.healthApi.getAppointmentById(auth, id)
       if (!item) {
@@ -615,9 +620,9 @@ export class HealthDirectorateService {
 
       return {
         id: item.id,
-        date: item.startTime?.toISOString(),
+        date: item.startTime,
         title: item.description,
-        status: item.status as AppointmentStatusEnum,
+        status: toAppointmentStatusEnum(item.status),
         instruction: item.patientInstruction,
         duration: item.duration,
         location: item.location
