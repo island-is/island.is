@@ -2410,7 +2410,7 @@ describe('MeUserProfileController', () => {
         .send({ deviceToken: newDeviceToken })
 
       // Assert
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(200)
       expect(res.body).toMatchObject({
         nationalId: testUser.nationalId,
         deviceToken: newDeviceToken,
@@ -2425,7 +2425,7 @@ describe('MeUserProfileController', () => {
         .put('/v2/me/device-tokens')
         .send({ deviceToken: existingDeviceToken })
 
-      expect(firstRes.status).toBe(201)
+      expect(firstRes.status).toBe(200)
       expect(firstRes.body.deviceToken).toBe(existingDeviceToken)
       expect(firstRes.body.nationalId).toBe(testUser.nationalId)
 
@@ -2435,7 +2435,7 @@ describe('MeUserProfileController', () => {
         .send({ deviceToken: existingDeviceToken })
 
       // Should return the same record (same ID)
-      expect(secondRes.status).toBe(201)
+      expect(secondRes.status).toBe(200)
       expect(secondRes.body).toMatchObject({
         nationalId: testUser.nationalId,
         deviceToken: existingDeviceToken,
@@ -2502,7 +2502,7 @@ describe('MeUserProfileController', () => {
         .put('/v2/me/device-tokens')
         .send({ deviceToken: oldDeviceToken })
 
-      expect(oldTokenRes.status).toBe(201)
+      expect(oldTokenRes.status).toBe(200)
       expect(oldTokenRes.body.deviceToken).toBe(oldDeviceToken)
 
       // Now add a new device token - should update the existing one
@@ -2511,7 +2511,7 @@ describe('MeUserProfileController', () => {
         .send({ deviceToken: newDeviceToken })
 
       // Assert the token was updated (not created new)
-      expect(newTokenRes.status).toBe(201)
+      expect(newTokenRes.status).toBe(200)
       expect(newTokenRes.body).toMatchObject({
         nationalId: testUser.nationalId,
         deviceToken: newDeviceToken,
@@ -2580,7 +2580,7 @@ describe('MeUserProfileController', () => {
         .put('/v2/me/device-tokens')
         .send({ deviceToken: sharedDeviceToken })
 
-      expect(user1Res.status).toBe(201)
+      expect(user1Res.status).toBe(200)
       expect(user1Res.body.deviceToken).toBe(sharedDeviceToken)
       expect(user1Res.body.nationalId).toBe(user1.nationalId)
 
