@@ -1,6 +1,6 @@
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import type { ApiScopeUserFormData, FormErrors } from './ApiScopeUsers.types'
 
 export const PAGE_SIZE = 20

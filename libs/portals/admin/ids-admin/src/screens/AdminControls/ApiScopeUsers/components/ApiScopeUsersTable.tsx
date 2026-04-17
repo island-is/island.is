@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 
-import { m } from '../../../lib/messages'
+import { m } from '../../../../lib/messages'
 import type { ApiScopeUserRow } from '../ApiScopeUsers.types'
 
 interface ApiScopeUsersTableProps {
@@ -85,7 +85,14 @@ export const ApiScopeUsersTable = ({
                     buttonTextConfirm={formatMessage(
                       m.apiScopeUsersDeleteButton,
                     )}
-                    buttonPropsConfirm={{ colorScheme: 'destructive' }}
+                    buttonPropsConfirm={{
+                      colorScheme: 'destructive',
+                      size: 'default',
+                    }}
+                    buttonPropsCancel={{
+                      variant: 'ghost',
+                      size: 'default',
+                    }}
                     buttonTextCancel={formatMessage(
                       m.apiScopeUsersCancelButton,
                     )}

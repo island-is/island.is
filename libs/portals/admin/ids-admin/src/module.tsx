@@ -16,8 +16,8 @@ import { createPermissionAction } from './screens/Permission/CreatePermission/Cr
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
 import { permissionLoader } from './screens/Permission/Permission.loader'
 import { editPermissionAction } from './screens/Permission/EditPermission.action'
-import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers.loader'
-import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers.action'
+import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.loader'
+import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -44,7 +44,7 @@ const AdminControls = lazy(() =>
   import('./screens/AdminControls/AdminControls'),
 )
 const ApiScopeUsers = lazy(() =>
-  import('./screens/AdminControls/ApiScopeUsers'),
+  import('./screens/AdminControls/ApiScopeUsers/ApiScopeUsers'),
 )
 const GrantTypes = lazy(() => import('./screens/AdminControls/GrantTypes'))
 const IdpProviders = lazy(() => import('./screens/AdminControls/IdpProviders'))

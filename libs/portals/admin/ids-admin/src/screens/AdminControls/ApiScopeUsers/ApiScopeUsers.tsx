@@ -12,6 +12,7 @@ import {
   Input,
   InputError,
   Select,
+  SkeletonLoader,
   Stack,
   Text,
   toast,
@@ -20,9 +21,9 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { Modal } from '@island.is/react/components'
 
-import { m } from '../../lib/messages'
-import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
-import { authAdminEnvironments } from '../../utils/environments'
+import { m } from '../../../lib/messages'
+import { useEnvironmentQuery } from '../../../hooks/useEnvironmentQuery'
+import { authAdminEnvironments } from '../../../utils/environments'
 import type { ApiScopeUsersLoaderData } from './ApiScopeUsers.loader'
 import {
   ApiScopeUserIntent,
@@ -433,36 +434,36 @@ const ApiScopeUsers = () => {
                   ? formatMessage(m.apiScopeUsersEditTitle)
                   : formatMessage(m.apiScopeUsersCreateTitle)}
               </Text>
-              {isEditing && !loadingUser && (
-                <Select
-                  name="publishEnvironment"
-                  label={formatMessage(m.environment)}
-                  options={environmentOptions}
-                  value={environmentOptions.find(
-                    (opt) => opt.value === selectedEnvResult.environment,
-                  )}
-                  size="sm"
-                  backgroundColor="blue"
-                  isDisabled={isPublishing}
-                  onChange={(opt) => {
-                    if (!opt) return
-                    const env = opt.value as AuthAdminEnvironment
-                    if (userAvailableEnvironments.includes(env)) {
-                      updateEnvironment(env)
-                    } else {
-                      handlePublish(env)
-                    }
-                  }}
-                />
-              )}
+              {isEditing &&
+                (loadingUser ? (
+                  <Box style={{ minWidth: 200 }}>
+                    <SkeletonLoader height={40} borderRadius="large" />
+                  </Box>
+                ) : (
+                  <Select
+                    name="publishEnvironment"
+                    label={formatMessage(m.environment)}
+                    options={environmentOptions}
+                    value={environmentOptions.find(
+                      (opt) => opt.value === selectedEnvResult.environment,
+                    )}
+                    size="sm"
+                    backgroundColor="blue"
+                    isDisabled={isPublishing}
+                    onChange={(opt) => {
+                      if (!opt) return
+                      const env = opt.value as AuthAdminEnvironment
+                      if (userAvailableEnvironments.includes(env)) {
+                        updateEnvironment(env)
+                      } else {
+                        handlePublish(env)
+                      }
+                    }}
+                  />
+                ))}
             </Box>
 
-            <Box
-              padding={4}
-              border="standard"
-              borderRadius="large"
-              marginBottom={3}
-            >
+            <Box marginBottom={3}>
               <Stack space={3}>
                 <Input
                   name="nationalId"

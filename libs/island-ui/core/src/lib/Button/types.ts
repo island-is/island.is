@@ -11,24 +11,28 @@ type PrimaryButtonType = {
   variant?: 'primary'
   colorScheme?: keyof typeof styles.colors.primary
   circle?: boolean
+  size?: ButtonSizes
 }
 
 type GhostButtonType = {
   variant?: 'ghost'
   colorScheme?: keyof typeof styles.colors.ghost
   circle?: boolean
+  size?: ButtonSizes
 }
 
 type TextButtonType = {
   variant?: 'text'
   colorScheme?: keyof typeof styles.colors.text
   circle?: never
+  size?: ButtonSizes
 }
 
 type UtilityButtonType = {
   variant?: 'utility'
   colorScheme?: keyof typeof styles.colors.utility
   circle?: never
+  size?: ButtonSizes
 }
 
 export type ButtonSizes = Exclude<
