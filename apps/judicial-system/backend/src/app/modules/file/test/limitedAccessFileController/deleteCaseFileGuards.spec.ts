@@ -1,4 +1,5 @@
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -10,7 +11,7 @@ import {
   CaseWriteGuard,
 } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
-import { LimitedAccessWriteCaseFileGuard } from '../../guards/limitedAccessWriteCaseFile.guard'
+import { LimitedAccessDeleteCaseFileGuard } from '../../guards/limitedAccessDeleteCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
 describe('LimitedAccessFileController - Delete case file guards', () => {
@@ -22,13 +23,17 @@ describe('LimitedAccessFileController - Delete case file guards', () => {
       CaseWriteGuard,
       CaseCompletedGuard,
       CaseFileExistsGuard,
-      LimitedAccessWriteCaseFileGuard,
+      LimitedAccessDeleteCaseFileGuard,
     ],
     [
       {
         guard: CaseTypeGuard,
         prop: {
-          allowedCaseTypes: [...restrictionCases, ...investigationCases],
+          allowedCaseTypes: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
         },
       },
     ],

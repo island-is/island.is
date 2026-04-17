@@ -6,14 +6,14 @@ import {
 
 import { verifyGuards } from '../../../../test'
 import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
-import { LimitedAccessWriteCaseFileGuard } from '../../guards/limitedAccessWriteCaseFile.guard'
+import { LimitedAccessCreateCaseFileGuard } from '../../guards/limitedAccessCreateCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
 describe('LimitedAccessFileController - Create case file guards', () => {
   verifyGuards(
     LimitedAccessFileController,
     'createCaseFile',
-    [CaseTypeGuard, CaseWriteGuard, LimitedAccessWriteCaseFileGuard],
+    [CaseTypeGuard, CaseWriteGuard, LimitedAccessCreateCaseFileGuard],
     [
       {
         guard: CaseTypeGuard,
