@@ -124,23 +124,29 @@ export const PermissionDelegations = ({
     useEnvironmentState(false)
 
   useEffect(() => {
-    if (
-      !showCategoriesAndTags ||
-      (tags.length === 0 && categories.length === 0)
-    )
-      return
+    if (!showCategoriesAndTags || categoriesLoading || tagsLoading) return
     setSelectedCategories(
-      (selectedPermission.categoryIds ?? [])
-        .map((id) => categories.find((c) => c.value === id))
-        .filter((c): c is Option => c !== undefined),
+      (selectedPermission.categoryIds ?? []).map(
+        (id) =>
+          categories.find((c) => c.value === id) ?? {
+            label: `Eytt flokkur (${id})`,
+            value: id,
+            description: 'Þessi flokkur er ekki lengur til í Contentful',
+          },
+      ),
     )
     setSelectedTags(
-      (selectedPermission.tagIds ?? [])
-        .map((id) => tags.find((t) => t.value === id))
-        .filter((t): t is Option => t !== undefined),
+      (selectedPermission.tagIds ?? []).map(
+        (id) =>
+          tags.find((t) => t.value === id) ?? {
+            label: `Eytt merki (${id})`,
+            value: id,
+            description: 'Þetta merki er ekki lengur til í Contentful',
+          },
+      ),
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCategoriesAndTags, tags, categories])
+  }, [showCategoriesAndTags, tags, categories, categoriesLoading, tagsLoading])
 
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
