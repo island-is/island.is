@@ -9,7 +9,6 @@ export const completedForm = buildForm({
   children: [
     buildFormConclusionSection({
       alertTitle: completedFormMessages.alertTitle,
-      alertMessage: completedFormMessages.alertMessage,
       expandableHeader: completedFormMessages.expandableHeader,
       expandableDescription: completedFormMessages.expandableDescription,
       descriptionFieldTitle: completedFormMessages.descriptionFieldTitle,

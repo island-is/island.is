@@ -119,18 +119,13 @@ export const completedForm = defineMessages({
     defaultMessage: 'Tilkynning um afskráningu hefur verið móttekin',
     description: 'completed form alert title',
   },
-  alertMessage: {
-    id: 'vmst.dub.application:completedForm.alertMessage',
-    defaultMessage: 'You have completed this boilerplate application',
-    description: 'completed form alert message',
-  },
   expandableHeader: {
     id: 'vmst.dub.application:completedForm.expandableHeader',
     defaultMessage: 'Hvað gerist næst?',
     description: 'completed form expandable header',
   },
   expandableDescription: {
-    id: 'vmst.dub.application:completedForm.expandableDescription',
+    id: 'vmst.dub.application:completedForm.expandableDescription#markdown',
     defaultMessage:
       'Þetta er lýsing á því hvað gerist eftir að umsókn hefur verið send inn',
     description: 'completed form expandable description',
