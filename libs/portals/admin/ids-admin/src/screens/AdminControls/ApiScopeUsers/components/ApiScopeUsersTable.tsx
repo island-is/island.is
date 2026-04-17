@@ -87,11 +87,6 @@ export const ApiScopeUsersTable = ({
                     )}
                     buttonPropsConfirm={{
                       colorScheme: 'destructive',
-                      size: 'default',
-                    }}
-                    buttonPropsCancel={{
-                      variant: 'ghost',
-                      size: 'default',
                     }}
                     buttonTextCancel={formatMessage(
                       m.apiScopeUsersCancelButton,
@@ -119,7 +114,11 @@ export const ApiScopeUsersTable = ({
             page={currentPage}
             totalPages={totalPages}
             renderLink={(page, className, children) => (
-              <button type="button" className={className} onClick={() => onPageChange(page)}>
+              <button
+                type="button"
+                className={className}
+                onClick={() => onPageChange(page)}
+              >
                 {children}
               </button>
             )}
