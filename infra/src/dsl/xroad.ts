@@ -753,6 +753,7 @@ export const VehiclesMileage = new XroadConf({
   },
 })
 
+// FJS does not have a staging environment, so we use the dev environment for staging.
 export const ChargeFjsV2 = new XroadConf({
   env: {
     XROAD_CHARGE_FJS_V2_PATH: {
