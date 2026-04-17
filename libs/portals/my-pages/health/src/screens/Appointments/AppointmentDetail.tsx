@@ -1,12 +1,11 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  CardLoader,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
   formatDate,
   getTime,
-  getWeekday,
   m,
 } from '@island.is/portals/my-pages/core'
 
@@ -14,50 +13,44 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 
-import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import { generateGoogleMapsLink } from '../../utils/googleMaps'
-import { mapWeekday } from '../../utils/mappers'
-import { useGetAppointmentsQuery } from './Appointments.generated'
+import { useGetAppointmentDetailQuery } from './AppointmentDetail.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AppointmentDetail = () => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
   const { id } = useParams<{ id: string }>()
 
-  const { data, loading, error } = useGetAppointmentsQuery({
-    variables: {
-      from: undefined,
-      status: DEFAULT_APPOINTMENTS_STATUS,
-    },
+  const { data, loading, error } = useGetAppointmentDetailQuery({
+    variables: { id: id ?? '' },
+    skip: !id,
   })
 
-  const appointment = data?.healthDirectorateAppointments.data?.find(
-    (appointment) => appointment.id === id,
+  const appointment = data?.healthDirectorateAppointment
+
+  const mapsLink = generateGoogleMapsLink(
+    appointment?.location?.latitude,
+    appointment?.location?.longitude,
   )
 
   return (
     <IntroWrapper
-      title={messages.appointmentDetail}
+      title={appointment?.title ?? messages.appointmentDetail}
       intro={messages.appointmentsDetailIntro}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      )}
       loading={loading}
     >
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {loading && !appointment && <CardLoader />}
       {!loading && !error && !appointment && <Problem type="no_data" />}
-      {!error && (
+      {!error && appointment && (
         <InfoLineStack label={formatMessage(m.info)} space={1}>
           <InfoLine
             label={formatMessage(messages.dateAndTime)}
             content={
               appointment?.date
                 ? [
-                    mapWeekday(
-                      getWeekday(appointment?.date ?? ''),
-                      formatMessage,
-                    ),
                     formatDate(appointment?.date ?? ''),
                     formatMessage(messages.clockShortArg, {
                       arg: getTime(appointment?.date ?? ''),
@@ -70,14 +63,48 @@ const AppointmentDetail = () => {
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.type)}
-            content={appointment?.title ?? undefined}
             loading={loading}
+            label={formatMessage(messages.locationAddress)}
+            content={appointment?.location?.name}
+            button={
+              appointment?.location?.link
+                ? {
+                    type: 'link',
+                    to: appointment.location.link,
+                    icon: 'link',
+                    label: formatMessage(messages.seeMore),
+                  }
+                : undefined
+            }
+          />
+          <InfoLine
+            loading={loading}
+            label={formatMessage(m.address)}
+            content={
+              [
+                appointment?.location?.address,
+                [appointment?.location?.postalCode, appointment?.location?.city]
+                  .filter(Boolean)
+                  .join(' '),
+              ]
+                .filter(Boolean)
+                .join(', ') || undefined
+            }
+            button={
+              mapsLink
+                ? {
+                    type: 'link',
+                    to: mapsLink,
+                    icon: 'link',
+                    label: formatMessage(messages.openMap),
+                  }
+                : undefined
+            }
           />
           {appointment?.instruction && (
             <InfoLine
               label={formatMessage(messages.instructions)}
-              content={appointment?.instruction}
+              content={appointment.instruction}
               loading={loading}
             />
           )}
@@ -85,40 +112,11 @@ const AppointmentDetail = () => {
             <InfoLine
               label={formatMessage(messages.duration)}
               content={formatMessage(messages.argWithMinutes, {
-                arg: appointment?.duration,
+                arg: appointment.duration,
               })}
               loading={loading}
             />
           )}
-          <InfoLine
-            loading={loading}
-            label={formatMessage(messages.locationAddress)}
-            content={appointment?.location?.name}
-          />
-          <InfoLine
-            loading={loading}
-            label={formatMessage(m.address)}
-            content={[
-              appointment?.location?.address,
-              [appointment?.location?.postalCode, appointment?.location?.city]
-                .filter(Boolean)
-                .join(' '),
-            ]
-              .filter(Boolean)
-              .join(', ')}
-            button={
-              appointment?.location?.address
-                ? {
-                    type: 'link',
-                    to: generateGoogleMapsLink(
-                      appointment.location?.address ?? '',
-                    ),
-                    icon: 'link',
-                    label: formatMessage(messages.openMap),
-                  }
-                : undefined
-            }
-          />
           {(appointment?.practitioners?.length ?? 0) > 0 && (
             <InfoLine
               loading={loading}
@@ -126,6 +124,13 @@ const AppointmentDetail = () => {
               content={appointment?.practitioners.join(', ')}
             />
           )}
+          {appointment?.location?.organization ? (
+            <InfoLine
+              loading={loading}
+              label={formatMessage(messages.organization)}
+              content={appointment.location.organization}
+            />
+          ) : null}
         </InfoLineStack>
       )}
     </IntroWrapper>

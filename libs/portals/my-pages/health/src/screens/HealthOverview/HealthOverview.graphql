@@ -65,22 +65,16 @@ query getAppointmentsOverview(
       __typename
       id
       title
-      instruction
       date
-      status
       location {
         __typename
         name
         organization
-        directions
         address
         city
-        postalCode
-        country
         latitude
         longitude
       }
-      practitioners
     }
   }
 }

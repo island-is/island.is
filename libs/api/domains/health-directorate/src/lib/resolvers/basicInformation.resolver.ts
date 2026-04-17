@@ -40,7 +40,11 @@ import { Vaccinations } from '.././models/vaccinations.model'
 import { WaitlistDetail } from '.././models/waitlist.model'
 import { Waitlists } from '.././models/waitlists.model'
 import { Appointments } from '../models/appointments.model'
-import { HealthDirectorateAppointmentsInput } from '../dto/appointments.input'
+import { AppointmentDetail } from '../models/appointment-detail.model'
+import {
+  HealthDirectorateAppointmentInput,
+  HealthDirectorateAppointmentsInput,
+} from '../dto/appointments.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -167,6 +171,7 @@ export class BasicInformationResolver {
   /* Appointments */
   @Query(() => Appointments, {
     name: 'healthDirectorateAppointments',
+    nullable: true,
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
@@ -176,5 +181,19 @@ export class BasicInformationResolver {
     @CurrentUser() user: User,
   ): Promise<Appointments | null> {
     return this.api.getAppointments(user, input)
+  }
+
+  @Query(() => AppointmentDetail, {
+    name: 'healthDirectorateAppointment',
+    nullable: true,
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
+  @Scopes(ApiScope.internal, ApiScope.health)
+  async getAppointment(
+    @Args() input: HealthDirectorateAppointmentInput,
+    @CurrentUser() user: User,
+  ): Promise<AppointmentDetail | null> {
+    return this.api.getAppointmentById(user, input)
   }
 }

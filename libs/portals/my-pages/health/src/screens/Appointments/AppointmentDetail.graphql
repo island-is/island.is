@@ -1,0 +1,22 @@
+query getAppointmentDetail($id: String!) {
+  healthDirectorateAppointment(id: $id) {
+    __typename
+    id
+    title
+    instruction
+    date
+    duration
+    practitioners
+    location {
+      __typename
+      name
+      organization
+      address
+      city
+      postalCode
+      country
+      latitude
+      longitude
+    }
+  }
+}

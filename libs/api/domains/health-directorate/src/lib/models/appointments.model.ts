@@ -1,4 +1,11 @@
-import { Field, ObjectType, Float, Int } from '@nestjs/graphql'
+import {
+  Field,
+  ObjectType,
+  Float,
+  Int,
+  GraphQLISODateTime,
+} from '@nestjs/graphql'
+import { AppointmentStatusEnum } from './enums'
 
 @ObjectType('HealthDirectorateAppointmentLocation')
 export class AppointmentLocation {
@@ -23,6 +30,9 @@ export class AppointmentLocation {
   @Field({ nullable: true })
   country?: string
 
+  @Field({ nullable: true })
+  link?: string
+
   @Field(() => Float, { nullable: true })
   latitude?: number
 
@@ -38,23 +48,30 @@ export class Appointment {
   @Field({ nullable: true })
   title?: string
 
-  @Field({ nullable: true })
-  date?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  date?: Date
 
-  @Field()
-  status!: string
-
-  @Field({ nullable: true })
-  instruction?: string
+  @Field(() => AppointmentStatusEnum, { nullable: true })
+  status?: AppointmentStatusEnum
 
   @Field(() => AppointmentLocation, { nullable: true })
   location?: AppointmentLocation
 
-  @Field(() => [String])
-  practitioners!: string[]
-
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, { nullable: true, description: 'Duration in minutes' })
   duration?: number
+
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Use healthDirectorateAppointment query for full appointment details',
+  })
+  instruction?: string
+
+  @Field(() => [String], {
+    deprecationReason:
+      'Use healthDirectorateAppointment query for full appointment details',
+  })
+  practitioners!: string[]
 }
 
 @ObjectType('HealthDirectorateAppointments')
