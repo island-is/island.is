@@ -40,6 +40,7 @@ export const ShipsOverview = () => {
             <ActionCard
               key={ship.registrationNumber}
               heading={ship.name}
+              headingVariant="h4"
               text={
                 ship.regionAcronym
                   ? `${ship.registrationNumber}, ${ship.regionAcronym}`

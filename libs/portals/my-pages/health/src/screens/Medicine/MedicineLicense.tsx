@@ -51,6 +51,7 @@ export const MedicineLicense = () => {
                   <ActionCard
                     key={i}
                     heading={certificate.drugName ?? undefined}
+                    headingVariant="h4"
                     tag={{
                       label: formatMessage(
                         certificate.processed === false
