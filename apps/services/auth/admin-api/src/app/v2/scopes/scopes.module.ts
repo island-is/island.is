@@ -12,6 +12,5 @@ import { MeScopeClientsController } from './me-scope-clients.controller'
     MeClientsScopesController,
     MeScopeClientsController,
   ],
-  providers: [TenantsService],
 })
 export class ScopesModule {}
