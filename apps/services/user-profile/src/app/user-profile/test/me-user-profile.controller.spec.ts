@@ -21,6 +21,7 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../models/userProfile.model'
 import { VerificationService } from '../verification.service'
 import { UserTokenService } from '../userToken.service'
+import { UserDeviceTokens } from '../models/userDeviceTokens.model'
 import { formatPhoneNumber } from '../utils/format-phone-number'
 import { SmsVerification } from '../models/smsVerification.model'
 import { EmailVerification } from '../models/emailVerification.model'
@@ -2382,7 +2383,7 @@ describe('MeUserProfileController', () => {
     })
   })
 
-  describe('POST /v2/me/device-tokens', () => {
+  describe('PUT /v2/me/device-tokens', () => {
     const newDeviceToken = 'new-device-token-123'
     const testUser = createCurrentUser({
       nationalId: testUserProfile.nationalId,
@@ -2405,7 +2406,7 @@ describe('MeUserProfileController', () => {
     it('should successfully add a new device token', async () => {
       // Act
       const res = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: newDeviceToken })
 
       // Assert
@@ -2421,7 +2422,7 @@ describe('MeUserProfileController', () => {
 
       // First, add a device token
       const firstRes = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: existingDeviceToken })
 
       expect(firstRes.status).toBe(201)
@@ -2430,7 +2431,7 @@ describe('MeUserProfileController', () => {
 
       // Try to add the same device token again
       const secondRes = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: existingDeviceToken })
 
       // Should return the same record (same ID)
@@ -2456,7 +2457,7 @@ describe('MeUserProfileController', () => {
 
       // Act
       const res = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: newDeviceToken })
 
       // Assert
@@ -2480,7 +2481,7 @@ describe('MeUserProfileController', () => {
       server = request(app.getHttpServer())
 
       // Act
-      const res = await server.post('/v2/me/device-tokens').send({}) // Empty body
+      const res = await server.put('/v2/me/device-tokens').send({}) // Empty body
 
       // Assert
       expect(res.status).toBe(400)
@@ -2498,7 +2499,7 @@ describe('MeUserProfileController', () => {
 
       // First, add an old device token
       const oldTokenRes = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: oldDeviceToken })
 
       expect(oldTokenRes.status).toBe(201)
@@ -2506,7 +2507,7 @@ describe('MeUserProfileController', () => {
 
       // Now add a new device token - should update the existing one
       const newTokenRes = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: newDeviceToken })
 
       // Assert the token was updated (not created new)
@@ -2518,6 +2519,40 @@ describe('MeUserProfileController', () => {
 
       // The ID should be the same (indicating update, not create)
       expect(newTokenRes.body.id).toBe(oldTokenRes.body.id)
+    })
+
+    it('should clean up stale tokens when user has multiple legacy tokens', async () => {
+      const userTokenService = app.get(UserTokenService)
+      const deviceTokenModel = app.get<typeof UserDeviceTokens>(
+        getModelToken(UserDeviceTokens),
+      )
+
+      // Simulate legacy state: user has multiple tokens by inserting directly via model
+      await deviceTokenModel.create({
+        nationalId: testUser.nationalId,
+        deviceToken: 'legacy-token-1',
+      })
+      await deviceTokenModel.create({
+        nationalId: testUser.nationalId,
+        deviceToken: 'legacy-token-2',
+      })
+
+      // Now add a new device token — should update the most recent and clean up the stale one
+      const result = await userTokenService.addDeviceToken(
+        'new-token-after-cleanup',
+        testUser,
+      )
+
+      expect(result.deviceToken).toBe('new-token-after-cleanup')
+      expect(result.nationalId).toBe(testUser.nationalId)
+
+      // Verify only one token remains for this user
+      const remainingTokens =
+        await userTokenService.findAllUserTokensByNationalId(
+          testUser.nationalId,
+        )
+      expect(remainingTokens).toHaveLength(1)
+      expect(remainingTokens[0].deviceToken).toBe('new-token-after-cleanup')
     })
 
     it('should handle same device token being used by different user', async () => {
@@ -2542,7 +2577,7 @@ describe('MeUserProfileController', () => {
 
       // User 1 adds device token
       const user1Res = await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: sharedDeviceToken })
 
       expect(user1Res.status).toBe(201)
@@ -2588,7 +2623,7 @@ describe('MeUserProfileController', () => {
     beforeEach(async () => {
       // Add a device token first so we can delete it
       await server
-        .post('/v2/me/device-tokens')
+        .put('/v2/me/device-tokens')
         .send({ deviceToken: deviceTokenToDelete })
     })
 

@@ -52,8 +52,11 @@ export class UserTokenService {
       })
 
       if (tokenWithDifferentUser) {
-        // Same device, different user: update the national_id
-        this.logger.info('Device token reassigned to different user')
+        // Same device, different user: reassign to current user
+        this.logger.info('Device token reassigned to different user', {
+          fromNationalId: tokenWithDifferentUser.nationalId,
+          toNationalId: user.nationalId,
+        })
 
         await tokenWithDifferentUser.update({
           nationalId: user.nationalId,
@@ -62,20 +65,30 @@ export class UserTokenService {
         return tokenWithDifferentUser
       }
 
-      // Check if this user already has a different device token
-      const userWithDifferentToken = await this.userDeviceTokensModel.findOne({
+      // Check if this user already has device token(s)
+      const userTokens = await this.userDeviceTokensModel.findAll({
         where: { nationalId: user.nationalId },
+        order: [['modified', 'DESC']],
       })
 
-      if (userWithDifferentToken) {
-        // Same user, different device: update the device_token
+      if (userTokens.length > 0) {
+        const [mostRecent, ...stale] = userTokens
+
+        // Clean up any legacy extra tokens (we enforce one token per user)
+        if (stale.length > 0) {
+          this.logger.info('Cleaning up stale device tokens for user', {
+            count: stale.length,
+          })
+          await this.userDeviceTokensModel.destroy({
+            where: { id: stale.map((t) => t.id) },
+          })
+        }
+
         this.logger.info('User device token updated')
 
-        await userWithDifferentToken.update({
-          deviceToken,
-        })
+        await mostRecent.update({ deviceToken })
 
-        return userWithDifferentToken
+        return mostRecent
       }
 
       // Neither exists: create new device token
