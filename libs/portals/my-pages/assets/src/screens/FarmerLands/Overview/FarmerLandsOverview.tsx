@@ -4,7 +4,6 @@ import {
   m,
   IntroWrapperV2,
   ATVINNUVEGARADUNEYTID_SLUG,
-  m as cm,
 } from '@island.is/portals/my-pages/core'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
 import { useFarmerLandsOverviewQuery } from './FarmerLandsOverview.generated'
@@ -35,11 +34,11 @@ export const FarmerLandsOverview = () => {
 
   return (
     <IntroWrapperV2
-      title={fm.title}
-      intro={fm.description}
+      title={m.farmerLands}
+      intro={m.farmerLandsIntro}
       serviceProvider={{
         slug: ATVINNUVEGARADUNEYTID_SLUG,
-        tooltip: formatMessage(cm.farmerLandTooltip),
+        tooltip: formatMessage(m.farmerLandTooltip),
       }}
     >
       <Box marginBottom={3}>
@@ -71,10 +70,10 @@ export const FarmerLandsOverview = () => {
         <Problem
           type="no_data"
           title={formatMessage(
-            search ? cm.noSearchResults : fm.noFarmerLandsTitle,
+            search ? m.noSearchResults : fm.noFarmerLandsTitle,
           )}
           message={formatMessage(
-            search ? cm.noSearchResultsText : cm.noDataFoundDetail,
+            search ? m.noSearchResultsText : m.noDataFoundDetail,
             search ? { arg: search } : undefined,
           )}
           imgSrc="./assets/images/movingTruck.svg"

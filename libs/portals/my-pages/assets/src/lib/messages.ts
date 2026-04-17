@@ -175,15 +175,6 @@ export const messages = defineMessages({
 })
 
 export const farmerLandsMessages = defineMessages({
-  title: {
-    id: 'sp.farmer-lands:title',
-    defaultMessage: 'Jarðabók',
-  },
-  description: {
-    id: 'sp.farmer-lands:description',
-    defaultMessage:
-      'Hér getur þú skoðað yfirlit yfir bújarðir þínar og tengdar upplýsingar.',
-  },
   farmNumber: {
     id: 'sp.farmer-lands:farm-number',
     defaultMessage: 'Búsnúmer: {arg}',
@@ -209,10 +200,6 @@ export const farmerLandsMessages = defineMessages({
   rightsHolder: {
     id: 'sp.farmer-lands:rights-holder',
     defaultMessage: 'Handhafi',
-  },
-  nationalId: {
-    id: 'sp.farmer-lands:national-id',
-    defaultMessage: 'Kennitala',
   },
   bankInfo: {
     id: 'sp.farmer-lands:bank-info',
@@ -256,10 +243,6 @@ export const farmerLandsMessages = defineMessages({
     id: 'sp.farmer-lands:land-registry-entry',
     defaultMessage: 'Jarðaskrá',
   },
-  landRegistryNationalId: {
-    id: 'sp.farmer-lands:land-registry-national-id',
-    defaultMessage: 'Kennitala',
-  },
   ownershipType: {
     id: 'sp.farmer-lands:ownership-type',
     defaultMessage: 'Tegund eignar',
@@ -278,10 +261,6 @@ export const farmerLandsMessages = defineMessages({
     defaultMessage: 'Næsta síða',
   },
   // Subsidies columns
-  subsidyGrossAmount: {
-    id: 'sp.farmer-lands:subsidy-gross-amount',
-    defaultMessage: 'Upphæð',
-  },
   subsidyOffset: {
     id: 'sp.farmer-lands:subsidy-offset',
     defaultMessage: 'Skuldajöf.',
@@ -298,10 +277,6 @@ export const farmerLandsMessages = defineMessages({
     id: 'sp.farmer-lands:subsidy-unit-price',
     defaultMessage: 'Einingaverð',
   },
-  noFarmerLands: {
-    id: 'sp.farmer-lands:no-farmer-lands',
-    defaultMessage: 'Engar jarðir eru skráðar á þig.',
-  },
   noFarmerLandsTitle: {
     id: 'sp.farmer-lands:no-farmer-lands-title',
     defaultMessage: 'Engar jarðir skráðar',
@@ -309,10 +284,6 @@ export const farmerLandsMessages = defineMessages({
   noFarmerLandFound: {
     id: 'sp.farmer-lands:no-farmer-land-found',
     defaultMessage: 'Jörð finnst ekki',
-  },
-  noFarmerLandFoundDetail: {
-    id: 'sp.farmer-lands:no-farmer-land-found-detail',
-    defaultMessage: 'Ekki tókst að finna upplýsingar um þessa jörð.',
   },
 })
 
