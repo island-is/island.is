@@ -13,7 +13,7 @@ import { LinkResolver } from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
 interface AppointmentCardProps {
   title: string
-  description: string
+  description?: string
   data?: {
     date: string
     time: string
@@ -80,11 +80,13 @@ export const TimeCard = ({
               <Text variant="medium">{data.time}</Text>
             </Box>
           </Box>
-          <Inline space={1}>
-            <Text variant="medium" marginBottom="smallGutter">
-              {description}
-            </Text>
-          </Inline>
+          {description && (
+            <Inline space={1}>
+              <Text variant="medium" marginBottom="smallGutter">
+                {description}
+              </Text>
+            </Inline>
+          )}
           <Inline>
             {data.location?.href ? (
               <Box
@@ -111,12 +113,13 @@ export const TimeCard = ({
     </GridRow>
   )
   return (
-    <Box>
+    <Box height="full">
       <Box
         border="standard"
         borderColor="blue200"
         borderRadius="large"
         padding={isMobile ? 2 : 3}
+        height="full"
         className={styles.boxContainer}
       >
         {to ? (
