@@ -166,7 +166,7 @@ export const applicationMessages = {
   },
   name: {
     id: 'vmst.dub.application:name',
-    defaultMessage: 'Breyting á upplýsingum um atvinnuleysisbætur',
+    defaultMessage: 'Afskráning af atvinnuleysisbótum',
     description: `Application's name`,
   },
 }
