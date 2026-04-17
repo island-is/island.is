@@ -5,12 +5,12 @@ import {
   MutationTuple,
   OperationVariables,
 } from '@apollo/client'
-import { ActiveItem } from './interfaces'
 import {
-  FormSystemSection,
-  FormSystemScreen,
   FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
 } from '@island.is/api/schema'
+import { ActiveItem } from './interfaces'
 
 export const updateActiveItemFn = async (
   activeItem: ActiveItem,
@@ -34,7 +34,7 @@ export const updateActiveItemFn = async (
   >,
   currentActiveItem?: ActiveItem,
 ) => {
-  const { type } = activeItem
+  const { type } = currentActiveItem ? currentActiveItem : activeItem
   const [updateSection] = sectionMutation
   const [updateScreen] = screenMutation
   const [updateField] = fieldMutation
@@ -55,17 +55,20 @@ export const updateActiveItemFn = async (
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, multiset, callRuleset } = currentActiveItem
-        ? (currentActiveItem.data as FormSystemScreen)
-        : (activeItem.data as FormSystemScreen)
+      const { id, name, multiMax, isMulti, shouldValidate, shouldPopulate } =
+        currentActiveItem
+          ? (currentActiveItem.data as FormSystemScreen)
+          : (activeItem.data as FormSystemScreen)
       updateScreen({
         variables: {
           input: {
             id,
             updateScreenDto: {
               name,
-              multiset: multiset ? multiset : 0,
-              callRuleset: callRuleset ? callRuleset : false,
+              multiMax: multiMax ? multiMax : 0,
+              isMulti: isMulti ? isMulti : false,
+              shouldValidate: shouldValidate ? shouldValidate : false,
+              shouldPopulate: shouldPopulate ? shouldPopulate : false,
             },
           },
         },

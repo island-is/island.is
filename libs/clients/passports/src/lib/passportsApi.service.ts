@@ -81,12 +81,12 @@ export class PassportsService {
 
       /**
        * Expires within notice time: boolean
-       * Does the passport expire within 6 months or less from today
+       * Does the passport expire within 9 months or less from today
        */
       let expiresWithinNoticeTime = undefined
       if (passport.expirationDate) {
         expiresWithinNoticeTime =
-          differenceInMonths(new Date(passport.expirationDate), new Date()) < 6
+          differenceInMonths(new Date(passport.expirationDate), new Date()) < 9
       }
 
       /**

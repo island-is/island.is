@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -26,7 +26,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseState,
@@ -102,8 +102,8 @@ const CourtOfAppealRuling = () => {
   const isStepValid =
     allFilesDoneOrError &&
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-    (workingCase.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED ||
+    (workingCase.appealCase?.appealRulingDecision ===
+      AppealCaseRulingDecision.DISCONTINUED ||
       uploadFiles.some(
         (file) =>
           file.category === CaseFileCategory.APPEAL_RULING &&
@@ -111,7 +111,7 @@ const CourtOfAppealRuling = () => {
       ))
 
   const handleRulingDecisionChange = (
-    appealRulingDecision: CaseAppealRulingDecision,
+    appealRulingDecision: AppealCaseRulingDecision,
   ) => {
     setAndSendCaseToServer(
       [
@@ -128,42 +128,42 @@ const CourtOfAppealRuling = () => {
   const decisionOptions = [
     {
       id: 'case-decision-accepting',
-      decision: CaseAppealRulingDecision.ACCEPTING,
+      decision: AppealCaseRulingDecision.ACCEPTING,
       message: appealRuling.decisionAccept,
     },
     {
       id: 'case-decision-repeal',
-      decision: CaseAppealRulingDecision.REPEAL,
+      decision: AppealCaseRulingDecision.REPEAL,
       message: appealRuling.decisionRepeal,
     },
     {
       id: 'case-decision-changed',
-      decision: CaseAppealRulingDecision.CHANGED,
+      decision: AppealCaseRulingDecision.CHANGED,
       message: appealRuling.decisionChanged,
     },
     {
       id: 'case-decision-changed-significantly',
-      decision: CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY,
+      decision: AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY,
       message: appealRuling.decisionChangedSignificantly,
     },
     {
       id: 'case-decision-dismissed-from-court-of-appeal',
-      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
+      decision: AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
       message: appealRuling.decisionDismissedFromCourtOfAppeal,
     },
     {
       id: 'case-decision-dismissed-from-court',
-      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+      decision: AppealCaseRulingDecision.DISMISSED_FROM_COURT,
       message: appealRuling.decisionDismissedFromCourt,
     },
     {
       id: 'case-decision-unlabeling',
-      decision: CaseAppealRulingDecision.REMAND,
+      decision: AppealCaseRulingDecision.REMAND,
       message: appealRuling.decisionRemand,
     },
     {
       id: 'case-decision-discontinued',
-      decision: CaseAppealRulingDecision.DISCONTINUED,
+      decision: AppealCaseRulingDecision.DISCONTINUED,
       message: appealRuling.decisionDiscontinued,
     },
   ]
@@ -205,7 +205,10 @@ const CourtOfAppealRuling = () => {
                   name="case-decision"
                   id={option.id}
                   label={formatMessage(option.message)}
-                  checked={workingCase.appealRulingDecision === option.decision}
+                  checked={
+                    workingCase.appealCase?.appealRulingDecision ===
+                    option.decision
+                  }
                   onChange={() => handleRulingDecisionChange(option.decision)}
                   backgroundColor="white"
                   large
@@ -214,8 +217,8 @@ const CourtOfAppealRuling = () => {
             ))}
           </BlueBox>
         </Box>
-        {workingCase.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ? (
+        {workingCase.appealCase?.appealRulingDecision ===
+        AppealCaseRulingDecision.DISCONTINUED ? (
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
@@ -249,10 +252,10 @@ const CourtOfAppealRuling = () => {
               workingCase.state === CaseState.ACCEPTED &&
               (workingCase.decision === CaseDecision.ACCEPTING ||
                 workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-              (workingCase.appealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED ||
-                workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY) && (
+              (workingCase.appealCase?.appealRulingDecision ===
+                AppealCaseRulingDecision.CHANGED ||
+                workingCase.appealCase?.appealRulingDecision ===
+                  AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY) && (
                 <RestrictionLength
                   workingCase={workingCase}
                   handleIsolationChange={(
@@ -312,7 +315,7 @@ const CourtOfAppealRuling = () => {
               <Input
                 label={formatMessage(strings.conclusionHeading)}
                 name="rulingConclusion"
-                value={workingCase.appealConclusion || ''}
+                value={workingCase.appealCase?.appealConclusion || ''}
                 placeholder={formatMessage(strings.conclusionPlaceholder)}
                 onChange={(event) => {
                   removeTabsValidateAndSet(

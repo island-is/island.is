@@ -74,6 +74,14 @@ import { mapTabSection, TabSection } from './models/tabSection.model'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import {
+  DelegationScopeTag,
+  mapDelegationScopeTag,
+} from './models/delegationScopeTag.model'
+import {
+  ArticleCategory,
+  mapArticleCategory,
+} from './models/articleCategory.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant, mapGrant } from './models/grant.model'
@@ -90,7 +98,11 @@ import {
   OrganizationPageStandaloneSitemap,
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
-import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
+import {
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
 import {
   getOrganizationPageUrlPrefix,
   sortAlpha,
@@ -113,6 +125,10 @@ import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { mapWebChat, WebChat } from './models/webChat.model'
+import {
+  mapServicePortalPage,
+  ServicePortalPage,
+} from './models/servicePortalPage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -120,6 +136,8 @@ const errorHandler = (name: string) => {
     throw new ApolloError('Failed to resolve request in ' + name)
   }
 }
+
+type ChildNodeOrder = 'asc-title' | 'desc-title' | 'manual'
 
 const ArticleFields = (
   [
@@ -369,6 +387,27 @@ export class CmsContentfulService {
     return result ? mapOrganization(result as types.IOrganization) : null
   }
 
+  async getServicePortalPage(
+    slug: string,
+    lang: string,
+  ): Promise<ServicePortalPage> {
+    const params = {
+      ['content_type']: 'servicePortalPage',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IServicePortalPageFields>(lang, params)
+      .catch(errorHandler('getServicePortalPage'))
+
+    return (
+      (result.items as types.IServicePortalPage[]).map(
+        mapServicePortalPage,
+      )[0] ?? null
+    )
+  }
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -863,6 +902,34 @@ export class CmsContentfulService {
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
+  async getDelegationScopeTags(lang: string): Promise<DelegationScopeTag[]> {
+    const params = {
+      ['content_type']: 'delegationScopeTag',
+      order: 'fields.title',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IDelegationScopeTagFields>(lang, params)
+      .catch(errorHandler('getDelegationScopeTags'))
+
+    return (result.items as types.IDelegationScopeTag[]).map(
+      mapDelegationScopeTag,
+    )
+  }
+
+  async getArticleCategories(lang: string): Promise<ArticleCategory[]> {
+    const params = {
+      ['content_type']: 'articleCategory',
+      order: 'fields.title',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IArticleCategoryFields>(lang, params)
+      .catch(errorHandler('getArticleCategories'))
+
+    return (result.items as types.IArticleCategory[]).map(mapArticleCategory)
+  }
+
   async getLifeEventsInCategory(
     lang: string,
     slug: string,
@@ -1241,6 +1308,41 @@ export class CmsContentfulService {
     )
   }
 
+  private getChildNodeOrder(parentNode: SitemapTree | SitemapTreeNode) {
+    if (
+      'type' in parentNode &&
+      parentNode.type === SitemapTreeNodeType.CATEGORY
+    ) {
+      return (parentNode.childNodeOrder ?? 'manual') as ChildNodeOrder
+    }
+
+    return 'manual'
+  }
+
+  private sortLinksByChildNodeOrder<T extends { label: string }>(
+    links: T[],
+    order: ChildNodeOrder,
+  ): T[] {
+    if (order === 'manual') {
+      return links
+    }
+
+    const direction = order === 'asc-title' ? 1 : -1
+
+    return links
+      .map((link, index) => ({ link, index }))
+      .sort((a, b) => {
+        const byLabel = sortAlpha<{ label: string }>('label')(a.link, b.link)
+
+        if (byLabel !== 0) {
+          return byLabel * direction
+        }
+
+        return a.index - b.index
+      })
+      .map(({ link }) => link)
+  }
+
   async getOrganizationPageStandaloneSitemapLevel1(
     input: GetOrganizationPageStandaloneSitemapLevel1Input,
   ): Promise<OrganizationPageStandaloneSitemap | null> {
@@ -1336,6 +1438,10 @@ export class CmsContentfulService {
     result.childLinks = result.childLinks.filter(
       (link) => link.label && link.href,
     )
+    result.childLinks = this.sortLinksByChildNodeOrder(
+      result.childLinks,
+      this.getChildNodeOrder(category),
+    )
 
     return result
   }
@@ -1385,11 +1491,11 @@ export class CmsContentfulService {
       { label: string; href: string; entryId: string }[]
     >()
 
-    const result: OrganizationPageStandaloneSitemapLevel2 = {
-      label: subcategory.label,
-      childCategories: subcategory.childNodes.map((node) => {
-        if (node.type === SitemapTreeNodeType.CATEGORY) {
-          return {
+    const childCategoriesWithOrder = subcategory.childNodes.map((node) => {
+      if (node.type === SitemapTreeNodeType.CATEGORY) {
+        return {
+          order: this.getChildNodeOrder(node),
+          childCategory: {
             label: node.label,
             childLinks: node.childNodes.map((childNode) => {
               if (childNode.type === SitemapTreeNodeType.CATEGORY) {
@@ -1421,31 +1527,37 @@ export class CmsContentfulService {
 
               return entryNode
             }),
-          }
+          },
         }
+      }
 
-        if (node.type === SitemapTreeNodeType.URL) {
-          return {
+      if (node.type === SitemapTreeNodeType.URL) {
+        return {
+          order: 'manual' as ChildNodeOrder,
+          childCategory: {
             label: node.label,
             href: node.url,
             childLinks: [],
-          }
+          },
         }
+      }
 
-        const entryNode = {
-          label: '',
-          href: '',
-          entryId: node.entryId,
-          childLinks: [],
-        }
+      const entryNode = {
+        label: '',
+        href: '',
+        entryId: node.entryId,
+        childLinks: [],
+      }
 
-        const nodeList = entryNodes.get(node.entryId) ?? []
-        nodeList.push(entryNode)
-        entryNodes.set(node.entryId, nodeList)
+      const nodeList = entryNodes.get(node.entryId) ?? []
+      nodeList.push(entryNode)
+      entryNodes.set(node.entryId, nodeList)
 
-        return entryNode
-      }),
-    }
+      return {
+        order: 'manual' as ChildNodeOrder,
+        childCategory: entryNode,
+      }
+    })
 
     const parentSubpageResponse =
       await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
@@ -1476,17 +1588,31 @@ export class CmsContentfulService {
       }
     }
 
-    // Prune empty values
-    result.childCategories = result.childCategories.filter((childCategory) => {
-      childCategory.childLinks = childCategory.childLinks.filter(
-        (childLink) => {
-          return childLink.href && childLink.label
-        },
-      )
-      return childCategory.label && childCategory.childLinks.length > 0
-    })
+    const childCategories = childCategoriesWithOrder
+      .map(({ childCategory, order }) => {
+        const prunedChildLinks = childCategory.childLinks.filter(
+          (childLink) => childLink.href && childLink.label,
+        )
 
-    return result
+        return {
+          childCategory: {
+            ...childCategory,
+            childLinks: this.sortLinksByChildNodeOrder(prunedChildLinks, order),
+          },
+        }
+      })
+      .filter(({ childCategory }) => {
+        return childCategory.label && childCategory.childLinks.length > 0
+      })
+      .map(({ childCategory }) => childCategory)
+
+    return {
+      label: subcategory.label,
+      childCategories: this.sortLinksByChildNodeOrder(
+        childCategories,
+        this.getChildNodeOrder(subcategory),
+      ),
+    }
   }
 
   async getOrganizationNavigationPages(
@@ -1574,52 +1700,74 @@ export class CmsContentfulService {
   async getCourseById(
     input: GetCourseByIdInput,
   ): Promise<CourseDetails | null> {
-    const params = {
+    let id = input.id
+
+    const slugResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 0,
+          'fields.slug': input.id,
+          select: 'sys',
+        },
+        0,
+      )
+    const potentialId = slugResponse?.items?.[0]?.sys?.id
+    if (potentialId) id = potentialId
+
+    const idParams = {
       content_type: 'course',
       limit: 1,
       include: 4,
     }
 
-    const [isResponse, enResponse] = await Promise.all([
-      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
-        input.id,
-        'is',
-        { ...params, include: input.lang === 'is' ? 4 : 0 },
-      ),
-      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
-        input.id,
-        'en',
-        { ...params, include: input.lang === 'en' ? 4 : 0 },
-      ),
-    ])
+    try {
+      const [isResponse, enResponse] = await Promise.all([
+        this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+          id,
+          'is',
+          { ...idParams, include: input.lang === 'is' ? 4 : 0 },
+        ),
+        this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+          id,
+          'en',
+          { ...idParams, include: input.lang === 'en' ? 4 : 0 },
+        ),
+      ])
 
-    const response = input.lang === 'is' ? isResponse : enResponse
+      const response = input.lang === 'is' ? isResponse : enResponse
 
-    if (response?.sys?.contentType?.sys?.id !== 'course') {
-      return null
-    }
+      if (response?.sys?.contentType?.sys?.id !== 'course') {
+        return null
+      }
 
-    const mappedCourse = mapCourse(response as types.ICourse)
+      const mappedCourse = mapCourse(response as types.ICourse)
 
-    // Filter out instances that are in the past
-    const today = new Date()
-    mappedCourse.instances = mappedCourse.instances.filter(
-      (instance) =>
-        Boolean(instance.startDate) && new Date(instance.startDate) > today,
-    )
+      // Filter out instances that are in the past
+      const today = new Date()
+      mappedCourse.instances = mappedCourse.instances.filter(
+        (instance) =>
+          Boolean(instance.startDate) && new Date(instance.startDate) > today,
+      )
 
-    // Sort instances in ascending start date order
-    mappedCourse.instances.sort(
-      (a, b) =>
-        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-    )
+      // Sort instances in ascending start date order
+      mappedCourse.instances.sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      )
 
-    return {
-      course: mappedCourse,
-      activeLocales: {
-        is: Boolean(isResponse?.fields?.title),
-        en: Boolean(enResponse?.fields?.title),
-      },
+      return {
+        course: mappedCourse,
+        activeLocales: {
+          is: Boolean(isResponse?.fields?.title),
+          en: Boolean(enResponse?.fields?.title),
+        },
+      }
+    } catch (error) {
+      if (error?.sys?.id === 'NotFound') return null
+      throw error
     }
   }
 
@@ -1703,5 +1851,23 @@ export class CmsContentfulService {
     if (!bestMatch) return null
 
     return mapWebChat(bestMatch, input.lang)
+  }
+
+  async getCourseOrganizationKennitala(
+    courseId: string,
+  ): Promise<string | undefined> {
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        courseId,
+        'is',
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 2,
+        },
+      )
+
+    return response?.fields?.courseListPage?.fields?.organization?.fields
+      ?.kennitala
   }
 }

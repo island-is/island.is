@@ -1,22 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useWindowSize } from 'react-use'
+import { useMemo, useState } from 'react'
 import NextLink from 'next/link'
 
 import {
   Box,
   Breadcrumbs,
-  CategoryCard,
   ColorSchemeContext,
+  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
   Pagination,
-  ResponsiveSpace,
-  Select,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { helperStyles, theme } from '@island.is/island-ui/theme'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { sortAlpha } from '@island.is/shared/utils'
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
@@ -24,7 +22,6 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationsArgs,
-  QueryGetOrganizationTagsArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -34,48 +31,37 @@ import { Screen } from '@island.is/web/types'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 import { CustomNextError } from '../../units/errors'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_TAGS_QUERY,
-  GET_ORGANIZATIONS_QUERY,
-} from '../queries'
-import {
-  CategoriesProps,
-  FilterLabels,
-  FilterMenu,
-  FilterOptions,
-} from './FilterMenu'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATIONS_QUERY } from '../queries'
+import { OrganizationCard } from './OrganizationCard'
 import * as styles from './Organizations.css'
 
-const CARDS_PER_PAGE = 12
+const CARDS_PER_PAGE = 18
 
-interface TitleSortOption {
+const ALPHABET_RANGES: ReadonlyArray<{
   label: string
-  value: 'asc' | 'desc'
-}
+  chars: ReadonlyArray<string> | null
+}> = [
+  { label: 'Allt', chars: null },
+  { label: 'A - C', chars: ['A', 'Á', 'B', 'C'] },
+  { label: 'D - F', chars: ['D', 'Ð', 'E', 'É', 'F'] },
+  { label: 'G - I', chars: ['G', 'H', 'I', 'Í'] },
+  { label: 'J - L', chars: ['J', 'K', 'L'] },
+  { label: 'M - O', chars: ['M', 'N', 'O', 'Ó'] },
+  { label: 'P - S', chars: ['P', 'Q', 'R', 'S'] },
+  { label: 'T - V', chars: ['T', 'U', 'Ú', 'V'] },
+  { label: 'X - Þ', chars: ['W', 'X', 'Y', 'Ý', 'Z', 'Þ'] },
+  { label: 'Æ - Ö', chars: ['Æ', 'Ö'] },
+]
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
-  tags: Query['getOrganizationTags']
   namespace: Query['getNamespace']
 }
 
-const verticalSpacing: ResponsiveSpace = 3
-
 const OrganizationPage: Screen<OrganizationProps> = ({
   organizations,
-  tags,
   namespace,
 }) => {
-  const [isMobile, setIsMobile] = useState(false)
-  const { width } = useWindowSize()
-  useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      setIsMobile(true)
-      return
-    }
-    setIsMobile(false)
-  }, [width])
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
@@ -83,74 +69,39 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
 
-  const [filter, setFilter] = useState<FilterOptions>({
-    raduneyti: [],
-    input: '',
-  })
+  const [searchInput, setSearchInput] = useState('')
+  const [selectedRangeIndex, setSelectedRangeIndex] = useState(0)
 
-  const titleSortOptions = useMemo<TitleSortOption[]>(
-    () => [
-      { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'asc' },
-      { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'desc' },
-    ],
-    [],
+  const sortedItems = useMemo(
+    () => [...organizations.items].sort(sortAlpha('title')),
+    [organizations],
   )
 
-  const [selectedTitleSortOption, setSelectedTitleSortOption] =
-    useState<TitleSortOption>(titleSortOptions[0])
+  const filteredItems = useMemo(() => {
+    let items = sortedItems
 
-  const organizationsItems = useMemo(() => {
-    const items = [...organizations.items]
-    if (selectedTitleSortOption.value === 'asc') {
-      items.sort(sortAlpha('title'))
-    } else {
-      items.sort((a, b) => sortAlpha('title')(b, a))
-    }
-    return items
-  }, [organizations, selectedTitleSortOption])
-
-  const tagsItems = useMemo(
-    () => tags?.items.filter((x) => x.title).sort(sortAlpha('title')),
-    [tags],
-  )
-
-  const categories: CategoriesProps[] = [
-    {
-      id: 'raduneyti',
-      label: n('ministries', 'Ráðuneyti'),
-      selected: filter.raduneyti,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      filters: tagsItems.map((f) => ({
-        value: f.title,
-        label: f.title,
-      })),
-    },
-  ]
-
-  const hasFilters = filter.raduneyti.length || filter.input
-  const filteredItems = hasFilters
-    ? organizationsItems.filter(
-        (x) =>
-          (filter.input &&
-            x.title
-              .trim()
-              .toLowerCase()
-              .includes(filter.input.trim().toLowerCase())) ||
-          filter.raduneyti.some((title) =>
-            x.tag.find((t) => t.title === title),
-          ),
+    const { chars } = ALPHABET_RANGES[selectedRangeIndex]
+    if (chars) {
+      items = items.filter((x) =>
+        chars.includes(x.title.charAt(0).toUpperCase()),
       )
-    : organizationsItems
+    }
+
+    if (searchInput) {
+      const query = searchInput.trim().toLowerCase()
+      items = items.filter((x) => x.title.trim().toLowerCase().includes(query))
+    }
+
+    return items
+  }, [sortedItems, selectedRangeIndex, searchInput])
 
   const count = filteredItems.length
-  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
+  const totalPages = Math.max(1, Math.ceil(count / CARDS_PER_PAGE))
   const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
   const visibleItems = filteredItems.slice(base, page * CARDS_PER_PAGE)
 
-  const goToPage = (page = 1, scrollTop = true) => {
-    setPage(page)
-
+  const goToPage = (newPage = 1, scrollTop = true) => {
+    setPage(newPage)
     if (scrollTop) {
       window.scrollTo(0, 0)
     }
@@ -161,21 +112,13 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     'Stofnanir Íslenska Ríkisins',
   )} | Ísland.is`
 
-  const filterLabels: FilterLabels = {
-    labelClearAll: n('filterClearAll', 'Hreinsa allar síur'),
-    labelClear: n('filterClear', 'Hreinsa síu'),
-    labelOpen: n('filterOpen', 'Sía niðurstöður'),
-    labelClose: n('filterClose', 'Loka síu'),
-    labelTitle: n('filterOrganization', 'Sía stofnanir'),
-    labelResult: n('showResults', 'Sýna niðurstöður'),
-    inputPlaceholder: n('filterBySearchQuery', 'Sía eftir leitarorði'),
-  }
+  const inputPlaceholder = n('filterBySearchQuery', 'Sía eftir leitarorði')
 
   return (
     <>
       <HeadWithSocialSharing title={metaTitle} />
-      <Box paddingTop={[2, 2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
-        <GridContainer>
+      <Box paddingTop={[2, 2, 2, 8]} paddingBottom={[4, 4, 4, 8]}>
+        <GridContainer className={styles.listContainer}>
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '1/12']}
@@ -204,8 +147,14 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     )
                   }}
                 />
-                <Text variant="h1" as="h1">
+                <Text variant="h1" as="h1" className={styles.heading}>
                   {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
+                </Text>
+                <Text variant="intro" className={styles.description}>
+                  {n(
+                    'stofnanirDescription',
+                    'Listi yfir opinbera aðila og sveitarfélög ásamt tengiliðaupplýsingum og þjónustuyfirlit.',
+                  )}
                 </Text>
               </Stack>
             </GridColumn>
@@ -215,100 +164,98 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-          <GridContainer id="organizations-list">
-            <Box marginY={[3, 3, 6]}>
-              <FilterMenu
-                {...filterLabels}
-                categories={categories}
-                filter={filter}
-                setFilter={setFilter}
-                resultCount={filteredItems.length}
-                onBeforeUpdate={() => goToPage(1, false)}
-                align="right"
-                variant={isMobile ? 'dialog' : 'popover'}
-              />
-              <Box className={styles.orderByContainer}>
-                <Select
-                  label={n('orderBy', 'Raða eftir')}
-                  name="sort-option-select"
-                  size="xs"
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  onChange={(option) => {
-                    setSelectedTitleSortOption(option as TitleSortOption)
-                  }}
-                  value={selectedTitleSortOption}
-                  options={titleSortOptions}
-                />
+          <GridContainer
+            id="organizations-list"
+            className={styles.listContainer}
+          >
+            <Box paddingTop={[4, 4, 8]} paddingBottom={[5, 5, 8]}>
+              <Box className={styles.filterBar}>
+                <Box className={styles.searchContainer}>
+                  <FilterInput
+                    name="filter-input"
+                    placeholder={inputPlaceholder}
+                    value={searchInput}
+                    onChange={(value) => {
+                      setSearchInput(value)
+                      goToPage(1, false)
+                    }}
+                    backgroundColor="white"
+                  />
+                </Box>
+                <Box className={styles.tagList}>
+                  {ALPHABET_RANGES.map((range, index) => (
+                    <Tag
+                      key={range.label}
+                      variant="blue"
+                      active={selectedRangeIndex === index}
+                      outlined
+                      onClick={() => {
+                        setSelectedRangeIndex(index)
+                        goToPage(1, false)
+                      }}
+                    >
+                      {index === 0
+                        ? n('organizationsFilterAll', 'Allt')
+                        : range.label}
+                    </Tag>
+                  ))}
+                </Box>
               </Box>
             </Box>
 
             <GridRow>
-              {visibleItems.map((organization, index) => {
+              {visibleItems.map((organization) => {
                 const tags =
                   organization?.tag &&
                   organization.tag.map((x) => ({
-                    title: x.title,
+                    id: x.id,
                     label: x.title,
                   }))
 
                 return (
                   <GridColumn
-                    key={index}
+                    key={organization.slug}
                     span={['12/12', '6/12', '6/12', '4/12']}
-                    paddingBottom={verticalSpacing}
+                    paddingBottom={3}
                   >
-                    <CategoryCard
+                    <OrganizationCard
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
                       href={getOrganizationLink(organization, activeLocale)}
-                      key={index}
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore make web strict
-                      text={organization?.description}
                       heading={organization?.title}
-                      hyphenate
                       {...(tags?.length && { tags })}
-                      tagOptions={{
-                        hyphenate: true,
-                        textLeft: true,
-                        truncate: true,
-                      }}
                       {...(organization?.logo?.url && {
                         src: organization.logo.url,
                         alt: organization.logo.title,
-                        autoStack: true,
                       })}
                     />
                   </GridColumn>
                 )
               })}
             </GridRow>
-            {totalPages > 1 && (
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Box paddingTop={8}>
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      variant="blue"
-                      renderLink={(page, className, children) => (
-                        <button
-                          onClick={() => {
-                            goToPage(page)
-                          }}
-                        >
-                          <span className={helperStyles.srOnly}>
-                            {n('page', 'Síða')}
-                          </span>
-                          <span className={className}>{children}</span>
-                        </button>
-                      )}
-                    />
-                  </Box>
-                </GridColumn>
-              </GridRow>
-            )}
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box paddingBottom={8} paddingTop={5}>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    variant="blue"
+                    renderLink={(page, className, children) => (
+                      <button
+                        onClick={() => {
+                          goToPage(page)
+                        }}
+                      >
+                        <span className={helperStyles.srOnly}>
+                          {n('page', 'Síða')}
+                        </span>
+                        <span className={className}>{children}</span>
+                      </button>
+                    )}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
           </GridContainer>
         </ColorSchemeContext.Provider>
       </Box>
@@ -321,21 +268,10 @@ OrganizationPage.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getOrganizations },
     },
-    {
-      data: { getOrganizationTags },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationTagsArgs>({
-      query: GET_ORGANIZATION_TAGS_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -371,9 +307,10 @@ OrganizationPage.getProps = async ({ apolloClient, locale }) => {
         (o) => o.showsUpOnTheOrganizationsPage,
       ),
     },
-    tags: getOrganizationTags,
     namespace,
   }
 }
 
-export default withMainLayout(OrganizationPage)
+export default withMainLayout(OrganizationPage, {
+  showFooterIllustration: true,
+})

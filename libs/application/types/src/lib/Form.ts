@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, ReactNode, SetStateAction } from 'react'
 import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
@@ -170,6 +170,7 @@ export interface ExternalDataProvider extends FormItem {
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  subDescription?: StaticText
   submitField?: SubmitField
 }
 
@@ -225,6 +226,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
   setSubmitButtonDisabled?: SetSubmitButtonDisabled
+  renderField?: (field: Field) => ReactNode
 }
 
 export type RepeaterProps = {

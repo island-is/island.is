@@ -22,6 +22,7 @@ type AgendaCardProps = {
   courtRoom: string
   addToCalendarButton: React.ReactNode
   closedHearingText: string
+  caseSubType?: string | null
 }
 
 export const AgendaCard = ({
@@ -35,6 +36,7 @@ export const AgendaCard = ({
   courtRoom,
   closedHearingText,
   addToCalendarButton,
+  caseSubType,
 }: AgendaCardProps) => {
   const detailLines: { text: string }[] = []
 
@@ -53,12 +55,6 @@ export const AgendaCard = ({
   if (time) {
     detailLines.push({
       text: time,
-    })
-  }
-
-  if (closedHearingText) {
-    detailLines.push({
-      text: closedHearingText,
     })
   }
 
@@ -100,11 +96,18 @@ export const AgendaCard = ({
                 <Text variant="h5" as="h2">
                   {caseNumber}
                 </Text>
-                {Boolean(type) && (
-                  <Tag variant="blue" disabled>
-                    {type}
-                  </Tag>
-                )}
+                <Inline space={2} alignY="center">
+                  {Boolean(type) && (
+                    <Tag variant="blue" outlined={true} disabled>
+                      {type}
+                    </Tag>
+                  )}
+                  {Boolean(closedHearingText) && (
+                    <Tag variant="red" outlined={true} disabled>
+                      {closedHearingText}
+                    </Tag>
+                  )}
+                </Inline>
               </Inline>
               <Text variant="medium" color="purple400" fontWeight="semiBold">
                 {date}
@@ -112,12 +115,21 @@ export const AgendaCard = ({
             </Inline>
             <GridRow direction="row">
               <GridColumn span="8/12">
-                {judgesString && <Text variant="small">{judgesString}</Text>}
-                {title && (
-                  <Box flexGrow={1} marginTop={1}>
-                    <Text className={styles.preLine}>{title}</Text>
-                  </Box>
-                )}
+                <Stack space={2}>
+                  <Stack space={1}>
+                    {Boolean(judgesString) && (
+                      <Text variant="small">{judgesString}</Text>
+                    )}
+                    {Boolean(caseSubType) && (
+                      <Text variant="small">{caseSubType}</Text>
+                    )}
+                  </Stack>
+                  {title && (
+                    <Box flexGrow={1}>
+                      <Text className={styles.preLine}>{title}</Text>
+                    </Box>
+                  )}
+                </Stack>
               </GridColumn>
               <GridColumn span="4/12">{renderDetails()}</GridColumn>
             </GridRow>
@@ -130,11 +142,18 @@ export const AgendaCard = ({
                 <Text variant="h5" as="h2">
                   {caseNumber}
                 </Text>
-                {Boolean(type) && (
-                  <Tag variant="blue" disabled>
-                    {type}
-                  </Tag>
-                )}
+                <Inline space={2} alignY="center">
+                  {Boolean(type) && (
+                    <Tag variant="blue" outlined={true} disabled>
+                      {type}
+                    </Tag>
+                  )}
+                  {Boolean(closedHearingText) && (
+                    <Tag variant="red" outlined={true} disabled>
+                      {closedHearingText}
+                    </Tag>
+                  )}
+                </Inline>
               </Inline>
               <Text variant="medium" color="purple400" fontWeight="semiBold">
                 {date}

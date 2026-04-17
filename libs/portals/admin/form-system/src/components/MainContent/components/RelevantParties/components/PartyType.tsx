@@ -1,9 +1,9 @@
-import { Box, Checkbox } from '@island.is/island-ui/core'
-import { RelevantParty } from './RelevantParty'
 import { FormSystemField } from '@island.is/api/schema'
+import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import { ControlContext } from 'libs/portals/admin/form-system/src/context/ControlContext'
+import { ControlContext } from '../../../../../context/ControlContext'
 import { getFieldBySettings } from '../../../../../lib/utils/getField'
+import { RelevantParty } from './RelevantParty'
 
 interface Props {
   groupApplicantTypes: string[]
@@ -18,7 +18,8 @@ export const PartyType = ({
   formApplicantFields,
   handleCheckboxChange,
 }: Props) => {
-  const { applicantTypes } = useContext(ControlContext)
+  const { applicantTypes, control } = useContext(ControlContext)
+  const { isReadOnly } = control
 
   const getApplicantType = (type: string) => {
     return applicantTypes?.find((applicantType) => applicantType?.id === type)
@@ -33,6 +34,7 @@ export const PartyType = ({
       <Box paddingTop={4}>
         <Checkbox
           label={label}
+          disabled={isReadOnly}
           checked={isGroupChecked}
           onChange={async (e) =>
             await handleCheckboxChange(groupApplicantTypes, e.target.checked)

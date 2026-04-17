@@ -54,8 +54,8 @@ export const message = style({
   textAlign: 'center',
   transition: 'bottom 0.3s ease, transform 0.3s ease',
   transform: 'translateY(0)',
-  ':focus': {
-    outline: 0,
+  ':focus-visible': {
+    outline: `4px solid ${theme.color.mint400}`,
     transform: 'translateY(-10px)',
   },
 })
@@ -81,7 +81,7 @@ export const messageArrow = style({
   borderTop: `10px solid ${blue200}`,
   transition: 'all 150ms ease',
   selectors: {
-    [`${message}:focus &`]: {
+    [`${message}:focus-visible &`]: {
       bottom: -13,
       right: 41,
       borderLeft: '13px solid transparent',

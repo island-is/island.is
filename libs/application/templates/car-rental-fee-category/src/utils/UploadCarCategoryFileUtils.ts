@@ -2,7 +2,7 @@ import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
-import { is30DaysOrMoreFromDate } from './dayRateUtils'
+import { is15DaysOrMoreFromDate } from './dayRateUtils'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
@@ -49,37 +49,6 @@ export const parseFileToCarCategory = async (
       const carNr = row[carNumberIndex]
       const prevMileStr = row[prevMilageIndex]?.trim()
       const currMileStr = row[currMilageIndex]?.trim()
-      if (!currentCarData[carNr]) {
-        return {
-          code: 1,
-          message: m.multiUploadErrors.carNotFound,
-          carNr,
-        }
-      }
-
-      // Changing from Dayrate
-      if (rateToChangeTo === RateCategory.KMRATE) {
-        const validFromDate = currentCarData[carNr].activeDayRate?.validFrom
-        if (validFromDate) {
-          const is30orMoreDays = is30DaysOrMoreFromDate(validFromDate)
-
-          if (!is30orMoreDays) {
-            return {
-              code: 1,
-              message: m.multiUploadErrors.dayRateMin30Days,
-              carNr,
-            }
-          }
-        }
-      }
-
-      if (!prevMileStr && currMileStr) {
-        return {
-          code: 1,
-          message: m.multiUploadErrors.previousMileageRequired,
-          carNr,
-        }
-      }
 
       // Skip rows where either mileage value is empty or undefined
       if (!prevMileStr || !currMileStr) return undefined
@@ -101,6 +70,38 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.newMileageLowerThanPrevious,
           carNr,
+        }
+      }
+
+      if (!prevMileStr && currMileStr) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.previousMileageRequired,
+          carNr,
+        }
+      }
+
+      if (!currentCarData[carNr]) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.carNotFound,
+          carNr,
+        }
+      }
+
+      // Changing from Dayrate
+      if (rateToChangeTo === RateCategory.KMRATE) {
+        const validFromDate = currentCarData[carNr].activeDayRate?.validFrom
+        if (validFromDate) {
+          const is15orMoreDays = is15DaysOrMoreFromDate(validFromDate)
+
+          if (!is15orMoreDays) {
+            return {
+              code: 1,
+              message: m.multiUploadErrors.dayRateMin15Days,
+              carNr,
+            }
+          }
         }
       }
 

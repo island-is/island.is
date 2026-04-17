@@ -1427,6 +1427,7 @@ export class CmsElasticsearchService {
         },
       },
     ]
+    const should: Record<string, unknown>[] = []
 
     if (!!input.tagKeys && input.tagKeys.length > 0) {
       must.push({
@@ -1460,16 +1461,14 @@ export class CmsElasticsearchService {
       ? input.queryString.replace('´', '').trim().toLowerCase()
       : ''
 
-    must.push({
+    const simpleQuery = {
       simple_query_string: {
         query: queryString + '*',
         fields: ['title^100', 'content'],
         analyze_wildcard: true,
         default_operator: 'and',
       },
-    })
-
-    const size = 10
+    }
 
     let sort = [
       { _score: { order: SortDirection.DESC } },
@@ -1477,14 +1476,33 @@ export class CmsElasticsearchService {
     ]
 
     if (queryString.length === 0) {
+      must.push(simpleQuery)
       sort = [{ 'title.sort': { order: SortDirection.ASC } }]
+    } else {
+      should.push(simpleQuery)
+      should.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                { term: { 'tags.type': 'keyword' } },
+                { match_phrase_prefix: { 'tags.value': queryString } },
+              ],
+            },
+          },
+        },
+      })
     }
+
+    const size = 10
 
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
         query: {
           bool: {
             must,
+            ...(should.length > 0 ? { should, minimum_should_match: 1 } : {}),
           },
         },
         sort,
@@ -1654,31 +1672,29 @@ export class CmsElasticsearchService {
     ]
 
     if (!!input.categoryKeys && input.categoryKeys.length > 0) {
-      must.push({
-        nested: {
-          path: 'tags',
-          query: {
-            bool: {
-              should: input.categoryKeys.map((key) => ({
-                bool: {
-                  must: [
-                    {
-                      term: {
-                        'tags.key': key,
-                      },
+      must.push(
+        ...input.categoryKeys.map((key) => ({
+          nested: {
+            path: 'tags',
+            query: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      'tags.key': key,
                     },
-                    {
-                      term: {
-                        'tags.type': 'genericTag',
-                      },
+                  },
+                  {
+                    term: {
+                      'tags.type': 'genericTag',
                     },
-                  ],
-                },
-              })),
+                  },
+                ],
+              },
             },
           },
-        },
-      })
+        })),
+      )
     }
 
     if (!!input.organizationSlug && input.organizationSlug.length > 0) {

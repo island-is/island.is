@@ -1,41 +1,41 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { ControlContext } from '../../../../../../context/ControlContext'
-import {
-  FormSystemField,
-  FormSystemListItem,
-  Maybe,
-} from '@island.is/api/schema'
-import {
-  GridRow as Row,
-  GridColumn as Column,
-  Text,
-  Box,
-  Button,
-  Stack,
-} from '@island.is/island-ui/core'
+import { useMutation } from '@apollo/client'
 import {
   DndContext,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  UniqueIdentifier,
   useSensor,
   useSensors,
-  UniqueIdentifier,
 } from '@dnd-kit/core'
-import { NavbarSelectStatus } from '../../../../../../lib/utils/interfaces'
-import { ListItem } from './components/ListItem'
 import { SortableContext } from '@dnd-kit/sortable'
-import { createPortal } from 'react-dom'
-import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
+import {
+  FormSystemField,
+  FormSystemListItem,
+  Maybe,
+} from '@island.is/api/schema'
 import {
   CREATE_LIST_ITEM,
   UPDATE_LIST_ITEM,
   UPDATE_LIST_ITEM_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
-import { removeTypename } from '../../../../../../lib/utils/removeTypename'
 import { m } from '@island.is/form-system/ui'
+import {
+  Box,
+  Button,
+  GridColumn as Column,
+  GridRow as Row,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../../../context/ControlContext'
+import { NavbarSelectStatus } from '../../../../../../lib/utils/interfaces'
+import { removeTypename } from '../../../../../../lib/utils/removeTypename'
+import { ListItem } from './components/ListItem'
 
 export const ListBuilder = () => {
   const [createListItem] = useMutation(CREATE_LIST_ITEM)
@@ -45,9 +45,14 @@ export const ListBuilder = () => {
   const [updateListItem] = useMutation(UPDATE_LIST_ITEM)
   const { control, controlDispatch, setSelectStatus, setInListBuilder } =
     useContext(ControlContext)
+  const { isReadOnly } = control
   const currentItem = control.activeItem.data as FormSystemField
   const { activeListItem } = control
-  const listItems = currentItem?.list ?? ([] as FormSystemListItem[])
+
+  const EMPTY_LIST: FormSystemListItem[] = []
+
+  const listItems = currentItem?.list ?? EMPTY_LIST
+
   const listItemIds = useMemo(
     () =>
       listItems
@@ -153,8 +158,8 @@ export const ListBuilder = () => {
   }, [])
 
   useEffect(() => {
-    setConnecting(listItems.map(() => false))
-  }, [listItems])
+    setConnecting(Array(listItems.length).fill(false))
+  }, [currentItem.id, listItems.length])
 
   const toggleListItemSelected = (id: string, checked: boolean) => {
     const listItemToUpdate = listItems.find((l) => l?.id === id)
@@ -256,11 +261,13 @@ export const ListBuilder = () => {
         justifyContent="flexEnd"
         marginTop={2}
       >
-        <Box marginRight={2}>
-          <Button variant="ghost" onClick={addListItem}>
-            {formatMessage(m.addListItem)}
-          </Button>
-        </Box>
+        {!isReadOnly && (
+          <Box marginRight={2}>
+            <Button variant="ghost" onClick={addListItem}>
+              {formatMessage(m.addListItem)}
+            </Button>
+          </Box>
+        )}
         <div>
           <Button
             onClick={() => {

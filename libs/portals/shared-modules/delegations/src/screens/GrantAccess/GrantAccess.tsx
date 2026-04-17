@@ -21,6 +21,7 @@ import {
   formatNationalId,
 } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   InputController,
@@ -39,16 +40,25 @@ import {
 } from './GrantAccess.generated'
 
 import * as styles from './GrantAccess.css'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { useGetServicePortalPageQuery } from '@island.is/portals/core'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
   const userInfo = useUserInfo()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [formError, setFormError] = useState<Error | undefined>()
   const [name, setName] = useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { md } = useBreakpoint()
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
   const {
     options,
     selectedOption,
@@ -64,17 +74,16 @@ const GrantAccess = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
 
-  const [getIdentity, { data, loading: queryLoading, error }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        setFormError(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        }
-      },
-    })
+  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
+    onError: (error) => {
+      setFormError(error)
+    },
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      }
+    },
+  })
 
   const { identity } = data || {}
 
@@ -258,7 +267,7 @@ const GrantAccess = () => {
                   <SelectController
                     id="domainName"
                     name="domainName"
-                    label={formatMessage(m.accessControl)}
+                    label={formatMessage(m.digitalDelegations)}
                     placeholder={formatMessage(m.chooseDomain)}
                     error={errors.domainName?.message}
                     options={options}
@@ -297,6 +306,12 @@ const GrantAccess = () => {
             </Box>
           </form>
         </FormProvider>
+
+        {faqList && faqList.questions.length > 0 && (
+          <Box paddingTop={8}>
+            <FaqList {...(faqList as unknown as FaqListProps)} />
+          </Box>
+        )}
       </div>
     </>
   )

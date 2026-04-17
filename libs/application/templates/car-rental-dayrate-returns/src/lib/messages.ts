@@ -1,5 +1,110 @@
 import { defineMessages } from 'react-intl'
 
+export const serviceErrors = {
+  missingDayRateEntry: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.title',
+      defaultMessage: 'Missing day rate entry',
+      description: 'Title for missing day rate entry id error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.summary',
+      defaultMessage: 'No dayRateEntryId for vehicle {vehicleId}',
+      description: 'Summary for missing day rate entry id error',
+    },
+  }),
+  badRequest: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.badRequest.title',
+      defaultMessage: 'Bad request',
+      description: 'Title for bad request error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.badRequest.summary',
+      defaultMessage: 'Invalid input.',
+      description: 'Summary for bad request error',
+    },
+  }),
+  requestToSkatturinnFailed: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.requestToSkatturinnFailed.title',
+      defaultMessage: 'Request to skatturinn failed',
+      description: 'Title for failed request to Skatturinn',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.requestToSkatturinnFailed.summary',
+      defaultMessage:
+        'Something went wrong when posting car data to skatturinn',
+      description: 'Summary for failed request to Skatturinn',
+    },
+  }),
+  missingManualEntries: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.missingManualEntries.title',
+      defaultMessage: 'Missing manual entries',
+      description: 'Title for missing manual entries error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.missingManualEntries.summary',
+      defaultMessage: 'No vehicle day rate usage entries found',
+      description: 'Summary for missing manual entries error',
+    },
+  }),
+  invalidData: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.invalidData.title',
+      defaultMessage: 'Invalid data',
+      description: 'Title for invalid data error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.invalidData.summary',
+      defaultMessage: 'Invalid data found',
+      description: 'Summary for invalid data error',
+    },
+    summaryWithDetails: {
+      id: 'rsk.crdr.application:serviceErrors.invalidData.summaryWithDetails',
+      defaultMessage: 'Invalid data found:\n{details}',
+      description: 'Detailed summary for invalid data error',
+    },
+  }),
+  noValidEntriesFound: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.noValidEntriesFound.title',
+      defaultMessage: 'Invalid data',
+      description: 'Title for no valid entries found error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.noValidEntriesFound.summary',
+      defaultMessage: 'No valid entries found',
+      description: 'Summary for no valid entries found error',
+    },
+  }),
+  missingFile: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.missingFile.title',
+      defaultMessage: 'Missing file',
+      description: 'Title for missing file error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.missingFile.summary',
+      defaultMessage: 'No uploaded file found',
+      description: 'Summary for missing file error',
+    },
+  }),
+  invalidFileType: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.invalidFileType.title',
+      defaultMessage: 'Invalid file type',
+      description: 'Title for invalid file type error',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.invalidFileType.summary',
+      defaultMessage: 'Only .csv or .xlsx are supported',
+      description: 'Summary for invalid file type error',
+    },
+  }),
+}
+
 export const m = {
   application: defineMessages({
     name: {
@@ -28,6 +133,12 @@ export const m = {
       id: 'rsk.crdr.application:prerequisites.checkbox',
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
+    },
+    linkToRateCategoryApplication: {
+      id: 'rsk.crdr.application:prerequisites.link.to.rate.category.application',
+      defaultMessage:
+        'Skráning ökutækja af og á daggjald: [Bílaleigu gjalflokkar](/umsoknir/bilaleigu-gjaldflokkur)',
+      description: 'Link to rate category application',
     },
     skatturTitle: {
       id: 'rsk.crdr.application:prerequisites.skattur.title',
@@ -106,6 +217,88 @@ export const m = {
     },
   }),
 
+  singleOrMulti: defineMessages({
+    sectionTitle: {
+      id: 'rsk.crdr.application:single.multi.section.title',
+      defaultMessage: 'Fjöldi skráninga',
+      description: 'Single or multi selection section title',
+    },
+    multiTitle: {
+      id: 'rsk.crdr.application:single.multi.multi.title',
+      defaultMessage: 'Magnskráning eða stakir bílar',
+      description: 'Single or multi selection multi field title',
+    },
+    description: {
+      id: 'rsk.crdr.application:single.multi.description',
+      defaultMessage: 'Veldu magnskráningu eða staka skráningu.',
+      description: 'Single or multi selection description',
+    },
+    optionMultiLabel: {
+      id: 'rsk.crdr.application:single.multi.option.multi.label',
+      defaultMessage: 'Magnskráning',
+      description: 'Bulk registration option label',
+    },
+    optionMultiSubLabel: {
+      id: 'rsk.crdr.application:single.multi.option.multi.sub',
+      defaultMessage:
+        'Hér má hlaða upp .xlsx eða .csv skjali til að magnskrá útleigudaga.',
+      description: 'Bulk registration option sublabel',
+    },
+    optionSingleLabel: {
+      id: 'rsk.crdr.application:single.multi.option.single.label',
+      defaultMessage: 'Skrá einstök ökutæki',
+      description: 'Single vehicle registration option label',
+    },
+    optionSingleSubLabel: {
+      id: 'rsk.crdr.application:single.multi.option.single.sub',
+      defaultMessage: 'Þú getur skráð útleigudaga beint í gegnum viðmótið.',
+      description: 'Single vehicle registration option sublabel',
+    },
+  }),
+
+  tableView: defineMessages({
+    sectionTitle: {
+      id: 'rsk.crdr.application:table.view.section.title',
+      defaultMessage: 'Skrá útleigudaga',
+      description: 'Table view section title',
+    },
+    multiTitle: {
+      id: 'rsk.crdr.application:table.view.multi.title',
+      defaultMessage: 'Skrá útleigudaga',
+      description: 'Table view multi field title',
+    },
+    searchLabel: {
+      id: 'rsk.crdr.application:table.view.search.label',
+      defaultMessage: 'Leita eftir bílnúmeri',
+      description: 'Vehicle table search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.crdr.application:table.view.search.placeholder',
+      defaultMessage: 'Bílnúmer...',
+      description: 'Vehicle table search input placeholder',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.crdr.application:table.view.header.permno',
+      defaultMessage: 'Bílnúmer',
+      description: 'Vehicle table permno column header',
+    },
+    tableHeaderTotalDays: {
+      id: 'rsk.crdr.application:table.view.header.total.days',
+      defaultMessage: 'Fjöldi daga á daggjaldi',
+      description: 'Vehicle table total days on day rate column header',
+    },
+    tableHeaderUsedDays: {
+      id: 'rsk.crdr.application:table.view.header.used.days',
+      defaultMessage: 'Útleigudagar',
+      description: 'Vehicle table used days column header',
+    },
+    emptyState: {
+      id: 'rsk.crdr.application:table.view.empty.state',
+      defaultMessage: 'Ekkert fannst fyrir þessa leit.',
+      description: 'Vehicle table empty state message',
+    },
+  }),
+
   multiUpload: defineMessages({
     sectionTitle: {
       id: 'rsk.crdr.application:multi.upload.section.title',
@@ -169,6 +362,12 @@ export const m = {
       id: 'rsk.crdr.application:multi.upload.error.no.cars',
       defaultMessage: 'Engar breytingar fundust í skjalinu',
       description: 'No cars to change found error',
+    },
+    allCarsMustBePresent: {
+      id: 'rsk.crdr.application:multi.upload.error.all.cars.must.be.present',
+      defaultMessage:
+        'Skila þarf upplýsingum um útleigudag fyrir öll ökutæki á daggjaldsskrá',
+      description: 'Entries for all cars must be present in the upload file',
     },
     invalidFileType: {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',

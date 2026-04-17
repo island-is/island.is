@@ -23,6 +23,7 @@ export const ApplicationFragment = gql`
     draftFinishedSteps
     draftTotalSteps
     allowProceedOnValidationFail
+    submissionServiceUrl
     hasPayment
     hasSummaryScreen
     certificationTypes {
@@ -43,6 +44,7 @@ export const ApplicationFragment = gql`
     completedSectionInfo {
       ...CompletedSectionInfo
     }
+    organizationNationalId
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}

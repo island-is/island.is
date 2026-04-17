@@ -21,7 +21,7 @@ const prosecutionRequestCasesActiveColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'appealCaseState',
   'validFromTo',
 ]
@@ -37,7 +37,7 @@ const prosecutionRequestCasesAppealedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'requestCaseState',
   'appealCaseState',
   'validFromTo',
@@ -54,7 +54,7 @@ const prosecutionRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'requestCaseState',
   'appealCaseState',
   'validFromTo',
@@ -126,6 +126,7 @@ const prosecutionIndictmentsInProgressColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'caseSentToCourtDate',
+  'prosecutorInitials',
   'indictmentCaseState',
   'indictmentArraignmentDate',
 ]
@@ -137,11 +138,26 @@ export const prosecutionIndictmentsInProgress: CaseTable = {
   columns: pickColumns(prosecutionIndictmentsInProgressColumnKeys),
 }
 
+const prosecutionIndictmentsAppealedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'rulingDate',
+  'indictmentRulingDecision',
+]
+
+export const prosecutionIndictmentsAppealed: CaseTable = {
+  title: 'Sakamál í kæruferli',
+  hasMyCasesFilter: true,
+  columnKeys: prosecutionIndictmentsAppealedColumnKeys,
+  columns: pickColumns(prosecutionIndictmentsAppealedColumnKeys),
+}
+
 const prosecutionIndictmentsCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'indictmentRulingDecision',
 ]
 

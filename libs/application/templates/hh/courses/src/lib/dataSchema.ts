@@ -53,6 +53,8 @@ const nationalIdWithNameSchema = z.object({
 
 const participantSchema = z.object({
   nationalIdWithName: nationalIdWithNameSchema,
+  workplace: z.string().optional(),
+  jobTitle: z.string().optional(),
 })
 
 const userInformationSchema = z.object({
@@ -71,8 +73,10 @@ export const dataSchema = z.object({
   participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
-  payment: paymentSchema,
+  payment: paymentSchema.optional(),
   userInformation: userInformationSchema,
+  workplace: z.string().optional(),
+  jobTitle: z.string().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

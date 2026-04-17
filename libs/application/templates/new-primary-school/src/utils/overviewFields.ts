@@ -7,8 +7,9 @@ import {
 } from '../lib/messages'
 import {
   hasSpecialEducationSubType,
+  isCurrentSchoolRegistered,
   shouldShowPage,
-  shouldShowReasonForApplicationAndNewSchoolPages,
+  shouldShowReasonForApplicationPage,
 } from './conditionUtils'
 import {
   ApplicationFeatureKey,
@@ -81,12 +82,14 @@ export const overviewFields = (editable?: boolean) => {
         return primaryOrgId ? undefined : editable ? 'currentSchool' : undefined
       },
       items: currentSchoolItems,
-      condition: (answers) => {
-        const { applicationType } = getApplicationAnswers(answers)
+      condition: (answers, externalData) => {
+        const { applicationType, hasCurrentSchool } =
+          getApplicationAnswers(answers)
 
         return (
-          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-          applicationType === ApplicationType.CONTINUING_ENROLLMENT
+          (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+            applicationType === ApplicationType.CONTINUING_ENROLLMENT) &&
+          (isCurrentSchoolRegistered(externalData) || hasCurrentSchool === YES)
         )
       },
     }),
@@ -132,20 +135,16 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationAndNewSchoolPages(
-          answers,
-          externalData,
-        ) && !hasSpecialEducationSubType(answers, externalData),
+        shouldShowReasonForApplicationPage(answers, externalData) &&
+        !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.counsellingRegardingApplication',
       backId: editable ? 'counsellingRegardingApplication' : undefined,
       loadItems: counsellingRegardingApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationAndNewSchoolPages(
-          answers,
-          externalData,
-        ) && hasSpecialEducationSubType(answers, externalData),
+        shouldShowReasonForApplicationPage(answers, externalData) &&
+        hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',
@@ -176,14 +175,18 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'support' : undefined,
       items: supportItems,
       condition: (answers, externalData) =>
-        !hasSpecialEducationSubType(answers, externalData),
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        true || !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.specialEducationSupport',
       backId: editable ? 'specialEducationSupport' : undefined,
       loadItems: specialEducationSupportItems,
       condition: (answers, externalData) =>
-        hasSpecialEducationSubType(answers, externalData),
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        false && hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.payer',

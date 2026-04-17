@@ -19,7 +19,6 @@ global:
 name: 'endorsement-system-api'
 args:
   - '--tls-min-v1.0'
-  - '--no-experimental-fetch'
   - 'main.cjs'
 command:
   - 'node'
@@ -102,7 +101,7 @@ initContainer:
     DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
 namespace: 'endorsement-system'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

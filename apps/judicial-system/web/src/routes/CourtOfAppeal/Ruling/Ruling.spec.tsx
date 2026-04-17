@@ -2,7 +2,8 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen, waitFor } from '@testing-library/react'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -38,7 +39,11 @@ describe('COA - Ruling', () => {
               ...mockCase(CaseType.CUSTODY),
               state: CaseState.ACCEPTED,
               decision: CaseDecision.ACCEPTING,
-              appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+              appealCase: {
+                id: 'test_appeal_case_id',
+                appealState: AppealCaseState.RECEIVED,
+                appealRulingDecision: AppealCaseRulingDecision.CHANGED,
+              },
             }}
           >
             <Ruling />
@@ -61,8 +66,12 @@ describe('COA - Ruling', () => {
               ...mockCase(CaseType.CUSTODY),
               state: CaseState.ACCEPTED,
               decision: CaseDecision.ACCEPTING,
-              appealRulingDecision:
-                CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+              appealCase: {
+                id: 'test_appeal_case_id',
+                appealState: AppealCaseState.RECEIVED,
+                appealRulingDecision:
+                  AppealCaseRulingDecision.DISMISSED_FROM_COURT,
+              },
             }}
           >
             <Ruling />

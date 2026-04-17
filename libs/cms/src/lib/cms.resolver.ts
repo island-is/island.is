@@ -94,6 +94,7 @@ import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPro
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
 import { ServiceWebPage } from './models/serviceWebPage.model'
 import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
+import { GetServicePortalPageInput } from './dto/getServicePortalPage.input'
 import { LatestEventsSlice } from './models/latestEventsSlice.model'
 import { Event as EventModel } from './models/event.model'
 import { GetSingleEventInput } from './dto/getSingleEvent.input'
@@ -172,6 +173,7 @@ import { CourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { WebChat } from './models/webChat.model'
 import { GetWebChatInput } from './dto/getWebChat.input'
+import { ServicePortalPage } from './models/servicePortalPage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -349,6 +351,17 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => ServicePortalPage, { nullable: true })
+  async getServicePortalPage(
+    @Args('input') input: GetServicePortalPageInput,
+  ): Promise<ServicePortalPage | null> {
+    return this.cmsContentfulService.getServicePortalPage(
+      input.slug,
+      input.lang,
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => [Auction])
   getAuctions(
     @Args('input') input: GetAuctionsInput,
@@ -375,6 +388,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getProjectPage(input.slug, input.lang)
   }
 
+  // TODO: Add filtering support for hasALandingPage
   @CacheControl(defaultCache)
   @Query(() => Organizations)
   getOrganizations(

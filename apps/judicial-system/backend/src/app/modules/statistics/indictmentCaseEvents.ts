@@ -34,6 +34,7 @@ export interface IndictmentCaseEvent {
   caseType: CaseType
   caseTypeDescriptor: string
   origin: CaseOrigin
+  prosecutorId?: string
   caseSubtype?: string
   subtypeDescriptor?: string
   // for subpoena events
@@ -69,6 +70,7 @@ const commonFields = (c: Case) => {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
     origin: c.origin,
+    prosecutorId: c.prosecutorId,
   }
 }
 
@@ -465,11 +467,11 @@ const caseReviewedByPublicProsecutorOffice = (
     (institution) =>
       institution.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   )
-
-  const date = EventLog.getEventLogDateByEventType(
-    EventType.INDICTMENT_REVIEWED,
-    c.eventLogs,
+  const date = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.INDICTMENT_REVIEWED,
+    c.defendants?.flatMap((defendant) => defendant.eventLogs || []),
   )?.toISOString()
+
   if (!date || !publicProsecutorOffice) {
     return undefined
   }

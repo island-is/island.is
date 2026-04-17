@@ -2,8 +2,9 @@ import React from 'react'
 import {
   ImageSourcePropType,
   Platform,
-  SafeAreaView,
+  PlatformColor,
   useWindowDimensions,
+  View,
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -13,6 +14,8 @@ import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
+import { testIDs } from '../../../utils/test-ids'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -22,8 +25,15 @@ const Header = styled.View`
   align-items: flex-start;
 `
 
+const HeaderTitleContainer = styled.View`
+  flex: 1;
+  min-width: 0;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const HeaderTitle = styled.Text`
   margin-top: 32px;
+  flex-shrink: 1;
   ${font({
     fontWeight: '600',
     fontSize: 26,
@@ -48,6 +58,7 @@ const IconsWrapper = styled.View`
   margin-left: auto;
   flex-direction: row;
   align-items: center;
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -70,19 +81,25 @@ const CloseIcon = styled.Image`
 
 type NavigationBarSheetProps = {
   title?: React.ReactNode
-  componentId: string
+  componentId?: string
   onClosePress(): void
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
+  testID?: string
 }
 
-export function NavigationBarSheet({
+export function NavigationBarSheet(props: NavigationBarSheetProps) {
+  return null
+}
+
+export function OldNavigationBarSheet({
   title,
   onClosePress,
   style,
   showLoading,
   closable = true,
+  testID,
 }: NavigationBarSheetProps) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
@@ -94,13 +111,24 @@ export function NavigationBarSheet({
   // then do the same isHandle check there to toggle status-bar color
 
   return (
-    <>
+    <View
+      style={{
+        backgroundColor:
+          Platform.OS === 'ios'
+            ? PlatformColor('systemBackground')
+            : theme.shade.background,
+      }}
+    >
       {isHandle && closable && <Handle />}
-      <SafeAreaView>
+      <SafeAreaView edges={['left', 'right']} testID={testID}>
         {(closable || title) && (
           <Header style={style}>
             {typeof title === 'string' ? (
-              <HeaderTitle>{title}</HeaderTitle>
+              <HeaderTitleContainer>
+                <HeaderTitle numberOfLines={2} ellipsizeMode="tail">
+                  {title}
+                </HeaderTitle>
+              </HeaderTitleContainer>
             ) : (
               title
             )}
@@ -111,7 +139,7 @@ export function NavigationBarSheet({
               {closable && (
                 <CloseButton
                   onPress={onClosePress}
-                  testID="NAVBAR_SHEET_CLOSE_BUTTON"
+                  testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}
                   accessibilityLabel="Close"
                   hitSlop={{
                     top: 10,
@@ -132,6 +160,6 @@ export function NavigationBarSheet({
           </Header>
         )}
       </SafeAreaView>
-    </>
+    </View>
   )
 }

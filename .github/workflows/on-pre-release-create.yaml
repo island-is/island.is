@@ -6,7 +6,7 @@ on:
       - 'pre-release/**'
 jobs:
   build-deploy:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     env:
       GIT_BRANCH: ${{ github.ref_name }}
     steps:

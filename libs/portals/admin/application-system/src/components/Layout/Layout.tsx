@@ -13,6 +13,12 @@ import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import { m } from '../../lib/messages'
 import Statistics from '../../screens/Statistics/Statistics'
+import {
+  useGetOrganizationsQuery,
+  useGetApplicationV2InstitutionsSuperAdminQuery,
+} from '../../queries/overview.generated'
+import { useMemo } from 'react'
+import { Organization } from '@island.is/shared/types'
 
 interface LayoutProps {
   isSuperAdmin: boolean
@@ -22,6 +28,58 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   isSuperAdmin,
 }) => {
   const { formatMessage } = useLocale()
+
+  //These are all organizations in contentful
+  const { data: contentfulOrgData, loading: contentfulOrgLoading } =
+    useGetOrganizationsQuery({
+      ssr: false,
+    })
+
+  const contentfulOrganizations = contentfulOrgData?.getOrganizations?.items
+
+  // Institutions that have active application types (enriched with Contentful data)
+  const { data: institutionsData, loading: institutionsLoading } =
+    useGetApplicationV2InstitutionsSuperAdminQuery({
+      ssr: false,
+      skip: !isSuperAdmin,
+    })
+
+  const availableOrganizations = useMemo<Organization[]>(
+    () =>
+      (institutionsData?.applicationV2InstitutionsSuperAdmin ?? [])
+        .flatMap((inst) => {
+          const contentfulOrg = contentfulOrganizations?.find(
+            (x) => x.slug === inst.contentfulSlug,
+          )
+
+          if (!contentfulOrg) {
+            if (!inst.nationalId) {
+              return []
+            }
+            return [
+              {
+                id: '',
+                title: inst.name ?? inst.nationalId ?? '',
+                slug: '',
+                nationalId: inst.nationalId,
+                logo: null,
+              },
+            ]
+          }
+
+          return [
+            {
+              ...contentfulOrg,
+              nationalId: inst.nationalId,
+            },
+          ]
+        })
+        .sort((a, b) => a.title.localeCompare(b.title)),
+    [institutionsData, contentfulOrganizations],
+  )
+
+  const isLoadingOrganizations = contentfulOrgLoading || institutionsLoading
+
   return (
     <GridContainer>
       <Breadcrumbs
@@ -47,12 +105,24 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                 {
                   id: 'overview',
                   label: formatMessage(m.overview),
-                  content: <Overview isSuperAdmin={isSuperAdmin} />,
+                  content: (
+                    <Overview
+                      isSuperAdmin={isSuperAdmin}
+                      availableOrganizations={availableOrganizations}
+                      isLoadingOrganizations={isLoadingOrganizations}
+                    />
+                  ),
                 },
                 {
                   id: 'statistics',
                   label: formatMessage(m.statistics),
-                  content: <Statistics isSuperAdmin={isSuperAdmin} />,
+                  content: (
+                    <Statistics
+                      isSuperAdmin={isSuperAdmin}
+                      availableOrganizations={availableOrganizations}
+                      isLoadingOrganizations={isLoadingOrganizations}
+                    />
+                  ),
                 },
               ]}
             />

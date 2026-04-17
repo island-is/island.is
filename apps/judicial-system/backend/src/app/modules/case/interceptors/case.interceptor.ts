@@ -7,14 +7,17 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseState,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
   isDefenceUser,
+  isIndictmentCase,
   isPrisonSystemUser,
   isProsecutionUser,
   isRequestCase,
@@ -60,6 +63,25 @@ export const transformDefendants = ({
     const appealDeadline = appealDeadlineResult?.deadlineDate
     const isAppealDeadlineExpired =
       appealDeadlineResult?.isDeadlineExpired ?? false
+    const indictmentCancelledOrDismissedEventLog =
+      DefendantEventLog.getEventLogByEventType(
+        [
+          DefendantEventType.INDICTMENT_CANCELLED,
+          DefendantEventType.INDICTMENT_DISMISSED,
+        ],
+        defendant.eventLogs,
+      )
+    const indictmentCancelledOrDismissedState =
+      indictmentCancelledOrDismissedEventLog
+        ? {
+            type:
+              indictmentCancelledOrDismissedEventLog.eventType ===
+              DefendantEventType.INDICTMENT_CANCELLED
+                ? CaseIndictmentRulingDecision.CANCELLATION
+                : CaseIndictmentRulingDecision.DISMISSAL,
+            time: indictmentCancelledOrDismissedEventLog.created,
+          }
+        : undefined
 
     return {
       ...defendant.toJSON(),
@@ -88,6 +110,7 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      indictmentCancelledOrDismissedState,
     }
   })
 }
@@ -142,17 +165,93 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case, user: User | undefined) => {
+const getDefenceUserDefendants = (
+  theCase: Case,
+  user: User,
+): {
+  defendants: Defendant[] | undefined
+  allCancelledOrDismissed: boolean
+  latestCancelledOrDismissedDate: Date | undefined
+} => {
+  const myDefendants = theCase.defendants?.filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(user.nationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+
+  if (!myDefendants?.length) {
+    return {
+      defendants: theCase.defendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
+  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
+    DefendantEventLog.getEventLogByEventType(
+      [
+        DefendantEventType.INDICTMENT_CANCELLED,
+        DefendantEventType.INDICTMENT_DISMISSED,
+      ],
+      defendant.eventLogs,
+    ),
+  )
+
+  const allCancelledOrDismissed = cancelledOrDismissedEventLogs.every(Boolean)
+
+  const latestCancelledOrDismissedDate = allCancelledOrDismissed
+    ? cancelledOrDismissedEventLogs.reduce<Date | undefined>((latest, log) => {
+        if (!log) return latest
+        return !latest || log.created > latest ? log.created : latest
+      }, undefined)
+    : undefined
+
+  return {
+    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  }
+}
+
+const transformCase = (
+  theCase: Case,
+  user: User | undefined,
+): Record<string, unknown> => {
+  const isDefence = isDefenceUser(user)
+  const {
+    defendants: transformedDefendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  } = isDefence && user
+    ? getDefenceUserDefendants(theCase, user)
+    : {
+        defendants: theCase.defendants,
+        allCancelledOrDismissed: false,
+        latestCancelledOrDismissedDate: undefined,
+      }
+
+  const stateOverride =
+    isDefence && isIndictmentCase(theCase.type) && allCancelledOrDismissed
+      ? {
+          state: CaseState.COMPLETED,
+          rulingDate: latestCancelledOrDismissedDate,
+        }
+      : {}
+
   return {
     ...theCase.toJSON(),
+    ...stateOverride,
     defendants: transformDefendants({
-      defendants: theCase.defendants,
+      defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),
     caseFiles: theCase.caseFiles?.filter(
       (file) =>
-        // The user must me known
+        // The user must be known
         user &&
         // Rejected files are only visible to relevant parties
         (file.state !== CaseFileState.REJECTED ||
@@ -186,9 +285,9 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_REVIEWED,
-      theCase.eventLogs,
+    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.INDICTMENT_REVIEWED,
+      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
     ),
     indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -224,6 +323,16 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       (isDefenceUser(user) || isPrisonSystemUser(user))
         ? undefined
         : theCase.rulingModifiedHistory,
+    parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
+    childCase: theCase.childCase && transformCase(theCase.childCase, user),
+    mergeCase: theCase.mergeCase && transformCase(theCase.mergeCase, user),
+    mergedCases:
+      theCase.mergedCases &&
+      theCase.mergedCases.map((mergedCase) => transformCase(mergedCase, user)),
+    splitCase: theCase.splitCase && transformCase(theCase.splitCase, user),
+    splitCases:
+      theCase.splitCases &&
+      theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
   }
 }
 

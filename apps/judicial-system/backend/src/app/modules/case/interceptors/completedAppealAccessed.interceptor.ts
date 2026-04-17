@@ -10,7 +10,7 @@ import {
 import { InjectConnection } from '@nestjs/sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   EventType,
   isDefenceUser,
   isPrisonStaffUser,
@@ -34,7 +34,7 @@ export class CompletedAppealAccessedInterceptor implements NestInterceptor {
     return next.handle().pipe(
       mergeMap(async (data) => {
         if (
-          data.appealState === CaseAppealState.COMPLETED &&
+          data.appealCase?.appealState === AppealCaseState.COMPLETED &&
           (isProsecutionUser(user) ||
             isDefenceUser(user) ||
             isPrisonStaffUser(user))

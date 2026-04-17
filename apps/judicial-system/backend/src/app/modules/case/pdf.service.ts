@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -42,9 +43,11 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   Case,
+  caseInclude,
   CaseRepositoryService,
   Defendant,
   EventLog,
+  PoliceDigitalCaseFileRepositoryService,
   Subpoena,
   Verdict,
 } from '../repository'
@@ -57,6 +60,7 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
+    private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     private readonly caseRepositoryService: CaseRepositoryService,
@@ -127,10 +131,16 @@ export class PdfService {
         }
       })
 
+    const policeDigitalCaseFiles =
+      await this.policeDigitalCaseFileRepositoryService.findAll({
+        where: { caseId: theCase.id, policeCaseNumber },
+      })
+
     const generatedPdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
+      policeDigitalCaseFiles,
       this.formatMessage,
     )
 
@@ -263,9 +273,7 @@ export class PdfService {
     theCase: Case,
     key: string,
   ): Promise<Buffer | undefined> {
-    return await this.awsS3Service
-      .getObject(theCase.type, key)
-      .catch(() => undefined) // Ignore errors and return undefined
+    return this.awsS3Service.getObject(theCase.type, key).catch(() => undefined) // Ignore errors and return undefined
   }
 
   private tryUploadPdfToS3(theCase: Case, key: string, pdf: Buffer) {
@@ -276,16 +284,51 @@ export class PdfService {
       })
   }
 
+  private async getFullOriginalCase(
+    theCase: Case,
+    transaction?: Transaction,
+  ): Promise<Case> {
+    if (!theCase.splitCaseId && !theCase.splitCases?.length) {
+      return theCase
+    }
+
+    const parentCase = theCase.splitCaseId
+      ? await this.caseRepositoryService.findById(theCase.splitCaseId, {
+          include: caseInclude,
+          transaction,
+        })
+      : theCase
+
+    if (!parentCase) {
+      throw new InternalServerErrorException(
+        `Split case parent with id ${theCase.splitCaseId} not found`,
+      )
+    }
+
+    const parentDefendants = parentCase.defendants ?? []
+    const splitDefendants = (parentCase.splitCases ?? []).flatMap((splitCase) =>
+      (splitCase.defendants ?? []).filter((d) => d.created < splitCase.created),
+    )
+    const allDefendants: Defendant[] = []
+    allDefendants.push(...parentDefendants)
+    allDefendants.push(...splitDefendants)
+    allDefendants.sort((d1, d2) => d1.created.getTime() - d2.created.getTime())
+    parentCase.defendants = allDefendants
+
+    return parentCase
+  }
+
   async getIndictmentPdf(
     theCase: Case,
     transaction: Transaction,
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
-    const key = `${theCase.splitCaseId ?? theCase.id}/indictment.pdf`
+    const originalCase = theCase.splitCase ?? theCase
+    const key = `${originalCase.id}/indictment.pdf`
 
-    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-      if (theCase.indictmentHash) {
-        const existingPdf = await this.tryGetPdfFromS3(theCase, key)
+    if (hasIndictmentCaseBeenSubmittedToCourt(originalCase.state)) {
+      if (originalCase.indictmentHash) {
+        const existingPdf = await this.tryGetPdfFromS3(originalCase, key)
 
         if (existingPdf) {
           return existingPdf
@@ -313,23 +356,52 @@ export class PdfService {
 
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createIndictment(
+    const fullOriginalCase = await this.getFullOriginalCase(
       theCase,
+      transaction,
+    )
+
+    if (
+      !fullOriginalCase.defendants ||
+      fullOriginalCase.defendants.length === 0
+    ) {
+      throw new BadRequestException(
+        'Cannot generate indictment PDF without at least one defendant',
+      )
+    }
+
+    // In case of splits, we use the reconstructed full parent case for generation
+    const generatedPdf = await createIndictment(
+      fullOriginalCase,
       this.formatMessage,
       confirmation,
     )
 
-    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
+    if (
+      hasIndictmentCaseBeenSubmittedToCourt(fullOriginalCase.state) &&
+      confirmation
+    ) {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
+      const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
+
       await this.caseRepositoryService.update(
-        theCase.id,
-        { indictmentHash: JSON.stringify({ hash, hashAlgorithm }) },
+        fullOriginalCase.id,
+        { indictmentHash },
         { transaction },
       )
 
+      // We need to update all split cases as well
+      for (const splitCase of fullOriginalCase.splitCases ?? []) {
+        await this.caseRepositoryService.update(
+          splitCase.id,
+          { indictmentHash },
+          { transaction },
+        )
+      }
+
       // No need to wait for this to finish
-      this.tryUploadPdfToS3(theCase, key, generatedPdf)
+      this.tryUploadPdfToS3(fullOriginalCase, key, generatedPdf)
     }
 
     return generatedPdf
@@ -339,9 +411,8 @@ export class PdfService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    const key = `${
-      theCase.splitCaseId ?? theCase.id
-    }/${policeCaseNumber}/caseFilesRecord.pdf`
+    const originalCase = theCase.splitCase ?? theCase
+    const key = `${originalCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       const existingPdf = await this.tryGetPdfFromS3(theCase, key)
@@ -351,8 +422,11 @@ export class PdfService {
       }
     }
 
+    // In case of splits, we use the reconstructed full parent case for generation
+    const fullOriginalCase = await this.getFullOriginalCase(theCase)
+
     this.throttle = this.throttleGetCaseFilesRecordPdf(
-      theCase,
+      fullOriginalCase,
       policeCaseNumber,
       key,
     )
@@ -370,8 +444,13 @@ export class PdfService {
     subpoenaType?: SubpoenaType,
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
+    const isSplitSubpoena =
+      theCase.splitCaseId && subpoena && subpoena.created < theCase.created
     const key = subpoena
-      ? `${theCase.splitCaseId ?? theCase.id}/subpoena/${subpoena.id}.pdf`
+      ? // use the parent case id for subpoenas created before the split
+        `${isSplitSubpoena ? theCase.splitCaseId : theCase.id}/subpoena/${
+          subpoena.id
+        }.pdf`
       : ''
 
     if (subpoena) {
@@ -393,8 +472,15 @@ export class PdfService {
 
     await this.refreshFormatMessage()
 
+    // For subpoenas created before the split, use the reconstructed full parent
+    // case. For subpoenas created after the split, use the current case directly
+    // so the correct court case number appears in the PDF.
+    const caseForPdf = isSplitSubpoena
+      ? await this.getFullOriginalCase(theCase)
+      : theCase
+
     const generatedPdf = await createSubpoena(
-      theCase,
+      caseForPdf,
       defendant,
       this.formatMessage,
       subpoena,
@@ -408,16 +494,14 @@ export class PdfService {
       const subpoenaHash = getCaseFileHash(generatedPdf)
 
       await this.subpoenaService.setHash(
-        theCase.id,
-        defendant.id,
-        subpoena.id,
+        subpoena,
         subpoenaHash.hash,
         subpoenaHash.hashAlgorithm,
         transaction,
       )
 
       // No need to wait for this to finish
-      this.tryUploadPdfToS3(theCase, key, generatedPdf)
+      this.tryUploadPdfToS3(caseForPdf, key, generatedPdf)
     }
 
     return generatedPdf
@@ -430,8 +514,18 @@ export class PdfService {
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
+    const isSplitSubpoena =
+      theCase.splitCaseId && subpoena.created < theCase.created
+
+    // For subpoenas created before the split, use the reconstructed full parent
+    // case. For subpoenas created after the split, use the current case directly
+    // so the correct court case number appears in the PDF.
+    const caseForPdf = isSplitSubpoena
+      ? await this.getFullOriginalCase(theCase)
+      : theCase
+
     const generatedPdf = await createSubpoenaServiceCertificate(
-      theCase,
+      caseForPdf,
       defendant,
       subpoena,
       this.formatMessage,

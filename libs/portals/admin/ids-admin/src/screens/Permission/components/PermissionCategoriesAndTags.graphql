@@ -1,0 +1,16 @@
+query GetScopeCategories($lang: String) {
+  authAdminScopeCategories(lang: $lang) {
+    id
+    title
+    slug
+    description
+  }
+}
+
+query GetScopeTags($lang: String) {
+  authAdminScopeTags(lang: $lang) {
+    id
+    title
+    description
+  }
+}

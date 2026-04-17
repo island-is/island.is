@@ -19,7 +19,6 @@ global:
 name: 'api'
 args:
   - '--tls-min-v1.0'
-  - '--no-experimental-fetch'
   - 'main.cjs'
 command:
   - 'node'
@@ -53,6 +52,8 @@ env:
   FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
   FISKISTOFA_ZENTER_CLIENT_ID: '1114'
   FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+  HH_COURSES_ZENDESK_ENV_TAG: 'hh_env_staging'
+  HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
   HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
   HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
   HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
@@ -114,6 +115,7 @@ env:
   XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
   XROAD_FINANCES_TIMEOUT: '20000'
   XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
+  XROAD_FINANCES_V3_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
   XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
   XROAD_FJS_BANKINFO_PATH: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1'
@@ -144,6 +146,7 @@ env:
   XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/frigg-form-api'
   XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1'
   XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/license-api-v1'
+  XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: 'IS-TEST/GOV/10066/MMS-Protected/data-gateway-backend-internal'
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
@@ -166,6 +169,7 @@ env:
   XROAD_SECONDARY_SCHOOL_PATH: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt'
   XROAD_SEMINARS_VER_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
   XROAD_SHIP_REGISTRY_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
+  XROAD_SHIP_REGISTRY_V2_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
   XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
@@ -201,6 +205,8 @@ grantNamespaces:
   - 'portals-my-pages'
   - 'services-payments'
   - 'payments'
+  - 'contentful-apps'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -219,6 +225,16 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'beta.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/api'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
 ingress:
@@ -232,7 +248,7 @@ ingress:
           - '/api'
 namespace: 'islandis'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -243,7 +259,7 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '1200m'
+    cpu: '3000m'
     memory: '2500Mi'
   requests:
     cpu: '900m'
@@ -254,6 +270,8 @@ secrets:
   APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
   CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL'
   CHART_STATISTIC_SOURCE_DATA_PATHS: '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS'
+  COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH: '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH'
+  COMPLAINTS_COMMITTEE_RULINGS_API_KEY: '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_KEY'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
@@ -302,6 +320,9 @@ secrets:
   FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
   FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
   FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
+  HH_ZENDESK_EMAIL: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL'
+  HH_ZENDESK_SUBDOMAIN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN'
+  HH_ZENDESK_TOKEN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN'
   HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
   HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'

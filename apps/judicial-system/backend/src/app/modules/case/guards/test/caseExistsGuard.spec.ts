@@ -11,8 +11,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { CaseRepositoryService } from '../../../repository'
-import { include } from '../../case.service'
+import { caseInclude, CaseRepositoryService } from '../../../repository'
 import { CaseExistsGuard } from '../caseExists.guard'
 
 interface Then {
@@ -65,7 +64,7 @@ describe('Case Exists Guard', () => {
 
     it('should activate', () => {
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           state: { [Op.not]: CaseState.DELETED },

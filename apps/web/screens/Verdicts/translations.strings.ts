@@ -87,6 +87,11 @@ export const m = {
       defaultMessage: 'Sláðu inn lagagrein',
       description: 'Label á "Lagagreinar" input',
     },
+    lawsInputTooltip: {
+      id: 'web.verdicts:listPage.lawsInputTooltip',
+      defaultMessage: 'Dæmi: 57. gr. laga nr. 91/1991',
+      description: 'Skýringartexti í upplýsingabólu fyrir "Lagagreinar" input',
+    },
     showCourtOfAppeal: {
       id: 'web.verdicts:listPage.showCourtOfAppeal',
       defaultMessage: 'Landsréttur',
@@ -221,6 +226,11 @@ export const m = {
     },
   }),
   verdictPage: defineMessages({
+    resolutionLink: {
+      id: 'web.verdicts:verdictPage.resolutionLink',
+      defaultMessage: 'Úrlausn Landsréttar / Héraðsdóms',
+      description: 'Texti á "Úrlausn Landsréttar / Héraðsdóms" hnapp',
+    },
     heading: {
       id: 'web.verdicts:verdictPage.heading',
       defaultMessage: 'Dómur',

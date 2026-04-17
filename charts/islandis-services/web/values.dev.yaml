@@ -26,6 +26,9 @@ env:
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'dev'
   LOG_LEVEL: 'info'
+  MATOMO_DOMAIN: 'https://matomo-dev.dev01.devland.is'
+  MATOMO_ENABLED: 'true'
+  MATOMO_SITE_ID: '2'
   NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.dev01.devland.is'
@@ -35,6 +38,7 @@ grantNamespaces:
   - 'application-system'
   - 'consultation-portal'
   - 'search-indexer'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -53,6 +57,16 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'beta.dev01.devland.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
 ingress:
@@ -68,7 +82,7 @@ ingress:
           - '/'
 namespace: 'islandis'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -79,7 +93,7 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '1800m'
+    cpu: '3000m'
     memory: '1500Mi'
   requests:
     cpu: '1200m'

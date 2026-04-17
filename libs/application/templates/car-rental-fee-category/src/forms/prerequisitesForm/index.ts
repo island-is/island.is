@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { SkatturApi, VehiclesApi } from '../../dataProviders'
+import { VehicleCarMapApi } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 const standardChildren = [
@@ -20,14 +20,9 @@ const standardChildren = [
         checkboxLabel: m.prerequisites.approvalCheckboxLabel,
         dataProviders: [
           buildDataProviderItem({
-            provider: SkatturApi, // Skatturinn
+            provider: VehicleCarMapApi,
             title: m.prerequisites.skatturTitle,
             subTitle: m.prerequisites.skatturSubTitle,
-          }),
-          buildDataProviderItem({
-            provider: VehiclesApi, // Samgöngustofan
-            title: m.prerequisites.vehiclesTitle,
-            subTitle: m.prerequisites.vehiclesSubTitle,
           }),
         ],
         submitField: buildSubmitField({
@@ -42,6 +37,7 @@ const standardChildren = [
             },
           ],
         }),
+        subDescription: m.prerequisites.linkToDayrateReturnsApplication,
       }),
     ],
   }),

@@ -1,17 +1,19 @@
-import { useContext, useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { FormSystemField } from '@island.is/api/schema'
+import { UPDATE_FIELD } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
 import {
   Box,
+  Button,
+  Checkbox,
   Input,
   RadioButton,
   Stack,
   Text,
-  Button,
-  Divider,
-  Checkbox,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/form-system/ui'
-import { ControlContext } from '../../../../context/ControlContext'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../context/ControlContext'
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -24,33 +26,71 @@ export const SubmissionUrls = () => {
     submissionUrlInput,
     setSubmissionUrlInput,
   } = useContext(ControlContext)
-  const { form } = control
-
+  const { form, isReadOnly } = control
+  const [updateField] = useMutation(UPDATE_FIELD)
   const [showInput, setShowInput] = useState(false)
 
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
 
+  const persistZendeskApplicantRequirements = async () => {
+    const applicantFields = (control.form.fields ?? []).filter(
+      (f): f is FormSystemField => !!f && f.fieldType === 'APPLICANT',
+    )
+
+    const toUpdate = applicantFields.filter((f) => {
+      const fs = f.fieldSettings as Record<string, unknown> | null | undefined
+      return fs?.isPhoneRequired != null && fs?.isEmailRequired != null
+    })
+
+    const results = await Promise.allSettled(
+      toUpdate.map((field) =>
+        updateField({
+          variables: {
+            input: {
+              id: field.id,
+              updateFieldDto: {
+                fieldSettings: {
+                  ...(field.fieldSettings ?? {}),
+                  isEmailRequired: true,
+                },
+              },
+            },
+          },
+        }),
+      ),
+    )
+    const failures = results.filter((r) => r.status === 'rejected')
+    if (failures.length > 0) {
+      throw new Error(
+        `Failed to persist Zendesk applicant requirements: ${JSON.stringify(
+          failures,
+        )}`,
+      )
+    }
+  }
+
   return (
     <Stack space={2}>
       {!showInput && !submissionUrlInput && (
-        <Box marginTop={4}>
-          <Button onClick={() => setShowInput(true)} variant="ghost">
+        <Box marginTop={7}>
+          <Button
+            onClick={() => setShowInput(true)}
+            variant="ghost"
+            disabled={isReadOnly}
+          >
             {formatMessage(m.addFormUrl)}
           </Button>
         </Box>
       )}
 
       {(showInput || submissionUrlInput) && (
-        <Box marginTop={4}>
-          <Text variant="eyebrow">
-            Athugið að á meðan við vinnum að tengingum við ytri kerfi er
-            einungis í boði að nota tengingar við Zendesk
-          </Text>
+        <Box marginTop={7}>
           <Input
             label={formatMessage(m.newFormUrlButton)}
-            placeholder="IS/..."
+            placeholder="/r1/IS/..."
             name="submission-url"
             value={submissionUrlInput}
+            readOnly={isReadOnly}
             backgroundColor="white"
             onChange={(e) => {
               setSubmissionUrlInput(e.target.value)
@@ -63,7 +103,7 @@ export const SubmissionUrls = () => {
           </Box>
           <Box marginTop={2}>
             <Text variant="small">
-              {formatMessage(m.urlFormatInstruction)} <strong>IS/</strong>
+              {formatMessage(m.urlFormatInstruction)} <strong>/r1/IS/</strong>
             </Text>
           </Box>
         </Box>
@@ -75,6 +115,7 @@ export const SubmissionUrls = () => {
           large
           name="submissionUrl"
           id="customSubmissionUrl"
+          disabled={isReadOnly}
           checked={form.submissionServiceUrl === submissionUrlInput}
           onChange={() => {
             controlDispatch({
@@ -100,6 +141,7 @@ export const SubmissionUrls = () => {
                 large
                 name="submissionUrl"
                 id={`submission-url-${sanitizeId(url ?? '')}`}
+                disabled={isReadOnly}
                 checked={form.submissionServiceUrl === url}
                 onChange={() => {
                   controlDispatch({
@@ -119,12 +161,14 @@ export const SubmissionUrls = () => {
         name="submissionUrl"
         id="zendesk"
         checked={form.submissionServiceUrl === 'zendesk'}
-        onChange={(e) => {
+        disabled={isReadOnly}
+        onChange={async (e) => {
           controlDispatch({
             type: 'CHANGE_SUBMISSION_URL',
             payload: { value: e.target.id },
           })
           formUpdate({ ...form, submissionServiceUrl: e.target.id })
+          await persistZendeskApplicantRequirements()
         }}
       />
 
@@ -132,6 +176,7 @@ export const SubmissionUrls = () => {
         <Checkbox
           label={formatMessage(m.zendeskPrivate)}
           checked={!!form.zendeskInternal}
+          disabled={isReadOnly}
           onChange={(e) => {
             controlDispatch({
               type: 'CHANGE_ZENDESK_INTERNAL',
@@ -140,6 +185,35 @@ export const SubmissionUrls = () => {
             formUpdate({ ...form, zendeskInternal: e.target.checked })
           }}
         />
+      )}
+
+      {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
+        <>
+          <Checkbox
+            label={formatMessage(m.useValidate)}
+            checked={!!form.useValidate}
+            disabled={isReadOnly}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_VALIDATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, useValidate: e.target.checked })
+            }}
+          />
+          <Checkbox
+            label={formatMessage(m.usePopulate)}
+            checked={!!form.usePopulate}
+            disabled={isReadOnly}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_POPULATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, usePopulate: e.target.checked })
+            }}
+          />
+        </>
       )}
     </Stack>
   )

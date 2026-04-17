@@ -41,6 +41,7 @@ export const Prerequisites = buildForm({
               },
             ],
           }),
+          subDescription: m.prerequisites.linkToRateCategoryApplication,
         }),
       ],
     }),

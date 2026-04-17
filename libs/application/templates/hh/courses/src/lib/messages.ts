@@ -13,6 +13,13 @@ export const m = {
         'Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
       description: 'Title of application',
     },
+    applicationTitleWithCourse: {
+      id: 'hh.courses.application:general.applicationTitleWithCourse',
+      defaultMessage:
+        '{value} - Námskeið hjá Heilsugæslunni á höfuðborgarsvæðinu',
+      description:
+        'Title of application with course name, shown in the application list',
+    },
     shorterApplicationTitle: {
       id: 'hh.courses.application:general.shorterApplicationTitle',
       defaultMessage: 'Skráning á námskeið',
@@ -22,6 +29,16 @@ export const m = {
       id: 'hh.courses.application:general.confirmButtonLabel',
       defaultMessage: 'Staðfesta',
       description: 'Confirm button label',
+    },
+    applicationListTitle: {
+      id: 'hh.courses.application:general.applicationListTitle',
+      defaultMessage: 'Þínar skráningar á námskeið',
+      description: 'Title shown on the applications list page',
+    },
+    newApplicationButtonLabel: {
+      id: 'hh.courses.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skráning á námskeið',
+      description: 'Label for the new application button on the list page',
     },
   }),
   userInformation: defineMessages({
@@ -60,6 +77,21 @@ export const m = {
       id: 'hh.courses.application:userInformation.healthcenter',
       defaultMessage: 'Heilsugæslustöð',
       description: 'Title of healthcenter field',
+    },
+    noHealthcenter: {
+      id: 'hh.courses.application:userInformation.noHealthcenter',
+      defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
+      description: 'Message shown when no health center is found',
+    },
+    workplace: {
+      id: 'hh.courses.application:userInformation.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of workplace field',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:userInformation.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of job title field',
     },
   }),
   prerequisites: defineMessages({
@@ -144,6 +176,16 @@ export const m = {
       defaultMessage: 'Símanúmer',
       description: 'Title of participant phone field',
     },
+    participantWorkplace: {
+      id: 'hh.courses.application:participant.participantWorkplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of participant workplace field',
+    },
+    participantJobTitle: {
+      id: 'hh.courses.application:participant.participantJobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of participant job title field',
+    },
   }),
   payer: defineMessages({
     sectionTitle: {
@@ -158,12 +200,12 @@ export const m = {
     },
     companyTitle: {
       id: 'hh.courses.application:payer.companyTitle',
-      defaultMessage: 'Nafn fyrirtækis',
+      defaultMessage: 'Nafn greiðanda',
       description: 'Title of company field',
     },
     companyNationalId: {
       id: 'hh.courses.application:payer.companyNationalId',
-      defaultMessage: 'Kennitala fyrirtækis',
+      defaultMessage: 'Kennitala greiðanda',
       description: 'Title of company national id field',
     },
     userIsPayingAsIndividualLabel: {
@@ -188,13 +230,13 @@ export const m = {
       description: 'Error message when company payment information is required',
     },
     userIsPayingAsIndividualDescription: {
-      id: 'hh.courses.application:payer.userIsPayingAsIndividualDescription',
-      defaultMessage: 'Kvittun verður send í stafræna pósthólfið þitt',
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualDescription#markdown',
+      defaultMessage: '* Kvittun verður send í stafræna pósthólfið þitt',
       description: 'Description of user is paying as individual field',
     },
     userIsPayingAsCompanyDescription: {
-      id: 'hh.courses.application:payer.userIsPayingAsCompanyDescription',
-      defaultMessage: 'Kvittun verður send í stafrænt pósthólf fyrirtækisins',
+      id: 'hh.courses.application:payer.userIsPayingAsCompanyDescription#markdown',
+      defaultMessage: '* Kvittun verður send í stafrænt pósthólf fyrirtækisins',
       description: 'Description of user is paying as company field',
     },
   }),
@@ -203,6 +245,12 @@ export const m = {
       id: 'hh.courses.application:overview.sectionTitle',
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
+    },
+    paymentWindowDescription: {
+      id: 'hh.courses.application:overview.paymentWindowDescription',
+      defaultMessage:
+        'Ef greiða þarf fyrir námskeið hefur þú 20 mínútur til að ljúka greiðslu. Eftir það er plássið ekki lengur frátekið og skráningarupplýsingar eyðast',
+      description: 'Payment window guidance in overview section',
     },
     participantHeading: {
       id: 'hh.courses.application:overview.participantHeading',
@@ -231,12 +279,12 @@ export const m = {
     },
     payerName: {
       id: 'hh.courses.application:overview.payerName',
-      defaultMessage: 'Nafn',
+      defaultMessage: 'Nafn greiðanda',
       description: 'Heading for payer name in overview section',
     },
     payerNationalId: {
       id: 'hh.courses.application:overview.payerNationalId',
-      defaultMessage: 'Kennitala',
+      defaultMessage: 'Kennitala greiðanda',
       description: 'Heading for payer national id in overview section',
     },
     payerHeading: {
@@ -244,10 +292,25 @@ export const m = {
       defaultMessage: 'Greiðandi',
       description: 'Heading for payer in overview section',
     },
-    submitTitle: {
-      id: 'hh.courses.application:overview.submitTitle',
+    submitAndPayTitle: {
+      id: 'hh.courses.application:overview.submitAndPayTitle',
+      defaultMessage: 'Staðfesta og greiða',
+      description: 'Title of submit button in overview section with payment',
+    },
+    submitRegistrationTitle: {
+      id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
-      description: 'Title of submit button in overview section',
+      description: 'Title of submit button in overview section without payment',
+    },
+    workplace: {
+      id: 'hh.courses.application:overview.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Heading for workplace in overview section',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:overview.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Heading for job title in overview section',
     },
   }),
   completedForm: defineMessages({
@@ -296,6 +359,62 @@ export const m = {
       id: 'hh.courses.application:completedForm.bottomButtonMessage',
       defaultMessage: 'Þú getur nálgast þínar umsóknir á mínum síðum.',
       description: 'Message next to bottom button',
+    },
+  }),
+  fullyBookedForm: defineMessages({
+    bottomButtonLabel: {
+      id: 'hh.courses.application:fullyBookedForm.bottomButtonLabel',
+      defaultMessage: 'Opna námskeiðsyfirlit',
+      description: 'Label for button at bottom of fully booked screen',
+    },
+    bottomButtonMessage: {
+      id: 'hh.courses.application:fullyBookedForm.bottomButtonMessage',
+      defaultMessage:
+        'Þú getur nálgast yfirlit yfir nýlegar námskeiðsskráningar á Mínum síðum.',
+      description: 'Message next to bottom button',
+    },
+    sectionTitle: {
+      id: 'hh.courses.application:fullyBookedForm.sectionTitle',
+      defaultMessage: 'Námskeið er fullbókað',
+      description: 'Title of fully booked form section (sidebar)',
+    },
+    multiFieldTitle: {
+      id: 'hh.courses.application:fullyBookedForm.multiFieldTitle',
+      defaultMessage: 'Námskeiðið er fullbókað',
+      description: 'Main title on the fully booked form screen',
+    },
+    alertTitle: {
+      id: 'hh.courses.application:fullyBookedForm.alertTitle',
+      defaultMessage: 'Ekki tókst að klára skráningu',
+      description: 'Title of fully booked form alert',
+    },
+    alertMessage: {
+      id: 'hh.courses.application:fullyBookedForm.alertMessage',
+      defaultMessage: 'Því miður er námskeiðið orðið fullbókað',
+      description: 'Message of fully booked form alert',
+    },
+    alertMessageWithSlots: {
+      id: 'hh.courses.application:fullyBookedForm.alertMessageWithSlots',
+      defaultMessage:
+        'Því miður er námskeiðið orðið fullbókað. Laus sæti í augnablikinu: {slotsAvailable}',
+      description:
+        'Message of fully booked form alert including currently available slots',
+    },
+    expandableHeader: {
+      id: 'hh.courses.application:fullyBookedForm.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Header for expandable section on fully booked screen',
+    },
+    expandableIntro: {
+      id: 'hh.courses.application:fullyBookedForm.expandableIntro#markdown',
+      defaultMessage:
+        'Skráningin var ekki send inn þar sem námskeiðið er fullbókað.',
+      description: 'Intro text for expandable section',
+    },
+    expandableDescription: {
+      id: 'hh.courses.application:fullyBookedForm.expandableDescription#markdown',
+      defaultMessage: ' ',
+      description: 'Expandable section content (markdown)',
     },
   }),
 }

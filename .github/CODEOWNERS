@@ -105,7 +105,6 @@
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-duplicate/              @island-is/juni
 /libs/application/templates/inheritance-report/                                                                              @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                                          @island-is/juni
-/libs/application/templates/signature-collection/assets                                                                      @island-is/juni
 /libs/application/templates/signature-collection/parliamentary-list-creation                                                 @island-is/juni
 /libs/application/templates/signature-collection/parliamentary-list-signing                                                  @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-creation                                                  @island-is/juni
@@ -199,6 +198,7 @@ codemagic.yaml                                                                  
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
+/libs/clients/finance-v3/                                                                                                    @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                                       @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                                                 @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                                            @island-is/hugsmidjan
@@ -229,7 +229,7 @@ codemagic.yaml                                                                  
 /libs/clients/legal-gazette/                                                                                                 @island-is/hugsmidjan
 /libs/clients/hms-housing-benefits/                                                                                          @island-is/hugsmidjan
 /apps/services/license-api/                                                                                                  @island-is/hugsmidjan
-/apps/services/cms-importer/                                                                                                 @island-is/hugsmidjan
+/apps/services/cms-importer/                                                                                                 @island-is/hugsmidjan @island-is/stefna
 /libs/regulations/                                                                                                           @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/document-provider/                                                                                       @island-is/hugsmidjan @island-is/core
@@ -245,7 +245,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/legal-gazette                                                                                              @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                                            @island-is/hugsmidjan
 
-/libs/application/templates/alcohol-tax-redemption/                                                                          @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                                                @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                                       @island-is/norda
 /libs/application/templates/document-provider-onboarding/                                                                    @island-is/norda
@@ -345,7 +344,8 @@ codemagic.yaml                                                                  
 /libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
 /libs/clients/housing-benefit-calculator/                                                                                    @island-is/stefna
 /libs/clients/ship-registry/                                                                                                 @island-is/stefna
-/libs/api/domains/ship-registry/                                                                                             @island-is/stefna
+/libs/clients/ship-registry-v2/                                                                                              @island-is/hugsmidjan
+/libs/api/domains/ship-registry/                                                                                             @island-is/stefna @island-is/hugsmidjan
 /libs/clients/administration-of-occupational-safety-and-health/                                                              @island-is/stefna
 /libs/api/domains/administration-of-occupational-safety-and-health/                                                          @island-is/stefna
 /libs/clients/ultraviolet-radiation/                                                                                         @island-is/stefna
@@ -357,6 +357,7 @@ codemagic.yaml                                                                  
 /apps/services/payment-flow-update-handler/                                                                                  @island-is/stefna
 /libs/application/templates/hh/courses/                                                                                      @island-is/stefna
 /libs/application/template-api-modules/src/lib/modules/templates/hh/courses/                                                 @island-is/stefna
+/libs/api/domains/course-charges/                                                                                            @island-is/stefna
 
 /libs/island-ui/                                                                                                             @island-is/island-ui
 
@@ -469,6 +470,8 @@ codemagic.yaml                                                                  
 /apps/web/screens/queries/UniversityGateway.ts                                                                               @island-is/origo
 /apps/web/components/ListViewCard/                                                                                           @island-is/origo
 
+/apps/web/screens/SecondarySchoolStudies/                                                                                    @island-is/origo
+
 /libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
@@ -514,6 +517,8 @@ codemagic.yaml                                                                  
 
 # DevOps
 /.github/                                                                                                                    @island-is/devops
+/scripts/ci/                                                                                                                 @island-is/devops
+/packer/                                                                                                                     @island-is/devops
 /.githooks/                                                                                                                  @island-is/devops
 /apps/reference-backend/                                                                                                     @island-is/devops
 /apps/github-actions-cache/                                                                                                  @island-is/devops

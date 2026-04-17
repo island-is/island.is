@@ -16,8 +16,11 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
 import { PaymentFlowEvent } from './paymentFlowEvent.model'
+import { PaymentFulfillment } from './paymentFulfillment.model'
+import { PaymentWorkerEvent } from './paymentWorkerEvent.model'
 
 @Table({
   tableName: 'payment_flow_charge',
@@ -79,6 +82,13 @@ export class PaymentFlowCharge extends Model<
     allowNull: false,
   })
   quantity!: number
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  reference?: string
 
   @CreatedAt
   @Column({
@@ -146,6 +156,15 @@ export class PaymentFlow extends Model<
   @HasOne(() => FjsCharge, 'paymentFlowId')
   fjsCharge?: FjsCharge
 
+  @HasMany(() => CardPaymentDetails, 'paymentFlowId')
+  cardPaymentDetails?: CardPaymentDetails[]
+
+  @HasMany(() => PaymentFulfillment, 'paymentFlowId')
+  paymentFulfillments?: PaymentFulfillment[]
+
+  @HasMany(() => PaymentWorkerEvent, 'paymentFlowId')
+  workerEvents?: PaymentWorkerEvent[]
+
   @ApiProperty({ type: [String] })
   @Column({
     type: DataType.ARRAY(DataType.STRING),
@@ -201,6 +220,22 @@ export class PaymentFlow extends Model<
   })
   redirectToReturnUrlOnSuccess?: boolean
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'invoice_return_url',
+  })
+  invoiceReturnUrl?: string
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    field: 'redirect_on_invoice_creation',
+  })
+  redirectOnInvoiceCreation?: boolean
+
   @ApiPropertyOptional({
     description:
       'Define key-value pairs of extra data, e.g., car license plate, house address, etc.',
@@ -225,6 +260,15 @@ export class PaymentFlow extends Model<
     field: 'charge_item_subject_id',
   })
   chargeItemSubjectId?: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
 
   @CreatedAt
   @Column({

@@ -17,11 +17,13 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { DefendantEventLog } from './defendantEventLog.model'
 import { Subpoena } from './subpoena.model'
 import { Verdict } from './verdict.model'
@@ -186,6 +188,13 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: () => Subpoena, isArray: true })
   subpoenas?: Subpoena[]
 
+  @HasMany(() => CaseDefendantPoliceCaseNumber, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({
+    type: () => CaseDefendantPoliceCaseNumber,
+    isArray: true,
+  })
+  caseDefendantPoliceCaseNumbers?: CaseDefendantPoliceCaseNumber[]
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -214,6 +223,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   isSentToPrisonAdmin?: boolean
 
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isRegisteredInPrisonSystem?: boolean
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -238,4 +251,20 @@ export class Defendant extends Model {
   @HasMany(() => Verdict, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Verdict, isArray: true })
   verdicts?: Verdict[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

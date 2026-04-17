@@ -8,6 +8,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   COMPLETED = 'completed',
+  FULLY_BOOKED = 'fullyBooked',
   PAYMENT = 'payment',
 }
 
@@ -17,6 +18,7 @@ export enum Roles {
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
+  checkParticipantAvailability = 'checkParticipantAvailability',
 }
 
 export enum IndividualOrCompany {

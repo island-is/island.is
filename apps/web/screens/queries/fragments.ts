@@ -509,6 +509,7 @@ export const slices = gql`
         href
       }
     }
+    introLinkImageSize
     overviewLinks {
       title
       intro {

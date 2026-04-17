@@ -1,6 +1,9 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { EventType } from '@island.is/judicial-system/types'
+import {
+  EventType,
+  IndictmentCaseReviewDecision,
+} from '@island.is/judicial-system/types'
 
 export const buildSubpoenaExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
@@ -17,17 +20,20 @@ export const buildAlternativeServiceExistsCondition = (exists: boolean) =>
       SELECT 1
       FROM defendant
       WHERE defendant.case_id = "Case".id
-        AND defendant.is_alternative_service = true
+        AND defendant.is_alternative_service = TRUE
     )
   `)
 
-export const buildIsSentToPrisonExistsCondition = (exists: boolean) =>
+export const buildIsSentToPrisonAdminExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
     ${exists ? '' : 'NOT'} EXISTS (
       SELECT 1
       FROM defendant
       WHERE defendant.case_id = "Case".id
-        AND defendant.is_sent_to_prison_admin = true
+        AND defendant.is_sent_to_prison_admin = TRUE
+        AND defendant.indictment_review_decision = '${
+          IndictmentCaseReviewDecision.ACCEPT
+        }'
     )
   `)
 
@@ -63,5 +69,17 @@ export const buildEventLogOrderCondition = (
         WHERE event_log.case_id = "Case".id
           AND event_log.event_type = '${eventType2}'
       )
+    )
+  `)
+
+export const buildHasDefendantWithNullReviewDecisionCondition = (
+  exists: boolean,
+) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.indictment_review_decision IS NULL
     )
   `)

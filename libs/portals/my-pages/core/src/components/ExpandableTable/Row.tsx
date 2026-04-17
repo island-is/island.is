@@ -1,3 +1,6 @@
+/**
+ * @deprecated Use `Table` from `@island.is/portals/my-pages/core` with the `renderExpandedRow` prop instead.
+ */
 import React, { useState, useCallback, FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { ApolloError } from '@apollo/client'

@@ -1,7 +1,11 @@
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { COPY_FORM, UPDATE_FORM_STATUS } from '@island.is/form-system/graphql'
+import {
+  COPY_FORM,
+  GET_FORM,
+  UPDATE_FORM_STATUS,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -15,6 +19,7 @@ import {
   GridRow as Row,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
@@ -22,6 +27,7 @@ import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
+import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
 
@@ -38,6 +44,7 @@ interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
   url?: string
+  lastModifiedBy?: string
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
@@ -59,6 +66,7 @@ export const TableRow = ({
   id,
   name,
   lastModified,
+  lastModifiedBy,
   setFormsState,
   slug,
   status,
@@ -69,6 +77,7 @@ export const TableRow = ({
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
+  const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
 
   const handleToggle = () => setIsOpen((prev) => !prev)
 
@@ -121,6 +130,14 @@ export const TableRow = ({
     const publish = {
       title: formatMessage(m.publish),
       onClick: async () => {
+        const { data: formData } = await getForm({
+          variables: { input: { id } },
+        })
+        const form = formData?.formSystemForm?.form
+        if (!form || !hasEnglishForAllNameFields(form)) {
+          toast.warning(formatMessage(m.translationNeededError))
+          return
+        }
         try {
           await updateFormStatus({
             variables: {
@@ -187,7 +204,7 @@ export const TableRow = ({
         if (slug) {
           window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
         } else {
-          window.alert(
+          toast.error(
             formatMessage({
               id: 'slugMissing',
               defaultMessage: 'Það vantar slug',
@@ -298,6 +315,15 @@ export const TableRow = ({
     })
   }
 
+  const view = async () => {
+    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
+      state: {
+        id,
+        readOnly: true,
+      },
+    })
+  }
+
   return (
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
@@ -332,6 +358,20 @@ export const TableRow = ({
 
           <Column span="1/12">
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <Button
+                  icon="eye"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={() => view()}
+                  title="Skoða"
+                />
+              </Box>
               {(status === FormStatus.IN_DEVELOPMENT ||
                 status === FormStatus.PUBLISHED_BEING_CHANGED) && (
                 <Box
@@ -345,6 +385,7 @@ export const TableRow = ({
                     colorScheme="negative"
                     inline
                     onClick={() => updateForm(status)}
+                    title="Breyta"
                   />
                 </Box>
               )}
@@ -375,7 +416,7 @@ export const TableRow = ({
         animateOpacity
       >
         <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
-          <Column span="6/12">
+          <Column span="12/12">
             <Stack space={1}>
               <Row>
                 <Inline space={2}>
@@ -422,7 +463,7 @@ export const TableRow = ({
               </Row>
               <Row>
                 <Text variant="medium">
-                  <strong>Númer:</strong> {id}
+                  <strong>Síðast breytt af:</strong> {lastModifiedBy ?? '—'}
                 </Text>
               </Row>
             </Stack>

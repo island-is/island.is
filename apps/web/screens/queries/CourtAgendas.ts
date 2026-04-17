@@ -12,6 +12,7 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         courtRoom
         type
         title
+        caseSubType
         judges {
           name
         }
@@ -25,6 +26,7 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         court
         lawyer
         scheduleTypes
+        caseTypes
       }
     }
   }

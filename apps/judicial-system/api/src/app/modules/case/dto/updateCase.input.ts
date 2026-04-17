@@ -17,15 +17,14 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -43,6 +42,22 @@ class UpdateDateLog {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly location?: string
+}
+
+@InputType()
+class UpdateCaseDefendantEventLogDecisionInput {
+  @Allow()
+  @Field(() => ID)
+  readonly defendantId!: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly rulingDate?: string
+
+  @Allow()
+  @Field(() => CaseIndictmentRulingDecision)
+  readonly rulingDecision!: CaseIndictmentRulingDecision
 }
 
 @InputType()
@@ -432,8 +447,8 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => CaseAppealRulingDecision, { nullable: true })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @Field(() => AppealCaseRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @Allow()
   @IsOptional()
@@ -470,11 +485,6 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  readonly indictmentReturnedExplanation?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
   readonly postponedIndefinitelyExplanation?: string
 
   @Allow()
@@ -486,11 +496,6 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly indictmentReviewerId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   @Allow()
   @IsOptional()
@@ -529,16 +534,13 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isRegisteredInPrisonSystem?: boolean
-
-  @Allow()
-  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly penalties?: string
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @IsObject({ each: true })
+  @Field(() => [UpdateCaseDefendantEventLogDecisionInput], { nullable: true })
+  readonly defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecisionInput[]
 }

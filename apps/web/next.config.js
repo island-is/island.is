@@ -15,6 +15,9 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
+  MATOMO_SITE_ID,
+  MATOMO_DOMAIN,
+  MATOMO_ENABLED,
 } = process.env
 
 /**
@@ -81,6 +84,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/s/opingogn',
+        destination: '/opingogn',
+        permanent: true,
+      },
+      {
         source: '/en/o/university-studies',
         destination: '/university-studies',
         permanent: true,
@@ -134,6 +142,29 @@ const nextConfig = {
         source: '/en/help/social-insurance-administration/contact-us',
         destination: 'https://minarsidur.tr.is/hafa-samband',
         permanent: true,
+      },
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source:
+          '/.well-known/apple-developer-merchantid-domain-association.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
+      },
+      {
+        source: '/.well-known/apple-developer-merchantid-domain-association',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
       },
     ]
   },
@@ -212,6 +243,9 @@ const nextConfig = {
     appVersion: APP_VERSION,
     environment: ENVIRONMENT,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
+    matomoSiteId: MATOMO_SITE_ID,
+    matomoDomain: MATOMO_DOMAIN,
+    isMatomoEnabled: MATOMO_ENABLED === 'true',
   },
 
   env: {

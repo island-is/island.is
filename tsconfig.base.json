@@ -2,6 +2,7 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
+      "@/*": ["${configDir}/src/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -55,6 +56,9 @@
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
+      ],
+      "@island.is/api/domains/course-charges": [
+        "libs/api/domains/course-charges/src/index.ts"
       ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
@@ -183,6 +187,12 @@
       "@island.is/api/domains/official-journal-of-iceland-application": [
         "libs/api/domains/official-journal-of-iceland-application/src/index.ts"
       ],
+      "@island.is/api/domains/one-systems-rulings": [
+        "libs/api/domains/one-systems-rulings/src/index.ts"
+      ],
+      "@island.is/api/domains/open-data": [
+        "libs/api/domains/open-data/src/index.ts"
+      ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
       ],
@@ -200,6 +210,9 @@
       ],
       "@island.is/api/domains/practical-exams": [
         "libs/api/domains/practical-exams/src/index.ts"
+      ],
+      "@island.is/api/domains/questionnaires": [
+        "libs/api/domains/questionnaires/src/index.ts"
       ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
@@ -267,21 +280,10 @@
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
-      "@island.is/api/domains/questionnaires": [
-        "libs/api/domains/questionnaires/src/index.ts"
-      ],
-      "@island.is/api/mocks": [
-        "libs/api/mocks/src/index.ts"
-      ],
-      "@island.is/api/mocks-react": [
-        "libs/api/mocks/src/react.ts"
-      ],
-      "@island.is/api/mocks/native": [
-        "libs/api/mocks/src/native.ts"
-      ],
-      "@island.is/api/schema": [
-        "libs/api/schema/src/index.ts"
-      ],
+      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
+      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
+      "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
+      "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -318,9 +320,6 @@
       ],
       "@island.is/application/templates/activation-allowance": [
         "libs/application/templates/activation-allowance/src/index.ts"
-      ],
-      "@island.is/application/templates/alcohol-tax-redemption": [
-        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
@@ -361,11 +360,11 @@
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
       ],
-      "@island.is/application/templates/car-rental-fee-category": [
-        "libs/application/templates/car-rental-fee-category/src/index.ts"
-      ],
       "@island.is/application/templates/car-rental-dayrate-returns": [
         "libs/application/templates/car-rental-dayrate-returns/src/index.ts"
+      ],
+      "@island.is/application/templates/car-rental-fee-category": [
+        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -531,6 +530,9 @@
       ],
       "@island.is/application/templates/official-journal-of-iceland": [
         "libs/application/templates/official-journal-of-iceland/src/index.ts"
+      ],
+      "@island.is/application/templates/official-journal-of-iceland/hooks": [
+        "libs/application/templates/official-journal-of-iceland/src/hooks/useTypes.ts"
       ],
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
@@ -776,9 +778,6 @@
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
-      "@island.is/clients/icelandic-government-institution-vacancies": [
-        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
-      ],
       "@island.is/clients/firearm-license": [
         "libs/clients/firearm-license/src/index.ts"
       ],
@@ -810,6 +809,9 @@
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
+      ],
       "@island.is/clients/icelandic-health-insurance/health-insurance": [
         "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
       ],
@@ -840,6 +842,9 @@
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
       "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
+      "@island.is/clients/mms/primary-school": [
+        "libs/clients/mms/primary-school/src/index.ts"
+      ],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -864,6 +869,10 @@
       "@island.is/clients/official-journal-of-iceland/application": [
         "libs/clients/official-journal-of-iceland/application/src/index.ts"
       ],
+      "@island.is/clients/one-systems-complaints-committee-rulings": [
+        "libs/clients/one-systems/complaints-committee-rulings/src/index.ts"
+      ],
+      "@island.is/clients/open-data": ["libs/clients/open-data/src/index.ts"],
       "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
@@ -897,6 +906,9 @@
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
+      ],
+      "@island.is/clients/ship-registry-v2": [
+        "libs/clients/ship-registry-v2/src/index.ts"
       ],
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"
@@ -1095,6 +1107,7 @@
       ],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
+      "@island.is/matomo": ["libs/matomo/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
@@ -1250,8 +1263,8 @@
       "@island.is/portals/my-pages/signature-collection": [
         "libs/portals/my-pages/signature-collection/src/index.ts"
       ],
-      "@island.is/portals/my-pages/social-insurance-maintenance": [
-        "libs/portals/my-pages/social-insurance-maintenance/src/index.ts"
+      "@island.is/portals/my-pages/social-benefits": [
+        "libs/portals/my-pages/social-benefits/src/index.ts"
       ],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
@@ -1311,12 +1324,11 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": [
-        "libs/portals/admin/delegation-admin/src/index.ts"
-      ],
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
+      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true

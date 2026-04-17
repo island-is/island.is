@@ -51,6 +51,7 @@ export const parseStatus = (
       const date = grant.dateTo
         ? formatDate(new Date(grant.dateTo), locale)
         : undefined
+
       return {
         applicationStatus: 'closed',
         deadlineStatus: date
@@ -117,16 +118,37 @@ export const parseStatus = (
       }
     }
     case GrantStatus.Open: {
-      const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale, 'dd. MMMM.')
-        : undefined
+      const dateString = grant.dateTo
+      if (!dateString) {
+        return {
+          applicationStatus: 'open',
+          deadlineStatus: formatMessage(m.search.applicationOpen),
+          note: grant.statusText ?? undefined,
+          deadlinePeriod:
+            grant.dateFrom && grant.dateTo
+              ? formatDeadlinePeriod(grant.dateFrom, grant.dateTo)
+              : undefined,
+        }
+      }
+
+      const hasTime = containsTimePart(dateString)
+      const dateFormat = hasTime
+        ? locale === 'en'
+          ? "dd MMMM, 'at' HH:mm"
+          : "dd. MMMM, 'kl.' HH:mm"
+        : locale === 'en'
+        ? 'dd MMMM'
+        : 'dd. MMMM'
+
+      const date = formatDate(new Date(dateString), locale, dateFormat)
+
       return {
         applicationStatus: 'open',
         deadlineStatus: date
           ? formatMessage(
-              containsTimePart(date)
-                ? m.search.applicationOpensToWithDay
-                : m.search.applicationOpensTo,
+              hasTime
+                ? m.search.applicationOpensTo
+                : m.search.applicationOpensToWithDay,
               {
                 arg: date,
               },

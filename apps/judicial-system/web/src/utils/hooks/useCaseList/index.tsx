@@ -26,8 +26,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -37,7 +37,7 @@ import useCase from '../useCase'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
-  // The id of the case that's about to be opened
+  // The case and row (defendant ids) that's about to be opened - used for loading state only
   const [clickedCase, setClickedCase] = useState<{
     id: string | null
     defendantIds?: string[] | null
@@ -64,7 +64,7 @@ const useCaseList = () => {
         routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
         // Court of appeals users can only see appealed request cases
-        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+        if (caseToOpen.appealCase?.appealState === AppealCaseState.COMPLETED) {
           routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
           routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
@@ -139,10 +139,16 @@ const useCaseList = () => {
         }
       }
 
+      const url = `${routeTo}/${caseToOpen.id}`
+
+      if (!routeTo) {
+        return
+      }
+
       if (openCaseInNewTab) {
-        window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
-      } else if (routeTo) {
-        router.push(`${routeTo}/${caseToOpen.id}`)
+        window.open(url, '_blank')
+      } else {
+        router.push(url)
       }
     },
     [router, user],

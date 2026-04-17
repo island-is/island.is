@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseState,
   completedCaseStates,
   courtOfAppealsRoles,
@@ -138,13 +138,13 @@ describe('View Case File Guard', () => {
 
   describe.each(courtOfAppealsRoles)('role %s', (role) => {
     describe.each(completedCaseStates)('%s cases', (state) => {
-      const accessibleCaseAppealStates = [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
-        CaseAppealState.WITHDRAWN,
+      const accessibleAppealCaseStates = [
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+        AppealCaseState.WITHDRAWN,
       ]
 
-      describe.each(accessibleCaseAppealStates)(
+      describe.each(accessibleAppealCaseStates)(
         'can view case files for %s cases',
         (appealState) => {
           let then: Then
@@ -157,7 +157,7 @@ describe('View Case File Guard', () => {
                   institution: { type: InstitutionType.COURT_OF_APPEALS },
                 },
               },
-              case: { state, appealState },
+              case: { state, appealCase: { appealState } },
             }))
 
             then = givenWhenThen()
@@ -171,8 +171,8 @@ describe('View Case File Guard', () => {
 
       describe.each([
         undefined,
-        ...Object.values(CaseAppealState).filter(
-          (state) => !accessibleCaseAppealStates.includes(state),
+        ...Object.values(AppealCaseState).filter(
+          (state) => !accessibleAppealCaseStates.includes(state),
         ),
       ])('can not view case files for %s cases', (appealState) => {
         let then: Then
@@ -185,7 +185,7 @@ describe('View Case File Guard', () => {
                 institution: { type: InstitutionType.COURT_OF_APPEALS },
               },
             },
-            case: { state, appealState },
+            case: { state, appealCase: { appealState } },
           }))
 
           then = givenWhenThen()
@@ -203,7 +203,7 @@ describe('View Case File Guard', () => {
         (state) => !completedCaseStates.includes(state as CaseState),
       ),
     )('%s cases', (state) => {
-      describe.each([undefined, ...Object.values(CaseAppealState)])(
+      describe.each([undefined, ...Object.values(AppealCaseState)])(
         'can not view case files for %s cases',
         (appealState) => {
           let then: Then
@@ -216,7 +216,7 @@ describe('View Case File Guard', () => {
                   institution: { type: InstitutionType.COURT_OF_APPEALS },
                 },
               },
-              case: { state, appealState },
+              case: { state, appealCase: { appealState } },
             }))
 
             then = givenWhenThen()

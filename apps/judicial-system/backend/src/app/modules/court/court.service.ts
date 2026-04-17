@@ -19,7 +19,7 @@ import type {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseType,
@@ -39,6 +39,7 @@ export enum CourtDocumentFolder {
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
   SUBPOENA_DOCUMENTS = 'Boðanir',
+  WORKING_DOCUMENTS = 'Vinnugögn',
 }
 
 enum RobotEmailType {
@@ -436,7 +437,7 @@ export class CourtService {
       })
   }
 
-  updateCaseWithConclusion(
+  async updateCaseWithConclusion(
     user: User,
     caseId: string,
     courtName?: string,
@@ -458,7 +459,7 @@ export class CourtService {
         isolationToDate,
       })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.CASE_CONCLUSION,
@@ -486,7 +487,7 @@ export class CourtService {
     }
   }
 
-  updateIndictmentCaseWithIndictmentInfo(
+  async updateIndictmentCaseWithIndictmentInfo(
     user: User,
     caseId: string,
     courtName?: string,
@@ -512,7 +513,7 @@ export class CourtService {
         prosecutor,
       })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.NEW_INDICTMENT_INFO,
@@ -537,7 +538,7 @@ export class CourtService {
     }
   }
 
-  updateIndictmentCaseWithDefenderInfo(
+  async updateIndictmentCaseWithDefenderInfo(
     user: User,
     caseId: string,
     courtName?: string,
@@ -554,7 +555,7 @@ export class CourtService {
         defenderEmail,
       })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.INDICTMENT_CASE_DEFENDER_INFO,
@@ -576,7 +577,7 @@ export class CourtService {
     }
   }
 
-  updateIndictmentCaseWithAssignedRoles(
+  async updateIndictmentCaseWithAssignedRoles(
     user: User,
     caseId: string,
     courtName?: string,
@@ -587,7 +588,7 @@ export class CourtService {
       const subject = `${courtName} - ${courtCaseNumber} - úthlutun`
       const content = JSON.stringify(assignedRole)
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
@@ -608,7 +609,7 @@ export class CourtService {
     }
   }
 
-  updateIndictmentCaseWithArraignmentDate(
+  async updateIndictmentCaseWithArraignmentDate(
     user: User,
     caseId: string,
     courtName?: string,
@@ -619,7 +620,7 @@ export class CourtService {
       const subject = `${courtName} - ${courtCaseNumber} - þingfesting`
       const content = JSON.stringify({ arraignmentDate })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.INDICTMENT_CASE_ARRAIGNMENT_DATE,
@@ -640,7 +641,7 @@ export class CourtService {
     }
   }
 
-  updateIndictmentCaseWithCancellationNotice(
+  async updateIndictmentCaseWithCancellationNotice(
     user: User,
     caseId: string,
     courtName?: string,
@@ -648,21 +649,36 @@ export class CourtService {
     noticeSubject?: string,
     noticeText?: string,
   ): Promise<unknown> {
-    const subject = `${courtName} - ${courtCaseNumber} - afturköllun`
-    const content = JSON.stringify({
-      subject: noticeSubject,
-      text: noticeText,
-    })
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - afturköllun`
+      const content = JSON.stringify({
+        subject: noticeSubject,
+        text: noticeText,
+      })
 
-    return this.sendToRobot(
-      subject,
-      content,
-      RobotEmailType.INDICTMENT_CASE_CANCELLATION_NOTICE,
-      caseId,
-    )
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_CANCELLATION_NOTICE,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with cancellation notice',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 
-  updateAppealCaseWithReceivedDate(
+  async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
@@ -672,7 +688,7 @@ export class CourtService {
       const subject = `Landsréttur - ${appealCaseNumber} - móttaka`
       const content = JSON.stringify({ appealReceivedByCourtDate })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.APPEAL_CASE_RECEIVED_DATE,
@@ -695,7 +711,7 @@ export class CourtService {
     }
   }
 
-  updateAppealCaseWithAssignedRoles(
+  async updateAppealCaseWithAssignedRoles(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
@@ -721,7 +737,7 @@ export class CourtService {
         appealJudge3Name,
       })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.APPEAL_CASE_ASSIGNED_ROLES,
@@ -751,12 +767,12 @@ export class CourtService {
     }
   }
 
-  updateAppealCaseWithConclusion(
+  async updateAppealCaseWithConclusion(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
     isCorrection?: boolean,
-    appealRulingDecision?: CaseAppealRulingDecision,
+    appealRulingDecision?: AppealCaseRulingDecision,
     appealRulingDate?: Date,
   ): Promise<unknown> {
     try {
@@ -767,7 +783,7 @@ export class CourtService {
         appealRulingDate,
       })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.APPEAL_CASE_CONCLUSION,
@@ -792,7 +808,7 @@ export class CourtService {
     }
   }
 
-  updateAppealCaseWithFile(
+  async updateAppealCaseWithFile(
     user: User,
     caseId: string,
     fileId: string,
@@ -811,7 +827,7 @@ export class CourtService {
         url: url && Base64.encode(url),
       })
 
-      return this.sendToRobot(
+      return await this.sendToRobot(
         subject,
         content,
         RobotEmailType.APPEAL_CASE_FILE,

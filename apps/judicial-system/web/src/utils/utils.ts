@@ -3,10 +3,14 @@ import {
   formatDate,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isProsecutionUser } from '@island.is/judicial-system/types'
 import {
+  isIndictmentCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CivilClaimant,
   Defendant,
@@ -15,24 +19,17 @@ import {
   Notification,
   NotificationType,
   User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-export const getShortGender = (gender?: Gender): string => {
-  switch (gender) {
-    case Gender.MALE: {
-      return 'kk'
-    }
-    case Gender.FEMALE: {
-      return 'kvk'
-    }
-    case Gender.OTHER: {
-      return 'annað'
-    }
-    default: {
-      return ''
-    }
-  }
-}
+export const mapStringToGender = (gender?: string | null): Gender | undefined =>
+  gender?.toLowerCase() === 'male'
+    ? Gender.MALE
+    : gender?.toLowerCase() === 'female'
+    ? Gender.FEMALE
+    : gender?.toLowerCase() === 'other'
+    ? Gender.OTHER
+    : undefined
 
 export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
@@ -108,11 +105,11 @@ export const hasSentNotification = (
 }
 
 export const isReopenedCOACase = (
-  appealState?: CaseAppealState | null,
+  appealState?: AppealCaseState | null,
   notifications?: Notification[] | null,
 ): boolean => {
   return (
-    appealState !== CaseAppealState.COMPLETED &&
+    appealState !== AppealCaseState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
       .hasSent
   )
@@ -136,12 +133,12 @@ export const getDefendantPleaText = (
 
 export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
   return (
-    theCase.appealState === CaseAppealState.WITHDRAWN &&
-    (!theCase.appealAssistant ||
-      !theCase.appealCaseNumber ||
-      !theCase.appealJudge1 ||
-      !theCase.appealJudge2 ||
-      !theCase.appealJudge3)
+    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+    (!theCase.appealCase?.appealAssistant ||
+      !theCase.appealCase?.appealCaseNumber ||
+      !theCase.appealCase?.appealJudge1 ||
+      !theCase.appealCase?.appealJudge2 ||
+      !theCase.appealCase?.appealJudge3)
   )
 }
 
@@ -169,10 +166,7 @@ export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
       ),
   )
 
-export const isCaseDefendantDefender = (
-  user?: User,
-  workingCase?: { defendants?: Defendant[] | null },
-) =>
+export const isCaseDefendantDefender = (user?: User, workingCase?: Case) =>
   workingCase?.defendants?.some(
     (defendant) =>
       defendant?.defenderNationalId &&
@@ -183,7 +177,7 @@ export const isCaseDefendantDefender = (
 
 export const isCaseCivilClaimantSpokesperson = (
   user?: User,
-  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+  workingCase?: Case,
 ) =>
   workingCase?.civilClaimants?.some(
     (civilClaimant) =>
@@ -195,7 +189,7 @@ export const isCaseCivilClaimantSpokesperson = (
 
 export const isCaseCivilClaimantLegalSpokesperson = (
   user?: User,
-  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+  workingCase?: Case,
 ) =>
   workingCase?.civilClaimants?.some(
     (civilClaimant) =>
@@ -205,6 +199,135 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       ) &&
       civilClaimant.spokespersonIsLawyer,
   )
+
+/**
+ * For indictment cases, returns the defendant ID or civil claimant ID
+ * that the current defence user represents. Used to associate uploaded
+ * appeal files with the correct party.
+ *
+ * Resolution order:
+ * 1. First matching defendant (by defenderNationalId)
+ * 2. First matching civil claimant (by spokespersonNationalId)
+ * 3. Empty object (prosecutor or no match)
+ */
+export const getDefenceUserPartyIds = (
+  user?: User,
+  workingCase?: Case,
+): { defendantId?: string; civilClaimantId?: string } => {
+  if (!user || !workingCase || !isIndictmentCase(workingCase.type)) {
+    return {}
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+  const defendant = workingCase.defendants?.find(
+    (d) => d.defenderNationalId && normalizedId.includes(d.defenderNationalId),
+  )
+
+  if (defendant) {
+    return { defendantId: defendant.id }
+  }
+
+  const civilClaimant = workingCase.civilClaimants?.find(
+    (cc) =>
+      cc.spokespersonNationalId &&
+      normalizedId.includes(cc.spokespersonNationalId),
+  )
+
+  if (civilClaimant) {
+    return { civilClaimantId: civilClaimant.id }
+  }
+
+  return {}
+}
+
+/**
+ * Returns a human-readable description of who appealed and when.
+ *
+ * Examples:
+ * - "Sækjandi kærði í þinghaldi"
+ * - "Kært af sækjanda 1. apríl 2026 kl. 10:00"
+ * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
+ * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
+ */
+export const getAppealActorText = (workingCase: Case): string => {
+  const appealedInCourt =
+    workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+    workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+
+  if (appealedInCourt) {
+    return workingCase.appealedByRole === UserRole.PROSECUTOR
+      ? 'Sækjandi kærði í þinghaldi'
+      : 'Varnaraðili kærði í þinghaldi'
+  }
+
+  const dateStr = formatDate(workingCase.appealedDate, 'PPPp')
+
+  if (workingCase.appealedByRole === UserRole.PROSECUTOR) {
+    return `Kært af sækjanda ${dateStr}`
+  }
+
+  const party = getAppealingPartyInfo(
+    workingCase.appealCase?.appealedByNationalId,
+    workingCase,
+  )
+
+  return party
+    ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+    : `Kært af verjanda ${dateStr}`
+}
+
+/**
+ * Given an appealedByNationalId, find the appealing party among confirmed
+ * defenders and civil claimant spokespersons.
+ *
+ * Search order: confirmed defenders first, then confirmed civil claimant
+ * spokespersons.
+ *
+ * Returns the role label and name, or undefined if not found.
+ */
+export const getAppealingPartyInfo = (
+  appealedByNationalId?: string | null,
+  workingCase?: Case,
+): { role: string; name: string } | undefined => {
+  if (!appealedByNationalId || !workingCase) {
+    return undefined
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(appealedByNationalId)
+
+  // Check confirmed defenders first
+  const defender = workingCase.defendants?.find(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizedId.includes(defendant.defenderNationalId),
+  )
+
+  if (defender) {
+    return { role: 'Verjandi', name: defender.defenderName ?? '' }
+  }
+
+  // Then check confirmed civil claimant spokespersons
+  const civilClaimant = workingCase.civilClaimants?.find(
+    (cc) =>
+      cc.hasSpokesperson &&
+      cc.isSpokespersonConfirmed &&
+      cc.spokespersonNationalId &&
+      normalizedId.includes(cc.spokespersonNationalId),
+  )
+
+  if (civilClaimant) {
+    return {
+      role: civilClaimant.spokespersonIsLawyer
+        ? 'Lögmaður'
+        : 'Réttargæslumaður',
+      name: civilClaimant.spokespersonName ?? '',
+    }
+  }
+
+  return undefined
+}
 
 // Use the gender of the single defendant if there is only one,
 // otherwise default to male

@@ -83,6 +83,9 @@ export class FieldInput {
   id?: string
 
   @Field(() => String, { nullable: true })
+  identifier?: string
+
+  @Field(() => String, { nullable: true })
   screenId?: string
 
   @Field(() => LanguageTypeInput, { nullable: true })

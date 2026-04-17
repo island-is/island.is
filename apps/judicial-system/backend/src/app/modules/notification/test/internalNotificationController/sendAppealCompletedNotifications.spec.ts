@@ -4,7 +4,7 @@ import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseNotificationType,
   CaseState,
@@ -28,7 +28,7 @@ interface Then {
 
 type GivenWhenThen = (
   defenderNationalId?: string,
-  appealRulingDecision?: CaseAppealRulingDecision,
+  appealRulingDecision?: AppealCaseRulingDecision,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -59,7 +59,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
 
     givenWhenThen = async (
       defenderNationalId?: string,
-      appealRulingDecision?: CaseAppealRulingDecision,
+      appealRulingDecision?: AppealCaseRulingDecision,
     ) => {
       const then = {} as Then
 
@@ -71,8 +71,6 @@ describe('InternalNotificationController - Send appeal completed notifications',
             type: CaseType.CUSTODY,
             state: CaseState.ACCEPTED,
             decision: CaseDecision.ACCEPTING,
-            appealRulingDecision:
-              appealRulingDecision ?? CaseAppealRulingDecision.ACCEPTING,
             prosecutor: { name: prosecutor.name, email: prosecutor.email },
             judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -80,8 +78,12 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealCaseNumber,
             courtId: courtId,
+            appealCase: {
+              appealCaseNumber,
+              appealRulingDecision:
+                appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
+            },
           } as Case,
           {
             user: { id: userId } as User,
@@ -174,7 +176,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen('', CaseAppealRulingDecision.DISCONTINUED)
+      then = await givenWhenThen('', AppealCaseRulingDecision.DISCONTINUED)
     })
 
     it('should send notification about discontinuance', () => {

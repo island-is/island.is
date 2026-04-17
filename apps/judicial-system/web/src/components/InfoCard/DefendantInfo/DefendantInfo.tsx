@@ -1,7 +1,8 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Icon, LinkV2, Text } from '@island.is/island-ui/core'
+import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
 import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   districtCourtAbbreviation,
@@ -9,6 +10,7 @@ import {
   formatDOB,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
@@ -17,10 +19,12 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { UserContext } from '../../UserProvider/UserProvider'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
+  getDefendantTagConfig,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
 import { strings as infoCardStrings } from '../useInfoCardItems.strings'
@@ -45,6 +49,9 @@ interface DefendantInfoProps {
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
   displayOpenCaseReference?: boolean
+  isDismissalCase?: boolean
+  isCancellationCase?: boolean
+  isFineCase?: boolean
 }
 
 const ConnectedCasesInfo = ({
@@ -130,8 +137,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displaySentToPrisonAdminDate = true,
     displayOpenCaseReference,
     defender,
+    isDismissalCase,
+    isCancellationCase,
+    isFineCase,
   } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const hasDefender = defendant.defenderName || defender?.name
   const defenderLabel =
     defender?.sessionArrangement ===
@@ -149,77 +160,105 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     serviceRequirement: defendant.verdict?.serviceRequirement,
   })
 
+  const defendantTagConfig = getDefendantTagConfig({
+    verdict: defendant.verdict,
+    isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
+    isDismissalCase,
+    isCancellationCase,
+    isFineCase,
+  })
+
   return (
-    <Box className={grid({ gap: 1 })}>
-      <Text>
-        <Text as="span" fontWeight="semiBold">{`${formatMessage(
-          infoCardStrings.name,
-        )}: `}</Text>
-        <Text as="span">
-          {defendant.name}
-          {defendant.nationalId &&
-            `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
-          {defendant.citizenship && `, (${defendant.citizenship})`}
+    <Box display="flex" justifyContent="spaceBetween">
+      <div className={grid({ gap: 1 })}>
+        <Text>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            infoCardStrings.name,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.name}
+            {defendant.nationalId &&
+              `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
+            {defendant.citizenship && `, (${defendant.citizenship})`}
+          </Text>
         </Text>
-      </Text>
-      <Text>
-        <Text as="span" fontWeight="semiBold">{`${formatMessage(
-          core.addressOrResidence,
-        )}: `}</Text>
-        <Text as="span">
-          {defendant.address ? defendant.address : 'Ekki skráð'}
+        <Text>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            core.addressOrResidence,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.address ? defendant.address : 'Ekki skráð'}
+          </Text>
         </Text>
-      </Text>
-      <Text>
-        <Text as="span" whiteSpace="pre" fontWeight="semiBold">
-          {`${defenderLabel}: `}
+        <Text>
+          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
+            {`${defenderLabel}: `}
+          </Text>
+          {hasDefender ? (
+            RenderPersonalData({
+              name: defenderName,
+              email: defenderEmail,
+              phoneNumber: defenderPhoneNumber,
+              breakSpaces: false,
+            })
+          ) : (
+            <Text as="span">{formatMessage(strings.noDefender)}</Text>
+          )}
         </Text>
-        {hasDefender ? (
-          RenderPersonalData({
-            name: defenderName,
-            email: defenderEmail,
-            phoneNumber: defenderPhoneNumber,
-            breakSpaces: false,
-          })
-        ) : (
-          <Text as="span">{formatMessage(strings.noDefender)}</Text>
-        )}
-      </Text>
-      {displayAppealExpirationInfo && (
-        <Text fontWeight="semiBold">
-          {formatMessage(appealExpirationInfo.message, {
-            appealExpirationDate: appealExpirationInfo.date,
-            deadlineType: defendant.verdict?.isDefaultJudgement
-              ? 'Endurupptökufrestur'
-              : 'Áfrýjunarfrestur',
-          })}
-        </Text>
-      )}
-      {displayVerdictViewDate &&
-        defendant.verdict?.serviceRequirement &&
-        defendant.verdict?.serviceRequirement !==
-          ServiceRequirement.NOT_REQUIRED && (
+        {displayAppealExpirationInfo && (
           <Text fontWeight="semiBold">
-            {getVerdictViewDateText(
-              formatMessage,
-              defendant.verdict?.serviceDate,
-            )}
+            {formatMessage(appealExpirationInfo.message, {
+              appealExpirationDate: appealExpirationInfo.date,
+              deadlineType: defendant.verdict?.isDefaultJudgement
+                ? 'Endurupptökufrestur'
+                : 'Áfrýjunarfrestur',
+            })}
           </Text>
         )}
-      {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
-        <Text fontWeight="semiBold">
-          {formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-          })}
-        </Text>
-      )}
-      {displayOpenCaseReference && (
-        <ConnectedCasesInfo
-          defendant={defendant}
-          workingCaseId={workingCaseId}
-          courtId={courtId}
-        />
-      )}
+        {displayVerdictViewDate &&
+          defendant.verdict?.serviceRequirement &&
+          defendant.verdict?.serviceRequirement !==
+            ServiceRequirement.NOT_REQUIRED && (
+            <Text fontWeight="semiBold">
+              {getVerdictViewDateText(
+                formatMessage,
+                defendant.verdict?.serviceDate,
+              )}
+            </Text>
+          )}
+        {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
+          <Text fontWeight="semiBold">
+            {formatMessage(strings.sendToPrisonAdminDate, {
+              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+            })}
+          </Text>
+        )}
+        {displayOpenCaseReference && (
+          <ConnectedCasesInfo
+            defendant={defendant}
+            workingCaseId={workingCaseId}
+            courtId={courtId}
+          />
+        )}
+      </div>
+      {defendantTagConfig && defendant.verdict ? (
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            initial={{ opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            key={defendantTagConfig.key}
+          >
+            <Tag variant={defendantTagConfig.variant} outlined disabled>
+              {defendantTagConfig.label}
+            </Tag>
+          </motion.span>
+        </AnimatePresence>
+      ) : defendantTagConfig ? (
+        <Tag variant={defendantTagConfig.variant} outlined disabled>
+          {defendantTagConfig.label}
+        </Tag>
+      ) : null}
     </Box>
   )
 }

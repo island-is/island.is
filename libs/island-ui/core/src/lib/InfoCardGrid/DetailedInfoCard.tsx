@@ -114,7 +114,12 @@ export const DetailedInfoCard = ({
 
   const renderHeader = () => {
     return (
-      <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+      <Box
+        className={styles.infoCardHeader}
+        display="flex"
+        flexDirection="row"
+        justifyContent="spaceBetween"
+      >
         {subEyebrow ? (
           <Box>
             <Text fontWeight="semiBold" variant="eyebrow" color={eyebrowColor}>

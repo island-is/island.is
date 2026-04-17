@@ -9,11 +9,12 @@ import {
 } from '@island.is/clients-rental-day-rate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  buildDayRateEntryMap,
+  CarUsageRecord,
   DayRateRecord,
-  getMonthTotalDayRateDays,
   getUploadFileType,
+  messages,
   parseUploadFile,
+  UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../shared/services'
@@ -44,33 +45,80 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     try {
       const now = new Date()
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-      const lastMonthIndex = lastMonthDate.getMonth()
+      const targetYear = lastMonthDate.getFullYear()
+      const targetMonthIndex = lastMonthDate.getMonth()
 
-      const resp = await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdGet({
-        entityId: auth.nationalId,
-      })
+      const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
+      const targetToUtc = new Date(
+        Date.UTC(targetYear, targetMonthIndex + 1, 0),
+      )
 
-      const dayRateEntryMap = buildDayRateEntryMap(resp)
+      const resp = await this.rentalsApiWithAuth(auth)
+        .withPreMiddleware(async ({ url, init }) => {
+          const headers = init?.headers
+            ? Object.fromEntries(new Headers(init.headers).entries())
+            : undefined
 
-      const entries: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
-        .map(([permno, data]) => {
-          const result = getMonthTotalDayRateDays({
-            dayRateEntries: data,
-            targetYear: lastMonthDate.getFullYear(),
-            targetMonthIndex: lastMonthIndex,
+          const reqData = {
+            url,
+            method: init?.method,
+            headers: headers
+              ? {
+                  ...headers,
+                  authorization: headers.authorization
+                    ? '[REDACTED]'
+                    : undefined,
+                  cookie: headers.cookie ? '[REDACTED]' : undefined,
+                }
+              : undefined,
+          }
+          this.logger.info('RSK day-rate request', reqData)
+        })
+        .apiDayRateEntriesEntityIdPeriodsPeriodGet({
+          entityId: auth.nationalId,
+          period: `${String(targetMonthIndex + 1).padStart(
+            2,
+            '0',
+          )}-${targetYear}`,
+        })
+
+      const entries: Array<DayRateRecord> = resp
+        .map((entry) => {
+          if (!entry.fastnr || !entry.id) return null
+
+          const alreadySubmitted = entry.rentalDaysEntries?.some((rde) => {
+            if (!rde.timabil) return false
+            const t = new Date(rde.timabil)
+            return (
+              t.getUTCFullYear() === targetYear &&
+              t.getUTCMonth() === targetMonthIndex
+            )
           })
 
-          if (!result) return null
-          const { totalDays, entryId } = result
+          if (alreadySubmitted) return null
 
-          if (totalDays === 0 || !entryId) return null
+          const entryValidFrom = entry.gildirFra
+            ? new Date(entry.gildirFra)
+            : targetFromUtc
+          const entryValidTo = entry.gildirTil
+            ? new Date(entry.gildirTil)
+            : targetToUtc
+
+          const start =
+            entryValidFrom > targetFromUtc ? entryValidFrom : targetFromUtc
+          const end = entryValidTo < targetToUtc ? entryValidTo : targetToUtc
+
+          if (end < start) return null
+
+          const totalDays =
+            Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+
+          if (totalDays <= 0) return null
 
           return {
-            permno,
+            permno: entry.fastnr,
             prevPeriodTotalDays: totalDays,
-            dayRateEntryId: entryId,
+            dayRateEntryId: entry.id,
           }
         })
         .filter((entry): entry is DayRateRecord => entry !== null)
@@ -87,6 +135,12 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
+      const uploadSelection =
+        getValueViaPath<UploadSelection>(
+          application.answers,
+          'singleOrMultiSelectionRadio',
+        ) ?? UploadSelection.MULTI
+
       const dayRateRecords =
         getValueViaPath<Array<DayRateRecord>>(
           application.externalData,
@@ -97,67 +151,23 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         dayRateRecords.map((d) => [d.permno, d]),
       )
 
-      const [attachment] = await this.attachmentService.getFiles(application, [
-        'carDayRateUsageFile',
-      ])
-      if (!attachment?.fileContent) {
-        throw new TemplateApiError(
-          { title: 'Missing file', summary: 'No uploaded file found' },
-          400,
-        )
-      }
-
-      const fileType = getUploadFileType(attachment.fileName ?? '')
-      if (!fileType) {
-        throw new TemplateApiError(
-          {
-            title: 'Invalid file type',
-            summary: 'Only .csv or .xlsx are supported',
-          },
-          400,
-        )
-      }
-
-      const bytes = Buffer.from(attachment.fileContent, 'base64')
-      const parsed = await parseUploadFile(
-        bytes,
-        fileType,
-        dayRateRecordsByPermno,
-      )
-
-      if (!parsed.ok) {
-        if (parsed.reason === 'no-data') {
-          throw new TemplateApiError(
-            { title: 'Invalid data', summary: 'Invalid data found' },
-            400,
-          )
-        }
-
-        const errorSummary = parsed.errors
-          .map((e) => {
-            const msg =
-              typeof e.message === 'string'
-                ? e.message
-                : e.message.defaultMessage ?? e.message.id
-            return `${e.carNr}: ${msg}`
-          })
-          .filter((m) => m.length > 0)
-          .join('\n')
-
-        throw new TemplateApiError(
-          {
-            title: 'Invalid data',
-            summary: errorSummary || 'Invalid data found',
-          },
-          400,
-        )
-      }
-
-      const records = parsed.records
-
       const now = new Date()
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const lastMonthIndex = lastMonthDate.getMonth()
+
+      let records: CarUsageRecord[] = []
+
+      if (uploadSelection === UploadSelection.SINGLE) {
+        records = this.getRecordsFromTableAnswers(
+          application,
+          dayRateRecordsByPermno,
+        )
+      } else {
+        records = await this.getRecordsFromFileUpload(
+          application,
+          dayRateRecordsByPermno,
+        )
+      }
 
       const entries = records.map((record) => {
         const dayRateEntryId = dayRateRecordsByPermno.get(
@@ -167,8 +177,13 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         if (!dayRateEntryId) {
           throw new TemplateApiError(
             {
-              title: 'Missing day rate entry',
-              summary: `No dayRateEntryId for vehicle ${record.vehicleId}`,
+              title: messages.serviceErrors.missingDayRateEntry.title,
+              summary: {
+                ...messages.serviceErrors.missingDayRateEntry.summary,
+                values: {
+                  vehicleId: record.vehicleId,
+                },
+              },
             },
             400,
           )
@@ -178,14 +193,14 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           permno: record.vehicleId,
           numberOfDays: record.prevPeriodUsage,
           dayRateEntryId,
+          month: lastMonthIndex + 1,
+          year: lastMonthDate.getFullYear(),
         }
       })
 
       await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
         entityId: auth.nationalId,
         rentalDayRegistrationModel: {
-          year: lastMonthDate.getFullYear(),
-          month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
           entries,
         },
       })
@@ -202,8 +217,11 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
         throw new TemplateApiError(
           {
-            title: error.title ?? error.statusText ?? 'Bad request',
-            summary: bodySummary ?? 'Invalid input.',
+            title:
+              error.title ??
+              error.statusText ??
+              messages.serviceErrors.badRequest.title,
+            summary: bodySummary ?? messages.serviceErrors.badRequest.summary,
           },
           error.status,
         )
@@ -211,18 +229,195 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Request to skatturinn failed',
-          summary: 'Something went wrong when posting car data to skatturinn',
+          title: messages.serviceErrors.requestToSkatturinnFailed.title,
+          summary: messages.serviceErrors.requestToSkatturinnFailed.summary,
         },
         isSkatturinnError(error) ? error.status ?? 500 : 500,
       )
     }
   }
 
-  private formatSkatturinnErrorBody(body: unknown): string | undefined {
-    if (!body || typeof body !== 'object') return undefined
+  private getRecordsFromTableAnswers(
+    application: TemplateApiModuleActionProps['application'],
+    dayRateRecordsByPermno: Map<string, DayRateRecord>,
+  ): CarUsageRecord[] {
+    const tableRows =
+      getValueViaPath<
+        Array<{
+          permno: string
+          prevPeriodUsage: number
+          dayRateEntryId: number
+        }>
+      >(application.answers, 'vehicleDayRateUsageRows') ?? []
 
-    const messages = Object.entries(body as Record<string, unknown>)
+    if (tableRows.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.missingManualEntries.title,
+          summary: messages.serviceErrors.missingManualEntries.summary,
+        },
+        400,
+      )
+    }
+
+    const invalidRows: string[] = []
+    const records = tableRows
+      .map<CarUsageRecord | null>((row) => {
+        const permno = row.permno?.trim()
+        const usage = Number(row.prevPeriodUsage)
+        const dayRateRecord = permno
+          ? dayRateRecordsByPermno.get(permno)
+          : undefined
+
+        if (!permno || !dayRateRecord || Number.isNaN(usage) || usage < 0) {
+          invalidRows.push(permno || '-')
+          return null
+        }
+
+        if (usage > dayRateRecord.prevPeriodTotalDays) {
+          invalidRows.push(permno)
+          return null
+        }
+
+        return {
+          vehicleId: permno,
+          prevPeriodTotalDays: dayRateRecord.prevPeriodTotalDays,
+          prevPeriodUsage: usage,
+        }
+      })
+      .filter((row): row is CarUsageRecord => row !== null)
+
+    if (invalidRows.length > 0) {
+      const uniqueInvalidRows = [...new Set(invalidRows)]
+      const errorSummary = uniqueInvalidRows
+        .map((permno) => `${permno}: Invalid or ineligible row`)
+        .join('\n')
+
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.invalidData.title,
+          summary: errorSummary
+            ? {
+                ...messages.serviceErrors.invalidData.summaryWithDetails,
+                values: {
+                  details: errorSummary,
+                },
+              }
+            : messages.serviceErrors.invalidData.summary,
+        },
+        400,
+      )
+    }
+
+    if (records.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.noValidEntriesFound.title,
+          summary: messages.serviceErrors.noValidEntriesFound.summary,
+        },
+        400,
+      )
+    }
+
+    return records
+  }
+
+  private async getRecordsFromFileUpload(
+    application: TemplateApiModuleActionProps['application'],
+    dayRateRecordsByPermno: Map<string, DayRateRecord>,
+  ): Promise<CarUsageRecord[]> {
+    const [attachment] = await this.attachmentService.getFiles(application, [
+      'carDayRateUsageFile',
+    ])
+    if (!attachment?.fileContent) {
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.missingFile.title,
+          summary: messages.serviceErrors.missingFile.summary,
+        },
+        400,
+      )
+    }
+
+    const fileType = getUploadFileType(attachment.fileName ?? '')
+    if (!fileType) {
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.invalidFileType.title,
+          summary: messages.serviceErrors.invalidFileType.summary,
+        },
+        400,
+      )
+    }
+
+    const bytes = Buffer.from(attachment.fileContent, 'base64')
+    const parsed = await parseUploadFile(
+      bytes,
+      fileType,
+      dayRateRecordsByPermno,
+    )
+
+    if (!parsed.ok) {
+      if (parsed.reason === 'no-data') {
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.invalidData.title,
+            summary: messages.serviceErrors.invalidData.summary,
+          },
+          400,
+        )
+      }
+
+      const errorSummary = parsed.errors
+        .map((e) => {
+          const msg =
+            typeof e.message === 'string'
+              ? e.message
+              : e.message.defaultMessage ?? e.message.id
+          return `${e.carNr}: ${msg}`
+        })
+        .filter((m) => m.length > 0)
+        .join('\n')
+
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.invalidData.title,
+          summary: errorSummary
+            ? {
+                ...messages.serviceErrors.invalidData.summaryWithDetails,
+                values: {
+                  details: errorSummary,
+                },
+              }
+            : messages.serviceErrors.invalidData.summary,
+        },
+        400,
+      )
+    }
+
+    return parsed.records
+  }
+
+  private formatSkatturinnErrorBody(body: unknown): string | undefined {
+    if (!body) return undefined
+
+    let parsed: Record<string, unknown>
+
+    if (typeof body === 'object') {
+      parsed = body as Record<string, unknown>
+    } else if (typeof body === 'string') {
+      try {
+        const json = JSON.parse(body)
+        if (!json || typeof json !== 'object') return undefined
+        parsed = json as Record<string, unknown>
+      } catch {
+        return undefined
+      }
+    } else {
+      return undefined
+    }
+
+    const messages = Object.entries(parsed)
       .flatMap(([field, value]) => {
         if (Array.isArray(value)) {
           return value

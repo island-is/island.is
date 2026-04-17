@@ -17,7 +17,6 @@ import {
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
 import { createMockApiResponse } from '../../../test/utils'
-import { ScopeResolver } from './scope.resolver'
 import { ScopeService } from './scope.service'
 import { AdminScopeDTO, AdminCreateScopeDto } from '@island.is/auth-api-lib'
 import { ScopesPayload } from './dto/scopes.payload'
@@ -94,6 +93,9 @@ const createMockAdminApi = (
   meScopesControllerFindByTenantIdAndScopeNameRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse(findByNameData)),
+  meScopeClientsControllerFindAllRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse([])),
 })
 
 const mockAdminDevApi = createMockAdminApi(
@@ -120,7 +122,7 @@ const mockAdminProdApi = createMockAdminApi(
       load: [AuthAdminApiClientConfig],
     }),
   ],
-  providers: [ScopeResolver, ScopeService],
+  providers: [ScopeService],
 })
 class TestModule {}
 
@@ -142,6 +144,10 @@ describe('ScopeService', () => {
     mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
     mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
     mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
+    // Find clients by scope
+    mockAdminDevApi.meScopeClientsControllerFindAllRaw.mockClear()
+    mockAdminStagingApi.meScopeClientsControllerFindAllRaw.mockClear()
+    mockAdminProdApi.meScopeClientsControllerFindAllRaw.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -167,7 +173,9 @@ describe('ScopeService', () => {
     })
 
     afterAll(async () => {
-      await app.cleanUp()
+      if (app) {
+        await app.cleanUp()
+      }
     })
 
     it('should create scope for specific tenant for all environments', async () => {
@@ -236,6 +244,8 @@ describe('ScopeService', () => {
           environments: scopes.map((scope) => ({
             ...scope,
             isAccessControlled: false,
+            categoryIds: [],
+            tagIds: [],
           })),
         }),
       )
@@ -278,6 +288,7 @@ describe('ScopeService', () => {
       const environments = Object.entries(groupedScopes)
         .map(([_, scopes]) => scopes)
         .flat()
+        .map((env) => ({ ...env, categoryIds: [], tagIds: [] }))
 
       // Act
       const scopeResponses = await scopeService.getScope(currentUser, {
@@ -299,6 +310,70 @@ describe('ScopeService', () => {
         scopeName: mockedScope.name,
         environments: environments,
       } as Scope)
+    })
+
+    it('should get clients for a scope in a specific environment', async () => {
+      // Arrange
+      const scopeName = '@island.is/scope1'
+      const mockClients = [
+        {
+          clientId: '@island.is/web',
+          clientType: 'web',
+          displayName: [
+            { locale: 'is', value: 'Vefur' },
+            { locale: 'en', value: 'Web' },
+          ],
+        },
+        {
+          clientId: '@island.is/native',
+          clientType: 'native',
+          displayName: [{ locale: 'is', value: 'App' }],
+        },
+      ]
+
+      mockAdminDevApi.meScopeClientsControllerFindAllRaw.mockResolvedValueOnce(
+        createMockApiResponse(mockClients),
+      )
+
+      // Act
+      const result = await scopeService.getScopeClients(
+        currentUser,
+        { tenantId: TENANT_ID, scopeName },
+        Environment.Development,
+      )
+
+      // Assert
+      expect(
+        mockAdminDevApi.meScopeClientsControllerFindAllRaw,
+      ).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopeClientsControllerFindAllRaw).toBeCalledWith(
+        {
+          tenantId: TENANT_ID,
+          scopeName,
+        },
+      )
+      expect(
+        mockAdminStagingApi.meScopeClientsControllerFindAllRaw,
+      ).not.toBeCalled()
+      expect(
+        mockAdminProdApi.meScopeClientsControllerFindAllRaw,
+      ).not.toBeCalled()
+
+      expect(result).toEqual([
+        {
+          clientId: '@island.is/web',
+          clientType: 'web',
+          displayName: [
+            { locale: 'is', value: 'Vefur' },
+            { locale: 'en', value: 'Web' },
+          ],
+        },
+        {
+          clientId: '@island.is/native',
+          clientType: 'native',
+          displayName: [{ locale: 'is', value: 'App' }],
+        },
+      ])
     })
   })
 })
