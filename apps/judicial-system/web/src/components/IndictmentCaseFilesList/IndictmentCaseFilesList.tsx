@@ -41,10 +41,10 @@ import {
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
 
@@ -292,18 +292,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
       sentToPrisonAdminDate,
     )
 
-  const hasNoFiles = !showFiles && !displayGeneratedPDFs
-
-  const {
-    digitalCaseFiles,
-    digitalCaseFilesLoading,
-    openDigitalCaseFileUrl,
-    loadingFileId,
-  } = usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const showDigitalCaseFilesSection =
     isDistrictCourtUser(user) &&
     (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+
+  const hasNoFiles =
+    !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection
 
   return (
     <>
@@ -508,7 +505,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
                           onClick={() =>
                             openDigitalCaseFileUrl(file.policeDigitalFileId)
                           }
-                          disabled={loadingFileId === file.policeDigitalFileId}
                           cursor="pointer"
                           background="transparent"
                           width="full"
@@ -522,34 +518,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                           >
                             {file.name}
                           </Text>
-                          <AnimatePresence mode="wait" initial={false}>
-                            {loadingFileId === file.policeDigitalFileId ? (
-                              <motion.span
-                                key="loading"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                style={{ display: 'flex' }}
-                              >
-                                <LoadingDots single size="small" />
-                              </motion.span>
-                            ) : (
-                              <motion.span
-                                key="icon"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                style={{ display: 'flex' }}
-                              >
-                                <Icon
-                                  icon="open"
-                                  type="outline"
-                                  size="small"
-                                  color="blue400"
-                                />
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
+                          <Icon
+                            icon="open"
+                            type="outline"
+                            size="small"
+                            color="blue400"
+                          />
                         </Box>
                       ))}
                     </motion.div>

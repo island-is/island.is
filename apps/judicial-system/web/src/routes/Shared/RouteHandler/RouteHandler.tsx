@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, LoadingDots } from '@island.is/island-ui/core'
@@ -94,11 +94,16 @@ const getRoute = (caseToOpen: Case, user: User): string => {
   return route ? `${route}/${caseToOpen.id}` : '/'
 }
 
-const RouteHandler: React.FC = () => {
+interface Props {
+  resolve?: () => Promise<string | null>
+}
+
+const RouteHandler: FC<Props> = ({ resolve }) => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
   const [caseToOpen, setCaseToOpen] = useState<Case>()
+  const resolveRef = useRef(resolve)
 
   const handleGetCase = useCallback(
     (caseId?: string) => {
@@ -119,16 +124,25 @@ const RouteHandler: React.FC = () => {
   )
 
   useEffect(() => {
-    handleGetCase(router.query.id?.toString())
-  }, [handleGetCase, router.query.id])
+    if (!resolveRef.current) return
+    resolveRef.current().then((url) => {
+      if (url) {
+        window.location.href = url
+      } else {
+        router.push('/')
+      }
+    })
+  }, [router])
 
   useEffect(() => {
-    if (!caseToOpen || !user) {
-      return
-    }
+    if (resolve) return
+    handleGetCase(router.query.id?.toString())
+  }, [resolve, handleGetCase, router.query.id])
 
+  useEffect(() => {
+    if (resolve || !caseToOpen || !user) return
     router.push(getRoute(caseToOpen, user))
-  }, [caseToOpen, router, user])
+  }, [resolve, caseToOpen, router, user])
 
   return (
     <Box className={styles.loadingContainer}>
