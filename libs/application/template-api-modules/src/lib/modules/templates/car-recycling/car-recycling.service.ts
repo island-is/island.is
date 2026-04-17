@@ -8,8 +8,13 @@ import {
   CarRecyclingClientService,
   RecyclingRequestTypes,
 } from '@island.is/clients/car-recycling'
+import {
+  RecyclingFundClientService,
+  CreateXRoadRecyclingRequestDtoRequestTypeEnum,
+} from '@island.is/clients/recycling-fund'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   VehicleDto,
@@ -27,16 +32,29 @@ export class CarRecyclingService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private carRecyclingService: CarRecyclingClientService,
     private readonly vehiclesApi: VehicleSearchApi,
+    private readonly recyclingFundService: RecyclingFundClientService,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
   }
+  //THE SKILAVOTTORD BACKEND IS BEING MOVED TO THE RECYCLING FUND SERVERS FROM ISLAND.IS
+  // TO BEGIN WITH WE ARE SAVING THE DATA ON BOTH SERVERS
 
   async createOwner(application: ApplicationWithAttachments, auth: User) {
     const { applicantName } = getApplicationExternalData(
       application.externalData,
     )
+    // OLD BACKEND
+    const oldResponse = await this.carRecyclingService.createOwner(
+      auth,
+      applicantName,
+    )
 
-    return await this.carRecyclingService.createOwner(auth, applicantName)
+    // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      await this.recyclingFundService.createOwner(auth, applicantName)
+    }
+
+    return oldResponse
   }
 
   async createVehicle(auth: User, vehicle: VehicleDto) {
@@ -61,7 +79,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
         modelYear = new Date(vehicle.modelYear, 0, 1)
       }
 
-      return await this.carRecyclingService.createVehicle(
+      // OLD Backend
+      const oldResponse = await this.carRecyclingService.createVehicle(
         auth,
         vehicle.permno,
         mileage,
@@ -70,6 +89,21 @@ export class CarRecyclingService extends BaseTemplateApiService {
         modelYear,
         vehicle.color || '',
       )
+
+      // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
+      if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+        await this.recyclingFundService.createVehicle(
+          auth,
+          vehicle.permno,
+          mileage,
+          vehicle.vin || '',
+          vehicle.make || '',
+          modelYear,
+          vehicle.color || '',
+        )
+      }
+
+      return oldResponse
     }
   }
 
@@ -79,12 +113,26 @@ export class CarRecyclingService extends BaseTemplateApiService {
     vehicle: VehicleDto,
     recyclingRequestType: RecyclingRequestTypes,
   ) {
-    return await this.carRecyclingService.recycleVehicle(
+    // OLD Backend
+    const oldResponse = await this.carRecyclingService.recycleVehicle(
       auth,
       fullName.trim(),
       vehicle.permno || '',
       recyclingRequestType,
     )
+
+    // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      await this.recyclingFundService.recycleVehicle(
+        auth,
+        fullName.trim(),
+        vehicle.permno || '',
+        recyclingRequestType === RecyclingRequestTypes.pendingRecycle
+          ? CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle
+          : CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
+      )
+    }
+    return oldResponse
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {

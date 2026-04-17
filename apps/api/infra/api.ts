@@ -65,6 +65,7 @@ import {
   FireCompensation,
   VMSTUnemployment,
   GoProVerdicts,
+  RecyclingFund,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -570,6 +571,7 @@ export const serviceSetup = (services: {
       PracticalExams,
       VMSTUnemployment,
       GoProVerdicts,
+      RecyclingFund,
     )
     .ingress({
       primary: {
