@@ -1110,6 +1110,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
+  const description = formatMessage(m.listPage.description)
+
   return (
     <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
@@ -1120,11 +1122,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       <Stack space={3}>
         <Box paddingBottom={2}>
           <GridContainer>
-            <Stack space={[3, 3, 3, 0]}>
+            <Stack space={[3, 3, 3, 1]}>
               <GridRow alignItems="center">
                 <GridColumn
                   offset={['0', '0', '0', '1/12', '1/12']}
-                  span={['1/1', '1/1', '1/1', '7/12', '7/12']}
+                  span={['1/1', '1/1', '1/1', '8/12', '8/12']}
                 >
                   <Stack space={2}>
                     <Text variant="h1" as="h1">
@@ -1135,26 +1137,28 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       marginBottom={0}
                       marginTop={0}
                     />
+                    {Boolean(description?.trim()) && (
+                      <Text variant="intro">{description}</Text>
+                    )}
                   </Stack>
                 </GridColumn>
-                <GridColumn
-                  span={['1/1', '1/1', '1/1', '4/12', '4/12']}
-                  hiddenBelow="lg"
-                >
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    width="full"
-                    paddingTop={2}
-                    paddingBottom={2}
-                  >
-                    <img
-                      src="/assets/skjaldarmerki.svg"
-                      alt=""
-                      className={styles.logo}
-                    />
-                  </Box>
+                <GridColumn span={['1/1', '1/1', '1/1', '3/12', '3/12']}>
+                  <Hidden below="xl">
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      width="full"
+                      paddingTop={2}
+                      paddingBottom={2}
+                    >
+                      <img
+                        src="/assets/skjaldarmerki.svg"
+                        alt=""
+                        className={styles.logo}
+                      />
+                    </Box>
+                  </Hidden>
                 </GridColumn>
               </GridRow>
 

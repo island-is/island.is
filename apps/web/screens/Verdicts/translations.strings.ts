@@ -32,6 +32,11 @@ export const m = {
       defaultMessage: 'Dómar og úrskurðir',
       description: 'H1 titill',
     },
+    description: {
+      id: 'web.verdicts:listPage.description',
+      defaultMessage: 'Dómar frá öllum dómstigum á Íslandi',
+      description: 'Lýsing',
+    },
     openFilter: {
       id: 'web.verdicts:listPage.openFilter',
       defaultMessage: 'Opna síu',
