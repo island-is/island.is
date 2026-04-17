@@ -49,6 +49,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       applicantName,
     )
 
+    // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       await this.recyclingFundService.createOwner(auth, applicantName)
     }
@@ -89,6 +90,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
         vehicle.color || '',
       )
 
+      // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
       if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
         await this.recyclingFundService.createVehicle(
           auth,
@@ -119,6 +121,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       recyclingRequestType,
     )
 
+    // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       await this.recyclingFundService.recycleVehicle(
         auth,
@@ -133,131 +136,123 @@ export class CarRecyclingService extends BaseTemplateApiService {
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
+      application.answers,
+    )
+
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    let isError = false
     try {
-      await this.recyclingFundService.healthCheck(auth)
-      console.log('OKOKOKOKOKKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOK-15')
+      // Create owner
+      const ownerResponse = await this.createOwner(application, auth)
+
+      if (ownerResponse && ownerResponse.errors) {
+        isError = true
+        this.logger.error(`car-recycling: Error creating owner`, {
+          error: ownerResponse.errors,
+        })
+      }
+
+      // Canceled recycling
+      const canceledResponses = canceledVehicles.map(async (vehicle) => {
+        if (!isError) {
+          const cancelResponse = await this.recycleVehicle(
+            auth,
+            applicantName,
+            vehicle,
+            RecyclingRequestTypes.cancelled,
+          )
+
+          if (
+            cancelResponse &&
+            !cancelResponse.data.createSkilavottordRecyclingRequestAppSys.status
+          ) {
+            isError = true
+            this.logger.error(
+              `car-recycling: Error canceling recycling vehicle ${vehicle.permno?.slice(
+                -3,
+              )} `,
+              {
+                error: cancelResponse.errors,
+              },
+            )
+          }
+        }
+      })
+
+      // Wait for cancel to finish before continuing
+      await Promise.all(canceledResponses)
+
+      // Recycle
+      const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
+        if (!isError) {
+          // Create vehicle
+          const vechicleResponse = await this.createVehicle(auth, vehicle)
+
+          if (vechicleResponse && vechicleResponse.errors) {
+            isError = true
+            this.logger.error(
+              `car-recycling: Error creating vehicle ${vehicle.permno?.slice(
+                -3,
+              )} `,
+              {
+                error: vechicleResponse.errors,
+              },
+            )
+          }
+
+          if (!isError) {
+            // Recycle vehicle
+            const response = await this.recycleVehicle(
+              auth,
+              applicantName,
+              vehicle,
+              RecyclingRequestTypes.pendingRecycle,
+            )
+
+            if (
+              response &&
+              !response.data.createSkilavottordRecyclingRequestAppSys.status
+            ) {
+              isError = true
+              this.logger.error(
+                `car-recycling: Error recycling vehicle ${vehicle.permno?.slice(
+                  -3,
+                )}`,
+                {
+                  error: response.errors,
+                },
+              )
+            }
+          }
+        }
+      })
+
+      // Wait for all promises to resolve or reject
+      await Promise.all(vehiclesResponses)
+
+      if (isError) {
+        return Promise.reject(
+          new Error(`car-recycling: Error occurred when recycling vehicle(s)`),
+        )
+      }
+
       return Promise.resolve(true)
     } catch (error) {
-      return Promise.reject(new Error(`ERROR`, error))
+      isError = true
+      this.logger.error(
+        `car-recycling: Error occurred when recycling vehicle(s)`,
+        {
+          error,
+        },
+      )
+
+      return Promise.reject(
+        new Error(`Error occurred when recycling vehicle(s)`),
+      )
     }
-
-    // const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
-    //   application.answers,
-    // )
-
-    // const { applicantName } = getApplicationExternalData(
-    //   application.externalData,
-    // )
-
-    // let isError = false
-    // try {
-    //   // Create owner
-    //   const ownerResponse = await this.createOwner(application, auth)
-
-    //   if (ownerResponse && ownerResponse.errors) {
-    //     isError = true
-    //     this.logger.error(`car-recycling: Error creating owner`, {
-    //       error: ownerResponse.errors,
-    //     })
-    //   }
-
-    //   // Canceled recycling
-    //   const canceledResponses = canceledVehicles.map(async (vehicle) => {
-    //     if (!isError) {
-    //       const cancelResponse = await this.recycleVehicle(
-    //         auth,
-    //         applicantName,
-    //         vehicle,
-    //         RecyclingRequestTypes.cancelled,
-    //       )
-
-    //       if (
-    //         cancelResponse &&
-    //         !cancelResponse.data.createSkilavottordRecyclingRequestAppSys.status
-    //       ) {
-    //         isError = true
-    //         this.logger.error(
-    //           `car-recycling: Error canceling recycling vehicle ${vehicle.permno?.slice(
-    //             -3,
-    //           )} `,
-    //           {
-    //             error: cancelResponse.errors,
-    //           },
-    //         )
-    //       }
-    //     }
-    //   })
-
-    //   // Wait for cancel to finish before continuing
-    //   await Promise.all(canceledResponses)
-
-    //   // Recycle
-    //   const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
-    //     if (!isError) {
-    //       // Create vehicle
-    //       const vechicleResponse = await this.createVehicle(auth, vehicle)
-
-    //       if (vechicleResponse && vechicleResponse.errors) {
-    //         isError = true
-    //         this.logger.error(
-    //           `car-recycling: Error creating vehicle ${vehicle.permno?.slice(
-    //             -3,
-    //           )} `,
-    //           {
-    //             error: vechicleResponse.errors,
-    //           },
-    //         )
-    //       }
-
-    //       if (!isError) {
-    //         // Recycle vehicle
-    //         const response = await this.recycleVehicle(
-    //           auth,
-    //           applicantName,
-    //           vehicle,
-    //           RecyclingRequestTypes.pendingRecycle,
-    //         )
-
-    //         if (
-    //           response &&
-    //           !response.data.createSkilavottordRecyclingRequestAppSys.status
-    //         ) {
-    //           isError = true
-    //           this.logger.error(
-    //             `car-recycling: Error recycling vehicle ${vehicle.permno?.slice(
-    //               -3,
-    //             )}`,
-    //             {
-    //               error: response.errors,
-    //             },
-    //           )
-    //         }
-    //       }
-    //     }
-    //   })
-
-    //   // Wait for all promises to resolve or reject
-    //   await Promise.all(vehiclesResponses)
-
-    //   if (isError) {
-    //     return Promise.reject(
-    //       new Error(`car-recycling: Error occurred when recycling vehicle(s)`),
-    //     )
-    //   }
-
-    //   return Promise.resolve(true)
-    // } catch (error) {
-    //   isError = true
-    //   this.logger.error(
-    //     `car-recycling: Error occurred when recycling vehicle(s)`,
-    //     {
-    //       error,
-    //     },
-    //   )
-
-    //   return Promise.reject(
-    //     new Error(`Error occurred when recycling vehicle(s)`),
-    //   )
-    // }
   }
 }

@@ -11,13 +11,9 @@ export const RecyclingFundClientConfig = defineConfig<z.infer<typeof schema>>({
   name: 'RecyclingFundClientConfig',
   schema,
   load: (env) => ({
-    /*xRoadServicePath: env.required(
-      'XROAD_RECYCLING_FUND_PATH',
-      'IS-TEST/GOV/5308033680/Urvinnslusjodur-Client',
-    ),*/
     xRoadServicePath: env.required(
       'XROAD_RECYCLING_FUND_PATH',
-      'IS-DEV/GOV/10099/Urvinnslusjodur-Client',
+      'IS-DEV/GOV/10099/Urvinnslusjodur-Protected/skilavottord-api',
     ),
     scope: [RecyclingFundScope.carRecycling],
   }),

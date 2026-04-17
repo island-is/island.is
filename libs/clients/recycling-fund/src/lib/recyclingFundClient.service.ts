@@ -10,6 +10,7 @@ import {
   XRoadControllerCreateRecyclingRequestRequest,
   CreateXRoadRecyclingRequestDtoRequestTypeEnum,
 } from '../../gen/fetch'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class RecyclingFundClientService {
@@ -17,10 +18,8 @@ export class RecyclingFundClientService {
   private recyclingFundApiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
-  healthCheck(user: User): Promise<void> {
-    // const r = this.recyclingFundApiWithAuth(user).xRoadControllerHealth()
-    //console.log('HEALTH CHECK RESPONSE-23', { result: r })
-    return this.createOwner(user, 'BK-TEST DUDE')
+  async healthCheck(user: User): Promise<void> {
+    return await this.recyclingFundApiWithAuth(user).xRoadControllerHealth()
   }
 
   async createOwner(user: User, applicantName: string): Promise<void> {
@@ -36,7 +35,7 @@ export class RecyclingFundClientService {
       user,
     ).xRoadControllerCreateVehicleOwner(request)
 
-    console.log('CREATE OWNER RESPONSE-27', { result: r })
+    logger.info('createOwner', { result: r })
     return r
   }
 
@@ -66,7 +65,7 @@ export class RecyclingFundClientService {
       user,
     ).xRoadControllerCreateVehicle(request)
 
-    console.log('CREATE VEHICLE RESPONSE-27', { result: r })
+    logger.info('createVehicle', { result: r })
     return r
   }
 
@@ -86,8 +85,11 @@ export class RecyclingFundClientService {
       } as CreateXRoadRecyclingRequestDto,
     }
 
-    return await this.recyclingFundApiWithAuth(
+    const r = await this.recyclingFundApiWithAuth(
       user,
     ).xRoadControllerCreateRecyclingRequest(request)
+
+    logger.info('recycleVehicle', { result: r })
+    return r
   }
 }

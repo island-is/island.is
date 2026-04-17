@@ -23,18 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10099/Urvinnslusjodur-Client/ > src/clientConfig.json",
-          "prettier --write src/clientConfig.json"
-        ],
-        "parallel": false,
-        "cwd": "libs/clients/recycling-fund"
-      }
-    },
-    "update-openapi-document2": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "curl https://app-skilavottord-api-staging-fvd4d6fneecxfqhk.northeurope-01.azurewebsites.net/app/skilavottord/api/swagger-json > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10099/Urvinnslusjodur-Protected/getOpenAPI?serviceCode=skilavottord-api > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
