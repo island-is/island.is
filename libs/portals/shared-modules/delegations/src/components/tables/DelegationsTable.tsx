@@ -96,7 +96,6 @@ const DesktopDelegationsTable = ({
                           ? alignRight
                           : undefined
                       }
-                      style={{ maxWidth: 300 }}
                     >
                       {cell}
                     </Box>
