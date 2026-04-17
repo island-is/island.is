@@ -108,6 +108,7 @@ const IndictmentOverview: FC = () => {
   const { appealBanner, appealModals } = useAppealCase()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
   const caseIsClosed = isCompletedCase(workingCase.state)
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
@@ -211,7 +212,8 @@ const IndictmentOverview: FC = () => {
               workingCase.indictmentDecision !==
                 IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
-                IndictmentDecision.REDISTRIBUTING && (
+                IndictmentDecision.REDISTRIBUTING &&
+              caseIsClosed === false && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
                     court={workingCase.court}

@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from 'react'
+import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
@@ -94,7 +94,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
-const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
+const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
   const { title, files, onOpenFile, shouldRender = true, children } = props
 
   if ((files.length === 0 && !children) || !shouldRender) {
@@ -278,6 +278,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+
+  const hideCourtRecord =
+    isDefenceUser(user) &&
+    Boolean(
+      workingCase.defendants?.length &&
+        workingCase.defendants.every(
+          (d) => d.indictmentCancelledOrDismissedState !== null,
+        ),
+    )
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
@@ -511,20 +520,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                {hasGeneratedCourtRecord && (
-                  <PdfButton
-                    caseId={workingCase.id}
-                    connectedCaseParentId={connectedCaseParentId}
-                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                    pdfType="courtRecord"
-                    renderAs="row"
-                    elementId="Þingbók"
+                {hideCourtRecord ? (
+                  <AlertMessage
+                    type="info"
+                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
                   />
+                ) : (
+                  <>
+                    {hasGeneratedCourtRecord && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        connectedCaseParentId={connectedCaseParentId}
+                        title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                        pdfType="courtRecord"
+                        renderAs="row"
+                        elementId="Þingbók"
+                      />
+                    )}
+                    <RenderFiles
+                      caseFiles={filteredFiles.courtRecords}
+                      onOpenFile={onOpen}
+                    />
+                  </>
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.courtRecords}
-                  onOpenFile={onOpen}
-                />
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}

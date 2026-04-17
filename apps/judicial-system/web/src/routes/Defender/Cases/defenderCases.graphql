@@ -7,6 +7,7 @@ query DefenderCases($input: CaseListQueryInput) {
     policeCaseNumbers
     defendants {
       id
+      defenderNationalId
       nationalId
       name
       noNationalId
@@ -18,6 +19,10 @@ query DefenderCases($input: CaseListQueryInput) {
       verdict {
         id
         isDefaultJudgement
+      }
+      indictmentCancelledOrDismissedState {
+        type
+        time
       }
     }
     courtCaseNumber
