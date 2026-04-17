@@ -41,7 +41,7 @@ export class LimitedAccessCreateCaseFileGuard implements CanActivate {
     }
 
     if (user.role !== UserRole.DEFENDER) {
-      // Only defence users can create limitedcase files
+      // Only defence users can create limited access case files
       return false
     }
 

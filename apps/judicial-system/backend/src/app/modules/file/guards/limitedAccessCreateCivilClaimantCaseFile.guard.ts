@@ -57,10 +57,6 @@ export class LimitedAccessCreateCivilClaimantCaseFileGuard
       throw new BadRequestException('Missing case file category')
     }
 
-    if (allowedCaseFileCategories.includes(caseFileCategory)) {
-      return true
-    }
-
-    return true
+    return allowedCaseFileCategories.includes(caseFileCategory)
   }
 }
