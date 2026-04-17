@@ -1,4 +1,4 @@
-export const generateGoogleMapsLinkFromCoords = (
+export const generateGoogleMapsLink = (
   lat?: number | null,
   lon?: number | null,
 ): string | null => {

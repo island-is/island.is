@@ -10,7 +10,7 @@ import {
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
-import { generateGoogleMapsLinkFromCoords } from '../../../utils/googleMaps'
+import { generateGoogleMapsLink } from '../../../utils/googleMaps'
 import { mapWeekday } from '../../../utils/mappers'
 import { GetAppointmentsQuery } from '../../Appointments/Appointments.generated'
 import { DataState } from '../../../utils/types'
@@ -42,8 +42,8 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         loading: false,
         error: data?.error,
         title: appointment.title ?? '',
+        description: '',
         to: HealthPaths.HealthAppointmentDetail.replace(':id', appointment.id),
-        href: HealthPaths.HealthAppointments,
         appointment: {
           date: formatDate(appointment.date ?? ''),
           time: getTime(appointment.date ?? ''),
@@ -54,7 +54,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
           location: {
             label: appointment.location?.name ?? '',
             href:
-              generateGoogleMapsLinkFromCoords(
+              generateGoogleMapsLink(
                 appointment.location?.latitude,
                 appointment.location?.longitude,
               ) ?? undefined,

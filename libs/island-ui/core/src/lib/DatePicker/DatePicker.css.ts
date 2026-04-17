@@ -325,6 +325,11 @@ export const popperInline = style({
   transform: 'none !important',
   marginBottom: '-7px',
   top: '-12px !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '-12px !important' as never,
+    },
+  }),
 })
 
 export const rangeContainer = style({

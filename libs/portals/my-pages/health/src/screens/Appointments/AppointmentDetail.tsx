@@ -13,7 +13,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 
-import { generateGoogleMapsLinkFromCoords } from '../../utils/googleMaps'
+import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { useGetAppointmentDetailQuery } from './AppointmentDetail.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
@@ -30,7 +30,7 @@ const AppointmentDetail = () => {
 
   const appointment = data?.healthDirectorateAppointment
 
-  const mapsLink = generateGoogleMapsLinkFromCoords(
+  const mapsLink = generateGoogleMapsLink(
     appointment?.location?.latitude,
     appointment?.location?.longitude,
   )
