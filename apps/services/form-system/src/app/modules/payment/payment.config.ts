@@ -4,7 +4,6 @@ import { z } from 'zod'
 const PaymentModule = z.object({
   callbackBaseUrl: z.string(),
   callbackAdditionUrl: z.string(),
-  arkBaseUrl: z.string(),
   clientLocationOrigin: z.string(),
   authIssuer: z.string(),
   paymentApiCallbackUrl: z.string(),
@@ -14,7 +13,6 @@ export const PaymentModuleConfig = defineConfig({
   name: 'PaymentModule',
   schema: PaymentModule,
   load: (env) => ({
-    arkBaseUrl: env.required('ARK_BASE_URL', 'https://uat.arkid.is'),
     callbackAdditionUrl: env.required(
       'XROAD_PAYMENT_CALLBACK_ADDITION_URL',
       '/',

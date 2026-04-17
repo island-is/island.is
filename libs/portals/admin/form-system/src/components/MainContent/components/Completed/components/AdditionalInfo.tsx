@@ -27,7 +27,7 @@ export const AdditionalInfo = ({
   const { formatMessage } = useLocale()
   const { focus, setFocus, getTranslation, control } =
     useContext(ControlContext)
-  const { isPublished } = control
+  const { isReadOnly } = control
 
   return (
     <Box
@@ -49,7 +49,7 @@ export const AdditionalInfo = ({
           variant="ghost"
           colorScheme="destructive"
           onClick={() => remove(index)}
-          disabled={isPublished}
+          disabled={isReadOnly}
           size="small"
           icon="trash"
         />
@@ -61,7 +61,7 @@ export const AdditionalInfo = ({
           backgroundColor="blue"
           textarea
           value={info.is || ''}
-          readOnly={isPublished}
+          readOnly={isReadOnly}
           onFocus={(e) => setFocus(e.target.value)}
           onChange={(e) => changeAdditionalInfo(index, 'is', e.target.value)}
           onBlur={(e) => e.target.value !== focus && saveAdditionalInfo()}
@@ -72,7 +72,7 @@ export const AdditionalInfo = ({
           backgroundColor="blue"
           textarea
           value={info.en || ''}
-          readOnly={isPublished}
+          readOnly={isReadOnly}
           onFocus={async (e) => {
             setFocus(e.target.value)
             if (info.en === '' && info.is !== '' && info.is) {

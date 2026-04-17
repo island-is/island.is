@@ -626,6 +626,7 @@ export class AdminClientsService {
       allowedCorsOrigins:
         client.allowedCorsOrigins?.map((cors) => cors.origin) ?? [],
       allowedAcr: client.allowedAcr.map((v) => v.toString()) ?? [],
+      modified: client.modified,
     }
   }
 
