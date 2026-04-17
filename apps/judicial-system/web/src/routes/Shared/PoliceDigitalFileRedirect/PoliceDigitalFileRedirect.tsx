@@ -6,15 +6,19 @@ import { usePoliceDigitalCaseFileTokenUrlLazyQuery } from '@island.is/judicial-s
 import RouteHandler from '../RouteHandler/RouteHandler'
 
 const PoliceDigitalFileRedirect = () => {
-  const { query } = useRouter()
-  const caseId = query.caseId?.toString()
-  const fileId = query.fileId?.toString()
+  const router = useRouter()
+  const caseId = router.query.caseId?.toString()
+  const fileId = router.query.fileId?.toString()
 
   const [getTokenUrl] = usePoliceDigitalCaseFileTokenUrlLazyQuery({
     fetchPolicy: 'no-cache',
   })
 
   const resolve = useCallback(async () => {
+    if (!router.isReady) {
+      return undefined
+    }
+
     if (!caseId || !fileId) {
       return null
     }
@@ -24,7 +28,7 @@ const PoliceDigitalFileRedirect = () => {
     })
 
     return result.data?.policeDigitalCaseFileTokenUrl ?? null
-  }, [caseId, fileId, getTokenUrl])
+  }, [router.isReady, caseId, fileId, getTokenUrl])
 
   return <RouteHandler resolve={resolve} />
 }

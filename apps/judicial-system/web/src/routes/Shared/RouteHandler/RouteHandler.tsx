@@ -95,7 +95,7 @@ const getRoute = (caseToOpen: Case, user: User): string => {
 }
 
 interface Props {
-  resolve?: () => Promise<string | null>
+  resolve?: () => Promise<string | null | undefined>
 }
 
 const RouteHandler: FC<Props> = ({ resolve }) => {
@@ -126,7 +126,9 @@ const RouteHandler: FC<Props> = ({ resolve }) => {
   useEffect(() => {
     if (!resolveRef.current) return
     resolveRef.current().then((url) => {
-      if (url) {
+      if (url === undefined) {
+        return
+      } else if (url) {
         window.location.href = url
       } else {
         router.push('/')
