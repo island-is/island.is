@@ -136,6 +136,13 @@ const SelectionSchema = z
         name: z.string().optional(),
       })
       .optional(),
+    fallbackThirdLanguageRequire: z.boolean().optional(),
+    fallbackThirdLanguage: z
+      .object({
+        code: z.string().optional().nullable(),
+        name: z.string().optional(),
+      })
+      .optional(),
     nordicLanguage: z
       .object({
         code: z.string().optional().nullable(),
@@ -179,6 +186,13 @@ const SelectionSchema = z
       return !!thirdLanguage?.code
     },
     { path: ['thirdLanguage', 'code'] },
+  )
+  .refine(
+    ({ fallbackThirdLanguageRequire, fallbackThirdLanguage }) => {
+      if (!fallbackThirdLanguageRequire) return true
+      return !!fallbackThirdLanguage?.code
+    },
+    { path: ['fallbackThirdLanguage', 'code'] },
   )
 
 export const SecondarySchoolSchema = z.object({

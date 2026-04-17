@@ -22,6 +22,7 @@ export type SecondarySchool = {
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
   requireThirdLanguage: boolean
+  requireFallbackThirdLanguage: boolean
   isOpenForAdmissionGeneral: boolean
   isOpenForAdmissionFreshman: boolean
 }

@@ -1471,6 +1471,7 @@
             "description": "Third language chosen by the applicant\r\ne.g. en = English \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
             "nullable": true
           },
+          "fallbackThirdLanguage": { "type": "string", "nullable": true },
           "northernLanguage": {
             "type": "string",
             "description": "Northern langauge chosen by the applicant\r\ne.g. da = Danish \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
@@ -1507,6 +1508,9 @@
             "nullable": true
           },
           "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "fallbackThirdLanguage": {
+            "$ref": "#/components/schemas/LanguageDto"
+          },
           "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
           "requestDormitory": {
             "type": "boolean",
@@ -1530,6 +1534,12 @@
           "isManuallyAccepted": { "type": "boolean" },
           "allocatedProgramme": {
             "$ref": "#/components/schemas/ProgrammeSimpleDto"
+          },
+          "statusUpdatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -1614,18 +1624,23 @@
           "thirdLanguages": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/LanguageDto" },
-            "description": "Third languageges tought in school",
+            "description": "Third languages taught in school",
             "nullable": true
           },
           "nordicLanguages": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/LanguageDto" },
-            "description": "Nordic languageges tought in school",
+            "description": "Nordic languages taught in school",
             "nullable": true
           },
           "requireThirdLanguage": {
             "type": "boolean",
             "description": "Whether third language is required",
+            "nullable": true
+          },
+          "requireFallbackThirdLanguage": {
+            "type": "boolean",
+            "description": "Whether fallback third language is required",
             "nullable": true
           }
         },
