@@ -131,7 +131,10 @@ const RouteHandler: FC<Props> = ({ resolve }) => {
       } else if (url) {
         window.location.href = url
       } else {
-        router.push('/')
+        new BroadcastChannel('police-digital-file-redirect').postMessage({
+          type: 'error',
+        })
+        window.close()
       }
     })
   }, [router])

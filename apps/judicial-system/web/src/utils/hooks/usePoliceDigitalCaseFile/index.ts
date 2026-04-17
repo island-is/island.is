@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
@@ -24,6 +24,16 @@ const usePoliceDigitalCaseFile = (
 
   const [deleteMutation, { loading: isDeleting }] =
     useDeletePoliceDigitalCaseFileMutation()
+
+  useEffect(() => {
+    const channel = new BroadcastChannel('police-digital-file-redirect')
+    channel.onmessage = (event) => {
+      if (event.data?.type === 'error') {
+        toast.error('Tengill á rafrænt skjal fannst ekki')
+      }
+    }
+    return () => channel.close()
+  }, [])
 
   const openDigitalCaseFileUrl = useCallback(
     (policeDigitalFileId: string) => {
