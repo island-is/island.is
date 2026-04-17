@@ -16,13 +16,18 @@ export class AppointmentDetail {
   @Field(() => AppointmentStatusEnum, { nullable: true })
   status?: AppointmentStatusEnum
 
-  @Field({ nullable: true, description: 'Patient preparation instructions for the appointment' })
+  @Field({
+    nullable: true,
+    description: 'Patient preparation instructions for the appointment',
+  })
   instruction?: string
 
   @Field(() => AppointmentLocation, { nullable: true })
   location?: AppointmentLocation
 
-  @Field(() => [String], { description: 'Names of practitioners assigned to the appointment' })
+  @Field(() => [String], {
+    description: 'Names of practitioners assigned to the appointment',
+  })
   practitioners!: string[]
 
   @Field(() => Int, { nullable: true, description: 'Duration in minutes' })

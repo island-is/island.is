@@ -1,4 +1,10 @@
-import { Field, ObjectType, Float, Int, GraphQLISODateTime } from '@nestjs/graphql'
+import {
+  Field,
+  ObjectType,
+  Float,
+  Int,
+  GraphQLISODateTime,
+} from '@nestjs/graphql'
 import { AppointmentStatusEnum } from './enums'
 
 @ObjectType('HealthDirectorateAppointmentLocation')
@@ -54,10 +60,17 @@ export class Appointment {
   @Field(() => Int, { nullable: true, description: 'Duration in minutes' })
   duration?: number
 
-  @Field({ nullable: true, deprecationReason: 'Use healthDirectorateAppointment query for full appointment details' })
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Use healthDirectorateAppointment query for full appointment details',
+  })
   instruction?: string
 
-  @Field(() => [String], { deprecationReason: 'Use healthDirectorateAppointment query for full appointment details' })
+  @Field(() => [String], {
+    deprecationReason:
+      'Use healthDirectorateAppointment query for full appointment details',
+  })
   practitioners!: string[]
 }
 
