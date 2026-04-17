@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 
 import {
   Box,
@@ -15,14 +15,15 @@ import {
   Logo,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { webMenuButtonClicked } from '@island.is/plausible'
 import { FixedNav, SearchInput } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 import { LanguageToggler } from '../LanguageToggler'
-import { Menu } from '../Menu/Menu'
+import { DesktopNav } from './DesktopNav'
 import { LoginButton } from './LoginButton'
+import { MobileNav } from './MobileNav'
+import * as styles from './Header.css'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -43,7 +44,10 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
-  megaMenuData,
+  // megaMenuData is still passed in from the layout but no longer consumed
+  // here — the old fullscreen Menu has been replaced by DesktopNav + MobileNav.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  megaMenuData: _megaMenuData,
   languageToggleQueryParams,
   organizationSearchFilter,
   searchPlaceholder,
@@ -54,20 +58,30 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
 }) => {
   const { activeLocale, t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
+  const [isDesktopNavOpen, setIsDesktopNavOpen] = useState(false)
+  const handleDesktopNavOpenChange = useCallback(
+    (isOpen: boolean) => setIsDesktopNavOpen(isOpen),
+    [],
+  )
 
   const locale = activeLocale
   const english = activeLocale === 'en'
   const isWhite = colorScheme === 'white'
 
   return (
-    <header>
+    <header
+      className={`${styles.header} ${
+        isDesktopNavOpen ? styles.headerWithShadow : ''
+      }`}
+    >
       <Hidden print={true}>
         <FixedNav organizationSearchFilter={organizationSearchFilter} />
         <GridContainer>
           <GridRow>
-            <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
-              <Columns alignY="center" space={2}>
-                <Column width="content">
+            <GridColumn span="12/12">
+              <div className={styles.headerRow}>
+                <Columns alignY="center" space={2}>
+                  <Column width="content">
                   <FocusableBox
                     href={english ? '/en' : '/'}
                     data-testid="link-back-home"
@@ -85,8 +99,16 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                     </Hidden>
                   </FocusableBox>
                 </Column>
+                <Column width="content">
+                  <Hidden below="lg">
+                    <Box marginLeft={3}>
+                      <DesktopNav onOpenChange={handleDesktopNavOpenChange} />
+                    </Box>
+                  </Hidden>
+                </Column>
                 <Column>
                   <Box
+                    className={styles.compactUtilityButtons}
                     display="flex"
                     alignItems="center"
                     justifyContent="flexEnd"
@@ -109,13 +131,15 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                       </Box>
                     )}
 
-                    <Box marginLeft={marginLeft}>
-                      <LoginButton
-                        colorScheme={buttonColorScheme}
-                        topItem={customTopLoginButtonItem}
-                        type={loginButtonType}
-                      />
-                    </Box>
+                    <Hidden below="lg">
+                      <Box marginLeft={marginLeft}>
+                        <LoginButton
+                          colorScheme={buttonColorScheme}
+                          topItem={customTopLoginButtonItem}
+                          type={loginButtonType}
+                        />
+                      </Box>
+                    </Hidden>
 
                     <Box
                       marginLeft={marginLeft}
@@ -127,18 +151,18 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         hrefOverride={languageToggleHrefOverride}
                       />
                     </Box>
-                    <Box marginLeft={marginLeft}>
-                      <Menu
-                        {...megaMenuData}
-                        buttonColorScheme={buttonColorScheme}
-                        onMenuOpen={webMenuButtonClicked}
-                        organizationSearchFilter={organizationSearchFilter}
-                        languageToggleQueryParams={languageToggleQueryParams}
-                      />
-                    </Box>
+                    <Hidden above="md">
+                      <Box marginLeft={marginLeft}>
+                        <MobileNav
+                          organizationSearchFilter={organizationSearchFilter}
+                          searchPlaceholder={searchPlaceholder}
+                        />
+                      </Box>
+                    </Hidden>
                   </Box>
                 </Column>
               </Columns>
+              </div>
             </GridColumn>
           </GridRow>
         </GridContainer>
