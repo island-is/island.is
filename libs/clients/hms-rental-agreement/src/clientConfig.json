@@ -453,6 +453,9 @@
                 }
               }
             }
+          },
+          "currentUserLocale": {
+            "type": "string"
           }
         },
         "additionalProperties": false
