@@ -27,4 +27,7 @@ export class PoliceDigitalCaseFileSyncResult {
 
   @ApiProperty({ type: Boolean })
   isDeletable!: boolean
+
+  @ApiProperty({ type: Boolean })
+  isNew!: boolean
 }
