@@ -13,3 +13,8 @@ export const crossmark = style({
   fontSize: '0.75rem',
   fontWeight: 'normal',
 })
+
+export const logo = style({
+  height: '162px',
+  width: 'auto',
+})
