@@ -13,7 +13,6 @@ import {
   isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import { isUserCaseFile } from '@island.is/judicial-system-web/src//utils/utils'
 import {
   ContextMenu,
   FileNotFoundModal,
@@ -34,6 +33,7 @@ import {
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isUserCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'

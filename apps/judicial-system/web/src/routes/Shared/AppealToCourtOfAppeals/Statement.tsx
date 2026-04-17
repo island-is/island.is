@@ -142,7 +142,7 @@ const Statement = () => {
       file.category === appealStatementType &&
       (isProsecutionUser(user) || isUserCaseFile(workingCase, file, user)),
   )
-  console.log(workingCase.defendants, appealStatementFiles, user)
+
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
