@@ -19,7 +19,7 @@ import type {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseType,
@@ -772,7 +772,7 @@ export class CourtService {
     caseId: string,
     appealCaseNumber?: string,
     isCorrection?: boolean,
-    appealRulingDecision?: CaseAppealRulingDecision,
+    appealRulingDecision?: AppealCaseRulingDecision,
     appealRulingDate?: Date,
   ): Promise<unknown> {
     try {

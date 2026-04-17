@@ -103,13 +103,20 @@ export class LimitedAccessAppealCaseController {
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
     @Body() updateDto: UpdateAppealCaseDto,
   ): Promise<AppealCase> {
     this.logger.debug(`Updating appeal case ${appealCaseId} of case ${caseId}`)
 
     return this.sequelize.transaction((transaction) =>
-      this.appealCaseService.update(appealCase, updateDto, user, transaction),
+      this.appealCaseService.update(
+        theCase,
+        appealCase,
+        updateDto,
+        user,
+        transaction,
+      ),
     )
   }
 
@@ -147,6 +154,7 @@ export class LimitedAccessAppealCaseController {
         appealCaseId,
         theCase,
         dto.transition,
+        user,
         transaction,
       ),
     )
