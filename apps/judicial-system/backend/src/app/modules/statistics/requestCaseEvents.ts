@@ -1,5 +1,5 @@
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseOrigin,
   CaseType,
@@ -24,7 +24,7 @@ export interface RequestCaseEvent {
   // event specific fields
   requestDecision?: CaseDecision
   requestDecisionDescriptor?: string
-  courtOfAppealDecision?: CaseAppealRulingDecision
+  courtOfAppealDecision?: AppealCaseRulingDecision
   courtOfAppealDecisionDescriptor?: string
   parentCaseId?: string
 }
@@ -81,31 +81,31 @@ const getDecisionDescriptor = (decision: CaseDecision) => {
 }
 
 const getAppealRulingDecisionDescriptor = (
-  appealRulingDecision: CaseAppealRulingDecision,
+  appealRulingDecision: AppealCaseRulingDecision,
 ) => {
   switch (appealRulingDecision) {
-    case CaseAppealRulingDecision.ACCEPTING: {
+    case AppealCaseRulingDecision.ACCEPTING: {
       return 'Staðfesting'
     }
-    case CaseAppealRulingDecision.REPEAL: {
+    case AppealCaseRulingDecision.REPEAL: {
       return 'Fella úr gildi'
     }
-    case CaseAppealRulingDecision.CHANGED: {
+    case AppealCaseRulingDecision.CHANGED: {
       return 'Niðurstöðu breytt'
     }
-    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY: {
+    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY: {
       return 'Niðurstöðu breytt að verulegu leyti'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
       return 'Frávísun frá Landsrétti'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT: {
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT: {
       return 'Frávísun frá héraðsdómi'
     }
-    case CaseAppealRulingDecision.REMAND: {
+    case AppealCaseRulingDecision.REMAND: {
       return 'Ómerking og heimvísun'
     }
-    case CaseAppealRulingDecision.DISCONTINUED: {
+    case AppealCaseRulingDecision.DISCONTINUED: {
       return 'Niðurfelling'
     }
     default: {
