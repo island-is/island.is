@@ -238,7 +238,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage:
         'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt vottorð um sjúkra- og endurhæfingargreiðslur (má vera mest 6 mánaða gamalt).\n\nEf hlé hefur orðið á greiðslum frá Tryggingastofnun í meira en 6 mánuði, vegna vanda sem orsakar skerta starfsgetu, þá þarf að fá nýtt vottorð til þess að geta sótt aftur um sjúkra- og endurhæfingargreiðslur',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 6 months).\n\nYou need a new certificate for medical and rehabilitation payments in order to apply for medical and rehabilitation payments.',
+        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 6 months).\n\nYou need a new certificate in order to apply for medical and rehabilitation payments.',
     },
     baseCertNotFoundDescription: {
       id: 'marp.application:not.eligible.base.cert.not.found.description#markdown',
