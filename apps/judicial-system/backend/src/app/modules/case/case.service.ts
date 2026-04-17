@@ -1203,6 +1203,7 @@ export class CaseService {
       }
     }
 
+    // TODO: Handle appeal in court when the following is removed
     // Applies to appealed cases
     if (
       updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
