@@ -42,7 +42,7 @@ export const NavComponent = ({
     openComponents,
     setOpenComponents,
   } = useContext(ControlContext)
-  const { activeItem, activeListItem, form, isPublished } = control
+  const { activeItem, activeListItem, form, isReadOnly } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
@@ -154,12 +154,12 @@ export const NavComponent = ({
       type: type,
       data,
     },
-    disabled: isPublished,
+    disabled: isReadOnly,
   })
 
-  const sortableRef = isPublished ? undefined : setNodeRef
-  const sortableAttributes = isPublished ? undefined : attributes
-  const sortableListeners = isPublished ? undefined : listeners
+  const sortableRef = isReadOnly ? undefined : setNodeRef
+  const sortableAttributes = isReadOnly ? undefined : attributes
+  const sortableListeners = isReadOnly ? undefined : listeners
 
   if (isDragging) {
     return (

@@ -46,18 +46,22 @@ export const AssessmentTable = ({ results, loading }: Props) => {
         id: 'download',
         header: formatMessage(psm.downloadResults),
         enableSorting: false,
-        cell: ({ row }) =>
-          row.original.downloadServiceUrl ? (
+        cell: ({ row }) => {
+          const url = row.original.downloadServiceUrl
+          if (!url) return null
+
+          return (
             <Button
               variant="text"
               size="small"
               icon="download"
               iconType="outline"
-              onClick={() => formSubmit(row.original.downloadServiceUrl!)}
+              onClick={() => formSubmit(url)}
             >
               {formatMessage(psm.downloadResults)}
             </Button>
-          ) : null,
+          )
+        },
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

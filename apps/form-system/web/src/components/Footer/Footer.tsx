@@ -215,13 +215,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           data?.notifyFormSystemExternalSystem?.screen,
         )
 
+        dispatch({
+          type: 'EXTERNAL_SERVICE_NOTIFICATION',
+          payload: {
+            screen: updatedScreen,
+          },
+        })
         if (updatedScreen?.screenError?.hasError) {
-          dispatch({
-            type: 'EXTERNAL_SERVICE_NOTIFICATION',
-            payload: {
-              screen: updatedScreen,
-            },
-          })
           return
         }
       } catch (error) {
