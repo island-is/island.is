@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { Box, Button, Hidden, Link, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { Featured } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
+import { FeaturedItemTags } from './FeaturedItemTags'
 import * as styles from './CardWithFeaturedItems.css'
 
 type CardWithFeaturedItemsProps = {
@@ -14,51 +14,7 @@ type CardWithFeaturedItemsProps = {
   dataTestId?: string
   buttonTitle?: string
   featuredItems: Featured[]
-}
-
-export const FeaturedItemsLinks = ({
-  featuredItems,
-}: {
-  featuredItems: Featured[]
-}) => {
-  const { linkResolver } = useLinkResolver()
-
-  return (
-    <Hidden below="sm">
-      <Box marginY={2}>
-        {featuredItems.map((item: Featured, index: number) => {
-          const cardUrl = linkResolver(item.thing?.type as LinkType, [
-            item.thing?.slug ?? '',
-          ])
-          return (
-            <Box marginBottom={1} key={index}>
-              <Tag
-                key={item.title}
-                {...(cardUrl.href.startsWith('/')
-                  ? {
-                      CustomLink: ({ children, ...props }) => (
-                        <Link
-                          key={item.title}
-                          {...props}
-                          {...cardUrl}
-                          dataTestId="featured-link"
-                        >
-                          {children}
-                        </Link>
-                      ),
-                    }
-                  : { href: cardUrl.href })}
-                variant="purple"
-                whiteBackground
-              >
-                {item.title}
-              </Tag>
-            </Box>
-          )
-        })}
-      </Box>
-    </Hidden>
-  )
+  white?: boolean
 }
 
 export const CardWithFeaturedItems = ({
@@ -69,12 +25,13 @@ export const CardWithFeaturedItems = ({
   dataTestId,
   featuredItems,
   buttonTitle,
+  white,
 }: CardWithFeaturedItemsProps) => {
   const limitedFeaturedItems = featuredItems.slice(0, 3)
 
   return (
     <Box
-      background="purple100"
+      background={white ? 'white' : 'purple100'}
       borderRadius="large"
       color="purple"
       data-testid={dataTestId}
@@ -92,7 +49,9 @@ export const CardWithFeaturedItems = ({
         </Box>
         <Box height="full">
           {limitedFeaturedItems.length > 0 && (
-            <FeaturedItemsLinks featuredItems={limitedFeaturedItems} />
+            <Hidden below="sm">
+              <FeaturedItemTags featuredItems={limitedFeaturedItems} />
+            </Hidden>
           )}
         </Box>
         <Link href={href ?? ''} skipTab>

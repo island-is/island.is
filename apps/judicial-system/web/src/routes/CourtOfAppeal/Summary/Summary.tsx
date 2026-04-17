@@ -19,8 +19,8 @@ import {
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -53,7 +53,7 @@ const Summary: FC = () => {
 
   const handleComplete = async () => {
     const caseTransitioned =
-      workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED
+      workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED
         ? await transitionCase(
             workingCase.id,
             CaseTransition.COMPLETE_APPEAL,
@@ -63,7 +63,7 @@ const Summary: FC = () => {
 
     if (caseTransitioned) {
       workingCase.appealCase?.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED
+      AppealCaseRulingDecision.DISCONTINUED
         ? setVisibleModal('AppealDiscontinued')
         : setVisibleModal('AppealCompleted')
     }

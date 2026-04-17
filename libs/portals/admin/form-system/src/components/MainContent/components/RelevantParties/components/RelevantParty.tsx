@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemField, FormSystemFormApplicant } from '@island.is/api/schema'
 import { UPDATE_FIELD } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
 import {
   Box,
   Checkbox,
@@ -9,7 +10,6 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useContext, useEffect, useState } from 'react'
-import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../../context/ControlContext'
 
@@ -22,7 +22,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
   const { formatMessage } = useIntl()
   const { setFocus, focus, getTranslation, controlDispatch, control } =
     useContext(ControlContext)
-  const { isPublished } = control
+  const { isReadOnly } = control
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
 
   const [updateField] = useMutation(UPDATE_FIELD)
@@ -47,7 +47,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             label={applicantType.description?.is ?? ''}
             name={currentApplicant.fieldSettings?.applicantType ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             value={currentApplicant.name?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
             onChange={(e) => {
@@ -83,7 +83,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             label={formatMessage(m.englishTranslation)}
             name={'en-' + (currentApplicant.fieldSettings?.applicantType ?? '')}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             value={currentApplicant.name?.en ?? ''}
             onFocus={async (e) => {
               if (!currentApplicant.name?.en && currentApplicant.name?.is) {
@@ -137,7 +137,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
               <Checkbox
                 label="Krefjast netfangs"
                 checked={currentApplicant.fieldSettings?.isEmailRequired}
-                disabled={isPublished || hasZendeskSettings}
+                disabled={isReadOnly || hasZendeskSettings}
                 tooltip={
                   hasZendeskSettings
                     ? 'Netfang þarf að vera krafist þegar Zendesk er valið sem þjónustuaðili fyrir innsendingar.'
@@ -175,7 +175,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
               <Checkbox
                 label="Krefjast símanúmers"
                 checked={currentApplicant.fieldSettings?.isPhoneRequired}
-                disabled={isPublished}
+                disabled={isReadOnly}
                 onChange={(e) => {
                   controlDispatch({
                     type: 'SET_APPLICANT_FIELD_SETTINGS',

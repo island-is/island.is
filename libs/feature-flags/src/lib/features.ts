@@ -174,6 +174,8 @@ export enum Features {
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
+  // Primary school (guardian-facing)
+  isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
 }

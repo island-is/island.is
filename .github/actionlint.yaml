@@ -1,6 +1,6 @@
 self-hosted-runner:
   # Labels of self-hosted runner in array of strings.
-  labels: [arc-shared, arc-test]
+  labels: [arc-shared, arc-test, ec2-runners, shared-v2]
 
 # Configuration variables in array of strings defined in your repository or
 # organization. `null` means disabling configuration variables check.

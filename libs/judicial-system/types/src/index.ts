@@ -113,7 +113,7 @@ export {
   IndictmentCaseSubtypes,
   type Subtype,
   courtSubtypes,
-  CaseAppealState,
+  AppealCaseState,
   RequestCaseState,
   CaseTransition,
   IndictmentCaseTransition,
@@ -122,7 +122,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   RequestSharedWhen,
@@ -147,6 +147,7 @@ export {
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
+  AppealCaseTransition,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'
@@ -155,6 +156,7 @@ export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 export type { VerdictInfo } from './lib/indictmentCase'
 
 export {
+  getMillisecondsFromDays,
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
   getAppealDeadlineDate,
