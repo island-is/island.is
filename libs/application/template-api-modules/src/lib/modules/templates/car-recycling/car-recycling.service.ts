@@ -8,9 +8,13 @@ import {
   CarRecyclingClientService,
   RecyclingRequestTypes,
 } from '@island.is/clients/car-recycling'
-import { RecyclingFundClientService } from '@island.is/clients/recycling-fund'
+import {
+  RecyclingFundClientService,
+  CreateXRoadRecyclingRequestDtoRequestTypeEnum,
+} from '@island.is/clients/recycling-fund'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   VehicleDto,
@@ -40,13 +44,16 @@ export class CarRecyclingService extends BaseTemplateApiService {
       application.externalData,
     )
     // OLD BACKEND
-    const owner = await this.carRecyclingService.createOwner(
+    const oldResponse = await this.carRecyclingService.createOwner(
       auth,
       applicantName,
     )
-    await this.recyclingFundService.createOwner(auth, applicantName)
 
-    return owner
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      await this.recyclingFundService.createOwner(auth, applicantName)
+    }
+
+    return oldResponse
   }
 
   async createVehicle(auth: User, vehicle: VehicleDto) {
@@ -71,7 +78,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
         modelYear = new Date(vehicle.modelYear, 0, 1)
       }
 
-      return await this.carRecyclingService.createVehicle(
+      // OLD Backend
+      const oldResponse = await this.carRecyclingService.createVehicle(
         auth,
         vehicle.permno,
         mileage,
@@ -80,6 +88,20 @@ export class CarRecyclingService extends BaseTemplateApiService {
         modelYear,
         vehicle.color || '',
       )
+
+      if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+        await this.recyclingFundService.createVehicle(
+          auth,
+          vehicle.permno,
+          mileage,
+          vehicle.vin || '',
+          vehicle.make || '',
+          modelYear,
+          vehicle.color || '',
+        )
+      }
+
+      return oldResponse
     }
   }
 
@@ -89,12 +111,25 @@ export class CarRecyclingService extends BaseTemplateApiService {
     vehicle: VehicleDto,
     recyclingRequestType: RecyclingRequestTypes,
   ) {
-    return await this.carRecyclingService.recycleVehicle(
+    // OLD Backend
+    const oldResponse = await this.carRecyclingService.recycleVehicle(
       auth,
       fullName.trim(),
       vehicle.permno || '',
       recyclingRequestType,
     )
+
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      await this.recyclingFundService.recycleVehicle(
+        auth,
+        fullName.trim(),
+        vehicle.permno || '',
+        recyclingRequestType === RecyclingRequestTypes.pendingRecycle
+          ? CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle
+          : CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
+      )
+    }
+    return oldResponse
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
