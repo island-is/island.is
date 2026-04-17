@@ -589,6 +589,7 @@ const Conclusion: FC = () => {
             <BlueBox className={grid({ gap: 2 })}>
               {radioButtons.map(({ id, value, label }) => (
                 <RadioButton
+                  key={id}
                   id={id}
                   name={id}
                   checked={selectedAction === value}
@@ -1178,7 +1179,7 @@ const Conclusion: FC = () => {
                     completingForSomeSelections[defendant.id] !== undefined,
                 )
                 .map((defendant) => (
-                  <Text variant="h4" as="h4">
+                  <Text key={defendant.id} variant="h4" as="h4">
                     {`${defendant.name}: `}
                     <Text as="span">
                       {

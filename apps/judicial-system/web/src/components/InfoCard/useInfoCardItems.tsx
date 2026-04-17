@@ -133,7 +133,7 @@ const useInfoCardItems = () => {
 
   const cancelledAndDismissedDefendants = (defendant: Defendant): Item => {
     return {
-      id: 'cancelled-and-dismissed-defendant-item',
+      id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
       title: (
         <Text variant="h4" as="h4">
           {getHumanReadableCaseIndictmentRulingDecision(
