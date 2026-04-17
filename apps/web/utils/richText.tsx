@@ -93,6 +93,7 @@ import { useI18n } from '@island.is/web/i18n'
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
 import { ComplaintsCommitteeRulings } from '../components/connected/ComplaintsCommitteeRulings'
+import { CustomsCalculator } from '../components/connected/CustomsCalculator'
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
@@ -211,6 +212,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Ums/CostOfLivingCalculator':
       connectedComponent = <UmsCostOfLivingCalculator />
+      break
+    case 'CustomsCalculator':
+      connectedComponent = <CustomsCalculator slice={slice} />
       break
     case 'VMST/ParentalLeaveCalculator':
       connectedComponent = <ParentalLeaveCalculator slice={slice} />
