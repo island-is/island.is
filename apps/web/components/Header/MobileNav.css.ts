@@ -55,7 +55,6 @@ export const chevron = style({
   width: 16,
   height: 16,
   transformOrigin: 'center center',
-  transition: 'transform 150ms ease',
 })
 
 export const chevronOpen = style({
@@ -72,15 +71,46 @@ export const panel = style({
   right: 0,
   width: 305,
   maxWidth: 'calc(100vw - 24px)',
-  maxHeight: 'calc(100vh - 80px)',
+  height: 'calc(100vh - 80px)',
   overflowY: 'auto',
+  // Prevents the rubber-band overscroll from shifting sticky children
+  // (the top scroll-shadow) past the panel edges during pull-scroll.
+  overscrollBehavior: 'none',
   background: theme.color.white,
-  borderBottomLeftRadius: theme.border.radius.large,
-  borderBottomRightRadius: theme.border.radius.large,
   boxShadow: '0 4px 30px 0 rgba(0, 97, 255, 0.16)',
-  clipPath: 'inset(0 -40px -40px -40px)',
-  padding: '24px',
+  clipPath: 'inset(0 -40px 0 -40px)',
+  // No top padding so the sticky scroll-shadow anchors to the panel's
+  // absolute top edge (sticky top:0 anchors to the padding-box, not the
+  // border-box). The visual top gap lives on the first content element.
+  padding: '0 24px 24px 24px',
   zIndex: 20,
+})
+
+// Sticky gradient overlay at the top of the panel that fades in when the
+// panel is scrolled past ~10px. Uses a linear-gradient instead of a
+// box-shadow because browsers render shadows on very thin elements
+// inconsistently inside overflow scroll containers. The gradient
+// approximates the same soft blue fade the header shadow produces.
+// Negative horizontal margins extend the overlay across the panel's side
+// padding; the negative bottom margin collapses its height so it doesn't
+// push content down.
+export const scrollShadow = style({
+  position: 'sticky',
+  top: 0,
+  height: 16,
+  marginLeft: -24,
+  marginRight: -24,
+  marginBottom: -16,
+  zIndex: 1,
+  background:
+    'linear-gradient(to bottom, rgba(0, 97, 255, 0.16), rgba(0, 97, 255, 0))',
+  opacity: 0,
+  transition: 'opacity 200ms ease-out',
+  pointerEvents: 'none',
+})
+
+export const scrollShadowVisible = style({
+  opacity: 1,
 })
 
 export const panelHeader = style({
@@ -163,6 +193,7 @@ export const drillLink = style({
 })
 
 export const searchWrapper = style({
+  marginTop: 24,
   marginBottom: 24,
 })
 

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, Button, Icon, Link } from '@island.is/island-ui/core'
+import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
 import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './DesktopNav.css'
@@ -18,12 +19,19 @@ interface DesktopNavProps {
 
 type DropdownKey = HeaderNavKey
 
+const FULL_WIDTH_BREAKPOINT = 1100
+
 export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
   const router = useRouter()
   const [openKey, setOpenKey] = useState<DropdownKey | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const reactId = useId()
+  const [fullWidthOffsets, setFullWidthOffsets] = useState<{
+    left: number
+    right: number
+  } | null>(null)
 
   useEffect(() => {
     onOpenChange?.(openKey !== null)
@@ -57,6 +65,42 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
       router.events.off('routeChangeStart', handle)
     }
   }, [router.events, close])
+
+  // When the viewport is below FULL_WIDTH_BREAKPOINT we want the dropdown
+  // to span from viewport edge to viewport edge. Measure the dropdown's
+  // actual positioning ancestor (offsetParent) — which may be <header>, a
+  // GridContainer descendant, or something else depending on the ambient
+  // CSS — and push left/right out to the viewport edges accordingly.
+  //
+  // useIsomorphicLayoutEffect runs synchronously before paint on the client,
+  // so the inline offsets are in place on the first visible frame. Without
+  // this, a regular useEffect paints the dropdown at its unadjusted position
+  // for one frame before we correct it — visible as a jump on slow machines.
+  useIsomorphicLayoutEffect(() => {
+    if (!openKey) {
+      setFullWidthOffsets(null)
+      return
+    }
+    const update = () => {
+      if (!dropdownRef.current) return
+      if (window.innerWidth >= FULL_WIDTH_BREAKPOINT) {
+        setFullWidthOffsets(null)
+        return
+      }
+      const parent = dropdownRef.current.offsetParent as HTMLElement | null
+      if (!parent) return
+      const pRect = parent.getBoundingClientRect()
+      setFullWidthOffsets({
+        left: -pRect.left,
+        right: pRect.right - window.innerWidth,
+      })
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('resize', update)
+    }
+  }, [openKey])
 
   const toggle = (key: DropdownKey) => {
     setOpenKey((current) => (current === key ? null : key))
@@ -93,10 +137,21 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
 
       {active && openKey && (
         <div
+          ref={dropdownRef}
           id={panelId}
           role="region"
           aria-labelledby={`desktop-nav-tab-${reactId}-${openKey}`}
           className={styles.dropdown}
+          style={
+            fullWidthOffsets
+              ? {
+                  left: `${fullWidthOffsets.left}px`,
+                  right: `${fullWidthOffsets.right}px`,
+                  width: 'auto',
+                  maxWidth: 'none',
+                }
+              : undefined
+          }
         >
           <div className={styles.dropdownTitle}>{active.title}</div>
           <ul className={styles.dropdownList}>
