@@ -2,6 +2,13 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+import {
+  NAV_SHADOW,
+  NAV_SHADOW_COLOR,
+  NAV_TRANSITION_DURATION,
+  NAV_TRANSITION_EASING,
+} from './headerNavTokens'
+
 export const headerButtons = style({
   display: 'flex',
   alignItems: 'center',
@@ -77,13 +84,27 @@ export const panel = style({
   // (the top scroll-shadow) past the panel edges during pull-scroll.
   overscrollBehavior: 'none',
   background: theme.color.white,
-  boxShadow: '0 4px 30px 0 rgba(0, 97, 255, 0.16)',
+  boxShadow: NAV_SHADOW,
+  // Panel is always mounted; the `.panelOpen` class toggles the fade.
+  // `visibility` uses a 0ms duration with a delay equal to the opacity
+  // transition on close, so the panel only becomes non-interactive after
+  // the fade-out finishes. On open, no delay so it's interactive
+  // immediately.
+  opacity: 0,
+  visibility: 'hidden',
+  transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear ${NAV_TRANSITION_DURATION}`,
   clipPath: 'inset(0 -40px 0 -40px)',
   // No top padding so the sticky scroll-shadow anchors to the panel's
   // absolute top edge (sticky top:0 anchors to the padding-box, not the
   // border-box). The visual top gap lives on the first content element.
   padding: '0 24px 24px 24px',
   zIndex: 20,
+})
+
+export const panelOpen = style({
+  opacity: 1,
+  visibility: 'visible',
+  transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear 0ms`,
 })
 
 // Sticky gradient overlay at the top of the panel that fades in when the
@@ -102,8 +123,7 @@ export const scrollShadow = style({
   marginRight: -24,
   marginBottom: -16,
   zIndex: 1,
-  background:
-    'linear-gradient(to bottom, rgba(0, 97, 255, 0.16), rgba(0, 97, 255, 0))',
+  background: `linear-gradient(to bottom, ${NAV_SHADOW_COLOR}, rgba(0, 97, 255, 0))`,
   opacity: 0,
   transition: 'opacity 200ms ease-out',
   pointerEvents: 'none',

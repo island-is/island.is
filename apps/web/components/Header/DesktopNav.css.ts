@@ -2,6 +2,12 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+import {
+  NAV_SHADOW,
+  NAV_TRANSITION_DURATION,
+  NAV_TRANSITION_EASING,
+} from './headerNavTokens'
+
 export const nav = style({
   display: 'flex',
   alignItems: 'center',
@@ -67,7 +73,13 @@ export const dropdown = style({
   background: theme.color.white,
   borderBottomLeftRadius: theme.border.radius.large,
   borderBottomRightRadius: theme.border.radius.large,
-  boxShadow: '0 4px 30px 0 rgba(0, 97, 255, 0.16)',
+  boxShadow: NAV_SHADOW,
+  // Dropdown is always mounted; the `.dropdownOpen` class toggles the fade.
+  // Asymmetric visibility transition delays hiding until the fade-out
+  // finishes, keeping the element interactive until it's invisible.
+  opacity: 0,
+  visibility: 'hidden',
+  transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear ${NAV_TRANSITION_DURATION}`,
   // Clip the shadow that would otherwise bleed upward into the header. Top
   // inset is 0 so the dropdown box itself stays intact, while -40px on the
   // other three sides allows the shadow to render freely there.
@@ -88,6 +100,12 @@ export const dropdown = style({
       clipPath: 'inset(0 0 -40px 0)',
     },
   },
+})
+
+export const dropdownOpen = style({
+  opacity: 1,
+  visibility: 'visible',
+  transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear 0ms`,
 })
 
 export const dropdownTitle = style({

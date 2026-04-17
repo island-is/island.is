@@ -2,12 +2,21 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+import {
+  NAV_SHADOW,
+  NAV_TRANSITION_DURATION,
+  NAV_TRANSITION_EASING,
+} from './headerNavTokens'
+
 export const header = style({
   background: theme.color.white,
+  // Transition lives on the base class so the shadow fades in AND out
+  // symmetrically as `.headerWithShadow` is toggled.
+  transition: `box-shadow ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}`,
 })
 
 export const headerWithShadow = style({
-  boxShadow: '0 4px 30px 0 rgba(0, 97, 255, 0.16)',
+  boxShadow: NAV_SHADOW,
 })
 
 export const headerRow = style({
