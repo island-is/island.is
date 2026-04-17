@@ -11,7 +11,7 @@ import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 
 export const ToggleConnection = () => {
   const { selectStatus, setSelectStatus, control } = useContext(ControlContext)
-  const { isPublished } = control
+  const { isReadOnly } = control
 
   const { formatMessage } = useIntl()
   return (
@@ -21,7 +21,7 @@ export const ToggleConnection = () => {
           name="connect"
           label={formatMessage(m.connect)}
           checked={selectStatus === NavbarSelectStatus.NORMAL}
-          disabled={isPublished}
+          disabled={isReadOnly}
           onChange={(e) =>
             setSelectStatus(
               e ? NavbarSelectStatus.NORMAL : NavbarSelectStatus.OFF,

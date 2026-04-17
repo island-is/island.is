@@ -6,7 +6,7 @@ import { ScreenValidationResponse } from '../../dataTypes/validationResponse.mod
 import { ValidationService } from './validation.service'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { NotificationCommands } from '@island.is/form-system/enums'
-import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationResponseDto } from '../applications/models/dto/notification.response.dto'
 
 @Injectable()
 export class ServiceManager {

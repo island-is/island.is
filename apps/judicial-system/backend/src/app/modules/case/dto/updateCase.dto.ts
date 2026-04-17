@@ -21,8 +21,8 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -474,9 +474,9 @@ export class UpdateCaseDto {
   readonly appealRulingModifiedHistory?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealRulingDecision)
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @IsEnum(AppealCaseRulingDecision)
+  @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @IsOptional()
   @Type(() => Date)
