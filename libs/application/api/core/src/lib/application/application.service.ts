@@ -402,7 +402,7 @@ export class ApplicationService {
     })
   }
 
-  async findAllDueToBeWarned(): Promise<ScheduledNotification[]> {
+  async findCurrentScheduledNotifications(): Promise<ScheduledNotification[]> {
     return this.scheduledNotificationModel.findAll({
       attributes: [
         'id',
@@ -411,6 +411,7 @@ export class ApplicationService {
         'application_state',
         'schedule_time',
         'schedule_status',
+        'args',
       ],
       where: {
         [Op.and]: {

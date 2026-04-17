@@ -54,7 +54,7 @@ export class ApplicationLifeCycleService {
     // Pruning
     this.logger.info(`Starting application pruning...`)
     // await this.fetchApplicationsToBePruned()
-    await this.fetchApplicationsToBeWarned()
+    await this.fetchCurrentScheduledNotifications()
     // await this.pruneAttachments()
     // await this.pruneApplicationCharge()
     // await this.pruneApplicationData()
@@ -100,12 +100,12 @@ export class ApplicationLifeCycleService {
     }
   }
 
-  private async fetchApplicationsToBeWarned() {
+  private async fetchCurrentScheduledNotifications() {
     const scheduledNotifications =
-      await this.applicationService.findAllDueToBeWarned()
+      await this.applicationService.findCurrentScheduledNotifications()
 
     this.logger.info(
-      `Found ${scheduledNotifications.length} scheduled notifications to be warned.`,
+      `Found ${scheduledNotifications.length} scheduled notifications to be processed.`,
     )
   }
 
