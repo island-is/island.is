@@ -1,5 +1,6 @@
 import { YesOrNoEnum } from '@island.is/application/core'
 import { NextStepInReviewOptions } from '../utils/enums'
+import { Locale } from '@island.is/shared/types'
 
 export type Maybe<T> = T | null
 
@@ -341,4 +342,5 @@ export interface DraftAnswers {
   heatingCostMeterStatus?: string
   otherCostPayedByTenant: YesOrNoEnum
   otherCostItems: CostField[]
+  currentUserLocale: Locale
 }
