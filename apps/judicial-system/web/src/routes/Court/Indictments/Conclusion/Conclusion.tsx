@@ -1007,9 +1007,7 @@ const Conclusion: FC = () => {
               selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
               selectedAction === IndictmentDecision.SPLITTING
             ) {
-              if (
-                selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
-              ) {
+              if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
                 setConclusionDate(formatDate(new Date()))
                 setModalVisible('COMPLETING_FOR_SOME')
               } else {
