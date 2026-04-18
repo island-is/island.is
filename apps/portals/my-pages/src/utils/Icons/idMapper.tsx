@@ -16,6 +16,7 @@ import Airplane from '../../components/AnimatedIcon/Airplane'
 import Heart from '../../components/AnimatedIcon/Heart'
 import CardWithCheckmark from '../../components/AnimatedIcon/CardWithCheckmark'
 import Gavel from '../../components/AnimatedIcon/Gavel'
+import Election from '../../components/AnimatedIcon/Election'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -69,6 +70,8 @@ export const iconIdMapper = (iconType: string) => {
       return 'eyzGY9baL4Z1'
     case 'gavel':
       return 'eDi3AOmSGXe1'
+    case 'election':
+      return 'epyxrSILKQP1'
     default:
       return ''
   }
@@ -130,6 +133,8 @@ export const iconTypeToSVG = (iconType: string) => {
     // Lög og reglur
     case 'gavel':
       return <Gavel />
+    case 'election':
+      return <Election />
     default:
       return undefined
   }
