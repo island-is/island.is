@@ -7,6 +7,7 @@ export const tenantsLoader: WrappedLoaderFn = ({ client }) => {
   return async (): Promise<AuthTenants> => {
     const tenantsList = await client.query<TenantsQuery>({
       query: TenantsDocument,
+      fetchPolicy: 'network-only',
     })
 
     if (tenantsList.error) {

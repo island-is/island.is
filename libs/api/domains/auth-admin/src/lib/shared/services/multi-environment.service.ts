@@ -56,6 +56,20 @@ export abstract class MultiEnvironmentService {
     }
   }
 
+  /** Returns true if the admin API client for the given environment is configured. */
+  protected isEnvironmentConfigured(environment: Environment): boolean {
+    switch (environment) {
+      case Environment.Development:
+        return Boolean(this.adminDevApi)
+      case Environment.Staging:
+        return Boolean(this.adminStagingApi)
+      case Environment.Production:
+        return Boolean(this.adminProdApi)
+      default:
+        return false
+    }
+  }
+
   /**
    * Request wrapper that handles 204 responses.
    * Needs to be passed the Raw functions from the openapi codegen

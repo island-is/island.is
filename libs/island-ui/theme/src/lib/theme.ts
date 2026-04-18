@@ -53,6 +53,8 @@ export const zIndex = {
   belowModal: 19,
   modal: 20,
   aboveModal: 21,
+  // ModalBase backdrop sits at 10000 — portalled tooltips must paint above it.
+  aboveModalBackdrop: 10001,
 }
 
 export const theme = {

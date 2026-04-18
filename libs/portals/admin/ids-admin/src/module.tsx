@@ -7,6 +7,8 @@ import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { createClientAction } from './screens/Client/CreateClient/CreateClient.action'
 import { tenantsLoader } from './screens/Tenants/Tenants.loader'
+import { editTenantLoader } from './screens/Tenants/EditTenant/EditTenant.loader'
+import { editTenantAction } from './screens/Tenants/EditTenant/EditTenant.action'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
@@ -21,6 +23,7 @@ const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 // Tenant
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
 const Tenants = lazy(() => import('./screens/Tenants/Tenants'))
+const EditTenant = lazy(() => import('./screens/Tenants/EditTenant'))
 
 // Client
 const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
@@ -78,6 +81,19 @@ export const idsAdminModule: PortalModule = {
               backPath: IDSAdminPaths.IDSAdmin,
             },
             children: [
+              {
+                name: m.editTenant,
+                path: IDSAdminPaths.IDSAdminTenantEdit,
+                enabled: props.userInfo.scopes.includes(
+                  AdminPortalScope.idsAdminSuperUser,
+                ),
+                element: <EditTenant />,
+                loader: editTenantLoader(props),
+                action: editTenantAction(props),
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminClients,
+                },
+              },
               {
                 name: m.clients,
                 path: IDSAdminPaths.IDSAdminClients,

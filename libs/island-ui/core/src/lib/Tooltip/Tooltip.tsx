@@ -9,7 +9,7 @@ import {
 import * as styles from './Tooltip.css'
 import { Icon } from '../IconRC/Icon'
 import { Size } from '../IconRC/types'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
 
@@ -95,7 +95,11 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
-      <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
+      <ReakitTooltip
+        {...tooltip}
+        unstable_portal={renderInPortal}
+        style={{ zIndex: theme.zIndex.aboveModalBackdrop }}
+      >
         <div
           className={cn(styles.tooltip, {
             [styles.fullWidth]: fullWidth,
