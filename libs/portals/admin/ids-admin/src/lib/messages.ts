@@ -960,6 +960,150 @@ export const m = defineMessages({
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
   },
+  domains: {
+    id: 'ap.ids-admin:domains',
+    defaultMessage: 'Domains',
+  },
+  adminControls: {
+    id: 'ap.ids-admin:admin-controls',
+    defaultMessage: 'Admin Controls',
+  },
+  apiScopeUsers: {
+    id: 'ap.ids-admin:api-scope-users',
+    defaultMessage: 'API Scope Users',
+  },
+  apiScopeUsersDescription: {
+    id: 'ap.ids-admin:api-scope-users-description',
+    defaultMessage: 'Manage users who have access to API scopes.',
+  },
+  apiScopeUsersSearchPlaceholder: {
+    id: 'ap.ids-admin:api-scope-users-search-placeholder',
+    defaultMessage: 'Search by name, national ID or email',
+  },
+  apiScopeUsersName: {
+    id: 'ap.ids-admin:api-scope-users-name',
+    defaultMessage: 'Name',
+  },
+  apiScopeUsersNationalId: {
+    id: 'ap.ids-admin:api-scope-users-national-id',
+    defaultMessage: 'National ID',
+  },
+  apiScopeUsersEmail: {
+    id: 'ap.ids-admin:api-scope-users-email',
+    defaultMessage: 'Email',
+  },
+  apiScopeUsersActions: {
+    id: 'ap.ids-admin:api-scope-users-actions',
+    defaultMessage: 'Actions',
+  },
+  apiScopeUsersCreateNew: {
+    id: 'ap.ids-admin:api-scope-users-create-new',
+    defaultMessage: 'Create user',
+  },
+  apiScopeUsersCreateTitle: {
+    id: 'ap.ids-admin:api-scope-users-create-title',
+    defaultMessage: 'Create API scope user',
+  },
+  apiScopeUsersEditTitle: {
+    id: 'ap.ids-admin:api-scope-users-edit-title',
+    defaultMessage: 'Edit API scope user',
+  },
+  apiScopeUsersDeleteConfirmTitle: {
+    id: 'ap.ids-admin:api-scope-users-delete-confirm-title',
+    defaultMessage: 'Delete API scope user',
+  },
+  apiScopeUsersDeleteConfirmMessage: {
+    id: 'ap.ids-admin:api-scope-users-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this API scope user?',
+  },
+  apiScopeUsersDeleteButton: {
+    id: 'ap.ids-admin:api-scope-users-delete-button',
+    defaultMessage: 'Delete',
+  },
+  apiScopeUserEditButton: {
+    id: 'ap.ids-admin:api-scope-user-edit',
+    defaultMessage: 'Edit',
+  },
+  apiScopeUsersSaveButton: {
+    id: 'ap.ids-admin:api-scope-users-save-button',
+    defaultMessage: 'Save',
+  },
+  apiScopeUsersCreateButton: {
+    id: 'ap.ids-admin:api-scope-users-create-button',
+    defaultMessage: 'Create',
+  },
+  apiScopeUsersCancelButton: {
+    id: 'ap.ids-admin:api-scope-users-cancel-button',
+    defaultMessage: 'Cancel',
+  },
+  apiScopeUsersCreateSuccess: {
+    id: 'ap.ids-admin:api-scope-users-create-success',
+    defaultMessage: 'API scope user created successfully',
+  },
+  apiScopeUsersUpdateSuccess: {
+    id: 'ap.ids-admin:api-scope-users-update-success',
+    defaultMessage: 'API scope user updated successfully',
+  },
+  apiScopeUsersDeleteSuccess: {
+    id: 'ap.ids-admin:api-scope-users-delete-success',
+    defaultMessage: 'API scope user deleted successfully',
+  },
+  apiScopeUsersError: {
+    id: 'ap.ids-admin:api-scope-users-error',
+    defaultMessage: 'An error occurred',
+  },
+  apiScopeUsersNoResults: {
+    id: 'ap.ids-admin:api-scope-users-no-results',
+    defaultMessage: 'No API scope users found',
+  },
+  apiScopeUsersScopes: {
+    id: 'ap.ids-admin:api-scope-users-scopes',
+    defaultMessage: 'Scopes',
+  },
+  apiScopeUsersScopesLoading: {
+    id: 'ap.ids-admin:api-scope-users-scopes-loading',
+    defaultMessage: 'Loading scopes...',
+  },
+  apiScopeUsersPublishSuccess: {
+    id: 'ap.ids-admin:api-scope-users-publish-success',
+    defaultMessage: 'User published to {environment} successfully',
+  },
+  apiScopeUsersErrorNameMinLength: {
+    id: 'ap.ids-admin:api-scope-users-error-name-min-length',
+    defaultMessage: 'Name must be at least 2 characters',
+  },
+  apiScopeUsersErrorNationalId: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id',
+    defaultMessage: 'National ID must be exactly 10 digits',
+  },
+  apiScopeUsersErrorEmailRequired: {
+    id: 'ap.ids-admin:api-scope-users-error-email-required',
+    defaultMessage: 'Email is required',
+  },
+  apiScopeUsersErrorEmailFormat: {
+    id: 'ap.ids-admin:api-scope-users-error-email-format',
+    defaultMessage: 'Email must be a valid email address',
+  },
+  apiScopeUsersErrorNationalIdExists: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id-exists',
+    defaultMessage: 'A user with this national ID already exists',
+  },
+  apiScopeUsersErrorNationalIdCheckFailed: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id-check-failed',
+    defaultMessage: 'Unable to verify national ID. Please try again.',
+  },
+  apiScopeUsersErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:api-scope-users-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  grantTypes: {
+    id: 'ap.ids-admin:grant-types',
+    defaultMessage: 'Grant Types',
+  },
+  idpProviders: {
+    id: 'ap.ids-admin:idp-providers',
+    defaultMessage: 'IDP Providers',
+  },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',
     defaultMessage: 'Client ID already exists',

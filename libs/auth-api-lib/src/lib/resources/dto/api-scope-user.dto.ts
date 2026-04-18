@@ -24,7 +24,7 @@ export class ApiScopeUserDTO {
   })
   email!: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     example: [{ nationalId: '0123456789', scope: 'scope_name' }],
   })

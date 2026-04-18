@@ -75,6 +75,21 @@ export abstract class MultiEnvironmentService {
     return handle204(request(api))
   }
 
+  protected getConfiguredEnvironments(): Environment[] {
+    return environments.filter((env) => {
+      switch (env) {
+        case Environment.Development:
+          return !!this.adminDevApi
+        case Environment.Staging:
+          return !!this.adminStagingApi
+        case Environment.Production:
+          return !!this.adminProdApi
+        default:
+          return false
+      }
+    })
+  }
+
   protected handleError(error: Error, environment: Environment) {
     this.logger.error(`Error from ${environment}`, error)
 
