@@ -1,8 +1,9 @@
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { Button, CancelButton, Illustration, Onboarding } from '@/ui'
+import { Button, Onboarding } from '@/ui'
 import allow from '@/assets/icons/allow.png'
+import onboardingNotifications from '@/assets/illustrations/onboarding-notifications.png'
 import { preferencesStore } from '@/stores/preferences-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
 import { requestNotificationsPermission } from '@/utils/permissions'
@@ -24,8 +25,9 @@ export default function NotificationsScreen() {
 
   return (
     <Onboarding
-      illustration={<Illustration />}
+      illustration={onboardingNotifications}
       title={<FormattedMessage id="onboarding.notifications.title" />}
+      body={<FormattedMessage id="onboarding.notifications.body" />}
       buttonSubmit={
         <Button
           title={intl.formatMessage({
@@ -36,10 +38,11 @@ export default function NotificationsScreen() {
         />
       }
       buttonCancel={
-        <CancelButton
-          title={
-            <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
-          }
+        <Button
+          title={intl.formatMessage({
+            id: 'onboarding.notifications.decideLaterButtonText',
+          })}
+          isOutlined
           onPress={onSkipPress}
         />
       }
