@@ -1026,6 +1026,7 @@ export interface ICustomPageFields {
     | 'Verdicts'
     | 'OfficialJournalOfIcelandHelp'
     | 'BloodDonationRestrictions'
+    | 'OpenInvoices'
     | 'CourtAgendas'
     | 'GrantSearch'
     | 'LandspitaliWebPaymentSuccessful'

@@ -1,8 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
-
-import { BreadCrumbItem } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { ReactNode } from 'react'
 
 import { HeadWithSocialSharing } from '../../HeadWithSocialSharing/HeadWithSocialSharing'
 
@@ -13,7 +9,7 @@ type WrapperProps = {
   children?: ReactNode
 }
 
-export const GrantWrapper = ({
+export const CustomPageLayoutWrapper = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
