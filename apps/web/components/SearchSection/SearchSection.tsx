@@ -63,8 +63,8 @@ export const SearchSection = ({
     <>
       <GridContainer>
         <GridRow
-          marginTop={4}
-          marginBottom={[0, 0, 4]}
+          marginTop={[4, 4, 0]}
+          marginBottom={[4, 4, 0]}
           className={styles.minHeight}
         >
           <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -145,7 +145,7 @@ export const SearchSection = ({
           justifyContent="center"
           alignItems="center"
           aria-hidden="true"
-          paddingTop={[4, 4, 0]}
+          paddingTop={[0, 0, 0]}
         >
           {videosMobile?.length ? (
             <Video
@@ -164,7 +164,6 @@ export const SearchSection = ({
                 <ImageOrDefault
                   url={imageMobile?.url}
                   imageAlternativeText={imageAlternativeText ?? ''}
-                  isMobile={isMobile}
                 />
               }
             />
@@ -172,7 +171,6 @@ export const SearchSection = ({
             <ImageOrDefault
               url={imageMobile?.url}
               imageAlternativeText={imageAlternativeText ?? ''}
-              isMobile={isMobile}
             />
           )}
         </Box>
