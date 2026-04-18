@@ -180,6 +180,13 @@ export class ApplicationController {
     description:
       'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
   })
+  @ApiQuery({
+    name: 'showPruned',
+    required: false,
+    type: 'boolean',
+    description:
+      'To include pruned applications in the response. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -191,12 +198,14 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
     @Query('scopeCheck') scopeCheck?: boolean,
+    @Query('showPruned') showPruned?: boolean,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
+      showPruned,
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -216,12 +225,14 @@ export class ApplicationController {
     nationalId: string,
     typeId?: string,
     status?: string,
+    showPruned?: boolean,
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
+      showPruned,
     )
   }
 

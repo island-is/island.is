@@ -16,6 +16,7 @@ export const APPLICATION_CARDS = gql`
       orgContentfulId
       nationalId
       pruneAt
+      pruned
       actionCard {
         title
         description
