@@ -241,6 +241,7 @@ export const Table = <TData extends object>({
                 key={header.id}
                 style={{
                   cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                  fontSize: '16px',
                 }}
                 onClick={header.column.getToggleSortingHandler()}
               >
@@ -278,7 +279,11 @@ export const Table = <TData extends object>({
               <T.Row>
                 {row.getVisibleCells().map((cell, i) =>
                   i === 0 && renderExpandedRow ? (
-                    <T.Data key={cell.id} box={{ position: 'relative' }}>
+                    <T.Data
+                      key={cell.id}
+                      box={{ position: 'relative' }}
+                      style={{ padding: '16px' }}
+                    >
                       {(isExpanded || isCollapsing) && (
                         <div className={styles.line} />
                       )}
@@ -307,8 +312,8 @@ export const Table = <TData extends object>({
                       </Box>
                     </T.Data>
                   ) : (
-                    <T.Data key={cell.id}>
-                      <Text variant="small">
+                    <T.Data key={cell.id} style={{ padding: '16px' }}>
+                      <Text variant="medium">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
