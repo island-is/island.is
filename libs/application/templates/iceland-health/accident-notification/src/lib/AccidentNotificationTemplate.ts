@@ -232,6 +232,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
+            },
           ],
         },
 
@@ -303,6 +311,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
+            },
           ],
         },
 
@@ -349,6 +365,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
               shouldBeListedForRole: false,
+            },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
             },
           ],
         },
