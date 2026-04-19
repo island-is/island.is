@@ -107,6 +107,12 @@ class CaseTableRow {
   @Field(() => String, { description: 'The row case id' })
   readonly caseId!: string
 
+  @Field(() => String, {
+    description: 'The row appeal case id',
+    nullable: true,
+  })
+  readonly appealCaseId?: string
+
   @Field(() => [String], {
     description: 'The row defendant ids',
     nullable: true,

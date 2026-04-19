@@ -170,7 +170,7 @@ const CaseTable: FC = () => {
           case ContextMenuCaseActionType.DELETE_CASE:
             return deleteCase(r.caseId)
           case ContextMenuCaseActionType.WITHDRAW_APPEAL:
-            return withdrawAppeal(r.caseId)
+            return r.appealCaseId && withdrawAppeal(r.caseId, r.appealCaseId)
           case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
           default: // Default to opening the case in a new tab
             return openCaseInNewTab(r.caseId)
