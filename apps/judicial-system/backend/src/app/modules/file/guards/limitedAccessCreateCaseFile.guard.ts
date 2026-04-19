@@ -12,7 +12,6 @@ import {
   isIndictmentCase,
   isRequestCase,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../repository'
@@ -41,7 +40,7 @@ export class LimitedAccessCreateCaseFileGuard implements CanActivate {
       throw new BadRequestException('Missing case file category')
     }
 
-    if (isDefenceUser(user)) {
+    if (!isDefenceUser(user)) {
       // Only defence users can create limited access case files
       return false
     }

@@ -11,7 +11,6 @@ import {
   isIndictmentCase,
   isRequestCase,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Case, CaseFile } from '../../repository'
@@ -39,7 +38,7 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (isDefenceUser(user)) {
+    if (!isDefenceUser(user)) {
       // Only defence users can delete limited access case files
       return false
     }
