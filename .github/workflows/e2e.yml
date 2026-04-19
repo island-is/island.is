@@ -27,11 +27,10 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -45,7 +44,7 @@ env:
 
 jobs:
   e2e:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     env:
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

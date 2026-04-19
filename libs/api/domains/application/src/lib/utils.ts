@@ -62,6 +62,7 @@ export const mapFormSystemCards = (
     orgContentfulId: application.formSystemOrgContentfulId,
     nationalId: undefined, // TODO: add nationalId if possible
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 
@@ -135,6 +136,7 @@ export const mapFormSystemStatisticsAdmin = (
     completed: statistics.completedCount,
     rejected: 0,
     approved: 0,
+    institutionNationalId: statistics.institutionNationalId,
   }
 }
 

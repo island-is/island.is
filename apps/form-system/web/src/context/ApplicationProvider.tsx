@@ -48,7 +48,7 @@ export const ApplicationProvider: React.FC<{
     },
     initialReducer,
   )
-  const methods = useForm({ mode: 'onBlur' })
+  const methods = useForm({ mode: 'onChange', shouldUnregister: true })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
   useEffect(() => {

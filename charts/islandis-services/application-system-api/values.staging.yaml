@@ -49,6 +49,7 @@ env:
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
   GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+  HH_COURSES_ZENDESK_ENV_TAG: 'hh_env_staging'
   HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
   HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
   HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
@@ -73,6 +74,7 @@ env:
   RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
   REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+  REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SERVERSIDE_FEATURES_ON: ''
   SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
   SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
@@ -100,6 +102,7 @@ env:
   XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
   XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
   XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
+  XROAD_FINANCES_V3_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
   XROAD_FJS_BANKINFO_PATH: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1'
   XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
@@ -161,6 +164,7 @@ grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -179,6 +183,18 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'application-payment-callback-xrd.internal.staging01.devland.is'
+      - 'application-callback-xrd.internal.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-internal'
+        namespace: 'envoy-gateway-internal'
+    rules:
+      - matches:
+          - pathPrefix: '/application-payment'
+          - pathPrefix: '/applications'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
 ingress:
@@ -262,13 +278,16 @@ secrets:
   EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
   FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
   FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
-  HH_ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL'
   HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
   NOVA_URL: '/k8s/NOVA_URL_V1'
   NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
+  REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+  REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+  REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+  REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
   SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'

@@ -6,13 +6,16 @@ import {
   CaseDecision,
   CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseType,
   DateType,
+  DefendantEventType,
   EventType,
   indictmentCases,
+  IndictmentDecision,
   InstitutionType,
   investigationCases,
   restrictionCases,
@@ -32,6 +35,7 @@ import {
   CaseRepositoryService,
   CaseString,
   DateLog,
+  DefendantEventLogRepositoryService,
 } from '../../../repository'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
@@ -78,6 +82,7 @@ describe('CaseController - Update', () => {
   let mockFileService: FileService
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
@@ -90,6 +95,7 @@ describe('CaseController - Update', () => {
       fileService,
       sequelize,
       caseRepositoryService,
+      defendantEventLogRepositoryService,
       dateLogModel,
       caseStringModel,
       caseController,
@@ -100,6 +106,7 @@ describe('CaseController - Update', () => {
     mockUserService = userService
     mockFileService = fileService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel
 
@@ -167,6 +174,91 @@ describe('CaseController - Update', () => {
 
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
+    })
+  })
+
+  describe('indictment completed for some defendants', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+        {
+          defendantId: defendantId2,
+          rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+        },
+      ],
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should not persist defendant event log decisions on the case', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME },
+        { transaction },
+      )
+    })
+
+    it('should create defendant event logs from the transient decisions', () => {
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        1,
+        DefendantEventType.INDICTMENT_DISMISSED,
+        caseId,
+        defendantId1,
+        user,
+        transaction,
+      )
+
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        2,
+        DefendantEventType.INDICTMENT_CANCELLED,
+        caseId,
+        defendantId2,
+        user,
+        transaction,
+      )
+    })
+  })
+
+  describe('indictment completed for some defendants with invalid defendant id', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME,
+      defendantEventLogDecisions: [
+        {
+          defendantId: uuid(),
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+      ],
+    } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should reject updates for defendants that do not belong to the case', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toContain('does not belong to case')
     })
   })
 
@@ -570,7 +662,7 @@ describe('CaseController - Update', () => {
       const updatedCase = {
         ...theCase,
         type,
-        prosecutorStatementDate: date,
+        appealCase: { prosecutorStatementDate: date },
         caseFiles,
       }
       let then: Then
@@ -623,7 +715,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.TRAVEL_BAN,
-      appealCaseNumber,
+      appealCase: { appealCaseNumber },
     }
 
     beforeEach(async () => {
@@ -654,11 +746,13 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.SEARCH_WARRANT,
-      appealCaseNumber,
-      appealAssistantId,
-      appealJudge1Id,
-      appealJudge2Id,
-      appealJudge3Id,
+      appealCase: {
+        appealCaseNumber,
+        appealAssistantId,
+        appealJudge1Id,
+        appealJudge2Id,
+        appealJudge3Id,
+      },
     }
 
     beforeEach(async () => {
@@ -668,7 +762,7 @@ describe('CaseController - Update', () => {
       await givenWhenThen(
         caseId,
         user,
-        { ...theCase, appealCaseNumber } as Case,
+        { ...theCase, appealCase: { appealCaseNumber } } as Case,
         caseToUpdate,
       )
     })
@@ -694,11 +788,13 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-      appealCaseNumber,
-      appealAssistantId,
-      appealJudge1Id,
-      appealJudge2Id,
-      appealJudge3Id,
+      appealCase: {
+        appealCaseNumber,
+        appealAssistantId,
+        appealJudge1Id,
+        appealJudge2Id,
+        appealJudge3Id,
+      },
     }
 
     beforeEach(async () => {
@@ -710,11 +806,13 @@ describe('CaseController - Update', () => {
         user,
         {
           ...theCase,
-          appealCaseNumber: uuid(),
-          appealAssistantId,
-          appealJudge1Id,
-          appealJudge2Id,
-          appealJudge3Id,
+          appealCase: {
+            appealCaseNumber: uuid(),
+            appealAssistantId,
+            appealJudge1Id,
+            appealJudge2Id,
+            appealJudge3Id,
+          },
         } as Case,
         caseToUpdate,
       )
@@ -793,7 +891,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.RESTRAINING_ORDER,
-      appealCaseNumber,
+      appealCase: { appealCaseNumber },
       caseFiles,
     }
 
@@ -806,7 +904,7 @@ describe('CaseController - Update', () => {
         user,
         {
           ...theCase,
-          appealCaseNumber: uuid(),
+          appealCase: { appealCaseNumber: uuid() },
           caseFiles,
         } as Case,
         caseToUpdate,

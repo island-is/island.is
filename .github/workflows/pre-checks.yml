@@ -19,6 +19,7 @@ on:
         value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
 
 env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
@@ -35,7 +36,7 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '3'
   MAX_JOBS: '2'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   AWS_REGION: eu-west-1
@@ -45,7 +46,7 @@ env:
 jobs:
   should-run:
     name: Check if job should run
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -58,6 +59,14 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
+      - name: Cache server health check
+        run: |
+          if curl -sf --max-time 3 "${ACTIONS_RESULTS_URL:-http://gha-cache.internal:3000/}" > /dev/null 2>&1; then
+            echo "✅ Cache server: ${ACTIONS_RESULTS_URL:-not set}"
+          else
+            echo "⚠️ Cache server unreachable (${ACTIONS_RESULTS_URL:-not set}) — using GitHub cache"
+          fi
+
       - name: Get git branch
         id: git-branch
         run: |

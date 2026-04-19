@@ -159,7 +159,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       isKeyAccessible
     }
     isAppealDeadlineExpired
-    isAppealGracePeriodExpired
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
@@ -180,7 +179,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       legalArguments
     }
     requestDriversLicenseSuspension
-    appealState
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
@@ -188,39 +186,40 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealedByRole
     appealedDate
     appealDeadline
-    prosecutorStatementDate
-    defendantStatementDate
-    appealReceivedByCourtDate
-    appealCaseNumber
-    appealAssistant {
-      id
-      name
+    appealCase {
+      appealState
+      appealCaseNumber
+      appealReceivedByCourtDate
+      prosecutorStatementDate
+      defendantStatementDate
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealRulingDecision
+      appealConclusion
+      appealRulingModifiedHistory
+      requestAppealRulingNotToBePublished
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
     }
-    appealJudge1 {
-      id
-      name
-    }
-    appealJudge2 {
-      id
-      name
-    }
-    appealJudge3 {
-      id
-      name
-    }
-    appealConclusion
-    appealRulingDecision
-    appealRulingModifiedHistory
-    isAppealCustodyIsolation
-    appealValidToDate
-    appealIsolationToDate
-    requestAppealRulingNotToBePublished
-    isRegisteredInPrisonSystem
     prosecutorsOffice {
       id
       name
     }
-    indictmentReturnedExplanation
     indictmentDecision
     indictmentDeniedExplanation
     mergeCase {

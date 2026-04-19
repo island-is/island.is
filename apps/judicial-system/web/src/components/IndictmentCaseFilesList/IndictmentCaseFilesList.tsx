@@ -2,11 +2,12 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
@@ -32,12 +33,14 @@ import {
 import {
   useFiledCourtDocuments,
   useFileList,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
+import * as styles from './IndictmentCaseFilesList.css'
 
 interface Props {
   workingCase: Case
@@ -285,6 +288,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
+  const { digitalCaseFiles, openDigitalCaseFileUrl, tokenUrlLoading } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+
+  const showPoliceDigitalCaseFiles =
+    (digitalCaseFiles?.length ?? 0) > 0 &&
+    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user))
+
   return (
     <>
       {displayHeading && (
@@ -435,7 +445,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </>
         )}
-        {(showFiles || hasGeneratedCourtRecord) && (
+        {(showFiles ||
+          hasGeneratedCourtRecord ||
+          showPoliceDigitalCaseFiles) && (
           <>
             <FileSection
               title={formatMessage(strings.civilClaimsTitle)}
@@ -443,6 +455,51 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
+            {showPoliceDigitalCaseFiles && (
+              <Box marginBottom={3}>
+                <SectionHeading
+                  title="Rafræn gögn"
+                  marginBottom={1}
+                  heading="h4"
+                  variant="h4"
+                />
+                <Text marginBottom={2}>
+                  Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
+                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
+                </Text>
+                {digitalCaseFiles?.map((file, index) => (
+                  <Box
+                    key={index}
+                    component="button"
+                    type="button"
+                    className={styles.electronicFileRow}
+                    onClick={() =>
+                      openDigitalCaseFileUrl(file.policeDigitalFileId)
+                    }
+                    disabled={tokenUrlLoading}
+                    cursor="pointer"
+                    background="transparent"
+                    width="full"
+                    textAlign="left"
+                  >
+                    <Text
+                      as="span"
+                      color="blue400"
+                      variant="h4"
+                      className={styles.electronicFileLinkContainer}
+                    >
+                      {file.name}
+                    </Text>
+                    <Icon
+                      icon="open"
+                      type="outline"
+                      size="small"
+                      color="blue400"
+                    />
+                  </Box>
+                ))}
+              </Box>
+            )}
             {(filteredFiles.courtRecords.length > 0 ||
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&

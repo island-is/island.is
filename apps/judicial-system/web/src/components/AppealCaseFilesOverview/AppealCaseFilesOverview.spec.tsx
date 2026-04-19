@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseFileCategory,
   CaseState,
   CaseType,
@@ -26,7 +26,10 @@ describe('<AppealCaseFilesOverview />', () => {
         mockCaseFile(CaseFileCategory.APPEAL_RULING),
       ],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -50,7 +53,10 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.APPEAL_RULING)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -75,8 +81,11 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
       prosecutorPostponedAppealDate: '2021-09-01T00:00:00Z',
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -104,7 +113,10 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -132,7 +144,10 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(

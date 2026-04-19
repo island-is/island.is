@@ -6,6 +6,8 @@ import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
+import { Sequelize } from 'sequelize-typescript'
+import { Transaction } from 'sequelize'
 
 @Injectable()
 export class FileService {
@@ -17,6 +19,7 @@ export class FileService {
     private readonly fileStorageService: FileStorageService,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async fileExists(key: string): Promise<boolean> {
@@ -35,37 +38,53 @@ export class FileService {
     }
 
     let attempts = 0
-    const key = `${fieldId}/${sourceKey}`
 
     while (attempts < 5) {
       const exists = await this.fileExists(sourceKey)
       this.logger.info(`Starting attempt ${attempts + 1}`)
       if (exists) {
         try {
-          const res = await this.fileStorageService.copyObjectFromUploadBucket(
-            sourceKey,
-            targetBucket,
-            key,
-          )
-          this.logger.info(`result: ${res}`)
-          const value = await this.valueModel.findByPk(valueId)
+          await this.sequelize.transaction(async (transaction) => {
+            const value = await this.valueModel.findByPk(valueId, {
+              transaction,
+              lock: transaction.LOCK.UPDATE, // row-level lock
+            })
 
-          if (!value) {
-            this.logger.warn(`Value with PK: ${valueId} not found`)
-            return
-          }
+            if (!value) {
+              throw new Error(`Value with PK: ${valueId} not found`)
+            }
 
-          const currentKeys = value.json?.s3Key || []
-          const updatedKeys = [...currentKeys, key]
+            const applicationId = value.applicationId
+            const key = `${applicationId}/${sourceKey}`
 
-          value.json = {
-            ...value.json,
-            s3Key: updatedKeys,
-          }
+            const res =
+              await this.fileStorageService.copyObjectFromUploadBucket(
+                sourceKey,
+                targetBucket,
+                key,
+              )
+            this.logger.info(`result: ${res}`)
 
-          await value.save()
+            const existingKeys = value.json?.s3Key
+            const currentKeys = Array.isArray(existingKeys) ? existingKeys : []
 
-          this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
+            // avoid duplicates on retries
+            const updatedKeys = currentKeys.includes(key)
+              ? currentKeys
+              : [...currentKeys, key]
+
+            value.json = {
+              ...(value.json ?? {}),
+              s3Key: updatedKeys,
+            }
+
+            await value.save({ transaction })
+
+            this.logger.info(
+              `✅ Updated field ${fieldId} with new S3 key ${key}`,
+            )
+          })
+
           return
         } catch (error) {
           this.logger.error(`❌ Copy failed: ${error}`)
@@ -85,7 +104,31 @@ export class FileService {
     this.logger.info(`Upload job added to queue for key ${sourceKey}`)
   }
 
-  async deleteFile(key: string, valueId: string): Promise<void> {
+  async getFile(key: string): Promise<string | undefined> {
+    if (!key) {
+      throw new Error('Key and valueId must be provided for fetching file')
+    }
+
+    const bucket = this.config.bucket
+    if (!bucket) {
+      throw new Error('S3 bucket not configured')
+    }
+
+    this.logger.info(`Fetching file ${key}`)
+
+    try {
+      return await this.s3Service.getFileContent({ bucket, key }, 'base64')
+    } catch (error) {
+      this.logger.error('Error fetching file content from S3', error)
+      throw error
+    }
+  }
+
+  async deleteFile(
+    key: string,
+    valueId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
     if (!key || !valueId) {
       throw new Error('Key and valueId must be provided for deletion')
     }
@@ -95,28 +138,29 @@ export class FileService {
       throw new Error('S3 bucket not configured')
     }
 
-    const s3Uri = `s3://${bucket}/${key}`
-
-    this.logger.info(`Deleting file ${s3Uri} for valueId ${valueId}`)
+    this.logger.info(`Deleting file ${key} for valueId ${valueId}`)
 
     try {
       await this.s3Service.deleteObject({ bucket, key })
-      this.logger.info(`Successfully deleted file ${s3Uri}`)
+      this.logger.info(`Successfully deleted file ${key}`)
 
       // Update the Value to remove the S3 key reference
-      const value = await this.valueModel.findByPk(valueId)
+      const value = await this.valueModel.findByPk(valueId, { transaction })
       if (value) {
         value.json = {
           ...value.json,
           s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
         }
-        await value.save()
+
+        if (transaction) await value.save({ transaction })
+        else await value.save()
+
         this.logger.info(`Cleared s3Key for valueId ${valueId} after deletion`)
       } else {
         this.logger.warn(`Value with id ${valueId} not found`)
       }
     } catch (error) {
-      this.logger.error(`Error deleting file ${s3Uri}`, error)
+      this.logger.error('Error deleting file from S3', error)
       throw error
     }
   }

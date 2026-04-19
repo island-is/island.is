@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -17,30 +17,53 @@ import {
 
 import {
   buildEventLogExistsCondition,
-  buildIsSentToPrisonExistsCondition,
+  buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
 // Court of appeals access
 
-export const courtOfAppealsRequestCasesAccessWhereOptions = {
+const courtOfAppealsRequestCasesAccessWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
   [Op.or]: [
     {
-      appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+      '$appealCase.appeal_state$': [
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+      ],
     },
     {
-      [Op.and]: [
-        { appeal_state: CaseAppealState.WITHDRAWN },
-        { appeal_received_by_court_date: { [Op.not]: null } },
-      ],
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
+      '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
   ],
 }
 
-export const courtOfAppealsCasesAccessWhereOptions = () =>
-  courtOfAppealsRequestCasesAccessWhereOptions
+const courtOfAppealsIndictmentsAccessWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: completedIndictmentCaseStates,
+  [Op.or]: [
+    {
+      '$appealCase.appeal_state$': [
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+      ],
+    },
+    {
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
+      '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
+    },
+  ],
+}
+
+export const courtOfAppealsCasesAccessWhereOptions = () => ({
+  [Op.or]: [
+    courtOfAppealsRequestCasesAccessWhereOptions,
+    courtOfAppealsIndictmentsAccessWhereOptions,
+  ],
+})
 
 // District court access
 
@@ -107,7 +130,7 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
+  [Op.and]: [buildIsSentToPrisonAdminExistsCondition(true)],
 }
 
 export const prisonAdminCasesAccessWhereOptions = () => ({

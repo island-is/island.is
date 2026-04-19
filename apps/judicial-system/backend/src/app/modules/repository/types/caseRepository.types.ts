@@ -3,6 +3,7 @@ import { col, Includeable, Op } from 'sequelize'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
@@ -13,6 +14,7 @@ import {
   stringTypes,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -38,6 +40,33 @@ export const caseInclude: Includeable[] = [
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+    ],
+  },
+  {
     model: User,
     as: 'creatingProsecutor',
     include: [{ model: Institution, as: 'institution' }],
@@ -60,26 +89,6 @@ export const caseInclude: Includeable[] = [
   {
     model: User,
     as: 'courtRecordSignatory',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -405,114 +414,170 @@ interface UpdateDateLog {
   location?: string
 }
 
+export interface UpdateCaseDefendantEventLogDecision {
+  defendantId: string
+  rulingDate?: Date
+  rulingDecision: CaseIndictmentRulingDecision
+}
+
 export interface UpdateCase
   extends Pick<
-    Case,
-    | 'indictmentSubtypes'
-    | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
-    | 'isHeightenedSecurityLevel'
-    | 'courtId'
-    | 'leadInvestigator'
-    | 'arrestDate'
-    | 'requestedCourtDate'
-    | 'translator'
-    | 'requestedValidToDate'
-    | 'demands'
-    | 'lawsBroken'
-    | 'legalBasis'
-    | 'legalProvisions'
-    | 'requestedCustodyRestrictions'
-    | 'requestedOtherRestrictions'
-    | 'caseFacts'
-    | 'legalArguments'
-    | 'requestProsecutorOnlySession'
-    | 'prosecutorOnlySessionRequest'
-    | 'comments'
-    | 'caseFilesComments'
-    | 'prosecutorId'
-    | 'sharedWithProsecutorsOfficeId'
-    | 'sessionArrangements'
-    | 'courtLocation'
-    | 'courtStartDate'
-    | 'courtEndTime'
-    | 'isClosedCourtHidden'
-    | 'courtAttendees'
-    | 'prosecutorDemands'
-    | 'courtDocuments'
-    | 'sessionBookings'
-    | 'courtCaseFacts'
-    | 'introduction'
-    | 'courtLegalArguments'
-    | 'ruling'
-    | 'decision'
-    | 'validToDate'
-    | 'isCustodyIsolation'
-    | 'isolationToDate'
-    | 'conclusion'
-    | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
-    | 'accusedPostponedAppealDate'
-    | 'prosecutorPostponedAppealDate'
-    | 'caseModifiedExplanation'
-    | 'rulingModifiedHistory'
-    | 'caseResentExplanation'
-    | 'crimeScenes'
-    | 'indictmentIntroduction'
-    | 'requestDriversLicenseSuspension'
-    | 'creatingProsecutorId'
-    | 'appealState'
-    | 'prosecutorStatementDate'
-    | 'appealReceivedByCourtDate'
-    | 'appealCaseNumber'
-    | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
-    | 'appealConclusion'
-    | 'appealRulingDecision'
-    | 'appealRulingModifiedHistory'
-    | 'requestSharedWithDefender'
-    | 'appealValidToDate'
-    | 'isAppealCustodyIsolation'
-    | 'appealIsolationToDate'
-    | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
-    | 'indictmentDecision'
-    | 'courtSessionType'
-    | 'mergeCaseId'
-    | 'mergeCaseNumber'
-    | 'isCompletedWithoutRuling'
-    | 'hasCivilClaims'
-    | 'isRegisteredInPrisonSystem'
-    | 'isArchived'
-  > {
-  type?: CaseType
-  state?: CaseState
-  policeCaseNumbers?: string[]
-  defendantWaivesRightToCounsel?: boolean
-  rulingDate?: Date | null
-  courtCaseNumber?: string | null
-  judgeId?: string | null
-  registrarId?: string | null
-  courtRecordSignatoryId?: string | null
-  courtRecordSignatureDate?: Date | null
-  parentCaseId?: string | null
-  indictmentReturnedExplanation?: string | null
-  indictmentDeniedExplanation?: string | null
-  indictmentHash?: string | null
+      Case,
+      | 'indictmentSubtypes'
+      | 'description'
+      | 'defenderName'
+      | 'defenderNationalId'
+      | 'defenderEmail'
+      | 'defenderPhoneNumber'
+      | 'isHeightenedSecurityLevel'
+      | 'courtId'
+      | 'leadInvestigator'
+      | 'arrestDate'
+      | 'requestedCourtDate'
+      | 'translator'
+      | 'requestedValidToDate'
+      | 'demands'
+      | 'lawsBroken'
+      | 'legalBasis'
+      | 'legalProvisions'
+      | 'requestedCustodyRestrictions'
+      | 'requestedOtherRestrictions'
+      | 'caseFacts'
+      | 'legalArguments'
+      | 'requestProsecutorOnlySession'
+      | 'prosecutorOnlySessionRequest'
+      | 'comments'
+      | 'caseFilesComments'
+      | 'prosecutorId'
+      | 'sharedWithProsecutorsOfficeId'
+      | 'sessionArrangements'
+      | 'courtLocation'
+      | 'courtStartDate'
+      | 'courtEndTime'
+      | 'isClosedCourtHidden'
+      | 'courtAttendees'
+      | 'prosecutorDemands'
+      | 'courtDocuments'
+      | 'sessionBookings'
+      | 'courtCaseFacts'
+      | 'introduction'
+      | 'courtLegalArguments'
+      | 'ruling'
+      | 'decision'
+      | 'validToDate'
+      | 'isCustodyIsolation'
+      | 'isolationToDate'
+      | 'conclusion'
+      | 'endOfSessionBookings'
+      | 'accusedAppealDecision'
+      | 'accusedAppealAnnouncement'
+      | 'prosecutorAppealDecision'
+      | 'prosecutorAppealAnnouncement'
+      | 'accusedPostponedAppealDate'
+      | 'prosecutorPostponedAppealDate'
+      | 'caseModifiedExplanation'
+      | 'rulingModifiedHistory'
+      | 'caseResentExplanation'
+      | 'crimeScenes'
+      | 'indictmentIntroduction'
+      | 'requestDriversLicenseSuspension'
+      | 'creatingProsecutorId'
+      | 'requestSharedWithDefender'
+      | 'indictmentRulingDecision'
+      | 'indictmentReviewerId'
+      | 'indictmentDecision'
+      | 'courtSessionType'
+      | 'mergeCaseId'
+      | 'mergeCaseNumber'
+      | 'isCompletedWithoutRuling'
+      | 'hasCivilClaims'
+      | 'isArchived'
+    >,
+    Partial<
+      Pick<
+        AppealCase,
+        | 'appealState'
+        | 'prosecutorStatementDate'
+        | 'defendantStatementDate'
+        | 'appealReceivedByCourtDate'
+        | 'appealCaseNumber'
+        | 'appealAssistantId'
+        | 'appealJudge1Id'
+        | 'appealJudge2Id'
+        | 'appealJudge3Id'
+        | 'appealConclusion'
+        | 'appealRulingDecision'
+        | 'appealRulingModifiedHistory'
+        | 'requestAppealRulingNotToBePublished'
+        | 'appealValidToDate'
+        | 'isAppealCustodyIsolation'
+        | 'appealIsolationToDate'
+        | 'appealedByNationalId'
+      >
+    > {
+  type?: Case['type']
+  state?: Case['state']
+  policeCaseNumbers?: Case['policeCaseNumbers']
+  defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
+  rulingDate?: Case['rulingDate'] | null
+  courtCaseNumber?: Case['courtCaseNumber'] | null
+  judgeId?: Case['judgeId'] | null
+  registrarId?: Case['registrarId'] | null
+  courtRecordSignatoryId?: Case['courtRecordSignatoryId'] | null
+  courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
+  parentCaseId?: Case['parentCaseId'] | null
+  indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
+  indictmentHash?: Case['indictmentHash'] | null
+  rulingSignatureDate?: Case['rulingSignatureDate'] | null
+  withCourtSessions?: Case['withCourtSessions']
+  courtRecordHash?: Case['courtRecordHash'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
   penalties?: string
-  rulingSignatureDate?: Date | null
-  withCourtSessions?: boolean
-  courtRecordHash?: string | null
+  defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
+}
+
+export const appealCaseFields: (keyof UpdateAppealCase)[] = [
+  'appealState',
+  'appealCaseNumber',
+  'appealReceivedByCourtDate',
+  'prosecutorStatementDate',
+  'defendantStatementDate',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealRulingDecision',
+  'appealConclusion',
+  'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
+  'appealValidToDate',
+  'isAppealCustodyIsolation',
+  'appealIsolationToDate',
+  'appealedByNationalId',
+]
+
+export interface UpdateAppealCase
+  extends Pick<
+    AppealCase,
+    | 'appealCaseNumber'
+    | 'appealReceivedByCourtDate'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
+    | 'appealRulingDecision'
+    | 'appealConclusion'
+    | 'appealRulingModifiedHistory'
+    | 'requestAppealRulingNotToBePublished'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
+    | 'appealedByNationalId'
+  > {
+  appealState?: AppealCase['appealState']
 }

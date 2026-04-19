@@ -175,9 +175,22 @@ describe('NotificationsWorkerService', () => {
       .spyOn(notificationDispatch, 'sendPushNotification')
       .mockReturnValue(Promise.resolve())
 
-    jest
-      .spyOn(smsService, 'sendSms')
-      .mockReturnValue(Promise.resolve({ Code: 1, Message: 'OK' }))
+    jest.spyOn(smsService, 'sendSms').mockReturnValue(
+      Promise.resolve({
+        success: true,
+        messagesTotal: 1,
+        messages: [
+          {
+            uuid: 'mock-uuid',
+            to: '1234567',
+            status: 'queued' as const,
+            error: false,
+            segmentsTotal: 1,
+            timestampRequest: new Date().toISOString(),
+          },
+        ],
+      }),
+    )
 
     jest
       .spyOn(notificationsService, 'getTemplate')
@@ -1169,6 +1182,93 @@ describe('NotificationsWorkerService', () => {
         userWithNoDelegations.mobilePhoneNumber,
         'Test SMS content',
       )
+    })
+
+    it('should normalize phone numbers by stripping hyphens before sending SMS', async () => {
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await smsSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        mobilePhoneNumber: '+354-6916391',
+        smsContent: 'Test SMS content',
+      } as SmsQueueMessage)
+
+      await wait(2)
+
+      expect(smsService.sendSms).toHaveBeenCalledWith(
+        '+3546916391',
+        'Test SMS content',
+      )
+
+      const record = await notificationDeliveryModel.findOne({
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Sms,
+        },
+      })
+      expect(record).not.toBeNull()
+      expect(record?.sentTo).toBe('+3546916391')
+    })
+
+    it('should throw when Nova returns a message-level error', async () => {
+      jest.spyOn(smsService, 'sendSms').mockResolvedValueOnce({
+        success: true,
+        messagesTotal: 1,
+        messages: [
+          {
+            uuid: 'mock-uuid',
+            to: '+3546916391',
+            status: 'failed' as const,
+            error: true,
+            errorDetails: 'Invalid recipient',
+            segmentsTotal: 0,
+            timestampRequest: new Date().toISOString(),
+          },
+        ],
+      })
+
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await smsSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        mobilePhoneNumber: '+354-6916391',
+        smsContent: 'Test SMS content',
+      } as SmsQueueMessage)
+
+      await wait(2)
+
+      // sendSms should have been called with the normalized number
+      expect(smsService.sendSms).toHaveBeenCalledWith(
+        '+3546916391',
+        'Test SMS content',
+      )
+
+      // Should NOT write a delivery record when the message has an error
+      const record = await notificationDeliveryModel.findOne({
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Sms,
+        },
+      })
+      expect(record).toBeNull()
     })
 
     it('should call sendPushNotification with correct args including userNotificationId', async () => {

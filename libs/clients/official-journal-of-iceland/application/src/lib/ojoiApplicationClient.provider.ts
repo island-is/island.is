@@ -33,7 +33,9 @@ export const OfficialJournalOfIcelandApplicationClientApiProvider: Provider<Offi
               : undefined,
             organizationSlug: 'domsmalaraduneytid',
           }),
-          basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+          basePath: xroadConfig.xRoadBasePath
+            ? `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`
+            : 'http://localhost:5555',
           headers: {
             'X-Road-Client': xroadConfig.xRoadClient,
             Accept: 'application/json',

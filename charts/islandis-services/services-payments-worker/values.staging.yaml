@@ -49,6 +49,7 @@ grantNamespaces:
   - 'application-system'
   - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -104,6 +105,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-payments'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-payments-worker'
   create: true
-  name: 'services-payments'
+  name: 'services-payments-worker'

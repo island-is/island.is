@@ -81,7 +81,7 @@ const useInfoCardItems = () => {
             <div key="defendants-grid" className={grid({ gap: 3 })}>
               {defendants.map((defendant, index) => (
                 <div
-                  key={defendant.id}
+                  key={`defendants-grid-${defendant.id}`}
                   className={cn({
                     [styles.renderDividerFull]: index !== defendants.length - 1,
                   })}
@@ -288,23 +288,22 @@ const useInfoCardItems = () => {
   const splitCases: Item = {
     id: 'split-cases-item',
     title: 'Klofinn frá',
-    values:
-      splitCaseEntries.length > 0
-        ? [
-            <div key="split-cases-grid" className={grid({ gap: 2 })}>
-              {splitCaseEntries.map(({ defendant, splitCase }) => (
-                <div key={defendant.id}>
-                  <Text>{defendant.name}</Text>
-                  <LinkComponent
-                    href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-                  >
-                    {splitCase.courtCaseNumber}
-                  </LinkComponent>
-                </div>
-              ))}
-            </div>,
-          ]
-        : [],
+    values: isNonEmptyArray(splitCaseEntries)
+      ? [
+          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+            {splitCaseEntries.map(({ defendant, splitCase }) => (
+              <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
+                <Text>{defendant.name}</Text>
+                <LinkComponent
+                  href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+                >
+                  {splitCase.courtCaseNumber}
+                </LinkComponent>
+              </div>
+            ))}
+          </div>,
+        ]
+      : [],
   }
 
   const splitCase: Item = {
@@ -329,13 +328,13 @@ const useInfoCardItems = () => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCaseNumber],
+    values: [workingCase.appealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealAssistant?.name],
+    values: [workingCase.appealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -344,9 +343,9 @@ const useInfoCardItems = () => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealJudge1?.name || '',
-          workingCase.appealJudge2?.name || '',
-          workingCase.appealJudge3?.name || '',
+          workingCase.appealCase?.appealJudge1?.name || '',
+          workingCase.appealCase?.appealJudge2?.name || '',
+          workingCase.appealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
@@ -363,7 +362,7 @@ const useInfoCardItems = () => {
   const indictmentReviewDecision: Item = {
     id: 'indictment-review-decision-item',
     title: formatMessage(strings.indictmentReviewDecision),
-    values: workingCase.defendants
+    values: isNonEmptyArray(workingCase.defendants)
       ? workingCase.defendants
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
@@ -418,13 +417,14 @@ const useInfoCardItems = () => {
     title: (
       <Text variant="h4" as="h4" marginBottom={2}>
         {capitalize(
-          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+          isNonEmptyArray(workingCase.civilClaimants) &&
+            workingCase.civilClaimants.length > 1
             ? formatMessage(strings.civilClaimants)
             : formatMessage(strings.civilClaimant),
         )}
       </Text>
     ),
-    values: workingCase.civilClaimants
+    values: isNonEmptyArray(workingCase.civilClaimants)
       ? [
           <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant, index) => (
@@ -432,7 +432,7 @@ const useInfoCardItems = () => {
                 key={civilClaimant.id}
                 className={cn({
                   [styles.renderDividerFull]:
-                    workingCase.civilClaimants &&
+                    isNonEmptyArray(workingCase.civilClaimants) &&
                     index !== workingCase.civilClaimants.length - 1,
                 })}
               >
@@ -453,7 +453,7 @@ const useInfoCardItems = () => {
           : 'Brotaþoli'}
       </Text>
     ),
-    values: workingCase.victims
+    values: isNonEmptyArray(workingCase.victims)
       ? [
           <div key="victims-grid" className={grid({ gap: 3 })}>
             {workingCase.victims.map((victim, index) => (
@@ -461,7 +461,7 @@ const useInfoCardItems = () => {
                 key={victim.id}
                 className={cn(grid({ gap: 1 }), {
                   [styles.renderDividerFull]:
-                    workingCase.victims &&
+                    isNonEmptyArray(workingCase.victims) &&
                     index !== workingCase.victims.length - 1,
                 })}
               >

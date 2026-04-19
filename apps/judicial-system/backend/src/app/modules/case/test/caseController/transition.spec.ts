@@ -2,12 +2,14 @@ import each from 'jest-each'
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { ForbiddenException } from '@nestjs/common'
+
 import { ConfigType } from '@island.is/nest/config'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -186,10 +188,6 @@ describe('CaseController - Transition', () => {
                 state: newState,
                 parentCaseId:
                   transition === CaseTransition.DELETE ? null : undefined,
-                courtCaseNumber:
-                  transition === CaseTransition.RETURN_INDICTMENT
-                    ? ''
-                    : undefined,
                 rulingDate: [
                   CaseTransition.ACCEPT,
                   CaseTransition.REJECT,
@@ -303,7 +301,6 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.ASK_FOR_CANCELLATION} | ${CaseState.SUBMITTED}                | ${CaseState.WAITING_FOR_CANCELLATION}
       ${CaseTransition.ASK_FOR_CANCELLATION} | ${CaseState.RECEIVED}                 | ${CaseState.WAITING_FOR_CANCELLATION}
       ${CaseTransition.RECEIVE}              | ${CaseState.SUBMITTED}                | ${CaseState.RECEIVED}
-      ${CaseTransition.RETURN_INDICTMENT}    | ${CaseState.RECEIVED}                 | ${CaseState.DRAFT}
       ${CaseTransition.COMPLETE}             | ${CaseState.RECEIVED}                 | ${CaseState.COMPLETED}
       ${CaseTransition.DELETE}               | ${CaseState.DRAFT}                    | ${CaseState.DELETED}
       ${CaseTransition.DELETE}               | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.DELETED}
@@ -331,6 +328,7 @@ describe('CaseController - Transition', () => {
           },
         ]
         const courtEndTime = randomDate()
+        const defendants = [{ id: uuid(), name: 'Test Defendant' }]
         const theCase = {
           id: caseId,
           origin: CaseOrigin.LOKE,
@@ -340,6 +338,7 @@ describe('CaseController - Transition', () => {
           state: oldState,
           caseFiles,
           courtEndTime,
+          defendants,
         } as Case
         const updatedCase = {
           id: caseId,
@@ -350,6 +349,7 @@ describe('CaseController - Transition', () => {
           state: newState,
           caseFiles,
           courtEndTime,
+          defendants,
         } as Case
         let then: Then
 
@@ -369,24 +369,12 @@ describe('CaseController - Transition', () => {
                 isRequestCase(type) && transition === CaseTransition.DELETE
                   ? null
                   : undefined,
-              courtCaseNumber:
-                transition === CaseTransition.RETURN_INDICTMENT
-                  ? null
-                  : undefined,
-              indictmentHash:
-                transition === CaseTransition.RETURN_INDICTMENT
-                  ? null
-                  : undefined,
               rulingDate:
                 transition === CaseTransition.COMPLETE
                   ? courtEndTime
                   : undefined,
               indictmentDeniedExplanation:
                 transition === CaseTransition.SUBMIT ? null : undefined,
-              indictmentReturnedExplanation:
-                transition === CaseTransition.ASK_FOR_CONFIRMATION
-                  ? null
-                  : undefined,
             },
             { transaction },
           )
@@ -480,21 +468,6 @@ describe('CaseController - Transition', () => {
             ])
           } else if (
             newState === CaseState.DRAFT &&
-            oldState === CaseState.RECEIVED
-          ) {
-            expect(mockQueuedMessages).toEqual([
-              {
-                type: MessageType.NOTIFICATION,
-                user: {
-                  ...defaultUser,
-                  canConfirmIndictment: isIndictmentCase(theCase.type),
-                },
-                caseId,
-                body: { type: CaseNotificationType.INDICTMENT_RETURNED },
-              },
-            ])
-          } else if (
-            newState === CaseState.DRAFT &&
             oldState === CaseState.WAITING_FOR_CONFIRMATION
           ) {
             expect(mockQueuedMessages).toEqual([
@@ -554,14 +527,41 @@ describe('CaseController - Transition', () => {
     },
   )
 
+  describe('indictment case with 0 defendants', () => {
+    each(indictmentCases).describe('%s case', (type) => {
+      it('should reject ASK_FOR_CONFIRMATION and not call update', async () => {
+        const caseId = uuid()
+        const policeCaseNumber = uuid()
+        const theCaseWithNoDefendants = {
+          id: caseId,
+          origin: CaseOrigin.LOKE,
+          type,
+          policeCaseNumbers: [policeCaseNumber],
+          state: CaseState.DRAFT,
+          defendants: [],
+        } as Case
+
+        const then = await givenWhenThen(caseId, theCaseWithNoDefendants, {
+          transition: CaseTransition.ASK_FOR_CONFIRMATION,
+        })
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error?.message).toContain(
+          'Cannot submit indictment to court without at least one defendant',
+        )
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   each`
       transition                        | caseState                    | currentAppealState           | newAppealState
-      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
-      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${CaseAppealState.COMPLETED} | ${CaseAppealState.RECEIVED}
-      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.WITHDRAWN}
-      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.WITHDRAWN}
+      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${AppealCaseState.APPEALED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${AppealCaseState.APPEALED}  | ${AppealCaseState.RECEIVED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.RECEIVED}  | ${AppealCaseState.COMPLETED}
+      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${AppealCaseState.COMPLETED} | ${AppealCaseState.RECEIVED}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.APPEALED}  | ${AppealCaseState.WITHDRAWN}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.RECEIVED}  | ${AppealCaseState.WITHDRAWN}
 
 
     `.describe(
@@ -610,7 +610,7 @@ describe('CaseController - Transition', () => {
             type,
             state: caseState,
             caseFiles,
-            appealState: currentAppealState,
+            appealCase: { appealState: currentAppealState },
             origin: CaseOrigin.LOKE,
           } as Case
 
@@ -619,7 +619,7 @@ describe('CaseController - Transition', () => {
             type,
             state: caseState,
             caseFiles,
-            appealState: newAppealState,
+            appealCase: { appealState: newAppealState },
             origin: CaseOrigin.LOKE,
           } as Case
 
@@ -645,8 +645,8 @@ describe('CaseController - Transition', () => {
                     : undefined,
                 appealRulingDecision:
                   transition === CaseTransition.WITHDRAW_APPEAL &&
-                  currentAppealState === CaseAppealState.RECEIVED
-                    ? CaseAppealRulingDecision.DISCONTINUED
+                  currentAppealState === AppealCaseState.RECEIVED
+                    ? AppealCaseRulingDecision.DISCONTINUED
                     : undefined,
               },
               { transaction },

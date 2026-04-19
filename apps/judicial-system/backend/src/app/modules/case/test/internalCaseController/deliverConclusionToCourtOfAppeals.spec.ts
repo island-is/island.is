@@ -30,8 +30,10 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCaseNumber,
-    appealRulingDecision,
+    appealCase: {
+      appealCaseNumber,
+      appealRulingDecision,
+    },
     notifications: [
       {
         type: NotificationType.APPEAL_COMPLETED,

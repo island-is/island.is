@@ -15,18 +15,21 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { Fragment, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
+import {
+  lifetimeSettingsStep,
+  urlSettingsStep,
+} from '../../lib/utils/customSections'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
-import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
 
 export const Navbar = () => {
   const {
@@ -37,7 +40,7 @@ export const Navbar = () => {
     openComponents,
   } = useContext(ControlContext) as IControlContext
   const { formatMessage } = useIntl()
-  const { activeItem, form, isPublished } = control
+  const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
   const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
   const { hasPayment } = form
@@ -145,6 +148,16 @@ export const Navbar = () => {
           },
         },
       })
+    } else if (id === lifetimeSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: lifetimeSettingsStep,
+          },
+        },
+      })
     } else if (data) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -166,8 +179,7 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT,
+          s.sectionType !== SectionTypes.SUMMARY,
       )
       .map((s) => (
         <Box key={s.id}>
@@ -274,6 +286,14 @@ export const Navbar = () => {
           focusComponent={focusComponent}
         />
       </div>
+      <div>
+        <NavComponent
+          type="Section"
+          data={lifetimeSettingsStep}
+          active={activeItem.data?.id === lifetimeSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
     </>
   )
 
@@ -281,10 +301,10 @@ export const Navbar = () => {
     <div>
       <Box className={cn(styles.navbarContainer)}>
         <DndContext
-          sensors={isPublished ? [] : sensors}
-          onDragStart={isPublished ? undefined : onDragStart}
-          onDragEnd={isPublished ? undefined : onDragEnd}
-          onDragOver={isPublished ? undefined : onDragOver}
+          sensors={isReadOnly ? [] : sensors}
+          onDragStart={isReadOnly ? undefined : onDragStart}
+          onDragEnd={isReadOnly ? undefined : onDragEnd}
+          onDragOver={isReadOnly ? undefined : onDragOver}
         >
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
@@ -315,7 +335,7 @@ export const Navbar = () => {
           )}
         </DndContext>
       </Box>
-      {payment && hasPayment && (
+      {/* {payment && hasPayment && (
         <Fragment>
           <NavComponent
             type="Section"
@@ -325,7 +345,7 @@ export const Navbar = () => {
           />
           {renderScreensForSection(payment as FormSystemSection)}
         </Fragment>
-      )}
+      )} */}
       <Box
         display="flex"
         justifyContent="center"
@@ -336,7 +356,7 @@ export const Navbar = () => {
           variant="ghost"
           size="small"
           onClick={addSection}
-          disabled={isPublished}
+          disabled={isReadOnly}
         >
           {formatMessage(m.addSection)}
         </Button>

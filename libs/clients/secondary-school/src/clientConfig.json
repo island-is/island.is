@@ -16,10 +16,7 @@
             "in": "path",
             "description": "(required) The ApplicationId from Island.is.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -54,34 +51,23 @@
             "in": "path",
             "description": "(required) The ApplicationId from Island.is.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "requestBody": {
           "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationUpdateDto.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             }
           }
         },
@@ -90,23 +76,12 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
             }
           }
         }
@@ -120,17 +95,10 @@
             "in": "path",
             "description": "(required) The ApplicationId from Island.is.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+        "responses": { "200": { "description": "OK" } }
       }
     },
     "/v1/applications/{islandIsApplicationId}/id": {
@@ -143,10 +111,7 @@
             "in": "path",
             "description": "(required) The ApplicationId from Island.is.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -154,23 +119,12 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
             }
           }
         }
@@ -184,24 +138,16 @@
           "description": "(required) Application MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             }
           }
         },
@@ -238,10 +184,7 @@
             "name": "date",
             "in": "query",
             "description": "The date to get registration dates for. If null, uses the current date.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -249,19 +192,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationInfoDto"
-                }
+                "schema": { "$ref": "#/components/schemas/RegistrationInfoDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationInfoDto"
-                }
+                "schema": { "$ref": "#/components/schemas/RegistrationInfoDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationInfoDto"
-                }
+                "schema": { "$ref": "#/components/schemas/RegistrationInfoDto" }
               }
             }
           }
@@ -278,10 +215,7 @@
             "in": "path",
             "description": "ID of the programme.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -289,19 +223,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeReturnDto"
-                }
+                "schema": { "$ref": "#/components/schemas/ProgrammeReturnDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeReturnDto"
-                }
+                "schema": { "$ref": "#/components/schemas/ProgrammeReturnDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeReturnDto"
-                }
+                "schema": { "$ref": "#/components/schemas/ProgrammeReturnDto" }
               }
             }
           }
@@ -383,10 +311,7 @@
             "in": "path",
             "description": "(required) SchoolId.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -394,19 +319,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchoolDto"
-                }
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchoolDto"
-                }
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchoolDto"
-                }
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
               }
             }
           }
@@ -422,11 +341,7 @@
             "name": "rowOffset",
             "in": "query",
             "description": "(optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
@@ -446,25 +361,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SchoolDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SchoolDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SchoolDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
                 }
               }
             }
@@ -482,18 +391,13 @@
             "in": "path",
             "description": "(required) SchoolId.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "onlyFreshmenEnabled",
             "in": "query",
             "description": "(optional) Boolean to filter only freshmen enabled programmes.",
-            "schema": {
-              "type": "boolean"
-            }
+            "schema": { "type": "boolean" }
           }
         ],
         "responses": {
@@ -503,25 +407,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
                 }
               }
             }
@@ -567,9 +465,7 @@
             "in": "path",
             "description": "(required) National Id of the students being fetched for.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -579,25 +475,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
                 }
               }
             }
@@ -614,19 +504,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/StudentInfoDto"
-                }
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StudentInfoDto"
-                }
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StudentInfoDto"
-                }
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
               }
             }
           }
@@ -641,21 +525,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
             }
           }
         }
@@ -702,12 +574,8 @@
       "AnyOpenForAdmissionDto": {
         "type": "object",
         "properties": {
-          "anyOpenForAdmissionGeneral": {
-            "type": "boolean"
-          },
-          "anyOpenForAdmissionFreshman": {
-            "type": "boolean"
-          }
+          "anyOpenForAdmissionGeneral": { "type": "boolean" },
+          "anyOpenForAdmissionFreshman": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -743,9 +611,7 @@
           },
           "attachments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AttachmentDto"
-            },
+            "items": { "$ref": "#/components/schemas/AttachmentDto" },
             "description": "Attachments that the applicant has uploaded",
             "nullable": true
           },
@@ -780,9 +646,7 @@
           },
           "nextOfKin": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NextOfKinDto"
-            },
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
             "description": "The national ID of the next of kin",
             "nullable": true
           },
@@ -798,9 +662,7 @@
           },
           "schoolChoices": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolChoiceBaseDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolChoiceBaseDto" },
             "description": "List of schools being applied to",
             "nullable": true
           }
@@ -842,17 +704,11 @@
             "description": "Date updated",
             "format": "date-time"
           },
-          "status": {
-            "$ref": "#/components/schemas/ApplicationStatus"
-          },
-          "speakingLanguage": {
-            "$ref": "#/components/schemas/LanguageDto"
-          },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
+          "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
           "schoolChoices": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolChoiceReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolChoiceReturnDto" },
             "description": "List of schools being applied to",
             "nullable": true
           },
@@ -861,17 +717,13 @@
           },
           "attachments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AttachmentReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
             "description": "List of attachments",
             "nullable": true
           },
           "grades": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GradeDto"
-            },
+            "items": { "$ref": "#/components/schemas/GradeDto" },
             "description": "Grades of the applicant",
             "nullable": true
           },
@@ -936,9 +788,7 @@
           },
           "nextOfKin": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NextOfKinDto"
-            },
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
             "description": "The national ID of the next of kin",
             "nullable": true
           },
@@ -990,10 +840,7 @@
             "description": "Content type (e.g., \"pdf\").\r\nNot contstrained to a specific set of values.",
             "nullable": true
           },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          }
+          "id": { "type": "string", "format": "uuid" }
         },
         "additionalProperties": false
       },
@@ -1007,9 +854,7 @@
           },
           "subjects": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubjectStructureDto"
-            },
+            "items": { "$ref": "#/components/schemas/SubjectStructureDto" },
             "description": "List of subjects that are a part of the core subject group.",
             "nullable": true
           }
@@ -1048,14 +893,8 @@
       "ElementarySchoolDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1089,10 +928,7 @@
             "description": "Name of the elementary school",
             "nullable": true
           },
-          "personId": {
-            "type": "string",
-            "format": "uuid"
-          },
+          "personId": { "type": "string", "format": "uuid" },
           "grade": {
             "type": "string",
             "description": "Grade, e.g. A, B, C, D",
@@ -1119,10 +955,7 @@
       "LanguageDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
+          "id": { "type": "string", "format": "uuid" },
           "name": {
             "type": "string",
             "description": "Name of language",
@@ -1218,9 +1051,7 @@
           },
           "packages": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PackageDto"
-            },
+            "items": { "$ref": "#/components/schemas/PackageDto" },
             "description": "List of packages that can be chosen, where each package contains a list of subjects.",
             "nullable": true
           }
@@ -1237,9 +1068,7 @@
           },
           "subjects": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubjectStructureDto"
-            },
+            "items": { "$ref": "#/components/schemas/SubjectStructureDto" },
             "description": "List of subjects that are a part of the package.",
             "nullable": true
           }
@@ -1304,12 +1133,8 @@
             "description": "Calculated weighted average for the programme",
             "format": "double"
           },
-          "status": {
-            "$ref": "#/components/schemas/ProgrammeChoiceStatus"
-          },
-          "failsGradeRequirement": {
-            "type": "boolean"
-          }
+          "status": { "$ref": "#/components/schemas/ProgrammeChoiceStatus" },
+          "failsGradeRequirement": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -1329,25 +1154,19 @@
         "properties": {
           "levels": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LevelDto"
-            },
+            "items": { "$ref": "#/components/schemas/LevelDto" },
             "description": "List of levels to filter by.",
             "nullable": true
           },
           "schools": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolSimpleReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
             "description": "List of schools to filter by.",
             "nullable": true
           },
           "countryAreas": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CountryAreaDto"
-            },
+            "items": { "$ref": "#/components/schemas/CountryAreaDto" },
             "description": "List of country areas to filter by.",
             "nullable": true
           }
@@ -1377,9 +1196,7 @@
             "description": "Title of the programme.",
             "nullable": true
           },
-          "studyTrack": {
-            "$ref": "#/components/schemas/StudyTrackReturnDto"
-          },
+          "studyTrack": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
           "qualification": {
             "$ref": "#/components/schemas/QualificationReturnDto"
           },
@@ -1430,9 +1247,7 @@
           },
           "competencyCriteria": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "description": "Competency criteria for the programme. (IS: Hæfniviðmið)",
             "nullable": true
           },
@@ -1444,9 +1259,7 @@
           },
           "schools": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolSimpleReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
             "description": "Schools offering this programme.",
             "nullable": true
           }
@@ -1456,53 +1269,26 @@
       "ProgrammeSimpleDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "titleEnglish": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "subSchool": {
-            "type": "string",
-            "nullable": true
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true },
+          "titleEnglish": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "subSchool": { "type": "string", "nullable": true },
           "registryEndDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "programmeApplicationMessage": {
+          "programmeApplicationMessage": { "type": "string", "nullable": true },
+          "programmeApplicationMessageEnglish": {
             "type": "string",
             "nullable": true
           },
-          "isSpecialNeedsProgramme": {
-            "type": "boolean"
-          },
-          "isProcessingLocked": {
-            "type": "boolean"
-          },
-          "isDisabled": {
-            "type": "boolean"
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          }
+          "isSpecialNeedsProgramme": { "type": "boolean" },
+          "isProcessingLocked": { "type": "boolean" },
+          "isDisabled": { "type": "boolean" },
+          "schoolId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1524,9 +1310,7 @@
             "description": "Title of the programme.",
             "nullable": true
           },
-          "studyTrack": {
-            "$ref": "#/components/schemas/StudyTrackReturnDto"
-          },
+          "studyTrack": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
           "qualification": {
             "$ref": "#/components/schemas/QualificationReturnDto"
           },
@@ -1543,14 +1327,10 @@
             "description": "Description of the programme.",
             "nullable": true
           },
-          "school": {
-            "$ref": "#/components/schemas/SchoolSimpleReturnDto"
-          },
+          "school": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
           "otherSchools": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolSimpleReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
             "description": "Other schools offering programmes with the same Ministry Serial.",
             "nullable": true
           }
@@ -1577,9 +1357,7 @@
           },
           "tags": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TagReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/TagReturnDto" },
             "description": "Tags associated with the programme specialization.",
             "nullable": true
           }
@@ -1591,25 +1369,19 @@
         "properties": {
           "coreSubjectGroups": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CoreSubjectGroupDto"
-            },
+            "items": { "$ref": "#/components/schemas/CoreSubjectGroupDto" },
             "description": "List of subject groups that are the core of the programme.",
             "nullable": true
           },
           "packageChoices": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PackageChoiceDto"
-            },
+            "items": { "$ref": "#/components/schemas/PackageChoiceDto" },
             "description": "List of package choices, where each package choice contains a list of packages.",
             "nullable": true
           },
           "subjectChoiceGroups": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubjectChoiceGroupDto"
-            },
+            "items": { "$ref": "#/components/schemas/SubjectChoiceGroupDto" },
             "description": "List of subjects that can be chosen freely, with a required number of credits.",
             "nullable": true
           }
@@ -1639,18 +1411,14 @@
             "description": "Description of the qualification.",
             "nullable": true
           },
-          "level": {
-            "$ref": "#/components/schemas/LevelDto"
-          }
+          "level": { "$ref": "#/components/schemas/LevelDto" }
         },
         "additionalProperties": false
       },
       "RegistrationInfoDto": {
         "type": "object",
         "properties": {
-          "allowFreshmenApplication": {
-            "type": "boolean"
-          },
+          "allowFreshmenApplication": { "type": "boolean" },
           "registrationEndDateGeneral": {
             "type": "string",
             "format": "date-time",
@@ -1694,9 +1462,7 @@
           },
           "programmeChoices": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProgrammeChoiceDto"
-            },
+            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
             "description": "Programme choices",
             "nullable": true
           },
@@ -1720,18 +1486,13 @@
       "SchoolChoiceReturnDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
+          "id": { "type": "string", "format": "uuid" },
           "priority": {
             "type": "integer",
             "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
             "format": "int32"
           },
-          "school": {
-            "$ref": "#/components/schemas/SchoolSimpleDto"
-          },
+          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
           "semesterId": {
             "type": "string",
             "description": "Id of semester being applied to",
@@ -1745,12 +1506,8 @@
             "description": "Programme choice",
             "nullable": true
           },
-          "thirdLanguage": {
-            "$ref": "#/components/schemas/LanguageDto"
-          },
-          "northernLanguage": {
-            "$ref": "#/components/schemas/LanguageDto"
-          },
+          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
           "requestDormitory": {
             "type": "boolean",
             "description": "Is the student requesting dormitory."
@@ -1765,26 +1522,12 @@
             "description": "Calculated weighted average for the school",
             "format": "double"
           },
-          "status": {
-            "$ref": "#/components/schemas/SchoolChoiceStatus"
-          },
-          "rejectionLetterSent": {
-            "type": "boolean"
-          },
-          "processingComment": {
-            "type": "string",
-            "nullable": true
-          },
-          "messageToApplicant": {
-            "type": "string",
-            "nullable": true
-          },
-          "isManualChoice": {
-            "type": "boolean"
-          },
-          "isManuallyAccepted": {
-            "type": "boolean"
-          },
+          "status": { "$ref": "#/components/schemas/SchoolChoiceStatus" },
+          "rejectionLetterSent": { "type": "boolean" },
+          "processingComment": { "type": "string", "nullable": true },
+          "messageToApplicant": { "type": "string", "nullable": true },
+          "isManualChoice": { "type": "boolean" },
+          "isManuallyAccepted": { "type": "boolean" },
           "allocatedProgramme": {
             "$ref": "#/components/schemas/ProgrammeSimpleDto"
           }
@@ -1870,17 +1613,13 @@
           },
           "thirdLanguages": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LanguageDto"
-            },
+            "items": { "$ref": "#/components/schemas/LanguageDto" },
             "description": "Third languageges tought in school",
             "nullable": true
           },
           "nordicLanguages": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LanguageDto"
-            },
+            "items": { "$ref": "#/components/schemas/LanguageDto" },
             "description": "Nordic languageges tought in school",
             "nullable": true
           },
@@ -1940,9 +1679,7 @@
             "description": "Abbreviation of the school.",
             "nullable": true
           },
-          "countryArea": {
-            "$ref": "#/components/schemas/CountryAreaDto"
-          }
+          "countryArea": { "$ref": "#/components/schemas/CountryAreaDto" }
         },
         "additionalProperties": false
       },
@@ -1959,10 +1696,7 @@
           },
           "applications": {
             "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
+            "items": { "type": "string", "format": "uuid" },
             "description": "List of applications the student has applied",
             "nullable": true
           }
@@ -1996,9 +1730,7 @@
           },
           "subjects": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubjectStructureDto"
-            },
+            "items": { "$ref": "#/components/schemas/SubjectStructureDto" },
             "description": "List of subjects that can be chosen freely, with a required number of credits.",
             "nullable": true
           }
@@ -2067,9 +1799,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

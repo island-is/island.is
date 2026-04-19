@@ -14,9 +14,14 @@ import { isDefined } from '@island.is/shared/utils'
 import { ApiScope } from '../models/api-scope.model'
 import { AdminCreateScopeDto } from './dto/admin-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
+import { ApiScopeCategory } from '../models/api-scope-category.model'
+import { ApiScopeTag } from '../models/api-scope-tag.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
+import { AdminScopeClientDto } from './dto/admin-scope-client.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
 import { NoContentException } from '@island.is/nest/problem'
+import { ClientAllowedScope } from '../../clients/models/client-allowed-scope.model'
+import { Client } from '../../clients/models/client.model'
 import {
   AdminPatchScopeDto,
   superUserScopeFields,
@@ -44,10 +49,63 @@ export class AdminScopeService {
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
     @InjectModel(ApiScopeDelegationType)
     private readonly apiScopeDelegationType: typeof ApiScopeDelegationType,
+    @InjectModel(ApiScopeCategory)
+    private readonly apiScopeCategory: typeof ApiScopeCategory,
+    @InjectModel(ApiScopeTag)
+    private readonly apiScopeTag: typeof ApiScopeTag,
+    @InjectModel(ClientAllowedScope)
+    private readonly clientAllowedScope: typeof ClientAllowedScope,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
   ) {}
+
+  async findClientsByScopeName({
+    scopeName,
+    tenantId,
+  }: {
+    scopeName: string
+    tenantId: string
+  }): Promise<AdminScopeClientDto[]> {
+    const allowedScopes = await this.clientAllowedScope.findAll({
+      where: { scopeName },
+      include: [
+        {
+          model: Client,
+          where: {
+            domainName: tenantId,
+            enabled: true,
+          },
+          required: true,
+        },
+      ],
+    })
+
+    const clients = allowedScopes
+      .map((row) => (row as ClientAllowedScope & { client: Client }).client)
+      .filter(isDefined)
+
+    if (clients.length === 0) {
+      return []
+    }
+
+    const translationMap = await this.translationService.findTranslationMap(
+      'client',
+      clients.map((c) => c.clientId),
+    )
+
+    return clients
+      .sort((a, b) => a.clientId.localeCompare(b.clientId))
+      .map((client) => ({
+        clientId: client.clientId,
+        clientType: client.clientType,
+        displayName: this.adminTranslationService.createTranslatedValueDTOs({
+          key: 'clientName',
+          defaultValueIS: client.clientName ?? '',
+          translations: translationMap.get(client.clientId),
+        }),
+      }))
+  }
 
   async findAllByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({
@@ -57,6 +115,8 @@ export class AdminScopeService {
       },
       include: [
         { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
+        { model: ApiScopeCategory, as: 'categories' },
+        { model: ApiScopeTag, as: 'tags' },
       ],
     })
 
@@ -94,6 +154,8 @@ export class AdminScopeService {
       },
       include: [
         { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
+        { model: ApiScopeCategory, as: 'categories' },
+        { model: ApiScopeTag, as: 'tags' },
       ],
     })
 
@@ -213,6 +275,22 @@ export class AdminScopeService {
         })
       }
 
+      if (input.categoryIds && input.categoryIds.length > 0) {
+        await this.addScopeCategories({
+          apiScopeName: scope.name,
+          categoryIds: input.categoryIds,
+          transaction,
+        })
+      }
+
+      if (input.tagIds && input.tagIds.length > 0) {
+        await this.addScopeTags({
+          apiScopeName: scope.name,
+          tagIds: input.tagIds,
+          transaction,
+        })
+      }
+
       return scope
     })
 
@@ -223,6 +301,8 @@ export class AdminScopeService {
       },
       include: [
         { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
+        { model: ApiScopeCategory, as: 'categories' },
+        { model: ApiScopeTag, as: 'tags' },
       ],
       useMaster: true,
     })
@@ -387,6 +467,38 @@ export class AdminScopeService {
         await this.removeScopeDelegationTypes({
           apiScopeName: scopeName,
           delegationTypes: input.removedDelegationTypes,
+          transaction,
+        })
+      }
+
+      if (input.addedCategoryIds && input.addedCategoryIds.length > 0) {
+        await this.addScopeCategories({
+          apiScopeName: scopeName,
+          categoryIds: input.addedCategoryIds,
+          transaction,
+        })
+      }
+
+      if (input.removedCategoryIds && input.removedCategoryIds.length > 0) {
+        await this.removeScopeCategories({
+          apiScopeName: scopeName,
+          categoryIds: input.removedCategoryIds,
+          transaction,
+        })
+      }
+
+      if (input.addedTagIds && input.addedTagIds.length > 0) {
+        await this.addScopeTags({
+          apiScopeName: scopeName,
+          tagIds: input.addedTagIds,
+          transaction,
+        })
+      }
+
+      if (input.removedTagIds && input.removedTagIds.length > 0) {
+        await this.removeScopeTags({
+          apiScopeName: scopeName,
+          tagIds: input.removedTagIds,
           transaction,
         })
       }
@@ -574,6 +686,94 @@ export class AdminScopeService {
         },
       )
     }
+  }
+
+  private async addScopeCategories({
+    apiScopeName,
+    categoryIds = [],
+    transaction,
+  }: {
+    apiScopeName: string
+    categoryIds?: string[]
+    transaction: Transaction
+  }) {
+    if (categoryIds.length === 0) return
+
+    await Promise.all(
+      categoryIds.map((categoryId) =>
+        this.apiScopeCategory.upsert(
+          {
+            scopeName: apiScopeName,
+            categoryId,
+          },
+          { transaction },
+        ),
+      ),
+    )
+  }
+
+  private async removeScopeCategories({
+    apiScopeName,
+    categoryIds = [],
+    transaction,
+  }: {
+    apiScopeName: string
+    categoryIds?: string[]
+    transaction: Transaction
+  }) {
+    if (categoryIds.length === 0) return
+
+    await this.apiScopeCategory.destroy({
+      transaction,
+      where: {
+        scopeName: apiScopeName,
+        categoryId: { [Op.in]: categoryIds },
+      },
+    })
+  }
+
+  private async addScopeTags({
+    apiScopeName,
+    tagIds = [],
+    transaction,
+  }: {
+    apiScopeName: string
+    tagIds?: string[]
+    transaction: Transaction
+  }) {
+    if (tagIds.length === 0) return
+
+    await Promise.all(
+      tagIds.map((tagId) =>
+        this.apiScopeTag.upsert(
+          {
+            scopeName: apiScopeName,
+            tagId,
+          },
+          { transaction },
+        ),
+      ),
+    )
+  }
+
+  private async removeScopeTags({
+    apiScopeName,
+    tagIds = [],
+    transaction,
+  }: {
+    apiScopeName: string
+    tagIds?: string[]
+    transaction: Transaction
+  }) {
+    if (tagIds.length === 0) return
+
+    await this.apiScopeTag.destroy({
+      transaction,
+      where: {
+        scopeName: apiScopeName,
+        tagId: { [Op.in]: tagIds },
+      },
+    })
   }
 
   private isSuperAdmin = (user: User) => {

@@ -20,6 +20,7 @@ type Props = {
   active: boolean
   index?: number
   selectable?: boolean
+  stylePaymentFieldAsSection?: boolean
   focusComponent?(type: ItemType, id: UniqueIdentifier): void
 }
 
@@ -29,6 +30,7 @@ export const NavComponent = ({
   active,
   index,
   selectable,
+  stylePaymentFieldAsSection = false,
   focusComponent,
 }: Props) => {
   const {
@@ -40,13 +42,18 @@ export const NavComponent = ({
     openComponents,
     setOpenComponents,
   } = useContext(ControlContext)
-  const { activeItem, activeListItem, form, isPublished } = control
+  const { activeItem, activeListItem, form, isReadOnly } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
 
   const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
+  const isPaymentField =
+    type === 'Field' &&
+    (data as FormSystemField).fieldType === FieldTypesEnum.PAYMENT
+  const isPaymentFieldWithSectionStyle =
+    isPaymentField && stylePaymentFieldAsSection
 
   const connected = () => {
     const hasDependency = form.dependencies?.find((dep) => {
@@ -90,8 +97,9 @@ export const NavComponent = ({
     const isSectionOrScreen = type === 'Section' || type === 'Screen'
 
     if (
-      type === 'Section' &&
-      (data as FormSystemSection).sectionType === SectionTypes.PARTIES
+      (type === 'Section' &&
+        (data as FormSystemSection).sectionType === SectionTypes.PARTIES) ||
+      (data as FormSystemSection).sectionType === SectionTypes.PAYMENT
     ) {
       return
     }
@@ -146,34 +154,44 @@ export const NavComponent = ({
       type: type,
       data,
     },
-    disabled: isPublished,
+    disabled: isReadOnly,
   })
 
-  const sortableRef = isPublished ? undefined : setNodeRef
-  const sortableAttributes = isPublished ? undefined : attributes
-  const sortableListeners = isPublished ? undefined : listeners
+  const sortableRef = isReadOnly ? undefined : setNodeRef
+  const sortableAttributes = isReadOnly ? undefined : attributes
+  const sortableListeners = isReadOnly ? undefined : listeners
 
   if (isDragging) {
     return (
       <div
         ref={sortableRef}
         className={cn({
-          [styles.navComponent.step]: type === 'Section' && focusComponent,
+          [styles.navComponent.step]:
+            (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+            focusComponent,
           [styles.navComponent.group]: type === 'Screen' && focusComponent,
-          [styles.navComponent.input]: type === 'Field' && focusComponent,
+          [styles.navComponent.input]:
+            type === 'Field' &&
+            !isPaymentFieldWithSectionStyle &&
+            focusComponent,
           [styles.navComponent.stepSelect]:
-            type === 'Section' && !focusComponent,
+            (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+            !focusComponent,
           [styles.navComponent.groupSelect]:
             type === 'Screen' && !focusComponent,
           [styles.navComponent.inputSelect]:
-            type === 'Field' && !focusComponent,
+            type === 'Field' &&
+            !isPaymentFieldWithSectionStyle &&
+            !focusComponent,
         })}
       >
         <div
           className={cn({
-            [styles.navBackgroundActive.step]: type === 'Section',
+            [styles.navBackgroundActive.step]:
+              type === 'Section' || isPaymentFieldWithSectionStyle,
             [styles.navBackgroundActive.group]: type === 'Screen',
-            [styles.navBackgroundActive.input]: type === 'Field',
+            [styles.navBackgroundActive.input]:
+              type === 'Field' && !isPaymentFieldWithSectionStyle,
           })}
         ></div>
       </div>
@@ -182,12 +200,20 @@ export const NavComponent = ({
   return (
     <Box
       className={cn({
-        [styles.navComponent.step]: type === 'Section' && focusComponent,
+        [styles.navComponent.step]:
+          (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+          focusComponent,
         [styles.navComponent.group]: type === 'Screen' && focusComponent,
-        [styles.navComponent.input]: type === 'Field' && focusComponent,
-        [styles.navComponent.stepSelect]: type === 'Section' && !focusComponent,
+        [styles.navComponent.input]:
+          type === 'Field' && !isPaymentFieldWithSectionStyle && focusComponent,
+        [styles.navComponent.stepSelect]:
+          (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+          !focusComponent,
         [styles.navComponent.groupSelect]: type === 'Screen' && !focusComponent,
-        [styles.navComponent.inputSelect]: type === 'Field' && !focusComponent,
+        [styles.navComponent.inputSelect]:
+          type === 'Field' &&
+          !isPaymentFieldWithSectionStyle &&
+          !focusComponent,
       })}
       {...(focusComponent && {
         onClick: () => focusComponent(type, data.id as UniqueIdentifier),
@@ -198,9 +224,11 @@ export const NavComponent = ({
         <Box display="flex" flexDirection="row">
           <Box
             className={cn({
-              [styles.navBackgroundActive.step]: type === 'Section',
+              [styles.navBackgroundActive.step]:
+                type === 'Section' || isPaymentFieldWithSectionStyle,
               [styles.navBackgroundActive.group]: type === 'Screen',
-              [styles.navBackgroundActive.input]: type === 'Field',
+              [styles.navBackgroundActive.input]:
+                type === 'Field' && !isPaymentFieldWithSectionStyle,
             })}
             {...sortableListeners}
             {...sortableAttributes}
@@ -248,9 +276,11 @@ export const NavComponent = ({
           <Box
             id="1"
             className={cn({
-              [styles.navBackgroundDefault.step]: type === 'Section',
+              [styles.navBackgroundDefault.step]:
+                type === 'Section' || isPaymentFieldWithSectionStyle,
               [styles.navBackgroundDefault.group]: type === 'Screen',
-              [styles.navBackgroundDefault.input]: type === 'Field',
+              [styles.navBackgroundDefault.input]:
+                type === 'Field' && !isPaymentFieldWithSectionStyle,
             })}
           >
             {index}

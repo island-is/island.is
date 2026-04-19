@@ -66,12 +66,12 @@ import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant'
-import { CreateDefendantDto } from '../defendant/dto/createDefendant.dto'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
+  AppealCase,
   Case,
   CaseArchiveRepositoryService,
   CaseFile,
@@ -124,10 +124,12 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseResentExplanation',
   'crimeScenes',
   'indictmentIntroduction',
+  'indictmentDeniedExplanation',
+]
+
+const appealCaseEncryptionProperties: (keyof AppealCase)[] = [
   'appealConclusion',
   'appealRulingModifiedHistory',
-  'indictmentDeniedExplanation',
-  'indictmentReturnedExplanation',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -340,6 +342,55 @@ export class InternalCaseService {
 
         return false
       })
+  }
+
+  private async uploadCourtRecordWorkingDocumentToCourt(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+    buffer?: Buffer,
+  ): Promise<boolean> {
+    try {
+      let pdf = buffer
+
+      if (!pdf) {
+        if (isIndictmentCase(theCase.type)) {
+          pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+            transaction,
+          )
+        } else {
+          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+        }
+      }
+
+      const fileName = this.formatMessage(courtUpload.courtRecord, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
+      })
+
+      await this.courtService.createDocument(
+        user,
+        theCase.id,
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.WORKING_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
+        pdf,
+      )
+
+      return true
+    } catch (error) {
+      this.logger.warn(
+        `Failed to upload court record working document to court for case ${theCase.id}`,
+        { error },
+      )
+
+      return false
+    }
   }
 
   private getSignedRulingPdf(theCase: Case) {
@@ -566,6 +617,7 @@ export class InternalCaseService {
         },
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
+        { model: AppealCase, as: 'appealCase' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -585,6 +637,18 @@ export class InternalCaseService {
       caseEncryptionProperties,
       theCase,
     )
+
+    let appealCaseArchive: { [key: string]: unknown } | undefined
+    if (theCase.appealCase) {
+      const [clearedAppealCaseProperties, archive] =
+        collectEncryptionProperties(
+          appealCaseEncryptionProperties,
+          theCase.appealCase,
+        )
+
+      appealCaseArchive = archive
+      Object.assign(clearedCaseProperties, clearedAppealCaseProperties)
+    }
 
     const defendantsArchive = []
     for (const defendant of theCase.defendants ?? []) {
@@ -645,6 +709,7 @@ export class InternalCaseService {
       {
         archiveJson: JSON.stringify({
           ...caseArchive,
+          appealCase: appealCaseArchive,
           defendants: defendantsArchive,
           caseFiles: caseFilesArchive,
           indictmentCounts: indictmentCountsArchive,
@@ -1045,6 +1110,20 @@ export class InternalCaseService {
     )
   }
 
+  async deliverCourtRecordWorkingDocumentToCourt(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    return this.uploadCourtRecordWorkingDocumentToCourt(
+      theCase,
+      user,
+      transaction,
+    ).then((delivered) => ({ delivered }))
+  }
+
   async deliverSignedRulingToCourt(
     theCase: Case,
     user: TUser,
@@ -1107,8 +1186,8 @@ export class InternalCaseService {
       .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        theCase.appealReceivedByCourtDate,
+        theCase.appealCase?.appealCaseNumber,
+        theCase.appealCase?.appealReceivedByCourtDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1129,15 +1208,15 @@ export class InternalCaseService {
       .updateAppealCaseWithAssignedRoles(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        theCase.appealAssistant?.nationalId,
-        theCase.appealAssistant?.name,
-        theCase.appealJudge1?.nationalId,
-        theCase.appealJudge1?.name,
-        theCase.appealJudge2?.nationalId,
-        theCase.appealJudge2?.name,
-        theCase.appealJudge3?.nationalId,
-        theCase.appealJudge3?.name,
+        theCase.appealCase?.appealCaseNumber,
+        theCase.appealCase?.appealAssistant?.nationalId,
+        theCase.appealCase?.appealAssistant?.name,
+        theCase.appealCase?.appealJudge1?.nationalId,
+        theCase.appealCase?.appealJudge1?.name,
+        theCase.appealCase?.appealJudge2?.nationalId,
+        theCase.appealCase?.appealJudge2?.name,
+        theCase.appealCase?.appealJudge3?.nationalId,
+        theCase.appealCase?.appealJudge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1169,9 +1248,9 @@ export class InternalCaseService {
       .updateAppealCaseWithConclusion(
         user,
         theCase.id,
-        theCase.appealCaseNumber,
-        Boolean(theCase.appealRulingModifiedHistory),
-        theCase.appealRulingDecision,
+        theCase.appealCase?.appealCaseNumber,
+        Boolean(theCase.appealCase?.appealRulingModifiedHistory),
+        theCase.appealCase?.appealRulingDecision,
         appealRulingDate,
       )
       .then(() => ({ delivered: true }))

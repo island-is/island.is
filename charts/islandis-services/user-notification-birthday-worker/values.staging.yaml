@@ -18,7 +18,6 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'user-notification-birthday-worker'
 args:
-  - '--no-experimental-fetch'
   - 'main.cjs'
   - '--job=worker'
   - '--isBirthdayWorker'
@@ -70,6 +69,7 @@ grantNamespaces:
   - 'islandis'
   - 'identity-server-delegation'
   - 'application-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -117,6 +117,11 @@ secrets:
   IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+  NOVA_LANDLAEKNIR_PASSWORD: '/k8s/NOVA_LANDLAEKNIR_PASSWORD'
+  NOVA_LANDLAEKNIR_USERNAME: '/k8s/NOVA_LANDLAEKNIR_USERNAME'
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+  NOVA_URL: '/k8s/NOVA_URL_V1'
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

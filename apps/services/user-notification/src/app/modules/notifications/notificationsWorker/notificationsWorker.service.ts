@@ -74,13 +74,13 @@ const createSmsContent = ({
   template: HnippTemplate
   isEnglish: boolean
 }): string => {
-  const linkText = isEnglish ? 'View on Island.is' : 'Skoda a Island.is'
+  const linkText = isEnglish ? 'View details' : 'Skoda nanar'
   const namePrefix = onBehalfOf
     ? getOnBehalfOfLabel(onBehalfOf, onBehalfOfNationalId, isEnglish)
     : fullName
   return `${namePrefix}: ${template.title}\n\n${template.externalBody}${
     template.clickActionUrl
-      ? `\n\n${linkText}: \n\n${template.clickActionUrl}`
+      ? `\n\n${linkText}: \n${template.clickActionUrl}`
       : ''
   }
     `.trim()
@@ -609,6 +609,7 @@ export class NotificationsWorkerService {
         template: formattedTemplate,
         isEnglish: locale === 'en',
       }),
+      smsPayer: formattedTemplate.smsPayer,
     }
   }
 

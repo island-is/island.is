@@ -7,7 +7,7 @@ import { Table } from '@island.is/application/ui-components'
 import {
   getApplicationExternalData,
   getCombinedResidenceHistory,
-} from '../../lib/oldAgePensionUtils'
+} from '../../utils/oldAgePensionUtils'
 import { getCountryByCode } from '@island.is/shared/utils'
 
 interface ResidenceHistoryTableProps {

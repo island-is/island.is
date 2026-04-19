@@ -42,6 +42,8 @@ export const MatomoTracker = ({
     window._paq = window._paq || []
     window._paq.push(['setTrackerUrl', `${normalizedDomain.current}matomo.php`])
     window._paq.push(['setSiteId', `${matomoSiteId}`])
+    window._paq.push(['setExcludedReferrers', ['localhost', '*.localhost']])
+    window._paq.push(['setReferralCookieTimeout', 2592000])
     window._paq.push(['enableLinkTracking'])
     const handleRouteChange = (url: string) => {
       window._paq?.push(['setCustomUrl', url])

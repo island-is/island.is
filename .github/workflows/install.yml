@@ -55,6 +55,7 @@ on:
         value: ${{ jobs.install.outputs.is-unicorn }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
+  NODE_OPTIONS: '--max-old-space-size=4096'
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ inputs.force_all_to_be_affected || contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   DISABLE_CHUNKS: 'true'
@@ -62,11 +63,10 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -97,7 +97,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     permissions:
       contents: 'read'
       actions: 'read'

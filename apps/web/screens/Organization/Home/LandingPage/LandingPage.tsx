@@ -16,6 +16,7 @@ import {
   FeaturedArticlesSlice,
   HeadWithSocialSharing,
   IconTitleCard,
+  OrganizationFooter,
 } from '@island.is/web/components'
 import {
   Article,
@@ -29,8 +30,6 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ARTICLES_QUERY } from '@island.is/web/screens/queries'
-
-import { LandingPageFooter } from './index'
 
 const ARTICLES_PAGE_SIZE = 10
 
@@ -60,7 +59,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
 
   const o = useNamespace(organizationNamespace)
   useContentfulId(organization?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationpage')
 
   const { linkResolver } = useLinkResolver()
 
@@ -204,7 +203,9 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
             </GridColumn>
           </GridRow>
         </GridContainer>
-        <LandingPageFooter footerItems={organization?.footerItems} />
+        {organization && (
+          <OrganizationFooter organizations={[organization]} force={true} />
+        )}
       </Stack>
     </>
   )

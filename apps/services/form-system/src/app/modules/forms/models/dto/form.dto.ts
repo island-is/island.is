@@ -63,7 +63,10 @@ export class FormDto {
   isTranslated!: boolean
 
   @ApiProperty()
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @ApiProperty()
+  submissionDaysToLive!: number
 
   @ApiProperty()
   derivedFrom!: string
@@ -94,4 +97,7 @@ export class FormDto {
 
   @ApiPropertyOptional({ type: [FieldDto] })
   fields?: FieldDto[]
+
+  @ApiPropertyOptional()
+  lastModifiedBy?: string
 }
