@@ -10,7 +10,7 @@ import cn from 'classnames'
 import { isValidElement, memo, ReactElement, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 import sanitizeHtml from 'sanitize-html'
-import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
+import { useIsMobile } from '@island.is/portals/core'
 import { LinkButton } from '../LinkButton/LinkButton'
 import * as styles from './NestedLines.css'
 

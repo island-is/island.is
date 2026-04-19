@@ -12,8 +12,14 @@ export * from './components/EducationCard/EducationCard'
 export * from './components/EmptyState/EmptyImage'
 export * from './components/EmptyState/EmptyImgSmall'
 export * from './components/EmptyState/EmptyState'
-export * from './components/EmptyTable/EmptyTable'
-export * from './components/Table/Table'
+export { EmptyTable } from '@island.is/portals/core'
+export { Table, createColumnHelper } from '@island.is/portals/core'
+export type {
+  ColumnDef,
+  Row,
+  SortingState,
+  OnChangeFn,
+} from '@island.is/portals/core'
 export * from './components/EventCard/EventCard'
 export * from './components/ExpandableTable'
 export * from './components/FootNote/FootNote'
@@ -52,7 +58,7 @@ export * from './components/UserInfoLine/UserInfoLine'
 export * from './components/VideoPlayer/VideoPlayer'
 export * from './components/Questionnaires'
 export * from './hooks/useDynamicRoutes/useDynamicRoutes'
-export * from './hooks/useIsMobile/useIsMobile'
+export { useIsMobile } from '@island.is/portals/core'
 export * from './hooks/usePlausibleDetailPageview/usePlausibleDetailPageview'
 export * from './hooks/useQueryParam'
 export * from './hooks/useScrollDirection/useScrollDirection'

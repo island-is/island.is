@@ -2,7 +2,7 @@ import React from 'react'
 import { Checkbox, Box, Stack, Inline, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import useIsMobile from '../../../hooks/useIsMobile/useIsMobile'
+import { useIsMobile } from '@island.is/portals/core'
 
 export interface MultipleOption {
   label: string

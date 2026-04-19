@@ -6,7 +6,6 @@ import {
   Box,
   Stack,
   Text,
-  Table as T,
   LoadingDots,
   SkeletonLoader,
   Tabs,
@@ -17,7 +16,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
 import {
+  createColumnHelper,
   IntroHeader,
+  Table,
   formatNationalId,
   m as coreMessages,
 } from '@island.is/portals/core'
@@ -26,6 +27,8 @@ import InfiniteScroll from 'react-infinite-scroller'
 
 import { m } from '../../lib/messages'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
+import { CopyCell } from './CopyCell'
+import { NotificationDeliveriesPanel } from './NotificationDeliveriesPanel'
 import {
   GetAdminNotificationsQuery,
   GetAdminActorNotificationsQuery,
@@ -116,6 +119,103 @@ const User = () => {
       console.error(e)
     }
   }
+
+  type AdminNotificationRow = NonNullable<
+    GetAdminNotificationsQuery['adminNotifications']
+  >['data'][number]
+  type ActorNotificationRow = NonNullable<
+    GetAdminActorNotificationsQuery['adminActorNotifications']
+  >['data'][number]
+
+  const userNotificationColumnHelper =
+    createColumnHelper<AdminNotificationRow>()
+  const userNotificationColumns = React.useMemo(
+    () => [
+      userNotificationColumnHelper.accessor('id', { header: 'ID' }),
+      userNotificationColumnHelper.accessor('sent', {
+        header: 'Sent',
+        cell: (info) => {
+          const value = info.getValue()
+          return value && isValidDate(new Date(value))
+            ? format(new Date(value), 'dd.MM.yyyy')
+            : ''
+        },
+      }),
+      userNotificationColumnHelper.accessor('notificationId', {
+        header: 'Message ID',
+        cell: (info) => <CopyCell value={info.getValue()} maxWidth={140} />,
+      }),
+      userNotificationColumnHelper.accessor((row) => row.sender, {
+        id: 'sender',
+        header: 'Sender',
+        cell: (info) => info.getValue().title || info.getValue().id,
+      }),
+      userNotificationColumnHelper.accessor('scope', {
+        header: 'Scope',
+        cell: (info) => (
+          <span
+            style={{
+              display: 'inline-block',
+              maxWidth: 140,
+              wordBreak: 'break-all',
+            }}
+          >
+            {info.getValue()}
+          </span>
+        ),
+      }),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+
+  const actorNotificationColumnHelper =
+    createColumnHelper<ActorNotificationRow>()
+  const actorNotificationColumns = React.useMemo(
+    () => [
+      actorNotificationColumnHelper.accessor('id', { header: 'ID' }),
+      actorNotificationColumnHelper.accessor('created', {
+        header: 'Sent',
+        cell: (info) => {
+          const value = info.getValue()
+          return value && isValidDate(new Date(value))
+            ? format(new Date(value), 'dd.MM.yyyy')
+            : ''
+        },
+      }),
+      actorNotificationColumnHelper.accessor('messageId', {
+        header: 'Message ID',
+        cell: (info) => <CopyCell value={info.getValue()} maxWidth={140} />,
+      }),
+      actorNotificationColumnHelper.accessor(
+        (row) => row.onBehalfOfNationalId?.nationalId,
+        {
+          id: 'onBehalfOf',
+          header: 'On Behalf Of',
+          cell: (info) => {
+            const value = info.getValue()
+            return value ? formatNationalId(value) : ''
+          },
+        },
+      ),
+      actorNotificationColumnHelper.accessor('scope', {
+        header: 'Scope',
+        cell: (info) => (
+          <span
+            style={{
+              display: 'inline-block',
+              maxWidth: 140,
+              wordBreak: 'break-all',
+            }}
+          >
+            {info.getValue()}
+          </span>
+        ),
+      }),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
 
   const loadMore = async () => {
     if (
@@ -507,41 +607,18 @@ const User = () => {
                         </Box>
                       }
                     >
-                      <T.Table>
-                        <T.Head>
-                          <T.Row>
-                            <T.HeadData>ID</T.HeadData>
-                            <T.HeadData>Sent</T.HeadData>
-                            <T.HeadData>Message ID</T.HeadData>
-                            <T.HeadData>Sender</T.HeadData>
-                            <T.HeadData>Scope</T.HeadData>
-                          </T.Row>
-                        </T.Head>
-                        <T.Body>
-                          {notifications?.adminNotifications?.data.map(
-                            (notification, index) => (
-                              <T.Row key={index}>
-                                <T.Data>{notification.id}</T.Data>
-                                <T.Data>
-                                  {notification.sent &&
-                                  isValidDate(new Date(notification.sent))
-                                    ? format(
-                                        new Date(notification.sent),
-                                        'dd.MM.yyyy',
-                                      )
-                                    : ''}
-                                </T.Data>
-                                <T.Data>{notification.notificationId}</T.Data>
-                                <T.Data>
-                                  {notification.sender.title ||
-                                    notification.sender.id}
-                                </T.Data>
-                                <T.Data>{notification.scope}</T.Data>
-                              </T.Row>
-                            ),
-                          )}
-                        </T.Body>
-                      </T.Table>
+                      <Table<AdminNotificationRow>
+                        columns={userNotificationColumns}
+                        data={notifications?.adminNotifications?.data ?? []}
+                        emptyMessage={formatMessage(m.notificationsEmpty)}
+                        getRowId={(row) => String(row.id)}
+                        renderExpandedRow={(row) => (
+                          <NotificationDeliveriesPanel
+                            notificationId={row.original.id}
+                            isActor={false}
+                          />
+                        )}
+                      />
                     </InfiniteScroll>
                   )}
                 </Box>
@@ -575,47 +652,21 @@ const User = () => {
                         </Box>
                       }
                     >
-                      <T.Table>
-                        <T.Head>
-                          <T.Row>
-                            <T.HeadData>ID</T.HeadData>
-                            <T.HeadData>Sent</T.HeadData>
-                            <T.HeadData>Message ID</T.HeadData>
-                            <T.HeadData style={{ whiteSpace: 'nowrap' }}>
-                              On Behalf Of
-                            </T.HeadData>
-                            <T.HeadData>Scope</T.HeadData>
-                          </T.Row>
-                        </T.Head>
-                        <T.Body>
-                          {actorNotifications?.adminActorNotifications?.data.map(
-                            (notification, index) => (
-                              <T.Row key={index}>
-                                <T.Data>{notification.id}</T.Data>
-                                <T.Data>
-                                  {notification.created &&
-                                  isValidDate(new Date(notification.created))
-                                    ? format(
-                                        new Date(notification.created),
-                                        'dd.MM.yyyy',
-                                      )
-                                    : ''}
-                                </T.Data>
-                                <T.Data>{notification.messageId}</T.Data>
-                                <T.Data>
-                                  {notification.onBehalfOfNationalId?.nationalId
-                                    ? formatNationalId(
-                                        notification.onBehalfOfNationalId
-                                          .nationalId,
-                                      )
-                                    : ''}
-                                </T.Data>
-                                <T.Data>{notification.scope}</T.Data>
-                              </T.Row>
-                            ),
-                          )}
-                        </T.Body>
-                      </T.Table>
+                      <Table<ActorNotificationRow>
+                        columns={actorNotificationColumns}
+                        data={
+                          actorNotifications?.adminActorNotifications?.data ??
+                          []
+                        }
+                        emptyMessage={formatMessage(m.notificationsEmpty)}
+                        getRowId={(row) => String(row.id)}
+                        renderExpandedRow={(row) => (
+                          <NotificationDeliveriesPanel
+                            notificationId={row.original.id}
+                            isActor={true}
+                          />
+                        )}
+                      />
                     </InfiniteScroll>
                   )}
                 </Box>
