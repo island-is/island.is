@@ -53,11 +53,12 @@ export class UserTokenService {
         }
 
         // Check if this device token is already associated with a different user
-        const tokenWithDifferentUser =
-          await this.userDeviceTokensModel.findOne({
+        const tokenWithDifferentUser = await this.userDeviceTokensModel.findOne(
+          {
             where: { deviceToken },
             transaction,
-          })
+          },
+        )
 
         if (tokenWithDifferentUser) {
           // Same device, different user: reassign to current user
