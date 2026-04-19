@@ -55,7 +55,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UpdateCase,
-  useAppealCase,
+  useAppealCaseUI,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -215,7 +215,7 @@ export const SignedVerdictOverview: FC = () => {
     isSendingNotification,
   } = useCase()
 
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseUI()
 
   /**
    * If the case is not rejected it must be accepted because
