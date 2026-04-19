@@ -52,7 +52,7 @@ export const EmployeeStartTimeError: FC<
     <div>
       {inputError && (
         <Box>
-          <ErrorMessage id={field.id}>
+          <ErrorMessage id={field.id as string}>
             {`${formatMessage(employee.employee.errorMessage)}, ${formatDate(
               startDate,
             )} ${startTime.slice(0, 2)}:${startTime.slice(2, 4)}`}

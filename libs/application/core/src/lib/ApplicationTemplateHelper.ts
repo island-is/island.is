@@ -9,6 +9,7 @@ import {
   ExternalData,
   FormValue,
   StaticText,
+  FormText,
   FormatMessage,
   ApplicationContext,
   ApplicationRole,
@@ -70,8 +71,8 @@ export class ApplicationTemplateHelper<
   }
 
   getApplicationActionCardMeta(stateKey: string = this.application.state): {
-    title?: StaticText
-    description?: StaticText
+    title?: FormText
+    description?: FormText
     tag: { variant?: string; label?: StaticText }
     historyButton?: StaticText
     displayPruneAt?: boolean

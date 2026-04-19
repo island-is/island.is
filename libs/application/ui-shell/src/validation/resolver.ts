@@ -1,4 +1,6 @@
+import { BffUser } from '@island.is/shared/types'
 import {
+  resolveFieldId,
   shouldShowFormItem,
   validateAnswers,
 } from '@island.is/application/core'
@@ -6,16 +8,22 @@ import {
   AccordionField,
   Application,
   Field,
+  FormItemTypes,
   FieldTypes,
   FormNode,
   FormValue,
+  MultiField,
 } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form'
 import { FieldDef, ResolverContext } from '../types'
 import { getAccordionChildFieldIds } from '../utils'
 
-const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
+const getFormNodeFieldIds = (
+  formNode: FormNode,
+  application?: Application,
+  user?: BffUser,
+) => {
   const children = formNode?.children ?? []
 
   const visibleChildren = children.filter(
@@ -24,7 +32,11 @@ const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
 
   const directIds = visibleChildren
     .filter((x) => x.id)
-    .map((x) => x.id as string)
+    .map((x) =>
+      application
+        ? resolveFieldId(x as Field, application, user)
+        : (x.id as string),
+    )
 
   const nestedIds = visibleChildren
     .filter((x): x is Field => 'type' in x && x.type === FieldTypes.ACCORDION)
@@ -45,7 +57,7 @@ const getFormNodeFieldIds = (formNode: FormNode, application?: Application) => {
                   null,
                 ),
               )
-              .map((child) => child.id)
+              .map((child) => resolveFieldId(child, application, user))
           : [],
       )
     })
@@ -73,13 +85,19 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
     }
   }
 
+  const applicationForFields: Application = {
+    ...context.application,
+    answers: formValue,
+  }
+
   const validationError = validateAnswers({
     dataSchema: context.dataSchema,
     answers: formValue,
     isFullSchemaValidation: false,
     currentScreenFields: getFormNodeFieldIds(
-      context.formNode,
-      context.application,
+      context.formNode as FormNode,
+      applicationForFields,
+      context.user,
     ),
     formatMessage,
   })

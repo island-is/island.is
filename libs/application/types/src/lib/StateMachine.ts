@@ -104,10 +104,16 @@ export interface ApplicationStateMeta<
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
-    /** @deprecated use pendingAction field instead */
-    title?: StaticText
-    /** @deprecated use pendingAction field instead */
-    description?: StaticText
+    /**
+     * @deprecated use pendingAction field instead
+     * Static copy or a function of the application (same shape as FormText).
+     */
+    title?: FormText
+    /**
+     * @deprecated use pendingAction field instead
+     * Static copy or a function of the application (same shape as FormText).
+     */
+    description?: FormText
     /**
      * Configures which messages should be displayed to the user when presenting the
      * application's history.
@@ -145,7 +151,13 @@ export interface ApplicationStateMeta<
   /**
    * Represents the current status of the application in the state, defaults to draft
    */
-  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
+  status:
+    | 'approved'
+    | 'rejected'
+    | 'draft'
+    | 'completed'
+    | 'inprogress'
+    | 'notstarted'
   roles?: RoleInState<T>[]
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onEntry?: TemplateApi<R>[] | TemplateApi<R>

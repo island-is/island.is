@@ -25,7 +25,8 @@ export const TextFieldsRepeater: FC<
 > = ({ field, errors }) => {
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })

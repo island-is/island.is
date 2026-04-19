@@ -5,6 +5,8 @@ import {
   getValueViaPath,
   buildFieldRequired,
   formatTextWithLocale,
+  resolveFieldId,
+  resolveFieldClearOnChange,
 } from '@island.is/application/core'
 import { FieldBaseProps, SelectField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -13,6 +15,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
@@ -46,9 +49,10 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isClearable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const { getValues } = useFormContext()
   const values = getValues()
-
+  const resolvedId = resolveFieldId({ id }, application, user)
   const updatedApplication = useMemo(() => {
     return {
       ...application,
@@ -80,7 +84,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
         <SelectController
           required={buildFieldRequired(application, required)}
           defaultValue={
-            (getValueViaPath(application.answers, id) ??
+            (getValueViaPath(application.answers, resolvedId) ??
               getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
@@ -90,10 +94,10 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
             locale as Locale,
             formatMessage,
           )}
-          name={id}
+          name={resolvedId}
           disabled={disabled}
           error={error}
-          id={id}
+          id={resolvedId}
           dataTestId={field.dataTestId}
           isMulti={isMulti}
           backgroundColor={backgroundColor}
@@ -112,7 +116,10 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           onSelect={onSelect}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'

@@ -468,6 +468,9 @@
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
       ],
+      "@island.is/application/templates/hms/housing-benefits": [
+        "libs/application/templates/hms/housing-benefits/src/index.ts"
+      ],
       "@island.is/application/templates/hms/registration-of-new-property-numbers": [
         "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
       ],
@@ -772,6 +775,7 @@
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
+      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "@island.is/clients/financial-management-authority": [
         "libs/clients/financial-management-authority/src/index.ts"
       ],
@@ -1328,7 +1332,6 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true

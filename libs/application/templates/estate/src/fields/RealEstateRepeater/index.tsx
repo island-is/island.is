@@ -16,7 +16,7 @@ export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors }) => {
   const error = (errors as ErrorValue)?.estate?.assets
-  const { id } = field
+  const id = field.id as string
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,

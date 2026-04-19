@@ -19,9 +19,10 @@ const GiveRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
 }) => {
+  const id = field.id as string
   const currentAnswer = getValueViaPath(
     application.answers,
-    field.id,
+    id,
     undefined,
   ) as ValidAnswers
 
@@ -41,10 +42,10 @@ const GiveRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ]
 
   return (
-    <Box marginTop={3} marginBottom={2} key={field.id}>
+    <Box marginTop={3} marginBottom={2} key={id}>
       <Box paddingY={3}>
         <RadioController
-          id={field.id}
+          id={id}
           defaultValue={
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }

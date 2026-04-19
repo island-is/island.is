@@ -2,6 +2,8 @@ import React, { FC, useCallback } from 'react'
 import {
   getErrorViaPath,
   shouldShowFormItem,
+  resolveFieldClearOnChange,
+  resolveFieldId,
 } from '@island.is/application/core'
 import {
   Application,
@@ -13,6 +15,7 @@ import {
   SetSubmitButtonDisabled,
   FormValue,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 
 import { useFields } from '../context/FieldContext'
 import { FieldDef } from '../types'
@@ -30,6 +33,7 @@ const FormField: FC<
     errors: RecordObject
     goToScreen: (id: string) => void
     refetch: () => void
+    user?: BffUser
   }>
 > = ({
   application,
@@ -43,10 +47,9 @@ const FormField: FC<
   goToScreen,
   showFieldName,
   refetch,
+  user,
 }) => {
   const [allFields] = useFields()
-
-  const error = getErrorViaPath(errors, field.id)
 
   const renderField = useCallback(
     (childField: Field) => {
@@ -67,7 +70,7 @@ const FormField: FC<
 
       return (
         <FormField
-          key={childField.id}
+          key={resolveFieldId(childField, application, user)}
           application={application}
           field={childDef}
           errors={errors}
@@ -91,12 +94,29 @@ const FormField: FC<
       setFieldLoadingState,
       setSubmitButtonDisabled,
       answerQuestions,
+      user,
     ],
   )
 
   if (!field.isNavigable) {
     return null
   }
+
+  const f = field as Field
+  const resolvedId = resolveFieldId(f, application, user)
+  const resolvedClearOnChange = resolveFieldClearOnChange(f, application, user)
+  const needsResolvedId = typeof f.id === 'function'
+  const needsResolvedClearOnChange = typeof f.clearOnChange === 'function'
+  const fieldForRender =
+    needsResolvedId || needsResolvedClearOnChange
+      ? {
+          ...f,
+          id: resolvedId,
+          clearOnChange: resolvedClearOnChange,
+        }
+      : f
+
+  const error = getErrorViaPath(errors, resolvedId)
 
   const fieldProps: FieldBaseProps = {
     application,
@@ -107,7 +127,7 @@ const FormField: FC<
     autoFocus,
     error,
     errors,
-    field: field as Field,
+    field: fieldForRender as Field,
     goToScreen,
     showFieldName,
     refetch,

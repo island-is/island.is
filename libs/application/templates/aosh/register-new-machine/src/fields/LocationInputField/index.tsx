@@ -16,7 +16,8 @@ export const LocationInputField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { watch } = useFormContext()
   const [displayError, setDisplayError] = useState<boolean>(false)
   const watchMachine = watch('machine.aboutMachine') as AboutMachine
-  const location = watch(field.id) as string
+  const id = field.id as string
+  const location = watch(id) as string
   const categoryValue = 'Fólkslyftur og vörulyftur'
 
   setBeforeSubmitCallback?.(async () => {
@@ -33,7 +34,7 @@ export const LocationInputField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   return (
     <Box paddingTop={2}>
       <InputController
-        id={field.id}
+        id={id}
         label={formatMessage(machine.labels.basicMachineInformation.location)}
         backgroundColor="blue"
         required={watchMachine.category?.nameIs === categoryValue}

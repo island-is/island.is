@@ -43,7 +43,8 @@ type FieldProps = {
 export const FuneralCost: FC<
   PropsWithChildren<FieldBaseProps<Answers> & FieldProps>
 > = ({ field, errors, application }) => {
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const otherField = `${id}.other`
   const otherDetailsField = `${id}.otherDetails`

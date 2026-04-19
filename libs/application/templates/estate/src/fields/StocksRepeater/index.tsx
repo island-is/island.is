@@ -34,7 +34,7 @@ interface StocksRepeaterProps {
 export const StocksRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & StocksRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id } = field
+  const id = field.id as string
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.stocks
   const { formatMessage } = useLocale()

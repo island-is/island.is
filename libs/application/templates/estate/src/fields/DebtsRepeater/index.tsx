@@ -30,7 +30,8 @@ type RepeaterProps = {
 export const DebtsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const { fields, append, remove, replace, update } = useFieldArray<any>({
     name: id,

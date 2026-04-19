@@ -73,8 +73,11 @@ export class ApplicationActionService {
     )
 
     for (const api of apis) {
-      const result =
-        updatedApplication.externalData[api.externalDataId || api.action]
+      const resolvedId = api.resolveExternalDataId(
+        updatedApplication,
+        auth.nationalId,
+      )
+      const result = updatedApplication.externalData[resolvedId]
 
       this.logger.debug(
         `Performing action ${api.action} on ${JSON.stringify(
@@ -137,9 +140,10 @@ export class ApplicationActionService {
       }
     }
 
+    const stateEvent = { type: event, nationalId: auth.nationalId }
     const [hasChanged, newState, withUpdatedState] =
       new ApplicationTemplateHelper(updatedApplication, template).changeState(
-        event,
+        stateEvent,
       )
     updatedApplication = {
       ...updatedApplication,

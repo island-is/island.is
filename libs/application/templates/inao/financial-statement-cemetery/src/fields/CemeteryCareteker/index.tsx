@@ -29,7 +29,7 @@ export const CemeteryCaretaker = ({
   setBeforeSubmitCallback,
 }: FieldBaseProps<FinancialStatementCemetery>) => {
   const { formatMessage } = useLocale()
-  const { id } = field
+  const id = field.id as string
 
   const { getValues, setError } = useFormContext()
   const values = getValues()

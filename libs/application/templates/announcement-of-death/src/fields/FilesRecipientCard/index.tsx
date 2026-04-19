@@ -26,6 +26,7 @@ export const FilesRecipientCard: FC<
   React.PropsWithChildren<FieldBaseProps<AODAnswers> & FilesRecipientCardProps>
 > = ({ application, field }) => {
   const { formatMessage, lang: locale } = useLocale()
+  const id = field.id as string
   let options =
     application.answers?.estateMembers?.members?.length &&
     application.answers.estateMembers.members.length !== 0
@@ -93,8 +94,8 @@ export const FilesRecipientCard: FC<
               application,
               formatMessage,
             )}
-            id={field.id}
-            name={field.id}
+            id={id}
+            name={id}
             backgroundColor="blue"
             defaultValue={field.defaultValue || ''}
             placeholder={

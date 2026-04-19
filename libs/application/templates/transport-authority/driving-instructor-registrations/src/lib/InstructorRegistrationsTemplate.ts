@@ -88,9 +88,9 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
               write: {
                 answers: ['approveExternalData'],
                 externalData: [
-                  HasTeachingRightsApi.externalDataId,
-                  NationalRegistryUserApi.externalDataId,
-                  GetTeacherRightsApi.externalDataId,
+                  HasTeachingRightsApi.externalDataId as string,
+                  NationalRegistryUserApi.externalDataId as string,
+                  GetTeacherRightsApi.externalDataId as string,
                 ],
               },
             },

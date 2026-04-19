@@ -7,7 +7,7 @@ import { reason } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 
 const Reason = ({ application, field }: CRCFieldBaseProps) => {
-  const { id } = field
+  const id = field.id as string
   const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
 
@@ -33,7 +33,7 @@ const Reason = ({ application, field }: CRCFieldBaseProps) => {
                 backgroundColor="blue"
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(id as string, e.target.value)
+                  setValue(id, e.target.value)
                 }}
               />
             )

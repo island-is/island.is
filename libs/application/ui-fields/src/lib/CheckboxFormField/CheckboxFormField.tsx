@@ -6,6 +6,8 @@ import {
   getValueViaPath,
   buildFieldOptions,
   formatTextWithLocale,
+  resolveFieldId,
+  resolveFieldClearOnChange,
 } from '@island.is/application/core'
 import { CheckboxField, FieldBaseProps } from '@island.is/application/types'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -14,6 +16,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
 import { Markdown } from '@island.is/shared/components'
@@ -50,12 +53,14 @@ export const CheckboxFormField = ({
     setOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const { watch } = useFormContext()
   const finalOptions = useMemo(() => {
     const updatedApplication = { ...application, answers: watch() }
     return buildFieldOptions(options, updatedApplication, field, locale)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch(), options, application, locale])
+  const resolvedId = resolveFieldId({ id }, application, user)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -89,7 +94,7 @@ export const CheckboxFormField = ({
 
       <Box paddingTop={2}>
         <CheckboxController
-          id={id}
+          id={resolvedId}
           disabled={disabled}
           large={large}
           name={`${id}`}
@@ -97,7 +102,7 @@ export const CheckboxFormField = ({
           onSelect={onSelect}
           backgroundColor={backgroundColor}
           defaultValue={
-            ((getValueViaPath(application.answers, id) as string[]) ??
+            (getValueViaPath<string[]>(application.answers, resolvedId) ??
               getDefaultValue(field, application, locale)) ||
             (required ? [] : undefined)
           }
@@ -123,7 +128,10 @@ export const CheckboxFormField = ({
               }),
             }),
           )}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'

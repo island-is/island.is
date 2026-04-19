@@ -1,0 +1,89 @@
+import {
+  buildCheckboxField,
+  buildDescriptionField,
+  buildHiddenInput,
+  buildMultiField,
+  buildSection,
+  buildImageField,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { HandShake } from '@island.is/application/assets/graphics'
+import * as m from '../../../lib/messages'
+import { nationalIdPreface } from '../../../utils/assigneeUtils'
+import { shouldShowRefetchNationalRegistrySection } from '../../../utils/conditions'
+import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
+
+export const wrongHomeSection = buildSection({
+  condition: (answers, externalData, user) => {
+    return !doesAssigneeAddressMatchRentalContract(answers, externalData, user)
+  },
+  id: 'wrongHomeSection',
+  title: m.assigneeDraft.wrongHomeTitle,
+  children: [
+    buildMultiField({
+      id: 'wrongHome',
+      title: m.assigneeDraft.wrongHomeMultiFieldTitle,
+      description: m.assigneeDraft.wrongHomeDescription,
+      children: [
+        buildDescriptionField({
+          id: 'wrongHome.reason2',
+          description: m.assigneeDraft.wrongHomeDescription2,
+          marginBottom: 4,
+        }),
+        buildDescriptionField({
+          id: 'wrongHome.reason3',
+          description: m.assigneeDraft.wrongHomeDescription3,
+          marginBottom: 6,
+        }),
+        buildImageField({
+          id: 'wrongHome.image',
+          image: HandShake,
+          marginBottom: 4,
+        }),
+        buildDescriptionField({
+          id: 'wrongHome.shouldRefetchNationalRegistryDescription',
+          description: m.assigneeDraft.wrongHomeDescription4,
+          marginBottom: 6,
+        }),
+        buildCheckboxField({
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'wrongHome.addressUpdated'),
+          title: '',
+          options: [
+            {
+              value: 'confirmed',
+              label: m.assigneeDraft.wrongHomeCheckboxLabel,
+            },
+          ],
+          clearOnChange: (application) => {
+            const answers = application.answers as Record<string, any>
+            const signed =
+              getValueViaPath<Array<string>>(answers, 'signedAssignees') ?? []
+            const suffixes = [
+              'assigneeInfo.name',
+              'assigneeInfo.nationalId',
+              'assigneeInfo.address',
+              'assigneeInfo.postalCode',
+              'assigneeInfo.city',
+              'assigneeInfo.email',
+              'assigneeInfo.phoneNumber',
+            ]
+
+            const paths: string[] = []
+            for (const topKey of Object.keys(answers)) {
+              if (answers[topKey]?.assigneeInfo && !signed.includes(topKey)) {
+                suffixes.forEach((s) => paths.push(`${topKey}.${s}`))
+              }
+            }
+            return paths
+          },
+        }),
+        buildHiddenInput({
+          id: 'wrongHome.shouldRefetchNationalRegistry',
+          condition: shouldShowRefetchNationalRegistrySection,
+          defaultValue: 'true',
+        }),
+      ],
+    }),
+  ],
+})
