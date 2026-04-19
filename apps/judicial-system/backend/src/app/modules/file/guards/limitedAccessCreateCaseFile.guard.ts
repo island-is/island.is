@@ -8,6 +8,7 @@ import {
 
 import {
   CaseFileCategory,
+  isDefenceUser,
   isIndictmentCase,
   isRequestCase,
   User,
@@ -40,7 +41,7 @@ export class LimitedAccessCreateCaseFileGuard implements CanActivate {
       throw new BadRequestException('Missing case file category')
     }
 
-    if (user.role !== UserRole.DEFENDER) {
+    if (isDefenceUser(user)) {
       // Only defence users can create limited access case files
       return false
     }

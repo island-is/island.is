@@ -7,6 +7,7 @@ import {
 
 import {
   CaseFileCategory,
+  isDefenceUser,
   isIndictmentCase,
   isRequestCase,
   User,
@@ -38,7 +39,7 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (user.role !== UserRole.DEFENDER) {
+    if (isDefenceUser(user)) {
       // Only defence users can delete limited access case files
       return false
     }
