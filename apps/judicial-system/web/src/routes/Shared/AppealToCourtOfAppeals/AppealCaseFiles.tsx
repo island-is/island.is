@@ -52,8 +52,8 @@ const AppealFiles = () => {
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
-    user,
     workingCase,
+    user,
   )
   const {
     uploadFiles,
@@ -76,18 +76,6 @@ const AppealFiles = () => {
   const appealCaseFilesType = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
     : CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE
-
-  const caseFilesTypesToDisplay = isDefenceUser(user)
-    ? [
-        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-      ]
-    : [
-        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-      ]
 
   const previousUrl = `${
     isDefenceUser(user)
@@ -166,11 +154,7 @@ const AppealFiles = () => {
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
-            files={uploadFiles.filter(
-              (file) =>
-                file.category &&
-                caseFilesTypesToDisplay.includes(file.category),
-            )}
+            files={uploadFiles}
             accept={'application/pdf'}
             title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {

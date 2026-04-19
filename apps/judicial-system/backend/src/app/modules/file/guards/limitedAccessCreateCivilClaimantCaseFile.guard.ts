@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
@@ -47,19 +47,16 @@ export class LimitedAccessCreateCivilClaimantCaseFileGuard
         civilClaimant.spokespersonNationalId,
       )
     ) {
-      throw new ForbiddenException(
-        `User ${user.nationalId} is not the confirmed spokesperson of civil claimant ${civilClaimant.id}`,
-      )
+      return false
     }
 
-    const caseFileCategory: CaseFileCategory = request.body?.category
+    const caseFileCategory: CaseFileCategory | undefined =
+      request.body?.category
 
-    if (!allowedCaseFileCategories.includes(caseFileCategory)) {
-      throw new ForbiddenException(
-        `Forbidden for case file category ${caseFileCategory}`,
-      )
+    if (!caseFileCategory) {
+      throw new BadRequestException('Missing case file category')
     }
 
-    return true
+    return allowedCaseFileCategories.includes(caseFileCategory)
   }
 }

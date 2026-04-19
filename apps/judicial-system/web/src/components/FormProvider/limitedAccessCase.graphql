@@ -47,6 +47,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         fileRepresentative
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
     }
     caseFiles {
@@ -65,6 +66,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       fileRepresentative
       isKeyAccessible
       defendantId
+      civilClaimantId
     }
     defendants {
       id

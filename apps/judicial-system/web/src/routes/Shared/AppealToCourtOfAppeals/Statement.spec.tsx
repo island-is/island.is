@@ -16,7 +16,7 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import Statement from './Statement'
+import Statement from '../AppealToCourtOfAppeals/Statement'
 
 jest.mock('next/router', () => ({
   useRouter() {
