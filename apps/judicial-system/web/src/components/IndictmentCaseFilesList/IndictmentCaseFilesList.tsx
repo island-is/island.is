@@ -7,6 +7,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
@@ -291,7 +292,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
     usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const showPoliceDigitalCaseFiles =
-    (digitalCaseFiles?.length ?? 0) > 0 && isDistrictCourtUser(user)
+    (digitalCaseFiles?.length ?? 0) > 0 &&
+    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user))
 
   return (
     <>

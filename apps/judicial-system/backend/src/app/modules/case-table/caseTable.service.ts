@@ -150,19 +150,32 @@ export class CaseTableService {
 
     const matchedValueExpr = `
       COALESCE(
-        (SELECT n FROM unnest("Case"."police_case_numbers") AS n WHERE n ILIKE ${safeQuery} LIMIT 1),
+        (SELECT cpn.police_case_number
+         FROM case_defendant_police_case_number cpn
+         WHERE cpn.case_id = "Case"."id"
+           AND cpn.police_case_number ILIKE ${safeQuery}
+         ORDER BY cpn.police_case_number
+         LIMIT 1),
         CASE WHEN "Case"."court_case_number" ILIKE ${safeQuery} THEN "Case"."court_case_number" END,
         (SELECT ac."appeal_case_number" FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_case_number" ILIKE ${safeQuery}),
         (SELECT d."national_id" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."national_id" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1),
         (SELECT d."name" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."name" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1),
-        (SELECT n FROM unnest("Case"."police_case_numbers") AS n LIMIT 1),
+        (SELECT cpn.police_case_number
+         FROM case_defendant_police_case_number cpn
+         WHERE cpn.case_id = "Case"."id"
+         ORDER BY cpn.police_case_number
+         LIMIT 1),
         ''
       )
     `
 
     const matchedFieldExpr = `
       CASE
-        WHEN (SELECT n FROM unnest("Case"."police_case_numbers") AS n WHERE n ILIKE ${safeQuery} LIMIT 1) IS NOT NULL THEN 'policeCaseNumbers'
+        WHEN EXISTS (
+          SELECT 1 FROM case_defendant_police_case_number cpn
+          WHERE cpn.case_id = "Case"."id"
+            AND cpn.police_case_number ILIKE ${safeQuery}
+        ) THEN 'policeCaseNumbers'
         WHEN "Case"."court_case_number" ILIKE ${safeQuery} THEN 'courtCaseNumber'
         WHEN (SELECT ac."appeal_case_number" FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_case_number" ILIKE ${safeQuery}) IS NOT NULL THEN 'appealCaseNumber'
         WHEN (SELECT d."national_id" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."national_id" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1) IS NOT NULL THEN 'defendantNationalId'
@@ -211,8 +224,9 @@ export class CaseTableService {
             [Op.or]: [
               literal(`
                 EXISTS (
-                  SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
-                  WHERE n ILIKE ${safeQuery}
+                  SELECT 1 FROM case_defendant_police_case_number cpn
+                  WHERE cpn.case_id = "Case"."id"
+                    AND cpn.police_case_number ILIKE ${safeQuery}
                 )
               `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
