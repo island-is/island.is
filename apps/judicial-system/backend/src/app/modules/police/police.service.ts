@@ -42,7 +42,13 @@ import {
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
-import { Case, DateLog, Defendant, IndictmentSubtype } from '../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  DateLog,
+  Defendant,
+  IndictmentSubtype,
+} from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -251,6 +257,7 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -908,36 +915,94 @@ export class PoliceService {
       })
   }
 
+  private buildPoliceCaseInfoFromCaseUnits(
+    caseUnits: CaseUnit[],
+  ): PoliceCaseInfo[] {
+    const cases: PoliceCaseInfo[] = []
+
+    for (const unit of caseUnits) {
+      const policeCaseNumber = unit.upprunalegtMalsnumer
+      const place = formatCrimeScenePlace(
+        unit.gotuHeiti,
+        unit.gotuNumer,
+        unit.sveitafelag,
+      )
+      const date = unit.brotFra ? new Date(unit.brotFra) : undefined
+      const licencePlate = unit.licencePlate ?? undefined
+      const subtype = unit.subtype
+
+      const foundCase = cases.find(
+        (item) => item.policeCaseNumber === policeCaseNumber,
+      )
+
+      if (!foundCase) {
+        cases.push({
+          policeCaseNumber,
+          place,
+          date,
+          licencePlate,
+          subtypes: subtype ? [subtype] : [],
+        })
+      } else {
+        const isNewer = date && (!foundCase.date || date > foundCase.date)
+
+        if (isNewer) {
+          foundCase.place = place
+          foundCase.date = date
+          foundCase.licencePlate = licencePlate
+          foundCase.subtypes = []
+        }
+
+        const isRelevant = !foundCase.date || (date && date >= foundCase.date)
+
+        if (subtype && isRelevant && !foundCase.subtypes?.includes(subtype)) {
+          foundCase.subtypes?.push(subtype)
+        }
+      }
+    }
+
+    return cases
+  }
+
+  private buildDefendantPoliceCaseNumberLinks(
+    defendants: { id: string; nationalId: string }[],
+    caseUnitsByDefendant: { nationalId: string; caseUnits: CaseUnit[] }[],
+  ): { defendantId: string; policeCaseNumber: string }[] {
+    const defendantIdByNationalId = new Map(
+      defendants.map((d) => [d.nationalId, d.id]),
+    )
+
+    const links: { defendantId: string; policeCaseNumber: string }[] = []
+
+    for (const { nationalId, caseUnits } of caseUnitsByDefendant) {
+      const defendantId = defendantIdByNationalId.get(nationalId)
+      if (!defendantId) {
+        continue
+      }
+      for (const unit of caseUnits) {
+        if (unit.upprunalegtMalsnumer) {
+          links.push({
+            defendantId,
+            policeCaseNumber: unit.upprunalegtMalsnumer,
+          })
+        }
+      }
+    }
+
+    return links
+  }
+
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
-    nationalIds: string[] = [],
+    defendants: { id: string; nationalId: string }[] = [],
   ): Promise<PoliceCaseInfo[]> {
     try {
-      const policeCaseResponse = await this.getPoliceCaseFiles(
-        caseId,
-        user,
-        'getPoliceCaseInfo',
-      )
-
-      const policeDigitalCaseFilesResponse = await this.getDigitalCaseFiles(
-        caseId,
-        user,
-        'getPoliceCaseInfo',
-      )
-
-      const caseNationalIds = Array.from(
-        new Set(
-          nationalIds
-            .map((nationalId) => nationalId?.trim())
-            .filter((nationalId) => Boolean(nationalId)),
-        ),
-      )
       const nationalIdsToUse =
-        caseNationalIds.length > 0
-          ? caseNationalIds
+        defendants.length > 0
+          ? defendants.map((d) => d.nationalId)
           : (await this.getDefendantsFromPolice(caseId, user)).map(
-              (defendant) => defendant.nationalId,
+              (d) => d.nationalId,
             )
 
       const caseUnitsByDefendant = await this.getCaseUnits(
@@ -946,63 +1011,22 @@ export class PoliceService {
         user,
       )
 
-      const policeCaseNumbers = new Set<string>([policeCaseResponse.malsnumer])
-
-      // fetch unique police case numbers from case files and digital case files
-      policeCaseResponse.skjol?.forEach((info: { malsnumer: string }) => {
-        policeCaseNumbers.add(info.malsnumer)
-      })
-      policeDigitalCaseFilesResponse?.forEach((info: { malsnumer: string }) => {
-        policeCaseNumbers.add(info.malsnumer)
-      })
-      const cases: PoliceCaseInfo[] = Array.from(policeCaseNumbers).map(
-        (number) => ({
-          policeCaseNumber: number,
-        }),
+      const cases = this.buildPoliceCaseInfoFromCaseUnits(
+        caseUnitsByDefendant.flatMap((entry) => entry.caseUnits),
       )
 
-      // fetch and populate essential police case information from the case units
-      await Promise.all(
-        caseUnitsByDefendant
-          .flatMap((entry) => entry.caseUnits)
-          .map(async (info: CaseUnit) => {
-            const policeCaseNumber = info.upprunalegtMalsnumer
-            const key = info.subtype
+      const defendantPoliceCaseNumberLinks =
+        this.buildDefendantPoliceCaseNumberLinks(
+          defendants,
+          caseUnitsByDefendant,
+        )
 
-            const place = formatCrimeScenePlace(
-              info.gotuHeiti,
-              info.gotuNumer,
-              info.sveitafelag,
-            )
-            const date = info.brotFra ? new Date(info.brotFra) : undefined
-            const licencePlate = info.licencePlate ?? undefined
-
-            const foundCase = cases.find(
-              (item) => item.policeCaseNumber === policeCaseNumber,
-            )
-
-            if (!foundCase) {
-              cases.push({
-                policeCaseNumber,
-                place,
-                date,
-                licencePlate,
-                subtypes: key ? [key] : [],
-              })
-            } else {
-              if (date && (!foundCase.date || date > foundCase.date)) {
-                foundCase.place = place
-                foundCase.date = date
-                foundCase.licencePlate = licencePlate
-                foundCase.subtypes = []
-              }
-
-              if (key && !foundCase.subtypes?.includes(key)) {
-                foundCase.subtypes?.push(key)
-              }
-            }
-          }),
-      )
+      if (defendantPoliceCaseNumberLinks.length > 0) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+          caseId,
+          defendantPoliceCaseNumberLinks,
+        )
+      }
 
       return cases
     } catch (reason) {
