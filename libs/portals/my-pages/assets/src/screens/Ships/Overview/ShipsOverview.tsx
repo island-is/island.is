@@ -30,6 +30,7 @@ export const ShipsOverview = () => {
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(coreMessages.shipsTooltip),
       }}
+      desktopContentSpan="10/12"
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
