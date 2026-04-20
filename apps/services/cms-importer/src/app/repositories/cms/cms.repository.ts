@@ -7,7 +7,11 @@ import {
   KeyValueMap,
 } from 'contentful-management'
 import { ManagementClientService } from './managementClient/managementClient.service'
-import { GENERIC_LIST_ITEM_CONTENT_TYPE, LOCALES_ARRAY } from '../../constants'
+import {
+  GENERIC_LIST_ITEM_CONTENT_TYPE,
+  LOCALE,
+  LOCALES_ARRAY,
+} from '../../constants'
 import { logger } from '@island.is/logging'
 import {
   CmsEntryOpResult,
@@ -16,6 +20,7 @@ import {
   EntryUpdateDto,
   Localized,
 } from './cms.types'
+import chunk from 'lodash/chunk'
 import { ContentfulFetchResponse } from './managementClient/managementClient.types'
 
 @Injectable()
@@ -81,7 +86,9 @@ export class CmsRepository {
     entries: Array<EntryCreationDto>,
     contentType: ContentTypeOptions,
   ): Promise<Array<CmsEntryOpResult>> => {
-    logger.info('creating entries...')
+    logger.info('creating entries', {
+      entries: entries.length,
+    })
 
     const cmsContentType = await this.getContentType(contentType)
 
@@ -104,34 +111,55 @@ export class CmsRepository {
       ]
     }
 
-    const promises = entries
-      .map((entry) => {
-        if (!entry?.fields) {
-          logger.warn('No input fields, aborting creation...')
-          return
+    const entryChunks = chunk(entries, 3)
+
+    const execute = async (
+      entries: EntryCreationDto[],
+    ): Promise<CmsEntryOpResult[]> => {
+      const promiseRes = await Promise.allSettled(
+        entries
+          .map((entry) => {
+            if (!entry?.fields) {
+              logger.info('No input fields, aborting creation...')
+              return
+            }
+            return this.createSingleEntry(cmsContentType, entry)
+          })
+          .filter(isDefined),
+      )
+
+      return promiseRes.map((pr) => {
+        if (pr.status === 'fulfilled' && pr.value) {
+          return { status: 'success' as const, entry: pr.value }
         }
-        return this.createSingleEntry(cmsContentType, entry)
+        if (pr.status === 'rejected') {
+          return { status: 'error' as const, error: pr.reason }
+        }
+        return { status: 'unknown' as const }
       })
-      .filter(isDefined)
+    }
 
-    const promiseRes = await Promise.allSettled(promises)
+    const resultArray: CmsEntryOpResult[] = []
+    //sequential execution by chunk size
+    for (const entryChunk of entryChunks) {
+      const response = await execute(entryChunk)
+      logger.debug('execute has finished')
+      resultArray.push(...response)
 
-    return promiseRes.map((pr) => {
-      if (pr.status === 'fulfilled' && pr.value) {
-        return { status: 'success', entry: pr.value }
-      }
-      if (pr.status === 'rejected') {
-        return { status: 'error', error: pr.reason }
-      }
-      return { status: 'unknown' }
-    })
+      //wait for 2,5 seconds before executing next chunk, for rate limit reasos
+      await new Promise((resolve) => setTimeout(resolve, 2500))
+    }
+
+    return resultArray
   }
 
   private createSingleEntry = async (
     contentType: ContentType,
     input: EntryCreationDto,
   ): Promise<Entry | undefined> => {
-    logger.info('creating single entry...')
+    logger.debug('creating single entry...', {
+      id: input.fields?.['slug']?.[LOCALE],
+    })
 
     const fields = input.fields
 
@@ -157,7 +185,7 @@ export class CmsRepository {
     }
 
     if (createdEntry?.ok) {
-      logger.info('Entry created', {
+      logger.debug('Entry created', {
         id: createdEntry.data.sys.id,
       })
       return createdEntry.data
@@ -208,35 +236,54 @@ export class CmsRepository {
       ]
     }
 
-    const promises = entries
-      .map((entry) => {
-        if (!entry?.inputFields) {
-          logger.warn('No input fields to update', {
-            referenceId: entry.referenceId,
+    const entryChunks = chunk(entries, 3)
+
+    const execute = async (
+      entries: EntryUpdateDto[],
+    ): Promise<CmsEntryOpResult[]> => {
+      const promiseRes = await Promise.allSettled(
+        entries
+          .map((entry) => {
+            if (!entry?.inputFields) {
+              logger.warn('No input fields to update', {
+                referenceId: entry.referenceId,
+              })
+              return
+            }
+            return this.updateSingleEntry(
+              entry.cmsEntry,
+              contentTypeResponse.data?.fields,
+              entry?.inputFields,
+              entry?.referenceId,
+              abortIfUnpublished,
+            )
           })
-          return
+          .filter(isDefined),
+      )
+
+      return promiseRes.map((pr) => {
+        if (pr.status === 'fulfilled' && pr.value) {
+          return { status: 'success' as const, entry: pr.value }
         }
-        return this.updateSingleEntry(
-          entry.cmsEntry,
-          contentTypeResponse.data?.fields,
-          entry?.inputFields,
-          entry?.referenceId,
-          abortIfUnpublished,
-        )
+        if (pr.status === 'rejected') {
+          return { status: 'error' as const, error: pr.reason }
+        }
+        return { status: 'unknown' as const }
       })
-      .filter(isDefined)
+    }
 
-    const promiseRes = await Promise.allSettled(promises)
+    const resultArray: CmsEntryOpResult[] = []
+    //sequential execution by chunk size
+    for (const entryChunk of entryChunks) {
+      const response = await execute(entryChunk)
+      logger.debug('execute has finished')
+      resultArray.push(...response)
 
-    return promiseRes.map((pr) => {
-      if (pr.status === 'fulfilled' && pr.value) {
-        return { status: 'success', entry: pr.value }
-      }
-      if (pr.status === 'rejected') {
-        return { status: 'error', error: pr.reason }
-      }
-      return { status: 'unknown' }
-    })
+      //wait for 2,5 seconds before executing next chunk, for rate limit reasos
+      await new Promise((resolve) => setTimeout(resolve, 2500))
+    }
+
+    return resultArray
   }
 
   private updateSingleEntry = async (

@@ -9,7 +9,7 @@ const createMyPagesLinks = (baseUrl: string) => ({
   accessControl: `${baseUrl}/minarsidur/adgangsstyring/umbod`,
   supportPayments: `${baseUrl}/minarsidur/framfaersla/greidsluaetlun`,
   education: `${baseUrl}/minarsidur/menntun/grunnskoli/namsmat`,
-  lawAndOrder: `${baseUrl}/minarsidur/log-og-reglur/yfirlit`,
+  lawAndOrder: `${baseUrl}/minarsidur/log-og-reglur`,
   occupationalLicenses: `${baseUrl}/minarsidur/starfsleyfi`,
   // For Vehicles screen
   ownerLookup: `${baseUrl}/minarsidur/eignir/okutaeki/leit`,

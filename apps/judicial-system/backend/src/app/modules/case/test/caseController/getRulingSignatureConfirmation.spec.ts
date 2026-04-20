@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseNotificationType,
@@ -29,6 +29,7 @@ type GivenWhenThen = (
   user: User,
   theCase: Case,
   documentToken: string,
+  method?: 'audkenni' | 'mobile',
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
@@ -36,7 +37,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
@@ -44,15 +45,15 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
       awsS3Service,
       sequelize,
       caseRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
+    mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
-    mockMessageService = messageService
     mockAwsS3Service = awsS3Service
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -68,15 +69,13 @@ describe('CaseController - Get ruling signature confirmation', () => {
     mockPutGeneratedObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue({})
-    const mockPostMessageToQueue =
-      mockMessageService.sendMessagesToQueue as jest.Mock
-    mockPostMessageToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (
       caseId: string,
       user: User,
       theCase: Case,
       documentToken: string,
+      method?: 'audkenni' | 'mobile',
     ) => {
       const then = {} as Then
 
@@ -86,6 +85,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
           user,
           theCase,
           documentToken,
+          method,
         )
       } catch (error) {
         then.error = error as Error
@@ -131,7 +131,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { transaction },
       )
       expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
           type: MessageType.NOTIFICATION,
@@ -168,7 +168,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { transaction },
       )
       expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
           type: MessageType.NOTIFICATION,
@@ -200,7 +200,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     })
 
     it('should return success', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
           type: MessageType.NOTIFICATION,
@@ -257,7 +257,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.message).toBeTruthy()
       expect(then.result.code).toBeUndefined()
       expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 })

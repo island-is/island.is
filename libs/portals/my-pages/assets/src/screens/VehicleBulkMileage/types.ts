@@ -5,6 +5,8 @@ export interface VehicleProps {
 
 export type SubmissionStatus = 'success' | 'error' | 'loading' | 'idle'
 
+export type OdometerUnit = 'km' | 'mi'
+
 export interface Props {
   vehicles: Array<VehicleProps>
 }
@@ -17,6 +19,7 @@ export interface TableData {
 }
 
 export interface VehicleType extends VehicleProps {
+  hasMilesOdometer?: boolean
   mileageUploadedFromFile?: number
   isCurrentlyEditing?: boolean
   lastMileageRegistration?: {

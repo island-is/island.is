@@ -105,6 +105,7 @@ query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
     baseInformation {
       ...QuestionnaireBaseInfo
     }
+    sender
     expirationDate
     canSubmit
     submissions {

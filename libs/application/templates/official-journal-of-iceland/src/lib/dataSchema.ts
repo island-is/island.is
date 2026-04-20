@@ -100,6 +100,63 @@ const miscSchema = z
   })
   .partial()
 
+// ---------------------------------------------------------------------------
+// Regulation-specific schemas
+//
+// For regulation application types (base_regulation / amending_regulation),
+// these fields live in the regulations-admin DB as single source of truth.
+// Only `regulation.draftId` is stored in application.answers.
+// The schema definitions are kept here for type inference, validation
+// schemas, and backward compatibility with legacy applications.
+// ---------------------------------------------------------------------------
+
+export const regulationAppendixSchema = z.object({
+  title: z.string().optional(),
+  text: z.string().optional(),
+  diff: z.string().optional(),
+  revoked: z.boolean().optional(),
+})
+
+export const regulationImpactSchema = z.object({
+  id: z.string(),
+  impactId: z.string().optional(), // Server-side UUID from regulations-admin DB
+  type: z.enum(['amend', 'repeal']),
+  name: z.string(), // RegName or 'self'
+  regTitle: z.string().optional(),
+  date: z.string().optional(), // ISODate
+  // Fields only present for 'amend' type
+  title: z.string().optional(),
+  text: z.string().optional(), // HTMLText
+  appendixes: z.array(regulationAppendixSchema).optional(),
+  comments: z.string().optional(), // HTMLText
+  diff: z.string().optional(), // HTMLText
+})
+
+const regulationSchema = z
+  .object({
+    draftId: z.string().optional(), // ID linking to regulations-admin draft in DB
+    effectiveDate: z.string().optional(),
+    fastTrack: z.boolean().optional(),
+    lawChapters: z
+      .array(
+        z.object({
+          slug: z.string(),
+          name: z.string(),
+        }),
+      )
+      .optional(),
+    draftingNotes: z.string().optional(),
+    impacts: z.array(regulationImpactSchema).optional(),
+  })
+  .partial()
+
+export const additionalPartySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  slug: z.string(),
+  nationalId: z.string(),
+})
+
 export const partialSchema = z.object({
   requirements: z
     .object({
@@ -109,9 +166,14 @@ export const partialSchema = z.object({
       params: error.dataGathering,
       path: ['approveExternalData'],
     }),
+  applicationType: z
+    .enum(['ad', 'base_regulation', 'amending_regulation'])
+    .optional(),
   advert: advertSchema.optional(),
   signature: signatureSchema.optional(),
   misc: miscSchema.optional(),
+  regulation: regulationSchema.optional(),
+  additionalParties: z.array(additionalPartySchema).optional(),
 })
 
 // We make properties optional to throw custom error messages
@@ -364,6 +426,119 @@ const validateChannel = (channel: z.infer<typeof channelSchema>) => {
 }
 
 export type partialSchema = z.infer<typeof partialSchema>
+
+// ---------------------------------------------------------------------------
+// Regulation validation schemas
+// ---------------------------------------------------------------------------
+
+export const regulationContentValidationSchema = z.object({
+  advert: z.object({
+    department: baseEntitySchema
+      .optional()
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
+        params: error.missingDepartment,
+      }),
+    type: baseEntitySchema
+      .optional()
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
+        params: error.missingType,
+      }),
+    title: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingRegulationTitle,
+      }),
+    html: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingRegulationText,
+      }),
+  }),
+})
+
+export const regulationMetaValidationSchema = z.object({
+  regulation: z.object({
+    effectiveDate: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingEffectiveDate,
+      }),
+    lawChapters: z
+      .array(z.object({ slug: z.string(), name: z.string() }))
+      .optional()
+      .refine((value) => Array.isArray(value) && value.length > 0, {
+        params: error.missingLawChapters,
+      }),
+  }),
+})
+
+export const regulationPublishingValidationSchema = z.object({
+  advert: z.object({
+    requestedDate: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingRequestedDate,
+      })
+      .refine(
+        (value) => {
+          if (!value) return true
+          return isDateNotBeforeToday(value)
+        },
+        {
+          params: error.dateBeforeToday,
+        },
+      ),
+    channels: z
+      .array(channelSchema)
+      .optional()
+      .superRefine((schema, context) => {
+        let pass = true
+        if (!schema || schema.length === 0) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: error.emptyChannel,
+            path: ['advert', 'channels'],
+          })
+          pass = false
+        }
+
+        const validChannels = schema?.every(
+          (channel) => validateChannel(channel) === true,
+        )
+
+        if (!validChannels) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: error.invalidChannel,
+            path: ['advert', 'channels'],
+          })
+          pass = false
+        }
+
+        return pass
+      }),
+  }),
+})
+
+export const regulationImpactsValidationSchema = z.object({
+  regulation: z.object({
+    impacts: z
+      .array(regulationImpactSchema)
+      .optional()
+      .refine((value) => Array.isArray(value) && value.length > 0, {
+        params: error.missingImpacts,
+      }),
+  }),
+})
+
+export type RegulationImpactSchema = z.infer<typeof regulationImpactSchema>
+export type RegulationSchema = z.infer<typeof regulationSchema>
 
 export type SignatureMemberKey = keyof z.infer<typeof memberItemSchema>
 export type SignatureInstitutionKey = keyof Pick<

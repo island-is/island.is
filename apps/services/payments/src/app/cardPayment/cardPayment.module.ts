@@ -21,6 +21,8 @@ import { JwksModule } from '../jwks/jwks.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
+import { RefundModule } from '../refund/refund.module'
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.mod
       FjsCharge,
       CardPaymentDetails,
       PaymentFulfillment,
+      PaymentWorkerEvent,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -40,6 +43,7 @@ import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.mod
     ChargeFjsV2ClientModule,
     CardPaymentCacheModule,
     JwksModule,
+    RefundModule,
   ],
   controllers: [CardPaymentController],
   providers: [CardPaymentService, PaymentFlowService],

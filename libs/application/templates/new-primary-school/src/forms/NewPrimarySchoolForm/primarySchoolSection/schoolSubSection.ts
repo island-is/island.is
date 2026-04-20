@@ -36,6 +36,7 @@ export const schoolSubSection = buildSubSection({
           id: 'school.applyForPreferredSchool',
           required: true,
           space: 0,
+          clearOnChange: ['newSchool.municipality', 'newSchool.school'],
           options: (application) => {
             return [
               {

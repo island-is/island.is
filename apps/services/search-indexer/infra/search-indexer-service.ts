@@ -137,6 +137,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
         },
       },
     })
+    .grantNamespaces('nginx-ingress-external')
     .replicaCount({
       min: 1,
       max: 1,

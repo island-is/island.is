@@ -1,6 +1,6 @@
 import { AnswerValidator } from '@island.is/application/core'
 
-import { AnswerValidationConstants } from './constants'
+import { AnswerValidationConstants } from '../utils/constants'
 import { period } from './answerValidationSections/period'
 
 const { PERIOD } = AnswerValidationConstants

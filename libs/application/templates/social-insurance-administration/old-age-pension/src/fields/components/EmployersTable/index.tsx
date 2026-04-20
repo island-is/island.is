@@ -2,8 +2,8 @@ import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { Box, Icon, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { Employer } from '../../../types'
-import { RatioType } from '../../../lib/constants'
+import { Employer } from '../../../utils/types'
+import { RatioType } from '../../../utils/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 interface EmployerTableProps {

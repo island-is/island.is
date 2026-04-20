@@ -6,9 +6,6 @@ export class ListItem {
   @Field(() => String)
   id!: string
 
-  @Field(() => String, { nullable: true })
-  identifier?: string
-
   @Field(() => LanguageType, { nullable: true })
   label?: LanguageType
 

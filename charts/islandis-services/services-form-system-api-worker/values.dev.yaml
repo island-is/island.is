@@ -32,7 +32,6 @@ env:
   DB_USER: 'services_form_system_api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
   FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
-  FORM_SYSTEM_BULL_PREFIX: 'form_system_api_bull_module'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -43,6 +42,9 @@ env:
 grantNamespaces:
   - 'islandis'
   - 'nginx-ingress-external'
+  - 'nginx-ingress-internal'
+  - 'envoy-gateway-external'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -65,7 +67,7 @@ image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
 namespace: 'services-form-system-api'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

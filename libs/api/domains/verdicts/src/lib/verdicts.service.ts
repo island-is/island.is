@@ -7,6 +7,13 @@ import { CourtAgendasResponse } from './dto/courtAgendas.response'
 import { CourtAgendasInput } from './dto/courtAgendas.input'
 import { LawyersResponse } from './dto/lawyers.response'
 import { CaseFilterOptionsResponse } from './dto/caseFilterOptions.response'
+import { SupremeCourtDeterminationsInput } from './dto/supremeCourtDeterminations.input'
+import { SupremeCourtDeterminationsResponse } from './dto/supremeCourtDeterminations.response'
+import { SupremeCourtDeterminationByIdInput } from './dto/supremeCourtDeterminationById.input'
+import { SupremeCourtDeterminationByIdResponse } from './dto/supremeCourtDeterminationById.response'
+import { ScheduleTypesResponse } from './dto/scheduleTypes.response'
+import { SupremeCourtAppealsInput } from './dto/supremeCourtAppeals.input'
+import { SupremeCourtAppealsResponse } from './dto/supremeCourtAppeals.response'
 
 @Injectable()
 export class VerdictsService {
@@ -25,6 +32,7 @@ export class VerdictsService {
       dateTo: input.dateTo,
       laws: input.laws,
       caseContact: input.caseContact,
+      pageSize: input.pageSize,
     })
     return {
       items: response.items,
@@ -64,5 +72,27 @@ export class VerdictsService {
     return {
       lawyers: await this.verdictsClientService.getLawyers(),
     }
+  }
+
+  async getSupremeCourtDeterminations(
+    input: SupremeCourtDeterminationsInput,
+  ): Promise<SupremeCourtDeterminationsResponse> {
+    return this.verdictsClientService.getSupremeCourtDeterminations(input)
+  }
+
+  async getSupremeCourtDeterminationById(
+    input: SupremeCourtDeterminationByIdInput,
+  ): Promise<SupremeCourtDeterminationByIdResponse | null> {
+    return this.verdictsClientService.getSupremeCourtDeterminationById(input.id)
+  }
+
+  async getSupremeCourtAppeals(
+    input: SupremeCourtAppealsInput,
+  ): Promise<SupremeCourtAppealsResponse> {
+    return this.verdictsClientService.getSupremeCourtAppeals(input)
+  }
+
+  async getScheduleTypes(): Promise<ScheduleTypesResponse> {
+    return this.verdictsClientService.getScheduleTypes()
   }
 }

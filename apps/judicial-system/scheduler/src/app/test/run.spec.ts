@@ -39,7 +39,7 @@ describe('AppService - Run', () => {
       mockMessageService = messageService
 
       const mockSendMessagesToQueue =
-        mockMessageService.sendMessagesToQueue as jest.Mock
+        mockMessageService.addMessagesToQueue as jest.Mock
       mockSendMessagesToQueue.mockRejectedValue(new Error('Some error'))
 
       const then = {} as Then
@@ -205,7 +205,7 @@ describe('AppService - Run', () => {
     })
 
     it('should send waiting for confirmation notification to the message queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockMessageService.addMessagesToQueue).toHaveBeenCalledWith([
         {
           type: 'NOTIFICATION_DISPATCH',
           body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },

@@ -14,6 +14,7 @@ export type PruningApplication = Pick<
   | 'typeId'
   | 'state'
   | 'applicant'
+  | 'applicantActors'
 >
 
 export type PruningNotification = {

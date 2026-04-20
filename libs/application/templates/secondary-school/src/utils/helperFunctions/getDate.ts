@@ -1,6 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { SecondarySchoolAnswers } from '../..'
+import { Locale } from '@island.is/shared/types'
+import format from 'date-fns/format'
+import localeIS from 'date-fns/locale/is'
+import localeEN from 'date-fns/locale/en-GB'
 
 const getRegistrationEndDates = (formValue: FormValue): Date[] => {
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
@@ -42,4 +46,15 @@ export const getEndOfDayUTCDate = (date: Date | undefined): Date => {
   newDate.setUTCHours(23, 59, 59, 999)
 
   return newDate
+}
+
+export const getDateWordStr = (
+  date: Date | undefined,
+  locale: Locale,
+): string => {
+  return date
+    ? format(new Date(date), 'd. MMMM yyyy', {
+        locale: locale === 'is' ? localeIS : localeEN,
+      })
+    : ''
 }

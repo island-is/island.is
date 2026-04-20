@@ -5,7 +5,6 @@ import {
   AuditTrailModule,
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
-import { MessageModule } from '@island.is/judicial-system/message'
 
 import {
   CaseModule,
@@ -24,7 +23,6 @@ import { VerdictService } from './verdict.service'
 @Module({
   imports: [
     AuditTrailModule,
-    MessageModule,
     forwardRef(() => CaseModule),
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),

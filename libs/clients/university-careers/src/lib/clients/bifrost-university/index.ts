@@ -1,7 +1,11 @@
 export { StudentTranscriptApi as BifrostApi } from './gen/fetch'
 export { StudentTrackInstitution as BifrostStudentTrackInstitution } from './gen/fetch'
 export { StudentTrack as BifrostStudentTrack } from './gen/fetch'
+export { StudentFile as BifrostStudentFile } from './gen/fetch'
 export { NemandiGetLocaleEnum as BifrostLocale } from './gen/fetch'
-export { NemandiFerillFerillFileTranscriptGetLocaleEnum as BifrostTranscriptLocale } from './gen/fetch'
 export { NemandiFerillFerillGetLocaleEnum as BifrostFerillLocale } from './gen/fetch'
+export { NemandiFerillFerillFileTypeGetLocaleEnum as BifrostTranscriptLocale } from './gen/fetch'
+export { FileType as BifrostFileType } from './gen/fetch'
+export { StudentTrackOverview as BifrostStudentTrackOverview } from './gen/fetch'
+
 export * from './bifrostUniversityCareerClient.config'

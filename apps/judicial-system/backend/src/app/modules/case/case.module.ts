@@ -4,13 +4,10 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 
-import { MessageModule } from '@island.is/judicial-system/message'
-
 import { CaseString, DateLog } from '../repository'
 import {
   AwsS3Module,
   CourtModule,
-  CourtSessionModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -35,7 +32,6 @@ import { PdfService } from './pdf.service'
   imports: [
     SigningModule,
     CmsTranslationsModule,
-    MessageModule,
     forwardRef(() => RepositoryModule),
     forwardRef(() => DefendantModule),
     forwardRef(() => SubpoenaModule),
@@ -43,7 +39,6 @@ import { PdfService } from './pdf.service'
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
-    forwardRef(() => CourtSessionModule),
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),

@@ -215,6 +215,16 @@ export const coreMessages = defineMessages({
     description:
       'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
   },
+  oneDayRemaining: {
+    id: 'application.system:application.oneDayRemaining',
+    defaultMessage: '1 dagur eftir',
+    description: '1 day remaining',
+  },
+  daysRemaining: {
+    id: 'application.system:application.daysRemaining',
+    defaultMessage: '{count} dagar eftir',
+    description: '{count} days remaining',
+  },
   notLoggedIn: {
     id: 'application.system:not.logged.id',
     defaultMessage: 'Þú þarft að vera skrá þig inn.',
@@ -514,6 +524,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.payment.retryCaption',
     defaultMessage: 'Reyna aftur',
     description: 'Caption for the retry button',
+  },
+  paymentSubmitRefundExitButtonCaption: {
+    id: 'application.system:core.payment.exitCaption',
+    defaultMessage: 'Hætta við greiðslu og fara aftur í umsókn',
+    description: 'Caption for the refund payment and exit button',
   },
   paymentStatusError: {
     id: 'application.system:core.payment.statusError',
@@ -1171,12 +1186,12 @@ export const coreHistoryMessages = defineMessages({
   },
   byReviewer: {
     id: 'application.system:core.history.byReviewer',
-    defaultMessage: ' [{subject}]',
+    defaultMessage: ' {subject} framkvæmdi',
     description: 'History log by reviewer',
   },
   byReviewerWithActor: {
     id: 'application.system:core.history.byReviewerWithActor',
-    defaultMessage: '  [{actor} fyrir hönd {subject}]',
+    defaultMessage: '  {actor} framkvæmdi fyrir hönd {subject}',
     description: 'History log by actor on behalf of reviewer',
   },
 })

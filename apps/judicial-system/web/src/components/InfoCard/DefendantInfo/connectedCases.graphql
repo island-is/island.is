@@ -1,0 +1,16 @@
+query ConnectedCases($input: CaseQueryInput!) {
+  connectedCases(input: $input) {
+    id
+    courtCaseNumber
+    defendants {
+      id
+      noNationalId
+      nationalId
+      name
+    }
+    court {
+      id
+      name
+    }
+  }
+}

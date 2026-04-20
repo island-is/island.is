@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/types'
 
 import { SharedTemplateApiService } from '../../../shared'
+import { AttachmentS3Service } from '../../../shared/services'
 import { DrivingLicenseSubmissionService } from './driving-license-submission.service'
 import {
   AdapterService,
@@ -50,6 +51,14 @@ describe('DrivingLicenseSubmissionService', () => {
           provide: ConfigService,
           useClass: jest.fn(() => ({
             get: () => 'http://localhost',
+          })),
+        },
+        {
+          provide: AttachmentS3Service,
+          useClass: jest.fn(() => ({
+            async getFiles() {
+              return []
+            },
           })),
         },
         {

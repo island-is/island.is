@@ -1,8 +1,8 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   Application,
-  NationalRegistryIndividual,
-  NationalRegistrySpouse,
+  NationalRegistryV3Individual,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import {
   HealthInsuranceDeclarationApplication,
@@ -110,11 +110,11 @@ export const getApplicantsFromExternalData = ({
 export const getChildrenFromExternalData = ({ externalData }: Application) => {
   return (
     (externalData?.childrenCustodyInformation
-      ?.data as ApplicantChildCustodyInformation[]) ?? []
+      ?.data as ApplicantChildCustodyInformationV3[]) ?? []
   )
 }
 export const getSpouseFromExternalData = ({ externalData }: Application) => {
-  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
+  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouseV3
 }
 
 export const getPersonsFromExternalData = (application: Application) => {
@@ -124,11 +124,11 @@ export const getPersonsFromExternalData = (application: Application) => {
     {
       nationalId: (
         application.externalData.nationalRegistry
-          .data as NationalRegistryIndividual
+          .data as NationalRegistryV3Individual
       ).nationalId,
       name: (
         application.externalData.nationalRegistry
-          .data as NationalRegistryIndividual
+          .data as NationalRegistryV3Individual
       ).fullName,
     },
   ]

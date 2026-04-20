@@ -7,13 +7,7 @@ import {
 import { MessageDescriptor } from 'react-intl'
 import { Organization } from '@island.is/shared/types'
 import { m } from '../lib/messages'
-import { institutionMapper } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { ApplicationListAdminResponseDtoTypeIdEnum } from '@island.is/api/schema'
-import { ApplicationFilters, MultiChoiceFilter } from '../types/filters'
-import { AdminApplication } from '../types/adminApplication'
-import startOfDay from 'date-fns/startOfDay'
-import endOfDay from 'date-fns/endOfDay'
 
 interface Tag {
   variant: ActionCardTag
@@ -47,12 +41,13 @@ export const statusMapper: Record<ApplicationStatus, Tag> = {
   },
 }
 
-export const getLogo = (
-  typeId: ApplicationListAdminResponseDtoTypeIdEnum,
+export const getLogoFromContentfulSlug = (
   organizations: Organization[],
+  institutionContentfulSlug?: string,
 ): string => {
-  const institutionSlug = institutionMapper[typeId].slug
-  const institution = organizations.find((x) => x.slug === institutionSlug)
+  const institution = organizations.find(
+    (x) => x.slug === institutionContentfulSlug,
+  )
   return getOrganizationLogoUrl(
     institution?.title ?? 'stafraent-island',
     organizations,
@@ -67,52 +62,4 @@ export const getSlugFromType = (type: ApplicationTypes) => {
   }
 
   return undefined
-}
-
-export const getFilteredApplications = (
-  applications: AdminApplication[],
-  {
-    multiChoiceFilters,
-    institutionFilters,
-    period,
-  }: {
-    multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
-    institutionFilters?: string[]
-    period?: ApplicationFilters['period']
-  },
-) => {
-  let filteredApplications = applications
-  const multiChoiceStatus = multiChoiceFilters[MultiChoiceFilter.STATUS]
-  const multiChoiceApplication =
-    multiChoiceFilters[MultiChoiceFilter.APPLICATION]
-
-  if (period?.from) {
-    const { from } = period
-    filteredApplications = filteredApplications.filter(
-      (x) => new Date(x.created) > startOfDay(from),
-    )
-  }
-  if (period?.to) {
-    const { to } = period
-    filteredApplications = filteredApplications.filter(
-      (x) => endOfDay(to) > new Date(x.created),
-    )
-  }
-  if (multiChoiceApplication) {
-    filteredApplications = filteredApplications.filter(
-      (x) => !!x.name && multiChoiceApplication.includes(x.name),
-    )
-  }
-  if (multiChoiceStatus) {
-    filteredApplications = filteredApplications.filter((x) =>
-      multiChoiceStatus.includes(x.status),
-    )
-  }
-  if (institutionFilters) {
-    filteredApplications = filteredApplications.filter((x) =>
-      institutionFilters.includes(x.typeId),
-    )
-  }
-
-  return filteredApplications
 }

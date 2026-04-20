@@ -64,7 +64,10 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d",
+        "commands": [
+          "docker compose up -d",
+          "docker compose -f ../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/judicial-system/backend"
       }
     },

@@ -56,7 +56,7 @@ const selectableListItemVariants = {
   }),
   hidden: { opacity: 0, y: 10 },
 }
-const AnimateChildren: FC<PropsWithChildren<AnimateChildrenProps>> = ({
+export const AnimateChildren: FC<PropsWithChildren<AnimateChildrenProps>> = ({
   children,
   id,
 }) => {

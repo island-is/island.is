@@ -78,6 +78,13 @@ export const propertySearch = {
       description:
         'Error message when number of rooms is larger than max in search results',
     },
+    numOfRoomsForRoomTypeError: {
+      id: 'ra.application:registerProperty.search.numOfRoomsForRoomTypeError',
+      defaultMessage:
+        'Þegar tegund húsnæðis er herbergi má fjöldi herbergja í hverri einingu ekki vera fleiri en 1',
+      description:
+        'Error message when any unit has more than 1 room for room type rental',
+    },
     changedSizeTooLargeError: {
       id: 'ra.application:registerProperty.search.changedSizeTooLargeError',
       defaultMessage:

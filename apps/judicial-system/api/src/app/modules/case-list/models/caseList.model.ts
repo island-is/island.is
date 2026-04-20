@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -57,14 +57,14 @@ export class CaseListEntry {
   @Field(() => ID, { nullable: true })
   readonly parentCaseId?: string
 
-  @Field(() => CaseAppealState, { nullable: true })
-  readonly appealState?: CaseAppealState
+  @Field(() => AppealCaseState, { nullable: true })
+  readonly appealState?: AppealCaseState
 
   @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string
 
-  @Field(() => CaseAppealRulingDecision, { nullable: true })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @Field(() => AppealCaseRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @Field(() => String, { nullable: true })
   readonly postponedIndefinitelyExplanation?: string
@@ -80,4 +80,7 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealedByNationalId?: string
 }

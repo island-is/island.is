@@ -1,9 +1,10 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
+  valueIndex: number
 }
 
 const ANSWER_MAP = {
@@ -17,18 +18,18 @@ const ANSWER_MAP = {
   },
 } as const
 
-export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
-  const rawValue = (item?.values?.[0]?.json as Record<string, unknown>)?.[
-    'checkboxValue'
-  ]
-  const value =
-    typeof rawValue === 'boolean'
-      ? String(rawValue)
-      : rawValue === 'true'
-      ? 'true'
-      : rawValue === 'false'
-      ? 'false'
-      : 'false'
+const normalizeCheckboxValue = (rawValue: unknown): 'true' | 'false' => {
+  if (typeof rawValue === 'boolean') return rawValue ? 'true' : 'false'
+  if (rawValue === 'true') return 'true'
+  if (rawValue === 'false') return 'false'
+  return 'false'
+}
+
+export const CheckBoxDisplay = ({ item, valueIndex }: Props) => {
+  const { lang } = useLocale()
+
+  const raw = item.values?.[valueIndex]
+  const value = normalizeCheckboxValue(raw?.json?.checkboxValue)
 
   return (
     <Box
@@ -38,14 +39,13 @@ export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={1}>
-        <Text as="p" fontWeight="semiBold">
-          {item.name?.[lang]}
-        </Text>
-        <Text fontWeight="light">
-          {ANSWER_MAP[lang][value as 'true' | 'false'] ?? ''}
-        </Text>
-      </Stack>
+      <Text as="p" fontWeight="semiBold">
+        {item.name?.[lang]}
+      </Text>
+
+      <Box marginLeft={2}>
+        <Text fontWeight="light">{ANSWER_MAP[lang][value] ?? ''}</Text>
+      </Box>
     </Box>
   )
 }

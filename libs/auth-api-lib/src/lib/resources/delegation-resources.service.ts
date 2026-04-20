@@ -232,28 +232,34 @@ export class DelegationResourcesService {
     }
   }
 
-  private async findScopesInternal({
+  async findScopesInternal({
     user,
     domainName,
     language,
     direction,
     attributes,
+    additionalIncludes = [],
   }: {
     user: User
-    domainName: string | null
+    domainName?: string | null
     language?: string
     direction?: DelegationDirection
     attributes?: Array<keyof Attributes<ApiScope>>
+    additionalIncludes?: Includeable[]
   }): Promise<ApiScope[]> {
+    const filters = await this.apiScopeFilter({ user, direction })
+
     const scopes = await this.apiScopeModel.findAll({
       attributes: attributes as string[],
-      where: and(
-        {
-          domainName,
-        },
-        ...(await this.apiScopeFilter({ user, direction })),
-      ),
-      include: [ApiScopeGroup, ...this.apiScopeInclude(user, direction)],
+      // Use !== undefined to preserve backwards compatibility:
+      // - When domainName is a string or null: apply the filter (OLD behavior)
+      // - When domainName is undefined: no domain filter (NEW behavior for categories)
+      where: and(domainName !== undefined ? { domainName } : {}, ...filters),
+      include: [
+        ApiScopeGroup,
+        ...this.apiScopeInclude(user, direction),
+        ...additionalIncludes,
+      ],
       order: [
         ['group_id', 'ASC NULLS FIRST'],
         ['order', 'ASC'],

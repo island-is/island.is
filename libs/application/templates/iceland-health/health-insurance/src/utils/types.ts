@@ -1,7 +1,7 @@
 import {
   FieldBaseProps,
   FormText,
-  NationalRegistryIndividual,
+  NationalRegistryV3Individual,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
 import { EmploymentStatus } from './constants'
@@ -62,7 +62,7 @@ export interface ContentType {
 }
 
 export interface ExternalDataNationalRegistry {
-  data: NationalRegistryIndividual
+  data: NationalRegistryV3Individual
 }
 
 export interface ExternalDataUserProfile {

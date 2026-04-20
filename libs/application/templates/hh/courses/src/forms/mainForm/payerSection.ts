@@ -10,10 +10,19 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { doesCourseInstanceHaveChargeItemCode } from '../../utils/loadOptions'
 
 export const payerSection = buildSection({
   id: 'payerSection',
   title: m.payer.sectionTitle,
+  condition: (answers) => {
+    const selectedInstanceId = getValueViaPath<string>(
+      answers,
+      'dateSelect',
+      '',
+    )
+    return doesCourseInstanceHaveChargeItemCode(selectedInstanceId)
+  },
   children: [
     buildMultiField({
       id: 'payerSectionMultiField',
@@ -37,7 +46,9 @@ export const payerSection = buildSection({
           titleVariant: 'h4',
           required: true,
           searchCompanies: true,
-          searchPersons: false,
+          searchPersons: true,
+          customNationalIdLabel: m.payer.companyNationalId,
+          customNameLabel: m.payer.companyTitle,
           condition: (answers) =>
             getValueViaPath<YesOrNoEnum>(
               answers,

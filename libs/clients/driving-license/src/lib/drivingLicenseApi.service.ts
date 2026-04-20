@@ -11,6 +11,7 @@ import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
   QualitySignature,
+  QualityPhotoAndSignature,
   RemarkCode,
   DrivingLicenseV4V5Dto,
   Jurisdiction,
@@ -535,6 +536,10 @@ export class DrivingLicenseApi {
     instructorSSN: string
     phoneNumber: string
     email: string
+    contentList?: v5.RLSApplicationContentModel[]
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
+    healthDeclarationModel?: v5.HealthDeclarationModel
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -546,6 +551,10 @@ export class DrivingLicenseApi {
         instructorSSN: params.instructorSSN,
         primaryPhoneNumber: params.phoneNumber,
         studentEmail: params.email,
+        contentList: params.contentList,
+        photoBiometricsId: params.photoBiometricsId,
+        signatureBiometricsId: params.signatureBiometricsId,
+        healthDeclarationModel: params.healthDeclarationModel,
       },
     })
 
@@ -590,6 +599,7 @@ export class DrivingLicenseApi {
     stolenOrLost: boolean
     pickUpLicense: boolean
     imageBiometricsId: string | null
+    signatureBiometricsId: string | null
   }): Promise<number> {
     const {
       districtId,
@@ -597,6 +607,7 @@ export class DrivingLicenseApi {
       stolenOrLost,
       pickUpLicense,
       imageBiometricsId,
+      signatureBiometricsId,
     } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -608,6 +619,7 @@ export class DrivingLicenseApi {
         userId: v5.DRIVING_LICENSE_API_USER_ID,
         pickUpLicense,
         imageBiometricsId,
+        signatureBiometricsId,
       },
     })
   }
@@ -655,6 +667,36 @@ export class DrivingLicenseApi {
     })
     return {
       data: image,
+    }
+  }
+
+  async getQualityPhotoAndSignature(params: {
+    token: string
+  }): Promise<QualityPhotoAndSignature | null> {
+    try {
+      const res =
+        await this.imageApiV5.apiImagecontrollerV5GetqualityphotoandsignatureGet(
+          {
+            apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+            apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+            jwttoken: params.token.replace('Bearer ', ''),
+          },
+        )
+
+      return {
+        imageId: res.imageId ?? null,
+        imageTypeId: res.imageTypeId ?? null,
+        imageTypeName: res.imageTypeName ?? null,
+        imageDate: res.imageDate ?? null,
+        pohto: res.pohto ?? null,
+        signatureId: res.signatureId ?? null,
+        signatureTypeId: res.signatureTypeId ?? null,
+        signatureTypeName: res.signatureTypeName ?? null,
+        signatureDate: res.signatureDate ?? null,
+        signature: res.signature ?? null,
+      }
+    } catch {
+      return null
     }
   }
 

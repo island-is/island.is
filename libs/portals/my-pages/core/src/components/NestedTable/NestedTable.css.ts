@@ -23,6 +23,12 @@ export const wrapper = style({
   padding: `0 ${theme.spacing[3]}px ${theme.spacing[3]}px ${theme.spacing[3]}px`,
 })
 
+export const wrapperFlush = style({
+  paddingLeft: 0,
+  paddingRight: 0,
+  paddingBottom: 0,
+})
+
 export const td = style({
   width: 'max-content',
 })

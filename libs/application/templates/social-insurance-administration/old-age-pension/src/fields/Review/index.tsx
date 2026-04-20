@@ -1,37 +1,48 @@
-import { Application, Field, RecordObject } from '@island.is/application/types'
+import { useMutation } from '@apollo/client'
+import {
+  Application,
+  Field,
+  FieldComponents,
+  FieldTypes,
+  RecordObject,
+} from '@island.is/application/types'
 import {
   Box,
+  Button,
   GridColumn,
   GridRow,
   Text,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
-import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
+import { FC } from 'react'
 
-import { BaseInformation } from './review-groups/BaseInformation'
-import { Period } from './review-groups/Period'
-import { Comment } from './review-groups/Comment'
-import { Attachments } from './review-groups/Attachments'
-import { ResidenceHistory } from './review-groups/ResidenceHistory'
-import { Employers } from './review-groups/Employers'
-import { PaymentInformation } from './review-groups/PaymentInformation'
-import { oldAgePensionFormMessage } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { ApplicationType } from '../../lib/constants'
+import { YES } from '@island.is/application/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   RadioValue,
   ReviewGroup,
   handleServerError,
 } from '@island.is/application/ui-components'
+import { OverviewFormField } from '@island.is/application/ui-fields'
+import { oldAgePensionFormMessage } from '../../lib/messages'
+import { ApplicationType } from '../../utils/constants'
+import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
+import {
+  incomePlanItems,
+  incomePlanTable,
+  paymentItems,
+} from '../../utils/overviewItems'
+import { Attachments } from './review-groups/Attachments'
+import { BaseInformation } from './review-groups/BaseInformation'
+import { Comment } from './review-groups/Comment'
+import { Employers } from './review-groups/Employers'
 import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { YES } from '@island.is/application/core'
+import { Period } from './review-groups/Period'
+import { ResidenceHistory } from './review-groups/ResidenceHistory'
 
 interface ReviewScreenProps {
   application: Application
@@ -176,7 +187,33 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
-      <PaymentInformation {...childProps} />
+      <OverviewFormField
+        application={application}
+        goToScreen={goToScreen}
+        field={{
+          id: 'overview.paymentInfo',
+          backId: editable ? 'paymentInfo' : undefined,
+          type: FieldTypes.OVERVIEW,
+          component: FieldComponents.OVERVIEW,
+          children: undefined,
+          items: paymentItems,
+        }}
+      />
+      <OverviewFormField
+        application={application}
+        goToScreen={goToScreen}
+        field={{
+          id: 'overview.incomePlan',
+          title:
+            socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+          backId: editable ? 'incomePlan' : undefined,
+          type: FieldTypes.OVERVIEW,
+          component: FieldComponents.OVERVIEW,
+          children: undefined,
+          tableData: incomePlanTable,
+          items: incomePlanItems,
+        }}
+      />
       <ResidenceHistory {...childProps} />
       {applicationType === ApplicationType.HALF_OLD_AGE_PENSION && (
         <Employers {...childProps} />

@@ -18,9 +18,11 @@ import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { mapWeekday } from '../../utils/mappers'
 import { useGetAppointmentsQuery } from './Appointments.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AppointmentDetail = () => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
   const { id } = useParams<{ id: string }>()
 
   const { data, loading, error } = useGetAppointmentsQuery({

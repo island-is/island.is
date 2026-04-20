@@ -112,7 +112,7 @@ const Dates: FC<DatesProps> = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        marginTop={[0, 0, 3]}
+        marginTop={[0, 0, 6]}
         flexWrap="nowrap"
         columnGap={2}
       >

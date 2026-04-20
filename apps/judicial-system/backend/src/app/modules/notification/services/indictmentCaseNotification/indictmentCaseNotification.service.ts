@@ -37,6 +37,7 @@ import {
   Case,
   DateLog,
   Defendant,
+  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -63,6 +64,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     emailService: EmailService,
     eventService: EventService,
     private readonly courtService: CourtService,
+    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
@@ -220,6 +222,47 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
             notifications.emailNames.publicProsecutorCriminalRecords,
           ),
           email: this.config.email.publicProsecutorCriminalRecordsEmail,
+        },
+      ],
+    )
+  }
+
+  private async sendDrivingLicenseSuspensionNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    if (!theCase.prosecutorsOfficeId) {
+      return { delivered: false }
+    }
+
+    const subject = `Svipting í máli ${theCase.courtCaseNumber}`
+    const html = `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${
+      theCase.courtCaseNumber
+    } í ${applyDativeCaseToCourtName(
+      theCase.court?.name ?? 'héraðsdómi',
+    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(', ')}.`
+
+    const contactInfo = {
+      name: theCase.prosecutorsOffice?.name,
+      email:
+        await this.institutionContactRepositoryService.getInstitutionContact(
+          theCase.prosecutorsOfficeId,
+          IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        ),
+    }
+
+    if (!contactInfo.name || !contactInfo.email) {
+      return { delivered: false }
+    }
+
+    return this.sendEmails(
+      theCase,
+      IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+      subject,
+      html,
+      [
+        {
+          name: contactInfo.name,
+          email: contactInfo.email,
         },
       ],
     )
@@ -573,6 +616,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
         return this.sendSplitCompletedNotifications(theCase)
+      case IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION:
+        return this.sendDrivingLicenseSuspensionNotifications(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid indictment notification type: ${notificationType}`,

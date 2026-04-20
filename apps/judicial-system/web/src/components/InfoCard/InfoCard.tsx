@@ -3,6 +3,8 @@ import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
+import BlueBox from '../BlueBox/BlueBox'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 interface Section {
@@ -25,17 +27,13 @@ const InfoCard: FC<Props> = (props) => {
   const { sections } = props
 
   return (
-    <Box className={styles.infoCardContainer} paddingX={[2, 2, 3, 3]}>
+    <BlueBox className={grid({ gap: 3 })}>
       {sections.map((section, index) => (
         <Box
-          className={cn(
-            styles.grid,
-            index < sections.length - 1 ? styles.infoCardTitleContainer : null,
-            {
-              [styles.twoCols]: section.columns === 2,
-            },
-          )}
-          paddingY={[2, 2, 3, 3]}
+          className={cn(styles.grid, {
+            [styles.twoCols]: section.columns === 2,
+            [styles.renderDividerFull]: index !== sections.length - 1,
+          })}
           key={section.id}
         >
           {section.items.map((item) => (
@@ -49,16 +47,20 @@ const InfoCard: FC<Props> = (props) => {
               )}
               {item.values.map((value, index) =>
                 typeof value === 'string' ? (
-                  <Text key={`${value}-${index}`}>{value}</Text>
+                  <Text key={`${value}-${index}`} className={styles.breakWord}>
+                    {value}
+                  </Text>
                 ) : (
-                  <Box key={`${value}-${index}`}>{value}</Box>
+                  <Box key={`${value}-${index}`} className={styles.breakWord}>
+                    {value}
+                  </Box>
                 ),
               )}
             </Box>
           ))}
         </Box>
       ))}
-    </Box>
+    </BlueBox>
   )
 }
 

@@ -24,6 +24,7 @@ export const ZendeskChatPanel = ({
   snippetUrl,
   pushUp = false,
   chatBubbleVariant = 'circle',
+  urlTrackingTicketId,
 }: ZendeskChatPanelProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -33,11 +34,21 @@ export const ZendeskChatPanel = ({
     const setup = () => {
       setIsChatOpen(true)
       setIsLoading(false)
+
       window.zE?.(
         'messenger:set',
         'locale',
-        activeLocale === 'en' ? 'en-US' : activeLocale,
+        activeLocale === 'en'
+          ? 'en-US'
+          : activeLocale === 'is'
+          ? 'is-IS'
+          : activeLocale,
       )
+      if (urlTrackingTicketId)
+        window.zE?.('messenger:set', 'conversationFields', [
+          { id: urlTrackingTicketId, value: window.location.href },
+        ])
+
       window.zE?.('messenger', 'show')
       window.zE?.('messenger', 'open')
       window.zE?.('messenger:on', 'close', () => {
@@ -60,7 +71,7 @@ export const ZendeskChatPanel = ({
       console.error(error)
       setIsLoading(false)
     }
-  }, [activeLocale, snippetUrl])
+  }, [activeLocale, snippetUrl, urlTrackingTicketId])
 
   useEffect(
     () => () => {

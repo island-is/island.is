@@ -364,6 +364,11 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: 'Exchange manager option',
   },
+  spouse: {
+    id: 'es.application:spouse',
+    defaultMessage: 'Maki',
+    description: 'Spouse option',
+  },
 
   // Estate members, assets, vehicles
   estateMembersTitle: {
@@ -1134,6 +1139,27 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer virðist ekki vera rétt',
     description: 'Phone number is invalid',
   },
+  phoneElectronicIdError: {
+    id: 'es.application:error.phoneElectronicIdError',
+    defaultMessage: 'Rafræn skilríki ekki til staðar fyrir kennitölu',
+    description: 'Electronic ID not found for national ID',
+  },
+  electronicIdCheckLoading: {
+    id: 'es.application:electronicIdCheckLoading',
+    defaultMessage: 'Athuga rafræn skilríki...',
+    description: 'Checking electronic ID',
+  },
+  electronicIdCheckSuccess: {
+    id: 'es.application:electronicIdCheckSuccess',
+    defaultMessage: 'Rafræn skilríki staðfest',
+    description: 'Electronic ID confirmed',
+  },
+  electronicIdCheckFailure: {
+    id: 'es.application:electronicIdCheckFailure',
+    defaultMessage:
+      'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
+    description: 'Electronic ID not found. Please contact Auðkenni.',
+  },
   errorEmail: {
     id: 'es.application:error.errorEmail',
     defaultMessage: 'Netfang virðist ekki vera rétt',
@@ -1220,19 +1246,13 @@ export const m = defineMessages({
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
-      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+      'Eftirfarandi erfingi er undir lögaldri án málsvara og því er ekki hægt að halda áfram með umsókn. Vinsamlegast tilgreinið lögráða málsvara eða hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: '',
   },
   inheritanceUnder18ErrorAdvocate: {
     id: 'es.application:inheritanceUnder18ErrorAdvocate',
     defaultMessage:
       'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
-    description: '',
-  },
-  inheritanceAgeValidation: {
-    id: 'es.application:inheritanceAgeValidation',
-    defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
     description: '',
   },
   heirAdvocateAgeValidation: {

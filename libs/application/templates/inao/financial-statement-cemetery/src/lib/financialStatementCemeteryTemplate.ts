@@ -20,7 +20,7 @@ import { dataSchema } from './dataSchema'
 import {
   CurrentUserTypeProvider,
   IdentityApiProvider,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserInfoApi,
 } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../types/types'
@@ -82,7 +82,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
               api: [
                 CurrentUserTypeProvider,
                 IdentityApiProvider,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserInfoApi,
               ],
             },
@@ -120,7 +120,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserInfoApi],
+              api: [NationalRegistryV3UserApi, UserInfoApi],
             },
           ],
         },

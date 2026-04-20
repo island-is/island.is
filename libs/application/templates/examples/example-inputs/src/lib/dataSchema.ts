@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 const nationalIdWithNameSchema = z.object({
-  nationalId: z.string().min(1),
-  name: z.string().min(1),
+  nationalId: z.string().optional(),
+  name: z.string().optional(),
 })
 
 const nationalIdWithNameWithContactSchema = nationalIdWithNameSchema.extend({
@@ -11,14 +11,14 @@ const nationalIdWithNameWithContactSchema = nationalIdWithNameSchema.extend({
 })
 
 const uploadFileSchema = z.object({
-  name: z.string(),
+  name: z.string().optional(),
   key: z.string().optional(),
 })
 
 const bankAccountSchema = z.object({
-  bankNumber: z.string(),
-  ledger: z.string(),
-  accountNumber: z.string(),
+  bankNumber: z.string().optional(),
+  ledger: z.string().optional(),
+  accountNumber: z.string().optional(),
 })
 
 const radioEnum = z.enum(['radio1', 'radio2', 'radio3'])
@@ -87,24 +87,24 @@ export const dataSchema = z.object({
   // Simple inputs - company search
   companySearch: z
     .object({
-      nationalId: z.string().min(1),
-      label: z.string().min(1).optional(),
+      nationalId: z.string().optional(),
+      label: z.string().optional(),
       isat: z.string().optional(),
       validEmployer: z.boolean().optional(),
     })
     .optional(),
   companySearchShouldIncludeIsatNumber: z
     .object({
-      nationalId: z.string().min(1),
-      label: z.string().min(1).optional(),
+      nationalId: z.string().optional(),
+      label: z.string().optional(),
       isat: z.string().optional(),
       validEmployer: z.boolean().optional(),
     })
     .optional(),
   companySearchCheckIfEmployerIsOnForbiddenList: z
     .object({
-      nationalId: z.string().min(1),
-      label: z.string().min(1).optional(),
+      nationalId: z.string().optional(),
+      label: z.string().optional(),
       validEmployer: z.boolean().optional(),
     })
     .optional(),
@@ -148,7 +148,9 @@ export const dataSchema = z.object({
     .optional(),
   basicSliderColorBothLabels: z.union([z.number(), z.string()]).optional(),
   basicSliderAllLabels: z.union([z.number(), z.string()]).optional(),
-  basicSliderAllLabelsDefaultValue: z.string().optional(),
+  basicSliderAllLabelsDefaultValue: z
+    .union([z.number(), z.string()])
+    .optional(),
 
   // Composite - nationalIdWithName
   nationalIdWithNameField1: nationalIdWithNameSchema.optional(),

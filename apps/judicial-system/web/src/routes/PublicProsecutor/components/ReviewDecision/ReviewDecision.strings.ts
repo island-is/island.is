@@ -1,18 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  title: {
-    id: 'judicial.system.core:public_prosecutor.indictments.review_decision.title_v1',
-    defaultMessage: 'Ákvörðun um {isFine, select, true {kæru} other {áfrýjun}}',
-    description: 'Notaður sem titill á ákvörðum um áfrýjun boxi fyrir ákæru.',
-  },
-  subtitle: {
-    id: 'judicial.system.core:public_prosecutor.indictments.review_decision.subtitle_v1',
-    defaultMessage:
-      'Frestur til að {isFine, select, true {kæra viðurlagaákvörðun} other {áfrýja dómi}} {appealDeadlineIsInThePast, select, true {rann} other {rennur}} út {indictmentAppealDeadline}',
-    description:
-      'Notaður sem undirtitill á ákvörðum um áfrýjun boxi fyrir ákæru.',
-  },
   appealToCourtOfAppeals: {
     id: 'judicial.system.core:public_prosecutor.indictments.review_decision.appeal_to_court_of_appeals',
     defaultMessage: 'Áfrýja héraðsdómi til Landsréttar',
@@ -40,18 +28,6 @@ export const strings = defineMessages({
     id: 'judicial.system.core:indictments_review.title',
     defaultMessage: 'Staðfesta ákvörðun',
     description: 'Notaður sem titill á yfirliti ákæru.',
-  },
-  reviewModalText: {
-    id: 'judicial.system.core:indictments_review.modal_text',
-    defaultMessage:
-      'Ertu viss um að þú viljir {reviewerDecision, select, ACCEPT {una héraðsdómi} APPEAL {áfrýja héraðsdómi til Landsréttar} other {halda áfram}}?',
-    description: 'Notaður sem texti í yfirlitsglugga um yfirlit ákæru.',
-  },
-  reviewModalTextFine: {
-    id: 'judicial.system.core:indictments_review.modal_text_fine',
-    defaultMessage:
-      'Ertu viss um að þú viljir {reviewerDecision, select, ACCEPT {una viðurlagaákvörðun} APPEAL {kæra viðurlagaákvörðun til Landsréttar} other {halda áfram}}?',
-    description: 'Notaður sem texti í yfirlitsglugga um yfirlit ákæru.',
   },
   reviewModalPrimaryButtonText: {
     id: 'judicial.system.core:indictments_review.modal_primary_button_text',

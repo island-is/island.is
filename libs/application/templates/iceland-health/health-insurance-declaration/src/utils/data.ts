@@ -1,10 +1,10 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   ExternalData,
-  NationalRegistryIndividual,
+  NationalRegistryV3Individual,
   Option,
   StaticText,
-  NationalRegistrySpouse,
+  NationalRegistrySpouseV3,
   FormValue,
 } from '@island.is/application/types'
 import { format } from 'kennitala'
@@ -20,11 +20,11 @@ import { getValueViaPath } from '@island.is/application/core'
 export const getChildrenFromExternalData = (externalData: ExternalData) => {
   return (
     (externalData?.childrenCustodyInformation
-      ?.data as ApplicantChildCustodyInformation[]) ?? []
+      ?.data as ApplicantChildCustodyInformationV3[]) ?? []
   )
 }
 export const getSpouseFromExternalData = (externalData: ExternalData) => {
-  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
+  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouseV3
 }
 
 export const getInsuranceStatus = (externalData: ExternalData) => {
@@ -121,7 +121,7 @@ export const getContinentsAsOption = (externalData: ExternalData): Option[] => {
 
 export const getFullNameFromExternalData = (externalData: ExternalData) => {
   return (
-    (externalData.nationalRegistry?.data as NationalRegistryIndividual)
+    (externalData.nationalRegistry?.data as NationalRegistryV3Individual)
       ?.fullName ?? ''
   )
 }
@@ -142,8 +142,8 @@ export const getChildrenAsOptions = (externalData: ExternalData): Option[] => {
 
 export const getApplicantFromExternalData = (
   externalData: ExternalData,
-): NationalRegistryIndividual => {
-  return externalData.nationalRegistry?.data as NationalRegistryIndividual
+): NationalRegistryV3Individual => {
+  return externalData.nationalRegistry?.data as NationalRegistryV3Individual
 }
 
 export const getApplicantAsOption = (externalData: ExternalData): Option[] => {

@@ -12,8 +12,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant'
-import { Case, CaseRepositoryService } from '../../../repository'
-import { include } from '../../case.service'
+import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 
 interface Then {
@@ -117,7 +116,7 @@ describe('CaseController - Create', () => {
         transaction,
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           isArchived: false,

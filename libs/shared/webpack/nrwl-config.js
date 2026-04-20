@@ -73,6 +73,14 @@ const addNodeModulesPolyfill = (config) => {
     crypto: require.resolve('crypto-browserify'),
     stream: require.resolve('stream-browserify'),
     vm: require.resolve('vm-browserify'),
+    fs: false,
+    zlib: require.resolve('browserify-zlib'),
+  }
+
+  // Add alias to ensure zlib resolves to browserify-zlib
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    zlib: require.resolve('browserify-zlib'),
   }
 
   config.plugins.push(

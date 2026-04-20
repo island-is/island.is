@@ -10,7 +10,8 @@ import { ControlContext } from '../../../../../../../context/ControlContext'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 
 export const ToggleConnection = () => {
-  const { selectStatus, setSelectStatus } = useContext(ControlContext)
+  const { selectStatus, setSelectStatus, control } = useContext(ControlContext)
+  const { isReadOnly } = control
 
   const { formatMessage } = useIntl()
   return (
@@ -20,6 +21,7 @@ export const ToggleConnection = () => {
           name="connect"
           label={formatMessage(m.connect)}
           checked={selectStatus === NavbarSelectStatus.NORMAL}
+          disabled={isReadOnly}
           onChange={(e) =>
             setSelectStatus(
               e ? NavbarSelectStatus.NORMAL : NavbarSelectStatus.OFF,

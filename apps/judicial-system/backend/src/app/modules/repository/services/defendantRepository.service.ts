@@ -13,6 +13,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -73,6 +74,7 @@ interface UpdateDefendant {
   punishmentType?: PunishmentType
   isAlternativeService?: boolean
   alternativeServiceDescription?: string
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
 }
 
 @Injectable()

@@ -20,6 +20,18 @@ export const serviceSetup = (services: {
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
       },
+      MATOMO_ENABLED: {
+        dev: 'true',
+        prod: 'true',
+        staging: 'false',
+      },
+      MATOMO_DOMAIN: {
+        dev: 'https://matomo-dev.dev01.devland.is',
+        // MATOMO is not on staging on purpose!
+        staging: '',
+        prod: 'https://matomo.island.is',
+      },
+      MATOMO_SITE_ID: { dev: '2', staging: '2', prod: '2' },
       DISABLE_API_CATALOGUE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_SYSLUMENN_PAGE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_ORGANIZATION_CHATBOT: {
@@ -63,7 +75,7 @@ export const serviceSetup = (services: {
     })
     .readiness({ path: '/readiness', initialDelaySeconds: 20 })
     .resources({
-      limits: { cpu: '1800m', memory: '1500Mi' },
+      limits: { cpu: '3000m', memory: '1500Mi' },
       requests: { cpu: '1200m', memory: '1024Mi' },
     })
     .replicaCount({

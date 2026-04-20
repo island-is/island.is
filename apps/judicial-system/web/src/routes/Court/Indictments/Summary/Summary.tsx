@@ -218,9 +218,7 @@ const Summary: FC = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <PageTitle includeTag={!!workingCase.indictmentRulingDecision}>
-          {formatMessage(strings.title)}
-        </PageTitle>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <div className={grid({ gap: 5, marginBottom: 10 })}>
           <Box component="section" className={grid({ gap: 1 })}>
             <Text variant="h2" as="h2">

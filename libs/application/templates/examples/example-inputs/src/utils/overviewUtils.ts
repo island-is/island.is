@@ -6,6 +6,7 @@ import {
   ExternalData,
   FormValue,
   KeyValueItem,
+  PaginatedSearchableTableRow,
   TableData,
 } from '@island.is/application/types'
 import { friggOrganizationsByTypeQuery } from '../graphql/sampleQuery'
@@ -176,6 +177,25 @@ export const getTableData = (
         'Row 3, Column 4',
       ],
     ],
+  }
+}
+
+export const getPaginatedSearchableTableData = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): TableData => {
+  const changedRows =
+    getValueViaPath<PaginatedSearchableTableRow[]>(
+      answers,
+      'paginatedSearchableTable',
+    ) ?? []
+
+  return {
+    header: ['ID', 'Mileage'],
+    rows: changedRows.map((row) => [
+      String(row.id ?? ''),
+      String(row.mileage ?? ''),
+    ]),
   }
 }
 

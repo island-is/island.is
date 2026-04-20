@@ -24,9 +24,11 @@ import { HealthPaths } from '../../lib/paths'
 import * as styles from './MedicineDelegation.css'
 import { useGetMedicineDelegationsQuery } from './MedicineDelegation.generated'
 import { permitTagSelector } from '../../utils/tagSelector'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const MedicineDelegation = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const [showExpiredPermits, setShowExpiredPermits] = useState(false)
 

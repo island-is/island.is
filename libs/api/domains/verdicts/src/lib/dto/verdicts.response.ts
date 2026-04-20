@@ -32,8 +32,8 @@ class VerdictItem {
   @Field(() => Date, { nullable: true })
   verdictDate?: Date | null
 
-  @CacheField(() => VerdictJudge, { nullable: true })
-  presidentJudge?: VerdictJudge | null
+  @CacheField(() => [VerdictJudge], { nullable: true })
+  verdictJudges?: VerdictJudge[] | null
 
   @CacheField(() => [String])
   keywords!: string[]
@@ -79,6 +79,9 @@ class VerdictByIdItem {
 
   @Field(() => String)
   presentings!: string
+
+  @Field(() => String, { nullable: true })
+  resolutionLink?: string | null
 }
 
 @ObjectType('WebVerdictByIdResponse')

@@ -14,7 +14,7 @@ import {
   ActionCard,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
@@ -30,6 +30,7 @@ import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -46,7 +47,9 @@ type FilterValues = {
 }
 
 const Questionnaires: FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
@@ -59,6 +62,7 @@ const Questionnaires: FC = () => {
     variables: {
       locale: lang,
     },
+    fetchPolicy: 'network-only',
   })
 
   const dataLength = data?.questionnairesList?.questionnaires?.length ?? 0

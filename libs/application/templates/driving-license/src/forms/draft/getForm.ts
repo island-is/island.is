@@ -6,6 +6,7 @@ import { subSectionApplicantInfo } from './subSectionApplicantInfo'
 import { subSectionOtherCountry } from './subSectionOtherCountry'
 import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirections'
 import { subSectionQualityPhoto } from './subSectionQualityPhoto'
+import { subSectionQualityPhotoBE } from './subSectionQualityPhotoBE'
 import { subSectionDelivery } from './subSectionDelivery'
 import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionSummary } from './subSectionSummary'
@@ -30,6 +31,7 @@ export const draft: Form = buildForm({
         subSectionOtherCountry,
         subSectionOtherCountryDirections,
         subSectionQualityPhoto,
+        subSectionQualityPhotoBE,
         subSectionDelivery,
         subSectionHealthDeclaration,
         subSectionSummary,

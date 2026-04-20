@@ -13,6 +13,9 @@ export enum CustomPageUniqueIdentifier {
   BloodDonationRestrictions = 'BloodDonationRestrictions',
   CourtAgendas = 'CourtAgendas',
   LandspitaliWebPaymentSuccessful = 'LandspitaliWebPaymentSuccessful',
+  SecondarySchoolStudies = 'SecondarySchoolStudies',
+  SupremeCourtDeterminations = 'SupremeCourtDeterminations',
+  SupremeCourtAppeals = 'SupremeCourtAppeals',
 }
 
 export interface StatisticSourceValue {
@@ -56,6 +59,7 @@ export type SitemapTreeNode = SitemapTree &
         description: string
         descriptionEN?: string
         status?: 'draft' | 'published'
+        childNodeOrder?: 'asc-title' | 'desc-title' | 'manual'
       }
     | {
         type: SitemapTreeNodeType.URL

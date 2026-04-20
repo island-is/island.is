@@ -157,7 +157,6 @@ export class SyslumennResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => RegistryPerson)
-  @BypassAuth()
   syslumennGetRegistryPerson(
     @Args('input') input: GetRegistryPersonInput,
   ): Promise<RegistryPerson> {
@@ -216,7 +215,6 @@ export class SyslumennResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Boolean)
-  @BypassAuth()
   async getSyslumennElectronicIDStatus(
     @Args('input') input: GetElectronicIDInput,
   ): Promise<boolean> {

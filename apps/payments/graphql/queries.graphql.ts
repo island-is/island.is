@@ -30,6 +30,8 @@ export const GetPaymentFlow = gql`
       returnUrl
       cancelUrl
       redirectToReturnUrlOnSuccess
+      invoiceReturnUrl
+      redirectOnInvoiceCreation
       updatedAt
     }
   }
@@ -54,6 +56,14 @@ export const GetJwks = gql`
         use
         alg
       }
+    }
+  }
+`
+
+export const GetApplePaySession = gql`
+  query getApplePaySession {
+    paymentsGetApplePaySession {
+      session
     }
   }
 `

@@ -420,27 +420,24 @@ export const PoliceCaseList = () => {
       ) {
         subtypes = policeCaseInfo.subtypes
       }
-
-      if (place || date) {
-        updates.push({
-          index: idx,
-          update: {
-            crimeScene: {
-              place: place ?? policeCase.place,
-              date: date ?? policeCase.date,
-            },
-          },
-        })
+      if (!place && !date && !subtypes) {
+        continue
       }
 
-      if (subtypes) {
-        updates.push({
-          index: idx,
-          update: {
-            subtypes,
-          },
-        })
-      }
+      updates.push({
+        index: idx,
+        update: {
+          ...(place || date
+            ? {
+                crimeScene: {
+                  place: place ?? policeCase.place,
+                  date: date ?? policeCase.date,
+                },
+              }
+            : {}),
+          ...(subtypes ? { subtypes } : {}),
+        },
+      })
     }
 
     if (updates.length === 0) {

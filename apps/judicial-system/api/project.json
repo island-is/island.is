@@ -45,12 +45,18 @@
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
       },
       "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "docker-express-yarn": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
+    },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f scripts/docker-compose/redis-cluster.yml up -d"
+      }
     }
   }
 }

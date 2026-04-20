@@ -531,7 +531,7 @@ export const eligibleText = (externalData: ExternalData) => {
         .hasActivePaymentsDescription
     case EligibleReasonCodes.INACTIVE_PAYMENTS_FOR_TOO_LONG:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
-        .baseCertOlderThanSevenYearsDescription
+        .inactivePaymentsForTooLongDescription
     case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertNotFoundDescription
@@ -541,12 +541,18 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
+    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
     case EligibleReasonCodes.BASE_CERT_DISABILITY_DATE_EMPTY:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertDisabilityDateEmptyDescription
     case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .latestMedicalDocumentNotFoundDescription
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_ALREADY_USED:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .latestMedicalDocumentAlreadyUsedDescription
     case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .errorProcessingClientDescription

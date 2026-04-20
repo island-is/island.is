@@ -35,7 +35,7 @@ export interface ApplicationPostPruning {
 @Injectable()
 export class ApplicationLifeCycleService {
   private processingApplications: ApplicationPruning[] = []
-  private pruneNotifications = new Map<string, CreateHnippNotificationDto>()
+  private pruneNotifications = new Map<string, CreateHnippNotificationDto[]>()
   private processingApplicationsPostPruning: ApplicationPostPruning[] = []
 
   constructor(
@@ -92,9 +92,9 @@ export class ApplicationLifeCycleService {
     })
 
     for (const { application } of this.processingApplications) {
-      const notification = await this.preparePrunedNotification(application)
-      if (notification) {
-        this.pruneNotifications.set(application.id, notification)
+      const notifications = await this.preparePrunedNotification(application)
+      if (notifications && notifications.length > 0) {
+        this.pruneNotifications.set(application.id, notifications)
       }
     }
   }
@@ -198,9 +198,11 @@ export class ApplicationLifeCycleService {
     )
 
     for (const { application } of success) {
-      const notification = this.pruneNotifications.get(application.id)
-      if (notification) {
-        await this.sendPrunedNotification(notification, application.id)
+      const notifications = this.pruneNotifications.get(application.id)
+      if (notifications) {
+        for (const notification of notifications) {
+          await this.sendPrunedNotification(notification, application.id)
+        }
       }
     }
 
@@ -209,7 +211,7 @@ export class ApplicationLifeCycleService {
 
   private async preparePrunedNotification(
     application: PruningApplication,
-  ): Promise<CreateHnippNotificationDto | null> {
+  ): Promise<Array<CreateHnippNotificationDto> | null> {
     try {
       const template = await getApplicationTemplateByTypeId(application.typeId)
       if (!template) {
@@ -225,21 +227,48 @@ export class ApplicationLifeCycleService {
                   application as ApplicationWithAttachments,
                 )
               : lifeCycle.pruneMessage
-          const notification = {
-            recipient: application.applicant,
-            templateId: pruneMessage.notificationTemplateId,
-            args: [
-              {
-                key: 'externalBody',
-                value: pruneMessage.externalBody || '',
-              },
-              {
-                key: 'internalBody',
-                value: pruneMessage.internalBody || '',
-              },
-            ],
+
+          const notificationArray = []
+          if (application.applicantActors?.length > 0) {
+            application.applicantActors.forEach((actor) => {
+              const notification = {
+                recipient: actor,
+                onBehalfOf: {
+                  nationalId: application.applicant,
+                },
+                templateId: pruneMessage.notificationTemplateId,
+                args: [
+                  {
+                    key: 'externalBody',
+                    value: pruneMessage.externalBody || '',
+                  },
+                  {
+                    key: 'internalBody',
+                    value: pruneMessage.internalBody || '',
+                  },
+                ],
+              }
+              notificationArray.push(notification)
+            })
+          } else {
+            const notification = {
+              recipient: application.applicant,
+              templateId: pruneMessage.notificationTemplateId,
+              args: [
+                {
+                  key: 'externalBody',
+                  value: pruneMessage.externalBody || '',
+                },
+                {
+                  key: 'internalBody',
+                  value: pruneMessage.internalBody || '',
+                },
+              ],
+            }
+            notificationArray.push(notification)
           }
-          return notification
+
+          return notificationArray
         } catch (error) {
           this.logger.error(
             `Failed to prepare pruning notification for application ${application.id}`,

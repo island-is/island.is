@@ -16,11 +16,13 @@ import { NO, YES } from '@island.is/application/core'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
+const formatDate = (date: Date) => format(date, dateFormat)
+
 const dateFormat = 'yyyy-MM-dd'
 const DEFAULT_DOB = '2021-01-15'
 const DEFAULT_DOB_DATE = new Date(DEFAULT_DOB)
-
-const formatDate = (date: Date) => format(date, dateFormat)
+const FUTURE_DOB = formatDate(addMonths(new Date(), 3))
+const FUTURE_DOB_DATE = new Date(FUTURE_DOB)
 
 const createBaseApplication = (): Application => ({
   answers: {
@@ -54,22 +56,49 @@ const createBaseApplication = (): Application => ({
   status: ApplicationStatus.IN_PROGRESS,
 })
 
+const createApplicationWithDob = (dob: string): Application => ({
+  ...createBaseApplication(),
+  externalData: {
+    children: {
+      date: new Date(),
+      status: 'success',
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: dob,
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+    },
+  },
+})
+
 describe('answerValidators', () => {
   let application: Application
+  let futureApplication: Application
 
   beforeEach(() => {
     application = createBaseApplication()
+    futureApplication = createApplicationWithDob(FUTURE_DOB)
   })
 
   it('should return an error if startDate is more than 1 month before DOB', () => {
+    const minimumDate = addMonths(
+      FUTURE_DOB_DATE,
+      -minimumPeriodStartBeforeExpectedDateOfBirth,
+    )
+
     const newAnswers = [
       {
         firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-        startDate: '2020-12-01',
+        startDate: formatDate(addDays(minimumDate, -15)),
       },
     ]
 
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+    expect(
+      answerValidators['periods'](newAnswers, futureApplication),
+    ).toStrictEqual({
       message: errorMessages.periodsStartDate,
       path: 'periods[0].startDate',
       values: {},
@@ -103,7 +132,7 @@ describe('answerValidators', () => {
   })
 
   describe('requestRights', () => {
-    it('should return error if not using all "common" days from multipleBirths and request more days', () => {
+    it('should return error if multipleBirthsRequestDays exceeds maximum', () => {
       const newAnswer = {
         isRequestingRights: YES,
         requestDays: 14,
@@ -111,7 +140,7 @@ describe('answerValidators', () => {
 
       const appAnswers = {
         ...application.answers,
-        multipleBirthsRequestDays: 30,
+        multipleBirthsRequestDays: 200,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
@@ -130,6 +159,31 @@ describe('answerValidators', () => {
         path: 'transferRights',
         values: undefined,
       })
+    })
+
+    it('should not return error if multipleBirthsRequestDays is below maximum (backwards-compatible)', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
     })
 
     it('should return not error if using all "common" days from multipleBirths and request more days', () => {
@@ -273,13 +327,19 @@ describe('answerValidators', () => {
 
 describe('when constructing a new period', () => {
   let application: Application
+  let futureApplication: Application
 
   beforeEach(() => {
     application = createBaseApplication()
+    futureApplication = createApplicationWithDob(FUTURE_DOB)
   })
 
   const createValidationResultForPeriod = (period: Record<string, unknown>) =>
     answerValidators[VALIDATE_LATEST_PERIOD]([period], application)
+
+  const createFutureValidationResultForPeriod = (
+    period: Record<string, unknown>,
+  ) => answerValidators[VALIDATE_LATEST_PERIOD]([period], futureApplication)
 
   it('should be required that the answer is an array', () => {
     expect(answerValidators[VALIDATE_LATEST_PERIOD]([], application)).toEqual(
@@ -356,19 +416,19 @@ describe('when constructing a new period', () => {
 
   it('should not be allowed to pass in a start date before dob but not further back than minimum', () => {
     const minimumDate = addMonths(
-      DEFAULT_DOB_DATE,
+      FUTURE_DOB_DATE,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
 
     expect(
-      createValidationResultForPeriod({
+      createFutureValidationResultForPeriod({
         firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
         startDate: formatDate(addDays(minimumDate, 1)),
       }),
     ).toStrictEqual(undefined)
 
     expect(
-      createValidationResultForPeriod({
+      createFutureValidationResultForPeriod({
         firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
         startDate: formatDate(addDays(minimumDate, -1)),
       }),
@@ -484,6 +544,88 @@ describe('when constructing a new period', () => {
         ratio: '100',
       }),
     ).toEqual(undefined)
+  })
+
+  describe('minimumStartDate when child is already born vs not born', () => {
+    it('should allow past start date before minimum when child is already born', () => {
+      const minimumDate = addMonths(
+        DEFAULT_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      const result = answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          {
+            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+            startDate: formatDate(addDays(minimumDate, -15)),
+          },
+        ],
+        application,
+      )
+
+      expect(result).toStrictEqual(undefined)
+    })
+
+    it('should block start date before minimum when child is not yet born', () => {
+      const minimumDate = addMonths(
+        FUTURE_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      const result = answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          {
+            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+            startDate: formatDate(addDays(minimumDate, -1)),
+          },
+        ],
+        futureApplication,
+      )
+
+      expect(result).toStrictEqual({
+        message: errorMessages.periodsStartDate,
+        path: 'periods[0].startDate',
+        values: {},
+      })
+    })
+
+    it('should allow start date after minimum regardless of birth status', () => {
+      // Not yet born
+      const futureMinimumDate = addMonths(
+        FUTURE_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            {
+              firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+              startDate: formatDate(addDays(futureMinimumDate, 1)),
+            },
+          ],
+          futureApplication,
+        ),
+      ).toStrictEqual(undefined)
+
+      // Already born
+      const pastMinimumDate = addMonths(
+        DEFAULT_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            {
+              firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+              startDate: formatDate(addDays(pastMinimumDate, 1)),
+            },
+          ],
+          application,
+        ),
+      ).toStrictEqual(undefined)
+    })
   })
 
   it('should not be able to have a lower ratio than 1%', () => {

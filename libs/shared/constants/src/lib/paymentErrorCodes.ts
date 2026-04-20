@@ -16,8 +16,12 @@ export enum PaymentServiceCode {
   CouldNotCreatePaymentConfirmation = 'CouldNotCreatePaymentConfirmation',
   PaymentFlowAmountMismatch = 'PaymentFlowAmountMismatch',
   ChargeItemCodesNotFound = 'ChargeItemCodesNotFound',
+  InvalidPaymentMethods = 'InvalidPaymentMethods',
   UpstreamNotificationFailure = 'UpstreamNotificationFailure',
   UnknownPaymentServiceError = 'UnknownPaymentServiceError',
+  PaymentFlowNotEligibleToBeRefunded = 'PaymentFlowNotEligibleToBeRefunded',
+  CouldNotDeletePaymentConfirmation = 'CouldNotDeletePaymentConfirmation',
+  CouldNotDeletePaymentFulfillment = 'CouldNotDeletePaymentFulfillment',
 }
 
 export enum CardErrorCode {
@@ -50,7 +54,9 @@ export enum CardErrorCode {
   VerificationFailed = 'VerificationFailed',
   VerificationCallbackFailed = 'VerificationCallbackFailed',
   RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
+  RefundFailedAfterPaymentError = 'RefundFailedAfterPaymentError',
   UnknownCardError = 'UnknownCardError',
+  ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
 }
 
 export enum InvoiceErrorCode {

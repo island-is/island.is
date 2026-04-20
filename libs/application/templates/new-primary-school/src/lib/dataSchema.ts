@@ -128,17 +128,24 @@ export const dataSchema = z.object({
   }),
   currentSchool: z
     .object({
+      hasCurrentSchool: z.enum([YES, NO]).optional(),
       municipality: z.string().optional().nullable(),
       school: z.string().optional().nullable(),
     })
     .refine(
-      ({ municipality, school }) =>
-        !municipality || (school && school.length > 0),
+      ({ hasCurrentSchool, municipality }) =>
+        hasCurrentSchool === YES ? !!municipality : true,
+      {
+        path: ['municipality'],
+      },
+    )
+    .refine(
+      ({ hasCurrentSchool, school }) =>
+        hasCurrentSchool === YES ? !!school : true,
       {
         path: ['school'],
       },
-    )
-    .optional(),
+    ),
   newSchool: z.object({
     municipality: z.string(),
     school: z.string(),

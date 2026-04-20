@@ -56,6 +56,9 @@ export class LifeEventPage {
 
   @Field({ nullable: true })
   seeMoreText?: string
+
+  @Field(() => Number, { nullable: true })
+  importance?: number | null
 }
 
 export const mapLifeEventPage = ({
@@ -80,4 +83,5 @@ export const mapLifeEventPage = ({
   relatedLifeEvents: (fields.relatedLifeEvents ?? []).map(mapLifeEventPage),
   shortIntro: fields.shortIntro ?? '',
   seeMoreText: fields.seeMoreText ?? '',
+  importance: fields.importance ?? null,
 })

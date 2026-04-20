@@ -20,7 +20,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
   const webChatType = webChat.webChatConfiguration?.type
 
   if (webChatType === 'zendesk') {
-    const { snippetUrl, chatBubbleVariant } =
+    const { snippetUrl, chatBubbleVariant, urlTrackingTicketId } =
       webChat.webChatConfiguration.zendesk ?? {}
     if (!snippetUrl) return renderFallback?.() ?? null
     return (
@@ -28,6 +28,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
         snippetUrl={snippetUrl}
         pushUp={pushUp}
         chatBubbleVariant={chatBubbleVariant || 'circle'}
+        urlTrackingTicketId={urlTrackingTicketId}
       />
     )
   }

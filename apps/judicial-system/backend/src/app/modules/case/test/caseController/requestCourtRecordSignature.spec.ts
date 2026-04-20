@@ -17,6 +17,7 @@ type GivenWhenThen = (
   caseId: string,
   user: User,
   theCase: Case,
+  method?: 'audkenni' | 'mobile',
 ) => Promise<Then>
 
 describe('CaseController - Request court record signature', () => {
@@ -25,7 +26,12 @@ describe('CaseController - Request court record signature', () => {
   beforeEach(async () => {
     const { caseController } = await createTestingCaseModule()
 
-    givenWhenThen = async (caseId: string, user: User, theCase: Case) => {
+    givenWhenThen = async (
+      caseId: string,
+      user: User,
+      theCase: Case,
+      method?: 'audkenni' | 'mobile',
+    ) => {
       const then = {} as Then
 
       try {
@@ -33,6 +39,7 @@ describe('CaseController - Request court record signature', () => {
           caseId,
           user,
           theCase,
+          method,
         )) as SigningServiceResponse
       } catch (error) {
         then.error = error as Error

@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   checkResidence,
   grindaVikHousing,
@@ -60,7 +60,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: prerequisites.dataProviders.nationalRegistryTitle,
               subTitle: prerequisites.dataProviders.nationalRegistryDescription,
             }),

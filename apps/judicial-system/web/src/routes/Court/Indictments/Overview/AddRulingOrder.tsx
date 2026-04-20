@@ -1,7 +1,12 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, FileUploadStatus } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  FileUploadStatus,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   BlueBox,
@@ -132,6 +137,9 @@ const AddRulingOrder: FC = () => {
               setEditCount={setEditCount}
             />
             <Box component="section" marginBottom={3}>
+              <Box marginBottom={2}>
+                <Text variant="h4">Úrskurður kveðinn upp</Text>
+              </Box>
               <BlueBox>
                 <Box>
                   <DateTime

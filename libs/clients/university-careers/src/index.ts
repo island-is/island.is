@@ -5,6 +5,7 @@ export {
   UniversityIdShort,
   UniversityIdMap,
   UniversityShortIdMap,
+  StudentFileType,
 } from './lib/universityCareers.types'
 export {
   UniversityOfIcelandCareerClientConfig,

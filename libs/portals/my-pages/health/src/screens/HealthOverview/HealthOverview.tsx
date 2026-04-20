@@ -24,12 +24,14 @@ import { useEffect, useState } from 'react'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md

@@ -24,6 +24,9 @@ export class Case {
   @Field({ nullable: true })
   department?: string
 
+  @Field({ nullable: true })
+  prosecutionOffice?: string
+
   @Field({ nullable: true, description: 'ISO8601' })
   received?: string
 

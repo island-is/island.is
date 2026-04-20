@@ -4,10 +4,24 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
+const graphqlPath = '/api/graphql'
+const {
+  API_URL = 'http://localhost:4444',
+  PUBLIC_API_URL = 'https://island.is',
+} = process.env
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: graphqlPath,
+        destination: `${PUBLIC_API_URL}${graphqlPath}`,
+      },
+    ]
+  },
   nx: {
     // Set this to true if you would like to to use SVGR
     // See: https://github.com/gregberge/svgr
@@ -18,6 +32,14 @@ const nextConfig = {
       config.devtool = 'source-map'
     }
     return config
+  },
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    graphqlEndpoint: `${API_URL}${graphqlPath}`,
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    graphqlEndpoint: graphqlPath,
   },
 }
 

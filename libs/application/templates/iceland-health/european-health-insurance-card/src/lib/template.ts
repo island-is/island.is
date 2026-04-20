@@ -1,14 +1,15 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   DefaultEvents,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
@@ -32,6 +33,8 @@ import { States } from './types'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import { CodeOwners } from '@island.is/shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -45,11 +48,25 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
-  name: e.form.applicationName,
+  name: e.application.applicationName,
   codeOwner: CodeOwners.NordaApplications,
-  institution: e.form.institutionName,
+  institution: e.application.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
+  translationNamespaces:
+    ApplicationConfigurations.EuropeanHealthInsuranceCard.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+    {
+      type: AuthDelegationType.LegalRepresentative,
+    },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+  ],
+  requiredScopes: [ApiScope.icelandHealth],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -81,9 +98,9 @@ const template: ApplicationTemplate<
                 },
               ],
               api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
+                ChildrenCustodyInformationApiV3,
                 EhicCardResponseApi,
               ],
               write: 'all',

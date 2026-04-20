@@ -1,8 +1,8 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input } from '@island.is/island-ui/core'
+import { Box, Input, LoadingDots, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
@@ -32,6 +32,7 @@ import {
   useDebouncedInput,
   useDefendants,
   useInstitution,
+  useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -42,6 +43,9 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
+const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
+  origin === CaseOrigin.LOKE && Boolean(id)
+
 export const Defendant = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -50,10 +54,23 @@ export const Defendant = () => {
     useContext(FormContext)
   const { createCase, isCreatingCase } = useCase()
   const { updateDefendant } = useDefendants()
+  const { loading: policeDefendantsLoading, error: policeDefendantsError } =
+    useSyncDefendantsFromPolice()
   const { loading: institutionLoading } = useInstitution()
   const { clientPoliceNumbers, setClientPoliceNumbers } =
     usePoliceCaseNumbers(workingCase)
   const leadInvestigator = useDebouncedInput('leadInvestigator', ['empty'])
+
+  const showPoliceDefendantsUI = isLokeCaseWithId(
+    workingCase.origin,
+    workingCase.id,
+  )
+
+  useEffect(() => {
+    if (policeDefendantsError && showPoliceDefendantsUI) {
+      toast.error('Ekki tókst að sækja málsaðila úr LÖKE')
+    }
+  }, [policeDefendantsError, showPoliceDefendantsUI])
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
@@ -150,16 +167,25 @@ export const Defendant = () => {
               </Box>
               {workingCase.defendants && workingCase.defendants.length > 0 && (
                 <Box component="section">
-                  <SectionHeading
-                    title={formatMessage(m.sections.accusedInfo.heading)}
-                  />
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="spaceBetween"
+                    marginBottom={2}
+                  >
+                    <SectionHeading
+                      title={formatMessage(m.sections.accusedInfo.heading)}
+                    />
+                    {showPoliceDefendantsUI && policeDefendantsLoading && (
+                      <LoadingDots size="small" />
+                    )}
+                  </Box>
                   <DefendantInfo
                     defendant={workingCase.defendants[0]}
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
-                    nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                   />
                 </Box>
               )}

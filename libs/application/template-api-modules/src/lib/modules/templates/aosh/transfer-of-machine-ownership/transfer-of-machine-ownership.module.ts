@@ -6,19 +6,15 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-import {
-  ChargeFjsV2ClientConfig,
-  ChargeFjsV2ClientModule,
-} from '@island.is/clients/charge-fjs-v2'
-
+import { PaymentModule } from '@island.is/application/api/payment'
 @Module({
   imports: [
     SharedTemplateAPIModule,
     WorkMachinesClientModule,
-    ChargeFjsV2ClientModule,
+    PaymentModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [WorkMachinesClientConfig, ChargeFjsV2ClientConfig],
+      load: [WorkMachinesClientConfig],
     }),
   ],
   providers: [TransferOfMachineOwnershipTemplateService],

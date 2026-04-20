@@ -7,6 +7,7 @@ import {
   SitemapTreeNodeType as TreeNodeType,
   SitemapUrlType,
 } from '@island.is/shared/types'
+import { sortAlpha } from '@island.is/shared/utils'
 
 export { type Tree, type TreeNode, TreeNodeType }
 
@@ -293,6 +294,7 @@ export const addNode = async (
           description,
           descriptionEN,
           status: 'draft',
+          childNodeOrder: 'manual',
         }
       : {
           type: TreeNodeType.URL,
@@ -388,6 +390,66 @@ export const extractNodeContent = (
       : ''
 
   return { label, slug, entryContentType }
+}
+
+export type ChildNodeOrder = 'asc-title' | 'desc-title' | 'manual'
+
+const getNormalizedChildNodeOrder = (node: TreeNode | Tree): ChildNodeOrder => {
+  if (!('type' in node) || node.type !== TreeNodeType.CATEGORY) {
+    return 'manual'
+  }
+
+  return node.childNodeOrder ?? 'manual'
+}
+
+export const orderChildNodes = (
+  childNodes: TreeNode[],
+  childNodeOrder: ChildNodeOrder,
+  language: 'is-IS' | 'en',
+  entries: Record<string, EntryProps>,
+) => {
+  if (childNodeOrder === 'manual') {
+    return childNodes
+  }
+
+  const direction = childNodeOrder === 'asc-title' ? 1 : -1
+
+  return childNodes
+    .map((childNode, index) => ({
+      childNode,
+      index,
+      label: extractNodeContent(childNode, language, entries)?.label ?? '',
+    }))
+    .sort((a, b) => {
+      const byLabel = sortAlpha<{ label: string }>('label')(a, b)
+
+      if (byLabel !== 0) {
+        return byLabel * direction
+      }
+
+      return a.index - b.index
+    })
+    .map(({ childNode }) => childNode)
+}
+
+export const getOrderedChildNodes = (
+  parentNode: TreeNode | Tree,
+  language: 'is-IS' | 'en',
+  entries: Record<string, EntryProps>,
+) => {
+  const childNodeOrder = getNormalizedChildNodeOrder(parentNode)
+  return orderChildNodes(
+    parentNode.childNodes,
+    childNodeOrder,
+    language,
+    entries,
+  )
+}
+
+export const areChildNodesDraggable = (node: TreeNode | Tree) => {
+  const childNodeOrder = getNormalizedChildNodeOrder(node)
+
+  return childNodeOrder === 'manual'
 }
 
 export const findParentNode = (root: Tree, nodeId: number) => {

@@ -66,7 +66,6 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { transitionCase } from './state/case.state'
 import {
@@ -94,7 +93,6 @@ export class LimitedAccessCaseController {
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
   @UseInterceptors(
-    DefendantIndictmentAccessedInterceptor,
     CompletedAppealAccessedInterceptor,
     LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
@@ -109,7 +107,7 @@ export class LimitedAccessCaseController {
     @CurrentCase() theCase: Case,
     @CurrentHttpUser() user: TUser,
   ): Promise<Case> {
-    this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
+    this.logger.debug(`Getting case ${caseId} by id`)
 
     if (isDefenceUser(user) && !theCase.openedByDefender) {
       const updated = await this.sequelize.transaction((transaction) =>
@@ -149,7 +147,7 @@ export class LimitedAccessCaseController {
     @CurrentCase() theCase: Case,
     @Body() updateDto: UpdateCaseDto,
   ): Promise<Case> {
-    this.logger.debug(`Updating limitedAccess case ${caseId}`)
+    this.logger.debug(`Updating case ${caseId}`)
 
     const update: LimitedAccessUpdateCase = updateDto
 
@@ -166,7 +164,11 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     LimitedAccessCaseExistsGuard,
     RolesGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
   )

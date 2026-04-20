@@ -1,9 +1,19 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+export const serviceSetup = (services: {
+  api: ServiceBuilder<'api'>
+}): ServiceBuilder<'contentful-apps'> =>
   service('contentful-apps')
     .image('contentful-apps')
     .namespace('contentful-apps')
     .serviceAccount('contentful-apps')
+    .env({
+      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      PUBLIC_API_URL: {
+        dev: ref((h) => `https://beta.${h.env.domain}`),
+        staging: ref((h) => `https://beta.${h.env.domain}`),
+        prod: 'https://island.is',
+      },
+    })
     .ingress({
       primary: {
         host: {
@@ -14,6 +24,7 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
         paths: ['/'],
       },
     })
+    .grantNamespaces('nginx-ingress-external')
     .replicaCount({
       default: 2,
       min: 2,

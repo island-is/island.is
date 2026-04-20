@@ -2,7 +2,7 @@ import { defineTemplateApi } from '@island.is/application/types'
 import { UserProfileApi } from '@island.is/application/types'
 
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   IdentityApi as IdentityApiProvider,
 } from '@island.is/application/types'
 export const CurrentUserTypeProvider = defineTemplateApi({

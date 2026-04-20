@@ -20,7 +20,7 @@ import {
 import {
   CurrentUserTypeProvider,
   IdentityApiProvider,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserInfoApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -84,7 +84,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               api: [
                 CurrentUserTypeProvider,
                 IdentityApiProvider,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserInfoApi,
               ],
             },
@@ -125,7 +125,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               api: [
                 CurrentUserTypeProvider,
                 IdentityApiProvider,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserInfoApi,
               ],
             },

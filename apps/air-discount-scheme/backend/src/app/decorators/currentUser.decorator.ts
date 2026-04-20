@@ -4,7 +4,7 @@ import { AuthUser } from '@island.is/air-discount-scheme/types'
 import { getUserFromContext } from '../lib'
 
 export const CurrentUser = createParamDecorator(
-  (_: unknown, context: ExecutionContext): AuthUser => {
+  async (_: unknown, context: ExecutionContext): Promise<AuthUser> => {
     return getUserFromContext(context)
   },
 )

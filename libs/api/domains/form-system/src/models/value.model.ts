@@ -11,7 +11,7 @@ export class Value {
   number?: number
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  date?: Date | null
 
   @Field(() => String, { nullable: true })
   listValue?: string
@@ -78,9 +78,6 @@ export class Value {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   s3Key?: string[]
-
-  @Field(() => String, { nullable: true })
-  s3Url?: string
 
   @Field(() => Boolean, { nullable: true })
   isLoggedInUser?: boolean

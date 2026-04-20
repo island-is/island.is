@@ -73,7 +73,16 @@ export class BloodDonationRestrictionSyncService
             contentSections.push(mapped.description)
           }
           if (mapped.keywordsText) {
-            contentSections.push(mapped.keywordsText)
+            const keywords = mapped.keywordsText
+              .split(',')
+              .map((keyword) => keyword.trim())
+              .filter(Boolean)
+            for (const keyword of keywords)
+              tags.push({
+                key: keyword,
+                value: keyword,
+                type: 'keyword',
+              })
           }
           if (entry.fields.cardText) {
             contentSections.push(

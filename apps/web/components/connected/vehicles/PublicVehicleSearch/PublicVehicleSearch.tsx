@@ -12,8 +12,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  GetPublicVehicleSearchQuery,
-  GetPublicVehicleSearchQueryVariables,
+  PublicVehicleSearchQuery,
+  PublicVehicleSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
@@ -52,11 +52,11 @@ const PublicVehicleSearch = () => {
   const { formatMessage } = useIntl()
 
   const [search, { loading, data, error, called }] = useLazyQuery<
-    GetPublicVehicleSearchQuery,
-    GetPublicVehicleSearchQueryVariables
+    PublicVehicleSearchQuery,
+    PublicVehicleSearchQueryVariables
   >(PUBLIC_VEHICLE_SEARCH_QUERY)
 
-  const vehicleInformation = data?.getPublicVehicleSearch
+  const vehicleInformation = data?.publicVehicleSearch
 
   const vehicleWasNotFound =
     vehicleInformation === null || typeof vehicleInformation === 'undefined'

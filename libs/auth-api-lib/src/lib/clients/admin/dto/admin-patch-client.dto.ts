@@ -197,6 +197,13 @@ export class AdminPatchClientDto {
   removedScopes?: string[]
 
   @ApiPropertyOptional({
+    description: 'Allowed CORS origins for the client.',
+  })
+  @IsOptional()
+  @IsArray()
+  allowedCorsOrigins?: string[]
+
+  @ApiPropertyOptional({
     description: 'Contact email for owner',
   })
   @IsOptional()

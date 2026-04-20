@@ -5,12 +5,10 @@ import {
   AuditTrailModule,
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
-import { MessageModule } from '@island.is/judicial-system/message'
 
 import {
   CaseModule,
   CourtModule,
-  CourtSessionModule,
   DefendantModule,
   EventModule,
   FileModule,
@@ -28,10 +26,8 @@ import { SubpoenaService } from './subpoena.service'
     CourtModule,
     forwardRef(() => CaseModule),
     forwardRef(() => PoliceModule),
-    forwardRef(() => MessageModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
-    forwardRef(() => CourtSessionModule),
     forwardRef(() => FileModule),
     forwardRef(() => RepositoryModule),
     ConfigModule.forRoot({

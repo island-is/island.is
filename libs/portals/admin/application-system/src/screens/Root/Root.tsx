@@ -1,17 +1,12 @@
-import { useLocale } from '@island.is/localization'
-import { Layout } from '@island.is/portals/admin/ids-admin'
-import { m } from '../../lib/messages'
 import { Outlet } from 'react-router-dom'
-import { applicationSystemNavigation } from '../../lib/navigation'
+import { Layout } from '../../components/Layout/Layout'
 
-export const Root = () => {
-  const { formatMessage } = useLocale()
-
+interface RootProps {
+  isSuperAdmin: boolean
+}
+export const Root = ({ isSuperAdmin }: RootProps) => {
   return (
-    <Layout
-      navTitle={formatMessage(m.applicationSystem)}
-      navItems={applicationSystemNavigation}
-    >
+    <Layout isSuperAdmin={isSuperAdmin}>
       <Outlet />
     </Layout>
   )

@@ -50,7 +50,6 @@ export const PoliceReport = () => {
           <Box component="section">
             <SectionHeading
               title={formatMessage(rcReportForm.sections.demands.heading)}
-              tooltip={formatMessage(rcReportForm.sections.demands.tooltip)}
             />
             <Input
               name="demands"

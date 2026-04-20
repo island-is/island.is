@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { signIn } from 'next-auth/client'
+import { signIn } from 'next-auth/react'
 
 export const useLogIn = () => {
   const router = useRouter()

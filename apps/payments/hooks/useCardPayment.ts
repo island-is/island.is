@@ -20,10 +20,6 @@ import { ApolloError } from '@apollo/client'
 
 interface UseCardPaymentProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
-  productInformation: {
-    amount: number
-    title: string
-  }
   onPaymentSuccess: (paymentMethod: 'card' | 'invoice') => void
   onPaymentError: (error: PaymentError) => void
   setThreeDSecureModalActive: (isActive: boolean) => void
@@ -38,7 +34,6 @@ interface CardPaymentData {
 
 export const useCardPayment = ({
   paymentFlow,
-  productInformation,
   onPaymentSuccess,
   onPaymentError,
   setThreeDSecureModalActive,
@@ -181,7 +176,6 @@ export const useCardPayment = ({
 
       try {
         const verifyCardResponse = await verifyCardApi({
-          amount: productInformation.amount,
           cardNumber: cardData.number,
           expiryMonth: cardData.expiryMonth,
           expiryYear: cardData.expiryYear,
@@ -208,7 +202,6 @@ export const useCardPayment = ({
         }
 
         const chargeCardResponse = await chargeCardApi({
-          amount: productInformation.amount,
           cardNumber: cardData.number,
           cvc: cardData.cvc,
           expiryMonth: cardData.expiryMonth,
@@ -239,7 +232,6 @@ export const useCardPayment = ({
     },
     [
       paymentFlow,
-      productInformation,
       verifyCardApi,
       chargeCardApi,
       waitForCardVerification,

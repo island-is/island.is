@@ -223,7 +223,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
                   <ClickableItem
                     item={{
                       title: item.title,
-                      slug: item.id,
+                      slug: item.slug || item.id,
                       cardIntro: item.cardIntro ?? [],
                       id: item.id,
                       filterTags: item.categories.map((category) => ({

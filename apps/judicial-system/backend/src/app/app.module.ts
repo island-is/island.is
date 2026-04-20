@@ -12,10 +12,16 @@ import {
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
-import { messageModuleConfig } from '@island.is/judicial-system/message'
+import {
+  MessageMiddleware,
+  MessageModule,
+  messageModuleConfig,
+} from '@island.is/judicial-system/message'
 
 import { CaseContextMiddleware, RequestContextMiddleware } from './middleware'
 import {
+  AppealCaseModule,
+  appealCaseModuleConfig,
   awsS3ModuleConfig,
   CaseModule,
   caseModuleConfig,
@@ -53,6 +59,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     SharedAuthModule,
+    AppealCaseModule,
     CaseModule,
     CourtSessionModule,
     DefendantModule,
@@ -71,6 +78,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     LawyerRegistryModule,
     StatisticsModule,
     RepositoryModule,
+    MessageModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -81,6 +89,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         emailModuleConfig,
         courtClientModuleConfig,
         messageModuleConfig,
+        appealCaseModuleConfig,
         caseModuleConfig,
         fileModuleConfig,
         notificationModuleConfig,
@@ -105,5 +114,6 @@ export class AppModule {
         '/api/internal/case/:caseId',
         '/api/internal/case/indictment/:caseId',
       )
+    consumer.apply(MessageMiddleware).forRoutes('*')
   }
 }

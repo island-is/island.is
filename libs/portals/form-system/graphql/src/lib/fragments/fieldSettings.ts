@@ -29,11 +29,19 @@ export const FieldSettingsFragment = gql`
     maxFiles
     timeInterval
     isLarge
-    zendeskIsPrivate
     zendeskIsCustomField
     zendeskCustomFieldId
     applicantType
     hasDescription
+    isPhoneRequired
+    isEmailRequired
+    chargeItemCode
+    chargeItemName
+    chargeType
+    performingOrgID
+    priceAmount
+    isDropdown
+    paymentQuantityId
   }
   ${ListItemFragment}
   ${LanguageFields}

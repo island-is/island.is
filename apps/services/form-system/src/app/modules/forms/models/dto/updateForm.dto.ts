@@ -4,9 +4,11 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
+  Max,
+  Min,
   ValidateNested,
 } from 'class-validator'
 import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
@@ -41,15 +43,25 @@ export class UpdateFormDto {
   @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
-  submissionServiceUrl?: string
+  zendeskInternal?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  useValidate?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  usePopulate?: boolean
 
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()
-  validationServiceUrl?: string
+  submissionServiceUrl?: string
 
   @IsBoolean()
   @IsOptional()
@@ -66,10 +78,19 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   isTranslated?: boolean
 
-  @IsNumber()
+  @IsInt()
+  @Min(1)
+  @Max(60)
   @IsOptional()
   @ApiPropertyOptional()
-  daysUntilApplicationPrune?: number
+  draftDaysToLive?: number
+
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  @IsOptional()
+  @ApiPropertyOptional()
+  submissionDaysToLive?: number
 
   @IsBoolean()
   @IsOptional()
@@ -93,4 +114,9 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  lastModifiedBy?: string
 }

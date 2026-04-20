@@ -32,6 +32,7 @@ export const userWithDelegations: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithDelegations2: MockUserProfileDto = {
@@ -44,6 +45,7 @@ export const userWithDelegations2: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithNoDelegations: MockUserProfileDto = {
@@ -56,6 +58,7 @@ export const userWithNoDelegations: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithNoEmail: MockUserProfileDto = {
@@ -67,6 +70,7 @@ export const userWithNoEmail: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
@@ -78,6 +82,7 @@ export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: false,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
@@ -90,6 +95,7 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   documentNotifications: false,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
@@ -102,6 +108,7 @@ export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
@@ -115,6 +122,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     documentNotifications: true,
     emailNotifications: true,
     isRestricted: false,
+    smsNotifications: true,
   }
 
 export const companyUser: MockUserProfileDto = {
@@ -127,6 +135,7 @@ export const companyUser: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const mockTemplateId = 'HNIPP.DEMO.ID'
@@ -139,6 +148,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl = 'https://island.is/minarsidur/postholf',
   args = ['arg1', 'arg2'],
   scope = '@island.is/documents',
+  smsPayer = 'Landlæknir',
+  smsDelivery = 'OPT_IN',
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -147,6 +158,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl,
   args,
   scope,
+  smsPayer,
+  smsDelivery,
 })
 
 export const userProfiles = [
@@ -173,6 +186,18 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       customDelegationScopes: null,
     },
   ],
+  [`${userWithDelegations.nationalId}:@island.is/applications/samgongustofa-vehicles`]:
+    [
+      {
+        fromNationalId: userWithDelegations.nationalId,
+        toNationalId: userWithNoDelegations.nationalId,
+        subjectId: null, // test that 3rd party login is not used if subjectId is null
+        type: AuthDelegationType.Custom,
+        customDelegationScopes: [
+          '@island.is/applications/samgongustofa-vehicles',
+        ],
+      },
+    ],
   // Fallback for backward compatibility - delegations without scope filtering
   [userWithDelegations.nationalId]: [
     {
@@ -213,17 +238,35 @@ export class MockDelegationsService {
   }) {
     // If scope is provided, try to get scope-specific delegations first
     if (scopes) {
-      const scopeArray = Array.isArray(scopes) ? scopes : [scopes]
+      const scopeArray = Array.isArray(scopes) ? scopes : scopes.split(',')
       // Try each scope in order, return first match
       for (const scope of scopeArray) {
         const scopeKey = `${xQueryNationalId}:${scope}`
         if (delegationsByScope[scopeKey]) {
-          return { data: delegationsByScope[scopeKey] }
+          return {
+            data: delegationsByScope[scopeKey],
+            totalCount: delegationsByScope[scopeKey].length,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }
         }
       }
     }
     // Fallback to delegations without scope filtering
-    return { data: delegationsByScope[xQueryNationalId] ?? [] }
+    return {
+      data: delegationsByScope[xQueryNationalId] ?? [],
+      totalCount: delegationsByScope[xQueryNationalId]?.length ?? 0,
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: '',
+        endCursor: '',
+      },
+    }
   }
 }
 

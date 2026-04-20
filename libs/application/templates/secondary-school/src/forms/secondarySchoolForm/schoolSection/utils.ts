@@ -9,6 +9,7 @@ import {
   checkIsFreshman,
   getSchoolsData,
   getTranslatedProgram,
+  getTranslatedString,
   LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
@@ -140,13 +141,8 @@ export const filterSchoolOptions = (
   return options.filter((x) => !otherSchoolIds.includes(x.value))
 }
 
-export const clearOnChangeSchool = (index: number) => {
-  return [
-    `selection[${index}].firstProgram.id`,
-    `selection[${index}].secondProgram.id`,
-    `selection[${index}].thirdLanguage.code`,
-    `selection[${index}].nordicLanguage.code`,
-  ]
+export const clearOnChangeSchool = () => {
+  return [] as string[]
 }
 
 export const setOnChangeSchool = (
@@ -164,8 +160,28 @@ export const setOnChangeSchool = (
       value: selectedSchool?.name,
     },
     {
-      key: `selection[${index}].secondProgram.require`,
+      key: `selection[${index}].firstProgram`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].secondProgram`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].thirdLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].nordicLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].secondProgramRequire`,
       value: checkIsFreshman(application.answers),
+    },
+    {
+      key: `selection[${index}].thirdLanguageRequire`,
+      value: selectedSchool?.requireThirdLanguage,
     },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
   ]
@@ -215,7 +231,7 @@ export const loadProgramOptions = async (
     const programs = data?.secondarySchoolProgramsBySchoolId || []
 
     setValueAtIndex?.('programOptions', programs)
-    setValueAtIndex?.('secondProgram.include', programs.length > 1)
+    setValueAtIndex?.('secondProgramInclude', programs.length > 1)
 
     return programs
       .map((program) => ({
@@ -260,7 +276,15 @@ export const setOnChangeFirstProgram = (
       value: programInfo?.isSpecialNeedsProgram,
     },
     {
-      key: `selection[${index}].secondProgram.require`,
+      key: `selection[${index}].firstProgram.programApplicationMessageIs`,
+      value: programInfo?.programApplicationMessageIs,
+    },
+    {
+      key: `selection[${index}].firstProgram.programApplicationMessageEn`,
+      value: programInfo?.programApplicationMessageEn,
+    },
+    {
+      key: `selection[${index}].secondProgramRequire`,
       value:
         checkIsFreshman(application.answers) &&
         !programInfo?.isSpecialNeedsProgram,
@@ -268,12 +292,12 @@ export const setOnChangeFirstProgram = (
   ]
 }
 
-export const getRequiredSecondProgram = (
+export const getRequireSecondProgram = (
   activeField?: Record<string, string>,
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require', true)) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramRequire')) ||
     false
   return secondProgramRequire
 }
@@ -283,7 +307,7 @@ export const getIsClearableSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require', true)) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramRequire')) ||
     false
   return !secondProgramRequire
 }
@@ -293,7 +317,7 @@ export const getConditionSecondProgram = (
 ): boolean => {
   const secondProgramInclude =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.include', true)) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramInclude')) ||
     false
   return secondProgramInclude
 }
@@ -331,10 +355,28 @@ export const setOnChangeSecondProgram = (
       key: `selection[${index}].secondProgram.isSpecialNeedsProgram`,
       value: programInfo?.isSpecialNeedsProgram,
     },
+    {
+      key: `selection[${index}].secondProgram.programApplicationMessageIs`,
+      value: programInfo?.programApplicationMessageIs,
+    },
+    {
+      key: `selection[${index}].secondProgram.programApplicationMessageEn`,
+      value: programInfo?.programApplicationMessageEn,
+    },
   ]
 }
 
-export const getThirdLanguageCondition = (
+export const getRequireThirdLanguage = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const thirdLanguageRequire =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'thirdLanguageRequire')) ||
+    false
+  return thirdLanguageRequire
+}
+
+export const getConditionThirdLanguage = (
   application: Application,
   activeField?: Record<string, string>,
 ): boolean => {
@@ -372,7 +414,7 @@ export const setOnChangeThirdLanguage = (
   ]
 }
 
-export const getNordicLanguageCondition = (
+export const getConditionNordicLanguage = (
   application: Application,
   activeField?: Record<string, string>,
 ): boolean => {
@@ -421,7 +463,7 @@ export const getRequestDormitoryOptions = (): RepeaterOption[] => {
   ]
 }
 
-export const getRequestDormitoryCondition = (
+export const getConditionRequestDormitory = (
   application: Application,
   activeField?: Record<string, string>,
 ): boolean => {
@@ -429,7 +471,7 @@ export const getRequestDormitoryCondition = (
   return schoolInfo?.allowRequestDormitory || false
 }
 
-export const getAlertMessageAddThirdSelectionCondition = (
+export const getAlertMessageConditionAddThirdSelection = (
   answers: FormValue,
 ): boolean => {
   const isFreshman = checkIsFreshman(answers)
@@ -440,7 +482,7 @@ export const getAlertMessageAddThirdSelectionCondition = (
   return isFreshman && !includeThirdSelection
 }
 
-export const getAlertSpecialNeedsProgramCondition = (
+export const getAlertMessageConditionSpecialNeedsProgram = (
   answers: FormValue,
 ): boolean => {
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
@@ -455,7 +497,7 @@ export const getAlertSpecialNeedsProgramCondition = (
   )
 }
 
-export const getAlertSpecialNeedsProgramMessage = (
+export const getAlertMessageSpecialNeedsProgram = (
   answers: FormValue,
   lang: Locale,
 ) => {
@@ -482,4 +524,37 @@ export const getAlertSpecialNeedsProgramMessage = (
       programNameList: programNames.join(', '),
     },
   }
+}
+
+export const getProgramApplicationMessage = (
+  programField: 'firstProgram' | 'secondProgram',
+  answers: FormValue,
+  index?: number,
+  lang?: Locale,
+) => {
+  if (index === undefined) {
+    return ''
+  }
+
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    answers,
+    'selection',
+  )
+
+  const program = selection?.[index]?.[programField]
+
+  return getTranslatedString(
+    lang,
+    program?.programApplicationMessageIs,
+    program?.programApplicationMessageEn,
+  )
+}
+
+export const getConditionProgramApplicationMessage = (
+  programField: 'firstProgram' | 'secondProgram',
+  answers: FormValue,
+  index?: number,
+  lang?: Locale,
+) => {
+  return !!getProgramApplicationMessage(programField, answers, index, lang)
 }

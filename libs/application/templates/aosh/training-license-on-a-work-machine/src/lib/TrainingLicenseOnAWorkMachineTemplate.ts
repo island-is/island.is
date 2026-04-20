@@ -9,6 +9,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   FormModes,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -233,7 +235,10 @@ const template: ApplicationTemplate<
           },
           lifecycle: {
             pruneMessage: {
-              notificationTemplateId: 'HNIPP.AS.VER.TLWM.PRUNED',
+              notificationTemplateId:
+                NotificationConfig[
+                  NotificationType.TrainingLicenseOnWorkMachinePruned
+                ].templateId,
             },
             shouldBeListed: true,
             shouldBePruned: true,

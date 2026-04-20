@@ -9,7 +9,9 @@ export {
   VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
+  isSuccessfulVerdictServiceStatus,
   isFailedServiceStatus,
+  IndictmentCaseReviewDecision,
 } from './lib/defendant'
 
 export {
@@ -111,7 +113,7 @@ export {
   IndictmentCaseSubtypes,
   type Subtype,
   courtSubtypes,
-  CaseAppealState,
+  AppealCaseState,
   RequestCaseState,
   CaseTransition,
   IndictmentCaseTransition,
@@ -120,7 +122,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   RequestSharedWhen,
@@ -128,7 +130,6 @@ export {
   indictmentCases,
   restrictionCases,
   investigationCases,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   isIndictmentCase,
   isRestrictionCase,
@@ -146,6 +147,7 @@ export {
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
+  AppealCaseTransition,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'
@@ -154,6 +156,7 @@ export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 export type { VerdictInfo } from './lib/indictmentCase'
 
 export {
+  getMillisecondsFromDays,
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
   getAppealDeadlineDate,

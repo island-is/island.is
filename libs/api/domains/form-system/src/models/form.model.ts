@@ -48,11 +48,17 @@ export class Form {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 
-  @Field(() => String, { nullable: true })
-  submissionServiceUrl?: string
+  @Field(() => Boolean, { nullable: true })
+  zendeskInternal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  useValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  usePopulate?: boolean
 
   @Field(() => String, { nullable: true })
-  validationServiceUrl?: string
+  submissionServiceUrl?: string
 
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
@@ -79,7 +85,10 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Field(() => Int)
+  submissionDaysToLive!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean
@@ -110,6 +119,9 @@ export class Form {
 
   @Field(() => String)
   status!: string
+
+  @Field(() => String, { nullable: true })
+  lastModifiedBy?: string
 }
 
 @ObjectType('FormSystemFormResponse')

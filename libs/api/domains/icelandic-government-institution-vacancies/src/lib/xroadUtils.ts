@@ -7,6 +7,7 @@ import {
   VacancyWithCreationDate,
   convertHtmlToContentfulRichText,
   convertHtmlToPlainText,
+  parseDisplayDate,
 } from './utils'
 
 // ============================================================================
@@ -173,6 +174,9 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromXRoad = async (
       logoUrl: item.logoURL,
       locations,
       address: item.heimilisfang,
+      _creationDate: item.umsoknarfrestur_fra
+        ? parseDisplayDate(item.umsoknarfrestur_fra) ?? undefined
+        : undefined,
     })
   }
 

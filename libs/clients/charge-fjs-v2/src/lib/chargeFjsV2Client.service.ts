@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  CatalogperformingOrgperformingOrgIDGET3Request,
   ChargeStatusByRequestIDrequestIDGETResponse,
   ChargeStatusResultStatusEnum,
   DefaultApi,
@@ -121,11 +122,17 @@ export class ChargeFjsV2ClientService {
     }
   }
 
-  async getCatalogByPerformingOrg(
-    performingOrganizationID: string,
-  ): Promise<Catalog> {
+  async getCatalogByPerformingOrg({
+    performingOrgID,
+    chargeType,
+    chargeItemCode,
+    paymentOptions,
+  }: CatalogperformingOrgperformingOrgIDGET3Request): Promise<Catalog> {
     const response = await this.api.catalogperformingOrgperformingOrgIDGET3({
-      performingOrgID: performingOrganizationID,
+      performingOrgID,
+      chargeType,
+      chargeItemCode,
+      paymentOptions,
     })
 
     return {
@@ -135,6 +142,9 @@ export class ChargeFjsV2ClientService {
         chargeItemCode: item.chargeItemCode,
         chargeItemName: item.chargeItemName,
         priceAmount: item.priceAmount,
+        paymentOptions: item.paymentOptions
+          ? item.paymentOptions.split(',').filter(Boolean)
+          : undefined,
       })),
     }
   }

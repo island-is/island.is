@@ -37,6 +37,9 @@ export class Application {
   @Field(() => String, { nullable: true })
   slug?: string
 
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
   @Field(() => Date, { nullable: true })
   created?: Date
 
@@ -87,6 +90,9 @@ export class Application {
 
   @Field(() => CompletedSectionInfo, { nullable: true })
   completedSectionInfo?: CompletedSectionInfo
+
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
 }
 
 @ObjectType('FormSystemApplicationListDto')
@@ -96,6 +102,27 @@ export class ApplicationListDto {
 
   @Field(() => Int, { nullable: true })
   total?: number
+}
+
+@ObjectType('FormSystemValidationError')
+export class ValidationError {
+  @Field(() => Boolean, { nullable: true })
+  hasError?: boolean
+
+  @Field(() => LanguageType, { nullable: true })
+  title?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  message?: LanguageType
+}
+
+@ObjectType('FormSystemSubmitApplicationResponse')
+export class SubmitApplicationResponse {
+  @Field(() => Boolean, { nullable: true })
+  submissionFailed?: boolean
+
+  @Field(() => ValidationError, { nullable: true })
+  validationError?: ValidationError
 }
 
 @ObjectType('FormSystemSubmitScreenResponseValue')

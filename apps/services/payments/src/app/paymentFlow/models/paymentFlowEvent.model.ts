@@ -63,10 +63,10 @@ export class PaymentFlowEvent extends Model<
 
   @ApiProperty()
   @Column({
-    type: DataType.ENUM('create', 'update', 'success', 'error', 'deleted'),
+    type: DataType.ENUM('create', 'update', 'success', 'error', 'delete'),
     allowNull: false,
   })
-  type!: 'create' | 'update' | 'success' | 'error' | 'deleted'
+  type!: 'create' | 'update' | 'success' | 'error' | 'delete'
 
   @ApiProperty()
   @Column({
@@ -74,6 +74,10 @@ export class PaymentFlowEvent extends Model<
       'payment_started',
       'payment_completed',
       'payment_failed',
+      'payment_finalized',
+      'refund_started',
+      'refund_completed',
+      'refund_failed',
       'deleted_admin',
       'deleted_auto',
       'other',
@@ -84,6 +88,10 @@ export class PaymentFlowEvent extends Model<
     | 'payment_started'
     | 'payment_completed'
     | 'payment_failed'
+    | 'payment_finalized'
+    | 'refund_started'
+    | 'refund_completed'
+    | 'refund_failed'
     | 'deleted_admin'
     | 'deleted_auto'
     | 'other' // further explained in message

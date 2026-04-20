@@ -12,11 +12,13 @@ import { useGetDonorStatusQuery } from './OrganDonation.generated'
 import { NoAccess } from './components/NoAccess'
 import { getOrganText } from './helpers/textMapper'
 import { useNavigate } from 'react-router-dom'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const { data, loading, error } = useGetDonorStatusQuery({
     fetchPolicy: 'no-cache',

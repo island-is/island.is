@@ -21,7 +21,9 @@ export const mapGroupToSection = (
 
   return {
     id: group.id,
-    title: group.title,
+    title: group.items.every((item) => item.type === 'text')
+      ? undefined
+      : group.title,
     questions: group.items.map((item) =>
       mapItemToQuestion(item, allQuestions, formatMessage, triggers, group.id),
     ),

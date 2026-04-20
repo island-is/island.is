@@ -29,6 +29,7 @@ interface CategoryState {
   description: string
   descriptionEN?: string
   status?: 'draft' | 'changed' | 'published'
+  childNodeOrder?: 'asc-title' | 'desc-title' | 'manual'
   version?: number
   publishedVersion?: number
 }
@@ -166,6 +167,9 @@ const CategoryForm = ({
           }
           if (!stateToSubmit.status) {
             stateToSubmit.status = 'draft'
+          }
+          if (!stateToSubmit.childNodeOrder) {
+            stateToSubmit.childNodeOrder = 'manual'
           }
 
           onSubmit(stateToSubmit)

@@ -59,6 +59,7 @@ export const ADVERT_QUERY = gql`
           title
           slug
         }
+        hideSignatureDate
         involvedParty {
           title
           slug

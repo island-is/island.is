@@ -124,7 +124,7 @@ export const m = defineMessages({
   usePassportImage: {
     id: 'dld.application:usePassportImage#markdown',
     defaultMessage:
-      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og nafnskírteinaskrá í ökuskírteinið',
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og skilríkjaskrá í ökuskírteinið',
     description: 'Some description',
   },
 
@@ -277,6 +277,17 @@ export const m = defineMessages({
   deliveryPickupLocationPlaceholder: {
     id: 'dld.application:deliveryPickupLocationPlaceholder',
     defaultMessage: 'Veldu afhendingarstað',
+  },
+
+  overviewPhotoQualityPhoto: {
+    id: 'dld.application:overview.photoQualityPhoto',
+    defaultMessage: 'Ökuskírteinaskrá',
+    description: 'Quality photo from RLS driving license registry',
+  },
+  overviewPhotoThjodskra: {
+    id: 'dld.application:overview.photoThjodskra',
+    defaultMessage: 'Skilríkjaskrá',
+    description: 'Photo from national registry',
   },
 
   /* Overview Section */

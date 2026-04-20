@@ -9,10 +9,7 @@ import {
   getRecipients,
   getRecipientBySsn,
 } from './change-operator-of-vehicle.utils'
-import {
-  ChargeFjsV2ClientService,
-  getPaymentIdFromExternalData,
-} from '@island.is/clients/charge-fjs-v2'
+import { getPaymentIdFromExternalData } from '@island.is/clients/charge-fjs-v2'
 import { ChangeOperatorOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
@@ -36,6 +33,7 @@ import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
 import { mapVehicle } from '../utils'
+import { PaymentService } from '@island.is/application/api/payment'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
@@ -43,11 +41,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
-    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
+    private readonly paymentService: PaymentService,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
@@ -258,12 +256,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     { application, auth }: TemplateApiModuleActionProps,
     rejectType: RejectType,
   ): Promise<void> {
-    // 1. Delete charge so that the seller gets reimburshed
+    // 1. Delete charge so that the seller gets reimbursed
     // Note: not necessary on delete, since that is done in the shared delete function
     if (rejectType !== RejectType.DELETE) {
       const chargeId = getPaymentIdFromExternalData(application)
       if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        await this.paymentService.refundPayment(
+          application.id,
+          'Application rejected',
+          true,
+        )
       }
     }
 

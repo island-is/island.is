@@ -41,9 +41,9 @@ export class LandspitaliService {
   ) {}
 
   async getCatalog(): Promise<Catalog> {
-    return this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      this.config.landspitaliOrganisationId,
-    )
+    return this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+      performingOrgID: this.config.landspitaliOrganisationId,
+    })
   }
 
   private getProtocol() {

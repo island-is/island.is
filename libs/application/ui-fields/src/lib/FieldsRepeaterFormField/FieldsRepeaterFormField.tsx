@@ -88,16 +88,16 @@ export const FieldsRepeaterFormField = ({
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
-      if (
-        isEqual(prev, {
-          ...stableApplication,
-          answers: { ...stableApplication.answers, ...stableAnswers },
-        })
-      ) {
+      const newApp = {
+        ...stableApplication,
+        answers: { ...stableApplication.answers, ...stableAnswers },
+      }
+
+      if (isEqual(prev, newApp)) {
         return prev
       }
 
-      return { ...stableApplication, answers: stableAnswers }
+      return newApp
     })
   }, [stableApplication, stableAnswers])
 
@@ -256,7 +256,7 @@ export const FieldsRepeaterFormField = ({
                         {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
                       </Text>
                     </Box>
-                    <GridColumn>{repeaterFields(i)}</GridColumn>
+                    <GridColumn span="1/1">{repeaterFields(i)}</GridColumn>
                   </Fragment>
                 )
               })}

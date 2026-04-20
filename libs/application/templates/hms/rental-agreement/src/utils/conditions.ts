@@ -7,7 +7,7 @@ import {
 import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
-import { ApplicantsRole } from './enums'
+import { ApplicantsRole, RentalHousingCategoryTypes } from './enums'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
@@ -157,4 +157,27 @@ export const applicantIsCompany = (
   )
 
   return identityType === 'company'
+}
+
+// HMS API disallows more than 1 room when type is TM_SPECIAL_TYPE_INDIVIDUAL_ROOMS
+export const shouldShowRoomTypeRoomCountError = (answers: FormValue) => {
+  const categoryType = getValueViaPath<string>(
+    answers,
+    'propertyInfo.categoryType',
+  )
+
+  if (categoryType !== RentalHousingCategoryTypes.ROOM) {
+    return false
+  }
+
+  const units = getValueViaPath<PropertyUnit[]>(
+    answers,
+    'registerProperty.searchresults.units',
+  )
+
+  if (!units || units.length === 0) {
+    return false
+  }
+
+  return units.some((unit) => (unit.numOfRooms ?? 0) > 1)
 }

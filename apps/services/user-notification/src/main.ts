@@ -2,6 +2,9 @@ import { bootstrap, processJob } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 import { NotificationsWorkerService } from './app/modules/notifications/notificationsWorker/notificationsWorker.service'
+import { EmailWorkerService } from './app/modules/notifications/notificationsWorker/emailWorker.service'
+import { SmsWorkerService } from './app/modules/notifications/notificationsWorker/smsWorker.service'
+import { PushWorkerService } from './app/modules/notifications/notificationsWorker/pushWorker.service'
 import { birthdayFlag } from './utils'
 
 const job = processJob()
@@ -25,7 +28,16 @@ if (job === 'cleanup') {
       const notificationsWorkerService = await app.resolve(
         NotificationsWorkerService,
       )
-      await notificationsWorkerService.run()
+      const emailWorkerService = await app.resolve(EmailWorkerService)
+      const smsWorkerService = await app.resolve(SmsWorkerService)
+      const pushWorkerService = await app.resolve(PushWorkerService)
+
+      await Promise.all([
+        notificationsWorkerService.run(),
+        emailWorkerService.run(),
+        smsWorkerService.run(),
+        pushWorkerService.run(),
+      ])
     }
   })
 }

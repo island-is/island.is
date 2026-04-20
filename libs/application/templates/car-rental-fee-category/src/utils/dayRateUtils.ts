@@ -22,15 +22,15 @@ export const hasActiveDayRate = (
   return entries.some((entry) => isDayRateEntryActive(entry, currentDate))
 }
 
-export const is30DaysOrMoreFromDate = (
+export const is15DaysOrMoreFromDate = (
   date: string | Date,
   currentDate: Date = new Date(),
 ): boolean => {
   const newDate = new Date(date)
   const diffTime = currentDate.getTime() - newDate.getTime()
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) // 30 days
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  return diffDays >= 30
+  return diffDays >= 15
 }
 
 export const areLessThan7DaysLeftOfMonth = (): boolean => {

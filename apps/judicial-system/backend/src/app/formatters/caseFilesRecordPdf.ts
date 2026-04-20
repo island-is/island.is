@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
-import { Case, Defendant } from '../modules/repository'
+import { Case, Defendant, PoliceDigitalCaseFile } from '../modules/repository'
 import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export const formatDefendant = (defendant: Defendant) => {
@@ -24,6 +24,65 @@ export const formatDefendant = (defendant: Defendant) => {
   }`
 }
 
+const addPoliceDigitalCaseFilesPage = (
+  pdfDocument: PdfDocument,
+  files: PoliceDigitalCaseFile[],
+  formatMessage: FormatMessage,
+  pageMargin: number,
+  textFontSize: number,
+  subtitleFontSize: number,
+) => {
+  const bulletIndent = pageMargin + 16
+  const valueIndent = pageMargin + 180
+
+  pdfDocument.addPage().addText('6. Rafræn gögn (IDES)', subtitleFontSize, {
+    bold: true,
+    alignment: Alignment.Center,
+    marginBottom: 8,
+  })
+
+  for (const file of files) {
+    pdfDocument.addText(file.name, textFontSize, {
+      bold: true,
+      marginTop: 8,
+    })
+
+    pdfDocument
+      .addText(`• Gagna nr: `, textFontSize, {
+        bold: true,
+        newLine: false,
+        position: { x: bulletIndent },
+      })
+      .addText(file.policeDigitalFileId, textFontSize, {
+        position: { x: valueIndent },
+      })
+
+    pdfDocument
+      .addText(`• Upptaka nr: `, textFontSize, {
+        bold: true,
+        newLine: false,
+        position: { x: bulletIndent },
+      })
+      .addText(file.policeExternalVendorId, textFontSize, {
+        position: { x: valueIndent },
+      })
+
+    pdfDocument
+      .addText(`• Dagsetning stofnað: `, textFontSize, {
+        bold: true,
+        newLine: false,
+        position: { x: bulletIndent },
+      })
+      .addText(
+        formatDate(file.displayDate?.toISOString()) ?? '',
+        textFontSize,
+        {
+          position: { x: valueIndent },
+        },
+      )
+  }
+}
+
 export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
@@ -33,6 +92,7 @@ export const createCaseFilesRecord = async (
     chapter: number
     buffer?: Buffer
   }>)[],
+  policeDigitalCaseFiles: PoliceDigitalCaseFile[],
   formatMessage: FormatMessage,
 ): Promise<Buffer> => {
   const pageMargin = 70
@@ -92,6 +152,39 @@ export const createCaseFilesRecord = async (
       pageNumber: pageNumber + 1,
       pageLink: pdfDocument.getPageLink(pageNumber),
     })
+  }
+
+  // Add police digital case files page (IDES)
+  if (policeDigitalCaseFiles.length > 0) {
+    const pageNumber = pdfDocument.getPageCount()
+
+    const sortedFiles = [...policeDigitalCaseFiles].sort(
+      (a, b) => (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0),
+    )
+    addPoliceDigitalCaseFilesPage(
+      pdfDocument,
+      sortedFiles,
+      formatMessage,
+      pageMargin,
+      textFontSize,
+      subtitleFontSize,
+    )
+
+    const digitalCaseFilesPage = pageNumber + 1
+
+    for (const digitalCaseFile of sortedFiles) {
+      const date = digitalCaseFile.displayDate
+      if (!date) {
+        continue
+      }
+      pageReferences.push({
+        chapter: 5,
+        date,
+        name: digitalCaseFile.name,
+        pageNumber: digitalCaseFilesPage,
+        pageLink: pdfDocument.getPageLink(pageNumber),
+      })
+    }
   }
 
   // Create the cover page

@@ -14,7 +14,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
-import * as styles from './Completed.css'
 
 export const Completed = () => {
   const { formatMessage, lang } = useLocale()
@@ -53,7 +52,7 @@ export const Completed = () => {
         >
           <AccordionItem
             id="completed-accordion"
-            label={formatMessage(m.completedAccordionTitle)}
+            label={formatMessage(m.completedListHeader)}
             startExpanded
           >
             <Box marginBottom={2}>
@@ -91,39 +90,24 @@ export const Completed = () => {
         </Text>
       )}
       <AlertMessage type="success" title={header} message={text} />
-      <Box
-        width="full"
-        border="standard"
-        borderColor="blue200"
-        borderRadius="large"
-        padding={3}
-      >
-        <Accordion
-          dividers={false}
-          dividerOnBottom={false}
-          dividerOnTop={false}
+      {infos.length > 0 && (
+        <Box
+          width="full"
+          border="standard"
+          borderColor="blue200"
+          borderRadius="large"
+          padding={3}
         >
-          <AccordionItem
-            id="completed-accordion"
-            label={formatMessage(m.completedAccordionTitle)}
-            startExpanded
-          >
-            {infos.length === 1 ? (
-              <Box marginBottom={2}>
-                <Text className={styles.preserveLines}>{infos[0][lang]}</Text>
-              </Box>
-            ) : (
-              <BulletList space={1}>
-                {infos.map((info, index) => (
-                  <Bullet key={index}>
-                    <Text className={styles.preserveLines}>{info[lang]}</Text>
-                  </Bullet>
-                ))}
-              </BulletList>
-            )}
-          </AccordionItem>
-        </Accordion>
-      </Box>
+          <Text variant="h4" as="h4" marginBottom={2}>
+            {formatMessage(m.completedListHeader)}
+          </Text>
+          <BulletList space={1}>
+            {infos.map((info, index) => (
+              <Bullet key={index}>{info?.[lang] || ''}</Bullet>
+            ))}
+          </BulletList>
+        </Box>
+      )}
 
       <Hidden below="md">
         <img

@@ -21,8 +21,8 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -30,7 +30,6 @@ import {
   CaseType,
   CourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -51,6 +50,22 @@ class UpdateDateLog {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly location?: string
+}
+
+class UpdateCaseDefendantEventLogDecisionDto {
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly defendantId!: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly rulingDate?: Date
+
+  @IsEnum(CaseIndictmentRulingDecision)
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  readonly rulingDecision!: CaseIndictmentRulingDecision
 }
 
 export class UpdateCaseDto {
@@ -459,9 +474,9 @@ export class UpdateCaseDto {
   readonly appealRulingModifiedHistory?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealRulingDecision)
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @IsEnum(AppealCaseRulingDecision)
+  @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @IsOptional()
   @Type(() => Date)
@@ -494,11 +509,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly indictmentReturnedExplanation?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
   readonly postponedIndefinitelyExplanation?: string
 
   @IsOptional()
@@ -510,11 +520,6 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional({ type: String })
   readonly indictmentReviewerId?: string
-
-  @IsOptional()
-  @IsEnum(IndictmentCaseReviewDecision)
-  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   @IsOptional()
   @IsEnum(IndictmentDecision)
@@ -552,17 +557,17 @@ export class UpdateCaseDto {
   readonly isCompletedWithoutRuling?: boolean
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isRegisteredInPrisonSystem?: boolean
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly penalties?: string
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateCaseDefendantEventLogDecisionDto)
+  @ApiPropertyOptional({
+    type: UpdateCaseDefendantEventLogDecisionDto,
+    isArray: true,
+  })
+  readonly defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecisionDto[]
 }

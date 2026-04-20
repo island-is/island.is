@@ -1,15 +1,12 @@
-import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-import { getSession, Provider } from 'next-auth/client'
-import initApollo from '../graphql/client'
-import get from 'lodash/get'
+import { userMonitoring } from '@island.is/user-monitoring'
+import { getSession, SessionProvider } from 'next-auth/react'
 import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
-import { Toast, ErrorBoundary, AppLayout, AuthProvider } from '../components'
-import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
-import router from 'next/router'
-import { userMonitoring } from '@island.is/user-monitoring'
+import { AppLayout, AuthProvider, ErrorBoundary, Toast } from '../components'
+import initApollo from '../graphql/client'
+import { appWithTranslation } from '../i18n'
 
 const {
   publicRuntimeConfig: { ddLogsClientToken, appVersion, environment },
@@ -37,7 +34,7 @@ const getLanguage = (path) => {
 const SupportApplication: any = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Provider session={pageProps.session}>
+      <SessionProvider session={pageProps.session}>
         <AuthProvider>
           <AppLayout {...pageProps.layoutProps}>
             <ErrorBoundary>
@@ -46,7 +43,7 @@ const SupportApplication: any = ({ Component, pageProps }) => {
             <Toast />
           </AppLayout>
         </AuthProvider>
-      </Provider>
+      </SessionProvider>
     </ApolloProvider>
   )
 }

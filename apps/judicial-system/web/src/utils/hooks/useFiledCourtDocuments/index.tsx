@@ -41,6 +41,15 @@ const useFiledCourtDocuments = () => {
     }
   }, [workingCase])
 
+  const isFiledInConfirmedCourtSession = (caseFileId: string) =>
+    Boolean(
+      workingCase.courtSessions?.some(
+        (session) =>
+          session.isConfirmed &&
+          session.filedDocuments?.some((doc) => doc.caseFileId === caseFileId),
+      ),
+    )
+
   const prefixUploadedDocumentNameWithDocumentOrder = (
     caseFileId: string,
     name: string,
@@ -104,6 +113,7 @@ const useFiledCourtDocuments = () => {
   }
 
   return {
+    isFiledInConfirmedCourtSession,
     prefixUploadedDocumentNameWithDocumentOrder,
     prefixGeneratedDocumentNameWithDocumentOrder,
   }

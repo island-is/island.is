@@ -3,7 +3,10 @@ import { UserRole } from '@island.is/judicial-system/types'
 
 import { UpdateDefendantDto } from '../dto/updateDefendant.dto'
 
-const limitedAccessFields: (keyof UpdateDefendantDto)[] = ['punishmentType']
+const limitedAccessFields: (keyof UpdateDefendantDto)[] = [
+  'punishmentType',
+  'isRegisteredInPrisonSystem',
+]
 
 // Allows prison staff to update a specific set of fields for defendant
 export const prisonSystemStaffUpdateRule: RolesRule = {

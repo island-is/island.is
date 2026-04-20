@@ -1,14 +1,13 @@
 import { FormSystemFieldSettings } from '@island.is/api/schema'
 import {
   Box,
+  Checkbox,
   GridColumn,
   GridRow,
-  Text,
-  Checkbox,
   Input,
 } from '@island.is/island-ui/core'
-import { ControlContext } from '../../../../../../context/ControlContext'
 import { useContext } from 'react'
+import { ControlContext } from '../../../../../../context/ControlContext'
 
 interface Props {
   fieldSettings: FormSystemFieldSettings
@@ -17,31 +16,16 @@ interface Props {
 export const ZendeskSettings = ({ fieldSettings }: Props) => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
+  const { isReadOnly } = control
 
   return (
     <Box marginTop={2}>
-      <Text variant="h4">Zendesk stillingar</Text>
       <GridRow marginTop={2} marginBottom={2}>
         <GridColumn span="5/10">
           <Checkbox
-            checked={fieldSettings?.zendeskIsPrivate ?? false}
-            label="Private"
-            onChange={(e) =>
-              controlDispatch({
-                type: 'SET_ZENDESK_FIELD_SETTINGS',
-                payload: {
-                  property: 'zendeskIsPrivate',
-                  value: e.target.checked,
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-        </GridColumn>
-        <GridColumn span="5/10">
-          <Checkbox
             checked={fieldSettings?.zendeskIsCustomField ?? false}
-            label="Custom field"
+            label="Zendesk reitur"
+            disabled={isReadOnly}
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_ZENDESK_FIELD_SETTINGS',
@@ -67,7 +51,8 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
             <Box marginTop={2}>
               <Input
                 name="custom-field-id"
-                placeholder="Sláðu inn Zendesk field id"
+                placeholder="Zendesk field id"
+                readOnly={isReadOnly}
                 value={fieldSettings?.zendeskCustomFieldId ?? ''}
                 onChange={(e) =>
                   controlDispatch({

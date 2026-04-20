@@ -12,7 +12,7 @@ export const GET_VERDICTS_QUERY = gql`
         verdictDate
         keywords
         presentings
-        presidentJudge {
+        verdictJudges {
           name
           title
         }
@@ -46,6 +46,7 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
         verdictDate
         keywords
         presentings
+        resolutionLink
       }
     }
   }
@@ -67,6 +68,12 @@ export const GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY = gql`
         }
       }
       districtCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
+      retrialCourt {
         options {
           label
           typeOfOption

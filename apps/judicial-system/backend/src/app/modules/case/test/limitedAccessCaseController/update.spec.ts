@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -52,24 +52,24 @@ describe('LimitedAccessCaseController - Update', () => {
   const updateDto = { defendantStatementDate: new Date() }
   const updatedCase = {
     ...theCase,
-    defendantStatementDate: date,
+    appealCase: { defendantStatementDate: date },
     caseFiles,
   } as Case
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      queuedMessages,
       sequelize,
-      messageService,
       caseRepositoryService,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -119,7 +119,7 @@ describe('LimitedAccessCaseController - Update', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

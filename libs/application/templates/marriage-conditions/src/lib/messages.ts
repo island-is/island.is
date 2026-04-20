@@ -579,17 +579,17 @@ export const m = defineMessages({
   },
   /* History logs */
   waitingForConfirmationSpouse2Title: {
-    id: 'pa.application:history.waitingForConfirmationSpouse2Title',
+    id: 'mac.application:history.waitingForConfirmationSpouse2Title',
     defaultMessage: 'Samþykki hjónaefnis',
     description: '',
   },
   waitingForConfirmationSpouse2Description: {
-    id: 'pa.application:history.waitingForConfirmationSpouse2Description',
+    id: 'mac.application:history.waitingForConfirmationSpouse2Description',
     defaultMessage: 'Beðið eftir staðfestingu hjónaefnis 2',
     description: '',
   },
   confirmedBySpouse2: {
-    id: 'pa.application:history.confirmedByParentB',
+    id: 'mac.application:history.confirmedByParentB',
     defaultMessage: 'Hjónaefni 2 hefur staðfest umsókn',
     description: '',
   },

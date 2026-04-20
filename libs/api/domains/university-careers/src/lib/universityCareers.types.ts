@@ -10,6 +10,15 @@ export interface InstitutionProps {
   logoUrl?: string
 }
 
+export enum FileType {
+  COURSE_DESCRIPTIONS,
+  DIPLOMA,
+  DIPLOMA_SUPPLEMENT,
+  TRANSCRIPT,
+  MICRO_CREDENTIALS_SUPPLEMENT,
+  MICRO_CREDENTIALS_TRANSCRIPT,
+}
+
 export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {
   unak: '02210',
   bifrost: 'bifrost-university',

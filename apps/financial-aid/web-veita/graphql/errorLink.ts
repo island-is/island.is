@@ -3,7 +3,7 @@ import { onError, ErrorResponse } from '@apollo/client/link/error'
 
 import { NotificationService } from '@island.is/financial-aid-web/veita/src/services'
 import { identityServerId, Routes } from '@island.is/financial-aid/shared/lib'
-import { signIn } from 'next-auth/client'
+import { signIn } from 'next-auth/react'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {

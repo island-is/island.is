@@ -64,6 +64,7 @@ export const SPOUSE = 'Maki'
 
 // Applicant relation enum for "Seta í óskiptu búi"
 export enum ApplicantRelation {
+  SPOUSE = 'Maki',
   HEIR = 'Erfingi',
   REPRESENTATIVE = 'Umboðsmaður',
   EXCHANGE_MANAGER = 'Skiptastjóri',

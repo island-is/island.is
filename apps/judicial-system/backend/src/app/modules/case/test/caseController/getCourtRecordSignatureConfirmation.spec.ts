@@ -23,6 +23,7 @@ type GivenWhenThen = (
   user: User,
   theCase: Case,
   documentToken: string,
+  method?: 'audkenni' | 'mobile',
 ) => Promise<Then>
 
 describe('CaseController - Get court record signature confirmation', () => {
@@ -57,6 +58,7 @@ describe('CaseController - Get court record signature confirmation', () => {
       user: User,
       theCase: Case,
       documentToken: string,
+      method?: 'audkenni' | 'mobile',
     ) => {
       const then = {} as Then
 
@@ -66,6 +68,7 @@ describe('CaseController - Get court record signature confirmation', () => {
           user,
           theCase,
           documentToken,
+          method,
         )
       } catch (error) {
         then.error = error as Error

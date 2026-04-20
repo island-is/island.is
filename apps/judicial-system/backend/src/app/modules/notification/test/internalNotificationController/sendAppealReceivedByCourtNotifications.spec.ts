@@ -73,7 +73,9 @@ describe('InternalNotificationController - Send appeal received by court notific
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealReceivedByCourtDate: receivedDate,
+            appealCase: {
+              appealReceivedByCourtDate: receivedDate,
+            },
           } as Case,
           {
             user: { id: userId } as User,

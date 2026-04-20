@@ -15,7 +15,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
-  DownloadFileButtons,
   MobileTable,
   StackWithBottomDivider,
   UserInfoLine,
@@ -26,7 +25,6 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { isDefined } from '@island.is/shared/utils'
-import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
@@ -39,16 +37,19 @@ import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from './Payments.generated'
+import { PaymentOverviewParticipationInfo } from './PaymentOverviewParticipationInfo'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import {
+  getFirstDayOfPreviousYear,
+  getLastDayOfPreviousYear,
+} from '../../utils/dates'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns, lang } = useLocale()
   const { width } = useWindowSize()
 
-  const [startDate, setStartDate] = useState<Date>(
-    sub(new Date(), { years: 3 }),
-  )
-  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [startDate, setStartDate] = useState<Date>(getFirstDayOfPreviousYear)
+  const [endDate, setEndDate] = useState<Date>(getLastDayOfPreviousYear)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
   const [overview, setOverview] = useState<RightsPortalPaymentOverview>()
@@ -121,7 +122,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverviewInvoices}>
       {error ? (
         <Problem noBorder={false} error={error} />
       ) : loading ? (
@@ -150,14 +151,8 @@ export const PaymentOverview = () => {
           <Stack space={[CONTENT_GAP, SECTION_GAP]}>
             <Text variant="h5">{formatMessage(messages.invoices)}</Text>
             <GridContainer>
-              <GridRow
-                marginBottom={CONTENT_GAP}
-                direction={['column', 'column', 'column', 'row']}
-              >
-                <GridColumn
-                  span={['6/8', '6/8', '6/8', '4/8']}
-                  paddingBottom={[CONTENT_GAP, CONTENT_GAP, CONTENT_GAP, 0]}
-                >
+              <GridRow rowGap={[2, 2, 2, 2, 'smallGutter']}>
+                <GridColumn span={['1/1', '1/1', '1/2', '1/2', '3/9']}>
                   <DatePicker
                     size="xs"
                     label={formatMessage(m.dateFrom)}
@@ -168,7 +163,10 @@ export const PaymentOverview = () => {
                     locale={lang}
                   />
                 </GridColumn>
-                <GridColumn span={['6/8', '6/8', '6/8', '4/8']}>
+                <GridColumn
+                  span={['1/1', '1/1', '1/2', '1/2', '3/9']}
+                  paddingTop={[2, 2, 0, 0, 0]}
+                >
                   <DatePicker
                     size="xs"
                     label={formatMessage(m.dateTo)}
@@ -179,12 +177,10 @@ export const PaymentOverview = () => {
                     locale={lang}
                   />
                 </GridColumn>
-              </GridRow>
-              {!!options?.length && (
-                <GridRow direction="row" alignItems={['flexStart', 'flexEnd']}>
+                {!!options?.length && (
                   <GridColumn
-                    span={['7/8', '7/8', '5/8']}
-                    paddingBottom={[CONTENT_GAP, CONTENT_GAP, 0]}
+                    span={['1/1', '1/1', '1/1', '1/1', '3/9']}
+                    paddingTop={[2, 2, 0, 0, 0]}
                   >
                     <Select
                       value={
@@ -204,13 +200,37 @@ export const PaymentOverview = () => {
                       }
                     />
                   </GridColumn>
-                  <GridColumn span={['4/8', '4/8', '3/8']}>
-                    <Button fluid size="medium" onClick={() => onFetchBills()}>
-                      {formatMessage(m.get)}
+                )}
+              </GridRow>
+              <GridRow marginTop={3} align="spaceBetween">
+                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
+                  <Button size="medium" onClick={() => onFetchBills()} fluid>
+                    {formatMessage(m.get)}
+                  </Button>
+                </GridColumn>
+                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
+                  <Box
+                    width="full"
+                    height="full"
+                    display="flex"
+                    alignItems="stretch"
+                    justifyContent="flexEnd"
+                  >
+                    <Button
+                      variant="utility"
+                      size="medium"
+                      icon="download"
+                      iconType="outline"
+                      onClick={() =>
+                        exportPaymentOverviewFile(overview?.bills ?? [], 'xlsx')
+                      }
+                      fluid
+                    >
+                      {formatMessage(m.getAsExcel)}
                     </Button>
-                  </GridColumn>
-                </GridRow>
-              )}
+                  </Box>
+                </GridColumn>
+              </GridRow>
             </GridContainer>
             <Box>
               {overviewError ? (
@@ -219,83 +239,63 @@ export const PaymentOverview = () => {
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : overview?.bills?.length ? (
                 !isMobile ? (
-                  <>
-                    <T.Table>
-                      <T.Head>
-                        <tr className={styles.tableRowStyle}>
-                          <T.HeadData>{formatMessage(m.date)}</T.HeadData>
+                  <T.Table>
+                    <T.Head>
+                      <tr className={styles.tableRowStyle}>
+                        <T.HeadData>{formatMessage(m.date)}</T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.typeofService)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.totalPayment)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.insuranceShare)}
+                        </T.HeadData>
+                        {enabledDocumentFlag ? (
                           <T.HeadData>
-                            {formatMessage(messages.typeofService)}
+                            {formatMessage(messages.paymentDocument)}
                           </T.HeadData>
-                          <T.HeadData>
-                            {formatMessage(messages.totalPayment)}
-                          </T.HeadData>
-                          <T.HeadData>
-                            {formatMessage(messages.insuranceShare)}
-                          </T.HeadData>
-                          {enabledDocumentFlag ? (
-                            <T.HeadData>
-                              {formatMessage(messages.paymentDocument)}
-                            </T.HeadData>
-                          ) : undefined}
-                        </tr>
-                      </T.Head>
-                      <T.Body>
-                        {overview?.bills?.map((item, index) => {
-                          return (
-                            <tr key={index} className={styles.tableRowStyle}>
+                        ) : undefined}
+                      </tr>
+                    </T.Head>
+                    <T.Body>
+                      {overview?.bills?.map((item, index) => {
+                        return (
+                          <tr key={index} className={styles.tableRowStyle}>
+                            <T.Data>
+                              {item.date &&
+                                formatDateFns(item.date, 'dd.MM.yyyy')}
+                            </T.Data>
+                            <T.Data>{item.serviceType?.name}</T.Data>
+                            <T.Data>
+                              {amountFormat(item.totalAmount ?? 0)}
+                            </T.Data>
+                            <T.Data>
+                              {amountFormat(item.insuranceAmount ?? 0)}
+                            </T.Data>
+                            {enabledDocumentFlag ? (
                               <T.Data>
-                                {item.date &&
-                                  formatDateFns(item.date, 'dd.MM.yyyy')}
+                                <Button
+                                  iconType="outline"
+                                  onClick={() =>
+                                    item.downloadUrl
+                                      ? onFetchDocument(item?.downloadUrl)
+                                      : undefined
+                                  }
+                                  variant="text"
+                                  icon="open"
+                                  size="small"
+                                >
+                                  {formatMessage(messages.fetchDocument)}
+                                </Button>
                               </T.Data>
-                              <T.Data>{item.serviceType?.name}</T.Data>
-                              <T.Data>
-                                {amountFormat(item.totalAmount ?? 0)}
-                              </T.Data>
-                              <T.Data>
-                                {amountFormat(item.insuranceAmount ?? 0)}
-                              </T.Data>
-                              {enabledDocumentFlag ? (
-                                <T.Data>
-                                  <Button
-                                    iconType="outline"
-                                    onClick={() =>
-                                      item.downloadUrl
-                                        ? onFetchDocument(item?.downloadUrl)
-                                        : undefined
-                                    }
-                                    variant="text"
-                                    icon="open"
-                                    size="small"
-                                  >
-                                    {formatMessage(messages.fetchDocument)}
-                                  </Button>
-                                </T.Data>
-                              ) : undefined}
-                            </tr>
-                          )
-                        })}
-                      </T.Body>
-                    </T.Table>
-                    <DownloadFileButtons
-                      BoxProps={{
-                        paddingTop: 2,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'flexEnd',
-                      }}
-                      buttons={[
-                        {
-                          text: formatMessage(m.getAsExcel),
-                          onClick: () =>
-                            exportPaymentOverviewFile(
-                              overview?.bills ?? [],
-                              'xlsx',
-                            ),
-                        },
-                      ]}
-                    />
-                  </>
+                            ) : undefined}
+                          </tr>
+                        )
+                      })}
+                    </T.Body>
+                  </T.Table>
                 ) : (
                   <Box>
                     <MobileTable
@@ -339,24 +339,6 @@ export const PaymentOverview = () => {
                           ) : undefined,
                       }))}
                     />
-                    <DownloadFileButtons
-                      BoxProps={{
-                        paddingTop: 2,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'flexEnd',
-                      }}
-                      buttons={[
-                        {
-                          text: formatMessage(m.getAsExcel),
-                          onClick: () =>
-                            exportPaymentOverviewFile(
-                              overview?.bills ?? [],
-                              'xlsx',
-                            ),
-                        },
-                      ]}
-                    />
                   </Box>
                 )
               ) : (
@@ -375,6 +357,7 @@ export const PaymentOverview = () => {
           </Stack>
         </Box>
       )}
+      <PaymentOverviewParticipationInfo />
     </PaymentsWrapper>
   )
 }

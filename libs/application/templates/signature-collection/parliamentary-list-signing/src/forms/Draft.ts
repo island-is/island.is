@@ -12,7 +12,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
@@ -20,7 +20,7 @@ export const Draft: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: NationalRegistryLogo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'selectCandidateSection',

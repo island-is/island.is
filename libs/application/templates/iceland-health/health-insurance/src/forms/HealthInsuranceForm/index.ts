@@ -6,23 +6,21 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { applicantInformationSection } from './aplicantInformationSection'
 import { statusAndChildrenSection } from './statusAndChildrenSection'
 import { formerInsuranceSection } from './formerInsuranceSection'
-import { confirmSection } from './confirmSection'
+import { overviewSection } from './overviewSection'
+import { extraInformationSection } from './extraInformationSection'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
   title: m.formTitle,
   logo: IcelandHealthLogo,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     applicantInformationSection,
     statusAndChildrenSection,
     formerInsuranceSection,
-    confirmSection,
-    buildFormConclusionSection({
-      alertTitle: m.successfulSubmissionTitle,
-      alertMessage: m.successfulSubmissionMessage,
-      expandableHeader: m.successfulExpendableHeader,
-      expandableDescription: m.nextStepReviewTime,
-    }),
+    extraInformationSection,
+    overviewSection,
   ],
 })

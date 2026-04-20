@@ -1,47 +1,51 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FC, useContext, useState } from 'react'
 import { useDebounce } from 'react-use'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  UpdateCase,
-  useCase,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+  BlueBox,
+  FormContext,
+} from '@island.is/judicial-system-web/src/components'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { courtCaseNumber } from './CourtCaseNumber.strings'
 import * as styles from './CourtCaseNumber.css'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase?: Dispatch<SetStateAction<Case>>
-  onCreateCourtCase?: () => Promise<string>
-  onChange?: (courtCaseNumber: string) => void
+  caseId: string
+  isIndictmentCase: boolean
+  courtCaseNumber: string | undefined | null
+  isDisabled: boolean
+  setCourtCaseNumber(courtCaseNumber: string): void
 }
 
-const CourtCaseNumberInput: FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, onCreateCourtCase, onChange } = props
-  const { formatMessage } = useIntl()
+export const CourtCaseNumberInput: FC<Props> = (props) => {
+  const {
+    caseId,
+    isIndictmentCase,
+    courtCaseNumber,
+    isDisabled,
+    setCourtCaseNumber,
+  } = props
+
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
-  const [value, setValue] = useState<string>(workingCase.courtCaseNumber ?? '')
+
+  const [value, setValue] = useState<string>(courtCaseNumber ?? '')
   const [courtCaseNumberErrorMessage, setCourtCaseNumberErrorMessage] =
     useState<string>('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
     useState<boolean>(false)
 
-  const handleCreateCourtCase = async (caseId: string) => {
+  const policeCaseNumberValidator = isIndictmentCase
+    ? 'S-case-number'
+    : 'R-case-number'
+
+  const handleCreateCourtCase = async () => {
     const courtCaseNumber = await createCourtCase(caseId)
 
-    setWorkingCase?.((prevWorkingCase) => ({
-      ...prevWorkingCase,
-      courtCaseNumber,
-    }))
+    setCourtCaseNumber(courtCaseNumber)
 
     if (courtCaseNumber !== '') {
       setCourtCaseNumberErrorMessage('')
@@ -54,37 +58,22 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
     }
   }
 
-  const updateCourtCaseNumber = async (id: string, update: UpdateCase) => {
+  const updateCourtCaseNumber = async () => {
     const isValid = validate([
-      [
-        update.courtCaseNumber,
-        [
-          'empty',
-          isIndictmentCase(workingCase.type)
-            ? 'S-case-number'
-            : 'R-case-number',
-        ],
-      ],
+      [value, ['empty', policeCaseNumberValidator]],
     ]).isValid
 
     if (!isValid) {
       return
     }
 
-    await updateCase(id, update)
+    updateCase(caseId, { courtCaseNumber: value })
+    setCourtCaseNumber(value)
   }
 
   const validateInput = (inputValue: string) => {
     const validation = validate([
-      [
-        inputValue,
-        [
-          'empty',
-          isIndictmentCase(workingCase.type)
-            ? 'S-case-number'
-            : 'R-case-number',
-        ],
-      ],
+      [inputValue, ['empty', policeCaseNumberValidator]],
     ])
 
     setCourtCaseNumberErrorMessage(
@@ -92,58 +81,35 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
     )
   }
 
-  useDebounce(
-    () => {
-      updateCourtCaseNumber(workingCase.id, { courtCaseNumber: value })
-    },
-    500,
-    [value],
-  )
+  useDebounce(updateCourtCaseNumber, 500, [value])
 
   return (
     <BlueBox className={styles.createCourtCaseContainer}>
       <div className={styles.createCourtCaseButton}>
         <Button
           size="small"
-          onClick={async () => {
-            if (onCreateCourtCase) {
-              const courtCaseNumber = await onCreateCourtCase()
-
-              if (courtCaseNumber !== '') {
-                setCreateCourtCaseSuccess(true)
-                setValue(courtCaseNumber)
-              }
-            } else {
-              handleCreateCourtCase(workingCase.id)
-            }
-          }}
+          onClick={handleCreateCourtCase}
           loading={isCreatingCourtCase}
-          disabled={Boolean(
-            (workingCase.state !== CaseState.SUBMITTED &&
-              workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-              workingCase.state !== CaseState.RECEIVED) ||
-              workingCase.courtCaseNumber,
-          )}
+          disabled={isDisabled || Boolean(courtCaseNumber)}
           fluid
         >
-          {formatMessage(courtCaseNumber.createCaseButtonText)}
+          Stofna nýtt mál
         </Button>
       </div>
       <div className={styles.createCourtCaseInput}>
         <Input
           data-testid="courtCaseNumber"
           name="courtCaseNumber"
-          label={formatMessage(courtCaseNumber.label)}
-          placeholder={formatMessage(courtCaseNumber.placeholder, {
-            isIndictment: isIndictmentCase(workingCase.type),
-            year: new Date().getFullYear(),
-          })}
+          label="Mál nr."
+          placeholder={`${
+            isIndictmentCase ? 'S' : 'R'
+          }-X/${new Date().getFullYear()}`}
           autoComplete="off"
           size="sm"
           backgroundColor="white"
           value={value}
           icon={
-            workingCase.courtCaseNumber && createCourtCaseSuccess
+            courtCaseNumber && createCourtCaseSuccess
               ? { name: 'checkmark' }
               : undefined
           }
@@ -153,22 +119,10 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
             setCourtCaseNumberErrorMessage('')
             setCreateCourtCaseSuccess(false)
             setValue(evt.target.value)
-            onChange?.(evt.target.value)
-
-            if (!setWorkingCase) {
-              return
-            }
-
-            setWorkingCase((prevWorkingCase) => {
-              return { ...prevWorkingCase, courtCaseNumber: evt.target.value }
-            })
+            setCourtCaseNumber(evt.target.value)
           }}
           onBlur={(evt) => validateInput(evt.target.value)}
-          disabled={
-            workingCase.state !== CaseState.SUBMITTED &&
-            workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-            workingCase.state !== CaseState.RECEIVED
-          }
+          disabled={isDisabled}
           required
         />
       </div>
@@ -176,4 +130,29 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
   )
 }
 
-export default CourtCaseNumberInput
+const CourtCaseNumberCurrentCaseInput: FC = () => {
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+
+  const setCourtCaseNumber = (courtCaseNumber: string) => {
+    setWorkingCase?.((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      courtCaseNumber,
+    }))
+  }
+
+  return (
+    <CourtCaseNumberInput
+      caseId={workingCase.id}
+      isIndictmentCase={isIndictmentCase(workingCase.type)}
+      courtCaseNumber={workingCase.courtCaseNumber}
+      isDisabled={
+        workingCase.state !== CaseState.SUBMITTED &&
+        workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        workingCase.state !== CaseState.RECEIVED
+      }
+      setCourtCaseNumber={setCourtCaseNumber}
+    />
+  )
+}
+
+export default CourtCaseNumberCurrentCaseInput

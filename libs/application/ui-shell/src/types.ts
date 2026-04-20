@@ -1,4 +1,5 @@
 import {
+  Application,
   Field,
   MultiField,
   ExternalDataProvider,
@@ -37,6 +38,7 @@ export type FormScreen =
 export type ResolverContext = {
   formNode: FormNode
   dataSchema: Schema
+  application?: Application
 }
 
 export enum ScreenType {

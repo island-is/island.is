@@ -8,15 +8,19 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import { ApplicationResponse } from '../../models/applications.model'
 import {
-  ApplicationsInput,
+  ApplicationResponse,
+  SubmitApplicationResponse,
+} from '../../models/applications.model'
+import {
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -33,17 +37,6 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
-  }
-
-  @Query(() => ApplicationResponse, {
-    name: 'formSystemApplications',
-  })
-  async getApplications(
-    @Args('input', { type: () => ApplicationsInput })
-    input: ApplicationsInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponse> {
-    return this.applicationsService.getApplications(user, input)
   }
 
   @Query(() => ApplicationResponse, {
@@ -80,7 +73,7 @@ export class ApplicationsResolver {
     return this.applicationsService.updateSettings(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => SubmitApplicationResponse, {
     name: 'submitFormSystemApplication',
     nullable: true,
   })
@@ -88,7 +81,7 @@ export class ApplicationsResolver {
     @Args('input', { type: () => GetApplicationInput })
     input: GetApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<SubmitApplicationResponse> {
     return this.applicationsService.submitApplication(user, input)
   }
 
@@ -113,6 +106,18 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => NotificationResponse, {
+    name: 'notifyFormSystemExternalSystem',
+    nullable: true,
+  })
+  async notifyExternalSystem(
+    @Args('input', { type: () => NotificationInput })
+    input: NotificationInput,
+    @CurrentUser() user: User,
+  ): Promise<NotificationResponse> {
+    return this.applicationsService.notifyExternalSystem(user, input)
   }
 
   @Mutation(() => Boolean, {

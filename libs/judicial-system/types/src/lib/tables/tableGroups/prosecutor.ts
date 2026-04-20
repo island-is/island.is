@@ -58,6 +58,13 @@ export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
       includeCounter: true,
     },
     {
+      type: CaseTableType.PROSECUTION_INDICTMENTS_APPEALED,
+      route: 'sakamal-i-kaeruferli',
+      title: 'Sakamál í kæruferli',
+      description: 'Úrskurðir í sakamálum sem eru í kæruferli hjá Landsrétti.',
+      includeCounter: true,
+    },
+    {
       type: CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED,
       route: 'afgreidd-sakamal',
       title: 'Afgreidd sakamál',

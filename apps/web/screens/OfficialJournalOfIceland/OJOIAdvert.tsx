@@ -115,14 +115,16 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                 </Text>
               </Box>
 
-              <Box>
-                <Text variant="h5">
-                  {formatMessage(m.advert.signatureDate)}
-                </Text>
-                <Text variant="small">
-                  {formatDate(advert.signatureDate, 'd. MMMM yyyy')}
-                </Text>
-              </Box>
+              {advert.hideSignatureDate ? null : (
+                <Box>
+                  <Text variant="h5">
+                    {formatMessage(m.advert.signatureDate)}
+                  </Text>
+                  <Text variant="small">
+                    {formatDate(advert.signatureDate, 'd. MMMM yyyy')}
+                  </Text>
+                </Box>
+              )}
 
               <Box>
                 <Text variant="h5">
@@ -285,6 +287,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
         advertText={advert.document.html}
         isLegacy={advert.document.isLegacy ?? false}
         additions={advert.additions ?? []}
+        hiddenSignatureDate={!!advert.hideSignatureDate}
       />
     </OJOIWrapper>
   )

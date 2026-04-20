@@ -13,8 +13,19 @@ export const ScreenFragment = gql`
     displayOrder
     isHidden
     isCompleted
-    multiset
-    callRuleset
+    multiMax
+    isMulti
+    shouldValidate
+    shouldPopulate
+    screenError {
+      hasError
+      title {
+        ...LanguageFields
+      }
+      message {
+        ...LanguageFields
+      }
+    }
     fields {
       ...Field
     }

@@ -78,6 +78,25 @@ export class CaseResolver {
     )
   }
 
+  @Query(() => [Case], { nullable: true })
+  async candidateMergeCases(
+    @Args('input', { type: () => CaseQueryInput })
+    input: CaseQueryInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case[]> {
+    this.logger.debug('Getting candidate merge cases')
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CANDIDATE_MERGE_CASES,
+      backendService.getCandidateMergeCases(input.id),
+      input.id,
+    )
+  }
+
   @Mutation(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
   createCase(
@@ -153,8 +172,11 @@ export class CaseResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestCourtRecordSignature(input.caseId),
+      AuditedAction.REQUEST_COURT_RECORD_SIGNATURE,
+      backendService.requestCourtRecordSignature(
+        input.caseId,
+        input.method ?? 'mobile',
+      ),
       input.caseId,
     )
   }
@@ -167,14 +189,18 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
+    const { caseId, documentToken, method } = input
 
     this.logger.debug(`Confirming signature of court record for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getCourtRecordSignatureConfirmation(caseId, documentToken),
+      AuditedAction.CONFIRM_COURT_RECORD_SIGNATURE,
+      backendService.getCourtRecordSignatureConfirmation(
+        caseId,
+        documentToken,
+        method ?? 'mobile',
+      ),
       caseId,
     )
   }
@@ -192,7 +218,10 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestRulingSignature(input.caseId),
+      backendService.requestRulingSignature(
+        input.caseId,
+        input.method ?? 'mobile',
+      ),
       input.caseId,
     )
   }
@@ -205,14 +234,18 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
+    const { caseId, documentToken, method } = input
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getRulingSignatureConfirmation(caseId, documentToken),
+      backendService.getRulingSignatureConfirmation(
+        caseId,
+        documentToken,
+        method ?? 'mobile',
+      ),
       caseId,
     )
   }

@@ -31,6 +31,7 @@ export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 export type ApplicationHistoryItem = {
   date: Date
   log: string
+  subLog?: string
 }
 
 export interface ActionCardMetaData {
@@ -51,6 +52,7 @@ export interface ActionCardMetaData {
   draftTotalSteps?: number
   draftFinishedSteps?: number
   historyButton?: string
+  displayPruneAt?: boolean
 }
 
 export interface Application<TAnswers = FormValue> {
@@ -87,6 +89,7 @@ export interface ApplicationCard {
   orgContentfulId?: string
   nationalId?: string
   actionCard?: ActionCardMetaData
+  pruneAt?: Date
 }
 export interface ApplicationWithAttachments extends Application {
   attachments: object

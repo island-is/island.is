@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
 
+import { fakeBusiness } from '../constants'
+
 const getBusinessesByNationalId = async (
   nationalId: string,
 ): Promise<NationalRegistryResponseBusiness> => {
@@ -23,6 +25,10 @@ export default async function handler(
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
 
-  const businesses = await getBusinessesByNationalId(nationalId)
+  const businesses =
+    process.env.NODE_ENV === 'production'
+      ? await getBusinessesByNationalId(nationalId)
+      : { items: [fakeBusiness] }
+
   res.status(200).json(businesses)
 }

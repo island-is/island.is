@@ -73,6 +73,7 @@ export interface TUploadFile extends UploadFile {
   fileRepresentative?: string | null
   previewUrl?: string | null
   isKeyAccessible?: boolean | null
+  defendantId?: string | null
 }
 
 export interface UploadFileState {
@@ -364,8 +365,9 @@ const useS3Upload = (
         isKeyAccessible: file.isKeyAccessible,
       }
 
-      if (defendantId) {
-        return addDefendantFileToCaseState(baseInput, defendantId)
+      const fileDefendantId = file.defendantId ?? defendantId
+      if (fileDefendantId) {
+        return addDefendantFileToCaseState(baseInput, fileDefendantId)
       }
 
       if (civilClaimantId) {

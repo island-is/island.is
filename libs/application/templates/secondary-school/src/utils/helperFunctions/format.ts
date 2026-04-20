@@ -23,3 +23,13 @@ export const getTranslatedProgram = (
   const fallback = program?.nameIs || ''
   return (lang === 'is' ? program?.nameIs : program?.nameEn) || fallback
 }
+
+export const getTranslatedString = (
+  lang?: string,
+  strIs?: string,
+  strEn?: string,
+): string => {
+  const fallback = strIs || ''
+  if (!lang) return fallback
+  return (lang === 'is' ? strIs : strEn) || fallback
+}

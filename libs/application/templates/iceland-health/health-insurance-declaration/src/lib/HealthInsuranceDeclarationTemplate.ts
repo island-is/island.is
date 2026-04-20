@@ -4,12 +4,12 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   DefaultEvents,
   FormModes,
   InstitutionNationalIds,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -22,6 +22,8 @@ import {
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type HealthInsuranceDeclarationEvent =
   | { type: DefaultEvents.APPROVE }
@@ -47,6 +49,18 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
   dataSchema: HealthInsuranceDeclarationSchema,
   institution: application.general.institutionName,
   featureFlag: Features.HealthInsuranceDeclaration,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+    {
+      type: AuthDelegationType.LegalRepresentative,
+    },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+  ],
+  requiredScopes: [ApiScope.icelandHealth],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -84,9 +98,9 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
                   externalDataId: 'insuranceStatementData',
                 }),
                 UserProfileApi,
-                NationalRegistryUserApi,
-                ChildrenCustodyInformationApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3UserApi,
+                ChildrenCustodyInformationApiV3,
+                NationalRegistryV3SpouseApi,
               ],
             },
           ],

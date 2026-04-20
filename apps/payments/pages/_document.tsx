@@ -7,6 +7,7 @@ import Document, {
   DocumentContext,
 } from 'next/document'
 import { defaultLanguage } from '@island.is/shared/constants'
+import Script from 'next/script'
 
 interface Props {
   lang: string
@@ -27,7 +28,13 @@ class MyDocument extends Document<Props> {
 
     return (
       <Html lang={lang}>
-        <Head />
+        <Head>
+          <Script
+            src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"
+            strategy="beforeInteractive"
+            crossOrigin="anonymous"
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />

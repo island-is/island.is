@@ -9,6 +9,7 @@ export type Icon =
   | 'arrowUp'
   | 'arrowDown'
   | 'attach'
+  | 'briefcase'
   | 'business'
   | 'calculator'
   | 'calendar'
@@ -61,6 +62,7 @@ export type Icon =
   | 'pencil'
   | 'people'
   | 'person'
+  | 'personAdd'
   | 'playCircle'
   | 'pause'
   | 'pauseCircle'
@@ -113,6 +115,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     bank: 'Bank',
+    briefcase: 'Briefcase',
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
@@ -168,6 +171,7 @@ export default {
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
+    personAdd: 'PersonAdd',
     playCircle: 'PlayCircle',
     print: 'Print',
     reader: 'Reader',
@@ -215,6 +219,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     bank: 'BankOutline',
+    briefcase: 'BriefcaseOutline',
     business: 'BusinessOutline',
     calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
@@ -270,6 +275,7 @@ export default {
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
+    personAdd: 'PersonAddOutline',
     playCircle: 'PlayCircleOutline',
     print: 'PrintOutline',
     reader: 'ReaderOutline',

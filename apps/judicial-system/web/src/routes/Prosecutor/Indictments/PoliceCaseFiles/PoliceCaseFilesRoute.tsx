@@ -1,37 +1,21 @@
-import {
-  FC,
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { FC, memo, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
-import {
-  Box,
-  FileUploadStatus,
-  InputFileUpload,
-} from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import {
-  errors as errorMessages,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentInfo,
   InfoBox,
-  Item,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -40,261 +24,20 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
-  CaseFileCategory,
   CaseOrigin,
+  PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  TUploadFile,
-  useFileList,
-  useS3Upload,
-  useUploadFiles,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { PoliceCaseFilesData } from '../../components'
 import {
-  mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFileCheck,
-  PoliceCaseFiles,
-  PoliceCaseFilesData,
-} from '../../components'
+  PoliceDigitalCaseFilesData,
+  PoliceDigitalCaseFilesList,
+} from '../../components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
+import UploadFilesToPoliceCase from './UploadFilesToPoliceCase'
 import { strings } from './PoliceCaseFilesRoute.strings'
-
-interface UploadFilesToPoliceCaseProps {
-  caseId: string
-  policeCaseNumber: string
-  setAllUploaded: (allUploaded: boolean) => void
-  caseFiles: CaseFile[]
-  caseOrigin?: CaseOrigin | null
-}
-
-const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
-  caseId,
-  policeCaseNumber,
-  setAllUploaded,
-  caseFiles,
-  caseOrigin,
-}) => {
-  const { formatMessage } = useIntl()
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    addUploadFile,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(caseFiles)
-  const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
-    useS3Upload(caseId)
-  const { onOpenFile } = useFileList({
-    caseId,
-  })
-  const {
-    data: policeData,
-    loading: policeDataLoading,
-    error: policeDataError,
-  } = useIndictmentPoliceCaseFilesQuery({
-    variables: { input: { caseId } },
-    skip: caseOrigin !== CaseOrigin.LOKE,
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-  const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
-    useState<boolean>(false)
-  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
-
-  const errorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
-      return formatMessage(errorMessages.general)
-    }
-    if (uploadFiles.some((file) => file.size === 0)) {
-      return 'Villa kom upp. Tómt skjal.'
-    } else {
-      return undefined
-    }
-  }, [uploadFiles, formatMessage])
-
-  useEffect(() => {
-    setAllUploaded(allFilesDoneOrError && !isUploadingPoliceCaseFiles)
-  }, [allFilesDoneOrError, isUploadingPoliceCaseFiles, setAllUploaded])
-
-  useEffect(() => {
-    if (caseOrigin !== CaseOrigin.LOKE) {
-      setPoliceCaseFiles({
-        files: [],
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeDataError) {
-      setPoliceCaseFiles({
-        files: [],
-        isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
-      })
-    } else if (policeDataLoading) {
-      setPoliceCaseFiles({
-        files: [],
-        isLoading: true,
-        hasError: false,
-      })
-    } else {
-      setPoliceCaseFiles({
-        files:
-          policeData?.policeCaseFiles?.filter(
-            (file) => file.policeCaseNumber === policeCaseNumber,
-          ) ?? [],
-        isLoading: false,
-        hasError: false,
-      })
-    }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    setPoliceCaseFiles,
-    caseOrigin,
-    caseFiles,
-    policeCaseNumber,
-  ])
-
-  useEffect(() => {
-    if (policeCaseFiles?.files.length === 0) {
-      return
-    }
-
-    setPoliceCaseFileList(
-      policeCaseFiles?.files
-        .filter(
-          (file) =>
-            !caseFiles.some((caseFile) => caseFile.policeFileId === file.id),
-        )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) ?? [],
-    )
-  }, [policeCaseFiles?.files, caseFiles, policeCaseNumber])
-
-  const uploadPoliceCaseFileCallback = (file: TUploadFile, id?: string) => {
-    if (id) {
-      addUploadFile({ ...file, id: id ?? file.id })
-    }
-
-    setPoliceCaseFileList((previous) =>
-      id
-        ? previous.filter((p) => p.id !== file.id)
-        : previous.map((p) =>
-            p.id === file.id ? { ...p, checked: false } : p,
-          ),
-    )
-  }
-
-  const removeFileCB = (file: TUploadFile) => {
-    const policeCaseFile = policeCaseFiles?.files.find(
-      (f) => f.id === file.policeFileId,
-    )
-
-    if (policeCaseFile) {
-      setPoliceCaseFileList((previous) => [
-        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-        ...previous,
-      ])
-    }
-
-    removeUploadFile(file)
-  }
-
-  const onPoliceCaseFileUpload = async (selectedFiles: Item[]) => {
-    let currentChapter: number | undefined | null
-    let currentOrderWithinChapter: number | undefined | null
-
-    const getCategory = (file: PoliceCaseFileCheck) => {
-      switch (file.type) {
-        case 'RVSK':
-          return CaseFileCategory.COST_BREAKDOWN
-        case 'REIKN':
-          return CaseFileCategory.CASE_FILE
-        default:
-          return CaseFileCategory.CASE_FILE_RECORD
-      }
-    }
-
-    const filesToUpload = policeCaseFileList
-      .filter((p) => selectedFiles.some((f) => f.id === p.id))
-      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
-      .map((f) => {
-        if (
-          f.chapter !== undefined &&
-          f.chapter !== null &&
-          f.chapter !== currentChapter
-        ) {
-          currentChapter = f.chapter
-          currentOrderWithinChapter = Math.max(
-            -1,
-            ...caseFiles
-              .filter((p) => p.chapter === currentChapter)
-              .map((p) => p.orderWithinChapter ?? -1),
-          )
-        }
-
-        return {
-          id: f.id,
-          name: f.name,
-          type: 'application/pdf',
-          category: getCategory(f),
-          policeCaseNumber: f.policeCaseNumber,
-          chapter: f.chapter ?? undefined,
-          orderWithinChapter:
-            currentOrderWithinChapter !== undefined &&
-            currentOrderWithinChapter !== null
-              ? ++currentOrderWithinChapter
-              : undefined,
-          displayDate: f.displayDate ?? undefined,
-          policeFileId: f.id,
-          policeType: f.type,
-        }
-      })
-
-    setIsUploadingPoliceCaseFiles(true)
-
-    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
-
-    setIsUploadingPoliceCaseFiles(false)
-  }
-
-  return (
-    <section className={grid({ gap: 5 })}>
-      <PoliceCaseFiles
-        onUpload={onPoliceCaseFileUpload}
-        policeCaseFileList={policeCaseFileList}
-        policeCaseFiles={policeCaseFiles}
-      />
-      <InputFileUpload
-        name="fileUpload"
-        files={uploadFiles}
-        accept="application/pdf"
-        title={formatMessage(strings.inputFileUpload.header)}
-        description={formatMessage(strings.inputFileUpload.description)}
-        buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
-        onChange={(files) =>
-          handleUpload(
-            addUploadFiles(files, {
-              category: CaseFileCategory.CASE_FILE_RECORD,
-              policeCaseNumber,
-            }),
-            updateUploadFile,
-          )
-        }
-        onOpenFile={(file) => onOpenFile(file)}
-        onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) => handleRetry(file, updateUploadFile)}
-        errorMessage={errorMessage}
-      />
-    </section>
-  )
-}
 
 type AllUploadedState = {
   [policeCaseNumber: string]: boolean
@@ -326,36 +69,168 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
   }) => {
     const { formatMessage } = useIntl()
 
+    const {
+      data: policeData,
+      loading: policeDataLoading,
+      error: policeDataError,
+    } = useIndictmentPoliceCaseFilesQuery({
+      variables: { input: { caseId } },
+      skip: caseOrigin !== CaseOrigin.LOKE,
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+
+    const {
+      digitalCaseFiles,
+      digitalCaseFilesLoading,
+      digitalCaseFilesError,
+      deletePoliceDigitalCaseFile,
+    } = usePoliceDigitalCaseFile(caseId, caseOrigin)
+
+    const [policeCaseFilesData, setPoliceCaseFiles] =
+      useState<PoliceCaseFilesData>()
+
+    const [policeDigitalCaseFileData, setPoliceDigitalCaseFileData] =
+      useState<PoliceDigitalCaseFilesData>()
+
+    useEffect(() => {
+      // get case files
+      if (caseOrigin !== CaseOrigin.LOKE) {
+        setPoliceCaseFiles({
+          files: [],
+          isLoading: false,
+          hasError: false,
+        })
+      } else if (policeDataError) {
+        setPoliceCaseFiles({
+          files: [],
+          isLoading: false,
+          hasError: true,
+          errorCode: policeDataError?.graphQLErrors[0]?.extensions
+            ?.code as string,
+        })
+      } else if (policeDataLoading) {
+        setPoliceCaseFiles({
+          files: [],
+          isLoading: true,
+          hasError: false,
+        })
+      } else {
+        setPoliceCaseFiles({
+          files: policeData?.policeCaseFiles ?? [],
+          isLoading: false,
+          hasError: false,
+        })
+      }
+    }, [
+      policeData,
+      policeDataError,
+      policeDataLoading,
+      setPoliceCaseFiles,
+      caseOrigin,
+      caseFiles,
+    ])
+
+    useEffect(() => {
+      // get digital case files
+      if (caseOrigin !== CaseOrigin.LOKE) {
+        setPoliceDigitalCaseFileData({
+          files: [],
+          isLoading: false,
+          hasError: false,
+        })
+      } else if (digitalCaseFilesError) {
+        setPoliceDigitalCaseFileData({
+          files: [],
+          isLoading: false,
+          hasError: true,
+        })
+      } else if (digitalCaseFilesLoading) {
+        setPoliceDigitalCaseFileData({
+          files: [],
+          isLoading: true,
+          hasError: false,
+        })
+      } else {
+        const files = digitalCaseFiles ?? []
+        setPoliceDigitalCaseFileData({
+          files,
+          isLoading: false,
+          hasError: false,
+        })
+      }
+    }, [
+      caseOrigin,
+      caseFiles,
+      digitalCaseFilesError,
+      digitalCaseFilesLoading,
+      digitalCaseFiles,
+      policeCaseNumbers,
+    ])
+
     return (
       <Box className={grid({ gap: 4 })}>
-        {policeCaseNumbers?.map((policeCaseNumber, index) => (
-          <Box key={index}>
-            <SectionHeading
-              title={formatMessage(strings.policeCaseNumberSectionHeading, {
-                policeCaseNumber,
-              })}
-              marginBottom={2}
-            />
-            <Box marginBottom={3}>
-              <IndictmentInfo
-                policeCaseNumber={policeCaseNumber}
-                subtypes={subtypes}
-                crimeScenes={crimeScenes}
+        {policeCaseNumbers?.map((policeCaseNumber, index) => {
+          const currentDigitalCaseFiles =
+            digitalCaseFiles?.filter(
+              (file) => file.policeCaseNumber === policeCaseNumber,
+            ) ?? []
+
+          const showDigitalCaseFiles =
+            currentDigitalCaseFiles.length > 0 ||
+            policeDigitalCaseFileData?.hasError
+
+          return (
+            <Box key={index}>
+              <SectionHeading
+                title={formatMessage(strings.policeCaseNumberSectionHeading, {
+                  policeCaseNumber,
+                })}
+                marginBottom={2}
               />
+              <Box marginBottom={3}>
+                <IndictmentInfo
+                  policeCaseNumber={policeCaseNumber}
+                  subtypes={subtypes}
+                  crimeScenes={crimeScenes}
+                />
+              </Box>
+              <UploadFilesToPoliceCase
+                caseId={caseId}
+                caseFiles={
+                  caseFiles?.filter(
+                    (file) => file.policeCaseNumber === policeCaseNumber,
+                  ) ?? []
+                }
+                policeCaseFilesData={{
+                  files:
+                    policeCaseFilesData?.files?.filter(
+                      (file) => file.policeCaseNumber === policeCaseNumber,
+                    ) ?? [],
+                  isLoading: !!policeCaseFilesData?.isLoading,
+                  hasError: !!policeCaseFilesData?.hasError,
+                  errorCode: policeCaseFilesData?.errorCode,
+                }}
+                policeCaseNumber={policeCaseNumber}
+                setAllUploaded={setAllUploaded(policeCaseNumber)}
+              />
+              {showDigitalCaseFiles && (
+                <PoliceDigitalCaseFilesList
+                  digitalCaseFiles={currentDigitalCaseFiles}
+                  onRemove={(file: PoliceDigitalCaseFile) => {
+                    deletePoliceDigitalCaseFile(file.id)
+                  }}
+                  isLoading={!!policeDigitalCaseFileData?.isLoading}
+                  errorMessage={
+                    policeDigitalCaseFileData?.hasError
+                      ? 'Ekki tókst að sækja rafræn skjöl í LÖKE.'
+                      : undefined
+                  }
+                />
+              )}
             </Box>
-            <UploadFilesToPoliceCase
-              caseId={caseId}
-              caseFiles={
-                caseFiles?.filter(
-                  (file) => file.policeCaseNumber === policeCaseNumber,
-                ) ?? []
-              }
-              policeCaseNumber={policeCaseNumber}
-              setAllUploaded={setAllUploaded(policeCaseNumber)}
-              caseOrigin={caseOrigin}
-            />
-          </Box>
-        ))}
+          )
+        })}
       </Box>
     )
   },

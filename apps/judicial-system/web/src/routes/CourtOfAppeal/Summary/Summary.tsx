@@ -19,8 +19,8 @@ import {
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -53,7 +53,7 @@ const Summary: FC = () => {
 
   const handleComplete = async () => {
     const caseTransitioned =
-      workingCase.appealState !== CaseAppealState.COMPLETED
+      workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED
         ? await transitionCase(
             workingCase.id,
             CaseTransition.COMPLETE_APPEAL,
@@ -62,7 +62,8 @@ const Summary: FC = () => {
         : true
 
     if (caseTransitioned) {
-      workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+      workingCase.appealCase?.appealRulingDecision ===
+      AppealCaseRulingDecision.DISCONTINUED
         ? setVisibleModal('AppealDiscontinued')
         : setVisibleModal('AppealCompleted')
     }
@@ -92,7 +93,7 @@ const Summary: FC = () => {
         title={formatMessage(strings.alertBannerTitle)}
         description={getAppealDecision(
           formatMessage,
-          workingCase.appealRulingDecision,
+          workingCase.appealCase?.appealRulingDecision,
         )}
       />
       <PageLayout
@@ -117,7 +118,7 @@ const Summary: FC = () => {
           <Box marginBottom={6}>
             <Conclusion
               title={formatMessage(conclusion.appealTitle)}
-              conclusionText={workingCase.appealConclusion}
+              conclusionText={workingCase.appealCase?.appealConclusion}
             />
           </Box>
           <Box marginBottom={6}>

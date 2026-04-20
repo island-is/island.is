@@ -1,7 +1,11 @@
 export { StudentTranscriptApi as HolarApi } from './gen/fetch'
 export { StudentTrackInstitution as HolarStudentTrackInstitution } from './gen/fetch'
 export { StudentTrack as HolarStudentTrack } from './gen/fetch'
+export { StudentFile as HolarStudentFile } from './gen/fetch'
 export { NemandiGetLocaleEnum as HolarLocale } from './gen/fetch'
-export { NemandiFerillFerillFileTranscriptGetLocaleEnum as HolarTranscriptLocale } from './gen/fetch'
 export { NemandiFerillFerillGetLocaleEnum as HolarFerillLocale } from './gen/fetch'
+export { NemandiFerillFerillFileTypeGetLocaleEnum as HolarTranscriptLocale } from './gen/fetch'
+export { FileType as HolarFileType } from './gen/fetch'
+export { StudentTrackOverview as HolarStudentTrackOverview } from './gen/fetch'
+
 export * from './holarUniversityCareerClient.config'

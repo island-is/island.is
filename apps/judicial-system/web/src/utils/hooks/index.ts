@@ -16,13 +16,11 @@ export {
   UploadState,
   useCourtUpload,
 } from './useCourtUpload'
-export {
-  getAppealDecision,
-  default as useAppealAlertBanner,
-} from './useAppealAlertBanner'
+export { getAppealDecision, default as useAppealCase } from './useAppealCase'
 export { default as useSort } from './useSort/useSort'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
+export { useSyncDefendantsFromPolice } from './usePoliceDefendants'
 export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
@@ -33,10 +31,11 @@ export { default as useSections } from './useSections'
 export { default as useCaseList } from './useCaseList'
 export { default as useNationalRegistry } from './useNationalRegistry'
 export { default as useCivilClaimants } from './useCivilClaimants'
-export { default as useSubpoena } from './useSubpoena'
+export { default as useSubpoena, useCreateSubpoenas } from './useSubpoena'
 export { default as useLawTag } from './useLawTag/useLawTag'
 export { default as useCourtSessions } from './useCourtSessions'
 export { default as useCourtDocuments } from './useCourtDocuments'
 export { default as useUsers } from './useUsers'
 export { default as useFiledCourtDocuments } from './useFiledCourtDocuments'
 export { default as useDebouncedInput } from './useDebouncedInput'
+export { default as usePoliceDigitalCaseFile } from './usePoliceDigitalCaseFile'

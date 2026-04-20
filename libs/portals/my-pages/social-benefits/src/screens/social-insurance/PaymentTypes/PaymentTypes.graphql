@@ -1,0 +1,14 @@
+query GetPaymentTypes {
+  socialInsurancePaymentTypes {
+    name
+    dateFrom
+    dateTo
+  }
+}
+
+query GetChildBenefits {
+  socialInsuranceChildBenefits {
+    name
+    nationalId
+  }
+}

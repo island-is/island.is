@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseNotificationType,
@@ -30,22 +30,17 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
       ...baseCase,
       type,
     } as Case)
-
   const user = { id: uuid(), name: 'Test' } as User
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let internalNotificationController: InternalNotificationController
 
   beforeEach(async () => {
-    const { messageService, internalNotificationController: controller } =
+    const { queuedMessages, internalNotificationController: controller } =
       await createTestingNotificationModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     internalNotificationController = controller
-
-    const mockSendMessagesToQueue =
-      messageService.sendMessagesToQueue as jest.Mock
-    mockSendMessagesToQueue.mockResolvedValueOnce(undefined)
   })
 
   const notificationScenarios = [
@@ -133,9 +128,7 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         { type: notificationType, userDescriptor: { name: user.name } },
       )
 
-    expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-      expectedMessages,
-    )
+    expect(mockQueuedMessages).toEqual(expectedMessages)
     expect(result).toEqual({ delivered: true })
   })
 

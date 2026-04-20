@@ -11,7 +11,7 @@ const base = style({
   ':hover': {
     fontWeight: 'bolder',
   },
-  cursor: 'grab',
+  cursor: 'pointer',
   flexShrink: 0,
 })
 
@@ -69,15 +69,16 @@ export const navComponent = styleVariants({
 })
 
 const baseBackground = style({
-  width: '25px',
-  minWidth: '25px',
+  width: '38px',
+  minWidth: '38px',
   height: '44px',
   borderRadius: `${theme.border.radius.standard} 0 0 ${theme.border.radius.standard}`,
   textAlign: 'center',
-  flex: '0 0 25px',
+  flex: '0 0 38px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  cursor: 'grab',
 })
 
 export const navBackgroundActive = styleVariants({
@@ -126,6 +127,8 @@ export const chevronStyle = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: 18,
-  width: 18,
+  height: 42,
+  width: 40,
+
+  margin: -12,
 })

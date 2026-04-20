@@ -4,8 +4,8 @@ import { validatorErrorMessages } from '../messages'
 import {
   getApplicationAnswers,
   getStartDateAndEndDate,
-} from '../oldAgePensionUtils'
-import { AnswerValidationConstants } from '../constants'
+} from '../../utils/oldAgePensionUtils'
+import { AnswerValidationConstants } from '../../utils/constants'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { buildError } from './utils'
 

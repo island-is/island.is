@@ -25,7 +25,7 @@ import { DelegationPaths } from '../../../lib/paths'
 import { useNavigate } from 'react-router-dom'
 import { DelegationViewModal } from '../DelegationViewModal'
 
-const prepareDomainName = (domainName: string | null) =>
+export const prepareDomainName = (domainName: string | null) =>
   domainName === ALL_DOMAINS ? null : domainName
 
 export const DelegationsOutgoing = () => {

@@ -1,15 +1,15 @@
 import {
+  ConsentHistoryEntryDto,
   EuPatientConsentDto,
   EuPatientConsentStatus,
 } from '@island.is/clients/health-directorate'
 import { PermitStatusEnum } from '../models/enums'
 
 import { Country } from '../models/permits/country.model'
-import { Permit } from '../models/permits/permits'
+import { Permit } from '../models/permits/permit.model'
+import { PermitHistoryEntry } from '../models/permits/permitHistoryEntry.model'
 
-export const mapPermitStatus = (
-  status: EuPatientConsentStatus,
-): PermitStatusEnum => {
+const mapPermitStatus = (status: EuPatientConsentStatus): PermitStatusEnum => {
   switch (status) {
     case EuPatientConsentStatus.ACTIVE:
       return PermitStatusEnum.active
@@ -24,42 +24,36 @@ export const mapPermitStatus = (
   }
 }
 
-export const mapCountryPermitStatus = (
-  status: string,
-): EuPatientConsentStatus => {
-  switch (status) {
-    case PermitStatusEnum.active:
-      return EuPatientConsentStatus.ACTIVE
-    case PermitStatusEnum.expired:
-      return EuPatientConsentStatus.EXPIRED
-    case PermitStatusEnum.inactive:
-      return EuPatientConsentStatus.INACTIVE
-    case PermitStatusEnum.awaitingApproval:
-      return EuPatientConsentStatus.PENDING
-    default:
-      return EuPatientConsentStatus.INACTIVE
-  }
-}
+const mapCountries = (
+  countries: Array<{ code: string; name: string }>,
+): Country[] =>
+  countries.map((country) => ({ code: country.code, name: country.name }))
 
 export const mapPermit = (
   permit: EuPatientConsentDto,
   locale: string,
 ): Permit => {
   return {
-    cacheId: `${permit.id}-${locale}`,
-    id: permit.id ?? '',
+    cacheId: `${permit.id ?? 'no-id'}-${locale}`,
+    id: permit.id,
     status: mapPermitStatus(permit.status),
     createdAt: permit.createdAt,
     validFrom: permit.validFrom,
     validTo: permit.validTo,
     codes: permit.codes ?? [],
-    countries:
-      permit.countries?.map((country) => {
-        const countryObj: Country = {
-          code: country.code,
-          name: country.name,
-        }
-        return countryObj
-      }) ?? [],
+    countries: mapCountries(permit.countries ?? []),
+  }
+}
+
+export const mapPermitHistoryEntry = (
+  entry: ConsentHistoryEntryDto,
+): PermitHistoryEntry => {
+  return {
+    countries: mapCountries(entry.countries ?? []),
+    consentTypes: entry.consentTypes ?? [],
+    validFrom: entry.validFrom,
+    validTo: entry.validTo,
+    changedAt: entry.changedAt,
+    createdAt: entry.createdAt,
   }
 }

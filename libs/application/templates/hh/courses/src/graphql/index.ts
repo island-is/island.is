@@ -15,6 +15,7 @@ export const GET_COURSE_BY_ID_QUERY = gql`
   query GetCourseById($input: GetCourseByIdInput!) {
     getCourseById(input: $input) {
       course {
+        courseListPageId
         instances {
           id
           startDate
@@ -24,22 +25,9 @@ export const GET_COURSE_BY_ID_QUERY = gql`
           }
           location
           displayedTitle
-          price {
-            amount
-          }
+          chargeItemCode
           description
         }
-      }
-    }
-  }
-`
-
-export const GET_HEALTHCENTERS_QUERY = gql`
-  query GetHealthCenters {
-    rightsPortalPaginatedHealthCenters {
-      data {
-        id
-        name
       }
     }
   }

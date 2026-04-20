@@ -1,8 +1,6 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { FetchResult, MutationFunctionOptions } from '@apollo/client'
 
-import { Exact } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   isAcceptingCaseDecision,
@@ -21,18 +19,17 @@ import {
   FormContext,
   PdfButton,
   SectionHeading,
+  SignatureType,
   SignedDocument,
+  SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/Modals/SigningModal/requestRulingSignature.generated'
 import {
   CaseDecision,
   CaseState,
   CaseType,
-  RequestSignatureInput,
+  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
 const showCustodyNotice = (
   type?: CaseType | null,
@@ -47,40 +44,46 @@ const showCustodyNotice = (
 }
 
 interface Props {
-  isRequestingCourtRecordSignature: boolean
-  handleRequestCourtRecordSignature: (
-    options?:
-      | MutationFunctionOptions<
-          RequestCourtRecordSignatureMutation,
-          Exact<{
-            input: RequestSignatureInput
-          }>
-        >
-      | undefined,
-  ) => Promise<FetchResult<RequestRulingSignatureMutation>>
-  isRequestingRulingSignature: boolean
-  requestRulingSignature: (
-    options?:
-      | MutationFunctionOptions<
-          RequestRulingSignatureMutation,
-          Exact<{
-            input: RequestSignatureInput
-          }>
-        >
-      | undefined,
-  ) => Promise<FetchResult<RequestRulingSignatureMutation>>
+  onCourtRecordSignatureRequested: (
+    response: RequestSignatureResponse,
+    isAudkenni: boolean,
+  ) => void
+  onRulingSignatureRequested: (
+    response: RequestSignatureResponse,
+    isAudkenni: boolean,
+  ) => void
+  retrySignatureType?: SignatureType | null
+  onRetryCleared?: () => void
 }
 
 const CaseDocuments: FC<Props> = ({
-  isRequestingCourtRecordSignature,
-  handleRequestCourtRecordSignature,
-  isRequestingRulingSignature,
-  requestRulingSignature,
+  onCourtRecordSignatureRequested,
+  onRulingSignatureRequested,
+  retrySignatureType,
+  onRetryCleared,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-
   const { user } = useContext(UserContext)
+  const [showMethodSelectionModal, setShowMethodSelectionModal] = useState<{
+    type: SignatureType
+  } | null>(null)
+  const prevRetrySignatureTypeRef = useRef<SignatureType | null | undefined>(
+    null,
+  )
+
+  // Handle retry by reopening the method selection modal
+  useEffect(() => {
+    if (
+      retrySignatureType &&
+      retrySignatureType !== prevRetrySignatureTypeRef.current
+    ) {
+      setShowMethodSelectionModal({ type: retrySignatureType })
+      prevRetrySignatureTypeRef.current = retrySignatureType
+    } else if (!retrySignatureType) {
+      prevRetrySignatureTypeRef.current = null
+    }
+  }, [retrySignatureType])
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
 
@@ -151,10 +154,9 @@ const CaseDocuments: FC<Props> = ({
                 <Button
                   size="small"
                   data-testid="signCourtRecordButton"
-                  loading={isRequestingCourtRecordSignature}
                   onClick={(event) => {
                     event.stopPropagation()
-                    handleRequestCourtRecordSignature()
+                    setShowMethodSelectionModal({ type: 'courtRecord' })
                   }}
                 >
                   {formatMessage(m.signButton)}
@@ -183,10 +185,9 @@ const CaseDocuments: FC<Props> = ({
                 ) : user?.id === workingCase.judge?.id ? (
                   <Button
                     size="small"
-                    loading={isRequestingRulingSignature}
                     onClick={(event) => {
                       event.stopPropagation()
-                      requestRulingSignature()
+                      setShowMethodSelectionModal({ type: 'ruling' })
                     }}
                   >
                     {formatMessage(m.signButton)}
@@ -198,6 +199,27 @@ const CaseDocuments: FC<Props> = ({
           </li>
         )}
       </Box>
+      {showMethodSelectionModal && (
+        <SigningMethodSelectionModal
+          workingCase={workingCase}
+          signatureType={showMethodSelectionModal.type}
+          onClose={() => {
+            setShowMethodSelectionModal(null)
+            // Clear retry state when modal is closed normally
+            if (retrySignatureType === showMethodSelectionModal.type) {
+              onRetryCleared?.()
+            }
+          }}
+          onSignatureRequested={(response, isAudkenni) => {
+            setShowMethodSelectionModal(null)
+            if (showMethodSelectionModal.type === 'ruling') {
+              onRulingSignatureRequested(response, isAudkenni)
+            } else {
+              onCourtRecordSignatureRequested(response, isAudkenni)
+            }
+          }}
+        />
+      )}
     </Box>
   )
 }

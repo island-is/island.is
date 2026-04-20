@@ -1,11 +1,11 @@
 import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
-  Tooltip as ReakitTooltip,
+  Tooltip as AriaTooltip,
+  TooltipAnchor,
   TooltipArrow,
-  TooltipReference,
-  useTooltipState,
-} from 'reakit'
+  TooltipProvider,
+} from '@ariakit/react'
 import * as styles from './ToolTip.css'
 import { Colors } from '@island.is/island-ui/theme'
 import { Icon, Size } from '@island.is/island-ui/core'
@@ -41,6 +41,7 @@ const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
       fill="none"
       viewBox="0 0 16 16"
       style={{ transform }}
+      aria-hidden="true"
     >
       <path
         fill={variant === 'white' ? 'white' : '#F2F7FF'}
@@ -59,6 +60,7 @@ const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
 interface TooltipProps {
   placement?: Placement
   text: React.ReactNode
+  ariaLabel?: string
   iconSize?: Size
   color?: Colors
   children?: ReactElement
@@ -71,6 +73,7 @@ interface TooltipProps {
 export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   placement = 'bottom',
   text,
+  ariaLabel,
   iconSize = 'small',
   color = 'dark200',
   children,
@@ -79,33 +82,25 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   renderInPortal = true,
   variant = 'dark',
 }) => {
-  const tooltip = useTooltipState({
-    animated: 250,
-    ...(placement && { placement }),
-  })
-
   if (!text) {
     return null
   }
 
+  const AnchorTag = as
+
   return (
-    <>
+    <TooltipProvider placement={placement} animated={250}>
       {children ? (
-        <TooltipReference aria-label={text} {...tooltip} {...children.props}>
-          {(referenceProps: any) =>
-            React.cloneElement(children, referenceProps)
-          }
-        </TooltipReference>
+        <TooltipAnchor render={children} />
       ) : (
-        <TooltipReference {...tooltip} as={as} className={cn(styles.icon)}>
+        <TooltipAnchor
+          aria-label={typeof text === 'string' ? text : ariaLabel}
+          render={<AnchorTag className={cn(styles.icon)} />}
+        >
           <Icon icon="informationCircle" color={color} size={iconSize} />
-        </TooltipReference>
+        </TooltipAnchor>
       )}
-      <ReakitTooltip
-        {...tooltip}
-        unstable_portal={renderInPortal}
-        className={styles.z}
-      >
+      <AriaTooltip portal={renderInPortal} className={styles.z}>
         <div
           className={cn(styles.tooltip, {
             [styles.fullWidth]: fullWidth,
@@ -114,13 +109,13 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
           })}
         >
           {(variant === 'light' || variant === 'white') && (
-            <TooltipArrow {...tooltip}>
-              <ArrowIcon placement={tooltip.placement} variant={variant} />
+            <TooltipArrow>
+              <ArrowIcon placement={placement} variant={variant} />
             </TooltipArrow>
           )}
           {text}
         </div>
-      </ReakitTooltip>
-    </>
+      </AriaTooltip>
+    </TooltipProvider>
   )
 }

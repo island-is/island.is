@@ -7,12 +7,12 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import {
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   Form,
   FormModes,
   HealthInsuranceStatementsApi,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { application } from '../lib/messages'
@@ -50,17 +50,17 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: prerequisites.dataProviders.nationalRegistryTitle,
               subTitle: prerequisites.dataProviders.nationalRegistryDescription,
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
+              provider: ChildrenCustodyInformationApiV3,
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryV3SpouseApi,
               title: '',
               subTitle: '',
             }),

@@ -7,7 +7,10 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
@@ -48,7 +51,6 @@ export class EventLogService {
   constructor(
     @InjectModel(EventLog)
     private readonly eventLogModel: typeof EventLog,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -112,7 +114,7 @@ export class EventLogService {
       return false
     } finally {
       if (caseId) {
-        this.addEventNotificationToQueue({
+        this.addMessagesForEventNotificationToQueue({
           eventType,
           caseId,
           userDescriptor: {
@@ -154,7 +156,7 @@ export class EventLogService {
   }
 
   // Sends events to queue for notification dispatch
-  private addEventNotificationToQueue({
+  private addMessagesForEventNotificationToQueue({
     eventType,
     caseId,
     userDescriptor,
@@ -166,20 +168,14 @@ export class EventLogService {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
-      try {
-        this.messageService.sendMessagesToQueue([
-          {
-            type: MessageType.EVENT_NOTIFICATION_DISPATCH,
-            caseId: caseId,
-            // There is a user property defined in the Message type definition, but
-            // in the event log service we won't always have a registered user with required props (e.g. user id)
-            // Thus we refrain from passing down the user instance in the event service
-            body: { type: notificationType, userDescriptor },
-          },
-        ])
-      } catch (error) {
-        this.logger.error('Failed to send event notification to queue', error)
-      }
+      addMessagesToQueue({
+        type: MessageType.EVENT_NOTIFICATION_DISPATCH,
+        caseId: caseId,
+        // There is a user property defined in the Message type definition, but
+        // in the event log service we won't always have a registered user with required props (e.g. user id)
+        // Thus we refrain from passing down the user instance in the event service
+        body: { type: notificationType, userDescriptor },
+      })
     }
   }
 }
