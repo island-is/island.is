@@ -481,6 +481,5 @@ export default withMainLayout(
   ),
   {
     footerVersion: 'organization',
-    showSearchInHeader: false,
   },
 )
