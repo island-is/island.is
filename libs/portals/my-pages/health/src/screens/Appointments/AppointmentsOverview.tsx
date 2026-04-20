@@ -14,6 +14,7 @@ import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import * as styles from './AppointmentsOverview.css'
 
 interface Filter {
   statuses: HealthDirectorateAppointmentStatus[]
@@ -152,11 +153,12 @@ const AppointmentsOverview = () => {
                   marginY={3}
                 >
                   <Box display="flex" flexDirection="column">
-                    <Box>
+                    <Box className={styles.datePickerWrapper}>
                       <DatePicker
                         label={formatMessage(m.datepickerFromLabel)}
                         placeholderText={formatMessage(m.datepickLabel)}
                         locale="is"
+                        size="xs"
                         backgroundColor="blue"
                         selected={filter.dates?.from}
                         handleChange={(from) => {
