@@ -193,8 +193,7 @@ export class VerdictsClientService {
         ? []
         : goproCourts
 
-    const shouldFetchGoproVerdicts =
-      hasNoCourtFilter || goproCourts.length > 0
+    const shouldFetchGoproVerdicts = hasNoCourtFilter || goproCourts.length > 0
     const shouldFetchSupremeCourtVerdicts =
       !input.caseCategories?.length &&
       (hasNoCourtFilter || includesSupremeCourt)
@@ -559,8 +558,7 @@ export class VerdictsClientService {
     // The gopro endpoint covers every court except the supreme court. Fetch
     // from it when no courts are selected (= "all") or at least one non-
     // supreme court is selected.
-    const shouldFetchGoproAgendas =
-      hasNoCourtFilter || goproCourts.length > 0
+    const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
 
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
