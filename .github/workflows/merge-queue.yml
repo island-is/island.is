@@ -58,7 +58,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
@@ -208,7 +208,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -236,7 +236,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   success:
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -319,7 +319,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     env:
       CHECK: 'false'
     steps:
