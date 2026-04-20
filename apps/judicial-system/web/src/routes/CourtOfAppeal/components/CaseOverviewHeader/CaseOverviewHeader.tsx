@@ -28,7 +28,7 @@ const AppealResultAccessed = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  if (!workingCase.appealRulingDecision) {
+  if (!workingCase.appealCase?.appealRulingDecision) {
     return null
   }
 
@@ -109,12 +109,13 @@ const CaseOverviewHeader: FC<Props> = (props) => {
         </Button>
       </Box>
       <Box className={grid({ gap: 2 })}>
-        {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
-          <AlertMessage
-            message={formatMessage(strings.appealSentAfterDeadline)}
-            type="warning"
-          />
-        )}
+        {!workingCase.appealCase?.appealRulingDecision &&
+          wasAppealedAfterDeadline && (
+            <AlertMessage
+              message={formatMessage(strings.appealSentAfterDeadline)}
+              type="warning"
+            />
+          )}
         <AppealResultAccessed />
         {alerts?.map((alert) => (
           <AlertMessage

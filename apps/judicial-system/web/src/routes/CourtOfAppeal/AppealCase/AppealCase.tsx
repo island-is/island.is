@@ -18,6 +18,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  type AppealCase as TAppealCase,
   NotificationType,
   User,
   UserRole,
@@ -69,23 +70,23 @@ const AppealCase: FC = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
-        workingCase.appealJudge1?.id !== user.id &&
-        workingCase.appealJudge2?.id !== user.id &&
-        workingCase.appealJudge3?.id !== user.id,
+        workingCase.appealCase?.appealJudge1?.id !== user.id &&
+        workingCase.appealCase?.appealJudge2?.id !== user.id &&
+        workingCase.appealCase?.appealJudge3?.id !== user.id,
     )
     .map((judge: User) => {
       return { label: judge.name ?? '', value: judge.id, judge }
     })
 
   const defaultJudges = [
-    workingCase.appealJudge1,
-    workingCase.appealJudge2,
-    workingCase.appealJudge3,
+    workingCase.appealCase?.appealJudge1,
+    workingCase.appealCase?.appealJudge2,
+    workingCase.appealCase?.appealJudge3,
   ]
 
   const defaultAssistant = assistants?.find(
     (assistant: AssistantSelectOption) =>
-      assistant.value === workingCase.appealAssistant?.id,
+      assistant.value === workingCase.appealCase?.appealAssistant?.id,
   )
 
   const sendNotifications = () => {
@@ -104,7 +105,10 @@ const AppealCase: FC = () => {
         NotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
       ).hasSent ||
-      isReopenedCOACase(workingCase.appealState, workingCase.notifications)
+      isReopenedCOACase(
+        workingCase.appealCase?.appealState,
+        workingCase.notifications,
+      )
     ) {
       router.push(`${destination}/${id}`)
     } else {
@@ -125,14 +129,17 @@ const AppealCase: FC = () => {
 
       const coaJudge =
         coaJudgeProperty === 'appealJudge1Id'
-          ? { appealJudge1: updatedCase?.appealJudge1 }
+          ? { appealJudge1: updatedCase?.appealCase?.appealJudge1 }
           : coaJudgeProperty === 'appealJudge2Id'
-          ? { appealJudge2: updatedCase?.appealJudge2 }
-          : { appealJudge3: updatedCase?.appealJudge3 }
+          ? { appealJudge2: updatedCase?.appealCase?.appealJudge2 }
+          : { appealJudge3: updatedCase?.appealCase?.appealJudge3 }
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
-        ...coaJudge,
+        appealCase: {
+          ...prevWorkingCase.appealCase,
+          ...coaJudge,
+        } as TAppealCase,
       }))
     }
   }
@@ -149,7 +156,10 @@ const AppealCase: FC = () => {
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
-        appealAssistant: updatedCase?.appealAssistant,
+        appealCase: {
+          ...prevWorkingCase.appealCase,
+          appealAssistant: updatedCase?.appealCase?.appealAssistant,
+        } as TAppealCase,
       }))
     }
   }

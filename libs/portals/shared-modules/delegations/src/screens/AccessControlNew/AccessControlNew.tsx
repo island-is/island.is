@@ -4,13 +4,17 @@ import {
   GridColumn,
   Icon,
   Input,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  useGetServicePortalPageQuery,
+} from '@island.is/portals/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
-import { isDefined } from '@island.is/shared/utils'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { isDefined, isCompany } from '@island.is/shared/utils'
+import { useNavigate } from 'react-router-dom'
 import { useLocation, useWindowSize } from 'react-use'
 import { useMemo, useState } from 'react'
 import groupBy from 'lodash/groupBy'
@@ -33,7 +37,6 @@ import {
 } from '../../components/tables/getTableData'
 import CustomDelegationsTable from '../../components/tables/CustomDelegationsTable'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import * as styles from './AccessControlNew.css'
 import { theme } from '@island.is/island-ui/theme'
 import { Problem } from '@island.is/react-spa/shared'
@@ -74,7 +77,13 @@ const AccessControlNew = () => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
 
   // Outgoing
   const {
@@ -214,6 +223,8 @@ const AccessControlNew = () => {
           </div>
         )}
 
+      {outgoingLoading && <SkeletonLoader space={1} height={40} repeat={5} />}
+
       {!outgoingLoading &&
         outgoingDelegations &&
         outgoingDelegations.length > 0 && (
@@ -221,7 +232,7 @@ const AccessControlNew = () => {
             display="flex"
             columnGap={1}
             alignItems="center"
-            marginBottom={3}
+            marginBottom={4}
             paddingTop={2}
             borderBottomWidth="standard"
             borderColor="blue200"
@@ -258,7 +269,7 @@ const AccessControlNew = () => {
       {outgoingGeneralMandateDelegations &&
         outgoingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
-            title={formatMessage(m.delegationTypeGeneralMandate)}
+            title={formatMessage(m.delegationTypeGeneralMandateOutgoing)}
             data={getGeneralMandateTableData(
               outgoingGeneralMandateDelegations,
               formatMessage,
@@ -268,6 +279,12 @@ const AccessControlNew = () => {
           />
         )}
 
+      {incomingLoading && !onlyOutgoingDelegations && (
+        <Box paddingTop={1}>
+          <SkeletonLoader space={1} height={40} repeat={5} />
+        </Box>
+      )}
+
       {!onlyOutgoingDelegations &&
         !incomingLoading &&
         incomingDelegations &&
@@ -276,8 +293,11 @@ const AccessControlNew = () => {
             display="flex"
             columnGap={1}
             alignItems="center"
-            marginBottom={3}
-            paddingTop={2}
+            marginBottom={4}
+            paddingTop={4}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+            paddingBottom={2}
           >
             <Box
               borderRadius="large"
@@ -337,7 +357,7 @@ const AccessControlNew = () => {
         incomingGeneralMandateDelegations &&
         incomingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
-            title={formatMessage(m.delegationTypeGeneralMandate)}
+            title={formatMessage(m.delegationTypeGeneralMandateIncoming)}
             data={getGeneralMandateTableData(
               incomingGeneralMandateDelegations,
               formatMessage,
@@ -361,9 +381,9 @@ const AccessControlNew = () => {
           />
         )}
 
-      {contentfulData?.faqList && contentfulData.faqList.questions.length > 0 && (
+      {faqList && faqList.questions.length > 0 && (
         <Box paddingTop={8}>
-          <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+          <FaqList {...(faqList as unknown as FaqListProps)} />
         </Box>
       )}
     </>

@@ -14,6 +14,7 @@ interface FilterSectionProps {
     filters: Array<{
       value: string
       label: React.ReactNode
+      tagLabel?: string
     }>
   }>
   selectedFilters: SelectedFilters

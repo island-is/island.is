@@ -30,6 +30,8 @@ export const GetPaymentFlow = gql`
       returnUrl
       cancelUrl
       redirectToReturnUrlOnSuccess
+      invoiceReturnUrl
+      redirectOnInvoiceCreation
       updatedAt
     }
   }

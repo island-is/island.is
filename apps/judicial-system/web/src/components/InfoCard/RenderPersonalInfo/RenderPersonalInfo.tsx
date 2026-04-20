@@ -50,7 +50,7 @@ const RenderPersonalData = ({
     {email && (
       <RenderItem breakSpaces={breakSpaces}>
         <LinkV2 href={`mailto:${email}`} className={link} key={email}>
-          <Text as="span" whiteSpace="pre">
+          <Text as="span" whiteSpace="normal">
             {email}
           </Text>
         </LinkV2>

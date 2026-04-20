@@ -39,6 +39,7 @@ export const ImpactBaseSelection = ({
   const [selRegOption, setSelRegOption] = useState<SelRegOption | undefined>()
 
   const setOption = (option: SelRegOption) => {
+    if (option.disabled) return
     setSelRegOption(option)
     onSelect(option)
   }

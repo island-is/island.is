@@ -7,6 +7,9 @@ export const GET_SUPREME_COURT_APPEALS_QUERY = gql`
         id
         title
         caseNumber
+        appealPolicyDate
+        registrationDate
+        verdictDate
       }
       total
       input {

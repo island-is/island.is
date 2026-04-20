@@ -35,7 +35,7 @@ import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
 import { mapVehicle } from '../utils'
-import { PaymentsApi } from '@island.is/clients/payments'
+import { PaymentService } from '@island.is/application/api/payment'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -47,7 +47,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
-    private readonly paymentsApi: PaymentsApi,
+    private readonly paymentService: PaymentService,
   ) {
     super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
   }
@@ -293,12 +293,11 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     if (rejectType !== RejectType.DELETE) {
       const chargeId = getPaymentIdFromExternalData(application)
       if (chargeId) {
-        await this.paymentsApi.refundControllerRefund({
-          refundPaymentInput: {
-            paymentFlowId: chargeId,
-            reasonForRefund: 'Application rejected',
-          },
-        })
+        await this.paymentService.refundPayment(
+          application.id,
+          'Application rejected',
+          true,
+        )
       }
     }
 

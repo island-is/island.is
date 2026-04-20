@@ -1,6 +1,8 @@
 import type { Locale } from '@island.is/shared/types'
 import { localeMap } from '@island.is/cms'
 
+export const METRICS_PREFIX = 'user-notification.'
+
 export const SmsDelivery = {
   ALWAYS: 'ALWAYS',
   OPT_IN: 'OPT_IN',

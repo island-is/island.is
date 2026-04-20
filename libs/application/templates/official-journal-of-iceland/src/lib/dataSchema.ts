@@ -150,6 +150,13 @@ const regulationSchema = z
   })
   .partial()
 
+export const additionalPartySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  slug: z.string(),
+  nationalId: z.string(),
+})
+
 export const partialSchema = z.object({
   requirements: z
     .object({
@@ -166,6 +173,7 @@ export const partialSchema = z.object({
   signature: signatureSchema.optional(),
   misc: miscSchema.optional(),
   regulation: regulationSchema.optional(),
+  additionalParties: z.array(additionalPartySchema).optional(),
 })
 
 // We make properties optional to throw custom error messages

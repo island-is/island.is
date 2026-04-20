@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { EntryProps } from 'contentful-management'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ContentTypeProps, EntryProps } from 'contentful-management'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { PageExtensionSDK } from '@contentful/app-sdk'
 import {
@@ -9,12 +9,18 @@ import {
   Flex,
   FormControl,
   Select,
+  Spinner,
   Stack,
+  Tab,
+  TabList,
+  Tabs,
 } from '@contentful/f36-components'
+import { CloudUploadIcon, DownloadIcon } from '@contentful/f36-icons'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 
 import { GridContainer } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 
 import {
   ContentTypeSelect,
@@ -44,9 +50,197 @@ import {
   slugify,
 } from '../../utils'
 
+const IMPORT_CONTENT_TYPES = [
+  { label: 'Price', value: 'price' },
+  { label: 'SupportQNA', value: 'supportQNA' },
+]
+
 const convertHtmlToContentfulRichText = (html: string) => {
   const markdown = NodeHtmlMarkdown.translate(html || '')
   return richTextFromMarkdown(markdown)
+}
+
+const ContentExportScreen = () => {
+  const cma = useCMA()
+  const sdk = useSDK<PageExtensionSDK>()
+
+  const [state, setState] = useState<{
+    contentTypes: {
+      label: string
+      value: string
+      contentType: ContentTypeProps
+    }[]
+    selectedContentTypeId: string
+    isExporting: boolean
+  }>({
+    contentTypes: [],
+    selectedContentTypeId: 'article',
+    isExporting: false,
+  })
+
+  useEffect(() => {
+    const fetchContentTypes = async () => {
+      const response = await cma.contentType.getMany({
+        query: {
+          limit: 1000,
+        },
+      })
+      setState((prev) => ({
+        ...prev,
+        contentTypes: response.items
+          .map((item) => ({
+            label: item.name,
+            value: item.sys.id,
+            contentType: item,
+          }))
+          .sort(sortAlpha('label')),
+      }))
+    }
+    fetchContentTypes()
+  }, [cma])
+
+  const exportContent = useCallback(async () => {
+    const contentTypeId = state.selectedContentTypeId
+    setState((prev) => ({ ...prev, isExporting: true }))
+    try {
+      const entries: EntryProps[] = []
+      let skip = 0
+      let total = Infinity
+      const chunkSize = 100
+      while (skip < total) {
+        const response = await cma.entry.getMany({
+          query: {
+            content_type: contentTypeId,
+            limit: chunkSize,
+            skip,
+            'sys.archivedAt[exists]': false,
+          },
+        })
+        total = response.total
+        skip += chunkSize
+        entries.push(...response.items)
+      }
+
+      const foundContentType = state.contentTypes.find(
+        (type) => type.value === contentTypeId,
+      )
+      if (!foundContentType) throw new Error('Content type not found')
+
+      const contentTypeFields = foundContentType.contentType.fields
+
+      const csvHeader: string[] = [
+        'Contentful URL',
+        'Contentful Status',
+        'Contentful Tags',
+      ]
+
+      for (const field of contentTypeFields) {
+        csvHeader.push(`${field.name} (${sdk.locales.default})`)
+        if (field.localized)
+          for (const locale of sdk.locales.available)
+            if (locale !== sdk.locales.default)
+              csvHeader.push(`${field.name} (${locale})`)
+      }
+
+      csvHeader.push('Contentful Created At')
+      csvHeader.push('Contentful Updated At')
+      csvHeader.push('Contentful Published At')
+      csvHeader.push('Contentful ID')
+
+      const csvBody: string[] = []
+      const delimiter = ';'
+
+      for (const entry of entries) {
+        const row: string[] = []
+        row.push(
+          `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/entries/${entry.sys.id}`,
+        )
+        let entryStatus = 'Draft'
+        if (entry.sys.updatedAt > entry.sys.publishedAt) entryStatus = 'Changed'
+        else if (entry.sys.publishedAt) entryStatus = 'Published'
+        row.push(entryStatus)
+
+        row.push(entry.metadata.tags.map((tag) => tag.sys.id).join(','))
+
+        for (const field of contentTypeFields) {
+          {
+            const value = entry.fields[field.id]?.[sdk.locales.default]
+            row.push(JSON.stringify(value ?? ''))
+          }
+          if (field.localized)
+            for (const locale of sdk.locales.available)
+              if (locale !== sdk.locales.default) {
+                const value = entry.fields[field.id]?.[locale]
+                row.push(JSON.stringify(value ?? ''))
+              }
+        }
+        row.push(entry.sys.createdAt ?? '')
+        row.push(entry.sys.updatedAt ?? '')
+        row.push(entry.sys.publishedAt ?? '')
+        row.push(entry.sys.id)
+        csvBody.push(row.join(delimiter))
+      }
+
+      const csvContent = `${csvHeader.join(delimiter)}\n${csvBody.join('\n')}`
+
+      const filename = `${contentTypeId}-${new Date().toISOString()}.csv`
+      const blob = new Blob([csvContent], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error(error)
+      sdk.notifier.error('Error exporting content')
+    } finally {
+      setState((prev) => ({ ...prev, isExporting: false }))
+    }
+  }, [
+    cma.entry,
+    sdk.ids.environment,
+    sdk.ids.space,
+    sdk.locales.available,
+    sdk.locales.default,
+    sdk.notifier,
+    state.contentTypes,
+    state.selectedContentTypeId,
+  ])
+
+  if (state.contentTypes.length === 0)
+    return (
+      <GridContainer>
+        <Spinner />
+      </GridContainer>
+    )
+
+  return (
+    <GridContainer>
+      <Flex gap="16px" flexWrap="wrap">
+        <ContentTypeSelect
+          disabled={state.isExporting}
+          selectedContentType={state.selectedContentTypeId}
+          setSelectedContentType={(value) =>
+            setState((prev) => ({ ...prev, selectedContentTypeId: value }))
+          }
+          contentTypes={state.contentTypes}
+        />
+      </Flex>
+      <Button
+        variant="primary"
+        onClick={exportContent}
+        isDisabled={
+          !state.selectedContentTypeId ||
+          state.contentTypes.length === 0 ||
+          state.isExporting
+        }
+        endIcon={state.isExporting ? <Spinner /> : <DownloadIcon />}
+      >
+        Export
+      </Button>
+    </GridContainer>
+  )
 }
 
 const ContentImportScreen = () => {
@@ -61,8 +255,8 @@ const ContentImportScreen = () => {
   )
 
   const [selectedContentType, setSelectedContentType] = useState<
-    'price' | 'supportQNA'
-  >('price')
+    typeof IMPORT_CONTENT_TYPES[number]['value']
+  >(IMPORT_CONTENT_TYPES[0].value)
   const contentTypeData = useContentTypeData(selectedContentType)
   const [selectedTag, setSelectedTag] = useState('')
 
@@ -298,7 +492,7 @@ const ContentImportScreen = () => {
     )
 
   return (
-    <Box padding="spacingXl" id="content-import-screen-container">
+    <Box id="content-import-screen-container">
       <Stack
         spacing="spacing2Xl"
         flexDirection="column"
@@ -316,6 +510,7 @@ const ContentImportScreen = () => {
                 variant="primary"
                 onClick={importContent}
                 isDisabled={!canImport}
+                endIcon={<CloudUploadIcon />}
               >
                 Import
               </Button>
@@ -325,6 +520,7 @@ const ContentImportScreen = () => {
               <ContentTypeSelect
                 selectedContentType={selectedContentType}
                 setSelectedContentType={setSelectedContentType}
+                contentTypes={IMPORT_CONTENT_TYPES}
               />
               <TagSelect
                 selectedTag={selectedTag}
@@ -417,4 +613,29 @@ const ContentImportScreen = () => {
   )
 }
 
-export default ContentImportScreen
+const Screen = () => {
+  const [selectedScreen, setSelectedScreen] = useState<'import' | 'export'>(
+    'import',
+  )
+  return (
+    <Box paddingLeft="spacingXl" paddingRight="spacingXl" paddingTop="spacingM">
+      <Box paddingBottom="spacingXl">
+        <GridContainer>
+          <Tabs
+            onTabChange={(tab) => setSelectedScreen(tab as 'import' | 'export')}
+            defaultTab="import"
+          >
+            <TabList>
+              <Tab panelId="import">Import</Tab>
+              <Tab panelId="export">Export</Tab>
+            </TabList>
+          </Tabs>
+        </GridContainer>
+      </Box>
+      {selectedScreen === 'import' && <ContentImportScreen />}
+      {selectedScreen === 'export' && <ContentExportScreen />}
+    </Box>
+  )
+}
+
+export default Screen

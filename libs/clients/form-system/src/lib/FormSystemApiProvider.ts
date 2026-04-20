@@ -9,6 +9,8 @@ import {
   ListItemsApi,
   OrganizationPermissionsApi,
   OrganizationsApi,
+  PaymentCallbackApi,
+  PaymentsApi,
   ScreensApi,
   SectionsApi,
 } from '../../gen/fetch'
@@ -26,6 +28,8 @@ const apis = [
   FormCertificationTypesApi,
   OrganizationPermissionsApi,
   FilesApi,
+  PaymentCallbackApi,
+  PaymentsApi,
 ]
 
 export const exportedApis = apis.map((Api) => ({

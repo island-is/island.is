@@ -17,6 +17,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { DeletePoliceDigitalCaseFileInput } from './dto/deletePoliceDigitalCaseFile.input'
 import { PoliceDigitalCaseFilesQueryInput } from './dto/policeDigitalCaseFiles.input'
+import { PoliceDigitalCaseFileTokenUrlInput } from './dto/policeDigitalCaseFileTokenUrl.input'
 import { UpdatePoliceDigitalCaseFilesInput } from './dto/updatePoliceDigitalCaseFiles.input'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
@@ -48,6 +49,29 @@ export class PoliceDigitalCaseFileResolver {
       AuditedAction.GET_POLICE_DIGITAL_CASE_FILES,
       backendService.getPoliceDigitalCaseFiles(input.caseId),
       input.caseId,
+    )
+  }
+
+  @Query(() => String)
+  policeDigitalCaseFileTokenUrl(
+    @Args('input', { type: () => PoliceDigitalCaseFileTokenUrlInput })
+    input: PoliceDigitalCaseFileTokenUrlInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<string> {
+    this.logger.debug(
+      `Getting token URL for police digital case file ${input.policeDigitalFileId} in case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_POLICE_DIGITAL_CASE_FILE_TOKEN_URL,
+      backendService.getPoliceDigitalCaseFileTokenUrl(
+        input.caseId,
+        input.policeDigitalFileId,
+      ),
+      input.policeDigitalFileId,
     )
   }
 

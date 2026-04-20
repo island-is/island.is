@@ -1,0 +1,5 @@
+query PoliceDigitalCaseFileTokenUrl(
+  $input: PoliceDigitalCaseFileTokenUrlInput!
+) {
+  policeDigitalCaseFileTokenUrl(input: $input)
+}

@@ -4,7 +4,7 @@ import {
   FormSystemSection,
   Maybe,
 } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
 import { Box } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
@@ -35,6 +35,17 @@ export const NavbarSelect = () => {
   const { sections, screens, fields } = form
   let selectable = false
 
+  const paymentFields = fields
+    ?.filter(
+      (field): field is FormSystemField =>
+        !!field && field.fieldType === FieldTypesEnum.PAYMENT,
+    )
+    .sort((a, b) => {
+      const ao = a.displayOrder ?? Number.MAX_SAFE_INTEGER
+      const bo = b.displayOrder ?? Number.MAX_SAFE_INTEGER
+      return ao - bo
+    })
+
   const renderFieldsForScreen = (screen: Maybe<FormSystemScreen>) => {
     return fields
       ?.filter((field) => field?.screenId === screen?.id)
@@ -52,6 +63,9 @@ export const NavbarSelect = () => {
             data={field as FormSystemField}
             active={activeItem?.data?.id === field?.id}
             selectable={selectable}
+            stylePaymentFieldAsSection={
+              field?.fieldType === FieldTypesEnum.PAYMENT
+            }
           />
         )
       })
@@ -59,6 +73,7 @@ export const NavbarSelect = () => {
 
   const renderScreensForSection = (section: FormSystemSection) => {
     if (section.sectionType === SectionTypes.PARTIES) return null
+    if (section.sectionType === SectionTypes.PAYMENT) return null
     return screens
       ?.filter((screen) => screen?.sectionId === section.id)
       .map((screen) => (
@@ -75,20 +90,46 @@ export const NavbarSelect = () => {
       ))
   }
 
-  const renderSections = () => {
-    return filterSections(sections).map((section) => (
-      <Box key={section.id}>
+  const renderPaymentFields = () => {
+    return paymentFields?.map((field) => {
+      if (
+        activeItem?.data?.id === field.id &&
+        selectStatus !== NavbarSelectStatus.ON_WITHOUT_SELECT
+      ) {
+        selectable = true
+      }
+
+      return (
         <SelectNavComponent
-          type="Section"
-          data={section}
-          active={activeItem?.data?.id === section.id}
+          key={field.id}
+          type="Field"
+          data={field}
+          active={activeItem?.data?.id === field.id}
           selectable={selectable}
+          stylePaymentFieldAsSection
         />
-        {openComponents.sections.includes(section.id) &&
-          renderScreensForSection(section)}
-      </Box>
-    ))
+      )
+    })
   }
 
-  return <>{renderSections()}</>
+  return (
+    <>
+      <Box style={{ flex: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
+        {filterSections(sections).map((section) => (
+          <Box key={section.id}>
+            <SelectNavComponent
+              type="Section"
+              data={section}
+              active={activeItem?.data?.id === section.id}
+              selectable={selectable}
+            />
+            {openComponents.sections.includes(section.id) &&
+              renderScreensForSection(section)}
+          </Box>
+        ))}
+      </Box>
+
+      {form.hasPayment ? <Box>{renderPaymentFields()}</Box> : null}
+    </>
+  )
 }

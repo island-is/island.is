@@ -20,6 +20,13 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/core/src/{screens,components,lib}/**/*.{js,ts,tsx}'"
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/core/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/core/codegen.yml"
+      }
     }
   }
 }

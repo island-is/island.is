@@ -7,3 +7,7 @@ export const sessionsNavigation: PortalNavigationItem = {
   name: m.sessions,
   path: SessionsPaths.Sessions,
 }
+export const sessionsNavigationNew: PortalNavigationItem = {
+  name: m.sessions,
+  path: SessionsPaths.SessionsNew,
+}

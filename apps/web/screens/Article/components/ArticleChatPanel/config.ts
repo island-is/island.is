@@ -1,6 +1,22 @@
 import { Locale } from '@island.is/shared/types'
-import { WatsonChatPanelProps } from '@island.is/web/components'
+import {
+  WatsonChatPanelProps,
+  ZendeskChatPanelProps,
+} from '@island.is/web/components'
 import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
+
+export const defaultZendeskConfig: Record<Locale, ZendeskChatPanelProps> = {
+  is: {
+    snippetUrl:
+      'https://static.zdassets.com/ekr/snippet.js?key=981362b3-9805-4375-b7cf-eafa3ac78ff5',
+    chatBubbleVariant: 'default',
+  },
+  en: {
+    snippetUrl:
+      'https://static.zdassets.com/ekr/snippet.js?key=981362b3-9805-4375-b7cf-eafa3ac78ff5',
+    chatBubbleVariant: 'default',
+  },
+}
 
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {
   is: {

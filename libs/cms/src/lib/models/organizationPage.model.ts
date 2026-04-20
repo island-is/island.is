@@ -180,6 +180,9 @@ export class OrganizationPage {
 
   @Field(() => String, { nullable: true })
   lang?: string
+
+  @Field(() => String, { nullable: true })
+  newsOverviewCardVariant?: string
 }
 
 export const mapOrganizationPage = ({
@@ -245,5 +248,7 @@ export const mapOrganizationPage = ({
     showPastEventsOption: fields.showPastEventsOption ?? false,
     navigationLinks: sitemapTree,
     lang: sys.locale,
+    newsOverviewCardVariant:
+      fields.newsOverviewCardVariant ?? 'First 3 cards have an image',
   }
 }

@@ -1,7 +1,7 @@
 import { fn, Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseState,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
@@ -50,7 +50,7 @@ export const prosecutionRequestCasesAppealedWhereOptions = (
       attributes: [],
       required: true,
       where: {
-        appeal_state: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
       },
     },
   },
@@ -75,16 +75,15 @@ export const prosecutionRequestCasesCompletedWhereOptions = (
     '$appealCase.appeal_state$': {
       [Op.or]: [
         null,
-        CaseAppealState.RECEIVED,
-        CaseAppealState.WITHDRAWN,
-        CaseAppealState.COMPLETED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.WITHDRAWN,
+        AppealCaseState.COMPLETED,
       ],
     },
   },
 })
 
 // Prosecution indictments
-
 export const prosecutionIndictmentsInDraftWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
@@ -109,6 +108,24 @@ export const prosecutionIndictmentsInProgressWhereOptions = (
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
     state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+  },
+})
+
+export const prosecutionIndictmentsAppealedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
+  includes: {
+    appealCase: {
+      attributes: [],
+      required: true,
+      where: {
+        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
+      },
+    },
+  },
+  where: {
+    ...prosecutionIndictmentsAccessWhereOptions(user),
+    state: completedIndictmentCaseStates,
   },
 })
 

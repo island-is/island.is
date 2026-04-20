@@ -1,9 +1,11 @@
 import {
-  CaseAppealState,
+  AppealCaseState,
+  CaseIndictmentRulingDecision,
   CaseState,
-  CaseType,
+  completedIndictmentCaseStates,
   completedRequestCaseStates,
   courtOfAppealsRoles,
+  indictmentCases,
   InstitutionType,
   investigationCases,
   restrictionCases,
@@ -20,63 +22,157 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
     institution: { type: InstitutionType.COURT_OF_APPEALS },
   } as User
 
-  const accessibleCaseTypes = [...restrictionCases, ...investigationCases]
+  const accessibleRequestCaseTypes = [
+    ...restrictionCases,
+    ...investigationCases,
+  ]
 
-  describe.each(
-    Object.values(CaseType).filter(
-      (type) => !accessibleCaseTypes.includes(type),
-    ),
-  )('inaccessible case type %s', (type) => {
-    const theCase = { type } as Case
-
-    verifyNoAccess(theCase, user)
-  })
-
-  describe.each(accessibleCaseTypes)('accessible case type %s', (type) => {
-    const accessibleCaseStates = completedRequestCaseStates
-
-    describe.each(
-      Object.values(CaseState).filter(
-        (state) => !accessibleCaseStates.includes(state),
-      ),
-    )('inaccessible case state %s', (state) => {
-      const theCase = { type, state } as Case
-
-      verifyNoAccess(theCase, user)
-    })
-
-    describe.each(accessibleCaseStates)('accessible case state %s', (state) => {
-      const accessibleCaseAppealStates = [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
-        CaseAppealState.WITHDRAWN,
-      ]
+  describe.each(accessibleRequestCaseTypes)(
+    'accessible request case type %s',
+    (type) => {
+      const accessibleCaseStates = completedRequestCaseStates
 
       describe.each(
-        [undefined, ...Object.values(CaseAppealState)].filter(
-          (state) => !state || !accessibleCaseAppealStates.includes(state),
+        Object.values(CaseState).filter(
+          (state) => !accessibleCaseStates.includes(state),
         ),
-      )('inaccessible case appeal state %s', (appealState) => {
-        const theCase = { type, state, appealCase: { appealState } } as Case
+      )('inaccessible case state %s', (state) => {
+        const theCase = { type, state } as Case
 
         verifyNoAccess(theCase, user)
       })
 
-      describe.each(accessibleCaseAppealStates)(
-        'accessible case appeal state %s',
-        (appealState) => {
-          const theCase = {
-            type,
-            state,
-            appealCase: {
-              appealState,
-              appealReceivedByCourtDate: nowFactory(),
-            },
-          } as Case
+      describe.each(accessibleCaseStates)(
+        'accessible case state %s',
+        (state) => {
+          const accessibleAppealCaseStates = [
+            AppealCaseState.RECEIVED,
+            AppealCaseState.COMPLETED,
+            AppealCaseState.WITHDRAWN,
+          ]
 
-          verifyFullAccess(theCase, user)
+          describe.each(
+            [undefined, ...Object.values(AppealCaseState)].filter(
+              (state) => !state || !accessibleAppealCaseStates.includes(state),
+            ),
+          )('inaccessible case appeal state %s', (appealState) => {
+            const theCase = {
+              type,
+              state,
+              appealCase: { appealState },
+            } as Case
+
+            verifyNoAccess(theCase, user)
+          })
+
+          describe.each(accessibleAppealCaseStates)(
+            'accessible case appeal state %s',
+            (appealState) => {
+              const theCase = {
+                type,
+                state,
+                appealCase: {
+                  appealState,
+                  appealReceivedByCourtDate: nowFactory(),
+                },
+              } as Case
+
+              verifyFullAccess(theCase, user)
+            },
+          )
         },
       )
-    })
-  })
+    },
+  )
+
+  describe.each(indictmentCases)(
+    'accessible indictment case type %s',
+    (type) => {
+      const accessibleCaseStates = completedIndictmentCaseStates
+
+      describe.each(
+        Object.values(CaseState).filter(
+          (state) => !accessibleCaseStates.includes(state),
+        ),
+      )('inaccessible case state %s', (state) => {
+        const theCase = {
+          type,
+          state,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe.each(accessibleCaseStates)(
+        'accessible case state %s',
+        (state) => {
+          // Non-dismissal ruling decisions should not be accessible
+          const inaccessibleRulingDecisions = Object.values(
+            CaseIndictmentRulingDecision,
+          ).filter((d) => d !== CaseIndictmentRulingDecision.DISMISSAL)
+
+          describe.each([undefined, ...inaccessibleRulingDecisions])(
+            'inaccessible ruling decision %s',
+            (rulingDecision) => {
+              const theCase = {
+                type,
+                state,
+                indictmentRulingDecision: rulingDecision,
+                appealCase: {
+                  appealState: AppealCaseState.RECEIVED,
+                  appealReceivedByCourtDate: nowFactory(),
+                },
+              } as Case
+
+              verifyNoAccess(theCase, user)
+            },
+          )
+
+          describe('dismissal ruling decision', () => {
+            const accessibleAppealCaseStates = [
+              AppealCaseState.RECEIVED,
+              AppealCaseState.COMPLETED,
+              AppealCaseState.WITHDRAWN,
+            ]
+
+            describe.each(
+              [undefined, ...Object.values(AppealCaseState)].filter(
+                (state) =>
+                  !state || !accessibleAppealCaseStates.includes(state),
+              ),
+            )('inaccessible case appeal state %s', (appealState) => {
+              const theCase = {
+                type,
+                state,
+                indictmentRulingDecision:
+                  CaseIndictmentRulingDecision.DISMISSAL,
+                appealCase: { appealState },
+              } as Case
+
+              verifyNoAccess(theCase, user)
+            })
+
+            describe.each(accessibleAppealCaseStates)(
+              'accessible case appeal state %s',
+              (appealState) => {
+                const theCase = {
+                  type,
+                  state,
+                  indictmentRulingDecision:
+                    CaseIndictmentRulingDecision.DISMISSAL,
+                  appealCase: {
+                    appealState,
+                    appealReceivedByCourtDate: nowFactory(),
+                  },
+                } as Case
+
+                verifyFullAccess(theCase, user)
+              },
+            )
+          })
+        },
+      )
+    },
+  )
 })

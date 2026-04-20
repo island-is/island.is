@@ -1,18 +1,27 @@
+import {
+  ApplicationStatus,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
+import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
+import { Field } from '../../fields/models/field.model'
 import { Form } from '../../forms/models/form.model'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
-import { ApplicationDto } from './dto/application.dto'
-import { ValueDto } from './dto/value.dto'
-import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
-import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
-import { Field } from '../../fields/models/field.model'
-import type { Locale } from '@island.is/shared/types'
 import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
+import { ApplicationDto } from './dto/application.dto'
+import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
+import { ValueDto } from './dto/value.dto'
+import {
+  ApplicationXroadDto,
+  ApplicationXroadFieldDto,
+  ApplicationXroadValueDto,
+} from './dto/application.xroad.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -45,6 +54,7 @@ export class ApplicationMapper {
       sections: [],
       certificationTypes: form.formCertificationTypes,
       completedSectionInfo: form.completedSectionInfo,
+      organizationNationalId: form.organizationNationalId,
     }
 
     form.sections
@@ -163,6 +173,45 @@ export class ApplicationMapper {
       }),
     }
     return applicationMinimalDto
+  }
+
+  mapApplicationDtoToApplicationXroadDto(
+    applicationDto: ApplicationDto,
+  ): ApplicationXroadDto {
+    const fields: ApplicationXroadFieldDto[] = (applicationDto.sections ?? [])
+      .flatMap((section) => section.screens ?? [])
+      .flatMap((screen) =>
+        (screen.fields ?? []).map((field) => ({
+          field,
+          screenIdentifier: screen.identifier,
+        })),
+      )
+      .filter(({ field }) => !field.isHidden)
+      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .filter(({ field }) => (field.values?.length ?? 0) > 0)
+      .map(({ field, screenIdentifier }) => {
+        const xroadField = new ApplicationXroadFieldDto()
+        xroadField.identifier = field.identifier
+        xroadField.screenIdentifier = screenIdentifier
+        xroadField.fieldType = field.fieldType
+        xroadField.values = (field.values ?? []).map((value) => {
+          const xroadValue = new ApplicationXroadValueDto()
+          xroadValue.order = value.order
+          xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+          return xroadValue
+        })
+        return xroadField
+      })
+
+    const xroadDto = new ApplicationXroadDto()
+    xroadDto.id = applicationDto.id ?? ''
+    xroadDto.slug = applicationDto.slug ?? ''
+    xroadDto.isTest = applicationDto.isTest ?? false
+    xroadDto.status = applicationDto.status ?? ''
+    xroadDto.submittedAt = applicationDto.submittedAt ?? null
+    xroadDto.fields = fields
+
+    return xroadDto
   }
 
   private isHidden(

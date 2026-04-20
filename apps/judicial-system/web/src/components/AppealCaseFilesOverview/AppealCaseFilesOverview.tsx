@@ -10,6 +10,7 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -22,7 +23,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealState,
+  AppealCaseState,
+  Case,
   CaseFile,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -35,6 +37,41 @@ import {
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
+
+const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
+  const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
+
+  if (prosecutorSubmitted) {
+    return 'Sækjandi lagði fram'
+  }
+
+  // For indictment cases, try to resolve the defender/spokesperson name
+  if (isIndictmentCase(workingCase.type) && file.defendantId) {
+    const defendant = workingCase.defendants?.find(
+      (d) => d.id === file.defendantId,
+    )
+
+    if (defendant?.defenderName) {
+      return `Verjandi ${defendant.defenderName} lagði fram`
+    }
+  }
+
+  // Fallback: use submittedBy if available (covers civil claimant
+  // spokespersons and other defence users)
+  if (isIndictmentCase(workingCase.type) && file.civilClaimantId) {
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (d) => d.id === file.civilClaimantId,
+    )
+
+    if (civilClaimant?.spokespersonName) {
+      return `${
+        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður'
+      } ${civilClaimant.spokespersonName} lagði fram`
+    }
+  }
+
+  return 'Varnaraðili lagði fram'
+}
 
 const AppealCaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
@@ -59,7 +96,7 @@ const AppealCaseFilesOverview = () => {
                 CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
                 CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
               ].includes(caseFile.category)) ||
-              (workingCase.prosecutorStatementDate &&
+              (workingCase.appealCase?.prosecutorStatementDate &&
                 [
                   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
                   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
@@ -69,7 +106,7 @@ const AppealCaseFilesOverview = () => {
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
                 ].includes(caseFile.category)) ||
-              (workingCase.defendantStatementDate &&
+              (workingCase.appealCase?.defendantStatementDate &&
                 [
                   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
                   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
@@ -78,10 +115,12 @@ const AppealCaseFilesOverview = () => {
                 CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
                 CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
               ].includes(caseFile.category) ||
-              ((workingCase.appealState === CaseAppealState.COMPLETED ||
+              ((workingCase.appealCase?.appealState ===
+                AppealCaseState.COMPLETED ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_RULING) ||
-              (((workingCase.appealState === CaseAppealState.COMPLETED &&
+              (((workingCase.appealCase?.appealState ===
+                AppealCaseState.COMPLETED &&
                 isDefenceUser(user)) ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
@@ -92,11 +131,11 @@ const AppealCaseFilesOverview = () => {
   }, [
     user,
     workingCase.accusedPostponedAppealDate,
-    workingCase.appealState,
+    workingCase.appealCase?.appealState,
     workingCase.caseFiles,
-    workingCase.defendantStatementDate,
+    workingCase.appealCase?.defendantStatementDate,
     workingCase.prosecutorPostponedAppealDate,
-    workingCase.prosecutorStatementDate,
+    workingCase.appealCase?.prosecutorStatementDate,
   ])
 
   return (
@@ -108,7 +147,7 @@ const AppealCaseFilesOverview = () => {
           <SectionHeading
             title="Skjöl kærumáls"
             tooltip={
-              isProsecutionUser(user)
+              isProsecutionUser(user) && !isIndictmentCase(workingCase.type)
                 ? 'Verjandi sér einungis kæru og greinargerð.'
                 : undefined
             }
@@ -155,10 +194,8 @@ const AppealCaseFilesOverview = () => {
                         CaseFileCategory.APPEAL_RULING,
                         CaseFileCategory.APPEAL_COURT_RECORD,
                       ].includes(file.category) && (
-                        <Text variant="small">
-                          {formatMessage(strings.submittedBy, {
-                            filesCategory: prosecutorSubmitted,
-                          })}
+                        <Text whiteSpace="nowrap" variant="small">
+                          {getFileSubmittedByText(file, workingCase)}
                         </Text>
                       )}
                   </Box>
@@ -203,8 +240,8 @@ const AppealCaseFilesOverview = () => {
           })}
         </Box>
         {(isProsecutionUser(user) || isDefenceUser(user)) &&
-          workingCase.appealState &&
-          workingCase.appealState !== CaseAppealState.COMPLETED && (
+          workingCase.appealCase?.appealState &&
+          workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED && (
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 icon="add"
@@ -215,7 +252,10 @@ const AppealCaseFilesOverview = () => {
                       : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }}
-                disabled={workingCase.appealState === CaseAppealState.WITHDRAWN}
+                disabled={
+                  workingCase.appealCase?.appealState ===
+                  AppealCaseState.WITHDRAWN
+                }
               >
                 {formatMessage(strings.addFiles)}
               </Button>

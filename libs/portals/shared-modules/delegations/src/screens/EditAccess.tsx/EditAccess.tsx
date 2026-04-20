@@ -1,11 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { AuthDomain } from '@island.is/api/schema'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  useGetServicePortalPageQuery,
+  useQueryParam,
+} from '@island.is/portals/core'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { FlowStep, FlowStepper } from '@island.is/island-ui/core'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
@@ -17,7 +23,6 @@ import { DelegationPaths } from '../../lib/paths'
 import { m as coreMessages } from '@island.is/portals/core'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import { useIdentityLazyQuery } from '../GrantAccess/GrantAccess.generated'
 import isSameDay from 'date-fns/isSameDay'
 
@@ -25,6 +30,7 @@ const EditAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
 
   const { formatMessage, lang } = useLocale()
+  const userInfo = useUserInfo()
   const {
     selectedScopes,
     setSelectedScopes,
@@ -123,7 +129,13 @@ const EditAccess = () => {
     )
   }, [selectedScopes])
 
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod/breyta', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
 
   const steps: FlowStep[] = [
     {
@@ -150,8 +162,8 @@ const EditAccess = () => {
     return (
       <>
         <IntroHeader
-          title={formatMessage(m.grantAccessStepsTitle)}
-          intro={formatMessage(m.grantAccessStepsIntro)}
+          title={formatMessage(m.editAccessStepsTitle)}
+          intro={formatMessage(m.editAccessStepsIntro)}
           marginBottom={4}
         />
         <Box padding={3}>
@@ -164,8 +176,8 @@ const EditAccess = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.grantAccessStepsTitle)}
-        intro={formatMessage(m.grantAccessStepsIntro)}
+        title={formatMessage(m.editAccessStepsTitle)}
+        intro={formatMessage(m.editAccessStepsIntro)}
         marginBottom={4}
       />
       <div>
@@ -184,9 +196,9 @@ const EditAccess = () => {
           isVisible={isConfirmModalVisible}
         />
 
-        {contentfulData?.faqList && (
+        {faqList && faqList.questions.length > 0 && (
           <Box paddingTop={8}>
-            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+            <FaqList {...(faqList as unknown as FaqListProps)} />
           </Box>
         )}
       </div>

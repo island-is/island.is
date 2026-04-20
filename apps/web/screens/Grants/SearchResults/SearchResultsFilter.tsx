@@ -149,6 +149,13 @@ export const GrantsSearchResultsFilter = ({
                         : 'Environment and Energy Agency',
                     label: 'Umhverfis- og orkustofnun',
                   },
+                  {
+                    value:
+                      locale === 'is'
+                        ? 'ferdamalastofa'
+                        : 'icelandic-tourist-board',
+                    label: 'Ferðamálastofa',
+                  },
                 ],
               },
             ].filter(isDefined)}

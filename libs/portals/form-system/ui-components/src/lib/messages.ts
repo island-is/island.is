@@ -1209,4 +1209,41 @@ export const m = defineMessages({
     description:
       'One or more files are too large. Max size is {maxSizeInMb} MB.',
   },
+  minAmount: {
+    id: 'form.system:min-amount',
+    defaultMessage: 'Magn má ekki vera lægra en {minAmount}',
+    description: 'Minimum amount must not be lower than {minAmount}',
+  },
+  maxAmount: {
+    id: 'form.system:max-amount',
+    defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
+    description: 'Maximum amount must not be higher than {maxAmount}',
+  },
+  total: {
+    id: 'form.system:total',
+    defaultMessage: 'Samtals',
+    description: 'Total',
+  },
+  price: {
+    id: 'form.system:price',
+    defaultMessage: 'Verð',
+    description: 'Price',
+  },
+  quantity: {
+    id: 'form.system:quantity',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity',
+  },
+  pay: {
+    id: 'form.system:pay',
+    defaultMessage: 'Greiða',
+    description: 'Pay',
+  },
+  translationNeededError: {
+    id: 'form.system:translation-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
+    description:
+      'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
 })

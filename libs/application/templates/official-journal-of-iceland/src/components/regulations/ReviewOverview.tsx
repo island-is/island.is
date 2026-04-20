@@ -8,10 +8,19 @@
  * - Removed editor-only actions (copy HTML, download PDF, etc.)
  * - Simplified to show regulation summary in a clean format
  */
-import { ReactNode } from 'react'
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { useMemo, ReactNode } from 'react'
+import {
+  Box,
+  Divider,
+  Inline,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { prettyName, RegName } from '@island.is/regulations'
+import { useLawChapters } from '../../hooks/useLawChapters'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
 import { regulation } from '../../lib/messages'
 
@@ -49,15 +58,20 @@ export type ReviewOverviewProps = {
         records?: Array<{
           institution?: string
           signatureDate?: string
+          chairman?: { name?: string }
+          members?: Array<{ name?: string }>
         }>
       }
       committee?: {
         records?: Array<{
           institution?: string
           signatureDate?: string
+          chairman?: { name?: string }
+          members?: Array<{ name?: string }>
         }>
       }
     }
+    misc?: { signatureType?: string }
     regulation?: {
       effectiveDate?: string
       lawChapters?: Array<{ slug: string; name: string }>
@@ -68,13 +82,30 @@ export type ReviewOverviewProps = {
   }
   /** Whether there are warnings — if true, the overview is hidden */
   hasWarnings: boolean
+  price?: number
+  priceLoading?: boolean
+  priceError?: boolean
 }
 
 export const ReviewOverview = ({
   answers,
   hasWarnings,
+  price,
+  priceLoading,
+  priceError,
 }: ReviewOverviewProps) => {
-  const { formatMessage: f, formatDateFns } = useLocale()
+  const { formatMessage: f, formatDateFns, formatNumber } = useLocale()
+  const user = useUserInfo()
+  const { lawChapters } = useLawChapters()
+
+  const lawChapterNameBySlug = useMemo(
+    () =>
+      lawChapters.reduce<Record<string, string>>((acc, ch) => {
+        acc[ch.slug] = ch.name
+        return acc
+      }, {}),
+    [lawChapters],
+  )
 
   if (hasWarnings) {
     return null
@@ -102,6 +133,14 @@ export const ReviewOverview = ({
 
   return (
     <Box>
+      <OverviewItem label="Sendandi">
+        <Text>{user.profile.name}</Text>
+      </OverviewItem>
+
+      <OverviewItem label="Dagsetning innsendingar">
+        <Text>{new Date().toLocaleDateString('is-IS')}</Text>
+      </OverviewItem>
+
       <OverviewItem label={f(regulation.summary.labels.title)}>
         <Text>
           {advert?.title || '—'} ({typeName})
@@ -127,11 +166,17 @@ export const ReviewOverview = ({
       </OverviewItem>
 
       <OverviewItem label={f(regulation.summary.labels.lawChapters)}>
-        <Text>
-          {reg?.lawChapters && reg.lawChapters.length > 0
-            ? reg.lawChapters.map((c) => '„' + c.name + '"').join(', ')
-            : '—'}
-        </Text>
+        {reg?.lawChapters && reg.lawChapters.length > 0 ? (
+          <Inline space={1} flexWrap="wrap">
+            {reg.lawChapters.map((c) => (
+              <Tag key={c.slug} variant="blue" outlined disabled>
+                {lawChapterNameBySlug[c.slug] ?? c.name ?? c.slug}
+              </Tag>
+            ))}
+          </Inline>
+        ) : (
+          <Text>—</Text>
+        )}
       </OverviewItem>
 
       {ministry && (
@@ -146,6 +191,16 @@ export const ReviewOverview = ({
             ? f(regulation.summary.labels.yes)
             : f(regulation.summary.labels.no)}
         </Text>
+      </OverviewItem>
+
+      <OverviewItem label="Áætlað verð">
+        {priceLoading ? (
+          <Text>...</Text>
+        ) : priceError ? (
+          <Text>Ekki tókst að sækja verð</Text>
+        ) : (
+          <Text>{`${formatNumber(price ?? 0)} kr.`}</Text>
+        )}
       </OverviewItem>
 
       {advert?.requestedDate && (

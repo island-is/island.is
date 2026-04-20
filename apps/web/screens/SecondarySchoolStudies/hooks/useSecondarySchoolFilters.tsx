@@ -32,7 +32,7 @@ interface UseSecondarySchoolFiltersReturn {
     id: string
     label: string
     selected: string[]
-    filters: Array<{ value: string; label: React.ReactNode }>
+    filters: Array<{ value: string; label: React.ReactNode; tagLabel?: string }>
   }>
 }
 
@@ -108,6 +108,7 @@ export const useSecondarySchoolFilters = (
         )
         .map((l, index) => ({
           value: String(l.id),
+          tagLabel: `${formatMessage(m.filters.haefnisþrep)} ${index + 1}`,
           label: (
             <Box>
               <Text>{`${formatMessage(m.filters.haefnisþrep)} ${

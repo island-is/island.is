@@ -1,7 +1,7 @@
-import { FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
-import { SectionTypes, FieldTypesEnum } from '../../lib'
+import { FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldTypesEnum, SectionTypes } from '../../lib'
 
 interface Current<T> {
   data?: T
@@ -13,6 +13,7 @@ interface Props {
   currentSection: Current<FormSystemSection>
   currentScreen?: Current<FormSystemScreen>
   hasSummaryScreen: boolean
+  hasPayment: boolean
 }
 
 export const FormStepper = ({
@@ -20,6 +21,7 @@ export const FormStepper = ({
   currentSection,
   currentScreen,
   hasSummaryScreen,
+  hasPayment,
 }: Props) => {
   const { lang } = useLocale()
 
@@ -30,7 +32,9 @@ export const FormStepper = ({
       s.sectionType !== SectionTypes.PREMISES &&
       (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen) &&
       (s.sectionType !== SectionTypes.COMPLETED ||
-        currentSection.data?.sectionType === SectionTypes.COMPLETED),
+        currentSection.data?.sectionType === SectionTypes.COMPLETED) &&
+      (s.sectionType !== SectionTypes.PAYMENT ||
+        (hasPayment && !hasSummaryScreen)),
   )
   const activeSectionId = currentSection?.data?.id
   const activeScreenId = currentScreen?.data?.id

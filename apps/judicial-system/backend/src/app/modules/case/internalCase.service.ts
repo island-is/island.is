@@ -71,6 +71,7 @@ import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
+  AppealCase,
   Case,
   CaseArchiveRepositoryService,
   CaseFile,
@@ -123,10 +124,12 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseResentExplanation',
   'crimeScenes',
   'indictmentIntroduction',
+  'indictmentDeniedExplanation',
+]
+
+const appealCaseEncryptionProperties: (keyof AppealCase)[] = [
   'appealConclusion',
   'appealRulingModifiedHistory',
-  'indictmentDeniedExplanation',
-  'indictmentReturnedExplanation',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -614,6 +617,7 @@ export class InternalCaseService {
         },
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
+        { model: AppealCase, as: 'appealCase' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -633,6 +637,18 @@ export class InternalCaseService {
       caseEncryptionProperties,
       theCase,
     )
+
+    let appealCaseArchive: { [key: string]: unknown } | undefined
+    if (theCase.appealCase) {
+      const [clearedAppealCaseProperties, archive] =
+        collectEncryptionProperties(
+          appealCaseEncryptionProperties,
+          theCase.appealCase,
+        )
+
+      appealCaseArchive = archive
+      Object.assign(clearedCaseProperties, clearedAppealCaseProperties)
+    }
 
     const defendantsArchive = []
     for (const defendant of theCase.defendants ?? []) {
@@ -693,6 +709,7 @@ export class InternalCaseService {
       {
         archiveJson: JSON.stringify({
           ...caseArchive,
+          appealCase: appealCaseArchive,
           defendants: defendantsArchive,
           caseFiles: caseFilesArchive,
           indictmentCounts: indictmentCountsArchive,

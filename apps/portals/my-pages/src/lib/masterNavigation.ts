@@ -1,5 +1,8 @@
 import { PortalNavigationItem, m } from '@island.is/portals/core'
-import { restrictionsNavigation } from '@island.is/portals/my-pages/restrictions'
+import {
+  restrictionsNavigation,
+  restrictionsNavigationNew,
+} from '@island.is/portals/my-pages/restrictions'
 import { documentsNavigation } from '@island.is/portals/my-pages/documents'
 import { financeNavigation } from '@island.is/portals/my-pages/finance'
 import { applicationsNavigation } from '@island.is/portals/my-pages/applications'
@@ -19,10 +22,16 @@ import {
   delegationsNavigationChildrenNew,
   delegationsNavigationNew,
 } from '@island.is/portals/shared-modules/delegations'
-import { sessionsNavigation } from '@island.is/portals/my-pages/sessions'
-import { consentNavigation } from '@island.is/portals/my-pages/consent'
+import {
+  sessionsNavigation,
+  sessionsNavigationNew,
+} from '@island.is/portals/my-pages/sessions'
+import {
+  consentNavigation,
+  consentNavigationNew,
+} from '@island.is/portals/my-pages/consent'
 import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
-import { socialInsuranceMaintenanceNavigation } from '@island.is/portals/my-pages/social-insurance-maintenance'
+import { socialBenefitsNavigation } from '@island.is/portals/my-pages/social-benefits'
 import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
 import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
 import { vehicleMileageNavigation } from '@island.is/portals/my-pages/mileage-registration'
@@ -45,7 +54,12 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     applicationsNavigation,
     {
       ...delegationsNavigationNew,
-      children: [...delegationsNavigationChildrenNew],
+      children: [
+        ...delegationsNavigationChildrenNew,
+        sessionsNavigationNew,
+        consentNavigationNew,
+        restrictionsNavigationNew,
+      ],
     },
     {
       ...delegationsNavigation,
@@ -59,7 +73,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     companySignatureCollectionNavigation,
     informationNavigation,
     companyInformationNavigation,
-    socialInsuranceMaintenanceNavigation,
+    socialBenefitsNavigation,
     assetsNavigation,
     financeNavigation,
     licenseNavigation,

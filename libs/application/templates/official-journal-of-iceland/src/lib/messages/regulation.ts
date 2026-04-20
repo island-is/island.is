@@ -248,6 +248,23 @@ export const regulation = {
         defaultMessage: 'Leita að reglugerð',
         description: 'Label for the regulation search input',
       },
+      mentionedNotFound: {
+        id: 'ojoi.application:regulation.impacts.labels.mentionedNotFound',
+        defaultMessage: 'er ekki reglugerð',
+        description:
+          'Shown when a mentioned regulation number does not exist in the system',
+      },
+      mentionedRepealed: {
+        id: 'ojoi.application:regulation.impacts.labels.mentionedRepealed',
+        defaultMessage: 'brottfallin',
+        description: 'Shown when a mentioned regulation has been repealed',
+      },
+      baseNotFound: {
+        id: 'ojoi.application:regulation.impacts.labels.baseNotFound',
+        defaultMessage: 'Stofnreglugerð fannst ekki við leit að',
+        description:
+          'Shown in amending search when no regulation matches the query',
+      },
     }),
   },
   preview: {

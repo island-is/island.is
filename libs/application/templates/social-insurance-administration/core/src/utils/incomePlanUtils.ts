@@ -152,3 +152,11 @@ export const isMonthlyIncome = (activeField?: Record<string, string>) => {
     activeField?.incomeCategory === INCOME
   )
 }
+
+// filter out removed rows from income plan table,
+// used for calculating total income and determining whether
+// to show alert and question about zero income
+export const getActiveIncomeRows = (value: unknown) => {
+  const rows = Array.isArray(value) ? value : [] // check if value is an array, if not return empty array to avoid errors
+  return rows.filter((row) => !row.isRemoved)
+}

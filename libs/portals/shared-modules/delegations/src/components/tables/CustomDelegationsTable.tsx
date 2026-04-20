@@ -164,39 +164,41 @@ export default function CustomDelegationsTable({
   }
 
   return (
-    <Box
-      marginBottom={6}
-      display="flex"
-      flexDirection="column"
-      rowGap={[0, 0, 0, 2]}
-    >
-      <Text variant={isMobile ? 'h4' : 'h5'}>{title}</Text>
+    <>
+      <Box
+        marginBottom={6}
+        display="flex"
+        flexDirection="column"
+        rowGap={[0, 0, 0, 2]}
+      >
+        <Text variant={isMobile ? 'h4' : 'h5'}>{title}</Text>
 
-      {loading ? (
-        <Box padding={3}>
-          <SkeletonLoader space={1} height={40} repeat={2} />
-        </Box>
-      ) : error && !data?.length ? (
-        <Problem error={error} />
-      ) : isMobile ? (
-        <MobileCustomDelegationsTable
-          data={data}
-          direction={direction}
-          expandedRow={expandedRow}
-          setExpandedRow={setExpandedRow}
-          onClickDelete={onClickDelete}
-          onClickEdit={onClickEdit}
-        />
-      ) : (
-        <DesktopCustomDelegationsTable
-          data={data}
-          direction={direction}
-          expandedRow={expandedRow}
-          setExpandedRow={setExpandedRow}
-          onClickDelete={onClickDelete}
-          onClickEdit={onClickEdit}
-        />
-      )}
+        {loading ? (
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={2} />
+          </Box>
+        ) : error && !data?.length ? (
+          <Problem error={error} />
+        ) : isMobile ? (
+          <MobileCustomDelegationsTable
+            data={data}
+            direction={direction}
+            expandedRow={expandedRow}
+            setExpandedRow={setExpandedRow}
+            onClickDelete={onClickDelete}
+            onClickEdit={onClickEdit}
+          />
+        ) : (
+          <DesktopCustomDelegationsTable
+            data={data}
+            direction={direction}
+            expandedRow={expandedRow}
+            setExpandedRow={setExpandedRow}
+            onClickDelete={onClickDelete}
+            onClickEdit={onClickEdit}
+          />
+        )}
+      </Box>
       <DeleteAccessModal
         isVisible={!!personToDelete}
         onClose={() => {
@@ -217,7 +219,7 @@ export default function CustomDelegationsTable({
         }}
         direction={direction}
       />
-    </Box>
+    </>
   )
 }
 
@@ -243,7 +245,6 @@ const DesktopCustomDelegationsTable = ({
     { value: formatMessage(m.name) },
     { value: formatMessage(m.numberOfDelegations) },
     { value: formatMessage(m.validityPeriod) },
-    ...(direction === 'outgoing' ? [{ value: '' }] : []),
     { value: '' },
   ]
 
@@ -298,32 +299,23 @@ const DesktopCustomDelegationsTable = ({
                       ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
                       : formatMessage(m.noValidToDate),
                   },
-                  ...(direction === 'outgoing'
-                    ? [
-                        {
-                          value: (
-                            <Box flexShrink={0}>
-                              <Button
-                                variant="text"
-                                icon="pencil"
-                                iconType="outline"
-                                size="small"
-                                colorScheme="default"
-                                onClick={() => {
-                                  onClickEdit(person)
-                                }}
-                              >
-                                {formatMessage(coreMessages.buttonEdit)}
-                              </Button>
-                            </Box>
-                          ),
-                          align: 'right' as const,
-                        },
-                      ]
-                    : []),
                   {
                     value: (
-                      <Box flexShrink={0}>
+                      <Box flexShrink={0} display="flex" columnGap={2}>
+                        {direction === 'outgoing' && (
+                          <Button
+                            variant="text"
+                            icon="pencil"
+                            iconType="outline"
+                            size="small"
+                            colorScheme="default"
+                            onClick={() => {
+                              onClickEdit(person)
+                            }}
+                          >
+                            {formatMessage(coreMessages.buttonEdit)}
+                          </Button>
+                        )}
                         <Button
                           variant="text"
                           icon="trash"

@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useRegulationSearch } from '../hooks/useRegulationSearch'
+import { useMentionedRegulations } from '../hooks/useMentionedRegulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import {
   ImpactList,
@@ -362,20 +363,24 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     executeRegulationSearch(query)
   }
 
-  // Extract mentioned regulations from draft HTML for base regulation flow
-  const mentionedOptions = useMemo(() => {
+  // Extract mentioned regulation names from draft HTML for base regulation flow
+  const mentionedNames = useMemo(() => {
     const title = (application.answers?.advert?.title ?? '') as PlainText
     const base64Html = application.answers?.advert?.html ?? ''
     const html = base64Html
       ? (Buffer.from(base64Html, 'base64').toString('utf-8') as HTMLText)
       : ('' as HTMLText)
     if (!title && !html) return []
-    const regNames = findAffectedRegulationsInText(title, html)
-    return regNames.map((name) => ({
-      value: String(name),
-      label: String(name),
-    }))
+    return findAffectedRegulationsInText(title, html)
   }, [application.answers?.advert?.title, application.answers?.advert?.html])
+
+  // Validate mentioned regulations against the API (not-found / repealed)
+  const { options: mentionedOptions, loading: mentionedLoading } =
+    useMentionedRegulations(
+      mentionedNames,
+      f(regulation.impacts.labels.mentionedNotFound),
+      f(regulation.impacts.labels.mentionedRepealed),
+    )
 
   return (
     <FormScreen
@@ -413,6 +418,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
           {!isAmending ? (
             <ImpactBaseSelection
               mentionedOptions={mentionedOptions}
+              loading={mentionedLoading}
               onSelect={(option) => setSelRegOption(option)}
             />
           ) : (

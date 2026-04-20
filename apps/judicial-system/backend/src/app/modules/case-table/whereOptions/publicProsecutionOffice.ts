@@ -51,49 +51,25 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
             { indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT },
             { is_sent_to_prison_admin: { [Op.not]: true } },
             {
+              '$Case.indictment_ruling_decision$':
+                CaseIndictmentRulingDecision.RULING,
               [Op.or]: [
                 {
-                  '$Case.indictment_ruling_decision$':
-                    CaseIndictmentRulingDecision.FINE,
-                },
-                {
-                  '$Case.indictment_ruling_decision$':
-                    CaseIndictmentRulingDecision.RULING,
-                  [Op.or]: [
+                  [Op.and]: [
                     {
-                      [Op.and]: [
-                        {
-                          '$Case.ruling_date$': {
-                            [Op.gt]: literal(`NOW() - INTERVAL '29 days'`),
-                          },
-                        },
-                        literal(`
-                          EXISTS (
-                            SELECT 1
-                            FROM verdict
-                            WHERE verdict.defendant_id = "defendants".id
-                              AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
-                              AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
-                              AND verdict.defendant_has_requested_appeal IS NOT TRUE
-                              AND verdict.appeal_date IS NULL
-                              AND verdict.created = (
-                                SELECT MAX(v2.created)
-                                FROM verdict v2
-                                WHERE v2.defendant_id = "defendants".id
-                              )
-                          )`),
-                      ],
+                      '$Case.ruling_date$': {
+                        [Op.gt]: literal(`NOW() - INTERVAL '29 days'`),
+                      },
                     },
                     literal(`
                       EXISTS (
                         SELECT 1
                         FROM verdict
                         WHERE verdict.defendant_id = "defendants".id
-                          AND verdict.service_requirement IN ('${ServiceRequirement.REQUIRED}', '${ServiceRequirement.NOT_APPLICABLE}')
+                          AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
                           AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
                           AND verdict.defendant_has_requested_appeal IS NOT TRUE
                           AND verdict.appeal_date IS NULL
-                          AND (verdict.service_date IS NULL OR verdict.service_date + INTERVAL '29 days' > NOW())
                           AND verdict.created = (
                             SELECT MAX(v2.created)
                             FROM verdict v2
@@ -102,6 +78,22 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
                       )`),
                   ],
                 },
+                literal(`
+                  EXISTS (
+                    SELECT 1
+                    FROM verdict
+                    WHERE verdict.defendant_id = "defendants".id
+                      AND verdict.service_requirement IN ('${ServiceRequirement.REQUIRED}', '${ServiceRequirement.NOT_APPLICABLE}')
+                      AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
+                      AND verdict.defendant_has_requested_appeal IS NOT TRUE
+                      AND verdict.appeal_date IS NULL
+                      AND (verdict.service_date IS NULL OR verdict.service_date + INTERVAL '29 days' > NOW())
+                      AND verdict.created = (
+                        SELECT MAX(v2.created)
+                        FROM verdict v2
+                        WHERE v2.defendant_id = "defendants".id
+                      )
+                  )`),
               ],
             },
           ],
@@ -129,6 +121,10 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
             { is_sent_to_prison_admin: { [Op.not]: true } },
             {
               [Op.or]: [
+                {
+                  '$Case.indictment_ruling_decision$':
+                    CaseIndictmentRulingDecision.FINE,
+                },
                 {
                   [Op.and]: [
                     {
@@ -180,7 +176,10 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
         {
           indictment_reviewer_id: { [Op.not]: null },
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_ruling_decision: [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
+          ],
         },
       ],
     },

@@ -17,11 +17,12 @@ import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Completed } from './components/Completed/Completed'
 import { FieldContent } from './components/FieldContent/FieldContent'
+import { Lifetime } from './components/Lifetime/Lifetime'
+import { Payment } from './components/Payment/Payment'
 import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
-import { Lifetime } from './components/Lifetime/Lifetime'
 
 export const MainContent = () => {
   const {
@@ -32,7 +33,7 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem, form, isPublished } = control
+  const { activeItem, form, isReadOnly } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
@@ -67,6 +68,9 @@ export const MainContent = () => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Lifetime' ? (
         <Lifetime />
+      ) : (activeItem.data as FormSystemSection).sectionType ===
+        SectionTypes.PAYMENT ? (
+        <Payment />
       ) : (
         <Stack space={2}>
           <Row>
@@ -76,7 +80,7 @@ export const MainContent = () => {
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -98,7 +102,7 @@ export const MainContent = () => {
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -136,7 +140,7 @@ export const MainContent = () => {
                 <Column span="12/12">
                   <Checkbox
                     name="multi"
-                    disabled={isPublished}
+                    disabled={isReadOnly}
                     label={formatMessage(m.allowMultiple)}
                     checked={
                       (activeItem.data as FormSystemScreen).isMulti ?? false
@@ -168,7 +172,7 @@ export const MainContent = () => {
                       <Select
                         name="multiMax"
                         label={formatMessage(m.multiMax)}
-                        isDisabled={isPublished}
+                        isDisabled={isReadOnly}
                         backgroundColor="blue"
                         options={Array.from({ length: 35 - 2 + 1 }, (_, i) => {
                           const n = i + 2

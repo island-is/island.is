@@ -15,6 +15,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../appeal-case'
 import {
   Case,
   RequestSignatureResponse,
@@ -310,6 +311,32 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createAppealCase(caseId: string): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase`)
+  }
+
+  updateAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    updateAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}`,
+      updateAppealCase,
+    )
+  }
+
+  transitionAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    transitionAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/state`,
+      transitionAppealCase,
+    )
+  }
+
   requestCourtRecordSignature(
     caseId: string,
     method: 'audkenni' | 'mobile' = 'mobile',
@@ -467,6 +494,16 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
     return this.get(`case/${caseId}/policeDigitalCaseFiles`)
+  }
+
+  getPoliceDigitalCaseFileTokenUrl(
+    caseId: string,
+    policeDigitalFileId: string,
+  ): Promise<string> {
+    const params = new URLSearchParams({ policeDigitalFileId })
+    return this.get<{ url: string }>(
+      `case/${caseId}/policeDigitalCaseFileTokenUrl?${params.toString()}`,
+    ).then((res) => res.url)
   }
 
   deletePoliceDigitalCaseFile(
@@ -773,6 +810,32 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/limitedAccess/state`,
       transitionCase,
       caseTransformer,
+    )
+  }
+
+  limitedAccessCreateAppealCase(caseId: string): Promise<AppealCase> {
+    return this.post(`case/${caseId}/limitedAccess/appealCase`)
+  }
+
+  limitedAccessUpdateAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    updateAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}`,
+      updateAppealCase,
+    )
+  }
+
+  limitedAccessTransitionAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    transitionAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/state`,
+      transitionAppealCase,
     )
   }
 

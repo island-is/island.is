@@ -318,7 +318,7 @@ export class VerdictService {
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
-      { code: 'RVG_VERDICT_ID', value: verdict.id },
+      { code: 'RVG_DOCUMENT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [
@@ -460,10 +460,6 @@ export class VerdictService {
         verdict,
       ),
     })
-
-    if (!createdDocument) {
-      return { delivered: false }
-    }
 
     // update existing verdict with the external document id returned from the police
     await this.updateVerdict(

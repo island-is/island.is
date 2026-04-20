@@ -328,13 +328,13 @@ const useInfoCardItems = () => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCaseNumber],
+    values: [workingCase.appealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealAssistant?.name],
+    values: [workingCase.appealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -343,9 +343,9 @@ const useInfoCardItems = () => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealJudge1?.name || '',
-          workingCase.appealJudge2?.name || '',
-          workingCase.appealJudge3?.name || '',
+          workingCase.appealCase?.appealJudge1?.name || '',
+          workingCase.appealCase?.appealJudge2?.name || '',
+          workingCase.appealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}

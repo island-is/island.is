@@ -12,8 +12,11 @@ type FakeCurrentLicense = 'none' | 'temp' | 'B' | 'C' | 'C1' | 'D' | 'D1'
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
+  qualitySignature?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
+  hasThjodskraPhoto?: YesOrNo
+  hasRLSPhoto?: YesOrNo
 }
 
 export type DrivingLicenseCategory = {

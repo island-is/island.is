@@ -9,6 +9,7 @@ import {
 } from '../types/input-types'
 import {
   ContainerRunHelm,
+  GatewayName,
   OutputFormat,
   OutputPersistentVolumeClaim,
   SerializeErrors,
@@ -56,7 +57,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   ]
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: grantNamespaces,
+    grantNamespaces: migrateGrantNamespaces(grantNamespaces),
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
@@ -247,6 +248,18 @@ const serializeService: SerializeMethod<HelmService> = async (
         return {
           ...acc,
           [`${ingressName}-alb`]: ingress,
+        }
+      },
+      {},
+    )
+
+    // httpRoute (Envoy Gateway - parallel to ingress during migration)
+    result.httpRoute = Object.entries(serviceDef.ingress).reduce(
+      (acc, [ingressName, ingressConf]) => {
+        const route = serializeHTTPRoute(ingressConf, env1)
+        return {
+          ...acc,
+          [`${ingressName}-gw`]: route,
         }
       },
       {},
@@ -467,6 +480,79 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 }
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
+
+const GATEWAY_EXTERNAL_NAMESPACE = 'envoy-gateway-external'
+const GATEWAY_INTERNAL_NAMESPACE = 'envoy-gateway-internal'
+
+/**
+ * Add envoy-gateway-external/internal grant namespaces alongside nginx ones.
+ * Maps nginx-ingress-external* → envoy-gateway-external,
+ *      nginx-ingress-internal* → envoy-gateway-internal.
+ * Keeps all existing grants intact for side-by-side migration.
+ */
+function migrateGrantNamespaces(namespaces: string[]): string[] {
+  const extra: string[] = []
+  for (const ns of namespaces) {
+    if (ns.startsWith('nginx-ingress-external')) {
+      extra.push(GATEWAY_EXTERNAL_NAMESPACE)
+    } else if (ns.startsWith('nginx-ingress-internal')) {
+      extra.push(GATEWAY_INTERNAL_NAMESPACE)
+    }
+  }
+  if (extra.length === 0) return namespaces
+  return Array.from(new Set([...namespaces, ...extra]))
+}
+
+function serializeHTTPRoute(
+  ingressConf: IngressForEnv,
+  env: EnvironmentConfig,
+): NonNullable<HelmService['httpRoute']>[string] {
+  const isPublic = ingressConf.public ?? true
+
+  let gatewayName: GatewayName
+  if (!isPublic) {
+    gatewayName = 'gateway-internal'
+  } else {
+    gatewayName = 'gateway-external'
+  }
+
+  const hostnames = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+  ).map((host) =>
+    isPublic ? hostFullName(host, env) : internalHostFullName(host, env),
+  )
+
+  // Detect nginx rewrite-target annotation → Gateway API ReplacePrefixMatch
+  const rewriteTarget =
+    ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
+  const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
+
+  return {
+    parentRefs: [
+      {
+        name: gatewayName,
+        namespace: isPublic
+          ? GATEWAY_EXTERNAL_NAMESPACE
+          : GATEWAY_INTERNAL_NAMESPACE,
+      },
+    ],
+    hostnames,
+    rules: [
+      {
+        matches: ingressConf.paths.map((path) => {
+          // Normalize nginx regex paths to Gateway API PathPrefix
+          // e.g. /api(/|$)(.*) → /api
+          const normalized = path.replace(/\(\/\|\$\)\(\.\*\)$/, '')
+          if (ingressConf.pathTypeOverride === 'Exact') {
+            return { pathExact: normalized }
+          }
+          return { pathPrefix: normalized }
+        }),
+        ...(rewritePrefix ? { rewritePrefix } : {}),
+      },
+    ],
+  }
+}
 
 const serviceMockDef = (options: {
   runtime: ReferenceResolver
