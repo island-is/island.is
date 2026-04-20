@@ -154,6 +154,14 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                     {selection?.[2]?.thirdLanguage?.name}
                   </Text>
                 )}
+                {!!selection?.[2]?.fallbackThirdLanguage?.code && (
+                  <Text>
+                    {formatMessage(
+                      overview.selection.fallbackThirdLanguageLabel,
+                    )}
+                    : {selection?.[2]?.fallbackThirdLanguage?.name}
+                  </Text>
+                )}{' '}
                 {!!selection?.[2]?.nordicLanguage?.code && (
                   <Text>
                     {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
