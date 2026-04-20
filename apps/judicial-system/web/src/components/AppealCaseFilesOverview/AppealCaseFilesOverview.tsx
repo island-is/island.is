@@ -33,13 +33,30 @@ import {
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isUserCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
 
+const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
+  category &&
+  [
+    CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+  ].includes(category)
+
+const isDefenceCategory = (category: CaseFileCategory | undefined | null) =>
+  category &&
+  [
+    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  ].includes(category)
+
 const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
-  const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
+  const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {
     return 'Sækjandi lagði fram'
@@ -154,20 +171,13 @@ const AppealCaseFilesOverview = () => {
             marginBottom={1}
           />
           {allFiles.map((file) => {
-            const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
             const isDisabled = !file.isKeyAccessible
             const canDeleteFile =
-              file.category &&
-              [
-                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-                CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-              ].includes(file.category) &&
-              ((prosecutorSubmitted && isProsecutionUser(user)) ||
-                (!prosecutorSubmitted && isDefenceUser(user)))
+              (isProsecutionUser(user) &&
+                isProsecutorCategory(file.category)) ||
+              (isDefenceUser(user) &&
+                isDefenceCategory(file.category) &&
+                isUserCaseFile(workingCase, file, user))
 
             return (
               <PdfButton

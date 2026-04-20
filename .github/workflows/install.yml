@@ -63,7 +63,7 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -97,7 +97,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     permissions:
       contents: 'read'
       actions: 'read'
