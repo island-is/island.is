@@ -7,6 +7,7 @@ import { DirectorateOfLabourLogo } from '@island.is/application/assets/instituti
 export const completedForm = buildForm({
   id: 'completedForm',
   mode: FormModes.COMPLETED,
+  title: completedFormMessages.alertTitle,
   logo: DirectorateOfLabourLogo,
   children: [
     buildFormConclusionSection({

@@ -19,6 +19,7 @@ import {
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
+  GaldurXRoadAPIModelsResolveApplicantResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -236,6 +237,22 @@ export class VmstUnemploymentClientService {
     return await api.unemploymentApplicationValidatePaymentPage2(
       requestParameter,
     )
+  }
+
+  async resolveApplicant(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantResolve({
+      galdurXRoadAPIModelsResolveApplicantRequest: {
+        ssn: auth.nationalId,
+      },
+    })
   }
 
   async submitApplication(

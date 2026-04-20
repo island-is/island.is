@@ -186,7 +186,7 @@ export const errorMessages = defineMessages({
   submitError: {
     id: 'vmst.dub.application:errorMessages.submitError',
     defaultMessage:
-      'Villa við að skila inn umsókn. Reyndu aftur eða hafðuð samband við Ísland.is',
+      'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
   },
 })

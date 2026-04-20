@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubmitField,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
@@ -17,6 +16,7 @@ export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
+  title: mainForm.general.title,
   logo: DirectorateOfLabourLogo,
   children: [
     buildMultiField({

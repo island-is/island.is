@@ -2,8 +2,6 @@
 
 This template for an application was generated with the `nx generate-template de-register-unemployment-benefits` command.
 
-Write documentation here.
-
 - What gervimenn can use this template
   - Advania Galdur team makes the test subjects and they vary, contact galdur team for more information
 - What is this application for

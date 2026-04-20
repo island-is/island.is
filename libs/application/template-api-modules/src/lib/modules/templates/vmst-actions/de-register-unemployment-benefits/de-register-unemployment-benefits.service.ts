@@ -52,18 +52,20 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
   }
 
   async submitApplication({ auth, application }: TemplateApiModuleActionProps) {
+    const resolvedApplicantId =
+      await this.vmstUnemploymentClientService.resolveApplicant(auth)
+
     const withDrawDate = getValueViaPath<string>(
       application.answers,
       'deregistrationDate',
     )
     const reason = getValueViaPath<string>(application.answers, 'reason')
     const requestObj: GaldurExternalDomainRequestsWithdrawApplicationRequest = {
-      applicantSSN: auth.nationalId,
+      applicantId: resolvedApplicantId.applicantId,
       withdrawDate: withDrawDate ? new Date(withDrawDate) : undefined,
       reasonId: reason,
     }
     const requestParameter = {
-      applicationId: application.id,
       galdurExternalDomainRequestsWithdrawApplicationRequest: requestObj,
     }
 
