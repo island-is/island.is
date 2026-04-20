@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import format from 'date-fns/fp/format'
-import { parseAsStringEnum, useQueryState } from 'next-usequerystate'
+import { createParser, useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client'
 
 import {
@@ -42,6 +41,17 @@ const REGION_LABEL_MAP: Record<
   [IcelandicMedicinesAgencyPharmacyRegion.Austurland]: m.regionEast,
 }
 
+const regionParser = createParser<IcelandicMedicinesAgencyPharmacyRegion>({
+  parse(s) {
+    return (
+      Object.values(IcelandicMedicinesAgencyPharmacyRegion).find(
+        (v) => v.toLowerCase() === s,
+      ) ?? null
+    )
+  },
+  serialize: (v) => v.toLowerCase(),
+})
+
 const PharmaciesAccordion = ({ slice }: Props) => {
   const { formatMessage } = useIntl()
   const { data, loading, error } = useQuery<Query>(GET_PHARMACIES, {
@@ -53,9 +63,7 @@ const PharmaciesAccordion = ({ slice }: Props) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRegion, setSelectedRegion] = useQueryState(
     'region',
-    parseAsStringEnum<IcelandicMedicinesAgencyPharmacyRegion>(
-      Object.values(IcelandicMedicinesAgencyPharmacyRegion),
-    ).withDefault(null),
+    regionParser,
   )
 
   if (loading) {
