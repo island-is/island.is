@@ -46,7 +46,7 @@ env:
 jobs:
   should-run:
     name: Check if job should run
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
