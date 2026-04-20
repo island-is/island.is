@@ -53,21 +53,21 @@ export class ApplicationLifeCycleService {
   public async run() {
     // Pruning
     this.logger.info(`Starting application pruning...`)
-    // await this.fetchApplicationsToBePruned()
+    await this.fetchApplicationsToBePruned()
     await this.fetchCurrentScheduledNotifications()
-    // await this.pruneAttachments()
-    // await this.pruneApplicationCharge()
-    // await this.pruneApplicationData()
-    // await this.reportPruningResults()
+    await this.pruneAttachments()
+    await this.pruneApplicationCharge()
+    await this.pruneApplicationData()
+    await this.reportPruningResults()
     this.logger.info(`Application pruning done.`)
 
     // Post-pruning
-    // this.logger.info(`Starting application post-pruning...`)
-    // await this.fetchApplicationsToBePostPruned()
-    // await this.postPruneApplicationHistory()
-    // await this.postPruneApplicationData()
-    // await this.reportPostPruningResults()
-    // this.logger.info(`Application post-pruning done.`)
+    this.logger.info(`Starting application post-pruning...`)
+    await this.fetchApplicationsToBePostPruned()
+    await this.postPruneApplicationHistory()
+    await this.postPruneApplicationData()
+    await this.reportPostPruningResults()
+    this.logger.info(`Application post-pruning done.`)
   }
 
   public getProcessingApplications() {
