@@ -46,10 +46,8 @@ const useAppealCase = () => {
     limitedAccessCreateAppealCaseMutation,
     { loading: isLimitedAccessCreatingAppealCase },
   ] = useLimitedAccessCreateAppealCaseMutation()
-  const [
-    transitionAppealCaseMutation,
-    { loading: isTransitioningAppealCase },
-  ] = useTransitionAppealCaseMutation()
+  const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
+    useTransitionAppealCaseMutation()
   const [
     limitedAccessTransitionAppealCaseMutation,
     { loading: isLimitedAccessTransitioningAppealCase },

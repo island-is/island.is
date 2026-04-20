@@ -44,11 +44,8 @@ type AssistantSelectOption = ReactSelectOption & { assistant: User }
 
 const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const {
-    sendNotification,
-    sendNotificationError,
-    isSendingNotification,
-  } = useCase()
+  const { sendNotification, sendNotificationError, isSendingNotification } =
+    useCase()
   const { updateAppealCase } = useAppealCase()
 
   const { formatMessage } = useIntl()
