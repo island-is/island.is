@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
@@ -1623,7 +1623,7 @@ describe('Transition Case', () => {
         // Assert
         expect(res).toMatchObject({
           appealState: AppealCaseState.WITHDRAWN,
-          appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+          appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
         })
       })
 
@@ -1656,7 +1656,7 @@ describe('Transition Case', () => {
             state: fromState,
             appealCase: {
               appealState: AppealCaseState.RECEIVED,
-              appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+              appealRulingDecision: AppealCaseRulingDecision.CHANGED,
             } as AppealCase,
             type,
           } as Case,
@@ -1775,7 +1775,7 @@ describe('Transition Case', () => {
           // Assert
           expect(res).toMatchObject({
             appealState: AppealCaseState.WITHDRAWN,
-            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+            appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
           })
         })
 
@@ -1808,7 +1808,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: {
                 appealState: AppealCaseState.RECEIVED,
-                appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                appealRulingDecision: AppealCaseRulingDecision.CHANGED,
               } as AppealCase,
               type,
             } as Case,

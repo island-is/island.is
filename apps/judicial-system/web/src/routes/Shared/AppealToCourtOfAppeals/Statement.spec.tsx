@@ -2,8 +2,8 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen, waitFor } from '@testing-library/react'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseDecision,
   CaseState,
   CaseType,
@@ -16,7 +16,7 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import Statement from './Statement'
+import Statement from '../AppealToCourtOfAppeals/Statement'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -45,7 +45,7 @@ describe('Statement', () => {
                 appealCase: {
                   id: 'test_appeal_case_id',
                   appealState: AppealCaseState.RECEIVED,
-                  appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                  appealRulingDecision: AppealCaseRulingDecision.CHANGED,
                 },
               }}
             >
@@ -74,7 +74,7 @@ describe('Statement', () => {
                 appealCase: {
                   id: 'test_appeal_case_id',
                   appealState: AppealCaseState.RECEIVED,
-                  appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                  appealRulingDecision: AppealCaseRulingDecision.CHANGED,
                 },
               }}
             >
