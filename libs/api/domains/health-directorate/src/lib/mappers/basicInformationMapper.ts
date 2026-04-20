@@ -34,7 +34,6 @@ export const mapVaccinationStatus = (
   }
 }
 
-
 export const toAppointmentStatusEnum = (
   status: string,
 ): AppointmentStatusEnum | undefined =>
