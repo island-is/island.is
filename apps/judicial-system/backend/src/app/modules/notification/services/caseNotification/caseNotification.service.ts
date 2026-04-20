@@ -32,7 +32,7 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -1916,38 +1916,6 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
-  //#region INDICTMENT_RETURNED notifications
-  private async sendIndictmentReturnedNotifications(
-    theCase: Case,
-  ): Promise<DeliverResponse> {
-    const subject = this.formatMessage(
-      notifications.indictmentReturned.subject,
-      {
-        caseNumber: theCase.policeCaseNumbers[0],
-      },
-    )
-    const html = this.formatMessage(notifications.indictmentReturned.body, {
-      courtName: theCase.court?.name,
-      caseNumber: theCase.policeCaseNumbers[0],
-      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
-
-    const recipient = await this.sendEmail({
-      subject,
-      html,
-      recipientName: theCase.prosecutor?.name,
-      recipientEmail: theCase.prosecutor?.email,
-    })
-
-    return this.recordNotification(
-      theCase.id,
-      CaseNotificationType.INDICTMENT_RETURNED,
-      [recipient],
-    )
-  }
-  //#endregion
-
   //#region PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED notifications
   private async sendPublicProsecutorReviewerAssignedNotifications(
     theCase: Case,
@@ -3673,7 +3641,7 @@ export class CaseNotificationService extends BaseNotificationService {
     let recipients: Recipient[] = []
     if (
       theCase.appealCase?.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED
+      AppealCaseRulingDecision.DISCONTINUED
     ) {
       recipients = await this.sendAppealDiscontinuedNotifications(theCase)
     } else {
@@ -4045,8 +4013,6 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendAppealWithdrawnNotifications(theCase, user)
       case CaseNotificationType.INDICTMENT_DENIED:
         return this.sendIndictmentDeniedNotifications(theCase)
-      case CaseNotificationType.INDICTMENT_RETURNED:
-        return this.sendIndictmentReturnedNotifications(theCase)
       case CaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, user)
       case CaseNotificationType.RULING_ORDER_ADDED:

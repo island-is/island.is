@@ -40,6 +40,7 @@ query Case($input: CaseQueryInput!) {
         submittedBy
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
     }
     splitCase {
@@ -227,6 +228,8 @@ query Case($input: CaseQueryInput!) {
         key
         size
         isKeyAccessible
+        defendantId
+        civilClaimantId
       }
     }
     childCase {
@@ -267,6 +270,7 @@ query Case($input: CaseQueryInput!) {
       fileRepresentative
       isKeyAccessible
       defendantId
+      civilClaimantId
     }
     isAppealDeadlineExpired
     caseModifiedExplanation
@@ -389,6 +393,7 @@ query Case($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
+      appealedByNationalId
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
@@ -418,7 +423,6 @@ query Case($input: CaseQueryInput!) {
       appealIsolationToDate
     }
     indictmentDeniedExplanation
-    indictmentReturnedExplanation
     arraignmentDate {
       date
       location
@@ -574,6 +578,8 @@ query Case($input: CaseQueryInput!) {
         displayDate
         submittedBy
         isKeyAccessible
+        defendantId
+        civilClaimantId
       }
       policeCaseNumbers
       indictmentSubtypes

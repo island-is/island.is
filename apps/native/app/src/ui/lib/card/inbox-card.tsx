@@ -3,6 +3,7 @@ import { ImageSourcePropType } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
 import { ListItem } from '../list/list-item'
+import { testIDs } from '../../../utils/test-ids'
 
 interface InboxCardProps {
   id: string
@@ -42,6 +43,7 @@ export const InboxCard = ({
     <PressableHighlight
       highlightColor={theme.shade.shade400}
       onPress={() => onPress(id)}
+      testID={`${testIDs.INBOX_ITEM}_${id}`}
     >
       <ListItem
         title={senderName ?? ''}

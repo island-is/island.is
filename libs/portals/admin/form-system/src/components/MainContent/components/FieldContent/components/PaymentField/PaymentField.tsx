@@ -59,7 +59,13 @@ export const PaymentField = () => {
               controlDispatch({
                 type: 'SET_PAYMENT_SETTINGS',
                 payload: {
-                  ...paymentSettings,
+                  field: currentItem,
+                  chargeItemCode: paymentSettings?.chargeItemCode || '',
+                  chargeItemName: paymentSettings?.chargeItemName || '',
+                  chargeType: paymentSettings?.chargeType || '',
+                  performingOrgID:
+                    paymentSettings?.performingOrganizationID || '',
+                  priceAmount: paymentSettings?.priceAmount || 0,
                   update: updateActiveItem,
                 },
               })

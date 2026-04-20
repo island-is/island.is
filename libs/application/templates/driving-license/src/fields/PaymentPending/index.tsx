@@ -1,5 +1,8 @@
 import { FC, useEffect } from 'react'
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  getErrorReasonIfPresent,
+} from '@island.is/application/core'
 import {
   CustomField,
   DefaultEvents,
@@ -11,6 +14,7 @@ import { useSubmitApplication, usePaymentStatus } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
 import { PersonsOnComputers } from '@island.is/application/assets/graphics'
 import { useLocale } from '@island.is/localization'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 export interface Props extends FieldBaseProps {
   field: CustomField
@@ -99,10 +103,18 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
   }
 
   if (submitError) {
+    const problem = findProblemInApolloError(submitError)
+    const errorReason =
+      problem && 'errorReason' in problem
+        ? getErrorReasonIfPresent(problem.errorReason)
+        : null
+
     return (
       <PaymentError
-        title={formatMessage(m.submitErrorTitle)}
-        errorMessage={formatMessage(m.submitErrorMessage)}
+        title={formatMessage(errorReason?.title ?? m.submitErrorTitle)}
+        errorMessage={formatMessage(
+          errorReason?.summary ?? m.submitErrorMessage,
+        )}
         buttonCaption={formatMessage(m.submitErrorButtonCaption)}
         onClick={() => refetch?.()}
       />

@@ -4,40 +4,41 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
-  NormalizedCacheObject,
+  ServerParseError,
 } from '@apollo/client'
-
+import * as WebBrowser from 'expo-web-browser'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { openNativeBrowser } from '../lib/rn-island'
-import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
-import { authStore } from '../stores/auth-store'
+import { setInitializer } from './client-instance'
+import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
-import { offlineStore } from '../stores/offline-store'
-import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
+import { createNetworkStatusNotifier } from 'react-apollo-network-status'
+
+export function cognitoAuthUrl() {
+  const url = `https://cognito.shared.devland.is/login`
+  const params = {
+    approval_prompt: 'prompt',
+    client_id: config.cognitoClientId,
+    redirect_uri: `${config.bundleId}://cognito`,
+    response_type: 'token',
+    scope: 'openid',
+    state: 'state',
+  }
+  return `${url}?${new URLSearchParams(params)}`
+}
+
+const NetworkStatusNotifier = createNetworkStatusNotifier()
+
+export const useApolloNetworkStatus =
+  NetworkStatusNotifier.useApolloNetworkStatus
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
-
-const connectivityLink = new ApolloLink((operation, forward) => {
-  return forward(operation).map((response) => {
-    // Check if the network response was successful
-    const success =
-      response.errors === undefined || response.errors.length === 0
-
-    // This is a fallback check if the @react-native-community/netinfo will fail to detect if the network status is available again.
-    if (success && !offlineStore.getState().isConnected) {
-      offlineStore.setState({ isConnected: true })
-    }
-
-    return response
-  })
-})
 
 const httpLink = new HttpLink({
   uri() {
@@ -58,7 +59,9 @@ const retryLink = new RetryLink({
   },
 })
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+let cognitoBrowserOpen = false
+
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
       console.log(`[GraphQL error]: ${JSON.stringify(graphQLError, null, 2)}`),
@@ -66,29 +69,36 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 
   if (networkError) {
-    console.log(`[Network error]: ${networkError}`)
-
     // Detect possible OAuth needed
     if (networkError.name === 'ServerParseError') {
-      const redirectUrl = (networkError as { response?: { url: string } })
-        .response?.url
-      if (
-        redirectUrl &&
-        redirectUrl.indexOf('cognito.shared.devland.is') >= 0
-      ) {
-        authStore.setState({ cognitoAuthUrl: redirectUrl })
-
-        if (config.isTestingApp && authStore.getState().authorizeResult) {
-          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
+      const parseError = networkError as ServerParseError
+      const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
+      const isCognitoRedirect = parseError?.response?.url?.includes('cognito')
+      const redirectUrl = cognitoAuthUrl()
+      if (isCognitoLogin || isCognitoRedirect) {
+        getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
+        if (
+          config.isTestingApp &&
+          getAuthStoreRef().getState().authorizeResult &&
+          !cognitoBrowserOpen
+        ) {
+          cognitoBrowserOpen = true
+          WebBrowser.openBrowserAsync(redirectUrl)
+            .finally(() => {
+              cognitoBrowserOpen = false
+            })
+            .catch(() => void 0)
         }
+        return
       }
     }
+    console.log(`[Network error]: ${networkError}`)
   }
 })
 
 const getAndRefreshToken = async () => {
-  const { refresh } = authStore.getState()
-  let { authorizeResult } = authStore.getState()
+  const { refresh } = getAuthStoreRef().getState()
+  let { authorizeResult } = getAuthStoreRef().getState()
 
   const timeUntilExpiration =
     new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() -
@@ -98,10 +108,10 @@ const getAndRefreshToken = async () => {
   if (isTokenPerhapsExpired) {
     // get a new token to be safe
     await refresh()
-    authorizeResult = authStore.getState().authorizeResult
+    authorizeResult = getAuthStoreRef().getState().authorizeResult
   } else if (isTokenCloseToExpiring) {
     // expires in less than 60 seconds, so refresh in the background
-    refresh().catch((err) => {
+    refresh().catch((err: Error) => {
       console.error('Failed to refresh token in the background', err)
     })
   }
@@ -120,7 +130,7 @@ const authLink = setContext(async (_, { headers }) => {
         environmentStore.getState().cognito?.accessToken
       }`,
       'User-Agent': getCustomUserAgent(),
-      cookie: [authStore.getState().cookies]
+      cookie: [getAuthStoreRef().getState().cookies]
         .filter((x) => String(x) !== '')
         .join('; '),
     },
@@ -199,40 +209,30 @@ const cache = new InMemoryCache({
   },
 })
 
-let apolloClientPromise: Promise<ApolloClient<NormalizedCacheObject>> | null =
-  null
-let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+// Re-export from client-instance for backward compatibility
+export { getApolloClientAsync, getApolloClient } from './client-instance'
 
-export const getApolloClientAsync = () => {
-  if (!apolloClientPromise) {
-    apolloClientPromise = initializeApolloClient()
-  }
-
-  return apolloClientPromise
-}
-
-export const getApolloClient = () => {
-  if (!apolloClient) {
-    throw new Error('Apollo client not initialized')
-  }
-
-  return apolloClient
-}
-
-export const initializeApolloClient = async () => {
+const initializeApolloClient = async () => {
   await persistCache({
     cache,
-    storage: new MMKVStorageWrapper(apolloMMKVStorage),
+    storage: new MMKVStorageWrapper({
+      getItem: async (key) => {
+        const value = await apolloMMKVStorage.getStringAsync(key)
+        return value ?? null
+      },
+      setItem: async (key, value) => {
+        await apolloMMKVStorage.setItem(key, value)
+        return true
+      },
+      removeItem: async (key) => {
+        await apolloMMKVStorage.removeItem(key)
+        return true
+      },
+    }),
   })
 
-  apolloClient = new ApolloClient({
-    link: ApolloLink.from([
-      connectivityLink,
-      retryLink,
-      errorLink,
-      authLink,
-      httpLink,
-    ]),
+  return new ApolloClient({
+    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: 'cache-and-network',
@@ -240,6 +240,7 @@ export const initializeApolloClient = async () => {
     },
     cache,
   })
-
-  return apolloClient
 }
+
+// Register the initializer so client-instance can create the client on demand
+setInitializer(initializeApolloClient)

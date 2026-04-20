@@ -313,6 +313,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-create-error',
     defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
   },
+  grantDeceasedTitle: {
+    id: 'sp.access-control-delegations:grant-deceased-title',
+    defaultMessage: 'Ekki er hægt að stofna umboð',
+  },
+  grantDeceasedMessage: {
+    id: 'sp.access-control-delegations:grant-deceased-message',
+    defaultMessage: 'Ekki er hægt að veita umboð til látins einstaklings.',
+  },
   grantRequiredSsn: {
     id: 'sp.access-control-delegations:grant-required-ssn',
     defaultMessage: 'Þú þarft að setja inn kennitölu',
@@ -467,6 +475,15 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-access-scopes-intro',
     defaultMessage:
       'Hérna getur þú, í þremur skrefum, veitt einstaklingum umboð til að sinna þínum erindum á vefsvæðum opinberra stofnana',
+  },
+  editAccessStepsTitle: {
+    id: 'sp.access-control-delegations:edit-access-steps-title',
+    defaultMessage: 'Breyta umboði',
+  },
+  editAccessStepsIntro: {
+    id: 'sp.access-control-delegations:edit-access-steps-intro',
+    defaultMessage:
+      'Hérna getur þú bætt við umboðum, fjarlægt eða breytt gildistíma.',
   },
   accessPeriodSame: {
     id: 'sp.access-control-delegations:access-period-same',

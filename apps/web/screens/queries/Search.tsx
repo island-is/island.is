@@ -63,6 +63,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
         }
+        ... on Course {
+          id
+          title
+          courseHref
+        }
       }
     }
   }
@@ -316,6 +321,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             title
             slug
           }
+        }
+        ... on Course {
+          id
+          title
+          organizationTitle
+          intro
+          courseHref
         }
       }
       tagCounts {

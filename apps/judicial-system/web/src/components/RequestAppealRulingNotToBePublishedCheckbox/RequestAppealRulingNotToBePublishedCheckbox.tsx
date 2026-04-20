@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Checkbox } from '@island.is/island-ui/core'
 
-import { CaseAppealState } from '../../graphql/schema'
+import { AppealCaseState } from '../../graphql/schema'
 import { setCheckboxAndSendToServer } from '../../utils/formHelper'
 import { useCase } from '../../utils/hooks'
 import BlueBox from '../BlueBox/BlueBox'
@@ -31,7 +31,7 @@ const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
           )
         }
         disabled={
-          workingCase.appealCase?.appealState === CaseAppealState.COMPLETED
+          workingCase.appealCase?.appealState === AppealCaseState.COMPLETED
         }
         onChange={() => {
           if (!user || user.role === undefined || user.role === null) return

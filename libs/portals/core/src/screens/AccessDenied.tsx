@@ -9,6 +9,7 @@ import { computeDisabledReason } from '../utils/filterNavigationTree/filterNavig
 import { renderHtml } from '@island.is/island-ui/contentful'
 import { useGetServicePortalPageQuery } from '../queries/ServicePortalPage.generated'
 import * as css from './AccessDenied.css'
+import { LoadingDots } from '@island.is/island-ui/core'
 
 export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
   const { formatMessage, lang } = useLocale()
@@ -24,7 +25,7 @@ export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
       ? 'access-denied-not-minor'
       : 'access-denied-default'
 
-  const { data } = useGetServicePortalPageQuery({
+  const { data, loading } = useGetServicePortalPageQuery({
     variables: { input: { slug, lang } },
     skip: !isDelegation,
   })
@@ -45,11 +46,17 @@ export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
             : formatMessage(m.accessDenied)
         }
         message={
-          isDelegation
-            ? delegationsMessage
-              ? renderHtml(delegationsMessage?.document)
-              : formatMessage(m.accessDeniedText)
-            : formatMessage(m.accessNeededText)
+          loading ? (
+            <LoadingDots />
+          ) : isDelegation ? (
+            delegationsMessage ? (
+              renderHtml(delegationsMessage?.document)
+            ) : (
+              formatMessage(m.accessDeniedText)
+            )
+          ) : (
+            formatMessage(m.accessNeededText)
+          )
         }
         imgSrc="./assets/images/jobsGrid.svg"
       />

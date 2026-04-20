@@ -24,6 +24,7 @@ export interface SecondarySchool {
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
   requireThirdLanguage: boolean
+  requireFallbackThirdLanguage: boolean
   isOpenForAdmissionGeneral: boolean
   isOpenForAdmissionFreshman: boolean
 }
@@ -56,6 +57,7 @@ export interface ApplicationSelectionSchool {
   schoolId: string
   programs: ApplicationSelectionSchoolProgram[]
   thirdLanguageCode?: string
+  fallbackThirdLanguageCode?: string
   nordicLanguageCode?: string
   requestDormitory?: boolean
 }

@@ -109,7 +109,10 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 }
 
 const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
-  const theKey = key as keyof UpdateCaseInput
+  const theKey = key as keyof Omit<
+    UpdateCaseInput,
+    'defendantEventLogDecisions'
+  >
 
   let currentValue: unknown
 
