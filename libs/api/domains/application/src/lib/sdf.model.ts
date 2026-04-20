@@ -122,6 +122,40 @@ export class SdfTextField {
   @Field(() => Int, { nullable: true })
   textareaRows?: number
 
+  @Field({ nullable: true })
+  inputBackgroundColor?: string
+
+  @Field({ nullable: true })
+  readOnly?: boolean
+
+  @Field({ nullable: true })
+  rightAlign?: boolean
+
+  @Field({ nullable: true })
+  textFormat?: string
+
+  @Field({ nullable: true })
+  textSuffix?: string
+
+  @Field({ nullable: true })
+  showMaxLength?: boolean
+
+  @Field({ nullable: true })
+  thousandSeparator?: boolean
+
+  @Field({ nullable: true })
+  allowNegative?: boolean
+
+  /** Number input bounds (renamed from `min`/`max` to avoid union conflict with `SdfSliderField`). */
+  @Field(() => Int, { nullable: true })
+  textNumberMin?: number
+
+  @Field(() => Int, { nullable: true })
+  textNumberMax?: number
+
+  @Field({ nullable: true })
+  textStep?: string
+
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 

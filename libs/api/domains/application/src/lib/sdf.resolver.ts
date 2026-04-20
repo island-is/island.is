@@ -59,7 +59,10 @@ const mapRestScreenToGql = (dto: ScreenDto): SdfScreen => {
       })),
       canGoBack: dto.footer.canGoBack,
     },
-    answers: dto.answers,
+    answers:
+      dto.answers === undefined || dto.answers === null
+        ? undefined
+        : (dto.answers as Record<string, unknown>),
   }
 }
 

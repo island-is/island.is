@@ -141,6 +141,19 @@ type TextField {
   disabled: Boolean!
   maxLength: Int
   defaultValue: String
+  inputVariant: String
+  textareaRows: Int
+  inputBackgroundColor: String
+  readOnly: Boolean
+  rightAlign: Boolean
+  textFormat: String
+  textSuffix: String
+  showMaxLength: Boolean
+  thousandSeparator: Boolean
+  allowNegative: Boolean
+  textNumberMin: Int
+  textNumberMax: Int
+  textStep: String
   width: ComponentWidth
   clientCondition: ClientCondition
 }

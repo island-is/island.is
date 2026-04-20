@@ -140,6 +140,44 @@ export class ComponentDto {
   @ApiPropertyOptional()
   textareaRows?: number
 
+  /** Mirrors `TextField.backgroundColor` (`blue` | `white`). */
+  @ApiPropertyOptional({ enum: ['blue', 'white'] })
+  inputBackgroundColor?: 'blue' | 'white'
+
+  @ApiPropertyOptional()
+  readOnly?: boolean
+
+  @ApiPropertyOptional()
+  rightAlign?: boolean
+
+  /** String `TextField.format` only (functions are not serializable). */
+  @ApiPropertyOptional()
+  textFormat?: string
+
+  @ApiPropertyOptional()
+  textSuffix?: string
+
+  @ApiPropertyOptional()
+  showMaxLength?: boolean
+
+  @ApiPropertyOptional()
+  thousandSeparator?: boolean
+
+  @ApiPropertyOptional()
+  allowNegative?: boolean
+
+  /** Number input min (distinct from slider `min` to avoid ambiguous JSON). */
+  @ApiPropertyOptional()
+  textNumberMin?: number
+
+  /** Number input max (distinct from slider `max`). */
+  @ApiPropertyOptional()
+  textNumberMax?: number
+
+  /** HTML `step` for number/text numeric inputs (distinct from slider `step`). */
+  @ApiPropertyOptional()
+  textStep?: string
+
   @ApiPropertyOptional()
   maxSize?: number
 

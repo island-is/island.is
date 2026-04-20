@@ -1,5 +1,6 @@
 import {
   AllOrAny,
+  Application,
   Comparators,
   Condition,
   DynamicCheck,
@@ -11,6 +12,9 @@ import {
   FormText,
 } from '@island.is/application/types'
 import { BoxProps } from '@island.is/island-ui/core/types'
+
+/** Builder-time field: satisfies `Field` while allowing extra props not on every union member. */
+type MutableField = Field & Record<string, unknown>
 
 type SimpleCondition = {
   field: string
@@ -39,6 +43,20 @@ interface FieldOptions {
   placeholder?: FormText
   required?: boolean
   variant?: 'text' | 'email' | 'number' | 'currency' | 'tel' | 'textarea'
+  /** Mirrors `buildTextField` / `TextField` for SDF screen mapping. */
+  backgroundColor?: 'blue' | 'white'
+  readOnly?: boolean
+  rightAlign?: boolean
+  format?: string
+  suffix?: FormText
+  showMaxLength?: boolean
+  thousandSeparator?: boolean
+  allowNegative?: boolean
+  maxLength?: number
+  rows?: number
+  min?: number
+  max?: number
+  step?: string
 }
 
 type OptionList = Array<string | { label: string; value: string }>
@@ -53,23 +71,23 @@ interface SelectFieldOptions extends RadioSelectOptions {
   onSelectRefetch?: string[]
 }
 
-function toStaticCheck(c: SimpleCondition): StaticCheck {
+const toStaticCheck = (c: SimpleCondition): StaticCheck => {
   const comparator =
     c.equals !== undefined
       ? Comparators.EQUALS
       : c.notEquals !== undefined
-        ? Comparators.NOT_EQUAL
-        : c.contains !== undefined
-          ? Comparators.CONTAINS
-          : c.gt !== undefined
-            ? Comparators.GT
-            : c.gte !== undefined
-              ? Comparators.GTE
-              : c.lt !== undefined
-                ? Comparators.LT
-                : c.lte !== undefined
-                  ? Comparators.LTE
-                  : Comparators.EQUALS
+      ? Comparators.NOT_EQUAL
+      : c.contains !== undefined
+      ? Comparators.CONTAINS
+      : c.gt !== undefined
+      ? Comparators.GT
+      : c.gte !== undefined
+      ? Comparators.GTE
+      : c.lt !== undefined
+      ? Comparators.LT
+      : c.lte !== undefined
+      ? Comparators.LTE
+      : Comparators.EQUALS
 
   const value =
     c.equals ??
@@ -84,13 +102,16 @@ function toStaticCheck(c: SimpleCondition): StaticCheck {
   return { questionId: c.field, comparator, value }
 }
 
-function resolveShowWhen(showWhen: ShowWhen): Condition {
+const resolveShowWhen = (showWhen: ShowWhen): Condition => {
   if (typeof showWhen === 'function') {
     return showWhen
   }
 
   if ('all' in showWhen || 'any' in showWhen) {
-    const checks = 'all' in showWhen ? showWhen.all : (showWhen as { any: SimpleCondition[] }).any
+    const checks =
+      'all' in showWhen
+        ? showWhen.all
+        : (showWhen as { any: SimpleCondition[] }).any
     return {
       isMultiCheck: true,
       show: true,
@@ -102,11 +123,11 @@ function resolveShowWhen(showWhen: ShowWhen): Condition {
   return toStaticCheck(showWhen as SimpleCondition)
 }
 
-function normalizeOptions(
+const normalizeOptions = (
   options: OptionList | DynamicOptions,
-): OptionList | DynamicOptions {
+): OptionList | DynamicOptions => {
   if (typeof options === 'function') {
-    return (app: any) => {
+    return (app: Application) => {
       const resolved = options(app)
       return resolved.map((o: string | { label: string; value: string }) =>
         typeof o === 'string' ? { label: o, value: o } : o,
@@ -118,29 +139,28 @@ function normalizeOptions(
   )
 }
 
-function resolveWidth(
-  width?: 'full' | 'half',
-): 'full' | 'half' | undefined {
+const resolveWidth = (width?: 'full' | 'half'): 'full' | 'half' | undefined => {
   return width
 }
 
-function makeBaseField(
+const makeBaseField = (
   id: string,
   title: FormText,
   type: FieldTypes,
   component: string,
   opts?: FieldOptions,
-): Field {
+): MutableField => {
   const field = {
     id,
     title: title ?? '',
     type,
     component,
     children: undefined,
-  } as unknown as Field & Record<string, unknown>
+    ...(opts?.description !== undefined && { description: opts.description }),
+  } as unknown as MutableField
 
   if (opts?.showWhen) {
-    ;(field as any).condition = resolveShowWhen(opts.showWhen)
+    field.condition = resolveShowWhen(opts.showWhen)
   }
 
   if (opts?.disabled !== undefined) {
@@ -159,27 +179,64 @@ function makeBaseField(
     field.doesNotRequireAnswer = opts.doesNotRequireAnswer
   }
 
-  if (opts?.description !== undefined) {
-    ;(field as any).description = opts.description
-  }
-
   if (opts?.placeholder !== undefined) {
-    ;(field as any).placeholder = opts.placeholder
+    field.placeholder = opts.placeholder
   }
 
   if (opts?.required !== undefined) {
-    ;(field as any).required = opts.required
+    field.required = opts.required
   }
 
   if (opts?.variant !== undefined) {
-    ;(field as any).variant = opts.variant
+    field.variant = opts.variant
+  }
+
+  const m = field as Record<string, unknown>
+  if (opts?.backgroundColor !== undefined) {
+    m.backgroundColor = opts.backgroundColor
+  }
+  if (opts?.readOnly !== undefined) {
+    m.readOnly = opts.readOnly
+  }
+  if (opts?.rightAlign !== undefined) {
+    m.rightAlign = opts.rightAlign
+  }
+  if (opts?.format !== undefined) {
+    m.format = opts.format
+  }
+  if (opts?.suffix !== undefined) {
+    m.suffix = opts.suffix
+  }
+  if (opts?.showMaxLength !== undefined) {
+    m.showMaxLength = opts.showMaxLength
+  }
+  if (opts?.thousandSeparator !== undefined) {
+    m.thousandSeparator = opts.thousandSeparator
+  }
+  if (opts?.allowNegative !== undefined) {
+    m.allowNegative = opts.allowNegative
+  }
+  if (opts?.maxLength !== undefined) {
+    m.maxLength = opts.maxLength
+  }
+  if (opts?.rows !== undefined) {
+    m.rows = opts.rows
+  }
+  if (opts?.min !== undefined) {
+    m.min = opts.min
+  }
+  if (opts?.max !== undefined) {
+    m.max = opts.max
+  }
+  if (opts?.step !== undefined) {
+    m.step = opts.step
   }
 
   return field
 }
 
 export class PageBuilder<TSchema = unknown> {
-  private fields: Field[] = []
+  private fields: MutableField[] = []
   private _id: string
   private _title: FormText
 
@@ -196,30 +253,52 @@ export class PageBuilder<TSchema = unknown> {
   }
 
   addRadioField(id: string, title: FormText, opts?: RadioSelectOptions): this {
-    const field = makeBaseField(id, title, FieldTypes.RADIO, 'RadioFormField', opts)
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.RADIO,
+      'RadioFormField',
+      opts,
+    )
     if (opts?.options) {
-      ;(field as any).options = normalizeOptions(opts.options)
+      field.options = normalizeOptions(opts.options)
     }
     this.fields.push(field)
     return this
   }
 
   addSelectField(id: string, title: FormText, opts?: SelectFieldOptions): this {
-    const field = makeBaseField(id, title, FieldTypes.SELECT, 'SelectFormField', opts)
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.SELECT,
+      'SelectFormField',
+      opts,
+    )
     if (opts?.options) {
-      ;(field as any).options = normalizeOptions(opts.options)
+      field.options = normalizeOptions(opts.options)
     }
     if (opts?.onSelectRefetch?.length) {
-      ;(field as any).inlineRefetchTemplateApis = opts.onSelectRefetch
+      field.inlineRefetchTemplateApis = opts.onSelectRefetch
     }
     this.fields.push(field)
     return this
   }
 
-  addCheckboxField(id: string, title: FormText, opts?: RadioSelectOptions): this {
-    const field = makeBaseField(id, title, FieldTypes.CHECKBOX, 'CheckboxFormField', opts)
+  addCheckboxField(
+    id: string,
+    title: FormText,
+    opts?: RadioSelectOptions,
+  ): this {
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.CHECKBOX,
+      'CheckboxFormField',
+      opts,
+    )
     if (opts?.options) {
-      ;(field as any).options = normalizeOptions(opts.options)
+      field.options = normalizeOptions(opts.options)
     }
     this.fields.push(field)
     return this
@@ -234,7 +313,13 @@ export class PageBuilder<TSchema = unknown> {
 
   addFileUploadField(id: string, title: FormText, opts?: FieldOptions): this {
     this.fields.push(
-      makeBaseField(id, title, FieldTypes.FILEUPLOAD, 'FileUploadFormField', opts),
+      makeBaseField(
+        id,
+        title,
+        FieldTypes.FILEUPLOAD,
+        'FileUploadFormField',
+        opts,
+      ),
     )
     return this
   }
@@ -248,7 +333,13 @@ export class PageBuilder<TSchema = unknown> {
 
   addDescriptionField(id: string, title: FormText, opts?: FieldOptions): this {
     this.fields.push(
-      makeBaseField(id, title, FieldTypes.DESCRIPTION, 'DescriptionFormField', opts),
+      makeBaseField(
+        id,
+        title,
+        FieldTypes.DESCRIPTION,
+        'DescriptionFormField',
+        opts,
+      ),
     )
     return this
   }
@@ -273,10 +364,16 @@ export class PageBuilder<TSchema = unknown> {
     value: FormText | ((app: any) => string),
     opts?: FieldOptions,
   ): this {
-    const field = makeBaseField(id, title, FieldTypes.KEY_VALUE, 'KeyValueFormField', {
-      ...opts,
-      doesNotRequireAnswer: true,
-    })
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.KEY_VALUE,
+      'KeyValueFormField',
+      {
+        ...opts,
+        doesNotRequireAnswer: true,
+      },
+    )
     ;(field as any).value = value
     this.fields.push(field)
     return this
@@ -288,10 +385,16 @@ export class PageBuilder<TSchema = unknown> {
     value: FormText | ((app: any) => string),
     opts?: FieldOptions,
   ): this {
-    const field = makeBaseField(id, title, FieldTypes.DISPLAY, 'DisplayFormField', {
-      ...opts,
-      doesNotRequireAnswer: true,
-    })
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.DISPLAY,
+      'DisplayFormField',
+      {
+        ...opts,
+        doesNotRequireAnswer: true,
+      },
+    )
     ;(field as any).value = value
     this.fields.push(field)
     return this
@@ -302,13 +405,7 @@ export class PageBuilder<TSchema = unknown> {
     componentName: string,
     opts?: FieldOptions,
   ): this {
-    const field = makeBaseField(
-      id,
-      '',
-      FieldTypes.CUSTOM,
-      componentName,
-      opts,
-    )
+    const field = makeBaseField(id, '', FieldTypes.CUSTOM, componentName, opts)
     this.fields.push(field)
     return this
   }
@@ -318,7 +415,7 @@ export class PageBuilder<TSchema = unknown> {
       id: this._id,
       title: this._title,
       type: FormItemTypes.MULTI_FIELD,
-      children: this.fields,
+      children: this.fields as Field[],
     }
   }
 }

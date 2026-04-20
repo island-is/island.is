@@ -12,7 +12,10 @@ import {
   validateCustomComponentProps,
   isCustomComponentWriteAllowed,
 } from './registry'
-import { SDF_FIELD_BLOCK_MARGIN_BOTTOM } from './sdfLayoutTokens'
+import {
+  SDF_FIELD_BLOCK_MARGIN_BOTTOM,
+  SDF_FIELD_CONTROL_PADDING_TOP,
+} from './sdfLayoutTokens'
 import {
   AlertMessage,
   AccordionCard,
@@ -33,6 +36,28 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import type { InputBackgroundColor } from '@island.is/island-ui/core/types'
+import NumberFormat from 'react-number-format'
+
+const resolveTextInputBackgroundColor = (
+  component: SdfComponentData,
+): InputBackgroundColor => {
+  const c = component.inputBackgroundColor
+  if (c === 'white' || c === 'blue') return c
+  return 'blue'
+}
+
+const buildSdfTextFieldLabel = (
+  component: SdfComponentData,
+  valueStr: string,
+): string | undefined => {
+  const core = component.label?.trim()
+  if (!core) return undefined
+  if (component.showMaxLength && component.maxLength != null) {
+    return `${core} (${valueStr.length}/${component.maxLength})`
+  }
+  return core
+}
 
 const FULL_ROW_TYPES = new Set([
   'SdfRadioField',
@@ -140,7 +165,7 @@ export const FormRenderer = ({
               <GridColumn
                 key={component.id ?? `col-${rowIdx}-${colIdx}`}
                 span={['1/1', '1/2']}
-                paddingBottom={2}
+                paddingBottom={0}
               >
                 <ComponentSwitch
                   component={component}
@@ -195,40 +220,144 @@ const ComponentSwitch = ({
     case 'SdfTextField': {
       const inputVariant = component.inputVariant ?? 'text'
       const isTextarea = inputVariant === 'textarea'
+      const valueStr = String(
+        (currentValue as string | undefined) ?? component.defaultValue ?? '',
+      )
+      const bg = resolveTextInputBackgroundColor(component)
+      const label = buildSdfTextFieldLabel(component, valueStr)
+      const placeholder = component.placeholder ?? ''
+      const inputCommon = {
+        id: component.id ?? '',
+        name: component.id ?? '',
+        placeholder,
+        disabled: component.disabled,
+        maxLength: component.maxLength ?? undefined,
+        required: component.required,
+        hasError: !!error,
+        errorMessage: error,
+        size: 'md' as const,
+        backgroundColor: bg,
+        readOnly: component.readOnly === true,
+        rightAlign: component.rightAlign === true,
+        label,
+      }
+
+      if (isTextarea) {
+        return (
+          <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+            <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+              <Input
+                {...inputCommon}
+                value={valueStr}
+                onChange={(e) => handleChange(e.target.value)}
+                textarea
+                rows={component.textareaRows ?? undefined}
+              />
+            </Box>
+          </Box>
+        )
+      }
+
+      const isCurrency = inputVariant === 'currency'
+      const isNumber = inputVariant === 'number'
+      const useNumericFormat = isCurrency || isNumber
+      const thousandSep =
+        component.thousandSeparator === true || isCurrency
+      const suffix =
+        component.textSuffix != null && component.textSuffix !== ''
+          ? component.textSuffix
+          : isCurrency
+          ? ' kr.'
+          : undefined
+      const allowNegative = component.allowNegative !== false
+
+      if (useNumericFormat) {
+        return (
+          <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+            <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+              <NumberFormat
+                customInput={Input}
+                {...inputCommon}
+                value={valueStr}
+                suffix={suffix}
+                thousandSeparator={thousandSep ? '.' : undefined}
+                decimalSeparator={thousandSep ? ',' : undefined}
+                allowNegative={allowNegative}
+                type={isCurrency ? ('text' as const) : undefined}
+                min={isNumber ? component.textNumberMin : undefined}
+                max={isNumber ? component.textNumberMax : undefined}
+                isAllowed={(values) => {
+                  const { floatValue } = values
+                  if (
+                    isNumber &&
+                    typeof component.textNumberMax === 'number' &&
+                    floatValue != null
+                  ) {
+                    return floatValue <= component.textNumberMax
+                  }
+                  return true
+                }}
+                onValueChange={({ value }) => {
+                  handleChange(value)
+                }}
+              />
+            </Box>
+          </Box>
+        )
+      }
+
+      const fmt = component.textFormat
+      if (
+        fmt &&
+        (inputVariant === 'text' ||
+          inputVariant === 'tel' ||
+          inputVariant === 'email')
+      ) {
+        return (
+          <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+            <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+              <NumberFormat
+                customInput={Input}
+                {...inputCommon}
+                type={
+                  inputVariant === 'email'
+                    ? ('email' as const)
+                    : inputVariant === 'tel'
+                    ? ('tel' as const)
+                    : ('text' as const)
+                }
+                value={valueStr}
+                format={fmt}
+                onValueChange={({ value }) => {
+                  handleChange(value)
+                }}
+              />
+            </Box>
+          </Box>
+        )
+      }
+
       return (
         <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
-          <Input
-            id={component.id ?? ''}
-            name={component.id ?? ''}
-            label={component.label ?? ''}
-            placeholder={component.placeholder ?? ''}
-            disabled={component.disabled}
-            maxLength={component.maxLength ?? undefined}
-            required={component.required}
-            hasError={!!error}
-            errorMessage={error}
-            value={
-              (currentValue as string) ?? component.defaultValue ?? ''
-            }
-            onChange={(e) => handleChange(e.target.value)}
-            size="md"
-            textarea={isTextarea}
-            rows={
-              isTextarea ? component.textareaRows ?? undefined : undefined
-            }
-            type={
-              !isTextarea && inputVariant !== 'currency'
-                ? inputVariant === 'number'
-                  ? 'number'
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <Input
+              {...inputCommon}
+              value={valueStr}
+              onChange={(e) => handleChange(e.target.value)}
+              type={
+                isNumber
+                  ? ('number' as const)
                   : inputVariant === 'email'
-                    ? 'email'
-                    : inputVariant === 'tel'
-                      ? 'tel'
-                      : 'text'
-                : 'text'
-            }
-            currency={inputVariant === 'currency'}
-          />
+                  ? ('email' as const)
+                  : inputVariant === 'tel'
+                  ? ('tel' as const)
+                  : ('text' as const)
+              }
+              min={isNumber ? component.textNumberMin : undefined}
+              max={isNumber ? component.textNumberMax : undefined}
+              step={isNumber ? component.textStep : undefined}
+            />
+          </Box>
         </Box>
       )
     }
@@ -236,49 +365,48 @@ const ComponentSwitch = ({
     case 'SdfSelectField':
       return (
         <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
-          <Select
-            name={component.id ?? ''}
-            label={component.label ?? ''}
-            placeholder={component.placeholder ?? 'Select...'}
-            isDisabled={component.disabled}
-            required={component.required}
-            hasError={!!error}
-            errorMessage={error}
-            options={
-              component.options?.map((opt) => ({
-                label: opt.label,
-                value: opt.value,
-              })) ?? []
-            }
-            value={
-              component.options?.find(
-                (opt) => opt.value === (currentValue as string),
-              )
-                ? {
-                    label:
-                      component.options.find(
-                        (opt) => opt.value === (currentValue as string),
-                      )?.label ?? '',
-                    value: (currentValue as string) ?? '',
-                  }
-                : undefined
-            }
-            onChange={(opt) => {
-              handleChange(opt?.value)
-              if (
-                component.onSelectRefetchTemplateApis?.length &&
-                dispatch
-              ) {
-                void dispatch(
-                  'REFETCH',
-                  undefined,
-                  undefined,
-                  undefined,
-                  component.onSelectRefetchTemplateApis,
-                )
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <Select
+              name={component.id ?? ''}
+              label={component.label ?? ''}
+              placeholder={component.placeholder ?? 'Select...'}
+              isDisabled={component.disabled}
+              required={component.required}
+              hasError={!!error}
+              errorMessage={error}
+              options={
+                component.options?.map((opt) => ({
+                  label: opt.label,
+                  value: opt.value,
+                })) ?? []
               }
-            }}
-          />
+              value={
+                component.options?.find(
+                  (opt) => opt.value === (currentValue as string),
+                )
+                  ? {
+                      label:
+                        component.options.find(
+                          (opt) => opt.value === (currentValue as string),
+                        )?.label ?? '',
+                      value: (currentValue as string) ?? '',
+                    }
+                  : undefined
+              }
+              onChange={(opt) => {
+                handleChange(opt?.value)
+                if (component.onSelectRefetchTemplateApis?.length && dispatch) {
+                  void dispatch(
+                    'REFETCH',
+                    undefined,
+                    undefined,
+                    undefined,
+                    component.onSelectRefetchTemplateApis,
+                  )
+                }
+              }}
+            />
+          </Box>
         </Box>
       )
 
@@ -372,75 +500,91 @@ const ComponentSwitch = ({
     case 'SdfDateField':
       return (
         <Box marginBottom={3}>
-          <DatePicker
-            id={component.id ?? ''}
-            label={component.label ?? ''}
-            placeholderText={component.placeholder}
-            disabled={component.disabled}
-            minDate={component.minDate ? new Date(component.minDate) : undefined}
-            maxDate={component.maxDate ? new Date(component.maxDate) : undefined}
-            required={component.required}
-            hasError={!!error}
-            errorMessage={error}
-            selected={currentValue ? new Date(currentValue as string) : undefined}
-            handleChange={(date) => handleChange(date.toISOString().split('T')[0])}
-            size="md"
-          />
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <DatePicker
+              id={component.id ?? ''}
+              label={component.label ?? ''}
+              placeholderText={component.placeholder}
+              disabled={component.disabled}
+              minDate={
+                component.minDate ? new Date(component.minDate) : undefined
+              }
+              maxDate={
+                component.maxDate ? new Date(component.maxDate) : undefined
+              }
+              required={component.required}
+              hasError={!!error}
+              errorMessage={error}
+              selected={
+                currentValue ? new Date(currentValue as string) : undefined
+              }
+              handleChange={(date) =>
+                handleChange(date.toISOString().split('T')[0])
+              }
+              size="md"
+            />
+          </Box>
         </Box>
       )
 
     case 'SdfPhoneField':
       return (
         <Box marginBottom={3}>
-          <Input
-            id={component.id ?? ''}
-            name={component.id ?? ''}
-            label={component.label ?? ''}
-            placeholder={component.placeholder ?? ''}
-            disabled={component.disabled}
-            required={component.required}
-            hasError={!!error}
-            errorMessage={error}
-            type="tel"
-            value={(currentValue as string) ?? ''}
-            onChange={(e) => handleChange(e.target.value)}
-            size={component.width === 'HALF' ? 'xs' : 'md'}
-          />
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <Input
+              id={component.id ?? ''}
+              name={component.id ?? ''}
+              label={component.label ?? ''}
+              placeholder={component.placeholder ?? ''}
+              disabled={component.disabled}
+              required={component.required}
+              hasError={!!error}
+              errorMessage={error}
+              type="tel"
+              value={(currentValue as string) ?? ''}
+              onChange={(e) => handleChange(e.target.value)}
+              size={component.width === 'HALF' ? 'xs' : 'md'}
+            />
+          </Box>
         </Box>
       )
 
     case 'SdfNationalIdField':
       return (
         <Box marginBottom={3}>
-          <Input
-            id={component.id ?? ''}
-            name={component.id ?? ''}
-            label={component.label ?? ''}
-            placeholder="000000-0000"
-            disabled={component.disabled}
-            required={component.required}
-            hasError={!!error}
-            errorMessage={error}
-            value={(currentValue as string) ?? ''}
-            onChange={(e) => handleChange(e.target.value)}
-            size="xs"
-          />
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <Input
+              id={component.id ?? ''}
+              name={component.id ?? ''}
+              label={component.label ?? ''}
+              placeholder="000000-0000"
+              disabled={component.disabled}
+              required={component.required}
+              hasError={!!error}
+              errorMessage={error}
+              value={(currentValue as string) ?? ''}
+              onChange={(e) => handleChange(e.target.value)}
+              size="xs"
+            />
+          </Box>
         </Box>
       )
 
     case 'SdfFileUploadField':
       return (
         <Box marginBottom={3}>
-          <Input
-            id={component.id ?? ''}
-            name={component.id ?? ''}
-            label={component.label ?? ''}
-            disabled={component.disabled}
-            required={component.required}
-            hasError={!!error}
-            errorMessage={error}
-            type="file"
-          />
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <Input
+              id={component.id ?? ''}
+              name={component.id ?? ''}
+              label={component.label ?? ''}
+              disabled={component.disabled}
+              required={component.required}
+              hasError={!!error}
+              errorMessage={error}
+              type="file"
+            />
+          </Box>
         </Box>
       )
 
@@ -450,9 +594,7 @@ const ComponentSwitch = ({
           <Text variant="h3" marginBottom={1}>
             {component.label}
           </Text>
-          {component.description && (
-            <Text>{component.description}</Text>
-          )}
+          {component.description && <Text>{component.description}</Text>}
         </Box>
       )
 
@@ -482,7 +624,13 @@ const ComponentSwitch = ({
       return (
         <Box marginBottom={3}>
           <AlertMessage
-            type={(component.alertType as 'info' | 'error' | 'warning' | 'success') ?? 'info'}
+            type={
+              (component.alertType as
+                | 'info'
+                | 'error'
+                | 'warning'
+                | 'success') ?? 'info'
+            }
             title={component.title ?? ''}
             message={component.message}
           />
@@ -591,17 +739,19 @@ const ComponentSwitch = ({
     case 'SdfBankAccountField':
       return (
         <Box marginBottom={3}>
-          <Input
-            id={component.id ?? ''}
-            name={component.id ?? ''}
-            label={component.label ?? ''}
-            placeholder="0000-00-000000"
-            disabled={component.disabled}
-            hasError={!!error}
-            errorMessage={error}
-            value={(currentValue as string) ?? ''}
-            onChange={(e) => handleChange(e.target.value)}
-          />
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <Input
+              id={component.id ?? ''}
+              name={component.id ?? ''}
+              label={component.label ?? ''}
+              placeholder="0000-00-000000"
+              disabled={component.disabled}
+              hasError={!!error}
+              errorMessage={error}
+              value={(currentValue as string) ?? ''}
+              onChange={(e) => handleChange(e.target.value)}
+            />
+          </Box>
         </Box>
       )
 
@@ -712,8 +862,8 @@ const ComponentSwitch = ({
             {component.addItemLabel ?? 'Items'}
           </Text>
           <Text variant="small" color="dark300">
-            Repeater rendering handled by the backend. Items are re-evaluated
-            on REFETCH.
+            Repeater rendering handled by the backend. Items are re-evaluated on
+            REFETCH.
           </Text>
         </Box>
       )
@@ -754,9 +904,7 @@ const ComponentSwitch = ({
             marginY={2}
           >
             <Box paddingRight={[0, 0, 4]}>
-              <Text variant="small">
-                {component.message}
-              </Text>
+              <Text variant="small">{component.message}</Text>
             </Box>
             <Box marginTop={[3, 3, 0]} marginLeft={[0, 0, 3]}>
               <Button
@@ -815,8 +963,15 @@ const ComponentSwitch = ({
                   <tr>
                     {component.header.map((h: string, i: number) => (
                       <th key={i} style={{ textAlign: 'left' }}>
-                        <Box paddingY={2} paddingX={3} borderBottomWidth="standard" borderColor="blue200">
-                          <Text fontWeight="semiBold" variant="small">{h}</Text>
+                        <Box
+                          paddingY={2}
+                          paddingX={3}
+                          borderBottomWidth="standard"
+                          borderColor="blue200"
+                        >
+                          <Text fontWeight="semiBold" variant="small">
+                            {h}
+                          </Text>
                         </Box>
                       </th>
                     ))}
@@ -828,7 +983,12 @@ const ComponentSwitch = ({
                   <tr key={ri}>
                     {row.map((cell: string, ci: number) => (
                       <td key={ci}>
-                        <Box paddingY={2} paddingX={3} borderBottomWidth="standard" borderColor="blue100">
+                        <Box
+                          paddingY={2}
+                          paddingX={3}
+                          borderBottomWidth="standard"
+                          borderColor="blue100"
+                        >
                           <Text variant="small">{cell}</Text>
                         </Box>
                       </td>
@@ -882,9 +1042,7 @@ const ComponentSwitch = ({
           </Box>
           <Checkbox
             name={component.id ?? ''}
-            label={
-              component.checkboxLabel ?? 'Ég samþykki'
-            }
+            label={component.checkboxLabel ?? 'Ég samþykki'}
             checked={isApproved}
             onChange={(e) => handleChange(e.target.checked)}
             hasError={!!error}
@@ -946,9 +1104,7 @@ const CustomComponentRenderer = ({
   const { parsed } = validateCustomComponentProps(componentName, rawProps)
   const allowWrites = isCustomComponentWriteAllowed(componentName)
 
-  const DynComponent = Component as React.ComponentType<
-    Record<string, unknown>
-  >
+  const DynComponent = Component as React.ComponentType<Record<string, unknown>>
 
   return (
     <DynComponent

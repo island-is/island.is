@@ -105,6 +105,17 @@ export interface SdfComponentData {
   maxLength?: number
   inputVariant?: string
   textareaRows?: number
+  inputBackgroundColor?: string
+  readOnly?: boolean
+  rightAlign?: boolean
+  textFormat?: string
+  textSuffix?: string
+  showMaxLength?: boolean
+  thousandSeparator?: boolean
+  allowNegative?: boolean
+  textNumberMin?: number
+  textNumberMax?: number
+  textStep?: string
   defaultValue?: string
   width?: string
   options?: { label: string; value: string }[]
@@ -204,6 +215,17 @@ export const GET_SCREEN_QUERY = `
             maxLength
             inputVariant
             textareaRows
+            inputBackgroundColor
+            readOnly
+            rightAlign
+            textFormat
+            textSuffix
+            showMaxLength
+            thousandSeparator
+            allowNegative
+            textNumberMin
+            textNumberMax
+            textStep
             defaultValue
             width
             clientCondition {
@@ -568,7 +590,7 @@ export const EXECUTE_ACTION_MUTATION = `
         subSectionIndex
         components {
           __typename
-          ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows defaultValue width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSelectField { id label placeholder required disabled options { label value } width onSelectRefetchTemplateApis clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfRadioField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfCheckboxField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
