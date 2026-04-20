@@ -97,7 +97,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     permissions:
       contents: 'read'
       actions: 'read'

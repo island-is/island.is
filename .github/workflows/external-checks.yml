@@ -11,7 +11,7 @@ defaults:
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     env:
       CHECK: 'false'
     steps:

@@ -7,7 +7,7 @@ on:
 jobs:
   mq:
     if: github.event.created
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     env:
       GIT_BRANCH: ${{ github.ref_name }}
     steps:
