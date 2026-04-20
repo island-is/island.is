@@ -23,7 +23,7 @@ export class VerdictsService {
     const response = await this.verdictsClientService.getVerdicts({
       searchTerm: input.searchTerm ?? '',
       pageNumber: input.page ?? 1,
-      courtLevel: input.courtLevel,
+      court: input.court,
       keywords: input.keywords,
       caseCategories: input.caseCategories,
       caseTypes: input.caseTypes,

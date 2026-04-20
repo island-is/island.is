@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { parseAsString } from 'next-usequerystate'
 
 import initApollo from '@island.is/web/graphql/client'
+import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
 import {
   GetCourtAgendasQuery,
   GetCourtAgendasQueryVariables,
@@ -37,7 +37,7 @@ export default async function handler(
   const baseUrl = `${protocol}${host}/dagskra-domstola`
 
   let itemString = ''
-  const court = parseAsString.parseServerSide(req.query?.court)
+  const court = parseCommaSeparatedListFromQuery(req.query?.court)
 
   const agendas = await apolloClient.query<
     GetCourtAgendasQuery,
@@ -47,7 +47,7 @@ export default async function handler(
     variables: {
       input: {
         page: 1,
-        court: court ?? undefined,
+        court: court.length > 0 ? court : undefined,
       },
     },
   })
