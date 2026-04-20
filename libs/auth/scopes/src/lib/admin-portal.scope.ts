@@ -21,4 +21,5 @@ export enum AdminPortalScope {
   delegationSystem = '@admin.island.is/delegation-system',
   delegationSystemAdmin = '@admin.island.is/delegation-system:admin',
   payments = '@admin.island.is/payments',
+  applicationTranslation = '@admin.island.is/application-translation',
 }

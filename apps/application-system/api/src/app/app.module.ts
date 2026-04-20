@@ -78,6 +78,7 @@ import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployme
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { TranslationModule } from './modules/translation/translation.module'
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
       useClass: SequelizeConfigService,
     }),
     ApplicationModule,
+    TranslationModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,

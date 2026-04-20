@@ -7,6 +7,11 @@ import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ApplicationAdminV2Resolver } from './application-admin/application-adminV2.resolver'
 import { ApplicationAdminV2Service } from './application-admin/application-adminV2.service'
+import { ApplicationTranslationResolver } from './application-translation/application-translation.resolver'
+import {
+  ApplicationTranslationApiService,
+  TRANSLATION_API_CONFIG,
+} from './application-translation/application-translation.service'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   AdminApi as FormSystemAdminApi,
@@ -27,9 +32,15 @@ export class ApplicationModule {
         ApplicationResolver,
         ApplicationV2Resolver,
         ApplicationAdminV2Resolver,
+        ApplicationTranslationResolver,
         ApplicationService,
         ApplicationV2Service,
         ApplicationAdminV2Service,
+        ApplicationTranslationApiService,
+        {
+          provide: TRANSLATION_API_CONFIG,
+          useValue: { baseApiUrl: config.baseApiUrl },
+        },
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(

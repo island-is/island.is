@@ -6,6 +6,9 @@ import { ApplicationSystemPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
 const Root = lazy(() => import('./screens/Root/Root'))
+const TranslationWorkspace = lazy(
+  () => import('./screens/TranslationWorkspace/TranslationWorkspace'),
+)
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
@@ -36,6 +39,11 @@ export const applicationSystemAdminModule: PortalModule = {
           element: <Navigate to={ApplicationSystemPaths.Overview} />,
         },
       ],
+    },
+    {
+      name: m.translations,
+      path: ApplicationSystemPaths.TranslationWorkspace,
+      element: <TranslationWorkspace />,
     },
   ],
 }

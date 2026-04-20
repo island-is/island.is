@@ -1,4 +1,5 @@
 import type { FC } from 'react'
+import { lazy, Suspense } from 'react'
 
 import {
   Box,
@@ -19,6 +20,10 @@ import {
 } from '../../queries/overview.generated'
 import { useMemo } from 'react'
 import { Organization } from '@island.is/shared/types'
+
+const Translations = lazy(
+  () => import('../../screens/Translations/Translations'),
+)
 
 interface LayoutProps {
   isSuperAdmin: boolean
@@ -122,6 +127,15 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                       availableOrganizations={availableOrganizations}
                       isLoadingOrganizations={isLoadingOrganizations}
                     />
+                  ),
+                },
+                {
+                  id: 'translations',
+                  label: formatMessage(m.translations),
+                  content: (
+                    <Suspense fallback={null}>
+                      <Translations />
+                    </Suspense>
                   ),
                 },
               ]}

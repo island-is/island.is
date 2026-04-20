@@ -173,6 +173,50 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:statistics',
     defaultMessage: 'Tölfræði',
   },
+  translations: {
+    id: 'admin-portal.application-system:translations',
+    defaultMessage: 'Þýðingar',
+  },
+  translationsDescription: {
+    id: 'admin-portal.application-system:translationsDescription',
+    defaultMessage: 'Þýðingar á umsóknum',
+  },
+  translationProgress: {
+    id: 'admin-portal.application-system:translationProgress',
+    defaultMessage: '{translated} af {total} þýtt',
+  },
+  translationOpen: {
+    id: 'admin-portal.application-system:translationOpen',
+    defaultMessage: 'Opna þýðingar',
+  },
+  translationBackToList: {
+    id: 'admin-portal.application-system:translationBackToList',
+    defaultMessage: 'Til baka',
+  },
+  translationSave: {
+    id: 'admin-portal.application-system:translationSave',
+    defaultMessage: 'Vista',
+  },
+  translationSaveAll: {
+    id: 'admin-portal.application-system:translationSaveAll',
+    defaultMessage: 'Vista allt',
+  },
+  translationAiTranslateScreen: {
+    id: 'admin-portal.application-system:translationAiTranslateScreen',
+    defaultMessage: 'Þýða skjá',
+  },
+  translationAiTranslateAll: {
+    id: 'admin-portal.application-system:translationAiTranslateAll',
+    defaultMessage: 'Þýða allt',
+  },
+  translationReview: {
+    id: 'admin-portal.application-system:translationReview',
+    defaultMessage: 'Samþykkja',
+  },
+  translationReviewAll: {
+    id: 'admin-portal.application-system:translationReviewAll',
+    defaultMessage: 'Samþykkja allt',
+  },
   statisticsDescription: {
     id: 'admin-portal.application-system:statisticsDescription',
     defaultMessage:

@@ -1,0 +1,157 @@
+query getApplicationTemplateList {
+  applicationTemplateList {
+    typeId
+    name
+    slug
+    translationNamespaces
+  }
+}
+
+query getApplicationTranslationAllStatus {
+  applicationTranslationAllStatus {
+    namespace
+    total
+    translatedEn
+    untranslatedEn
+    reviewed
+  }
+}
+
+query getApplicationTranslations($namespace: String!) {
+  applicationTranslations(namespace: $namespace) {
+    id
+    namespace
+    messageKey
+    valueIs
+    valueEn
+    defaultMessage
+    isReviewed
+    translatedBy
+    reviewedBy
+    created
+    modified
+  }
+}
+
+query getApplicationTemplateIntrospection($typeId: String!) {
+  applicationTemplateIntrospection(typeId: $typeId) {
+    typeId
+    name
+    slug
+    translationNamespaces
+    states {
+      stateKey
+      stateName
+      status
+      roles {
+        roleId
+        form {
+          id
+          title
+          sections {
+            id
+            title
+            subSections {
+              id
+              title
+              screens {
+                id
+                type
+                title
+                messageDescriptors {
+                  id
+                  defaultMessage
+                  description
+                }
+                children {
+                  id
+                  type
+                  title
+                  messageDescriptors {
+                    id
+                    defaultMessage
+                    description
+                  }
+                }
+              }
+            }
+            screens {
+              id
+              type
+              title
+              messageDescriptors {
+                id
+                defaultMessage
+                description
+              }
+              children {
+                id
+                type
+                title
+                messageDescriptors {
+                  id
+                  defaultMessage
+                  description
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    allMessageDescriptors {
+      id
+      defaultMessage
+      description
+    }
+  }
+}
+
+mutation updateApplicationTranslation(
+  $input: UpdateApplicationTranslationInput!
+) {
+  updateApplicationTranslation(input: $input) {
+    id
+    namespace
+    messageKey
+    valueIs
+    valueEn
+    isReviewed
+  }
+}
+
+mutation bulkUpdateApplicationTranslations(
+  $input: BulkUpdateApplicationTranslationsInput!
+) {
+  bulkUpdateApplicationTranslations(input: $input) {
+    id
+    namespace
+    messageKey
+    valueIs
+    valueEn
+    isReviewed
+  }
+}
+
+mutation reviewApplicationTranslation($id: String!) {
+  reviewApplicationTranslation(id: $id) {
+    id
+    isReviewed
+  }
+}
+
+query aiTranslateStrings(
+  $namespace: String!
+  $messageKeys: [String!]!
+  $sourceLocale: String!
+  $targetLocale: String!
+) {
+  aiTranslateStrings(
+    namespace: $namespace
+    messageKeys: $messageKeys
+    sourceLocale: $sourceLocale
+    targetLocale: $targetLocale
+  ) {
+    translations
+  }
+}

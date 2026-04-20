@@ -3,4 +3,6 @@ export enum ApplicationSystemPaths {
 
   Overview = '/umsoknakerfi/yfirlit',
   Statistics = '/umsoknakerfi/tolfraedi',
+  Translations = '/umsoknakerfi/thydingar',
+  TranslationWorkspace = '/umsoknakerfi/thydingar/:typeId',
 }
