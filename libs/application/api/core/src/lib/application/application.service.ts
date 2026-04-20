@@ -582,7 +582,11 @@ export class ApplicationService {
   async createScheduledNotifications(
     applicationId: string,
     state: string,
-    notifications: { template: string; schedule_time: Date }[],
+    notifications: {
+      template: string
+      schedule_time: Date
+      args?: Record<string, unknown>
+    }[],
   ) {
     if (!notifications.length) return
     const records = notifications.map((n) => ({
@@ -590,7 +594,7 @@ export class ApplicationService {
       template: n.template,
       application_state: state,
       schedule_time: n.schedule_time,
-      schedule_status: NotificationStatus.PENDING,
+      args: n.args,
     }))
     return this.scheduledNotificationModel.bulkCreate(records)
   }

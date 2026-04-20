@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   NotificationType,
+  NotificationConfig,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -88,8 +89,11 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           scheduledNotifications: [
             {
-              template: NotificationType.System,
+              template: NotificationConfig[NotificationType.System].templateId,
               delayInMs: 10000,
+              args: {
+                documentId: '1234567890',
+              },
             },
           ],
           roles: [

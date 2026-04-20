@@ -411,6 +411,7 @@ export const handleScheduledNotifications = async (
       notificationsToSchedule.push({
         template: config.template,
         schedule_time: time,
+        args: config.args,
       })
     } catch (error) {
       console.error(
