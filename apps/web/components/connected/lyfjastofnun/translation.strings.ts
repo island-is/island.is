@@ -36,6 +36,11 @@ export const m = defineMessages({
     defaultMessage: 'kt.',
     description: 'Prefix shown before national ID (kennitala)',
   },
+  search: {
+    id: 'web.lyfjastofnunPharmacies:search',
+    defaultMessage: 'Leit',
+    description: 'Label for pharmacy name search input',
+  },
   searchPlaceholder: {
     id: 'web.lyfjastofnunPharmacies:searchPlaceholder',
     defaultMessage: 'Leita að apóteki',
@@ -76,14 +81,10 @@ export const m = defineMessages({
     defaultMessage: 'Engar niðurstöður fundust',
     description: 'Message shown when no pharmacies match the current filters',
   },
-  filterOpen: {
-    id: 'web.lyfjastofnunPharmacies:filterOpen',
-    defaultMessage: 'Sía',
-    description: 'Label for filter button',
-  },
-  filterClear: {
-    id: 'web.lyfjastofnunPharmacies:filterClear',
-    defaultMessage: 'Hreinsa síu',
-    description: 'Label for clear filter button',
+  regionAll: {
+    id: 'web.lyfjastofnunPharmacies:regionAll',
+    defaultMessage: 'Allir landshlutar',
+    description:
+      'Placeholder shown in region dropdown when no region is selected',
   },
 })

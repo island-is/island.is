@@ -7,13 +7,12 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Filter,
-  FilterMultiChoice,
   GridColumn,
   GridRow,
   Input,
   LinkV2,
   LoadingDots,
+  Select,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -26,6 +25,7 @@ import {
 
 import { GET_PHARMACIES } from './queries'
 import { m } from './translation.strings'
+import format from 'date-fns/fp/format'
 
 interface Props {
   slice: ConnectedComponent
@@ -55,7 +55,7 @@ const PharmaciesAccordion = ({ slice }: Props) => {
     'region',
     parseAsStringEnum<IcelandicMedicinesAgencyPharmacyRegion>(
       Object.values(IcelandicMedicinesAgencyPharmacyRegion),
-    ),
+    ).withDefault(null),
   )
 
   if (loading) {
@@ -87,50 +87,49 @@ const PharmaciesAccordion = ({ slice }: Props) => {
 
   return (
     <Stack space={3}>
-      <Filter
-        variant="popover"
-        reverse
-        align="left"
-        filterInput={
+      <GridRow alignItems="center" rowGap={[2, 0, 0]}>
+        <GridColumn span={['12/12', '6/12', '6/12']}>
           <Input
             name="pharmacy-search"
             placeholder={formatMessage(m.searchPlaceholder)}
-            aria-label={formatMessage(m.searchPlaceholder)}
+            label={formatMessage(m.search)}
             backgroundColor="blue"
             size="xs"
             icon={{ name: 'search', type: 'outline' }}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        }
-        labelOpen={formatMessage(m.filterOpen)}
-        labelClear={formatMessage(m.filterClear)}
-        labelClearAll={formatMessage(m.filterClear)}
-        filterCount={selectedRegion ? 1 : 0}
-        onFilterClear={() => setSelectedRegion(null)}
-      >
-        <FilterMultiChoice
-          labelClear={formatMessage(m.filterClear)}
-          onChange={({ selected }) =>
-            setSelectedRegion(
-              (selected[0] as IcelandicMedicinesAgencyPharmacyRegion) ?? null,
-            )
-          }
-          onClear={() => setSelectedRegion(null)}
-          categories={[
-            {
-              id: 'region',
-              label: formatMessage(m.regionLabel),
-              selected: selectedRegion ? [selectedRegion] : [],
-              singleOption: true,
-              filters: uniqueRegions.map((region) => ({
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12', '6/12']}>
+          <Select
+            name="pharmacy-region"
+            label={formatMessage(m.regionLabel)}
+            backgroundColor="blue"
+            size="xs"
+            options={[
+              { value: '', label: formatMessage(m.regionAll) },
+              ...uniqueRegions.map((region) => ({
                 value: region,
                 label: formatMessage(REGION_LABEL_MAP[region]),
               })),
-            },
-          ]}
-        />
-      </Filter>
+            ]}
+            value={
+              selectedRegion
+                ? {
+                    value: selectedRegion,
+                    label: formatMessage(REGION_LABEL_MAP[selectedRegion]),
+                  }
+                : { value: '', label: formatMessage(m.regionAll) }
+            }
+            onChange={(option) =>
+              setSelectedRegion(
+                (option?.value as IcelandicMedicinesAgencyPharmacyRegion) ||
+                  null,
+              )
+            }
+          />
+        </GridColumn>
+      </GridRow>
 
       {filteredPharmacies.length === 0 ? (
         <Text>{formatMessage(m.noResults)}</Text>
@@ -143,7 +142,7 @@ const PharmaciesAccordion = ({ slice }: Props) => {
               label={pharmacy.name}
             >
               <GridRow rowGap={3}>
-                <GridColumn span={['1/1', '1/2']}>
+                <GridColumn span={['12/12', '6/12']}>
                   <Stack space={2}>
                     {pharmacy.address && (
                       <Box>
@@ -193,7 +192,7 @@ const PharmaciesAccordion = ({ slice }: Props) => {
                     )}
                   </Stack>
                 </GridColumn>
-                <GridColumn span={['1/1', '1/2']}>
+                <GridColumn span={['12/12', '6/12']}>
                   <Stack space={3}>
                     {pharmacy.licenseHolder && (
                       <Box>
