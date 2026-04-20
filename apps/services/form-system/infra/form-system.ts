@@ -9,7 +9,6 @@ import {
   Base,
   Client,
   NationalRegistryB2C,
-  Payment,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
@@ -48,11 +47,6 @@ export const serviceSetup = (services: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
-      },
-      XROAD_CHARGE_FJS_V2_PATH: {
-        dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-        staging: 'IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2',
-        prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
       },
       CLIENT_LOCATION_ORIGIN: {
         dev: 'https://beta.dev01.devland.is/form',
@@ -100,7 +94,7 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistryB2C, Payment)
+    .xroad(Base, Client, NationalRegistryB2C)
     .ingress({
       primary: {
         host: {
