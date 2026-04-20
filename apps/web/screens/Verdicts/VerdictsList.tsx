@@ -1261,7 +1261,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           const prevDistrict =
                             queryState[QueryParam.DISTRICT_COURTS] ?? []
                           const lastOption = options[options.length - 1]
-                          if (!lastOption || lastOption.value === ALL_COURTS_TAG) {
+                          if (
+                            !lastOption ||
+                            lastOption.value === ALL_COURTS_TAG
+                          ) {
                             if (
                               shouldResetCaseFiltersOnCourtsChange(
                                 prevCourts,
@@ -1303,12 +1306,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             (previousState) => ({
                               ...previousState,
                               [QueryParam.COURT]: nextValues,
-                              [QueryParam.DISTRICT_COURTS]:
-                                nextValues.includes(
-                                  DEFAULT_DISTRICT_COURT_TAG,
-                                )
-                                  ? previousState[QueryParam.DISTRICT_COURTS]
-                                  : [],
+                              [QueryParam.DISTRICT_COURTS]: nextValues.includes(
+                                DEFAULT_DISTRICT_COURT_TAG,
+                              )
+                                ? previousState[QueryParam.DISTRICT_COURTS]
+                                : [],
                             }),
                           )
                         }}
@@ -1348,7 +1350,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                       QueryParam.CASE_CATEGORIES,
                                       null,
                                     )
-                                    updateQueryState(QueryParam.CASE_TYPES, null)
+                                    updateQueryState(
+                                      QueryParam.CASE_TYPES,
+                                      null,
+                                    )
                                     updateRenderKey()
                                   }
                                   updateQueryState(QueryParam.COURT, [])
@@ -1372,9 +1377,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                     tag.value === DEFAULT_DISTRICT_COURT_TAG
                                   return {
                                     nextCourts,
-                                    nextDistrictCourts: shouldResetDistrictCourts
-                                      ? []
-                                      : prevDistrict,
+                                    nextDistrictCourts:
+                                      shouldResetDistrictCourts
+                                        ? []
+                                        : prevDistrict,
                                   }
                                 })()
                                 if (

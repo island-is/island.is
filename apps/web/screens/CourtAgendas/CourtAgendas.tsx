@@ -110,11 +110,7 @@ const DISTRICT_COURT_TAGS = [
   },
 ]
 
-type TopLevelCourt =
-  | 'all'
-  | 'courtOfAppeal'
-  | 'supremeCourt'
-  | 'districtCourt'
+type TopLevelCourt = 'all' | 'courtOfAppeal' | 'supremeCourt' | 'districtCourt'
 
 const mapCourtValueToTopLevelCourt = (court: string): TopLevelCourt => {
   if (!court || court === ALL_COURTS_TAG) return 'all'
@@ -975,7 +971,10 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         label={formatMessage(m.listPage.courtSelectLabel)}
                         onChange={(options) => {
                           const lastOption = options[options.length - 1]
-                          if (!lastOption || lastOption.value === ALL_COURTS_TAG) {
+                          if (
+                            !lastOption ||
+                            lastOption.value === ALL_COURTS_TAG
+                          ) {
                             updateQueryState(QueryParam.COURT, [])
                             updateQueryState(QueryParam.DISTRICT_COURTS, null)
                             return
@@ -983,18 +982,22 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                           const nextValues = options
                             .map((option) => option.value)
                             .filter((value) => value !== ALL_COURTS_TAG)
-                          updateQueryState(QueryParam.COURT, (previousState) => {
-                            const nextDistrictCourts = nextValues.includes(
-                              DEFAULT_DISTRICT_COURT_TAG,
-                            )
-                              ? previousState[QueryParam.DISTRICT_COURTS]
-                              : []
-                            return {
-                              ...previousState,
-                              [QueryParam.COURT]: nextValues,
-                              [QueryParam.DISTRICT_COURTS]: nextDistrictCourts,
-                            }
-                          })
+                          updateQueryState(
+                            QueryParam.COURT,
+                            (previousState) => {
+                              const nextDistrictCourts = nextValues.includes(
+                                DEFAULT_DISTRICT_COURT_TAG,
+                              )
+                                ? previousState[QueryParam.DISTRICT_COURTS]
+                                : []
+                              return {
+                                ...previousState,
+                                [QueryParam.COURT]: nextValues,
+                                [QueryParam.DISTRICT_COURTS]:
+                                  nextDistrictCourts,
+                              }
+                            },
+                          )
                         }}
                         size="sm"
                         backgroundColor="blue"
