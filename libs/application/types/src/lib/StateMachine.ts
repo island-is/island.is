@@ -104,6 +104,7 @@ export type ScheduledNotificationConfig =
        * Schedules the notification relative to the time the state is entered.
        * E.g. `delayInMs: 7 * 24 * 3600 * 1000` for 7 days later.
        */
+      args?: Record<string, unknown>
       delayInMs: number | ((application: Application) => number)
     }
   | {
@@ -112,6 +113,7 @@ export type ScheduledNotificationConfig =
        * Schedules the notification at an exact point in time.
        * E.g. `date: (app) => new Date(app.answers.flightDate)`
        */
+      args?: Record<string, unknown>
       date: Date | ((application: Application) => Date)
     }
 

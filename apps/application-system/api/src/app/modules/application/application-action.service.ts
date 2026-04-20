@@ -207,7 +207,7 @@ export class ApplicationActionService {
       updatedApplication = update.updatedApplication as BaseApplication
 
       // Wait for both promises in parallel, no fail fast
-      Promise.allSettled([
+      await Promise.allSettled([
         this.historyService.saveStateTransition(
           application.id,
           newState,
