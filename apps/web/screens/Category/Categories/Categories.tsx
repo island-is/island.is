@@ -132,7 +132,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                           {description && (
                             <Text
                               paddingTop={2}
-                              variant="medium"
+                              variant="default"
                               fontWeight="light"
                             >
                               {description}
