@@ -5,11 +5,15 @@ global.BroadcastChannel = class BroadcastChannel {
   constructor(name: string) {
     this.name = name
   }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   postMessage() {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   close() {}
   onmessage = null
   onmessageerror = null
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   addEventListener() {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   removeEventListener() {}
   dispatchEvent() {
     return false
