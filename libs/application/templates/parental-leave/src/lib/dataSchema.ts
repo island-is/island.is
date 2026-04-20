@@ -75,16 +75,25 @@ export const dataSchema = z.object({
   }),
   fosterCareOrAdoption: z
     .object({
-      birthDate: z.string(),
-      adoptionDate: z.string(),
+      birthDate: z.string().optional(),
+      adoptionDate: z.string().optional(),
+    })
+    .refine(({ birthDate }) => !!birthDate?.trim(), {
+      path: ['birthDate'],
+      params: coreErrorMessages.missingAnswer,
+    })
+    .refine(({ adoptionDate }) => !!adoptionDate?.trim(), {
+      path: ['adoptionDate'],
+      params: coreErrorMessages.missingAnswer,
     })
     .refine(
       ({ birthDate, adoptionDate }) => {
+        if (!birthDate?.trim() || !adoptionDate?.trim()) return true
         // Eligibility is "child was under 8 on the placement date", a stable
         // historical fact — not a sliding window against today. Otherwise an
         // already-approved application becomes uneditable the day the child
         // turns 8 (zendesk #461551).
-        const referenceDate = adoptionDate ? new Date(adoptionDate) : new Date()
+        const referenceDate = new Date(adoptionDate)
         const minimumStartDate = new Date(referenceDate)
         minimumStartDate.setMonth(
           referenceDate.getMonth() - yearFosterCareOrAdoption * yearInMonths,

@@ -29,4 +29,13 @@ describe('dataSchema fosterCareOrAdoption', () => {
       }).success,
     ).toBe(false)
   })
+
+  it('should reject an empty placement date', () => {
+    expect(
+      fosterCareOrAdoptionSchema.safeParse({
+        birthDate: '2018-04-12',
+        adoptionDate: '',
+      }).success,
+    ).toBe(false)
+  })
 })
