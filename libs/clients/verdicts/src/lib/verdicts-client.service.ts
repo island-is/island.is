@@ -581,6 +581,7 @@ export class VerdictsClientService {
           court: SUPREME_COURT,
           type: '',
           title: agenda.title ?? '',
+          hearingTime: agenda.hearingTime ?? '',
         })
       }
     } else {
