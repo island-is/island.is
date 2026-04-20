@@ -22,7 +22,7 @@ import { useSortableData } from './useSortableData'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
-import { EmptyTable } from '../EmptyTable/EmptyTable'
+import { EmptyTable } from '@island.is/portals/core'
 
 /**
  * SortableTable component renders a table that can be sorted and is responsive to different screen sizes.
