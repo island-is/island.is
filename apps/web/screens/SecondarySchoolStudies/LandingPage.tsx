@@ -469,7 +469,6 @@ SecondarySchoolStudiesLandingPage.getProps = async ({
     hourlySeed,
     languageToggleHrefOverride: {
       is: '/framhaldsskolanam',
-      en: '/en/secondary-school-studies',
     },
     locale,
   }

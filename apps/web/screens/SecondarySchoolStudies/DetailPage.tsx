@@ -147,7 +147,6 @@ SecondarySchoolStudiesDetailsPage.getProps = async ({
     programme,
     languageToggleHrefOverride: {
       is: `/framhaldsskolanam/${programme.id}`,
-      en: `/en/secondary-school-studies/${programme.id}`,
     },
     locale,
   }
