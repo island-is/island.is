@@ -1,8 +1,20 @@
 import { NO, YES } from '@island.is/application/core'
 import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
-import { BankAccountType, TaxLevelOptions } from './constants'
+import {
+  Bank,
+  BankInfo,
+  CategorizedIncomeTypes,
+  PaymentInfo,
+  PaymentInfoV2,
+} from '../types'
+import {
+  BankAccountType,
+  INCOME,
+  ISK,
+  RatioType,
+  TaxLevelOptions,
+} from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
 
 export const formatBankInfo = (bankInfo: string) => {
@@ -14,7 +26,7 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const formatBankAccount = (bankInfo?: PaymentInfo) => {
+export const formatBankAccount = (bankInfo?: PaymentInfo | Bank) => {
   return !isEmpty(bankInfo)
     ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
         bankInfo.accountNumber ?? ''
@@ -74,6 +86,12 @@ export const formatBank = (bankInfo: string) => {
   return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 }
 
+// normalize IBAN/Swift
+const normalize = (value?: string) => value?.replace(/\s+/g, '')
+
+// normalize icelandic bank
+const normalizeBank = (bank: string) => bank.replace(/\D/g, '')
+
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
@@ -97,20 +115,58 @@ export const shouldNotUpdateBankAccount = (
   if (bankAccountType === BankAccountType.FOREIGN) {
     return (
       !isEmpty(bankInfo) &&
-      bankInfo.iban === iban?.replace(/[\s]+/g, '') &&
-      bankInfo.swift === swift?.replace(/[\s]+/g, '') &&
+      bankInfo.iban === normalize(iban) &&
+      bankInfo.swift === normalize(swift) &&
       bankInfo.foreignBankName === bankName &&
       bankInfo.foreignBankAddress === bankAddress &&
       bankInfo.currency === currency
     )
-  } else {
-    // used in BankAccountFormField
-    if (bankNumber) {
-      return getBankIsk(bankInfo) === getBankIsk(paymentInfo)
-    }
-
-    return getBankIsk(bankInfo) === bank
   }
+
+  // Domestic accounts
+  // used in BankAccountFormField
+  if (bankNumber) {
+    return getBankIsk(bankInfo) === getBankIsk(paymentInfo)
+  }
+
+  return getBankIsk(bankInfo) === bank
+}
+
+// Determines if the bank account should NOT be updated
+// used for flows that uses BankAccountFormField.
+export const shouldNotUpdateBankAccountV2 = (
+  bankInfo?: BankInfo,
+  paymentInfo?: PaymentInfoV2,
+) => {
+  if (!paymentInfo) {
+    return false
+  }
+
+  const {
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = paymentInfo
+  if (bankAccountType === BankAccountType.FOREIGN) {
+    return (
+      !isEmpty(bankInfo) &&
+      bankInfo.iban === normalize(iban) &&
+      bankInfo.swift === normalize(swift) &&
+      bankInfo.foreignBankName === bankName &&
+      bankInfo.foreignBankAddress === bankAddress &&
+      bankInfo.currency === currency
+    )
+  }
+
+  // Domestic accounts
+  return (
+    !isEmpty(bank) &&
+    getBankIsk(bankInfo) === normalizeBank(formatBankAccount(bank))
+  )
 }
 
 export const getCurrencies = (
@@ -129,7 +185,7 @@ export const getCurrencies = (
 
 export const typeOfBankInfo = (
   bankInfo: BankInfo,
-  bankAccountType: BankAccountType,
+  bankAccountType?: BankAccountType,
 ) => {
   return bankAccountType
     ? bankAccountType
@@ -225,4 +281,34 @@ export const getTypesOptions = (
         label: item.incomeTypeName || '',
       }
     })
+}
+
+export const shouldShowEqualIncomePerMonth = (
+  isForeign: boolean,
+  activeField?: Record<string, string>,
+): boolean => {
+  const unevenAndEmploymentIncome =
+    activeField?.unevenIncomePerYear?.[0] !== YES ||
+    (activeField?.incomeCategory !== INCOME &&
+      activeField?.unevenIncomePerYear?.[0] === YES)
+
+  const isCurrencyValid = isForeign
+    ? activeField?.currency !== ISK
+    : activeField?.currency === ISK
+
+  return (
+    activeField?.income === RatioType.MONTHLY &&
+    isCurrencyValid &&
+    unevenAndEmploymentIncome
+  )
+}
+
+export const shouldShowIncomePlanMonths = (
+  activeField?: Record<string, string>,
+): boolean => {
+  return (
+    activeField?.income === RatioType.MONTHLY &&
+    activeField?.incomeCategory === INCOME &&
+    activeField?.unevenIncomePerYear?.[0] === YES
+  )
 }

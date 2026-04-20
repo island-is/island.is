@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { WomanWithLaptopIllustration } from '../assets/WomanWithLaptopIllustration'
+import { WomanWithLaptopIllustration } from '@island.is/application/assets/graphics'
 
 export const Finished: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,

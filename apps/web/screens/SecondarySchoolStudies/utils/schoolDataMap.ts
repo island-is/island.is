@@ -140,8 +140,24 @@ export const SCHOOL_DATA_MAP: Record<string, SchoolData> = {
     website: 'https://www.verslo.is/',
   },
   MB: {
-    icon: 'MB.svg', // TODO Change to actual logo, placeholder for now
+    icon: 'MB.svg',
     website: 'https://menntaborg.is/',
+  },
+  FJALLA: {
+    icon: 'FJALLA.svg',
+    website: 'https://fjallanam.is/',
+  },
+  HAR: {
+    icon: 'HAR.svg',
+    website: 'https://harakademian.is/',
+  },
+  RAF: {
+    icon: 'RAF.svg',
+    website: 'https://www.rafmennt.is/',
+  },
+  LM: {
+    icon: 'LM.svg',
+    website: 'https://ljosmyndaskolinn.is/',
   },
 }
 

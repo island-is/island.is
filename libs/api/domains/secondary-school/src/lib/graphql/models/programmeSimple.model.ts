@@ -7,7 +7,7 @@ import { SecondarySchoolSimple } from './schoolSimple.model'
 @ObjectType('SecondarySchoolProgrammeSimple')
 export class SecondarySchoolProgrammeSimple {
   @Field(() => String, { nullable: true })
-  id?: string
+  programmeId?: string
 
   @Field(() => String, { nullable: true })
   ministrySerial?: string | null

@@ -160,7 +160,7 @@ export type RepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
+  condition?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -268,7 +268,7 @@ export type RepeaterItem = {
   | {
       component: 'alertMessage'
       title?: MaybeWithApplicationAndActiveField<StaticText>
-      message?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<StaticText>
       alertType?: AlertType
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']
@@ -882,7 +882,8 @@ export type FieldsRepeaterField = BaseField & {
 
 export type AccordionItem = {
   itemTitle: FormText
-  itemContent: FormText
+  itemContent?: FormText
+  children?: Field[]
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
@@ -994,6 +995,7 @@ export type PaginatedSearchableTableHeader = {
   editable?: boolean
   inputType?: 'text' | 'number'
   min?: number
+  placeholderKey?: string
 }
 
 export interface PaginatedSearchableTableField extends BaseField {

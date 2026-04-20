@@ -425,18 +425,23 @@ const inputPatch = {
 const patchExpectedOutput = {
   alsoForDelegatedUser: false,
   automaticDelegationGrant: false,
+  allowExplicitDelegationGrant: false,
+  allowsWrite: false,
+  categoryIds: [],
   domainName: TENANT_ID,
   emphasize: false,
   enabled: true,
   grantToPersonalRepresentatives: false,
   grantToLegalGuardians: false,
   grantToProcuringHolders: false,
-  allowExplicitDelegationGrant: false,
   name: `${TENANT_ID}/scope1`,
   order: 0,
   required: false,
+  requiresConfirmation: false,
   showInDiscoveryDocument: true,
   supportedDelegationTypes: [],
+  tagIds: [],
+  modified: expect.any(String),
   ...inputPatch,
 }
 
@@ -707,8 +712,10 @@ describe('MeScopesController', () => {
               ? testCase.expected.body.grantToLegalGuardians
               : false,
             allowExplicitDelegationGrant: false,
+            allowsWrite: false,
             alsoForDelegatedUser: false,
             automaticDelegationGrant: false,
+            categoryIds: [],
             domainName: TENANT_ID,
             emphasize: false,
             enabled: true,
@@ -717,7 +724,10 @@ describe('MeScopesController', () => {
             isAccessControlled: false,
             order: 0,
             required: false,
+            requiresConfirmation: false,
             showInDiscoveryDocument: true,
+            tagIds: [],
+            modified: expect.any(String),
           })
 
           // Assert - db record

@@ -241,7 +241,7 @@
             "name": "productId",
             "required": true,
             "in": "path",
-            "description": "The product id (Norr\u00e6nt v\u00f6rumerki)",
+            "description": "The product id (Norrænt vörumerki)",
             "schema": {
               "type": "string"
             }
@@ -330,16 +330,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PrescriptionRenewalRequestDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
@@ -1435,7 +1425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/SubmitQuestionnaireResponseDto"
                 }
               }
             }
@@ -2259,9 +2249,9 @@
           "specialistOnlyPrescription"
         ]
       },
-      "PrescriptionRenewalStatus": {
-        "type": "number",
-        "enum": [0, 1, 2, 3]
+      "PrescriptionRenewalStatusDisplay": {
+        "type": "string",
+        "enum": ["pending", "approved", "rejected", "dismissed"]
       },
       "RenewalDto": {
         "type": "object",
@@ -2279,7 +2269,7 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+                "$ref": "#/components/schemas/PrescriptionRenewalStatusDisplay"
               }
             ]
           },
@@ -2351,21 +2341,15 @@
       "PrescribedItemDto": {
         "type": "object",
         "properties": {
-          "prescribedItemId": {
-            "type": "number"
-          },
           "prescriptionId": {
-            "type": "number"
+            "type": "string",
+            "description": "The prescription gateway ID (idByGateway). For users without a medcard, falls back to the stringified internal DB id."
           },
           "issueDate": {
             "format": "date-time",
             "type": "string"
           },
           "expiryDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "nextDispensationDate": {
             "format": "date-time",
             "type": "string"
           },
@@ -2412,6 +2396,10 @@
           "isRegiment": {
             "type": "boolean"
           },
+          "isSpecialistOnlyPrescription": {
+            "type": "boolean",
+            "description": "Indicates whether this prescription requires specialist-only care (z-marked)"
+          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2432,7 +2420,6 @@
           }
         },
         "required": [
-          "prescribedItemId",
           "prescriptionId",
           "issueDate",
           "expiryDate",
@@ -2457,21 +2444,6 @@
           }
         },
         "required": ["typeId", "path", "name"]
-      },
-      "PrescriptionRenewalRequestDto": {
-        "type": "object",
-        "properties": {
-          "prescribedItemId": {
-            "type": "number"
-          },
-          "medCardDrugId": {
-            "type": "string"
-          },
-          "medCardDrugCategory": {
-            "type": "number"
-          }
-        },
-        "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
       },
       "DispensationHistoryProductDto": {
         "type": "object",
@@ -2762,6 +2734,10 @@
             "type": "string",
             "nullable": true
           },
+          "sender": {
+            "type": "string",
+            "description": "Name of the sender of the questionnaire"
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -2773,8 +2749,8 @@
           },
           "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1,
-            "description": "Number of submissions allowed for the questionnaire"
+            "description": "Number of submissions allowed for the questionnaire, null if unlimited",
+            "nullable": true
           },
           "numSubmitted": {
             "type": "number",
@@ -2794,12 +2770,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "questionnaireId",
-          "numSubmissionsAllowed",
-          "numSubmitted",
-          "hasDraft"
-        ]
+        "required": ["questionnaireId", "sender", "numSubmitted", "hasDraft"]
       },
       "QuestionType": {
         "type": "string",
@@ -3631,6 +3602,10 @@
             "type": "string",
             "nullable": true
           },
+          "sender": {
+            "type": "string",
+            "description": "Name of the sender of the questionnaire"
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -3642,8 +3617,8 @@
           },
           "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1,
-            "description": "Number of submissions allowed for the questionnaire"
+            "description": "Number of submissions allowed for the questionnaire, null if unlimited",
+            "nullable": true
           },
           "numSubmitted": {
             "type": "number",
@@ -3738,7 +3713,7 @@
         },
         "required": [
           "questionnaireId",
-          "numSubmissionsAllowed",
+          "sender",
           "numSubmitted",
           "hasDraft",
           "daysBetweenReplies",
@@ -3954,6 +3929,16 @@
           }
         },
         "required": ["replies", "isDraft"]
+      },
+      "SubmitQuestionnaireResponseDto": {
+        "type": "object",
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "description": "Id of the questionnaire submission (draft or final)"
+          }
+        },
+        "required": ["submissionId"]
       },
       "InvalidSubmissionDto": {
         "type": "object",
@@ -4273,36 +4258,6 @@
         },
         "required": ["status", "codes", "countries"]
       },
-      "CreateEuPatientConsentDto": {
-        "type": "object",
-        "properties": {
-          "validFrom": {
-            "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 date string",
-            "example": "2024-06-01T00:00:00.000Z"
-          },
-          "validTo": {
-            "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 date string",
-            "example": "2024-06-01T00:00:00.000Z"
-          },
-          "codes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "countryCodes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": ["codes", "countryCodes"]
-      },
       "ConsentHistoryEntryDto": {
         "type": "object",
         "properties": {
@@ -4360,6 +4315,36 @@
           }
         },
         "required": ["consent", "history"]
+      },
+      "CreateEuPatientConsentDto": {
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date string",
+            "example": "2024-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date string",
+            "example": "2024-06-01T00:00:00.000Z"
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "countryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["codes", "countryCodes"]
       }
     }
   }

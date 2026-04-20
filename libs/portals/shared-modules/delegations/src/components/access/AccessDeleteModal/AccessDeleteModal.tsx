@@ -93,7 +93,7 @@ export const AccessDeleteModal = ({
   return (
     <Modal
       id="access-delete-modal"
-      eyebrow={formatMessage(m.accessControl)}
+      eyebrow={formatMessage(m.digitalDelegations)}
       title={formatMessage(m.accessRemoveModalTitle)}
       label={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}

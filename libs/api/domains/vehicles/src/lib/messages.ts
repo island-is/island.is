@@ -9,7 +9,7 @@ export const m = defineMessages({
   invalidMileageColumnHeader: {
     id: 'api.bulk-vehicle-mileage:invalid-mileage-column-header',
     defaultMessage:
-      'Kílómetrastöðudálkur er ekki réttur. Dálkanafn þarf að vera eitt af eftirfarandi; "kilometrastada", "mileage", "odometer"',
+      'Kílómetrastöðudálkur er ekki réttur. Dálkanafn þarf að vera eitt af eftirfarandi; "skra stodu", "mileage", "odometer"',
   },
   tooManyPermno: {
     id: 'api.bulk-vehicle-mileage:too-many-permno',

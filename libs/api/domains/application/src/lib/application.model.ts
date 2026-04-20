@@ -176,6 +176,9 @@ export class ApplicationStatistics {
   institutionName?: string
 
   @Field(() => String, { nullable: true })
+  institutionNationalId?: string
+
+  @Field(() => String, { nullable: true })
   institutionContentfulSlug?: string
 }
 

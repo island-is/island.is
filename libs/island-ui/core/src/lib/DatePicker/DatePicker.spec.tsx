@@ -122,9 +122,10 @@ describe('DatePicker', () => {
   })
 
   describe('Range selection', () => {
-    it('should display and select date range', () => {
-      const startDate = new Date(2020, 9, 1)
-      const endDate = new Date(2020, 9, 15)
+    const startDate = new Date(2020, 9, 1)
+    const endDate = new Date(2020, 9, 15)
+
+    it('should display range in en locale format (dd/MM/yyyy)', () => {
       const { container } = render(
         <DatePicker
           placeholderText="Pick a date"
@@ -136,54 +137,356 @@ describe('DatePicker', () => {
         />,
       )
       const input = container.querySelector('input')
-
-      // Verify both start and end dates are displayed
       expect(input?.value).toContain('01/10/2020')
       expect(input?.value).toContain('15/10/2020')
-
-      // Open calendar and verify range highlighting
-      if (input) {
-        fireEvent.click(input)
-      }
-
-      // Check for range-specific CSS classes
-      const inRangeDays = container.querySelectorAll(
-        '.react-datepicker__day--in-range',
-      )
-      const rangeStart = container.querySelector(
-        '.react-datepicker__day--range-start',
-      )
-      const rangeEnd = container.querySelector(
-        '.react-datepicker__day--range-end',
-      )
-
-      expect(inRangeDays.length > 0 || rangeStart || rangeEnd).toBeTruthy()
     })
 
-    it('should call handleChange when selecting range dates', () => {
+    it('should display range in is locale format (dd.MM.yyyy)', () => {
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{ startDate, endDate }}
+          handleChange={jest.fn()}
+          locale="is"
+        />,
+      )
+      const input = container.querySelector('input')
+      expect(input?.value).toContain('01.10.2020')
+      expect(input?.value).toContain('15.10.2020')
+    })
+
+    it('should update input when selectedRange prop changes', () => {
+      const { container, rerender } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{ startDate, endDate }}
+          handleChange={jest.fn()}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')
+      expect(input?.value).toContain('01/10/2020')
+
+      rerender(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{
+            startDate: new Date(2021, 0, 5),
+            endDate: new Date(2021, 0, 20),
+          }}
+          handleChange={jest.fn()}
+          locale="en"
+        />,
+      )
+      expect(input?.value).toContain('05/01/2021')
+      expect(input?.value).toContain('20/01/2021')
+    })
+
+    it('should call handleClear and clear input when clear button is clicked', () => {
+      const handleClear = jest.fn()
+      const { getByRole, container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{ startDate, endDate }}
+          handleChange={jest.fn()}
+          handleClear={handleClear}
+          isClearable={true}
+          clearLabel="Clear dates"
+          locale="en"
+        />,
+      )
+      // The label is in a VisuallyHidden span — query by accessible name
+      const clearButton = getByRole('button', { name: /clear dates/i })
+      fireEvent.click(clearButton)
+      expect(handleClear).toHaveBeenCalledTimes(1)
+      const input = container.querySelector('input')
+      expect(input?.value).toBe('')
+    })
+
+    it('should clear both dates when input is emptied', () => {
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{ startDate, endDate }}
+          handleChange={jest.fn()}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')
+      expect(input?.value).not.toBe('')
+      fireEvent.change(input!, { target: { value: '' } })
+      expect(input?.value).toBe('')
+    })
+
+    it('should submit range on Enter with canonical en format (dd/MM/yyyy)', () => {
       const handleChange = jest.fn()
-      const { container, getByText } = render(
+      const { container } = render(
         <DatePicker
           placeholderText="Pick a date"
           label="Select date range"
           range={true}
           handleChange={handleChange}
+          locale="en"
         />,
       )
-      const input = container.querySelector('input')
-      if (input) {
-        fireEvent.click(input)
-      }
-      // Click first date to start range
-      fireEvent.click(getAllByText(container, '1')[0])
-      // Calendar should stay open, click second date to complete range
-      fireEvent.click(getAllByText(container, '15')[0])
-      // handleChange should only be called when both dates are selected
+      const input = container.querySelector('input')!
+      input.value = '01/06/2020 - 15/06/2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
       expect(handleChange).toHaveBeenCalledTimes(1)
       expect(handleChange).toHaveBeenCalledWith(
-        expect.any(Date),
-        expect.any(Date),
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
       )
+    })
+
+    it('should submit range on Enter with canonical is format (dd.MM.yyyy)', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="is"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '01.06.2020 - 15.06.2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
+      )
+    })
+
+    it('should accept date without leading zeros on Enter (d/M/yyyy)', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '1/6/2020 - 15/6/2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
+      )
+    })
+
+    it('should accept spaceless range separator on Enter', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '01/06/2020-15/06/2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
+      )
+    })
+
+    it('should auto-swap dates when end is before start on Enter', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '15/06/2020 - 01/06/2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
+      )
+    })
+
+    it('should not call handleChange on Enter with invalid input', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = 'not-a-date - garbage'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).not.toHaveBeenCalled()
+    })
+
+    it('should not call handleChange while typing (only on Enter)', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      fireEvent.change(input, { target: { value: '01/06/2020 - 15/06/2020' } })
+      expect(handleChange).not.toHaveBeenCalled()
+    })
+
+    it('should complete range when calendar day is clicked with startDate already set', async () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{ startDate: new Date(2020, 9, 1), endDate: null }}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const openButton = container.querySelector('[aria-label="Open calendar"]')
+      // Open calendar (mirrors the non-range test pattern: each interaction gets its own act)
+      await act(async () => {
+        if (openButton) fireEvent.click(openButton)
+      })
+      // Click day 15 inside its own act to ensure the onChange callback is fully processed
+      await act(async () => {
+        fireEvent.click(getAllByText(container, '15')[0])
+      })
+      await waitFor(() => {
+        expect(handleChange).toHaveBeenCalledTimes(1)
+        expect(handleChange).toHaveBeenCalledWith(
+          new Date(2020, 9, 1),
+          new Date(2020, 9, 15),
+        )
+      })
+    })
+
+    it('should accept dot separator as fallback in en locale on Enter', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '01.06.2020 - 15.06.2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
+      )
+    })
+
+    it('should accept slash separator as fallback in is locale on Enter', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="is"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '01/06/2020 - 15/06/2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        new Date(2020, 5, 1),
+        new Date(2020, 5, 15),
+      )
+    })
+
+    it('should not call handleChange on Enter with no separator (single date)', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '01/06/2020'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).not.toHaveBeenCalled()
+    })
+
+    it('should not call handleChange on Enter when one side is unparseable', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = '01/06/2020 - garbage'
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).not.toHaveBeenCalled()
+    })
+
+    it('should not call handleChange on Enter with empty input', () => {
+      const handleChange = jest.fn()
+      const { container } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          handleChange={handleChange}
+          locale="en"
+        />,
+      )
+      const input = container.querySelector('input')!
+      input.value = ''
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(handleChange).not.toHaveBeenCalled()
     })
   })
 
@@ -213,10 +516,10 @@ describe('DatePicker', () => {
         />,
       )
 
-      // Open calendar
-      const input = container.querySelector('input')
-      if (input) {
-        fireEvent.click(input)
+      // Open calendar via the icon button (range mode requires the icon button to open)
+      const openButton = container.querySelector('[aria-label="Open calendar"]')
+      if (openButton) {
+        fireEvent.click(openButton)
       }
 
       // Click on predefined range

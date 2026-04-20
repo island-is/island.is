@@ -9,10 +9,14 @@ export const grid = style({
 
 export const twoCols = style({
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       gridTemplateColumns: '1fr 1fr',
     },
   },
+})
+
+export const breakWord = style({
+  overflowWrap: 'anywhere',
 })
 
 export const renderDividerFull = style({

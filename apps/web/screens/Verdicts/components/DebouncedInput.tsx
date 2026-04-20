@@ -19,6 +19,7 @@ const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
 interface DebouncedInputProps {
   value: string
   label?: string
+  tooltip?: InputProps['tooltip']
   name: string
   placeholder?: string
   size?: InputProps['size']
@@ -33,6 +34,7 @@ interface DebouncedInputProps {
 export const DebouncedInput = ({
   value,
   label,
+  tooltip,
   name,
   placeholder,
   backgroundColor,
@@ -63,6 +65,7 @@ export const DebouncedInput = ({
       <Input
         size={size}
         label={label}
+        tooltip={tooltip}
         name={name}
         icon={icon}
         loading={loading}

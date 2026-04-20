@@ -1,4 +1,4 @@
-import { signIn, signOut } from 'next-auth/client'
+import { signIn, signOut } from 'next-auth/react'
 import { SessionInfo } from '../entities/common/SessionInfo'
 
 const isExpired = (session: SessionInfo): boolean => {

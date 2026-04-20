@@ -13,7 +13,6 @@ import {
   SubmitApplicationResponse,
 } from '../../models/applications.model'
 import {
-  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,

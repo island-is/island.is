@@ -19,18 +19,35 @@ import InputName from '@island.is/judicial-system-web/src/components/Inputs/Inpu
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
   Case,
+  CaseOrigin,
   Defendant,
   Gender,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { formatNationalRegistryAddress } from '@island.is/judicial-system-web/src/utils/formatNationalRegistryAddress'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isBusiness,
+  mapStringToGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
+
+/**
+ * Skip national registry lookup for police system synced defendants.
+ */
+const skipNationalRegistryForPoliceSystemDefendant = (
+  origin: CaseOrigin | null | undefined,
+  caseId: string | null | undefined,
+  defendant: Defendant,
+) =>
+  origin === CaseOrigin.LOKE &&
+  Boolean(caseId) &&
+  (Boolean(defendant.name?.trim()) || Boolean(defendant.address?.trim()))
 
 interface Props {
   defendant: Defendant
@@ -54,8 +71,14 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
+  const skipNationalRegistry = skipNationalRegistryForPoliceSystemDefendant(
+    workingCase.origin,
+    workingCase.id,
+    defendant,
+  )
   const { personData, businessData, error, notFound } = useNationalRegistry(
     defendant.nationalId,
+    { skip: skipNationalRegistry },
   )
 
   const genderOptions: ReactSelectOption[] = [
@@ -72,29 +95,22 @@ const DefendantInfo: FC<Props> = (props) => {
       !!defendant.nationalId && isBusiness(defendant.nationalId),
     )
 
-  const mapNationalRegistryGenderToGender = (gender: string) => {
-    return gender === 'male'
-      ? Gender.MALE
-      : gender === 'female'
-      ? Gender.FEMALE
-      : Gender.OTHER
-  }
-
   useEffect(() => {
     if (!isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
-    if (personData && personData.items && personData.items.length > 0) {
+    if (personData?.items?.length) {
       setAccusedAddressErrorMessage('')
       setIsGenderAndCitizenshipDisabled(false)
 
+      const person = personData.items[0]
       onChange({
         caseId: workingCase.id,
         defendantId: defendant.id,
-        name: personData.items[0].name,
-        gender: mapNationalRegistryGenderToGender(personData.items[0].gender),
-        address: personData.items[0].permanent_address.street?.nominative,
+        name: person.name,
+        gender: mapStringToGender(person.gender),
+        address: formatNationalRegistryAddress(person.permanent_address),
       })
     }
     // We only want this to run when a lookup is done in the national registry.
@@ -106,15 +122,16 @@ const DefendantInfo: FC<Props> = (props) => {
       return
     }
 
-    if (businessData && businessData.items && businessData.items.length > 0) {
+    if (businessData?.items?.length) {
       setAccusedAddressErrorMessage('')
       setIsGenderAndCitizenshipDisabled(true)
 
+      const business = businessData.items[0]
       onChange({
         caseId: workingCase.id,
         defendantId: defendant.id,
-        name: businessData.items[0].full_name,
-        address: businessData.items[0].legal_address.street?.nominative,
+        name: business.full_name,
+        address: formatNationalRegistryAddress(business.legal_address),
         gender: undefined,
         citizenship: undefined,
       })

@@ -24,9 +24,12 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetWaitlistsQuery } from './Waitlists.generated'
 import { WaitlistsInfoModal } from './WaitlistsInfoModal'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Waitlists: React.FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
+
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)

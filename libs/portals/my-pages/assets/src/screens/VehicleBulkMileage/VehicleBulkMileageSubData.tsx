@@ -14,12 +14,14 @@ import VehicleCO2 from '../../components/VehicleCO2'
 import { vehicleMessage } from '../../lib/messages'
 import { AssetsPaths } from '../../lib/paths'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import { OdometerUnit } from './types'
 
 interface Props {
   vehicleId: string
   data: VehiclesMileageRegistrationHistory
   loading?: boolean
   co2?: string
+  unit: OdometerUnit
 }
 
 interface ChartProps {
@@ -64,6 +66,7 @@ export const VehicleBulkMileageSubData = ({
   loading,
   data,
   co2,
+  unit,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -82,13 +85,13 @@ export const VehicleBulkMileageSubData = ({
         tableData.push([
           formatDate(mileageRegistration.date),
           mileageRegistration.originCode,
-          displayWithUnit(mileageRegistration.mileage, 'km', true),
+          displayWithUnit(mileageRegistration.mileage, unit, true),
         ])
       }
     }
 
     return tableData
-  }, [data])
+  }, [data, unit])
 
   return (
     <Box paddingX={3} paddingY={2} background="blue100">
@@ -115,7 +118,7 @@ export const VehicleBulkMileageSubData = ({
           headerArray={[
             formatMessage(vehicleMessage.date),
             formatMessage(vehicleMessage.registration),
-            formatMessage(vehicleMessage.odometer),
+            formatMessage(vehicleMessage.odometerStatus),
           ]}
           loading={loading}
           emptyMessage={formatMessage(vehicleMessage.mileageHistoryNotFound)}
@@ -135,17 +138,17 @@ export const VehicleBulkMileageSubData = ({
           }}
           yAxis={{
             datakey: 'mileage',
-            label: 'Km.',
+            label: unit === 'mi' ? 'Mi.' : 'Km.',
           }}
           tooltip={{
             labels: {
               mileage: formatMessage(vehicleMessage.odometer),
             },
-            valueFormat: (arg: number) => `${numberFormat(arg)} km`,
+            valueFormat: (arg: number) => `${numberFormat(arg)} ${unit}`,
           }}
         />
       ) : undefined}
-      <VehicleCO2 co2={co2 ?? '0'} />
+      <VehicleCO2 co2={co2} />
       <Box marginTop={2}>
         <Inline space={1}>
           <LinkResolver

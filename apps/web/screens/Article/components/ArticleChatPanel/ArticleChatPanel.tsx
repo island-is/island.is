@@ -1,4 +1,8 @@
-import { WatsonChatPanel, WebChat } from '@island.is/web/components'
+import {
+  WatsonChatPanel,
+  WebChat,
+  ZendeskChatPanel,
+} from '@island.is/web/components'
 import {
   GetSingleArticleQuery,
   GetWebChatQuery,
@@ -6,7 +10,7 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 
 import {
-  defaultWatsonConfig,
+  defaultZendeskConfig,
   excludedOrganizationWatsonConfig,
   watsonConfig,
 } from './config'
@@ -67,8 +71,8 @@ export const ArticleChatPanel = ({
           )
         )
           return (
-            <WatsonChatPanel
-              {...defaultWatsonConfig[activeLocale]}
+            <ZendeskChatPanel
+              {...defaultZendeskConfig[activeLocale]}
               pushUp={pushUp}
             />
           )

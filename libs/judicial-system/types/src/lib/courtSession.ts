@@ -5,6 +5,7 @@ import {
 } from './case'
 import {
   InstitutionUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
@@ -60,7 +61,7 @@ export const hasGeneratedCourtRecordPdf = (
     return Boolean(courtSessions[0].isConfirmed)
   }
 
-  if (isPublicProsecutionOfficeUser(user)) {
+  if (isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) {
     return isCompletedCase(caseState) && Boolean(courtSessions[0].isConfirmed)
   }
 

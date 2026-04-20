@@ -26,6 +26,7 @@ describe('NotificationsController', () => {
           useValue: {
             validate: jest.fn(),
             sanitize: jest.fn(),
+            validateSmsDelivery: jest.fn(),
             getTemplates: jest.fn(),
             getTemplate: jest.fn(),
             findActorNotifications: jest.fn(),

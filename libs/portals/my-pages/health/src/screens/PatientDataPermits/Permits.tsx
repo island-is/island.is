@@ -12,9 +12,12 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { permitTagSelector } from '../../utils/tagSelector'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const PatientDataPermits: FC = () => {
   useNamespaces('sp.health')
+
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
   const { data, loading, error } = useGetPatientDataPermitsQuery({

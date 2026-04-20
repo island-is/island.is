@@ -23,7 +23,7 @@ export type DatePickerSize = 'xs' | 'sm' | 'md'
 
 export interface DatePickerProps {
   name?: string
-  label: string
+  label?: string
   placeholderText: ReactDatePickerProps['placeholderText']
   locale?: LocaleKeys
   minDate?: ReactDatePickerProps['minDate']
@@ -73,6 +73,8 @@ export interface DatePickerProps {
     startDate?: Date | null
     endDate?: Date | null
   }
+  detachedCalendar?: boolean
+  fixedHeight?: boolean
 }
 
 export interface DatePickerCustomHeaderProps {

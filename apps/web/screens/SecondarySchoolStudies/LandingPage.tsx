@@ -5,6 +5,7 @@ import Fuse from 'fuse.js'
 import {
   Box,
   Button,
+  CategoryCard,
   GridContainer,
   Pagination,
   Stack,
@@ -43,7 +44,7 @@ import {
 } from './components'
 import * as styles from './SecondarySchoolStudies.css'
 
-const ITEMS_PER_PAGE = 18
+const ITEMS_PER_PAGE = 12
 
 const getDeterministicWeight = (value: string) => {
   let hash = 0
@@ -103,10 +104,10 @@ const SecondarySchoolStudiesLandingPage: Screen<
       })
       .sort((left, right) => {
         const leftWeight = getDeterministicWeight(
-          `${hourlySeed}:${left.item.id ?? left.refIndex}`,
+          `${hourlySeed}:${left.item.programmeId ?? left.refIndex}`,
         )
         const rightWeight = getDeterministicWeight(
-          `${hourlySeed}:${right.item.id ?? right.refIndex}`,
+          `${hourlySeed}:${right.item.programmeId ?? right.refIndex}`,
         )
 
         if (leftWeight === rightWeight) {
@@ -141,10 +142,11 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
   // Fuse.js configuration
   const fuseOptions = {
-    threshold: 0.3,
+    threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,
-    minMatchCharLength: 3,
+    minMatchCharLength: 2,
+    useExtendedSearch: true,
     keys: [
       { name: 'title', weight: 2 },
       { name: 'specialization.title', weight: 1 },
@@ -176,7 +178,6 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
     // Reset to page 1 when filters or search changes
     setSelectedPage(1)
-
     // If no filters and no search term, show all results
     if (searchTerm === '' && activeFiltersFound.length === 0) {
       setFilteredResults(originalSortedResults)
@@ -200,7 +201,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
     return paginatedResults.map((result) => ({
       ...transformProgrammeToCard(result.item, formatMessage),
-      uniqueKey: `${result.refIndex}-${result.item.id}`,
+      uniqueKey: `${result.refIndex}-${result.item.programmeId}`,
     }))
   }
 
@@ -235,7 +236,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
   ) => {
     const category = filterCategories.find((cat) => cat.id === categoryId)
     const filter = category?.filters.find((f) => f.value === value)
-    return filter?.label || value
+    return filter?.tagLabel ?? filter?.label ?? value
   }
 
   return (
@@ -354,7 +355,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
                   </Box>
                 </Box>
                 <Box
-                  style={{ minHeight: '100vh' }}
+                  style={{ minHeight: '84vh' }}
                   className={styles.studyCardsWrapper}
                 >
                   <StudyCardsGrid
@@ -382,6 +383,51 @@ const SecondarySchoolStudiesLandingPage: Screen<
                     )}
                   />
                 </Box>
+
+                {/* Tengt efni */}
+                <Box paddingTop={4}>
+                  <Text variant="h3" as="h2" paddingBottom={3}>
+                    {formatMessage(m.general.relatedContent)}
+                  </Text>
+                  <Box
+                    display="flex"
+                    flexDirection={['column', 'column', 'row']}
+                    alignItems="stretch"
+                    columnGap={3}
+                    rowGap={3}
+                  >
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      flexGrow={1}
+                      style={{ flexBasis: '0%' }}
+                    >
+                      <CategoryCard
+                        heading={formatMessage(m.general.innritun)}
+                        text={formatMessage(m.general.innritunDescription)}
+                        href={formatMessage(m.general.innritunLink)}
+                        src="/assets/framhaldsskolar/mms.svg"
+                        alt="MMS logo"
+                        autoStack
+                      />
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      flexGrow={1}
+                      style={{ flexBasis: '0%' }}
+                    >
+                      <CategoryCard
+                        src="/assets/framhaldsskolar/naestaskref.svg"
+                        alt="næsta skref logo"
+                        heading={formatMessage(m.general.nextStep)}
+                        text={formatMessage(m.general.nextStepDescription)}
+                        href={formatMessage(m.general.naestaskrefLink)}
+                        autoStack
+                      />
+                    </Box>
+                  </Box>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -402,9 +448,6 @@ SecondarySchoolStudiesLandingPage.getProps = async ({
   apolloClient,
   locale,
 }) => {
-  if (isRunningOnEnvironment('production'))
-    throw new CustomNextError(404, 'Feature not live')
-
   const [programmesResponse, filterOptionsResponse] = await Promise.all([
     apolloClient.query<SecondarySchoolAllProgrammesQuery>({
       query: GET_SECONDARY_SCHOOL_ALL_PROGRAMMES_QUERY,

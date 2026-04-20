@@ -57,4 +57,9 @@ export class UpdateVerdictInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isAcquittedByPublicProsecutionOffice?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly defendantHasRequestedAppeal?: boolean
 }

@@ -113,16 +113,20 @@ export const PermissionContent = () => {
         'displayName',
       ])}
     >
-      <Tabs
-        size="md"
-        contentBackground="white"
-        selected={activeTab}
-        label={formatMessage(m.translations)}
-        onChange={() =>
-          setActiveTab(activeTab === Languages.IS ? Languages.EN : Languages.IS)
-        }
-        tabs={languages.map(renderTabs)}
-      />
+      <Stack space={5}>
+        <Tabs
+          size="md"
+          contentBackground="white"
+          selected={activeTab}
+          label={formatMessage(m.translations)}
+          onChange={() =>
+            setActiveTab(
+              activeTab === Languages.IS ? Languages.EN : Languages.IS,
+            )
+          }
+          tabs={languages.map(renderTabs)}
+        />
+      </Stack>
     </FormCard>
   )
 }

@@ -53,7 +53,7 @@ export const generateChargeFJSPayload = ({
     systemID: systemId,
     payInfo,
     returnUrl,
-    extraData: paymentFlow.extraData,
+    extraData: paymentFlow.extraData ?? [],
   }
 }
 

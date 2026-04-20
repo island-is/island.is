@@ -152,6 +152,7 @@ query getApplicationV2ApplicationStatisticsSuperAdmin(
     approved
     name
     institutionName
+    institutionNationalId
     institutionContentfulSlug
   }
 }
@@ -169,6 +170,7 @@ query getApplicationV2ApplicationStatisticsInstitutionAdmin(
     approved
     name
     institutionName
+    institutionNationalId
     institutionContentfulSlug
   }
 }

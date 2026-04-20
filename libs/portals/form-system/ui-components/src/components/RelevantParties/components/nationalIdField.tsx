@@ -5,10 +5,9 @@ import { m } from '../../../lib/messages'
 interface Props {
   nationalId?: string
   name?: string
-  legalEntity?: boolean
 }
 
-export const NationalIdField = ({ nationalId, name, legalEntity }: Props) => {
+export const NationalIdField = ({ nationalId, name }: Props) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>

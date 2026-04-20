@@ -148,6 +148,7 @@ BloodDonationRestrictionDetails.getProps = async ({
 
   const organizationPageSlug =
     locale === 'is' ? 'blodbankinn' : 'icelandic-blood-bank'
+  const subpageSlug = locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors'
 
   const [
     bloodDonationRestrictionDetailsResponse,
@@ -169,9 +170,7 @@ BloodDonationRestrictionDetails.getProps = async ({
         input: {
           slug: organizationPageSlug,
           lang: locale,
-          subpageSlugs: [
-            locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors',
-          ],
+          subpageSlugs: [subpageSlug],
         },
       },
     }),
@@ -209,11 +208,19 @@ BloodDonationRestrictionDetails.getProps = async ({
     )
   }
 
+  const id =
+    bloodDonationRestrictionDetailsResponse.data
+      .getBloodDonationRestrictionDetails.id
+
   return {
     item: bloodDonationRestrictionDetailsResponse.data
       .getBloodDonationRestrictionDetails,
     namespace,
     organizationPage: organizationPageResponse.data.getOrganizationPage,
+    languageToggleHrefOverride: {
+      is: `/s/blodbankinn/ahrif-a-blodgjof/${id}`,
+      en: `/en/o/icelandic-blood-bank/affecting-factors/${id}`,
+    },
   }
 }
 

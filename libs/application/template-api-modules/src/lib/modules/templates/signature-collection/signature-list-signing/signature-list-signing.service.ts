@@ -27,6 +27,22 @@ export class SignatureListSigningService extends BaseTemplateApiService {
       throw new TemplateApiError(errorMessages.submitFailure, 400)
     }
 
+    // Check if the list has reached max signatures before attempting to sign
+    try {
+      const list = await this.signatureCollectionClientService.getList(
+        listId,
+        auth,
+      )
+      if (list.maxReached) {
+        throw new TemplateApiError(errorMessages.maxReached, 405)
+      }
+    } catch (e) {
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      // If getList fails for other reasons, let signList handle it
+    }
+
     const signature = await this.signatureCollectionClientService.signList(
       listId,
       this.collectionType,

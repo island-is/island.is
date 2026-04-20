@@ -55,6 +55,11 @@ type FormCardProps<Intent> = {
    * Note: This function should be memoized to prevent unnecessary re-renders.
    */
   customValidation?(currentValue: FormData, originalValue: FormData): boolean
+  /**
+   * When true, the Save button is disabled regardless of dirty state.
+   * Useful when the form has pending input that must be resolved before submission.
+   */
+  submitDisabled?: boolean
   headerMarginBottom?: 3 | 5
 }
 
@@ -67,6 +72,7 @@ export const FormCard = <Intent extends string>({
   accordionLabel,
   description,
   customValidation,
+  submitDisabled,
   headerMarginBottom = 5,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
@@ -140,12 +146,14 @@ export const FormCard = <Intent extends string>({
     }
   }, [actionData, intent])
 
-  // On mount, set the original form data
+  // On mount or environment change, reset the baseline form data and dirty state
   useEffect(() => {
     if (formRef.current) {
       prevFormData.current = new FormData(formRef.current)
+      setDirty(false)
     }
-  }, [formRef])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedEnvironment])
 
   useEffect(() => {
     // Reset dirty state if form is not submitting, prev and current form data are the same and if form is already dirty
@@ -249,7 +257,7 @@ export const FormCard = <Intent extends string>({
                   type="submit"
                   name="intent"
                   value={intent}
-                  disabled={!dirty}
+                  disabled={!dirty || submitDisabled}
                   loading={loading}
                   dataTestId={`button-save-${title}`}
                 >

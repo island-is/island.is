@@ -58,6 +58,19 @@ const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
 const TOKEN_SIGNING_SECRET = 'supersecret'
 const TOKEN_SIGNING_ALGORITHM = 'HS256'
 
+/** Minimal valid CardVerification success response (schema + cardUsage/cardScheme required by verify()) */
+const mockVerificationSuccessResponse = {
+  isSuccess: true,
+  responseCode: '00',
+  responseTime: '12:00:00',
+  correlationID: 'test-correlation-id',
+  cardVerificationRawResponse: '',
+  postUrl: 'https://example.com/post',
+  verificationFields: [] as Array<{ name: string; value: string }>,
+  additionalFields: [] as Array<{ name: string; value: string }>,
+  cardInformation: { cardScheme: 'Visa', cardUsage: 'credit' },
+}
+
 describe('CardPaymentController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
@@ -258,7 +271,7 @@ describe('CardPaymentController', () => {
         .mockImplementation(async (url) => {
           if (typeof url === 'string' && url.includes(verificationUrl)) {
             return {
-              json: async () => ({ isSuccess: true }),
+              json: async () => mockVerificationSuccessResponse,
               status: 200,
               ok: true,
             } as Response
@@ -313,7 +326,7 @@ describe('CardPaymentController', () => {
           if (typeof url === 'string') {
             if (url.includes(verificationUrl)) {
               return {
-                json: async () => ({ isSuccess: true }),
+                json: async () => mockVerificationSuccessResponse,
                 status: 200,
                 ok: true,
               } as Response
@@ -632,6 +645,7 @@ describe('CardPaymentController', () => {
           organisationId: '1234567890',
           created: new Date(),
           modified: new Date(),
+          isDeleted: false,
         })
       const getPaymentFlowChargeDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -1121,6 +1135,7 @@ describe('CardPaymentController', () => {
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
+            isDeleted: false,
           })
 
         const getPaymentFlowChargeDetailsSpy = jest
@@ -1238,6 +1253,7 @@ describe('CardPaymentController', () => {
             organisationId: '1234567890',
             created: new Date(),
             modified: new Date(),
+            isDeleted: false,
           })
 
         const getPaymentFlowChargeDetailsSpy = jest
@@ -1370,6 +1386,7 @@ describe('CardPaymentController', () => {
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
+            isDeleted: false,
           })
 
         const getPaymentFlowChargeDetailsSpy = jest

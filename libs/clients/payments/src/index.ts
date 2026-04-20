@@ -15,4 +15,5 @@ export {
   PaymentFlowEventDTOTypeEnum,
   PaymentFlowEventDTOReasonEnum,
   GetPaymentFlowsPaginatedDTO,
+  GetPaymentFlowStatusDTOPaymentStatusEnum,
 } from '../gen/fetch'

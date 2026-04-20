@@ -268,18 +268,61 @@ export class ZendeskService {
 
           for (const field of screen.fields ?? []) {
             if (field.isHidden) continue
+            if (field.fieldType === FieldTypesEnum.MESSAGE) continue
 
             const requiredMark = field.isRequired ? '*' : ''
             parts.push(
               h(5, `${field.name.is}${requiredMark}`, `margin:0;${indent(20)}`),
             )
 
-            for (const value of field.values ?? []) {
-              const json = value.json
-              if (!json || typeof json !== 'object') continue
+            const values = field.values ?? []
+            const isMulti = values.length > 1
+
+            for (let valueIndex = 0; valueIndex < values.length; valueIndex++) {
+              const value = values[valueIndex]
+              const itemNo = valueIndex + 1
+
+              const rawJson = value?.json
+              const json =
+                rawJson && typeof rawJson === 'object'
+                  ? (rawJson as Record<string, unknown>)
+                  : {}
+
+              if (field.fieldType === FieldTypesEnum.FILE) {
+                const keys = this.normalizeS3Keys(
+                  (json as Record<string, unknown>)['s3Key'],
+                )
+                const lines = keys.map(
+                  (k) => `• ${this.displayNameFromS3Key(k)}`,
+                )
+
+                const prefixHtml = isMulti ? `<strong>${itemNo}.</strong> ` : ''
+                const valHtml = lines.length
+                  ? this.escapeHtml(lines.join('\n')).replace(
+                      /\r\n|\n|\r/g,
+                      '<br />',
+                    )
+                  : ''
+
+                parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
+                continue
+              }
 
               const entries = Object.entries(json)
               const isMultiAttribute = entries.length > 1
+
+              // If multi and json is empty -> just write the itemNo (bold)
+              if (isMulti && entries.length === 0) {
+                parts.push(p0(`<strong>${itemNo}.</strong>`, indent(30)))
+                continue
+              }
+
+              // Multi + multi-attribute: number once above all attributes (bold)
+              if (isMulti && isMultiAttribute) {
+                parts.push(
+                  h(6, `<strong>${itemNo}.</strong>`, `margin:0;${indent(30)}`),
+                )
+              }
 
               for (const [key, raw] of entries) {
                 if (
@@ -291,25 +334,31 @@ export class ZendeskService {
                   continue
                 }
 
-                if (raw == null) continue
-
                 const val = this.formatValue(raw, field.fieldType)
+                const valHtml = this.escapeHtml(val).replace(
+                  /\r\n|\n|\r/g,
+                  '<br />',
+                )
 
                 if (isMultiAttribute) {
                   const attribute = getLanguageTypeForValueTypeAttribute(key)
+                  const attrIndent = isMulti ? 40 : 30
 
                   parts.push(
                     h(
                       6,
                       `${this.escapeHtml(attribute.is)}:`,
-                      `display:inline-block;${indent(30)};margin-right:4px`,
+                      `display:inline-block;${indent(
+                        attrIndent,
+                      )};margin-right:4px`,
                     ),
-                    `<p style="display:inline-block;margin:0">${this.escapeHtml(
-                      val,
-                    )}</p><br />`,
+                    `<p style="display:inline-block;margin:0">${valHtml}</p><br />`,
                   )
                 } else {
-                  parts.push(p0(`${this.escapeHtml(val)}`, indent(30)))
+                  const prefixHtml = isMulti
+                    ? `<strong>${itemNo}.</strong> `
+                    : ''
+                  parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
                 }
               }
             }
@@ -319,6 +368,35 @@ export class ZendeskService {
     }
 
     return parts.join('')
+  }
+
+  private normalizeS3Keys(raw: unknown): string[] {
+    if (Array.isArray(raw)) {
+      return raw.filter(
+        (k): k is string => typeof k === 'string' && k.length > 0,
+      )
+    }
+    if (typeof raw === 'string' && raw.length > 0) return [raw]
+    return []
+  }
+
+  private displayNameFromS3Key(key: string): string {
+    // 1) turn s3 key into human filename
+    const lastPart = key.split('/').pop() ?? key
+    const underscoreIndex = lastPart.indexOf('_')
+    const fileName =
+      underscoreIndex >= 0 ? lastPart.slice(underscoreIndex + 1) : lastPart
+
+    // 2) truncate middle if long
+    const maxLength = 40
+    if (fileName.length <= maxLength) return fileName
+
+    const ellipsis = '...'
+    const keepLength = maxLength - ellipsis.length
+    const start = Math.ceil(keepLength / 2)
+    const end = fileName.length - Math.floor(keepLength / 2)
+
+    return `${fileName.slice(0, start)}${ellipsis}${fileName.slice(end)}`
   }
 
   private getCustomFields(applicationDto: ApplicationDto): CustomField[] {
@@ -392,9 +470,36 @@ export class ZendeskService {
       } else {
         return this.CHECKBOX_FALSE
       }
-    } else if (fieldType === FieldTypesEnum.BANK_ACCOUNT && val === '--') {
+    }
+
+    if (fieldType === FieldTypesEnum.BANK_ACCOUNT && val === '--') {
       return ''
     }
+
+    if (fieldType === FieldTypesEnum.DATE_PICKER) {
+      if (val === null || val === '') return ''
+
+      if (typeof val === 'string') {
+        const trimmed = val.trim()
+
+        // Common stored format in this repo: yyyy-MM-dd
+        const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed)
+        if (iso) return `${iso[3]}.${iso[2]}.${iso[1]}`
+
+        // Already formatted
+        if (/^\d{2}\.\d{2}\.\d{4}$/.test(trimmed)) return trimmed
+      }
+
+      const d = val instanceof Date ? val : new Date(String(val))
+      if (Number.isNaN(d.getTime())) return ''
+
+      return new Intl.DateTimeFormat('is-IS', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }).format(d)
+    }
+
     if (val === null) {
       return ''
     }

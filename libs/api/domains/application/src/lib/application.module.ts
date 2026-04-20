@@ -12,7 +12,6 @@ import {
   AdminApi as FormSystemAdminApi,
   Configuration as FormSystemConfiguration,
 } from '@island.is/clients/form-system'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 export interface Config {
   baseApiUrl: string
@@ -79,7 +78,6 @@ export class ApplicationModule {
           ),
         },
       ],
-      imports: [FeatureFlagModule],
       exports: [],
     }
   }

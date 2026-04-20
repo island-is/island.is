@@ -249,10 +249,9 @@ export const healthNavigation: PortalNavigationItem = {
               breadcrumbHide: true,
             },
             {
-              name: messages.questionnaire,
+              name: messages.answers,
               path: HealthPaths.HealthQuestionnairesAnswered,
               navHide: true,
-              breadcrumbHide: true,
             },
           ],
         },

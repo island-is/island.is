@@ -14,9 +14,12 @@ import { SECTION_GAP } from '../../utils/constants'
 import StatusModal from './StatusModal'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export const VaccinationsWrapper = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
+
   const { formatMessage, locale } = useLocale()
   const { data, loading, error } = useGetVaccinationsQuery({
     variables: {

@@ -69,6 +69,7 @@ grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

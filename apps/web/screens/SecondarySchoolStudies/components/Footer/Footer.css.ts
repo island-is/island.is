@@ -38,16 +38,3 @@ export const linksSection = style({
   alignItems: 'center',
   rowGap: '0px',
 })
-
-export const buttonsSection = style({
-  display: 'flex',
-  gap: '16px',
-  flexShrink: 0,
-})
-
-export const link = style({
-  textDecoration: 'none',
-  ':hover': {
-    textDecoration: 'underline',
-  },
-})

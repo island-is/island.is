@@ -1,17 +1,17 @@
+import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { m } from '@island.is/form-system/ui'
 import {
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
-  Input,
-  DatePicker,
-  Checkbox,
   Box,
+  Checkbox,
+  GridColumn as Column,
+  DatePicker,
+  Input,
+  GridRow as Row,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
-import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { ControlContext } from '../../../../context/ControlContext'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
 
 export const BaseSettings = () => {
@@ -23,7 +23,7 @@ export const BaseSettings = () => {
     formUpdate,
     getTranslation,
   } = useContext(ControlContext)
-  const { form, isPublished } = control
+  const { form, isReadOnly } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -36,7 +36,7 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.organizationName)}
             name="organizationName"
             value={form?.organizationTitle ?? ''}
-            disabled={true}
+            readOnly={true}
           />
         </Column>
         <Column span="5/10">
@@ -45,7 +45,7 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.organizationNameEn)}
             name="organizationNameEn"
             value={form?.organizationTitleEn ?? ''}
-            disabled={true}
+            readOnly={true}
           />
         </Column>
       </Row>
@@ -57,7 +57,7 @@ export const BaseSettings = () => {
             name="organizationDisplayName"
             value={form?.organizationDisplayName?.is ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => {
               if (!form.organizationDisplayName?.is) {
                 controlDispatch({
@@ -89,7 +89,7 @@ export const BaseSettings = () => {
             name="organizationDisplayNameEn"
             value={form?.organizationDisplayName?.en ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => {
               if (!form.organizationDisplayName?.en) {
                 controlDispatch({
@@ -121,7 +121,7 @@ export const BaseSettings = () => {
             name="formName"
             value={form?.name?.is ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => {
@@ -141,7 +141,7 @@ export const BaseSettings = () => {
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={async (e) => {
               if (!form?.name?.en && form?.name?.is !== '') {
                 const translation = await getTranslation(form.name.is ?? '')
@@ -171,7 +171,7 @@ export const BaseSettings = () => {
             value={form?.slug ?? ''}
             backgroundColor="blue"
             errorMessage={errorMsg}
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => {
               if (!form.slug) {
                 controlDispatch({
@@ -212,54 +212,11 @@ export const BaseSettings = () => {
       <Box marginTop={5} />
       <Row>
         <Column span="5/10">
-          <Input
-            label={formatMessage(m.daysUntilExpiration)}
-            placeholder={formatMessage(m.max30Days)}
-            name="applicationsDaysToRemove"
-            value={
-              form.daysUntilApplicationPrune === 0
-                ? ''
-                : form.daysUntilApplicationPrune ?? ''
-            }
-            backgroundColor="blue"
-            readOnly={isPublished}
-            type="number"
-            max={30}
-            min={1}
-            onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => {
-              if (e.target.value !== focus) {
-                if (e.target.value === '' || Number(e.target.value) < 1) {
-                  e.target.value = '1'
-                  controlDispatch({
-                    type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
-                    payload: { value: 1 },
-                  })
-                  formUpdate({ ...form, daysUntilApplicationPrune: 1 })
-                } else {
-                  formUpdate()
-                }
-              }
-            }}
-            onChange={(e) => {
-              const value = Number(e.target.value)
-              if (value <= 30) {
-                controlDispatch({
-                  type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
-                  payload: { value: parseInt(e.target.value) },
-                })
-              }
-            }}
-          />
-        </Column>
-      </Row>
-      <Row>
-        <Column span="5/10">
           <DatePicker
             label={formatMessage(m.deadline)}
             placeholderText={formatMessage(m.chooseDate)}
             backgroundColor="blue"
-            disabled={isPublished}
+            disabled={isReadOnly}
             selected={
               form.invalidationDate ? new Date(form.invalidationDate) : null
             }
@@ -299,7 +256,7 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.summaryScreen)}
-            disabled={isPublished}
+            disabled={isReadOnly}
             checked={
               form.hasSummaryScreen !== null &&
               form.hasSummaryScreen !== undefined
@@ -309,28 +266,6 @@ export const BaseSettings = () => {
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_HAS_SUMMARY_SCREEN',
-                payload: {
-                  value: e.target.checked,
-                  update: formUpdate,
-                },
-              })
-            }}
-          />
-        </Column>
-      </Row>
-      <Row>
-        <Column>
-          <Checkbox
-            label={formatMessage(m.payment)}
-            disabled={isPublished}
-            checked={
-              form.hasPayment !== null && form.hasPayment !== undefined
-                ? form.hasPayment
-                : false
-            }
-            onChange={(e) => {
-              controlDispatch({
-                type: 'CHANGE_HAS_PAYMENT',
                 payload: {
                   value: e.target.checked,
                   update: formUpdate,

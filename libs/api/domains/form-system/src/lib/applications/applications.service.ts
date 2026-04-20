@@ -15,7 +15,6 @@ import {
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
-  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,

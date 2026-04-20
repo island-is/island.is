@@ -87,7 +87,7 @@ export class InstitutionSerializer
       .pipe(
         mergeMap((institutions: InstitutionDto[]) =>
           from(
-            Promise.allSettled(
+            Promise.all(
               institutions.map((institution) => this.serialize(institution)),
             ).then((serialized) => plainToInstance(InstitutionDto, serialized)),
           ),

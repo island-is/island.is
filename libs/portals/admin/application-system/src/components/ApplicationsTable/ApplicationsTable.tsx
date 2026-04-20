@@ -38,6 +38,7 @@ interface Props {
   shouldShowCardButtons?: boolean
   numberOfItems?: number // Set this if using paginated data from api
   showAdminData?: boolean
+  showInstitution?: boolean
   isSuperAdmin: boolean
 }
 
@@ -50,6 +51,7 @@ export const ApplicationsTable = ({
   shouldShowCardButtons = true,
   numberOfItems,
   showAdminData,
+  showInstitution,
   isSuperAdmin,
 }: Props) => {
   const { formatMessage } = useLocale()
@@ -103,7 +105,12 @@ export const ApplicationsTable = ({
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.dateCreated)}</T.HeadData>
+            <T.HeadData>
+              <Box display="flex" alignItems="center">
+                {formatMessage(m.dateModified)}
+                <Icon icon="chevronDown" ariaHidden />
+              </Box>
+            </T.HeadData>
             {!showAdminData && (
               <T.HeadData>{formatMessage(m.application)}</T.HeadData>
             )}
@@ -115,13 +122,8 @@ export const ApplicationsTable = ({
                   {formatMessage(x.label) ?? ''}
                 </T.HeadData>
               ))}
-            <T.HeadData>
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.dateModified)}
-                <Icon icon="chevronDown" ariaHidden />
-              </Box>
-            </T.HeadData>
-            {isSuperAdmin && !showAdminData && (
+            <T.HeadData>{formatMessage(m.dateCreated)}</T.HeadData>
+            {isSuperAdmin && showInstitution && (
               <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             )}
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
@@ -155,7 +157,7 @@ export const ApplicationsTable = ({
                       }
                     >
                       <T.Data text={{ color: cellText }}>
-                        {format(new Date(application.created), 'dd.MM.yyyy')}
+                        {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>
                       {!showAdminData && (
                         <T.Data>
@@ -180,9 +182,9 @@ export const ApplicationsTable = ({
                           </T.Data>
                         ))}
                       <T.Data text={{ color: cellText }}>
-                        {format(new Date(application.modified), 'dd.MM.yyyy')}
+                        {format(new Date(application.created), 'dd.MM.yyyy')}
                       </T.Data>
-                      {isSuperAdmin && !showAdminData && (
+                      {isSuperAdmin && showInstitution && (
                         <T.Data>
                           <Box display="flex" alignItems="center">
                             <Tooltip text={application.institution ?? ''}>

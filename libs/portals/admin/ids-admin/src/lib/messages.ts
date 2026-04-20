@@ -69,6 +69,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:advanced-settings',
     defaultMessage: 'Advanced settings',
   },
+  modified: {
+    id: 'ap.ids-admin:modified',
+    defaultMessage: 'Last modified: {date}',
+  },
   back: {
     id: 'ap.ids-admin:back',
     defaultMessage: 'Back',
@@ -327,14 +331,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:cors',
     defaultMessage: 'CORS',
   },
+  allowedCorsOrigins: {
+    id: 'ap.ids-admin:allowed-cors-origins',
+    defaultMessage: 'Allowed CORS origins',
+  },
   corsPlaceholder: {
     id: 'ap.ids-admin:cors-placeholder',
-    defaultMessage: 'List CORS urls, comma seperated',
+    defaultMessage: 'http://localhost:4200',
   },
   corsDescription: {
     id: 'ap.ids-admin:cors-description',
     defaultMessage:
-      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. URLs can be comma-separated or added line-by-line Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com) Query strings and hash information are ignored Organization URL placeholders are supported',
+      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com) Query strings and hash information are ignored Organization URL placeholders are supported',
   },
   translations: {
     id: 'ap.ids-admin:translations',
@@ -389,9 +397,26 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-urls',
     defaultMessage: 'List of URLs, comma separated',
   },
+  errorInvalidUrl: {
+    id: 'ap.ids-admin:error-invalid-url',
+    defaultMessage: 'Invalid URL',
+  },
+  errorCorsOriginAlreadyExists: {
+    id: 'ap.ids-admin:error-cors-origin-already-exists',
+    defaultMessage: 'Origin already added',
+  },
+  errorCorsOriginNotAdded: {
+    id: 'ap.ids-admin:error-cors-origin-not-added',
+    defaultMessage:
+      'Press Enter or click the plus button to include this origin',
+  },
   errorPositiveNumber: {
     id: 'ap.ids-admin:error-positive-number',
     defaultMessage: 'Must be a positive number',
+  },
+  addCorsOrigin: {
+    id: 'ap.ids-admin:add-cors-origin',
+    defaultMessage: 'Add origin',
   },
   delegations: {
     id: 'ap.ids-admin:delegations',
@@ -593,6 +618,22 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-modal-no-scopes',
     defaultMessage: 'No scopes available',
   },
+  permissionApplicationsDescription: {
+    id: 'ap.ids-admin:permission-applications-description',
+    defaultMessage: 'Applications that are currently using this permission.',
+  },
+  permissionApplicationsEmpty: {
+    id: 'ap.ids-admin:permission-applications-empty',
+    defaultMessage: 'No applications are using this permission.',
+  },
+  permissionApplicationsName: {
+    id: 'ap.ids-admin:permission-applications-name',
+    defaultMessage: 'Application',
+  },
+  permissionApplicationsType: {
+    id: 'ap.ids-admin:permission-applications-type',
+    defaultMessage: 'Type',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -776,9 +817,77 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  securityAndCapabilities: {
+    id: 'ap.ids-admin:security-and-capabilities',
+    defaultMessage: 'Security & Capabilities',
+  },
+  allowsWrite: {
+    id: 'ap.ids-admin:allows-write',
+    defaultMessage: 'Read/Write Access',
+  },
+  allowsWriteDescription: {
+    id: 'ap.ids-admin:allows-write-description',
+    defaultMessage:
+      'When enabled, this permission grants both read and write access. When disabled, only read access is granted.',
+  },
+  requiresConfirmation: {
+    id: 'ap.ids-admin:requires-confirmation',
+    defaultMessage: 'Step-up Authentication Required',
+  },
+  requiresConfirmationDescription: {
+    id: 'ap.ids-admin:requires-confirmation-description',
+    defaultMessage:
+      'When enabled, users must provide additional authentication (tvöfalt samþykki) to access sensitive information with this permission.',
+  },
   accessControl: {
     id: 'ap.ids-admin:access-control',
     defaultMessage: 'Access control',
+  },
+  categoriesAndTags: {
+    id: 'ap.ids-admin:categories-and-tags',
+    defaultMessage: 'Categories and Tags',
+  },
+  categories: {
+    id: 'ap.ids-admin:categories',
+    defaultMessage: 'Service categories',
+  },
+  categoriesDescription: {
+    id: 'ap.ids-admin:categories-description',
+    defaultMessage:
+      'Select which service categories this permission belongs to. These help users find relevant permissions when creating delegations.',
+  },
+  tags: {
+    id: 'ap.ids-admin:tags',
+    defaultMessage: 'Tags',
+  },
+  tagsDescription: {
+    id: 'ap.ids-admin:tags-description',
+    defaultMessage:
+      'Select which tags this permission is relevant for. This helps users understand when they might need this permission.',
+  },
+  categoryRequired: {
+    id: 'ap.ids-admin:category-required',
+    defaultMessage: 'At least one category must be selected',
+  },
+  noCategories: {
+    id: 'ap.ids-admin:no-categories',
+    defaultMessage: 'No categories available',
+  },
+  selectCategoriesPlaceholder: {
+    id: 'ap.ids-admin:select-categories-placeholder',
+    defaultMessage: 'Select categories',
+  },
+  noTags: {
+    id: 'ap.ids-admin:no-tags',
+    defaultMessage: 'No tags available',
+  },
+  selectTagsPlaceholder: {
+    id: 'ap.ids-admin:select-tags-placeholder',
+    defaultMessage: 'Select tags',
+  },
+  loading: {
+    id: 'ap.ids-admin:loading',
+    defaultMessage: 'Loading...',
   },
   icelandic: {
     id: 'ap.ids-admin:icelandic',

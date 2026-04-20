@@ -29,10 +29,13 @@ import {
 import { HealthPaths } from '../../lib/paths'
 import { permitTagSelector } from '../../utils/tagSelector'
 import { Markdown } from '@island.is/shared/components'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const PermitDetail: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
+
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   const [showAllHistory, setShowAllHistory] = useState(false)

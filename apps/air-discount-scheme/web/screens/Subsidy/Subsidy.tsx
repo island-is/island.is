@@ -21,7 +21,7 @@ import {
 import { Screen } from '../../types'
 import { Benefits, Usage } from './components'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import { Auth } from '../Auth'
 
 interface PropTypes {
@@ -31,7 +31,8 @@ interface PropTypes {
 const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
-  const [session, loading] = useSession()
+  const { data: session, status } = useSession()
+  const loading = status === 'loading'
   if (loading || !session?.user) {
     return <Auth />
   }

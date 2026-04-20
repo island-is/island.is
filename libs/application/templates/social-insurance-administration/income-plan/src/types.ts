@@ -24,22 +24,3 @@ interface WithholdingTaxIncomeType {
   december?: number | null
   total?: number | null
 }
-
-export interface LatestIncomePlan {
-  year: number
-  origin: string
-  status: string
-  incomeTypeLines: IncomeType[]
-  registrationDate: string
-}
-
-interface IncomeType {
-  currency: string
-  totalSum: number
-  incomeTypeCode: string
-  incomeTypeName: string
-  incomeTypeNumber: number
-  incomeCategoryCode: string
-  incomeCategoryName: string
-  incomeCategoryNumber: number
-}

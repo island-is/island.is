@@ -61,3 +61,44 @@ export const fsreBuildingsImportSetup =
       })
       .command('node')
       .args('main.cjs')
+
+export const webSitemapImportSetup =
+  (): ServiceBuilder<'cms-importer-web-sitemap'> =>
+    service('cms-importer-web-sitemap')
+      .image('services-cms-importer')
+      .namespace('cms-importer')
+      .serviceAccount('cms-importer-web-sitemap')
+      .env({
+        S3_BUCKET: {
+          dev: 'island-is-dev-cms-importer',
+          staging: 'island-is-staging-cms-importer',
+          prod: 'island-is-prod-cms-importer',
+        },
+      })
+      .secrets({
+        CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+          '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
+      })
+      .command('node')
+      .args('main.cjs', '--job', 'web-sitemap')
+      .extraAttributes({
+        dev: { schedule: '0 0 * * *' },
+        staging: { schedule: '0 0 * * 0' },
+        prod: { schedule: '0 */3 * * *' },
+      })
+
+export const cmsCleanupSetup = (): ServiceBuilder<'cms-importer-cms-cleanup'> =>
+  service('cms-importer-cms-cleanup')
+    .image('services-cms-importer')
+    .namespace('cms-importer')
+    .secrets({
+      CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+        '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
+    })
+    .command('node')
+    .args('main.cjs', '--job', 'cms-cleanup')
+    .extraAttributes({
+      dev: { schedule: '0 0 * * 0' },
+      staging: { schedule: '0 0 * * 0' },
+      prod: { schedule: '0 0 * * 0' },
+    })

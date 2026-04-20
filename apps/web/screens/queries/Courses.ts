@@ -9,6 +9,7 @@ export const GET_ORGANIZATION_COURSES_QUERY = gql`
       items {
         id
         title
+        slug
         cardIntro {
           ...HtmlFields
         }
@@ -52,6 +53,7 @@ export const GET_COURSE_BY_ID_QUERY = gql`
         id
         title
         courseListPageId
+        showPlaceholderTextIfNoCourseInstances
         description {
           ...AllSlices
         }

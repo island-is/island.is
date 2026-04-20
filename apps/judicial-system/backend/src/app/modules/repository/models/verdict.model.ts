@@ -140,4 +140,8 @@ export class Verdict extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isAcquittedByPublicProsecutionOffice?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  defendantHasRequestedAppeal?: boolean
 }

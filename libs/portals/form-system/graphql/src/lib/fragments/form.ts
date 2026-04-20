@@ -31,7 +31,8 @@ export const FormFragment = gql`
     isTranslated
     hasPayment
     beenPublished
-    daysUntilApplicationPrune
+    draftDaysToLive
+    submissionDaysToLive
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
@@ -58,6 +59,7 @@ export const FormFragment = gql`
       ...Dependency
     }
     status
+    lastModifiedBy
   }
   ${LanguageFields}
   ${FormApplicantFragment}

@@ -17,6 +17,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { ExtraDoctors } from './components/ExtraDoctors'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   type: string
@@ -25,6 +26,7 @@ type UseParams = {
 
 export const MedicineCertificate = () => {
   const params = useParams() as UseParams
+  useHealthPlausibleSwap()
 
   const { formatMessage, formatDateFns } = useLocale()
 

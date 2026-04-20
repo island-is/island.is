@@ -4,13 +4,24 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
 import { DayRateRecord } from '../../utils/types'
+import { UploadSelection } from '../../utils/constants'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
 
 export const multiUploadSection = buildSection({
+  condition: (answers) => {
+    const uploadSelectionValue =
+      getValueViaPath<string>(answers, 'singleOrMultiSelectionRadio') ??
+      UploadSelection.MULTI
+
+    return uploadSelectionValue
+      ? uploadSelectionValue === UploadSelection.MULTI
+      : false
+  },
   id: 'multiUploadSection',
   title: m.multiUpload.sectionTitle,
   children: [

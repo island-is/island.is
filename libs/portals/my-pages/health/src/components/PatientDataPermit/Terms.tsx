@@ -1,8 +1,8 @@
 import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
-import { InfoModal } from './DataModal'
 import * as styles from './PatientDataPermit.css'
 
 interface TermsProps {
@@ -15,7 +15,6 @@ interface TermsProps {
 const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
   const { formatMessage } = useLocale()
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
   const [isAccepted, setIsAccepted] = useState<boolean>(false)
   return (
     <Box>
@@ -23,21 +22,19 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
         {formatMessage(messages.step, { first: '3', second: '3' })}
       </Text>
       <Text variant="h5" marginTop={1} marginBottom={2}>
-        {formatMessage(messages.chooseDataToShare)}
+        {formatMessage(messages.permitApprovalTitle)}
       </Text>
-      <Box className={styles.linkText} marginBottom={2}>
+      <Box className={styles.linkText} marginBottom={3}>
         <Text variant="default" fontWeight="light">
-          {formatMessage(messages.permitApprovalDescription, {
-            link: (parts: React.ReactNode[]) => (
-              <Button
-                variant="text"
-                size="medium"
-                onClick={() => setModalOpen(true)}
-              >
-                {parts}
-              </Button>
-            ),
-          })}
+          {formatMessage(messages.permitApprovalTopText)}
+        </Text>
+      </Box>
+      <Box marginTop={3}>
+        <Markdown>{formatMessage(messages.keyHealthInformationList)}</Markdown>
+      </Box>
+      <Box marginTop={3}>
+        <Text variant="default" fontWeight="light">
+          {formatMessage(messages.permitApprovalBottomText)}
         </Text>
       </Box>
       <Box marginTop={3}>
@@ -83,7 +80,6 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
           </Button>
         </Box>
       </Box>
-      <InfoModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </Box>
   )
 }

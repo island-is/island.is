@@ -103,6 +103,9 @@ export class PatchClientInput {
   @Field(() => [String], { nullable: true })
   removedScopes?: string[]
 
+  @Field(() => [String], { nullable: true })
+  allowedCorsOrigins?: string[]
+
   @Field(() => ClientSso, { nullable: true })
   sso?: ClientSso
 }

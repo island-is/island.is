@@ -277,6 +277,11 @@ export class PaymentFlowService {
     } catch (e) {
       const fjsCode = mapFjsErrorToCode(e, true)
 
+      this.logger.error(`[${paymentFlow.id}] Failed to validate charge`, {
+        error: e,
+        fjsCode,
+      })
+
       throw new BadRequestException(
         fjsCode ?? PaymentServiceCode.UnknownPaymentServiceError,
       )
@@ -1063,7 +1068,7 @@ export class PaymentFlowService {
     if (paymentFlowDetails.onUpdateUrl) {
       await this.logPaymentFlowUpdate({
         paymentFlowId: id,
-        type: 'deleted',
+        type: 'delete',
         occurredAt: new Date(),
         paymentMethod: 'system' as PaymentMethod,
         reason: 'deleted_admin', // TODO: connect with systemId when we have machine clients?

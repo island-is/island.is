@@ -2,7 +2,12 @@ import { useMemo } from 'react'
 import { IconButton, Menu } from '@contentful/f36-components'
 import { MoreHorizontalIcon } from '@contentful/f36-icons'
 
-import { findNodes, type Tree, TreeNodeType } from './utils'
+import {
+  type ChildNodeOrder,
+  findNodes,
+  type Tree,
+  TreeNodeType,
+} from './utils'
 
 interface EditMenuProps {
   onEdit: () => void
@@ -14,6 +19,8 @@ interface EditMenuProps {
   entryNodeId: number
   root: Tree
   isEntryNodePrimaryLocation?: boolean
+  currentChildNodeOrder?: ChildNodeOrder
+  onSetChildNodeOrder?: (order: ChildNodeOrder) => void
 }
 
 export const EditMenu = ({
@@ -26,6 +33,8 @@ export const EditMenu = ({
   entryId,
   entryNodeId,
   root,
+  currentChildNodeOrder,
+  onSetChildNodeOrder,
 }: EditMenuProps) => {
   const sameEntryNodes = useMemo(() => {
     if (!entryId || !entryNodeId) return []
@@ -45,6 +54,38 @@ export const EditMenu = ({
         <Menu.Item onClick={onEdit}>Edit</Menu.Item>
         {onPublish && <Menu.Item onClick={onPublish}>Publish</Menu.Item>}
         {onUnpublish && <Menu.Item onClick={onUnpublish}>Unpublish</Menu.Item>}
+        {currentChildNodeOrder && onSetChildNodeOrder && (
+          <Menu.Submenu placement="left-start">
+            <Menu.SubmenuTrigger>Child order</Menu.SubmenuTrigger>
+            <Menu.List>
+              <Menu.Item
+                onClick={() => {
+                  onSetChildNodeOrder('manual')
+                }}
+              >
+                {currentChildNodeOrder === 'manual' ? 'Manual ✅' : 'Manual'}
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  onSetChildNodeOrder('asc-title')
+                }}
+              >
+                {currentChildNodeOrder === 'asc-title'
+                  ? 'Title ascending (A-Z) ✅'
+                  : 'Title ascending (A-Z)'}
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  onSetChildNodeOrder('desc-title')
+                }}
+              >
+                {currentChildNodeOrder === 'desc-title'
+                  ? 'Title descending (Z-A) ✅'
+                  : 'Title descending (Z-A)'}
+              </Menu.Item>
+            </Menu.List>
+          </Menu.Submenu>
+        )}
         {sameEntryNodes.length > 1 && (
           <Menu.Item
             disabled={isEntryNodePrimaryLocation}

@@ -13,10 +13,16 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   lang: 'is' | 'en'
+  valueIndex?: number
 }
 const df = 'yyyy-MM-dd'
 
-export const DatePickerField = ({ item, dispatch, lang = 'is' }: Props) => {
+export const DatePickerField = ({
+  item,
+  dispatch,
+  lang = 'is',
+  valueIndex = 0,
+}: Props) => {
   const { formatMessage } = useIntl()
   const { control, trigger } = useFormContext()
 
@@ -28,6 +34,7 @@ export const DatePickerField = ({ item, dispatch, lang = 'is' }: Props) => {
         payload: {
           id: item.id,
           value: date,
+          valueIndex,
         },
       })
     }
@@ -35,10 +42,10 @@ export const DatePickerField = ({ item, dispatch, lang = 'is' }: Props) => {
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={`${item.id}.${valueIndex}`}
       control={control}
-      defaultValue={getValue(item, 'date')}
+      defaultValue={getValue(item, 'date', valueIndex)}
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -78,6 +85,7 @@ export const DatePickerField = ({ item, dispatch, lang = 'is' }: Props) => {
             trigger(item.id)
           }}
           isClearable={!item.isRequired}
+          readOnly={true}
         />
       )}
     />

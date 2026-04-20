@@ -22,7 +22,7 @@ env:
   AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
   AUDIT_TRAIL_REGION: 'eu-west-1'
   AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-  BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE'
+  BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE, POLICE_DIGITAL_CASE_FILES'
   CLIENT_URL: 'https://judicial-system.staging01.devland.is'
   CONTENTFUL_ENVIRONMENT: 'test'
   CONTENTFUL_HOST: 'cdn.contentful.com'
@@ -58,6 +58,7 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
 grantNamespaces:
   - 'nginx-ingress-external'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -149,7 +150,6 @@ secrets:
   NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
   POLICE_INSTITUTIONS_EMAILS: '/k8s/judicial-system/POLICE_INSTITUTIONS_EMAILS'
   PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
-  PRISON_ADMIN_INDICTMENT_EMAILS: '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS'
   PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
   PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL: '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL'
   XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'

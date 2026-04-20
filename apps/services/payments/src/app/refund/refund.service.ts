@@ -7,8 +7,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   PaymentTrackingData,
-  RefundResponseSchema,
+  RefundErrorSchema,
   RefundSuccessResponse,
+  RefundSuccessSchema,
 } from '../../types/cardPayment'
 import { mapToCardErrorCode } from '../../utils/paymentErrors'
 import { RefundModuleConfig, RefundModuleConfigType } from './refund.config'
@@ -24,8 +25,10 @@ export class RefundService {
 
   async refundWithCorrelationId({
     paymentTrackingData,
+    paymentFlowId,
   }: {
     paymentTrackingData: PaymentTrackingData
+    paymentFlowId?: string
   }): Promise<RefundSuccessResponse> {
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
@@ -41,11 +44,13 @@ export class RefundService {
 
     const data = await this.parseGatewayResponse({
       response,
-      schema: RefundResponseSchema,
+      schema: RefundSuccessSchema,
+      errorSchema: RefundErrorSchema,
       errorMessage: 'Failed to refund payment with correlation id',
+      paymentFlowId,
     })
 
-    return data as RefundSuccessResponse
+    return data
   }
 
   private buildRefundWithCorrelationIdRequest(
@@ -74,19 +79,32 @@ export class RefundService {
     }
   }
 
-  private async parseGatewayResponse<T extends z.ZodTypeAny>({
+  private async parseGatewayResponse<
+    TOut extends { isSuccess: true },
+    TErrOut extends {
+      isSuccess: false
+      responseCode: string
+      responseDescription?: string
+    },
+  >({
     response,
     schema,
+    errorSchema,
     errorMessage,
+    paymentFlowId,
   }: {
     response: Response
-    schema: T
+    schema: z.ZodType<TOut>
+    errorSchema: z.ZodType<TErrOut>
     errorMessage: string
-  }): Promise<z.infer<T>> {
+    paymentFlowId?: string
+  }): Promise<TOut> {
+    const logPrefix = paymentFlowId ? `[${paymentFlowId}] ` : ''
+
     if (!response.ok) {
       const responseBody = await response.text()
 
-      this.logger.error(errorMessage, {
+      this.logger.error(`${logPrefix}${errorMessage}`, {
         statusText: response.statusText,
         responseBody,
       })
@@ -94,27 +112,28 @@ export class RefundService {
       throw new BadRequestException(response.statusText)
     }
 
-    const data = await response.json()
+    const rawData = await response.json()
 
-    const parsedData = schema.safeParse(data)
+    const successParsed = schema.safeParse(rawData)
 
-    if (!parsedData.success) {
-      this.logger.error('Failed to parse payment gateway response', {
-        error: parsedData.error,
-      })
-      throw new BadRequestException(parsedData.error.message)
+    if (successParsed.success) {
+      return successParsed.data
     }
 
-    const { isSuccess, responseCode, responseDescription } = parsedData.data
+    const errorParsed = errorSchema.safeParse(rawData)
 
-    if (!isSuccess) {
-      this.logger.error(`Payment gateway error: ${errorMessage}`, {
+    if (errorParsed.success) {
+      const { responseCode, responseDescription } = errorParsed.data
+      this.logger.error(`${logPrefix}Payment gateway error: ${errorMessage}`, {
         responseCode,
         responseDescription,
       })
       throw new BadRequestException(mapToCardErrorCode(responseCode))
     }
 
-    return parsedData.data
+    this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
+      error: successParsed.error,
+    })
+    throw new BadRequestException('Failed to parse payment gateway response')
   }
 }

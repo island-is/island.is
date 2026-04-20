@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const GET_SECONDARY_SCHOOL_ALL_PROGRAMMES_QUERY = gql`
   query SecondarySchoolAllProgrammes {
     secondarySchoolAllProgrammes {
-      id
+      programmeId
       ministrySerial
       title
       studyTrack {

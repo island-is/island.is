@@ -30,6 +30,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       IDENTITY_SERVER_ISSUER_DOMAIN: {
+        local: 'identity-server.dev01.devland.is',
         dev: 'identity-server.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',
         prod: 'innskra.island.is',
@@ -49,6 +50,7 @@ export const serviceSetup = (services: {
     .secrets({
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET',
+      NEXTAUTH_SECRET: '/k8s/consultation-portal/NEXTAUTH_SECRET',
     })
     .ingress({
       primary: {
@@ -74,5 +76,6 @@ export const serviceSetup = (services: {
         paths: ['/samradsgatt'],
       },
     })
+    .grantNamespaces('nginx-ingress-external')
   return consultationService
 }

@@ -49,3 +49,13 @@ globalStyle(`${mobileFilterButton} button div span`, {
   display: 'flex',
   justifyContent: 'space-between',
 })
+
+globalStyle(`${mobileFilterButton} div div`, {
+  width: '100%',
+  marginLeft: 0,
+})
+
+globalStyle(`${mobileFilterButton} div div span`, {
+  display: 'flex',
+  justifyContent: 'space-between',
+})

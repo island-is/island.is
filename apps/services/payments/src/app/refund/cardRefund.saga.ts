@@ -176,6 +176,7 @@ export const createCardRefundSaga = (
 
       const refundResult = await retry(() =>
         refundService.refundWithCorrelationId({
+          paymentFlowId: ctx.paymentFlowId,
           paymentTrackingData: {
             merchantReferenceData:
               cardPaymentConfirmation.merchantReferenceData,

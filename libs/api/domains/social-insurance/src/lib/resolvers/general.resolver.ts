@@ -110,7 +110,7 @@ export class GeneralResolver {
     nullable: true,
   })
   resolveProfessions(@CurrentUser() user: User) {
-    return this.professionService.getProfessions(user)
+    return this.professionService.getProfessionsInDto(user)
   }
 
   @ResolveField('professionActivities', () => [GenericKeyValueStringObject], {

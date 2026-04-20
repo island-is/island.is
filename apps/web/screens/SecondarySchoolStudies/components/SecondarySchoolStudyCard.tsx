@@ -86,8 +86,8 @@ export const SecondarySchoolStudyCard = ({
             <Box
               display="flex"
               flexDirection="row"
-              alignItems="center"
-              paddingBottom={2}
+              alignItems="flexStart"
+              style={{ minHeight: '2.5rem' }}
             >
               {schoolIcon && (
                 <Box paddingRight={1} display="flex" alignItems="center">

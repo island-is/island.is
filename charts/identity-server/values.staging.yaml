@@ -20,6 +20,8 @@ auth-admin-web:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -38,6 +40,16 @@ auth-admin-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/admin'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
   ingress:
@@ -75,6 +87,7 @@ auth-admin-web:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
+    NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -140,6 +153,7 @@ identity-server:
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -159,6 +173,16 @@ identity-server:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
   ingress:
@@ -267,6 +291,8 @@ services-auth-admin-api:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -285,6 +311,16 @@ services-auth-admin-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/backend'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
   ingress:
@@ -346,6 +382,7 @@ services-auth-delegation-api:
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
+    CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -380,6 +417,7 @@ services-auth-delegation-api:
     - 'service-portal'
     - 'user-notification-worker'
     - 'user-notification-birthday-worker'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -398,6 +436,16 @@ services-auth-delegation-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'auth-delegation-api.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
   ingress:
@@ -429,6 +477,7 @@ services-auth-delegation-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -495,6 +544,7 @@ services-auth-ids-api:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'datadog'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -612,6 +662,7 @@ services-auth-ids-api-cleanup:
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -694,8 +745,10 @@ services-auth-personal-representative:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -713,6 +766,16 @@ services-auth-personal-representative:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'personal-representative-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
   ingress:
@@ -771,8 +834,10 @@ services-auth-personal-representative-public:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -790,6 +855,16 @@ services-auth-personal-representative-public:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'personal-representative-public-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
   ingress:
@@ -875,6 +950,8 @@ services-auth-public-api:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -893,6 +970,17 @@ services-auth-public-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
+          rewritePrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
   ingress:

@@ -27,7 +27,8 @@ export class SecondarySchoolApi {
   }
 
   async getAllProgrammes(): Promise<SecondarySchoolProgrammeSimple[]> {
-    return this.secondarySchoolPublicClient.getAllProgrammes()
+    const programmes = await this.secondarySchoolPublicClient.getAllProgrammes()
+    return programmes.map(({ id, ...rest }) => ({ ...rest, programmeId: id }))
   }
 
   async getProgrammeFilterOptions(): Promise<SecondarySchoolProgrammeFilterOptions> {

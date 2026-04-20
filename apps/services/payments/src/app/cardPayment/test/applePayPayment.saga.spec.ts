@@ -141,6 +141,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
 
       expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
         paymentTrackingData: context.trackingData,
+        paymentFlowId: input.paymentFlowId,
       })
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({

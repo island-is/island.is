@@ -59,6 +59,7 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  MmsPrimarySchool,
   LSH,
   PracticalExams,
   FireCompensation,
@@ -86,7 +87,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
+    .args('--tls-min-v1.0', 'main.cjs')
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -344,6 +345,11 @@ export const serviceSetup = (services: {
           '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
       },
+      HH_COURSES_ZENDESK_ENV_TAG: {
+        dev: 'hh_env_dev',
+        staging: 'hh_env_staging',
+        prod: 'hh_env_prod',
+      },
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -374,6 +380,10 @@ export const serviceSetup = (services: {
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
       POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH',
+      COMPLAINTS_COMMITTEE_RULINGS_API_KEY:
+        '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_KEY',
+      COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH:
+        '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH',
       DOCUMENT_PROVIDER_CLIENTID:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID',
       DOCUMENT_PROVIDER_CLIENT_SECRET:
@@ -555,6 +565,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      MmsPrimarySchool,
       LSH,
       PracticalExams,
       VMSTUnemployment,
@@ -578,7 +589,7 @@ export const serviceSetup = (services: {
       timeoutSeconds: 5,
     })
     .resources({
-      limits: { cpu: '1200m', memory: '2500Mi' },
+      limits: { cpu: '3000m', memory: '2500Mi' },
       requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
@@ -597,5 +608,6 @@ export const serviceSetup = (services: {
       'portals-my-pages',
       'services-payments',
       'payments',
+      'contentful-apps',
     )
 }

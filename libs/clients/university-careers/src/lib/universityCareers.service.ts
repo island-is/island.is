@@ -198,7 +198,11 @@ export class UniversityCareersClientService {
             : fileType === 'diploma_supplement'
             ? fileTypeEnum.DiplomaSupplement
             : fileType === 'diploma'
-            ? fileTypeEnum.DiplomaSupplement
+            ? fileTypeEnum.Diploma
+            : fileType === 'micro_credentials_supplement'
+            ? fileTypeEnum.MicroCredentialsSupplement
+            : fileType === 'micro_credentials_transcript'
+            ? fileTypeEnum.MicroCredentialsTranscript
             : fileTypeEnum.CourseDescriptions,
         locale:
           locale === 'en'

@@ -1,4 +1,4 @@
-import { getSession } from 'next-auth/client'
+import { getSession } from 'next-auth/react'
 import initApollo from '../../graphql/client'
 import SubscriptionScreen from '../../screens/Subscriptions/Subscriptions'
 import {

@@ -15,5 +15,6 @@ query Verdict($input: VerdictQueryInput!) {
     servedBy
     isDefaultJudgement
     isAcquittedByPublicProsecutionOffice
+    defendantHasRequestedAppeal
   }
 }

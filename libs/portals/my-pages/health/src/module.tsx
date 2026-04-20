@@ -1,5 +1,5 @@
 import { ApiScope } from '@island.is/auth/scopes'
-import { PortalModule } from '@island.is/portals/core'
+import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
@@ -147,7 +147,7 @@ const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo }): PortalRoute[] => [
     {
       name: m.health,
       path: HealthPaths.HealthRoot,
@@ -367,24 +367,28 @@ export const healthModule: PortalModule = {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonation,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: <OrganDonation />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationOld,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: <OrganDonationRegistration />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistrationOld,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: (
         <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
       ),

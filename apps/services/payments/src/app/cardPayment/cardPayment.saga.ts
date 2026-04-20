@@ -53,6 +53,10 @@ export const createCardPaymentSaga = (
     execute: async (ctx) => {
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
 
+      logger.info(
+        `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging card`,
+      )
+
       const paymentResult = await cardPaymentService.charge({
         chargeCardInput: ctx.input,
         paymentTrackingData: ctx.trackingData,

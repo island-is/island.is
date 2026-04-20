@@ -159,6 +159,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     const scale = Math.min(scaleX, scaleY)
 
     page.scaleContent(scale, scale)
+    page.scaleAnnotations(scale, scale)
     page.setSize(
       isLandscape ? A4Height : A4Width,
       isLandscape ? A4Width : A4Height,
@@ -323,17 +324,13 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         const { width, height } = page.getSize()
         const isLandscape = width > height
 
-        if (width > A4Width || height > A4Height) {
-          const { page: scaledPage, scale } = scaleToA4(page, isLandscape)
-          const pageNumber = rawDocument.getPageCount()
+        // Always scale to A4 so all merged pages have consistent size (small pages
+        // were previously added as-is and appeared tiny next to A4 pages).
+        const { page: scaledPage, scale } = scaleToA4(page, isLandscape)
+        const pageNumber = rawDocument.getPageCount()
 
-          scalePageInfo.set(pageNumber, 1 / scale)
-          rawDocument.addPage(scaledPage)
-
-          return
-        }
-
-        rawDocument.addPage(page)
+        scalePageInfo.set(pageNumber, 1 / scale)
+        rawDocument.addPage(scaledPage)
       })
 
       return pdfDocument

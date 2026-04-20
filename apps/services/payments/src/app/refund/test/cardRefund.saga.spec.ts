@@ -123,6 +123,7 @@ describe('Card Refund Saga', () => {
         }),
       )
       expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
+        paymentFlowId: input.paymentFlowId,
         paymentTrackingData: {
           merchantReferenceData:
             mockCardPaymentConfirmation.merchantReferenceData,

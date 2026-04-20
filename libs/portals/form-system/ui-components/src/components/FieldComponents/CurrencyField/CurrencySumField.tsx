@@ -28,12 +28,12 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
   let sum = 0
   currentScreen?.data?.fields?.forEach((field) => {
     if (field && field.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
-      const value = getValue(field, 'iskNumber')
-      if (value) {
-        const numericValue = parseInt(value.replace(/\./g, ''), 10)
-        if (!isNaN(numericValue)) {
-          sum += numericValue
-        }
+      const valueCount = field.values?.length ?? 0
+      for (let idx = 0; idx < valueCount; idx++) {
+        const value = getValue(field, 'iskNumber', idx)
+        if (!value) continue
+        const numericValue = parseInt(String(value).replace(/\./g, ''), 10)
+        if (!Number.isNaN(numericValue)) sum += numericValue
       }
     }
   })

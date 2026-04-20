@@ -1,8 +1,4 @@
-import {
-  FormSystemApplication,
-  FormSystemForm,
-  FormSystemPermissionType,
-} from '@island.is/api/schema'
+import { FormSystemForm, FormSystemPermissionType } from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
 import { createContext, Dispatch, SetStateAction } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'

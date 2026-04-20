@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { isLoggedIn, login, logout } from '../../utils/auth.utils'
 import { SessionInfo } from './../../entities/common/SessionInfo'
@@ -7,7 +7,8 @@ import LocalizationUtils from '../../utils/localization.utils'
 import { Localization } from '../../entities/common/Localization'
 
 const Header: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const [session, loading] = useSession()
+  const { data: session, status } = useSession()
+  const loading = status === 'loading'
   const router = useRouter()
   const [localization] = useState<Localization>(
     LocalizationUtils.getLocalization(),

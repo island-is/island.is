@@ -42,6 +42,9 @@ env:
 grantNamespaces:
   - 'islandis'
   - 'nginx-ingress-external'
+  - 'nginx-ingress-internal'
+  - 'envoy-gateway-external'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

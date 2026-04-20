@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Filter, FilterMultiChoice } from '@island.is/island-ui/core'
 
 import { SelectedFilters } from '../../hooks/useSecondarySchoolFilters'
@@ -11,7 +13,8 @@ interface FilterSectionProps {
     selected: string[]
     filters: Array<{
       value: string
-      label: string
+      label: React.ReactNode
+      tagLabel?: string
     }>
   }>
   selectedFilters: SelectedFilters

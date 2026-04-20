@@ -83,6 +83,16 @@ export const m = {
       defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
       description: 'Message shown when no health center is found',
     },
+    workplace: {
+      id: 'hh.courses.application:userInformation.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of workplace field',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:userInformation.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of job title field',
+    },
   }),
   prerequisites: defineMessages({
     nationalRegistryTitle: {
@@ -165,6 +175,16 @@ export const m = {
       id: 'hh.courses.application:participant.participantPhone',
       defaultMessage: 'Símanúmer',
       description: 'Title of participant phone field',
+    },
+    participantWorkplace: {
+      id: 'hh.courses.application:participant.participantWorkplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of participant workplace field',
+    },
+    participantJobTitle: {
+      id: 'hh.courses.application:participant.participantJobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of participant job title field',
     },
   }),
   payer: defineMessages({
@@ -281,6 +301,16 @@ export const m = {
       id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
       description: 'Title of submit button in overview section without payment',
+    },
+    workplace: {
+      id: 'hh.courses.application:overview.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Heading for workplace in overview section',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:overview.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Heading for job title in overview section',
     },
   }),
   completedForm: defineMessages({

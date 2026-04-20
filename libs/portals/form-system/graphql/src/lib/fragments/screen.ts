@@ -13,7 +13,8 @@ export const ScreenFragment = gql`
     displayOrder
     isHidden
     isCompleted
-    multiset
+    multiMax
+    isMulti
     shouldValidate
     shouldPopulate
     screenError {

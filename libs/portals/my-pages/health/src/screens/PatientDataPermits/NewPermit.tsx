@@ -1,5 +1,5 @@
 import { toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -12,6 +12,7 @@ import { HealthPaths } from '../../lib/paths'
 import { PermitInput } from '../../utils/types'
 import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
 import { Markdown } from '@island.is/shared/components'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
@@ -49,7 +50,10 @@ const buildInitialFormState = (state: unknown): PermitInput | undefined => {
 }
 
 const NewPermit: React.FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
+  useHealthPlausibleSwap()
   const location = useLocation()
   const [step, setStep] = useState<number>(DEFAULT_STEP)
   const [formState, setFormState] = useState<PermitInput | undefined>(() =>

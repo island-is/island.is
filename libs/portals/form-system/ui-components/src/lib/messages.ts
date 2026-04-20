@@ -120,10 +120,15 @@ export const m = defineMessages({
     defaultMessage: 'slug',
     description: 'slug',
   },
-  daysUntilExpiration: {
-    id: 'form.system:days-until-expiration',
-    defaultMessage: 'Líftími umsóknar (hámark 30 dagar)',
-    description: 'Days until expiration of application (max 30 days)',
+  lifetimeWhileInDraft: {
+    id: 'form.system:lifetime-while-in-draft',
+    defaultMessage: 'Líftími umsókna í drögum (allt að 60 dagar)',
+    description: 'Application lifetime in drafts (max 60 days)',
+  },
+  lifetimeAfterSubmission: {
+    id: 'form.system:lifetime-after-submission',
+    defaultMessage: 'Líftími umsókna eftir skil (allt að 30 dagar)',
+    description: 'Application lifetime after submission (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
@@ -456,6 +461,11 @@ export const m = defineMessages({
     defaultMessage: 'Hámark 30 dagar',
     description: 'Max 30 days',
   },
+  max60Days: {
+    id: 'form.system:max-60-days',
+    defaultMessage: 'Hámark 60 dagar',
+    description: 'Max 60 days',
+  },
   chooseDate: {
     id: 'form.system:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -545,6 +555,11 @@ export const m = defineMessages({
     id: 'form.system:required',
     defaultMessage: 'Krafist',
     description: 'Required',
+  },
+  select: {
+    id: 'form.system:select',
+    defaultMessage: 'Veldu',
+    description: 'Select an option',
   },
   email: {
     id: 'form.system:email',
@@ -1161,5 +1176,74 @@ export const m = defineMessages({
     id: 'form.system:completed-message',
     defaultMessage: 'Skilaboð á lokasíðu',
     description: 'Message on completed page',
+  },
+  isPartOfMulti: {
+    id: 'form.system:is-part-of-multi',
+    defaultMessage: 'Hluti af fjölmengi',
+    description: 'Part of multiset',
+  },
+  multiMax: {
+    id: 'form.system:multi-max',
+    defaultMessage: 'Hámarksfjöldi lína í fjölmengi',
+    description: 'Maximum number of lines in multiset',
+  },
+  addMulti: {
+    id: 'form.system:add-multi',
+    defaultMessage: 'Bæta við línu',
+    description: 'Add line',
+  },
+  removeMulti: {
+    id: 'form.system:remove-multi',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove',
+  },
+  applicationLifetime: {
+    id: 'form.system:application-lifetime',
+    defaultMessage: 'Líftími umsókna',
+    description: 'Application lifetime',
+  },
+  maxSizeInMb: {
+    id: 'form.system:max-size-in-mb',
+    defaultMessage:
+      'Ein eða fleiri skrár eru of stórar. Hámarksstærð er {maxSizeInMb} MB.',
+    description:
+      'One or more files are too large. Max size is {maxSizeInMb} MB.',
+  },
+  minAmount: {
+    id: 'form.system:min-amount',
+    defaultMessage: 'Magn má ekki vera lægra en {minAmount}',
+    description: 'Minimum amount must not be lower than {minAmount}',
+  },
+  maxAmount: {
+    id: 'form.system:max-amount',
+    defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
+    description: 'Maximum amount must not be higher than {maxAmount}',
+  },
+  total: {
+    id: 'form.system:total',
+    defaultMessage: 'Samtals',
+    description: 'Total',
+  },
+  price: {
+    id: 'form.system:price',
+    defaultMessage: 'Verð',
+    description: 'Price',
+  },
+  quantity: {
+    id: 'form.system:quantity',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity',
+  },
+  pay: {
+    id: 'form.system:pay',
+    defaultMessage: 'Greiða',
+    description: 'Pay',
+  },
+  translationNeededError: {
+    id: 'form.system:translation-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
+    description:
+      'The form cannot be published. All name fields with Icelandic text require an English translation.',
   },
 })

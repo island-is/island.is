@@ -39,15 +39,17 @@ import {
   LimitedAccessCaseExistsGuard,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import { CivilClaimantExistsGuard } from '../defendant'
+import { CivilClaimantExistsGuard, DefendantExistsGuard } from '../defendant'
 import { Case, CaseFile } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
-import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
+import { LimitedAccessCreateCaseFileGuard } from './guards/limitedAccessCreateCaseFile.guard'
+import { LimitedAccessCreateCivilClaimantCaseFileGuard } from './guards/limitedAccessCreateCivilClaimantCaseFile.guard'
+import { LimitedAccessCreateDefendantCaseFileGuard } from './guards/limitedAccessCreateDefendantCaseFile.guard'
+import { LimitedAccessDeleteCaseFileGuard } from './guards/limitedAccessDeleteCaseFile.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
-import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -95,7 +97,7 @@ export class LimitedAccessFileController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    LimitedAccessWriteCaseFileGuard,
+    LimitedAccessCreateCaseFileGuard,
   )
   @RolesRules(defenderRule)
   @Post('file')
@@ -116,18 +118,46 @@ export class LimitedAccessFileController {
     )
   }
 
-  // This endpoint is not used by any role at the moment
-  // Before using the endpoint we should probably change
-  // the createCaseFile endpoint to createDefendantCaseFile and
-  // limit file creation to defendant's and spokesperson's clients
+  @UseGuards(
+    new CaseTypeGuard([...indictmentCases]),
+    CaseWriteGuard,
+    DefendantExistsGuard,
+    LimitedAccessCreateDefendantCaseFileGuard,
+  )
+  @RolesRules(defenderRule)
+  @Post('defendant/:defendantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file for a defendant',
+  })
+  createDefendantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} and defendant ${defendantId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(
+        theCase,
+        { ...createFile, defendantId },
+        user,
+        transaction,
+      ),
+    )
+  }
+
   @UseGuards(
     new CaseTypeGuard([...indictmentCases]),
     CaseWriteGuard,
     CivilClaimantExistsGuard,
-    LimitedAccessWriteCaseFileGuard,
-    CreateCivilClaimantCaseFileGuard,
+    LimitedAccessCreateCivilClaimantCaseFileGuard,
   )
-  @RolesRules()
+  @RolesRules(defenderRule)
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -180,11 +210,15 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
     CaseFileExistsGuard,
-    LimitedAccessWriteCaseFileGuard,
+    LimitedAccessDeleteCaseFileGuard,
   )
   @RolesRules(defenderRule)
   @Delete('file/:fileId')

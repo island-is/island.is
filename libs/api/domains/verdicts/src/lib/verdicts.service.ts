@@ -12,6 +12,8 @@ import { SupremeCourtDeterminationsResponse } from './dto/supremeCourtDeterminat
 import { SupremeCourtDeterminationByIdInput } from './dto/supremeCourtDeterminationById.input'
 import { SupremeCourtDeterminationByIdResponse } from './dto/supremeCourtDeterminationById.response'
 import { ScheduleTypesResponse } from './dto/scheduleTypes.response'
+import { SupremeCourtAppealsInput } from './dto/supremeCourtAppeals.input'
+import { SupremeCourtAppealsResponse } from './dto/supremeCourtAppeals.response'
 
 @Injectable()
 export class VerdictsService {
@@ -82,6 +84,12 @@ export class VerdictsService {
     input: SupremeCourtDeterminationByIdInput,
   ): Promise<SupremeCourtDeterminationByIdResponse | null> {
     return this.verdictsClientService.getSupremeCourtDeterminationById(input.id)
+  }
+
+  async getSupremeCourtAppeals(
+    input: SupremeCourtAppealsInput,
+  ): Promise<SupremeCourtAppealsResponse> {
+    return this.verdictsClientService.getSupremeCourtAppeals(input)
   }
 
   async getScheduleTypes(): Promise<ScheduleTypesResponse> {

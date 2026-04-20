@@ -11,22 +11,30 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
+import { CmsContentfulService } from '@island.is/cms'
 
 import { Scope } from './models/scope.model'
+import { ScopeClient } from './models/scope-client.model'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { ScopeService } from './scope.service'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { ScopeInput } from './dto/scope.input'
+import { ScopeClientsInput } from './dto/scope-clients.input'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { ScopesInput } from './dto/scopes.input'
 import { ScopesPayload } from './dto/scopes.payload'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
+import { ScopeCategory } from './models/scope-category.model'
+import { ScopeTag } from './models/scope-tag.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Scope)
 export class ScopeResolver {
-  constructor(private readonly scopeService: ScopeService) {}
+  constructor(
+    private readonly scopeService: ScopeService,
+    private readonly cmsContentfulService: CmsContentfulService,
+  ) {}
 
   @Mutation(() => [CreateScopeResponse], {
     name: 'createAuthAdminScope',
@@ -61,12 +69,12 @@ export class ScopeResolver {
     return this.scopeService.publishScope(user, input)
   }
 
-  @Query(() => Scope, { name: 'authAdminScope' })
+  @Query(() => Scope, { name: 'authAdminScope', nullable: true })
   getScope(
     @CurrentUser() user: User,
     @Args('input', { type: () => ScopeInput })
     input: ScopeInput,
-  ): Promise<Scope> {
+  ): Promise<Scope | null> {
     return this.scopeService.getScope(user, input)
   }
 
@@ -102,5 +110,41 @@ export class ScopeResolver {
     }
 
     return Array.from(availableEnvironments)
+  }
+
+  @Query(() => [ScopeClient], {
+    name: 'authAdminScopeClients',
+    description: 'Get all clients that use the specified scope',
+  })
+  getScopeClients(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeClientsInput })
+    input: ScopeClientsInput,
+  ): Promise<ScopeClient[]> {
+    return this.scopeService.getScopeClients(user, input, input.environment)
+  }
+
+  @Query(() => [ScopeCategory], {
+    name: 'authAdminScopeCategories',
+    description: 'Get available categories for scope categorization',
+  })
+  async getScopeCategories(
+    @CurrentUser() user: User,
+    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
+    lang?: string,
+  ): Promise<ScopeCategory[]> {
+    return this.cmsContentfulService.getArticleCategories(lang ?? 'is')
+  }
+
+  @Query(() => [ScopeTag], {
+    name: 'authAdminScopeTags',
+    description: 'Get available tags (delegation scope tags) for scope tagging',
+  })
+  async getScopeTags(
+    @CurrentUser() user: User,
+    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
+    lang?: string,
+  ): Promise<ScopeTag[]> {
+    return this.cmsContentfulService.getDelegationScopeTags(lang ?? 'is')
   }
 }

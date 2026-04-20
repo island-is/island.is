@@ -263,4 +263,40 @@ export const error = defineMessages({
     defaultMessage: 'Engar niðurstöður fundust',
     description: 'Error message when no results are found',
   },
+  // Regulation-specific errors
+  missingRegulationTitle: {
+    id: 'ojoi.application:error.missingRegulationTitle',
+    defaultMessage: 'Fylla þarf út titil reglugerðar',
+    description: 'Error message when regulation title is missing',
+  },
+  missingRegulationText: {
+    id: 'ojoi.application:error.missingRegulationText',
+    defaultMessage: 'Meginmál reglugerðar má ekki vera autt',
+    description: 'Error message when regulation text is missing',
+  },
+  missingEffectiveDate: {
+    id: 'ojoi.application:error.missingEffectiveDate',
+    defaultMessage: 'Gildistökudagur vantar',
+    description: 'Error message when effective date is missing',
+  },
+  missingLawChapters: {
+    id: 'ojoi.application:error.missingLawChapters',
+    defaultMessage: 'Velja þarf a.m.k. einn lagakafla',
+    description: 'Error message when no law chapters are selected',
+  },
+  missingImpacts: {
+    id: 'ojoi.application:error.missingImpacts',
+    defaultMessage: 'Breytingareglugerð þarf að hafa a.m.k. eina breytingu',
+    description: 'Error message when amending regulation has no impacts',
+  },
+  missingImpactDate: {
+    id: 'ojoi.application:error.missingImpactDate',
+    defaultMessage: 'Dagsetning breytingar vantar',
+    description: 'Error message when impact date is missing',
+  },
+  missingImpactText: {
+    id: 'ojoi.application:error.missingImpactText',
+    defaultMessage: 'Texti breytingar vantar',
+    description: 'Error message when impact amendment text is missing',
+  },
 })

@@ -47,14 +47,17 @@ const DispensingDetailModalItem: React.FC<DispensingDetailModalItemProps> = ({
             </Text>
           </Box>
         </GridColumn>
-        <GridColumn span={tag ? '5/12' : '7/12'} className={styles.data}>
+        <GridColumn
+          span={tag ? ['4/12', '4/12', '5/12'] : '7/12'}
+          className={styles.data}
+        >
           <Box display="flex" alignItems="center" height="full">
             <Text variant="small" truncate>
               {value ?? formatMessage(messages.notRegistered)}
             </Text>
           </Box>
         </GridColumn>
-        {tag && <GridColumn span={'2/12'}>{tag}</GridColumn>}
+        {tag && <GridColumn span={['3/12', '3/12', '2/12']}>{tag}</GridColumn>}
       </GridRow>
     </GridContainer>
   )

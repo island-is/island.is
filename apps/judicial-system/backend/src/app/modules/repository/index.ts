@@ -1,6 +1,8 @@
+export { AppealCase } from './models/appealCase.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
+export { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
 export { CaseString } from './models/caseString.model'
 export { CivilClaimant } from './models/civilClaimant.model'
 export { CourtSession } from './models/courtSession.model'
@@ -17,6 +19,7 @@ export { InstitutionContact } from './models/institutionContact.model'
 export { LawyerRegistry } from './models/lawyerRegistry.model'
 export { Notification, Recipient } from './models/notification.model'
 export { Offense } from './models/offense.model'
+export { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 export { RobotLog } from './models/robotLog.model'
 export { Subpoena } from './models/subpoena.model'
 export { User } from './models/user.model'
@@ -25,12 +28,19 @@ export { Victim } from './models/victim.model'
 
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
+export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
-export { caseInclude, UpdateCase } from './types/caseRepository.types'
+export {
+  caseInclude,
+  UpdateCase,
+  UpdateAppealCase,
+  appealCaseFields,
+} from './types/caseRepository.types'

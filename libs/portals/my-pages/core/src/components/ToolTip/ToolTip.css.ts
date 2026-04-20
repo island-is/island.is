@@ -7,6 +7,7 @@ export const tooltip = style({
   borderRadius: theme.border.radius.large,
   padding: theme.spacing[1],
   maxWidth: '240px',
+  position: 'relative',
   transition: theme.transitions.fast,
   opacity: 0,
   transformOrigin: 'top center',

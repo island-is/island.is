@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import {
   useGetApplicationV2ApplicationsSuperAdminQuery,
-  useGetApplicationV2InstitutionsSuperAdminQuery,
   useGetApplicationV2ApplicationsInstitutionAdminQuery,
 } from '../../queries/overview.generated'
 import uniq from 'lodash/uniq'
@@ -23,30 +22,21 @@ const defaultFilters: ApplicationFilters = {
 
 interface OverviewProps {
   isSuperAdmin: boolean
-  organizationListFromContentful: Organization[]
-  isLoadingOrganizationsFromContentful: boolean
+  availableOrganizations: Organization[]
+  isLoadingOrganizations: boolean
 }
 
 const pageSize = 12
 
 const Overview = ({
   isSuperAdmin,
-  organizationListFromContentful,
-  isLoadingOrganizationsFromContentful,
+  availableOrganizations,
+  isLoadingOrganizations,
 }: OverviewProps) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
   const [availableApplications, setAvailableApplications] = useState<string[]>()
-
-  // A list of all institutions with active application types
-  const {
-    data: organizationsWithApplicationData,
-    loading: loadingOrganizationsWithApplication,
-  } = useGetApplicationV2InstitutionsSuperAdminQuery({
-    ssr: false,
-    skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
-  })
 
   const useAdvancedSearch = !!filters.typeIdValue
 
@@ -110,8 +100,7 @@ const Overview = ({
   const isLoading =
     loadingSuperApplications ||
     loadingInstitutionApplications ||
-    isLoadingOrganizationsFromContentful ||
-    loadingOrganizationsWithApplication
+    isLoadingOrganizations
 
   const applicationApplicationsAdmin = isSuperAdmin
     ? superApplicationsData?.applicationV2ApplicationsSuperAdmin?.rows
@@ -120,43 +109,6 @@ const Overview = ({
 
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
-
-  // Get organizations of all applications currently fetched
-  const availableOrganizations = isSuperAdmin
-    ? organizationsWithApplicationData?.applicationV2InstitutionsSuperAdmin?.flatMap(
-        (responseOrg) => {
-          const contentfulOrg = organizationListFromContentful?.find(
-            (x) => x.slug === responseOrg.contentfulSlug,
-          )
-
-          if (!contentfulOrg) {
-            if (!responseOrg.nationalId) {
-              return []
-            } else {
-              return [
-                {
-                  id: '',
-                  title: responseOrg.name ?? responseOrg.nationalId ?? '',
-                  slug: '',
-                  nationalId: responseOrg.nationalId,
-                  logo: null,
-                },
-              ]
-            }
-          }
-
-          return [
-            {
-              ...contentfulOrg,
-              nationalId: responseOrg.nationalId,
-            },
-          ]
-        },
-      ) ?? []
-    : organizationListFromContentful?.map((x) => ({
-        ...x,
-        nationalId: '',
-      })) ?? []
 
   const handleSearchChange = (nationalId: string) => {
     const nationalIdWithoutDash = nationalId.replace('-', '')
@@ -265,6 +217,7 @@ const Overview = ({
           setPage={setPage}
           pageSize={pageSize}
           showAdminData={!!filters.typeIdValue}
+          showInstitution={!filters.institution}
           shouldShowCardButtons={false}
           isSuperAdmin={isSuperAdmin}
           numberOfItems={

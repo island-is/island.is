@@ -1,15 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 
 import { m } from '../../messages/messages'
 import * as styles from './Footer.css'
-
-const ButtonLink = Button as React.ComponentType<
-  React.ComponentProps<typeof Button> &
-    React.AnchorHTMLAttributes<HTMLAnchorElement>
->
 
 export const MobileFooter = () => {
   const { formatMessage } = useIntl()
@@ -68,44 +63,6 @@ export const MobileFooter = () => {
               {formatMessage(m.footer.email)}
             </Text>
           </Box>
-        </Box>
-
-        {/* Buttons */}
-        <Box
-          display="flex"
-          flexDirection="column"
-          rowGap={2}
-          width="full"
-          style={{ maxWidth: '265px' }}
-        >
-          <ButtonLink
-            variant="ghost"
-            size="medium"
-            colorScheme="negative"
-            icon="open"
-            iconType="outline"
-            fluid
-            as="a"
-            href="https://naestaskref.is"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {formatMessage(m.general.nextStep)}
-          </ButtonLink>
-          <ButtonLink
-            variant="ghost"
-            size="medium"
-            colorScheme="negative"
-            icon="open"
-            iconType="outline"
-            fluid
-            as="a"
-            href="https://island.is/umsokn-um-framhaldsskola"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {formatMessage(m.general.innritun)}
-          </ButtonLink>
         </Box>
       </Box>
     </Box>

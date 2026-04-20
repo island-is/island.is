@@ -962,6 +962,7 @@ const Conclusion: FC = () => {
         <Modal
           title={`Nýtt mál - ${selectedDefendant?.name}`}
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
+          footerJustifyContent="flexEnd"
           primaryButton={{
             text: 'Staðfesta',
             onClick: () => {

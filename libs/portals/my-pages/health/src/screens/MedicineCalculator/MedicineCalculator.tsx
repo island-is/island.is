@@ -34,6 +34,7 @@ import {
 } from '../Medicine/Medicine.generated'
 import { MedicinePaymentParticipationWrapper } from '../Medicine/wrapper/MedicinePaymentParticipationWrapper'
 import { DrugRow } from './components/DrugRow/DrugRow'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -41,6 +42,7 @@ const DEFAULT_PAGE_SIZE = 8
 export const MedicineCalulator = () => {
   const { formatMessage } = useLocale()
   const [search, setSearch] = useState('')
+  useHealthPlausibleSwap()
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER)
   const [hoveredDrug, setHoveredDrug] = useState(-1)

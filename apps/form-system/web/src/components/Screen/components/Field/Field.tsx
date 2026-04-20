@@ -11,12 +11,13 @@ import {
   List,
   MessageWithLink,
   NationalId,
+  NumberInput,
+  PaymentQuantity,
   PhoneNumber,
   PropertyNumber,
   Radio,
   TextInput,
   TimeInput,
-  NumberInput,
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
@@ -24,6 +25,7 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
   field: FormSystemField
+  valueIndex?: number
 }
 
 const FIELD_COMPONENT_MAP = {
@@ -43,17 +45,20 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.DATE_PICKER]: DatePicker,
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
+  [FieldTypesEnum.PAYMENT_QUANTITY]: PaymentQuantity,
 } as const
 
-export const Field = ({ field }: Props) => {
+export const Field = ({ field, valueIndex = 0 }: Props) => {
   const { dispatch, state } = useApplicationContext()
   const { control } = useFormContext()
 
   const fieldItems = {
     item: field,
+    valueIndex,
     control,
     dispatch,
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
+    ...(field.fieldType === FieldTypesEnum.FILE && { state }),
   }
 
   const FieldComponent =
