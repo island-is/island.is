@@ -12,6 +12,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -38,8 +39,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
+import { getDefenceUserPartyIds } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
@@ -48,6 +48,10 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    user,
+    workingCase,
+  )
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -56,7 +60,11 @@ const AppealToCourtOfAppeals = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(
+    workingCase.id,
+    defendantId,
+    civilClaimantId,
+  )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
@@ -70,7 +78,11 @@ const AppealToCourtOfAppeals = () => {
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
     isDefenceUser(user)
-      ? constants.DEFENDER_ROUTE
+      ? isIndictmentCase(workingCase.type)
+        ? constants.DEFENDER_INDICTMENT_ROUTE
+        : constants.DEFENDER_ROUTE
+      : isIndictmentCase(workingCase.type)
+      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
@@ -116,9 +128,7 @@ const AppealToCourtOfAppeals = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>
-          {formatMessage(strings.title)}
-        </PageTitle>
+        <PageTitle previousUrl={previousUrl}>Kæra til Landsréttar</PageTitle>
         <Box component="section" marginBottom={5}>
           <Text variant="h2" as="h2">
             {`Mál nr. ${workingCase.courtCaseNumber}`}
@@ -128,10 +138,7 @@ const AppealToCourtOfAppeals = () => {
           )}
         </Box>
         <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.appealBriefTitle)}
-            required
-          />
+          <SectionHeading title="Kæra" required />
           <InputFileUpload
             name="appealBrief"
             files={uploadFiles.filter(
@@ -156,15 +163,14 @@ const AppealToCourtOfAppeals = () => {
           component="section"
           marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
-          <SectionHeading
-            title={formatMessage(strings.appealCaseFilesTitle)}
-            marginBottom={1}
-          />
+          <SectionHeading title="Gögn" marginBottom={1} />
           <Text marginBottom={3} whiteSpace="pre">
-            {formatMessage(strings.appealCaseFilesSubtitle)}
+            Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að
+            neðan.
             {'\n'}
-            {!isDefenceUser(user) &&
-              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
+            {!isIndictmentCase(workingCase.type) &&
+              !isDefenceUser(user) &&
+              'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
@@ -184,7 +190,7 @@ const AppealToCourtOfAppeals = () => {
             disabled={!allFilesDoneOrError}
           />
         </Box>
-        {isProsecutionUser(user) && (
+        {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
           <Box component="section" marginBottom={10}>
             <RequestAppealRulingNotToBePublishedCheckbox />
           </Box>
@@ -194,11 +200,7 @@ const AppealToCourtOfAppeals = () => {
         <FormFooter
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
-          nextButtonText={formatMessage(
-            someFilesError
-              ? strings.uploadFailedNextButtonText
-              : strings.nextButtonText,
-          )}
+          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda kæru'}
           nextIsDisabled={
             !uploadFiles.find((file) => file.category === appealBriefType) ||
             isTransitioningCase
@@ -210,8 +212,8 @@ const AppealToCourtOfAppeals = () => {
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (
         <Modal
-          title={formatMessage(strings.appealSentModalTitle)}
-          text={formatMessage(strings.appealSentModalText)}
+          title="Kæra hefur verið send viðkomandi héraðsdómstól"
+          text="Tilkynning um móttöku kæru verður send á aðila máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
             onClick: () => router.push(previousUrl),

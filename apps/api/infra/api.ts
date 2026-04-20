@@ -59,6 +59,7 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  MmsPrimarySchool,
   LSH,
   PracticalExams,
   FireCompensation,
@@ -345,6 +346,11 @@ export const serviceSetup = (services: {
           '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
       },
+      HH_COURSES_ZENDESK_ENV_TAG: {
+        dev: 'hh_env_dev',
+        staging: 'hh_env_staging',
+        prod: 'hh_env_prod',
+      },
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -551,6 +557,7 @@ export const serviceSetup = (services: {
       SeminarsVer,
       SecondarySchool,
       IcelandicGovernmentEmployees,
+      MmsPrimarySchool,
       LSH,
       PracticalExams,
       VMSTUnemployment,

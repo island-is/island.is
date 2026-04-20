@@ -1,17 +1,17 @@
-import capitalize from 'lodash/capitalize'
 import { FormControl, Select } from '@contentful/f36-components'
-
-const CONTENT_TYPES = ['price', 'supportQNA'] as const
-export type ContentType = typeof CONTENT_TYPES[number]
 
 interface ContentTypeSelectProps {
   selectedContentType: string | null
-  setSelectedContentType: (value: ContentType) => void
+  setSelectedContentType: (value: string) => void
+  contentTypes: { label: string; value: string }[]
+  disabled?: boolean
 }
 
 export const ContentTypeSelect = ({
   selectedContentType,
   setSelectedContentType,
+  contentTypes,
+  disabled = false,
 }: ContentTypeSelectProps) => {
   return (
     <FormControl>
@@ -21,12 +21,13 @@ export const ContentTypeSelect = ({
         name="content-type-select"
         value={selectedContentType}
         onChange={(ev) => {
-          setSelectedContentType(ev.target.value as ContentType)
+          setSelectedContentType(ev.target.value)
         }}
+        isDisabled={disabled}
       >
-        {CONTENT_TYPES.map((type) => (
-          <Select.Option key={type} value={type}>
-            {capitalize(type)}
+        {contentTypes.map((type) => (
+          <Select.Option key={type.value} value={type.value}>
+            {type.label}
           </Select.Option>
         ))}
       </Select>

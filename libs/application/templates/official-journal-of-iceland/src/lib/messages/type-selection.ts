@@ -43,19 +43,4 @@ export const typeSelection = {
         'Reglugerð sem breytir eða fellir úr gildi aðra reglugerð.',
     },
   }),
-  reader: defineMessages({
-    label: {
-      id: 'ojoi.application:typeSelection.reader.label',
-      defaultMessage: 'Auka sendandi',
-    },
-    placeholder: {
-      id: 'ojoi.application:typeSelection.reader.placeholder',
-      defaultMessage: 'Veldu auka sendanda',
-    },
-    tooltip: {
-      id: 'ojoi.application:typeSelection.reader.tooltip',
-      defaultMessage:
-        'Valinn auka sendandi getur skoðað innihald þessarar umsóknar áður en hún er send til ritstjórnar, en ekki breytt innihaldi umsóknarinnar',
-    },
-  }),
 }

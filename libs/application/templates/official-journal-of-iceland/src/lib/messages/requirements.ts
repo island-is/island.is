@@ -34,4 +34,26 @@ export const requirements = {
       description: 'Label for the accept input',
     },
   }),
+  additionalParties: defineMessages({
+    label: {
+      id: 'ojoi.application:requirements.additionalParties.label',
+      defaultMessage: 'Aðrir aðilar',
+      description: 'Label for the additional parties select',
+    },
+    intro: {
+      id: 'ojoi.application:requirements.additionalParties.intro',
+      defaultMessage: 'Veldu þá aðila sem eiga að hafa aðgang að umsókninni.',
+      description: 'Intro for the additional parties select',
+    },
+    placeholder: {
+      id: 'ojoi.application:requirements.additionalParties.placeholder',
+      defaultMessage: 'Veldu aðila',
+      description: 'Placeholder for the additional parties select',
+    },
+    empty: {
+      id: 'ojoi.application:requirements.additionalParties.empty',
+      defaultMessage: 'Engir aðrir aðilar eru tiltækir.',
+      description: 'Message when no additional parties are available',
+    },
+  }),
 }

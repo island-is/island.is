@@ -119,6 +119,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:whichDelegationsSuit',
     defaultMessage: 'Hvaða umboð henta í hvaða tilvikum?',
   },
+  delegationTypes: {
+    id: 'sp.access-control-delegations:delegationTypes',
+    defaultMessage: 'Tegundir umboða',
+  },
   delegationsThatSuit: {
     id: 'sp.access-control-delegations:delegationsThatSuit',
     defaultMessage: 'Rafræn umboð sem henta',
@@ -463,6 +467,15 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-access-scopes-intro',
     defaultMessage:
       'Hérna getur þú, í þremur skrefum, veitt einstaklingum umboð til að sinna þínum erindum á vefsvæðum opinberra stofnana',
+  },
+  editAccessStepsTitle: {
+    id: 'sp.access-control-delegations:edit-access-steps-title',
+    defaultMessage: 'Breyta umboði',
+  },
+  editAccessStepsIntro: {
+    id: 'sp.access-control-delegations:edit-access-steps-intro',
+    defaultMessage:
+      'Hérna getur þú bætt við umboðum, fjarlægt eða breytt gildistíma.',
   },
   accessPeriodSame: {
     id: 'sp.access-control-delegations:access-period-same',

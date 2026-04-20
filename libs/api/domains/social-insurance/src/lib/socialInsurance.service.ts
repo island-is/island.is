@@ -5,7 +5,12 @@ import {
   SocialInsuranceAdministrationGeneralService,
   SocialInsuranceAdministrationIncomePlanService,
   SocialInsuranceAdministrationPaymentPlanService,
+  SocialInsuranceAdministrationPaymentTypesOverviewService,
   SocialInsuranceAdministrationPensionCalculatorService,
+  SocialInsuranceAdministrationPersonalTaxCreditService,
+  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -22,6 +27,7 @@ import { IncomePlan } from './models/income/incomePlan.model'
 import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
+import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
@@ -30,11 +36,18 @@ import {
   getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
+  toYearWithMonths,
 } from './utils'
 import { Locale } from '@island.is/shared/types'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 import { parseIncomePlanStatus } from './mappers/parseIncomePlanStatus'
+import {
+  mapChildBenefitInformation,
+  mapPaymentTypeOverview,
+} from './mappers/mapPaymentTypesOverview'
+import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
+import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -46,6 +59,8 @@ export class SocialInsuranceService {
     private readonly pensionCalculatorService: SocialInsuranceAdministrationPensionCalculatorService,
     private readonly incomePlanService: SocialInsuranceAdministrationIncomePlanService,
     private readonly paymentService: SocialInsuranceAdministrationPaymentPlanService,
+    private readonly personalTaxCreditClient: SocialInsuranceAdministrationPersonalTaxCreditService,
+    private readonly paymentTypesOverviewClient: SocialInsuranceAdministrationPaymentTypesOverviewService,
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
@@ -241,5 +256,73 @@ export class SocialInsuranceService {
       code: data.value,
       name: data.label,
     }))
+  }
+
+  async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
+    const taxCardsResult = await this.personalTaxCreditClient.getTaxCards(user)
+
+    const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
+      ? undefined
+      : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
+
+    const discontinuingMonthsAndYears =
+      taxCardsResult?.canDiscontinuePersonalAllowance
+        ? await this.personalTaxCreditClient.getTaxCardMonthsAndYearsWhenDiscontinuing(
+            user,
+          )
+        : undefined
+
+    return {
+      taxCards: taxCardsResult?.taxCards?.map((tc) => ({
+        ...tc,
+        validFrom: tc.validFrom ?? undefined,
+        validTo: tc.validTo ?? undefined,
+        type: tc.taxCardType ?? undefined,
+        percentage: tc.percentage ?? 0,
+      })),
+      canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
+      canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
+      registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
+      discontinuingMonthsAndYears: toYearWithMonths(
+        discontinuingMonthsAndYears,
+      ),
+    }
+  }
+
+  async setTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setTaxCardAllowance(user, input)
+  }
+
+  async editTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.editTaxCardAllowance(user, input)
+  }
+
+  async discontinueTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
+  }
+
+  async getPaymentTypes(user: User): Promise<PaymentTypeOverview[] | null> {
+    const data = await this.paymentTypesOverviewClient
+      .getPaymentTypesOverview(user)
+      .catch(handle404)
+    return data ? data.map(mapPaymentTypeOverview) : null
+  }
+
+  async getChildBenefits(
+    user: User,
+  ): Promise<ChildBenefitInformation[] | null> {
+    const data = await this.paymentTypesOverviewClient
+      .getChildBenefitsInformation(user)
+      .catch(handle404)
+    return data ? data.map(mapChildBenefitInformation) : null
   }
 }

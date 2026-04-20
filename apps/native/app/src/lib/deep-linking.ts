@@ -1,268 +1,191 @@
-import { compile, match } from 'path-to-regexp'
-import { Navigation } from 'react-native-navigation'
-import createUse from 'zustand'
-import create, { State } from 'zustand/vanilla'
-import { bundleId } from '../config'
+import { Href, router } from 'expo-router'
+import * as Router from 'expo-router'
 import {
   GenericLicenseType,
   NotificationMessage,
 } from '../graphql/types/schema'
-import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
-import { openNativeBrowser } from './rn-island'
+import { match } from 'path-to-regexp'
+import * as WebBrowser from 'expo-web-browser'
 
-export type RouteCallbackArgs =
-  | boolean
-  | ({ path: string } & {
-      scheme: string
-      match?: RegExpExecArray
-      [key: string]: string | RegExpExecArray | undefined
-    })
+const UNIVERSAL_LINK_BASE = 'https://island.is'
 
-export interface Route {
-  expression: string | RegExp
-  callback(args: RouteCallbackArgs): void
+// Map of universal link paths to native routes.
+// The key is a path pattern to match against the incoming URL,
+// and the value is either a static route or a function that generates a route with params.
+const routes: Record<
+  string,
+  Href | ((params: Router.UnknownInputParams) => Href)
+> = {
+  // Inbox
+  '/minarsidur/postholf': '/inbox',
+  '/minarsidur/postholf/:id': ({ id }) => ({
+    pathname: '/inbox/[id]',
+    params: { id: id as string },
+  }),
+  // Wallet
+  '/minarsidur/skirteini': '/wallet',
+  '/minarsidur/skirteini/:provider/:type/:id': ({ id, type }) => ({
+    pathname: '/wallet/[licenseType]/[id]',
+    params: {
+      id: id as string,
+      licenseType:
+        {
+          vegabref: GenericLicenseType.Passport,
+          ehic: GenericLicenseType.Ehic,
+          veidikort: GenericLicenseType.HuntingLicense,
+          pkort: GenericLicenseType.PCard,
+          okurettindi: GenericLicenseType.DriversLicense,
+          adrrettindi: GenericLicenseType.AdrLicense,
+          vinnuvelarettindi: GenericLicenseType.MachineLicense,
+          skotvopnaleyfi: GenericLicenseType.FirearmLicense,
+          ororkuskirteini: GenericLicenseType.DisabilityLicense,
+          nafnskirteini: GenericLicenseType.IdentityDocument,
+        }[type as string] || (type as string),
+    },
+  }),
+  // Health
+  '/minarsidur/heilsa/grunnupplysingar/yfirlit': '/health',
+  '/minarsidur/heilsa/bolusetningar': '/health/vaccinations',
+  '/minarsidur/heilsa/spurningalistar': '/health/questionnaires',
+  '/minarsidur/heilsa/lyf': '/health/medicine',
+  '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/prescriptions',
+  '/minarsidur/heilsa/lyf/lyfjasaga/:id': ({ id }) => ({
+    pathname: '/health/medicine/prescriptions/history/[id]',
+    params: { id: id as string },
+  }),
+  '/minarsidur/heilsa/lyf/lyfjaumbod': '/health/medicine/delegation',
+  '/minarsidur/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod':
+    '/health/medicine/delegation/new',
+  '/minarsidur/heilsa/lyf/lyfjaumbod/:id': ({ id }) => ({
+    pathname: '/health/medicine/delegation/[id]',
+    params: { id: id as string },
+  }),
+  // Family
+  '/minarsidur/min-gogn/yfirlit': '/more/family',
+  // Applications
+  '/minarsidur/umsoknir': '/more/applications',
+  '/minarsidur/umsoknir/:status': ({ status }) => ({
+    pathname: '/more/applications/[status]',
+    params: {
+      status:
+        {
+          'oklaradar-umsoknir': 'incomplete',
+          'klaradar-umsoknir': 'complete',
+          'i-vinnslu': 'in-progress',
+          'opnar-umsoknir': 'open',
+        }[status as string] || (status as string),
+    },
+  }),
+  '/minarsidur/umsoknir/klaradar-umsoknir': {
+    pathname: '/more/applications/[status]',
+    params: { status: 'complete' },
+  },
+  // Assets
+  '/minarsidur/eignir/fasteignir': '/more/assets',
+  '/minarsidur/eignir/fasteignir/:id': ({ id }) => ({
+    pathname: '/more/assets/[id]',
+    params: { id: id as string },
+  }),
+  // Finance
+  '/minarsidur/fjarmal/stada': '/more/finance',
+  // Vehicles
+  '/minarsidur/eignir/okutaeki/min-okutaeki': '/more/vehicles',
+  '/minarsidur/eignir/okutaeki/min-okutaeki/:id': ({ id }) => ({
+    pathname: '/more/vehicles/[id]',
+    params: { id: id as string },
+  }),
+  '/minarsidur/eignir/okutaeki/min-okutaeki/:id/kilometrastada': ({ id }) => ({
+    pathname: '/more/vehicles/[id]/mileage',
+    params: { id: id as string },
+  }),
+  // Air discount
+  '/minarsidur/loftbru': '/more/air-discount',
+  // Modals
+  '/minarsidur/min-gogn/yfirlit/minar-upplysingar': '/personal-info',
+  '/minarsidur/min-gogn/stillingar': '/settings',
+  '/minarsidur/min-gogn/tilkynningar': '/notifications',
 }
 
-export interface DeepLinkingStore extends State {
-  schemes: string[]
-  routes: Route[]
-}
-
-export const deepLinkingStore = create<DeepLinkingStore>((set, get) => ({
-  schemes: [],
-  routes: [],
-}))
-
-export const useDeepLinkingStore = createUse(deepLinkingStore)
-
-function fetchQueries(expression: string) {
-  const regex = /:([^/]*)/g
-  const queries = []
-
-  let match = regex.exec(expression)
-  while (match) {
-    if (match && match[0] && match[1]) {
-      queries.push(match[0])
-    }
-
-    match = regex.exec(expression)
-  }
-
-  return queries
-}
-
-function execRegex(queries: string[], expression: string, path: string) {
-  let regexExpression = expression
-  queries.forEach((query) => {
-    regexExpression = regexExpression.replace(query, '(.*)')
-  })
-
-  const queryRegex = new RegExp(regexExpression, 'g')
-  const match = queryRegex.exec(path)
-
-  if (match && !match[1].includes('/')) {
-    let results = { path: match[0] }
-    queries.forEach((query, index) => {
-      const id = query.substring(1)
-      results = { [id]: match[index + 1], ...results }
-    })
-
-    return results
-  }
-
-  return false
-}
-
-function evaluateExpression(
-  expression: string | RegExp,
-  path: string,
-  scheme: string,
-) {
-  if (expression === path) {
-    return { scheme, path }
-  }
-
-  try {
-    const regex = expression as RegExp
-    const match = regex.exec(path)
-    regex.lastIndex = 0
-    if (match) {
-      return { scheme, path, match }
-    }
-  } catch (e) {
-    // Error, expression is not regex
-  }
-
-  if (typeof expression === 'string' && expression.includes(':')) {
-    const queries = fetchQueries(expression)
-    if (queries.length) {
-      return execRegex(queries, expression, path)
-    }
-  }
-
-  return false
-}
-
-export function evaluateUrl(url: string, extraProps: any = {}) {
-  let solved = false
-  const { schemes, routes } = deepLinkingStore.getState()
-  schemes.forEach((scheme) => {
-    if (url.startsWith(scheme)) {
-      const path = url.substring(scheme.length - 1)
-      routes.forEach((route) => {
-        const result = evaluateExpression(route.expression, path, scheme)
-        if (result) {
-          solved = true
-          route.callback({ scheme, ...result, ...extraProps })
-        }
-      })
-    }
-  })
-
-  return solved
-}
-
-export const addRoute = (
-  expression: string | RegExp,
-  callback: (args: RouteCallbackArgs) => void,
-) => {
-  const route = { expression, callback }
-  deepLinkingStore.setState(({ routes }) => ({ routes: [...routes, route] }))
-}
-
-export const removeRoute = (expression: string | RegExp) => {
-  deepLinkingStore.setState(({ routes }) => {
-    const index = routes.findIndex((route) => route.expression === expression)
-    if (index >= 0) {
-      routes.splice(index, 1)
-    }
-    return { routes }
-  })
-}
-
-export const resetRoutes = () => {
-  deepLinkingStore.setState(() => ({ routes: [] }))
-}
-
-export const addScheme = (scheme: string) => {
-  deepLinkingStore.setState(({ schemes }) => ({
-    schemes: [...schemes, scheme],
-  }))
-}
-
-export const resetSchemes = () => {
-  deepLinkingStore.setState(() => ({ schemes: [] }))
-}
-
-const navigateTimeMap = new Map()
-const NAVIGATE_TIMEOUT = 500
+// Compiled map of links
+const compiledRoutes = Object.entries(routes).map(
+  ([pattern, route]) => [match(pattern), route] as const,
+)
 
 /**
- * Navigate to a specific url within the app
- * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
- * @returns
+ * Find a matching native route for a universal link URL.
+ * Handles both full URLs (https://island.is/...) and path-only (/minarsidur/...).
+ * Returns the mapped expo-router path, or null if no match.
  */
-export function navigateTo(url: string, extraProps: any = {}) {
-  const now = Date.now()
-  // find last navigate time to this route
-  const lastNavigate = navigateTimeMap.get(url)
-
-  if (lastNavigate && now - lastNavigate <= NAVIGATE_TIMEOUT) {
-    // user tried to navigate to same route twice within TAP_TIMEOUT (500ms)
-    return
+export function findRoute(url: string): Href | null {
+  const cleanUrl = new URL(url, UNIVERSAL_LINK_BASE)
+  for (const [matchFn, href] of compiledRoutes) {
+    const result = matchFn(cleanUrl.pathname)
+    if (result) {
+      if (typeof href === 'function') {
+        // Combine params from the URL path and the query string.
+        const params = {
+          ...Object.fromEntries(cleanUrl.searchParams.entries()),
+          ...result.params,
+        } as Record<string, string>
+        return href(params)
+      }
+      return href
+    }
   }
+  return null
+}
 
-  // update navigate time for this route
-  navigateTimeMap.set(url, now)
+function replacePathname(href: Href, pathname: string): Href {
+  if (typeof href === 'string') {
+    return pathname as Href
+  }
+  return {
+    ...href,
+    pathname,
+  } as Href
+}
 
-  // setup linking url
-  const linkingUrl = `${bundleId}://${String(url).replace(/^\//, '')}`
-
-  // evaluate and route
-  return evaluateUrl(linkingUrl, extraProps)
-
-  // @todo when to use native linking system?
-  // return Linking.openURL(linkingUrl);
+function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
+  const pathname = typeof dest === 'string' ? dest : dest.pathname
+  const isFromNotifications = source?.toString().includes('/notifications')
+  if (isFromNotifications) {
+    if (pathname.startsWith('/inbox/')) {
+      return replacePathname(
+        dest,
+        pathname.replace('/inbox/', '/notifications/document/'),
+      )
+    }
+  }
+  return dest
 }
 
 /**
- * Navigate to a specific universal link, if our mapping does not return a valid screen within the app - open a webview.
+ * Navigate to a universal link. If our mapping returns a valid native screen,
+ * navigate there directly. Otherwise, open in the in-app browser.
  */
-export function navigateToUniversalLink({
+export async function navigateToUniversalLink({
   link,
-  componentId,
-  openBrowser = openNativeBrowser,
+  fromScreen,
 }: {
-  // url to navigate to
   link?: NotificationMessage['link']['url']
-  // componentId to open web browser in
-  componentId?: string
-  openBrowser?: (link: string, componentId?: string) => void
+  fromScreen?: Href
 }) {
-  // If no link do nothing
   if (!link) return
 
   const appRoute = findRoute(link)
 
   if (appRoute) {
-    navigateTo(appRoute)
-
-    return
+    return router.navigate(adjustedAppRoute(appRoute, fromScreen))
   }
 
-  if (!componentId) {
-    // Use home tab for browser
-    Navigation.mergeOptions(MainBottomTabs, {
-      bottomTabs: {
-        currentTabIndex: 1,
-      },
-    })
-  }
-
-  openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
-}
-
-// Map between notification link and app screen
-const urlMapping: { [key: string]: string } = {
-  '/minarsidur/postholf/:id': '/inbox/:id',
-  '/minarsidur/postholf': '/inbox',
-  '/minarsidur/min-gogn/stillingar': '/settings',
-  '/minarsidur/skirteini': '/wallet',
-  '/minarsidur/skirteini/:provider/vegabref/:id': `/wallet/${GenericLicenseType.Passport}/:id`,
-  '/minarsidur/skirteini/:provider/ehic/:id': `/wallet/${GenericLicenseType.Ehic}/:id`,
-  '/minarsidur/skirteini/:provider/veidikort/:id': `/wallet/${GenericLicenseType.HuntingLicense}/default`,
-  '/minarsidur/skirteini/:provider/pkort/:id': `/wallet/${GenericLicenseType.PCard}/default`,
-  '/minarsidur/skirteini/:provider/okurettindi/:id': `/wallet/${GenericLicenseType.DriversLicense}/default`,
-  '/minarsidur/skirteini/:provider/adrrettindi/:id': `/wallet/${GenericLicenseType.AdrLicense}/default`,
-  '/minarsidur/skirteini/:provider/vinnuvelarettindi/:id': `/wallet/${GenericLicenseType.MachineLicense}/default`,
-  '/minarsidur/skirteini/:provider/skotvopnaleyfi/:id': `/wallet/${GenericLicenseType.FirearmLicense}/default`,
-  '/minarsidur/skirteini/:provider/ororkuskirteini/:id': `/wallet/${GenericLicenseType.DisabilityLicense}/default`,
-  '/minarsidur/skirteini/:provider/nafnskirteini/:id': `/wallet/${GenericLicenseType.IdentityDocument}/:id`,
-  '/minarsidur/eignir/fasteignir': '/assets',
-  '/minarsidur/eignir/fasteignir/:id': '/asset/:id',
-  '/minarsidur/fjarmal/stada': '/finance',
-  '/minarsidur/eignir/okutaeki/min-okutaeki': '/vehicles',
-  '/minarsidur/eignir/okutaeki/min-okutaeki/:id': '/vehicle/:id',
-  '/minarsidur/eignir/okutaeki/min-okutaeki/:id/kilometrastada':
-    '/vehicle-mileage/:id',
-  '/minarsidur/loftbru': '/air-discount',
-}
-
-const findRoute = (url: string) => {
-  // Remove trailing slash and spacess
-  const cleanLink = url.replace(/\/\s*$/, '')
-  // Remove domain
-  const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
-
-  for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
-    const matcher = match(pattern, { decode: decodeURIComponent })
-    const matchResult = matcher(path)
-
-    if (matchResult) {
-      const compiler = compile(routeTemplate)
-      return compiler(matchResult.params)
+  // No matching native route — open in browser
+  try {
+    if (link.startsWith('http')) {
+      await WebBrowser.openBrowserAsync(link, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+      })
     }
+  } catch (error) {
+    console.log('Failed to open link in browser', { link, error })
   }
-
-  return null
 }

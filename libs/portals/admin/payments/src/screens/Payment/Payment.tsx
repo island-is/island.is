@@ -37,7 +37,7 @@ const Payment = () => {
         return { variant: 'blue', message: formatMessage(m.create) }
       case PaymentsPaymentFlowEventType.update:
         return { variant: 'blue', message: formatMessage(m.update) }
-      case PaymentsPaymentFlowEventType.deleted:
+      case PaymentsPaymentFlowEventType.delete:
         return { variant: 'red', message: formatMessage(m.deleted) }
       case PaymentsPaymentFlowEventType.error:
         return { variant: 'red', message: formatMessage(m.error) }

@@ -2,8 +2,8 @@ import faker from 'faker'
 
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseFile,
   CaseFileCategory,
   CaseFileState,
@@ -139,7 +139,7 @@ export const mockTransitonCaseMutation = (caseId: string) => [
       data: {
         transitionCase: {
           state: CaseState.ACCEPTED,
-          appealState: CaseAppealState.COMPLETED,
+          appealState: AppealCaseState.COMPLETED,
           statementDeadline: '2021-09-09T12:00:00.000Z',
           appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
         },

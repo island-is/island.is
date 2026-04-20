@@ -525,6 +525,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Reyna aftur',
     description: 'Caption for the retry button',
   },
+  paymentSubmitRefundExitButtonCaption: {
+    id: 'application.system:core.payment.exitCaption',
+    defaultMessage: 'Hætta við greiðslu og fara aftur í umsókn',
+    description: 'Caption for the refund payment and exit button',
+  },
   paymentStatusError: {
     id: 'application.system:core.payment.statusError',
     defaultMessage: 'Tókst ekki að sækja stöðu greiðslu',

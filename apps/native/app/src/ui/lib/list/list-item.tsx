@@ -1,95 +1,95 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType, Pressable, View } from 'react-native'
-import styled from 'styled-components/native'
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native'
 
 import starFilledIcon from '../../../assets/icons/star-filled.png'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
-import { dynamicColor } from '../../utils'
+import { theme } from '@/ui/utils'
 import { Icon as UIIcon } from '../icon/icon'
 import { Label } from '../label/label'
 import { Typography } from '../typography/typography'
 
-const Host = styled.SafeAreaView<{ unread?: boolean }>`
-  flex-direction: row;
-  background-color: ${dynamicColor((props) => ({
-    dark: props.unread ? props.theme.shades.dark.shade300 : 'transparent',
-    light: props.unread ? props.theme.color.blue100 : 'transparent',
-  }))};
-  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade400,
-    }),
-    true,
-  )};
-`
-const Icon = styled.View<{
-  unread?: boolean
-  selectable?: boolean
-  selected?: boolean
-}>`
-  margin-vertical: ${({ theme }) => theme.spacing[3]}px;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${({ theme, unread }) =>
-    unread ? theme.color.white : theme.color.blue100};
-  height: 42px;
-  width: 42px;
-  align-items: center;
-  justify-content: center;
-  border-radius: ${({ theme }) => theme.border.radius.full};
-  flex-direction: column;
-  border: ${({ theme, selectable, selected }) =>
-      selectable && !selected ? theme.border.width.standard : 0}px
-    solid ${({ theme }) => theme.color.blue200};
-`
-
-const Content = styled.View`
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: ${({ theme }) => theme.spacing[3]}px;
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-  margin-right: ${({ theme }) => theme.spacing[2]}px;
-`
-
-const Row = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
-  gap: ${({ theme }) => theme.spacing.smallGutter}px;
-`
-
-const LowerRow = styled(Row)`
-  align-items: center;
-  padding-bottom: 0;
-`
-
-const Title = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
-`
-
-const SubtitleWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex-shrink: 1;
-  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
-`
-
-const Cell = styled.View``
-
-const StarImage = styled.Image<{ active?: boolean }>`
-  tint-color: ${dynamicColor(({ active, theme }) => ({
-    dark: active ? theme.color.blue400 : theme.color.dark300,
-    light: active ? theme.color.blue400 : theme.color.dark300,
-  }))};
-  width: 16px;
-  height: 16px;
-`
+const styles = StyleSheet.create({
+  host: {
+    flexDirection: 'row',
+    borderBottomWidth: theme.border.width.standard,
+    borderBottomColor: theme.color.blue200,
+  },
+  hostUnread: {
+    backgroundColor: theme.color.blue100,
+  },
+  icon: {
+    marginVertical: theme.spacing[3],
+    marginHorizontal: theme.spacing[2],
+    backgroundColor: theme.color.blue100,
+    height: 42,
+    width: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 42,
+    flexDirection: 'column',
+  },
+  iconUnread: {
+    backgroundColor: theme.color.white,
+  },
+  iconSelectable: {
+    borderWidth: theme.border.width.standard,
+    borderColor: theme.color.blue200,
+  },
+  iconImage: {
+    width: 24,
+    height: 24,
+  },
+  selectedIconImage: {
+    width: 50,
+    height: 50,
+  },
+  content: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing[3],
+    marginTop: theme.spacing[3],
+    marginRight: theme.spacing[2],
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: theme.spacing.smallGutter,
+    gap: theme.spacing.smallGutter,
+  },
+  lowerRow: {
+    alignItems: 'center',
+    paddingBottom: 0,
+  },
+  title: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginBottom: theme.spacing.smallGutter,
+  },
+  subtitleWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexShrink: 1,
+    columnGap: theme.spacing.smallGutter,
+  },
+  spacer: {
+    flex: 1,
+  },
+  starImage: {
+    width: 16,
+    height: 16,
+    tintColor: theme.color.blue400,
+  },
+})
 
 interface ListItemAction {
   id: string
@@ -127,66 +127,67 @@ export function ListItem({
 }: ListItemProps) {
   const intl = useIntl()
   return (
-    <Cell>
-      <Host unread={unread}>
-        {icon && isValidElement(icon) ? (
-          icon
-        ) : icon ? (
-          <Icon unread={unread} selectable={selectable} selected={selected}>
-            {!selectable && !selected && (
-              <Pressable hitSlop={24} onPress={onPressIcon}>
-                <Image
-                  source={icon as ImageSourcePropType}
-                  style={{ width: 24, height: 24 }}
-                />
-              </Pressable>
-            )}
-            {selectable && selected && (
-              <Image source={checkmarkIcon} style={{ width: 50, height: 50 }} />
-            )}
-          </Icon>
-        ) : null}
-        <Content>
-          <Row>
-            <Title>
-              <Typography
-                variant="body3"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {title}
-              </Typography>
-            </Title>
-            {date && (
-              <Typography variant="body3">
-                <FormattedDate value={date} />
-              </Typography>
-            )}
-          </Row>
-          <LowerRow>
-            <SubtitleWrapper>
-              <Typography variant="heading5" numberOfLines={1}>
-                {subtitle}
-              </Typography>
-            </SubtitleWrapper>
-            {replyable && (
-              <UIIcon
-                source={require('../../../assets/icons/reply.png')}
-                width={12}
-                height={12}
-                tintColor="dark300"
-              />
-            )}
-            <View style={{ flex: 1 }} />
-            {starred && <StarImage source={starFilledIcon} active={starred} />}
-            {urgent && (
-              <Label color="urgent" icon>
-                {intl.formatMessage({ id: 'inbox.urgent' })}
-              </Label>
-            )}
-          </LowerRow>
-        </Content>
-      </Host>
-    </Cell>
+    <SafeAreaView style={[styles.host, unread && styles.hostUnread]}>
+      <View
+        style={[
+          styles.icon,
+          unread && styles.iconUnread,
+          selectable && !selected && styles.iconSelectable,
+        ]}
+      >
+        <Pressable hitSlop={24} onPress={onPressIcon}>
+          <Image
+            source={
+              selectable && selected
+                ? checkmarkIcon
+                : (icon as ImageSourcePropType)
+            }
+            style={
+              selectable && selected
+                ? styles.selectedIconImage
+                : styles.iconImage
+            }
+          />
+        </Pressable>
+      </View>
+      <View style={styles.content}>
+        <View style={styles.row}>
+          <View style={styles.title}>
+            <Typography variant="body3" numberOfLines={1} ellipsizeMode="tail">
+              {title}
+            </Typography>
+          </View>
+          {date && (
+            <Typography variant="body3">
+              <FormattedDate value={date} />
+            </Typography>
+          )}
+        </View>
+        <View style={[styles.row, styles.lowerRow]}>
+          <View style={styles.subtitleWrapper}>
+            <Typography variant="heading5" numberOfLines={1}>
+              {subtitle}
+            </Typography>
+          </View>
+          {replyable && (
+            <UIIcon
+              source={require('../../../assets/icons/reply.png')}
+              width={12}
+              height={12}
+              tintColor="dark300"
+            />
+          )}
+          <View style={styles.spacer} />
+          {starred && (
+            <Image source={starFilledIcon} style={styles.starImage} />
+          )}
+          {urgent && (
+            <Label color="urgent" icon>
+              {intl.formatMessage({ id: 'inbox.urgent' })}
+            </Label>
+          )}
+        </View>
+      </View>
+    </SafeAreaView>
   )
 }

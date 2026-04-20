@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import chunk from 'lodash/chunk'
 import {
   Text,
   Table as T,
@@ -10,7 +11,7 @@ import { tableStyles } from '../../utils/utils'
 import { EmptyTable } from '../EmptyTable/EmptyTable'
 import { MessageDescriptor } from 'react-intl'
 
-interface TableItem {
+export interface TableItem {
   title: string
   value: string | React.ReactNode
   detail?: string
@@ -23,6 +24,13 @@ interface Props {
   mt?: boolean
   loading?: boolean
   emptyMessage?: MessageDescriptor
+}
+
+export const createTableData = (
+  items: (TableItem | null | undefined | '')[],
+  chunkSize = 2,
+): (TableItem | null | undefined | '')[][] => {
+  return chunk(items, chunkSize)
 }
 
 export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
@@ -57,7 +65,12 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                   rowitem && (
                     <T.Data
                       key={`rowitem-${iii}`}
-                      colSpan={2}
+                      colSpan={
+                        row.filter((item): item is TableItem => Boolean(item))
+                          .length === 1
+                          ? 4
+                          : 2
+                      }
                       style={tableStyles}
                     >
                       <Columns alignY="center" collapseBelow="lg" space={2}>

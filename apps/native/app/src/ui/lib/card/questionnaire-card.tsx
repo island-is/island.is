@@ -5,12 +5,12 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
 import { QuestionnaireQuestionnairesStatusEnum } from '../../../graphql/types/schema'
-import { getQuestionnaireStatusLabelId } from '../../../screens/health/questionnaires/questionnaire-utils'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
 import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Badge } from '../badge/badge'
 import { Typography } from '../typography/typography'
+import { getQuestionnaireStatusLabelId } from '../../../utils/questionnaire-utils'
 
 export type QuestionnaireCardAction = {
   text: string

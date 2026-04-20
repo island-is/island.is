@@ -55,6 +55,8 @@ export enum Features {
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
+  isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
+  isServicePortalTRPersonalTaxCreditPageEnabled = 'isServicePortalTRPersonalTaxCreditPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
@@ -171,6 +173,8 @@ export enum Features {
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
+  // Primary school (guardian-facing)
+  isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
 }
