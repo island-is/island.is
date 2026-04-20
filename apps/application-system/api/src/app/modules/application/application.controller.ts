@@ -460,6 +460,7 @@ export class ApplicationController {
 
       //Programmers responsible for handling failure status
       updatedApplication.externalData = withUpdatedExternalData.externalData
+      actionDto.externalData = withUpdatedExternalData.externalData // Make sure to update the actionDto with the updated external data
     }
 
     await handleScheduledNotifications(
