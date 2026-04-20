@@ -59,9 +59,9 @@ import { escapeLike } from './utils/escapeLike'
 import {
   ApplicationXroadFieldDto,
   ApplicationXroadValueDto,
-  ValidationScreenDto,
 } from './models/dto/application.xroad.dto'
 import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
+import { FieldDto } from '../fields/models/dto/field.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -1095,30 +1095,97 @@ export class ApplicationsService {
 
     notificationDto.nationalId = nationalId
 
-    if (!notificationDto.screen) {
+    if (!notificationDto.screenDto) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }
 
-    const screen = notificationDto.screen
+    const screen = notificationDto.screenDto
 
     if (
-      notificationDto.command === NotificationCommands.VALIDATE &&
-      notificationDto.screen
+      notificationDto.command !== NotificationCommands.SUBMIT &&
+      notificationDto.screenDto
     ) {
-      notificationDto.validationScreen = this.mapScreenToValidationScreenDto(
-        notificationDto.screen,
+      notificationDto.fields = this.mapScreenToNotificationFields(
+        notificationDto.screenDto,
       )
-      notificationDto.screen = undefined
+      notificationDto.screenDto = undefined
     }
+
+    console.log(
+      'Notifying external service with payload:',
+      JSON.stringify(notificationDto),
+    )
 
     const response = await this.notifyService.sendNotification(
       notificationDto,
       submissionUrl,
     )
 
+    // console.log(
+    //   'Received response from external service:',
+    //   JSON.stringify(response),
+    // )
+
+    const mockResponse = {
+      fields: [
+        {
+          identifier: '3edb7634-6a54-43b3-b800-e881e824a036',
+          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
+          fieldType: 'PHONE_NUMBER',
+          values: [{ order: 0, json: { phoneNumber: '+3545812345' } }],
+        },
+        {
+          identifier: 'e1914418-dbdb-40f0-9149-9d06ac654a9a',
+          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
+          fieldType: 'EMAIL',
+          values: [{ order: 0, json: {} }],
+        },
+        {
+          identifier: '8cf77f28-89f4-49f4-9ec6-7e8a4ef7c879',
+          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
+          fieldType: 'DROPDOWN_LIST',
+          values: [{ order: 0, json: {} }],
+        },
+        {
+          identifier: 'ca05c156-31b9-48c1-9d51-3fe51a10cb35',
+          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
+          fieldType: 'DROPDOWN_LIST',
+          list: [
+            {
+              label: { is: 'Galdrakarlinn í Oz 4', en: 'The Wizard of Oz 4' },
+              description: { is: '', en: '' },
+              value: '',
+              displayOrder: 3,
+              isSelected: false,
+            },
+            {
+              label: { is: 'Galdrakarlinn í Oz 5', en: 'The Wizard of Oz 5' },
+              description: { is: '', en: '' },
+              value: '',
+              displayOrder: 4,
+              isSelected: false,
+            },
+          ],
+          values: [{ order: 0, json: { listValue: 'Galdrakarlinn í Oz 2' } }],
+        },
+      ],
+      screenError: {
+        hasError: false,
+        title: { is: '', en: '' },
+        message: { is: '', en: '' },
+      },
+    }
+
+    // const mergedFields = this.mergeMissing(mockResponse.fields, screen.fields)
+    // console.log('mergedFields:', JSON.stringify(mergedFields)),
+
+    screen.fields = this.mergeMissing(mockResponse.fields, screen.fields)
+
     response.screen = screen
+
+    // response.screen.fields = mergedFields
 
     response.screen.screenError = {
       hasError: false,
@@ -1152,7 +1219,52 @@ export class ApplicationsService {
       )
     }
 
+    // console.log(
+    //   'Final response after merging and error handling:',
+    //   JSON.stringify(response),
+    // )
     return response
+  }
+
+  private mergeMissing(
+    responseFields: any[] | undefined,
+    screenFields: any[] | undefined,
+  ): any[] | undefined {
+    if (!screenFields?.length) return screenFields
+    if (!responseFields?.length) return screenFields
+
+    const byIdentifier = new Map(responseFields.map((f) => [f.identifier, f]))
+
+    return screenFields.map((field) => {
+      const override = byIdentifier.get(field.identifier)
+      if (!override) return field
+
+      const existingValueIdByOrder = new Map(
+        (field.values ?? []).map((v: any) => [v.order, v.id]),
+      )
+
+      const merged: any = { ...field, ...override }
+
+      if (Array.isArray(override.values)) {
+        merged.values = override.values.map((v: any) => ({
+          ...v,
+          id:
+            typeof v.id === 'string' && v.id.length > 0
+              ? v.id
+              : existingValueIdByOrder.get(v.order),
+        }))
+      }
+
+      // id is required for list items
+      if (Array.isArray(override.list)) {
+        merged.list = override.list.map((li: any) => ({
+          ...li,
+          id: '1',
+        }))
+      }
+
+      return merged
+    })
   }
 
   private getDefaultScreenErrorValidate(): ValidationErrorDto {
@@ -1183,24 +1295,22 @@ export class ApplicationsService {
     }
   }
 
-  private mapScreenToValidationScreenDto(
+  private mapScreenToNotificationFields(
     screen: ScreenDto,
-  ): ValidationScreenDto {
-    return {
-      screenIdentifier: screen.identifier,
-      fields: (screen.fields ?? []).map(
-        (field): ApplicationXroadFieldDto => ({
-          identifier: field.identifier,
-          fieldType: field.fieldType,
-          values: (field.values ?? []).map(
-            (value): ApplicationXroadValueDto => ({
-              order: value.order,
-              json: (value.json ?? {}) as unknown as Record<string, unknown>,
-            }),
-          ),
-        }),
-      ),
-    }
+  ): ApplicationXroadFieldDto[] {
+    return (screen.fields ?? []).map((field) => {
+      const xroadField = new ApplicationXroadFieldDto()
+      xroadField.identifier = field.identifier
+      xroadField.screenIdentifier = screen.identifier
+      xroadField.fieldType = field.fieldType
+      xroadField.values = (field.values ?? []).map((value) => {
+        const xroadValue = new ApplicationXroadValueDto()
+        xroadValue.order = value.order
+        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+        return xroadValue
+      })
+      return xroadField
+    })
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

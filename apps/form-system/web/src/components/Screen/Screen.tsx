@@ -116,11 +116,12 @@ export const Screen = () => {
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.POPULATE,
-              screen: state.currentScreen?.data,
+              screenDto: state.currentScreen?.data,
             },
           },
         })
 
+        console.log('Notify external service response:', data)
         const updatedScreen = removeTypename(
           data?.notifyFormSystemExternalSystem?.screen,
         )

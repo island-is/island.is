@@ -206,7 +206,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
-              screen: state.currentScreen.data,
+              screenDto: state.currentScreen.data,
             },
           },
         })
