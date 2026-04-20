@@ -77,16 +77,8 @@ export const DialogPrompt = ({
   buttonTextConfirm,
   initialVisibility,
   img,
-  buttonPropsConfirm = {
-    variant: 'ghost',
-    colorScheme: 'default',
-    size: 'small',
-  },
-  buttonPropsCancel = {
-    variant: 'ghost',
-    colorScheme: 'default',
-    size: 'small',
-  },
+  buttonPropsConfirm = { variant: 'ghost', colorScheme: 'default' },
+  buttonPropsCancel = { variant: 'ghost', colorScheme: 'default' },
 }: DialogPromptProps) => {
   const hasButtons = !!buttonTextCancel || !!buttonTextConfirm
 
@@ -149,8 +141,8 @@ export const DialogPrompt = ({
                     <Box paddingRight={2}>
                       {buttonTextCancel && (
                         <Button
-                          size="small"
                           {...buttonPropsCancel}
+                          size="small"
                           onClick={handleClose}
                         >
                           {buttonTextCancel}
@@ -160,8 +152,8 @@ export const DialogPrompt = ({
                     <Box>
                       {buttonTextConfirm && (
                         <Button
-                          size="small"
                           {...buttonPropsConfirm}
+                          size="small"
                           onClick={handleConfirm}
                         >
                           {buttonTextConfirm}

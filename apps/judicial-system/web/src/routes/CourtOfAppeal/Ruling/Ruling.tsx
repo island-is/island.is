@@ -26,7 +26,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseState,
@@ -103,7 +103,7 @@ const CourtOfAppealRuling = () => {
     allFilesDoneOrError &&
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
     (workingCase.appealCase?.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED ||
+      AppealCaseRulingDecision.DISCONTINUED ||
       uploadFiles.some(
         (file) =>
           file.category === CaseFileCategory.APPEAL_RULING &&
@@ -111,7 +111,7 @@ const CourtOfAppealRuling = () => {
       ))
 
   const handleRulingDecisionChange = (
-    appealRulingDecision: CaseAppealRulingDecision,
+    appealRulingDecision: AppealCaseRulingDecision,
   ) => {
     setAndSendCaseToServer(
       [
@@ -128,42 +128,42 @@ const CourtOfAppealRuling = () => {
   const decisionOptions = [
     {
       id: 'case-decision-accepting',
-      decision: CaseAppealRulingDecision.ACCEPTING,
+      decision: AppealCaseRulingDecision.ACCEPTING,
       message: appealRuling.decisionAccept,
     },
     {
       id: 'case-decision-repeal',
-      decision: CaseAppealRulingDecision.REPEAL,
+      decision: AppealCaseRulingDecision.REPEAL,
       message: appealRuling.decisionRepeal,
     },
     {
       id: 'case-decision-changed',
-      decision: CaseAppealRulingDecision.CHANGED,
+      decision: AppealCaseRulingDecision.CHANGED,
       message: appealRuling.decisionChanged,
     },
     {
       id: 'case-decision-changed-significantly',
-      decision: CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY,
+      decision: AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY,
       message: appealRuling.decisionChangedSignificantly,
     },
     {
       id: 'case-decision-dismissed-from-court-of-appeal',
-      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
+      decision: AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
       message: appealRuling.decisionDismissedFromCourtOfAppeal,
     },
     {
       id: 'case-decision-dismissed-from-court',
-      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+      decision: AppealCaseRulingDecision.DISMISSED_FROM_COURT,
       message: appealRuling.decisionDismissedFromCourt,
     },
     {
       id: 'case-decision-unlabeling',
-      decision: CaseAppealRulingDecision.REMAND,
+      decision: AppealCaseRulingDecision.REMAND,
       message: appealRuling.decisionRemand,
     },
     {
       id: 'case-decision-discontinued',
-      decision: CaseAppealRulingDecision.DISCONTINUED,
+      decision: AppealCaseRulingDecision.DISCONTINUED,
       message: appealRuling.decisionDiscontinued,
     },
   ]
@@ -218,7 +218,7 @@ const CourtOfAppealRuling = () => {
           </BlueBox>
         </Box>
         {workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ? (
+        AppealCaseRulingDecision.DISCONTINUED ? (
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
@@ -253,9 +253,9 @@ const CourtOfAppealRuling = () => {
               (workingCase.decision === CaseDecision.ACCEPTING ||
                 workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
               (workingCase.appealCase?.appealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED ||
+                AppealCaseRulingDecision.CHANGED ||
                 workingCase.appealCase?.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY) && (
+                  AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY) && (
                 <RestrictionLength
                   workingCase={workingCase}
                   handleIsolationChange={(

@@ -50,8 +50,10 @@ export class ApiScopeUserResolver {
   })
   getAccessControlledScopes(
     @CurrentUser() user: User,
+    @Args('environment', { type: () => Environment, nullable: true })
+    environment?: Environment,
   ): Promise<AccessControlledScope[]> {
-    return this.apiScopeUserService.getAccessControlledScopes(user)
+    return this.apiScopeUserService.getAccessControlledScopes(user, environment)
   }
 
   @Query(() => [Environment], {
@@ -85,6 +87,10 @@ export class ApiScopeUserResolver {
     @Args('input', { type: () => DeleteApiScopeUserInput })
     input: DeleteApiScopeUserInput,
   ): Promise<boolean> {
-    return this.apiScopeUserService.deleteApiScopeUser(user, input.nationalId)
+    return this.apiScopeUserService.deleteApiScopeUser(
+      user,
+      input.nationalId,
+      input.environments,
+    )
   }
 }

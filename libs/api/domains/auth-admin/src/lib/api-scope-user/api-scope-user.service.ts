@@ -12,6 +12,7 @@ import { ApiScopeUsersInput } from './dto/api-scope-users.input'
 import { CreateApiScopeUserInput } from './dto/create-api-scope-user.input'
 import { UpdateApiScopeUserInput } from './dto/update-api-scope-user.input'
 import { ApiScopeUser } from './models/api-scope-user.model'
+import { ApiScopeUserEnvironmentData } from './models/api-scope-user-environment-data.model'
 import { AccessControlledScope } from './models/access-controlled-scope.model'
 
 interface ApiScopeUserAccessResponse {
@@ -99,9 +100,12 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
   async getAccessControlledScopes(
     user: User,
+    environment?: Environment,
   ): Promise<AccessControlledScope[]> {
-    for (const environment of environments) {
-      const result = await this.typedRequest(user, environment, (api) =>
+    const targetEnvironments = environment ? [environment] : environments
+
+    for (const env of targetEnvironments) {
+      const result = await this.typedRequest(user, env, (api) =>
         api.meApiScopeUsersControllerFindAllAccessControlledScopesRaw(),
       )
 
@@ -121,8 +125,8 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
-    let userData: ApiScopeUser | null = null
     const availableEnvironments: Environment[] = []
+    const environmentsData: ApiScopeUserEnvironmentData[] = []
 
     for (const environment of environments) {
       const result = await this.typedRequest(user, environment, (api) =>
@@ -131,48 +135,73 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
       if (result) {
         availableEnvironments.push(environment)
-        if (!userData) {
-          userData = {
-            nationalId: result.nationalId,
-            name: result.name ?? undefined,
-            email: result.email,
-            userAccess: result.userAccess?.map((access) => ({
-              nationalId: access.nationalId,
-              scope: access.scope,
-            })),
-          }
-        }
+
+        environmentsData.push({
+          environment,
+          nationalId: result.nationalId,
+          name: result.name ?? undefined,
+          email: result.email,
+          userAccess: result.userAccess?.map((access) => ({
+            nationalId: access.nationalId,
+            scope: access.scope,
+          })),
+        })
       }
     }
 
-    if (userData) {
-      userData.availableEnvironments = availableEnvironments
+    if (environmentsData.length === 0) {
+      return null
     }
 
-    return userData
+    return {
+      nationalId,
+      availableEnvironments,
+      environments: environmentsData,
+    }
   }
 
   async getApiScopeUsers(
     user: User,
     input: ApiScopeUsersInput,
   ): Promise<ApiScopeUsersPayload> {
-    for (const environment of environments) {
-      const result = await this.typedRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerFindAndCountAllRaw({
-          searchString: input.searchString ?? '',
-          page: input.page,
-          count: input.count,
-        }),
-      )
+    const results = await Promise.allSettled(
+      environments.map(async (environment) => {
+        const result = await this.typedRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerFindAndCountAllRaw({
+            searchString: input.searchString ?? '',
+            page: input.page,
+            count: input.count,
+          }),
+        )
+        return result ? { environment, data: result } : null
+      }),
+    )
 
-      if (result) {
+    // Build a map of nationalId -> environments the user exists in
+    const envMap = new Map<string, Environment[]>()
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        const { environment, data } = result.value
+        for (const row of data.rows) {
+          const existing = envMap.get(row.nationalId) ?? []
+          existing.push(environment)
+          envMap.set(row.nationalId, existing)
+        }
+      }
+    }
+
+    // Use the first successful environment as the primary result for pagination
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        const { data } = result.value
         return {
-          rows: result.rows.map((row: ApiScopeUserResponse) => ({
+          rows: data.rows.map((row: ApiScopeUserResponse) => ({
             nationalId: row.nationalId,
             name: row.name ?? undefined,
             email: row.email,
+            availableEnvironments: envMap.get(row.nationalId),
           })),
-          totalCount: result.count,
+          totalCount: data.count,
         }
       }
     }
@@ -189,7 +218,8 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       ? environments.filter((env) => inputEnvironments.includes(env))
       : environments
 
-    let lastResult: ApiScopeUser | null = null
+    const availableEnvironments: Environment[] = []
+    const environmentsData: ApiScopeUserEnvironmentData[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -208,7 +238,9 @@ export class ApiScopeUserService extends MultiEnvironmentService {
         )
 
         if (result) {
-          lastResult = {
+          availableEnvironments.push(environment)
+          environmentsData.push({
+            environment,
             nationalId: result.nationalId,
             name: result.name ?? undefined,
             email: result.email,
@@ -216,7 +248,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
               nationalId: access.nationalId,
               scope: access.scope,
             })),
-          }
+          })
         }
       } catch (error) {
         this.logger.error(
@@ -226,8 +258,12 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       }
     }
 
-    if (lastResult) {
-      return lastResult
+    if (environmentsData.length > 0) {
+      return {
+        nationalId: input.nationalId,
+        availableEnvironments,
+        environments: environmentsData,
+      }
     }
 
     throw new Error('Failed to create API scope user')
@@ -237,12 +273,18 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     input: UpdateApiScopeUserInput,
   ): Promise<ApiScopeUser> {
-    const inputEnvironments = input.environments
-    const targetEnvironments = inputEnvironments?.length
-      ? environments.filter((env) => inputEnvironments.includes(env))
-      : environments
+    const targetEnvironments = input.environments
 
-    let lastResult: ApiScopeUser | null = null
+    if (!targetEnvironments) {
+      const existing = await this.getApiScopeUser(user, input.nationalId)
+      if (!existing) {
+        throw new Error('API scope user not found')
+      }
+      return existing
+    }
+
+    const availableEnvironments: Environment[] = []
+    const environmentsData: ApiScopeUserEnvironmentData[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -261,7 +303,9 @@ export class ApiScopeUserService extends MultiEnvironmentService {
         )
 
         if (result) {
-          lastResult = {
+          availableEnvironments.push(environment)
+          environmentsData.push({
+            environment,
             nationalId: result.nationalId,
             name: result.name ?? undefined,
             email: result.email,
@@ -269,7 +313,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
               nationalId: access.nationalId,
               scope: access.scope,
             })),
-          }
+          })
         }
       } catch (error) {
         this.logger.error(
@@ -279,18 +323,31 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       }
     }
 
-    if (lastResult) {
-      return lastResult
+    if (environmentsData.length > 0) {
+      return {
+        nationalId: input.nationalId,
+        availableEnvironments,
+        environments: environmentsData,
+      }
     }
 
     throw new Error('Failed to update API scope user')
   }
 
-  async deleteApiScopeUser(user: User, nationalId: string): Promise<boolean> {
+  async deleteApiScopeUser(
+    user: User,
+    nationalId: string,
+    targetEnvironments?: Environment[],
+  ): Promise<boolean> {
+    const envsToDelete =
+      targetEnvironments && targetEnvironments.length > 0
+        ? targetEnvironments
+        : environments
+
     let anyRequestMade = false
     let lastError: unknown = null
 
-    for (const environment of environments) {
+    for (const environment of envsToDelete) {
       let requestMade = false
 
       try {

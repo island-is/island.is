@@ -4,13 +4,14 @@ query GetApiScopeUsers($input: AuthAdminApiScopeUsersInput!) {
       nationalId
       name
       email
+      availableEnvironments
     }
     totalCount
   }
 }
 
-query GetAccessControlledScopes {
-  authAdminAccessControlledScopes {
+query GetAccessControlledScopes($environment: AuthAdminEnvironment) {
+  authAdminAccessControlledScopes(environment: $environment) {
     name
     displayName
     description
@@ -24,24 +25,33 @@ query GetConfiguredEnvironments {
 query GetApiScopeUser($nationalId: String!) {
   authAdminApiScopeUser(nationalId: $nationalId) {
     nationalId
-    name
-    email
-    userAccess {
-      nationalId
-      scope
-    }
     availableEnvironments
+    environments {
+      environment
+      nationalId
+      name
+      email
+      userAccess {
+        nationalId
+        scope
+      }
+    }
   }
 }
 
 mutation CreateApiScopeUser($input: CreateAuthAdminApiScopeUserInput!) {
   createAuthAdminApiScopeUser(input: $input) {
     nationalId
-    name
-    email
-    userAccess {
+    availableEnvironments
+    environments {
+      environment
       nationalId
-      scope
+      name
+      email
+      userAccess {
+        nationalId
+        scope
+      }
     }
   }
 }
@@ -49,11 +59,16 @@ mutation CreateApiScopeUser($input: CreateAuthAdminApiScopeUserInput!) {
 mutation UpdateApiScopeUser($input: UpdateAuthAdminApiScopeUserInput!) {
   updateAuthAdminApiScopeUser(input: $input) {
     nationalId
-    name
-    email
-    userAccess {
+    availableEnvironments
+    environments {
+      environment
       nationalId
-      scope
+      name
+      email
+      userAccess {
+        nationalId
+        scope
+      }
     }
   }
 }
