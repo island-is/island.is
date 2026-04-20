@@ -30,7 +30,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/financial-management-authority/gen/fetch -i libs/clients/financial-management-authority/src/clientConfig.json --type-mappings AnyType=object --global-property apis=Vacancy --global-property models --global-property supportingFiles"
+        "command": "yarn openapi-generator -o libs/clients/financial-management-authority/gen/fetch -i libs/clients/financial-management-authority/src/clientConfig.json --type-mappings AnyType=object"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
