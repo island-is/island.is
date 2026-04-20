@@ -3,6 +3,7 @@ import { Box, DatePicker, Filter, Input } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   m,
@@ -52,7 +53,7 @@ const AppointmentsOverview = () => {
     const search = searchTerm.trim().toLowerCase()
 
     return appointments.data.filter((a) =>
-      [a.title, a.date, a.location?.address, a.location?.name]
+      [a.title, formatDate(a.date ?? ''), a.location?.address, a.location?.name]
         .filter(Boolean)
         .some((value) => value?.toLowerCase().includes(search)),
     )
