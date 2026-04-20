@@ -33,7 +33,7 @@ interface TooltipType {
   valueFormat?: (arg: number) => string
 }
 
-interface GraphDataProps {
+export interface GraphDataProps {
   title?: string
   data: Array<Record<string, number | string>>
   datakeys: Array<string>
