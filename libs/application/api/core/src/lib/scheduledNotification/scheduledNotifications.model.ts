@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Application } from '@island.is/application/api/core'
+import { Application } from '../application/application.model';
 
 export enum NotificationStatus {
   PENDING = 'PENDING',

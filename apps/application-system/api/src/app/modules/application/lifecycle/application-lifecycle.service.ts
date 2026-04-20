@@ -178,7 +178,7 @@ export class ApplicationLifeCycleService {
       dto: CreateHnippNotificationDto
     }[],
   ) {
-    let sentIds: string[] = []
+    const sentIds: string[] = []
     for (const notification of notificationsToSend) {
       try {
         await this.notificationApi.notificationsControllerCreateHnippNotification(
