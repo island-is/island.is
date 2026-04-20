@@ -12,8 +12,7 @@ export * from './components/EducationCard/EducationCard'
 export * from './components/EmptyState/EmptyImage'
 export * from './components/EmptyState/EmptyImgSmall'
 export * from './components/EmptyState/EmptyState'
-export { EmptyTable } from '@island.is/portals/core'
-export { Table, createColumnHelper } from '@island.is/portals/core'
+export { EmptyTable, Table, createColumnHelper } from '@island.is/portals/core'
 export type {
   ColumnDef,
   Row,

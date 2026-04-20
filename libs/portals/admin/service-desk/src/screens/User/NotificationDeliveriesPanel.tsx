@@ -36,7 +36,7 @@ export const NotificationDeliveriesPanel = ({
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetAdminNotificationDeliveriesQuery({
     variables: { input: { notificationId, isActor } },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'cache-and-network',
   })
 
   const deliveries = data?.adminNotificationDeliveries ?? []
