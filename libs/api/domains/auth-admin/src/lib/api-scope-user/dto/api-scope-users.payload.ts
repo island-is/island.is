@@ -1,11 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-import { ApiScopeUser } from '../models/api-scope-user.model'
+import { ApiScopeUserListItem } from '../models/api-scope-user-list-item.model'
 
 @ObjectType('AuthAdminApiScopeUsersPayload')
 export class ApiScopeUsersPayload {
-  @Field(() => [ApiScopeUser])
-  rows!: ApiScopeUser[]
+  @Field(() => [ApiScopeUserListItem])
+  rows!: ApiScopeUserListItem[]
 
   @Field(() => Int)
   totalCount!: number

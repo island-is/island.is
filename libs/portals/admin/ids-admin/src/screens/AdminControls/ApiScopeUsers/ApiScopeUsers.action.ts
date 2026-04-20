@@ -110,6 +110,7 @@ export const apiScopeUsersAction: WrappedActionFn =
             variables: {
               input: {
                 nationalId: formData.get('nationalId') as string,
+                environments: parseEnvironments(formData),
               },
             },
           })

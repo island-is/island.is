@@ -1096,6 +1096,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-error-environment-required',
     defaultMessage: 'Select at least one environment',
   },
+  apiScopeUsersEnvironments: {
+    id: 'ap.ids-admin:api-scope-users-environments',
+    defaultMessage: 'Environments',
+  },
+  apiScopeUsersDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:api-scope-users-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  apiScopeUsersDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:api-scope-users-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
   grantTypes: {
     id: 'ap.ids-admin:grant-types',
     defaultMessage: 'Grant Types',

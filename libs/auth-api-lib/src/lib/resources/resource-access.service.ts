@@ -121,8 +121,10 @@ export class ResourceAccessService {
 
     await apiScopeUser.update({ ...apiScopeUserData })
 
-    await this.deleteUserScopes(nationalId)
-    await this.createUserScopes(userAccess)
+    if (userAccess !== undefined) {
+      await this.deleteUserScopes(nationalId)
+      await this.createUserScopes(userAccess)
+    }
 
     return (await this.findOne(nationalId)) as ApiScopeUser
   }

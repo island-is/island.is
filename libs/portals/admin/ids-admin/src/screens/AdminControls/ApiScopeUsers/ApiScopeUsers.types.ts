@@ -1,7 +1,10 @@
+import { AuthAdminEnvironment } from '@island.is/api/schema'
+
 export interface ApiScopeUserRow {
   nationalId: string
   name?: string | null
   email: string
+  availableEnvironments?: AuthAdminEnvironment[] | null
 }
 
 export interface ApiScopeUserFormData {
