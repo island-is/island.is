@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { isValid, parse } from 'date-fns'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
@@ -233,13 +234,11 @@ const Conclusion: FC = () => {
           }
           break
         case IndictmentDecision.COMPLETING_FOR_SOME: {
-          const parsedConclusionDate = conclusionDate
-            ? new Date(
-                Number(conclusionDate.split('.')[2]),
-                Number(conclusionDate.split('.')[1]) - 1,
-                Number(conclusionDate.split('.')[0]),
-              )
-            : undefined
+          const parsed = conclusionDate
+            ? parse(conclusionDate, 'dd.MM.yyyy', new Date())
+            : null
+          const parsedConclusionDate =
+            parsed && isValid(parsed) ? parsed : undefined
 
           const remainingDefendants =
             workingCase.defendants?.filter(
