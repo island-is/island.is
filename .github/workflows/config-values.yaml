@@ -32,7 +32,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -51,7 +51,7 @@ jobs:
           echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
@@ -163,7 +163,7 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - check-secrets
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     steps:
       - name: Collect
         run: |
