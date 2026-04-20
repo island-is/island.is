@@ -5,7 +5,6 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { IdentityDocument, IdentityDocumentChild } from '../lib/constants'
-import { FormValue } from '@island.is/application/types'
 
 export * from './getChosenApplicant'
 export * from './hasSecondGuardian'
@@ -21,9 +20,6 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
 }
-
-export const hasReviewerApproved = (answers: FormValue): string =>
-  getValueViaPath<string>(answers, 'secondGuardianInformation.approved') ?? ''
 
 export const getCombinedApplicantInformation = (externalData: ExternalData) => {
   const applicantName = getValueViaPath<string>(

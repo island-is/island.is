@@ -28,6 +28,11 @@ export const userMessages = defineMessages({
     defaultMessage: 'Mínar stillingar',
   },
 
+  companyInformation: {
+    id: 'global:companyInformation',
+    defaultMessage: 'Stillingar',
+  },
+
   backToMyself: {
     id: 'global:backToMyself',
     description: 'Takki til að skipta frá umboði til baka á raun notanda.',
@@ -53,5 +58,18 @@ export const userMessages = defineMessages({
     id: 'global:userDelegationSelected',
     description: 'Birtist í lista af umboðum við hlið þess sem er í notkun.',
     defaultMessage: `Valið`,
+  },
+
+  delegationBannerText: {
+    id: 'global:delegationBannerText',
+    description:
+      'Banner text shown below the header when logged in via delegation',
+    defaultMessage: 'Innskráning með umboði: {name}',
+  },
+
+  exitDelegation: {
+    id: 'global:exitDelegation',
+    description: 'Button label to exit delegation mode',
+    defaultMessage: 'Hætta í umboði',
   },
 })

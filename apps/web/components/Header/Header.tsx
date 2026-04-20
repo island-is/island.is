@@ -35,6 +35,7 @@ interface HeaderProps {
   searchPlaceholder?: string
   customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
   loginButtonType?: 'dropdown' | 'link'
+  languageToggleHrefOverride?: LayoutProps['languageToggleHrefOverride']
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -48,6 +49,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   searchPlaceholder,
   customTopLoginButtonItem,
   loginButtonType = 'dropdown',
+  languageToggleHrefOverride,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -122,6 +124,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                       <LanguageToggler
                         buttonColorScheme={buttonColorScheme}
                         queryParams={languageToggleQueryParams}
+                        hrefOverride={languageToggleHrefOverride}
                       />
                     </Box>
                     <Box marginLeft={marginLeft}>

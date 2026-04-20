@@ -21,7 +21,13 @@ import { CreateListItemDto } from './models/dto/createListItem.dto'
 import { ListItemDto } from './models/dto/listItem.dto'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -38,8 +44,11 @@ export class ListItemsController {
   })
   @ApiBody({ type: CreateListItemDto })
   @Post()
-  create(@Body() createListItem: CreateListItemDto): Promise<ListItemDto> {
-    return this.listItemsService.create(createListItem)
+  create(
+    @CurrentUser() user: User,
+    @Body() createListItem: CreateListItemDto,
+  ): Promise<ListItemDto> {
+    return this.listItemsService.create(user, createListItem)
   }
 
   @ApiOperation({ summary: 'Update list item' })
@@ -50,10 +59,11 @@ export class ListItemsController {
   @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async update(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateListItemDto: UpdateListItemDto,
   ): Promise<void> {
-    return this.listItemsService.update(id, updateListItemDto)
+    return this.listItemsService.update(user, id, updateListItemDto)
   }
 
   @ApiOperation({ summary: 'Delete list item' })
@@ -62,8 +72,11 @@ export class ListItemsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.listItemsService.delete(id)
+  async delete(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.listItemsService.delete(user, id)
   }
 
   @ApiOperation({ summary: 'Update display order of list items' })
@@ -73,9 +86,11 @@ export class ListItemsController {
   @ApiBody({ type: UpdateListItemsDisplayOrderDto })
   @Put()
   async updateDisplayOrder(
+    @CurrentUser() user: User,
     @Body() updateListItemsDisplayOrderDto: UpdateListItemsDisplayOrderDto,
   ): Promise<void> {
     return this.listItemsService.updateDisplayOrder(
+      user,
       updateListItemsDisplayOrderDto,
     )
   }

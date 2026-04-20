@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Controller,
@@ -9,6 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -29,14 +31,14 @@ import {
   defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
-import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { CurrentDefendant, SplitDefendantExistsGuard } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 
-@Controller([
+@Controller(
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
-])
+)
 @ApiTags('limited access subpoenas')
 @UseGuards(
   JwtAuthUserGuard,
@@ -44,15 +46,16 @@ import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
   RolesGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
-  DefendantExistsGuard,
+  SplitDefendantExistsGuard,
+  SubpoenaExistsGuard,
 )
 export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(SubpoenaExistsGuard)
   @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')
@@ -73,10 +76,8 @@ export class LimitedAccessSubpoenaController {
       `Getting subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getSubpoenaPdf(
-      theCase,
-      defendant,
-      subpoena,
+    const pdf = await this.sequelize.transaction((transaction) =>
+      this.pdfService.getSubpoenaPdf(theCase, defendant, transaction, subpoena),
     )
 
     res.end(pdf)

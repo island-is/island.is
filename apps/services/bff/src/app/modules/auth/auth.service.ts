@@ -312,6 +312,18 @@ export class AuthService {
       })
     }
 
+    // IDS responds with error and error_description when e.g. passkey authentication fails
+    if (query.error) {
+      this.logger.warn(
+        `Callback login authentication failed: ${query.error} - ${query.error_description}`,
+      )
+
+      return this.redirectWithError(res, {
+        statusCode: 401,
+        message: query.error_description || query.error,
+      })
+    }
+
     // Validate query params
     if (!query.code || !query.state) {
       const missingParam = !query.code ? 'code' : 'state'

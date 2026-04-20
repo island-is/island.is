@@ -19,12 +19,56 @@ const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
+const EMAIL_QUEUE_NAME = `${serviceName}-email`
+const EMAIL_DEAD_LETTER_QUEUE_NAME = `${serviceName}-email-failure`
+const SMS_QUEUE_NAME = `${serviceName}-sms`
+const SMS_DEAD_LETTER_QUEUE_NAME = `${serviceName}-sms-failure`
+const PUSH_QUEUE_NAME = `${serviceName}-push`
+const PUSH_DEAD_LETTER_QUEUE_NAME = `${serviceName}-push-failure`
 
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
 }) => ({
-  MAIN_QUEUE_NAME,
-  DEAD_LETTER_QUEUE_NAME,
+  MAIN_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${MAIN_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : MAIN_QUEUE_NAME,
+  ),
+  DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : DEAD_LETTER_QUEUE_NAME,
+  ),
+  EMAIL_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${EMAIL_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : EMAIL_QUEUE_NAME,
+  ),
+  EMAIL_DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${EMAIL_DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : EMAIL_DEAD_LETTER_QUEUE_NAME,
+  ),
+  SMS_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${SMS_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : SMS_QUEUE_NAME,
+  ),
+  SMS_DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${SMS_DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : SMS_DEAD_LETTER_QUEUE_NAME,
+  ),
+  PUSH_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${PUSH_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : PUSH_QUEUE_NAME,
+  ),
+  PUSH_DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${PUSH_DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : PUSH_DEAD_LETTER_QUEUE_NAME,
+  ),
   IDENTITY_SERVER_ISSUER_URL: {
     dev: 'https://identity-server.dev01.devland.is',
     staging: 'https://identity-server.staging01.devland.is',
@@ -54,6 +98,17 @@ const getEnv = (services: {
     prod: 'noreply@island.is',
   },
   REDIS_USE_SSL: 'true',
+  REDIS_NODES: {
+    dev: json([
+      'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    ]),
+    staging: json([
+      'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+    ]),
+    prod: json([
+      'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+    ]),
+  },
 })
 
 export const userNotificationServiceSetup = (services: {
@@ -66,7 +121,7 @@ export const userNotificationServiceSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db()
     .command('node')
-    .args('--no-experimental-fetch', 'main.cjs')
+    .args('main.cjs')
     .redis()
     .env(getEnv(services))
     .secrets({
@@ -76,6 +131,11 @@ export const userNotificationServiceSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_LANDLAEKNIR_USERNAME: `/k8s/NOVA_LANDLAEKNIR_USERNAME`,
+      NOVA_LANDLAEKNIR_PASSWORD: `/k8s/NOVA_LANDLAEKNIR_PASSWORD`,
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
@@ -140,7 +200,7 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.cjs', '--job=worker')
+    .args('main.cjs', '--job=worker')
     .db()
     .migrations()
     .redis()
@@ -175,6 +235,11 @@ export const userNotificationWorkerSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_LANDLAEKNIR_USERNAME: `/k8s/NOVA_LANDLAEKNIR_USERNAME`,
+      NOVA_LANDLAEKNIR_PASSWORD: `/k8s/NOVA_LANDLAEKNIR_PASSWORD`,
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
@@ -189,7 +254,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .serviceAccount(serviceCleanupWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.cjs', '--job=cleanup')
+    .args('main.cjs', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
     .extraAttributes({
@@ -208,12 +273,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db({ name: 'user-notification' })
     .command('node')
-    .args(
-      '--no-experimental-fetch',
-      'main.cjs',
-      '--job=worker',
-      '--isBirthdayWorker',
-    )
+    .args('main.cjs', '--job=worker', '--isBirthdayWorker')
     .redis()
     .env({ ...getEnv(services) })
     .secrets({
@@ -223,6 +283,11 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_LANDLAEKNIR_USERNAME: `/k8s/NOVA_LANDLAEKNIR_USERNAME`,
+      NOVA_LANDLAEKNIR_PASSWORD: `/k8s/NOVA_LANDLAEKNIR_PASSWORD`,
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .resources({
       limits: {

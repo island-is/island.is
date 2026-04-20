@@ -6,7 +6,7 @@ import {
   PortalNavigationItem,
   m as coreMessages,
 } from '@island.is/portals/core'
-import { documentProviderNavigation } from '@island.is/portals/admin/document-provider'
+import { baseDocumentProviderNavigation } from '@island.is/portals/admin/document-provider'
 import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
 import { AdminPortalPaths } from './paths'
 import { idsAdminNavigation } from '@island.is/portals/admin/ids-admin'
@@ -35,7 +35,7 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     // Mannanafnaskrá
     icelandicNamesRegistryNavigation,
     // Skjalaveita
-    documentProviderNavigation,
+    baseDocumentProviderNavigation,
     // Umsoknarkerfi
     applicationSystemNavigation,
     // IDS Admin

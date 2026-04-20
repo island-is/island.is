@@ -1,5 +1,6 @@
 import { YesOrNoEnum } from '@island.is/application/core'
 import { NextStepInReviewOptions } from '../utils/enums'
+import { Locale } from '@island.is/shared/types'
 
 export type Maybe<T> = T | null
 
@@ -17,6 +18,16 @@ export type ApplicantsInfo = {
   email: string
   address: string
   isRepresentative?: boolean
+}
+
+export type AnswerApplicant = {
+  city: string
+  name: string
+  email: string
+  address: string
+  nationalId: string
+  postalCode: string
+  phoneNumber: string
 }
 
 export type LandlordInfo = {
@@ -122,6 +133,7 @@ export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
   landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
+  signingParties: ApplicantsInfo[]
 }
 
 export interface PropertySection {
@@ -185,7 +197,7 @@ export interface SecurityDepositSection {
   bankGuaranteeInfo: string | undefined
   thirdPartyGuaranteeInfo: string | undefined
   insuranceCompanyInfo: string | undefined
-  landlordsMutualFundInfo: string | undefined
+  mutualFundInfo: string | undefined
   otherInfo: string | undefined
   securityDepositAmount: string | undefined
   securityAmountOther: string | undefined
@@ -222,3 +234,113 @@ export interface RentalAgreementAnswers
     SecurityDepositSection,
     OtherFeesSection,
     ReviewSection {}
+
+export interface DraftPartyContact {
+  email: string
+  phone: string
+  nationalIdWithName: DraftNationalIdWithName
+}
+
+export interface DraftNationalIdWithName {
+  name: string
+  nationalId: string
+}
+
+export interface DraftPropertyUnit {
+  address?: string
+  addressCode?: number
+  appraisalUnitCode?: number
+  fireInsuranceValuation?: number
+  propertyCode?: number
+  propertyUsageDescription?: string
+  propertyValue?: number
+  size?: number
+  sizeUnit?: string
+  unitCode?: string
+  checked?: boolean
+  changedSize?: number
+  numOfRooms?: number
+}
+
+export interface DraftAppraisalUnit {
+  units: DraftPropertyUnit[]
+  address: string
+  unitCode: string
+  addressCode: number
+  propertyCode: number
+  propertyValue: number
+  propertyLandValue: object
+  propertyUsageDescription: string
+}
+
+export interface DraftPropertyByAddressCode {
+  size: number
+  address: string
+  landCode: number
+  sizeUnit: string
+  unitCode: string
+  postalCode: number
+  addressCode: number
+  propertyCode: number
+  propertyValue: number
+  appraisalUnits: DraftAppraisalUnit[]
+  municipalityCode: number
+  municipalityName: string
+  propertyLandValue: number
+  propertyUsageDescription: string
+}
+
+export interface DraftAnswers {
+  contractId: string
+  landlords: DraftPartyContact[]
+  landlordRepresentatives: DraftPartyContact[]
+  tenants: DraftPartyContact[]
+  signingParties: ApplicantsInfo[]
+  units: DraftPropertyUnit[]
+  startDate: string
+  endDate: string
+  amount: string
+  isIndexConnected: YesOrNoEnum[]
+  indexDate: string
+  indexRate: string
+  paymentMethodOther?: string
+  paymentDateOptions: string
+  paymentDayOther?: string
+  paymentMethodOptions: string
+  paymentMethodBankAccountNumber: BankAccount
+  securityDepositRequired: YesOrNoEnum
+  securityType: string
+  bankGuaranteeInfo: string
+  thirdPartyGuaranteeInfo: string
+  insuranceCompanyInfo: string
+  mutualFundInfo: string
+  otherInfo: string
+  securityDepositAmount: string
+  securityAmountOther: string
+  securityAmountCalculated: string
+  categoryType: string
+  categoryClass: string
+  categoryClassGroup: string
+  description: string
+  rules: string
+  conditionDescription: string
+  inspector: string
+  inspectorName?: string
+  smokeDetectors: string
+  fireExtinguisher: string
+  fireBlanket: string
+  emergencyExits: string
+  housingFundPayee: string
+  housingFundAmount?: string
+  electricityCostPayee: string
+  electricityCostMeterStatusDate?: string
+  electricityCostMeterNumber?: string
+  electricityCostMeterStatus?: string
+  heatingCostPayee: string
+  heatingCostMeterStatusDate?: string
+  heatingCostMeterNumber?: string
+  heatingCostMeterStatus?: string
+  otherCostPayedByTenant: YesOrNoEnum
+  otherCostItems: CostField[]
+  currentUserLocale: Locale
+}

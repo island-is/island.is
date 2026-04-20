@@ -14,4 +14,7 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional({ type: [Option] })
   organizations?: Option[]
+
+  @ApiPropertyOptional()
+  isLoginTypeAllowed?: boolean
 }

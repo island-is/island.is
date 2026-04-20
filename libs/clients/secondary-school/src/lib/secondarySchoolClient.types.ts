@@ -1,3 +1,11 @@
+export interface ApplicationPeriod {
+  allowFreshmanApplication: boolean
+  registrationEndDateGeneral: Date
+  registrationEndDateFreshman: Date
+  reviewStartDateGeneral: Date
+  reviewStartDateFreshman: Date
+}
+
 export interface Student {
   hasActiveApplication: boolean
   isFreshman: boolean
@@ -15,6 +23,7 @@ export interface SecondarySchool {
   thirdLanguages: Language[]
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
+  requireThirdLanguage: boolean
   isOpenForAdmissionGeneral: boolean
   isOpenForAdmissionFreshman: boolean
 }

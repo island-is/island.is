@@ -12,11 +12,15 @@ export class ServiceWebPageSyncService
   implements CmsSyncProvider<IServiceWebPage>
 {
   processSyncData(entries: processSyncDataInput<IServiceWebPage>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IServiceWebPage =>
         entry.sys.contentType.sys.id === 'serviceWebPage' &&
         !!entry.fields.title,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IServiceWebPage[]) {

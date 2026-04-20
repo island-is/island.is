@@ -5,6 +5,7 @@ import {
 } from './case'
 import {
   InstitutionUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
@@ -44,10 +45,11 @@ interface CourtSession {
 export const hasGeneratedCourtRecordPdf = (
   caseState: CaseState | null | undefined,
   indictmentRulingDecision: CaseIndictmentRulingDecision | null | undefined,
-  courtSessions: CourtSession[] | undefined | null,
+  withCourtSessions: boolean | null | undefined,
+  courtSessions: CourtSession[] | null | undefined,
   user?: InstitutionUser,
 ) => {
-  if (!courtSessions || courtSessions.length === 0) {
+  if (!withCourtSessions || !courtSessions || courtSessions.length === 0) {
     return false
   }
 
@@ -55,20 +57,20 @@ export const hasGeneratedCourtRecordPdf = (
     return Boolean(courtSessions[0].startDate)
   }
 
-  if (
-    isProsecutionUser(user) ||
-    isPublicProsecutionOfficeUser(user) ||
-    isDefenceUser(user)
-  ) {
+  if (isProsecutionUser(user) || isDefenceUser(user)) {
     return Boolean(courtSessions[0].isConfirmed)
   }
 
-  if (
-    isPrisonAdminUser(user) &&
-    isCompletedCase(caseState) &&
-    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  ) {
-    return Boolean(courtSessions[0].isConfirmed)
+  if (isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) {
+    return isCompletedCase(caseState) && Boolean(courtSessions[0].isConfirmed)
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return (
+      isCompletedCase(caseState) &&
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE &&
+      Boolean(courtSessions[0].isConfirmed)
+    )
   }
 
   return false

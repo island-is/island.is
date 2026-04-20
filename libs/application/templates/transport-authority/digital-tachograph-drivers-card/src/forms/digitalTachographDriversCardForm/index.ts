@@ -5,7 +5,7 @@ import { cardTypeSection } from './cardTypeSection'
 import { applicantSection } from './applicantSection'
 import { externalDataSection } from './externalDataSection'
 import { fakeDataSection } from './fakeDataSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItems } from '../../utils'
 
@@ -14,7 +14,7 @@ export const getDigitalTachographDriversCardForm = ({
 }): Form =>
   buildForm({
     id: 'DigitalTachographDriversCardFormDraft',
-    logo: Logo,
+    logo: TransportAuthorityLogo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

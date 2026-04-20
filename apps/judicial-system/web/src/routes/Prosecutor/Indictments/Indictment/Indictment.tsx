@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
@@ -11,7 +11,10 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
+import {
+  getIndictmentCountCompare,
+  isTrafficViolationIndictmentCount,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -25,6 +28,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseOrigin,
   Defendant,
@@ -36,13 +40,9 @@ import {
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   UpdateIndictmentCount,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -52,6 +52,7 @@ import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/
 import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
 import { strings } from './Indictment.strings'
+import * as styles from './Indictment.css'
 
 export const getIndictmentIntroductionAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -66,24 +67,25 @@ export const getIndictmentIntroductionAutofill = (
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
-        `\n\n${defendants.map((defendant) => {
-          return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
-            {
-              defendantName: defendant.name
-                ? applyCase('þgf', defendant.name)
-                : 'Ekki skráð',
-              defendantNationalId: defendant.nationalId
-                ? formatNationalId(defendant.nationalId)
-                : 'Ekki skráð',
-            },
-          )}\n          ${
-            defendant.address
-              ? applyCaseToAddress('þgf', defendant.address)
-              : 'Ekki skráð'
-          },`
-        })}
-    `,
+        `\n\n${defendants
+          .map((defendant) => {
+            return `\n          ${formatMessage(
+              strings.indictmentIntroductionAutofillDefendant,
+              {
+                defendantName: defendant.name
+                  ? applyCase('þgf', defendant.name)
+                  : 'Ekki skráð',
+                defendantNationalId: defendant.nationalId
+                  ? formatNationalId(defendant.nationalId)
+                  : 'Ekki skráð',
+              },
+            )}\n          ${
+              defendant.address
+                ? applyCaseToAddress('þgf', defendant.address)
+                : 'Ekki skráð'
+            },`
+          })
+          .join('')}`,
       ]
     : []
 }
@@ -118,20 +120,21 @@ const Indictment = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
+  const demandsInput = useDebouncedInput('demands', ['empty'])
+  const civilDemandsInput = useDebouncedInput('civilDemands', ['empty'])
+  const indictmentIntroductionInput = useDebouncedInput(
+    'indictmentIntroduction',
+    ['empty'],
+  )
+
   const { formatMessage } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const {
     createIndictmentCount,
     updateIndictmentCount,
     deleteIndictmentCount,
     updateIndictmentCountState,
   } = useIndictmentCounts()
-  const [
-    indictmentIntroductionErrorMessage,
-    setIndictmentIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
-  const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
 
   const gender = getDefaultDefendantGender(workingCase.defendants)
 
@@ -146,7 +149,9 @@ const Indictment = () => {
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
         return undefined
-      } else return data as PoliceCaseInfo[]
+      } else {
+        return data as PoliceCaseInfo[]
+      }
     },
   })
 
@@ -157,7 +162,16 @@ const Indictment = () => {
     [workingCase.id],
   )
 
-  useDeb(workingCase, ['indictmentIntroduction', 'demands'])
+  const getLicencePlateFromPoliceCase = useCallback(
+    (policeCaseNumber: string) => {
+      return policeCaseData?.policeCaseInfo?.find(
+        (policeCase) =>
+          policeCase?.policeCaseNumber === policeCaseNumber &&
+          policeCase.licencePlate,
+      )?.licencePlate
+    },
+    [policeCaseData],
+  )
 
   const getDemands = useCallback(
     (
@@ -276,49 +290,67 @@ const Indictment = () => {
   const handleUpdateIndictmentCount = useCallback(
     async (
       indictmentCountId: string,
-      updatedIndictmentCount: UpdateIndictmentCount,
+      indictmentCountUpdate: UpdateIndictmentCount,
       updatedOffenses?: Offense[],
     ) => {
-      if (
-        updatedIndictmentCount.policeCaseNumber &&
-        policeCaseData?.policeCaseInfo
-      ) {
-        const vehicleNumber = policeCaseData.policeCaseInfo?.find(
-          (policeCase) =>
-            policeCase?.policeCaseNumber ===
-            updatedIndictmentCount.policeCaseNumber,
-        )?.licencePlate
+      const prevIndictmentCount = workingCase.indictmentCounts?.find(
+        (count) => count.id === indictmentCountId,
+      )
+
+      if (!prevIndictmentCount) {
+        return
+      }
+
+      const policeCaseNumber =
+        indictmentCountUpdate.policeCaseNumber ??
+        prevIndictmentCount.policeCaseNumber ??
+        ''
+      const isTrafficViolation = isTrafficViolationIndictmentCount(
+        indictmentCountUpdate.indictmentCountSubtypes ??
+          prevIndictmentCount.indictmentCountSubtypes,
+        workingCase.indictmentSubtypes[policeCaseNumber],
+      )
+      const updatingPoliceCaseNumber = indictmentCountUpdate.policeCaseNumber
+      const missingVehicleRegistrationNumber =
+        indictmentCountUpdate.vehicleRegistrationNumber === undefined &&
+        !prevIndictmentCount.vehicleRegistrationNumber
+      const shouldLookupLicencePlate =
+        isTrafficViolation &&
+        (updatingPoliceCaseNumber || missingVehicleRegistrationNumber)
+
+      if (shouldLookupLicencePlate) {
+        const vehicleNumber = getLicencePlateFromPoliceCase(policeCaseNumber)
 
         if (vehicleNumber)
-          updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
+          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
         workingCase.id,
         indictmentCountId,
-        updatedIndictmentCount,
+        indictmentCountUpdate,
       )
 
       if (!returnedIndictmentCount) {
         return
       }
 
-      const prevSuspensionOffenses = getSuspensionOffenses(
-        workingCase.indictmentCounts,
-      )
-
-      const newSuspensionOffenses = getSuspensionOffenses(
-        workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId
-            ? {
-                ...returnedIndictmentCount,
-                offenses: updatedOffenses ?? count.offenses,
-              }
-            : count,
-        ),
-      )
+      const updatedIndictmentCount = {
+        ...returnedIndictmentCount,
+        offenses: updatedOffenses ?? prevIndictmentCount.offenses,
+      }
 
       if (updatedOffenses && updatedOffenses?.length > 0) {
+        const prevSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts,
+        )
+
+        const newSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts?.map((count) =>
+            count.id === indictmentCountId ? updatedIndictmentCount : count,
+          ),
+        )
+
         setSuspensionRequest(
           prevSuspensionOffenses,
           newSuspensionOffenses,
@@ -328,19 +360,19 @@ const Indictment = () => {
 
       updateIndictmentCountState(
         indictmentCountId,
-        returnedIndictmentCount,
+        updatedIndictmentCount,
         setWorkingCase,
-        updatedOffenses,
       )
     },
     [
-      policeCaseData?.policeCaseInfo,
+      getLicencePlateFromPoliceCase,
       setSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,
       updateIndictmentCountState,
       workingCase.id,
       workingCase.indictmentCounts,
+      workingCase.indictmentSubtypes,
       workingCase.requestDriversLicenseSuspension,
     ],
   )
@@ -378,6 +410,33 @@ const Indictment = () => {
       workingCase.indictmentCounts,
     ],
   )
+
+  useOnceOn(Boolean(policeCaseData), () => {
+    if (policeCaseData) {
+      for (const indictmentCount of workingCase.indictmentCounts || []) {
+        if (
+          !indictmentCount.policeCaseNumber ||
+          !isTrafficViolationIndictmentCount(
+            indictmentCount.indictmentCountSubtypes,
+            workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
+          ) ||
+          indictmentCount.vehicleRegistrationNumber
+        ) {
+          continue
+        }
+
+        const vehicleNumber = getLicencePlateFromPoliceCase(
+          indictmentCount.policeCaseNumber,
+        )
+
+        if (vehicleNumber) {
+          handleUpdateIndictmentCount(indictmentCount.id, {
+            vehicleRegistrationNumber: vehicleNumber,
+          })
+        }
+      }
+    }
+  })
 
   const initialize = useCallback(() => {
     const indictmentCounts = workingCase.indictmentCounts || []
@@ -437,92 +496,74 @@ const Indictment = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={3}>
-          <SectionHeading
-            title={formatMessage(strings.indictmentIntroductionTitle)}
-          />
-          <Input
-            name="indictmentIntroduction"
-            label={formatMessage(strings.indictmentIntroductionLabel)}
-            placeholder={formatMessage(
-              strings.indictmentIntroductionPlaceholder,
-            )}
-            value={workingCase.indictmentIntroduction || ''}
-            errorMessage={indictmentIntroductionErrorMessage}
-            hasError={indictmentIntroductionErrorMessage !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'indictmentIntroduction',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                indictmentIntroductionErrorMessage,
-                setIndictmentIntroductionErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'indictmentIntroduction',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setIndictmentIntroductionErrorMessage,
-              )
-            }
-            textarea
-            required
-            autoComplete="off"
-            rows={10}
-            autoExpand={{ on: true, maxHeight: 300 }}
-          />
-        </Box>
-        {indictmentCounts.map((indictmentCount, index) => (
-          <motion.div
-            key={indictmentCount.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-          >
-            <Box
-              component="section"
-              marginBottom={
-                index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
+        <Box display="flex" flexDirection="column" rowGap={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(strings.indictmentIntroductionTitle)}
+            />
+            <Input
+              name="indictmentIntroduction"
+              label={formatMessage(strings.indictmentIntroductionLabel)}
+              placeholder={formatMessage(
+                strings.indictmentIntroductionPlaceholder,
+              )}
+              value={indictmentIntroductionInput.value ?? ''}
+              errorMessage={indictmentIntroductionInput.errorMessage}
+              hasError={indictmentIntroductionInput.hasError}
+              onChange={(evt) =>
+                indictmentIntroductionInput.onChange(evt.target.value)
               }
+              onBlur={(evt) =>
+                indictmentIntroductionInput.onBlur(evt.target.value)
+              }
+              textarea
+              required
+              autoComplete="off"
+              rows={10}
+            />
+          </Box>
+          <AnimatePresence>
+            {indictmentCounts.map((indictmentCount, index) => (
+              <motion.div
+                key={indictmentCount.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <Box component="section">
+                  <SectionHeading
+                    title={formatMessage(strings.indictmentCountHeading, {
+                      count: index + 1,
+                    })}
+                  />
+                  <IndictmentCount
+                    indictmentCount={indictmentCount}
+                    workingCase={workingCase}
+                    onDelete={
+                      index > 0 ? handleDeleteIndictmentCount : undefined
+                    }
+                    onChange={handleUpdateIndictmentCount}
+                    setWorkingCase={setWorkingCase}
+                    updateIndictmentCountState={updateIndictmentCountState}
+                  />
+                </Box>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <Box display="flex" justifyContent="flexEnd">
+            <Button
+              variant="ghost"
+              icon="add"
+              onClick={handleCreateIndictmentCount}
+              disabled={false}
             >
-              <SectionHeading
-                title={formatMessage(strings.indictmentCountHeading, {
-                  count: index + 1,
-                })}
-              />
-              <AnimatePresence>
-                <IndictmentCount
-                  indictmentCount={indictmentCount}
-                  workingCase={workingCase}
-                  onDelete={index > 0 ? handleDeleteIndictmentCount : undefined}
-                  onChange={handleUpdateIndictmentCount}
-                  setWorkingCase={setWorkingCase}
-                  updateIndictmentCountState={updateIndictmentCountState}
-                />
-              </AnimatePresence>
-            </Box>
-          </motion.div>
-        ))}
-        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
-          <Button
-            variant="ghost"
-            icon="add"
-            onClick={handleCreateIndictmentCount}
-            disabled={false}
-          >
-            {formatMessage(strings.addIndictmentCount)}
-          </Button>
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <SectionHeading title={formatMessage(strings.demandsTitle)} />
-          <BlueBox>
-            <Box marginBottom={3}>
+              {formatMessage(strings.addIndictmentCount)}
+            </Button>
+          </Box>
+          <Box component="section">
+            <SectionHeading title={formatMessage(strings.demandsTitle)} />
+            <BlueBox className={styles.demandsGrid}>
               <Checkbox
                 name="requestDriversLicenseSuspension"
                 label={formatMessage(strings.demandsRequestSuspension)}
@@ -547,89 +588,54 @@ const Indictment = () => {
                 filled
                 large
               />
-            </Box>
-            <Input
-              name="demands"
-              label={formatMessage(strings.demandsLabel)}
-              placeholder={formatMessage(strings.demandsPlaceholder)}
-              value={workingCase.demands ?? ''}
-              errorMessage={demandsErrorMessage}
-              hasError={demandsErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'demands',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  demandsErrorMessage,
-                  setDemandsErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'demands',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setDemandsErrorMessage,
-                )
-              }
-              textarea
-              autoComplete="off"
-              required
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
-            />
-          </BlueBox>
-        </Box>
-        {workingCase.hasCivilClaims && (
-          <Box marginBottom={6}>
-            <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
-            <BlueBox>
+              <Input
+                name="demands"
+                label={formatMessage(strings.demandsLabel)}
+                placeholder={formatMessage(strings.demandsPlaceholder)}
+                value={demandsInput.value ?? ''}
+                onChange={(evt) => demandsInput.onChange(evt.target.value)}
+                onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
+                errorMessage={demandsInput.errorMessage}
+                hasError={demandsInput.hasError}
+                autoComplete="off"
+                rows={7}
+                textarea
+                required
+              />
+            </BlueBox>
+          </Box>
+          {workingCase.hasCivilClaims && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(strings.civilDemandsTitle)}
+              />
               <Input
                 name="civilDemands"
                 label={formatMessage(strings.civilDemandsLabel)}
                 placeholder={formatMessage(strings.civilDemandsPlaceholder)}
-                value={workingCase.civilDemands ?? ''}
-                errorMessage={civilDemandsErrorMessage}
-                hasError={civilDemandsErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'civilDemands',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    civilDemandsErrorMessage,
-                    setCivilDemandsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'civilDemands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setCivilDemandsErrorMessage,
-                  )
-                }
+                value={civilDemandsInput.value ?? ''}
+                errorMessage={civilDemandsInput.errorMessage}
+                hasError={civilDemandsInput.hasError}
+                onChange={(evt) => civilDemandsInput.onChange(evt.target.value)}
+                onBlur={(evt) => civilDemandsInput.onBlur(evt.target.value)}
                 textarea
                 autoComplete="off"
                 required
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
               />
-            </BlueBox>
+            </Box>
+          )}
+          <Box component="section">
+            <InputPenalties />
           </Box>
-        )}
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(strings.pdfButtonIndictment)}
-            pdfType="indictment"
-            elementId="Ákæra"
-          />
+          <Box marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(strings.pdfButtonIndictment)}
+              pdfType="indictment"
+              elementId="Ákæra"
+            />
+          </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

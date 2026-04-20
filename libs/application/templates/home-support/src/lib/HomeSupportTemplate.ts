@@ -5,12 +5,12 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  NationalRegistryCohabitantsApi,
+  NationalRegistryV3CohabitantsApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
   HealthInsuranceApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   HealthCenterApi,
 } from '../dataProviders'
@@ -83,8 +83,8 @@ const HomeSupportTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 UserProfileApi,
-                NationalRegistryUserApi,
-                NationalRegistryCohabitantsApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3CohabitantsApi,
                 HealthInsuranceApi,
                 HealthCenterApi,
               ],

@@ -281,6 +281,7 @@ export const ReportFieldsRepeater: FC<
         ...field,
         enabled: !field.enabled,
       }
+      clearErrors(`${id}[${index}]`)
       update(index, updatedField)
     } else {
       remove(index)
@@ -386,8 +387,7 @@ export const ReportFieldsRepeater: FC<
                         })}
                         error={err}
                         disabled={!repeaterField.enabled}
-                        readOnly={repeaterField.initial}
-                        required={!repeaterField.initial}
+                        required
                       />
                     ) : field.id === 'share' ? (
                       <InputController

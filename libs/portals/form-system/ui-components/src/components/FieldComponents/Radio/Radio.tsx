@@ -1,110 +1,141 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import {
-  RadioButton,
-  Text,
   Box,
   Inline,
   InputError,
+  RadioButton,
+  Text,
 } from '@island.is/island-ui/core'
-import { Dispatch, useEffect, useState } from 'react'
-import { getValue } from '../../../lib/getValue'
+import { useLocale } from '@island.is/localization'
+import { Dispatch, useEffect, useMemo } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
-import { useIntl } from 'react-intl'
+import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
+  valueIndex?: number
 }
 
-export const Radio = ({ item, dispatch, lang = 'is', hasError }: Props) => {
-  const radioButtons = item.list as FormSystemListItem[]
-  const [value, setValue] = useState<string>(getValue(item, 'listValue'))
-  const [radioChecked, setRadioChecked] = useState<boolean[]>([])
-  const language = lang ?? 'is'
-  const { formatMessage } = useIntl()
+export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
+  const { formatMessage, lang } = useLocale()
+  const { control, trigger } = useFormContext()
 
-  useEffect(() => {
-    setRadioChecked(
-      radioButtons?.map((rb) => (rb.label?.is === value ? true : false)) ?? [],
-    )
-  }, [radioButtons, value])
-
-  const handleChange = (index: number) => {
-    setRadioChecked((prev) => prev.map((rb, i) => (i === index ? true : false)))
-    if (!dispatch) return
-    dispatch({
-      type: 'SET_LIST_VALUE',
-      payload: {
-        id: item.id,
-        value: radioButtons[index].label?.is,
-      },
-    })
-    setValue(radioButtons[index].label?.is ?? '')
-  }
-
-  const radioButton = (rb: FormSystemListItem, index: number) => (
-    <Box
-      width="half"
-      padding={1}
-      onClick={() => handleChange(index)}
-      key={rb.id}
-    >
-      <RadioButton
-        label={rb?.label?.[language]}
-        tooltip={
-          rb?.description?.is && rb?.description?.[language] !== ''
-            ? rb?.description?.[language]
-            : undefined
-        }
-        large
-        backgroundColor="blue"
-        checked={radioChecked[index]}
-        onChange={() => handleChange(index)}
-      />
-    </Box>
+  const radioButtons = useMemo(
+    () => (item.list as FormSystemListItem[]) ?? [],
+    [item.list],
   )
 
-  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+  // The reducer/dependency logic elsewhere compares against label.is,
+  // so keep the stored value consistent with that.
+  const selected = useMemo(
+    () => item?.list?.find((listItem) => listItem?.isSelected === true),
+    [item?.list],
+  )
+
+  const defaultSelectedValue =
+    getValue(item, 'listValue', valueIndex) ?? selected?.label?.is ?? ''
+
+  const fieldName = `${item.id}.${valueIndex}`
 
   useEffect(() => {
-    if (selected && dispatch) {
-      if (!value) {
-        dispatch({
-          type: 'SET_LIST_VALUE',
-          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
-        })
-        setValue(selected.label?.[lang] ?? '')
-      }
-    }
+    if (!dispatch) return
+    if (!selected) return
+
+    const existing = getValue(item, 'listValue', valueIndex)
+    if (existing) return
+
+    const seededValue = selected.label?.is ?? ''
+    if (!seededValue) return
+
+    dispatch({
+      type: 'SET_LIST_VALUE',
+      payload: { id: item.id, value: seededValue, valueIndex },
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <>
-      <Inline space={1}>
-        <Text variant="h3">{item?.name?.[language]}</Text>
-        {item?.isRequired && (
-          <Text variant="h3" as="span" color="red600">
-            {' '}
-            *
-          </Text>
-        )}
-      </Inline>
-      {hasError && (
-        <InputError errorMessage={formatMessage(m.basicErrorMessage)} />
+    <Controller
+      key={`${item.id}-${valueIndex}`}
+      name={fieldName}
+      control={control}
+      defaultValue={defaultSelectedValue}
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+      }}
+      render={({ field, fieldState }) => (
+        <>
+          <Inline space={1}>
+            <Text variant="h4">{item?.name?.[lang]}</Text>
+            {item?.isRequired && (
+              <Text variant="h4" as="span">
+                *
+              </Text>
+            )}
+          </Inline>
+
+          {(hasError || fieldState.error) && (
+            <InputError
+              errorMessage={
+                fieldState.error?.message ?? formatMessage(m.basicErrorMessage)
+              }
+            />
+          )}
+
+          <Box display="flex" flexDirection="row" flexWrap="wrap">
+            {radioButtons.map((rb, index) => {
+              const rbValue = rb.label?.is ?? ''
+
+              return (
+                <Box
+                  width="half"
+                  padding={1}
+                  onClick={() => {
+                    field.onChange(rbValue)
+                    trigger(field.name)
+
+                    if (!dispatch) return
+                    dispatch({
+                      type: 'SET_LIST_VALUE',
+                      payload: { id: item.id, value: rbValue, valueIndex },
+                    })
+                  }}
+                  key={rb.id ?? `${item.id}-${valueIndex}-${index}`}
+                >
+                  <RadioButton
+                    label={rb?.label?.[lang]}
+                    tooltip={
+                      rb?.description?.is && rb?.description?.[lang] !== ''
+                        ? rb?.description?.[lang]
+                        : undefined
+                    }
+                    large
+                    backgroundColor="blue"
+                    checked={field.value === rbValue}
+                    onChange={() => {
+                      field.onChange(rbValue)
+                      trigger(field.name)
+
+                      if (!dispatch) return
+                      dispatch({
+                        type: 'SET_LIST_VALUE',
+                        payload: { id: item.id, value: rbValue, valueIndex },
+                      })
+                    }}
+                  />
+                </Box>
+              )
+            })}
+          </Box>
+        </>
       )}
-      <Box
-        marginTop={2}
-        marginBottom={2}
-        display="flex"
-        flexDirection="row"
-        flexWrap="wrap"
-      >
-        {radioButtons?.map((rb, index) => radioButton(rb, index))}
-      </Box>
-    </>
+    />
   )
 }

@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const dataHandling = defineMessages({
-  dataFetchTitle: {
-    id: 'dp.application:prerequisites.dataFetchTitle',
-    defaultMessage: 'Gagnaöflun og meðferð persónuupplýsinga',
-    description: 'Data fetch title',
-  },
   dataFetchText: {
     id: 'dp.application:prerequisites.dataFetchText#markdown',
     defaultMessage:

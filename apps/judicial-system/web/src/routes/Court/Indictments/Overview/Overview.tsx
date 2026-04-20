@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -23,10 +23,14 @@ import {
   UserContext,
   // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  IndictmentDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
@@ -36,18 +40,17 @@ const OverviewBody = ({
   handleNavigationTo: (destination: string) => Promise<void>
 }) => {
   const { user } = useContext(UserContext)
+
   const router = useRouter()
 
-  const { workingCase, isLoadingWorkingCase, setWorkingCase } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
-  const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
+  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
   return (
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
@@ -55,41 +58,41 @@ const OverviewBody = ({
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
-        {workingCase.court &&
-          latestDate?.date &&
-          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
-          workingCase.indictmentDecision !==
-            IndictmentDecision.REDISTRIBUTING && (
-            <Box component="section" marginBottom={5}>
-              <IndictmentCaseScheduledCard
-                court={workingCase.court}
-                indictmentDecision={workingCase.indictmentDecision}
-                courtDate={latestDate.date}
-                courtRoom={latestDate.location}
-                postponedIndefinitelyExplanation={
-                  workingCase.postponedIndefinitelyExplanation
-                }
-                courtSessionType={workingCase.courtSessionType}
-              />
-            </Box>
-          )}
-        <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
-        </Box>
-        {/* 
-    NOTE: Temporarily hidden while list of laws broken is not complete in
-    indictment cases
-    
-    {lawsBroken.size > 0 && (
-      <Box marginBottom={5}>
-        <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-      </Box>
-    )} */}
-        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
-          <>
-            <Accordion>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.court &&
+            latestDate?.date &&
+            workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+            workingCase.indictmentDecision !==
+              IndictmentDecision.REDISTRIBUTING && (
+              <Box component="section">
+                <IndictmentCaseScheduledCard
+                  court={workingCase.court}
+                  indictmentDecision={workingCase.indictmentDecision}
+                  courtDate={latestDate.date}
+                  courtRoom={latestDate.location}
+                  postponedIndefinitelyExplanation={
+                    workingCase.postponedIndefinitelyExplanation
+                  }
+                  courtSessionType={workingCase.courtSessionType}
+                />
+              </Box>
+            )}
+          <Box component="section">
+            <InfoCardActiveIndictment displayOpenCaseReference={true} />
+          </Box>
+          {/*
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+
+            {lawsBroken.size > 0 && (
+              <Box marginBottom={5}>
+                <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+              </Box>
+            )} */}
+          {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+            <Accordion dividerOnBottom={false} dividerOnTop={false}>
               {workingCase.mergedCases.map((mergedCase) => (
-                <Box marginBottom={5} key={mergedCase.id}>
+                <Box key={mergedCase.id}>
                   <ConnectedCaseFilesAccordionItem
                     connectedCaseParentId={workingCase.id}
                     connectedCase={mergedCase}
@@ -97,12 +100,16 @@ const OverviewBody = ({
                 </Box>
               ))}
             </Accordion>
-            <Box marginBottom={5} />
-          </>
-        )}
-        <Box component="section" marginBottom={10}>
-          <IndictmentCaseFilesList workingCase={workingCase} />
-          <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          )}
+          <Box component="section">
+            <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+          <Box
+            component="section"
+            display="flex"
+            justifyContent="flexEnd"
+            columnGap={2}
+          >
             <Button
               variant="primary"
               icon="add"
@@ -112,12 +119,27 @@ const OverviewBody = ({
                   `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
                 )
               }}
-              disabled={false}
+              disabled={workingCase.state === CaseState.CORRECTING}
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>
+            {isUserAssignedJudge && (
+              <Button
+                variant="primary"
+                icon="add"
+                size="small"
+                onClick={() => {
+                  router.push(
+                    `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
+                  )
+                }}
+                disabled={workingCase.state === CaseState.CORRECTING}
+              >
+                Kveða upp úrskurð undir rekstri máls
+              </Button>
+            )}
           </Box>
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -130,25 +152,8 @@ const OverviewBody = ({
             )
           }
           nextButtonText={formatMessage(core.continue)}
-          /* 
-        The return indictment feature has been removed for the time being but
-        we want to hold on to the functionality for now, since we are likely
-        to change this feature in the future.
-      */
-          // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-          // actionButtonColorScheme={'destructive'}
-          // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
-          // onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
         />
       </FormContentContainer>
-      {modalVisible === 'RETURN_INDICTMENT' && (
-        <ReturnIndictmentModal
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          onClose={() => setModalVisible(undefined)}
-          onComplete={() => router.push(getStandardUserDashboardRoute(user))}
-        />
-      )}
     </>
   )
 }
@@ -159,27 +164,32 @@ const IndictmentOverview = () => {
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
 
+  const defendants = workingCase.defendants
+  const hasDefendants = isNonEmptyArray(defendants)
+
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (workingCase.defendants) {
-        const promises = workingCase.defendants.map((defendant) =>
-          updateDefendant({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            subpoenaType: defendant.subpoenaType,
-          }),
-        )
+      if (!isNonEmptyArray(defendants)) {
+        return
+      }
 
-        const allDataSentToServer = await Promise.all(promises)
+      const promises = defendants.map((defendant) =>
+        updateDefendant({
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          subpoenaType: defendant.subpoenaType,
+        }),
+      )
 
-        if (!allDataSentToServer.every(Boolean)) {
-          return
-        }
+      const allDataSentToServer = await Promise.all(promises)
+
+      if (!allDataSentToServer.every(Boolean)) {
+        return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [router, updateDefendant, workingCase.defendants, workingCase.id],
+    [defendants, router, updateDefendant, workingCase.id],
   )
 
   return (
@@ -187,7 +197,7 @@ const IndictmentOverview = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={true}
+      isValid={hasDefendants}
       onNavigationTo={handleNavigationTo}
     >
       <OverviewBody handleNavigationTo={handleNavigationTo} />

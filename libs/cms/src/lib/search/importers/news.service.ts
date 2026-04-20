@@ -17,12 +17,16 @@ import {
 export class NewsSyncService implements CmsSyncProvider<INews> {
   processSyncData(entries: processSyncDataInput<INews>) {
     // only process news that we consider not to be empty
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is INews =>
         entry.sys.contentType.sys.id === 'news' &&
         !!entry.fields.title &&
         !!entry.fields.date,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: INews[]) {

@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -15,6 +16,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -35,9 +37,9 @@ import {
   indictmentCases,
   investigationCases,
   isCompletedCase,
+  isDefenceUser,
   isRequestCase,
   restrictionCases,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -64,7 +66,6 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { transitionCase } from './state/case.state'
 import {
@@ -80,6 +81,7 @@ export class LimitedAccessCaseController {
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -91,7 +93,6 @@ export class LimitedAccessCaseController {
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
   @UseInterceptors(
-    DefendantIndictmentAccessedInterceptor,
     CompletedAppealAccessedInterceptor,
     LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
@@ -106,14 +107,18 @@ export class LimitedAccessCaseController {
     @CurrentCase() theCase: Case,
     @CurrentHttpUser() user: TUser,
   ): Promise<Case> {
-    this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
+    this.logger.debug(`Getting case ${caseId} by id`)
 
-    if (user.role === UserRole.DEFENDER && !theCase.openedByDefender) {
-      const updated = await this.limitedAccessCaseService.update(
-        theCase,
-        { openedByDefender: nowFactory() },
-        user,
+    if (isDefenceUser(user) && !theCase.openedByDefender) {
+      const updated = await this.sequelize.transaction((transaction) =>
+        this.limitedAccessCaseService.update(
+          theCase,
+          { openedByDefender: nowFactory() },
+          user,
+          transaction,
+        ),
       )
+
       return updated
     }
 
@@ -142,7 +147,7 @@ export class LimitedAccessCaseController {
     @CurrentCase() theCase: Case,
     @Body() updateDto: UpdateCaseDto,
   ): Promise<Case> {
-    this.logger.debug(`Updating limitedAccess case ${caseId}`)
+    this.logger.debug(`Updating case ${caseId}`)
 
     const update: LimitedAccessUpdateCase = updateDto
 
@@ -150,14 +155,20 @@ export class LimitedAccessCaseController {
       update.defendantStatementDate = nowFactory()
     }
 
-    return this.limitedAccessCaseService.update(theCase, update, user)
+    return this.sequelize.transaction((transaction) =>
+      this.limitedAccessCaseService.update(theCase, update, user, transaction),
+    )
   }
 
   @UseGuards(
     JwtAuthUserGuard,
     LimitedAccessCaseExistsGuard,
     RolesGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
   )
@@ -180,10 +191,8 @@ export class LimitedAccessCaseController {
 
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.limitedAccessCaseService.update(
-      theCase,
-      update,
-      user,
+    const updatedCase = await this.sequelize.transaction((transaction) =>
+      this.limitedAccessCaseService.update(theCase, update, user, transaction),
     )
 
     this.eventService.postEvent(transition.transition, updatedCase)
@@ -321,6 +330,7 @@ export class LimitedAccessCaseController {
         !hasGeneratedCourtRecordPdf(
           theCase.state,
           theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
           theCase.courtSessions,
           user,
         )
@@ -330,9 +340,12 @@ export class LimitedAccessCaseController {
         )
       }
 
-      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
-        theCase,
-        user,
+      pdf = await this.sequelize.transaction(async (transaction) =>
+        this.pdfService.getCourtRecordPdfForIndictmentCase(
+          theCase,
+          user,
+          transaction,
+        ),
       )
     }
 
@@ -429,7 +442,9 @@ export class LimitedAccessCaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getIndictmentPdf(theCase)
+    const pdf = await this.sequelize.transaction(async (transaction) =>
+      this.pdfService.getIndictmentPdf(theCase, transaction),
+    )
 
     res.end(pdf)
   }
@@ -507,9 +522,8 @@ export class LimitedAccessCaseController {
       `Getting all files for case ${theCase.id} as a zip document`,
     )
 
-    const zip = await this.limitedAccessCaseService.getAllFilesZip(
-      theCase,
-      user,
+    const zip = await this.sequelize.transaction(async (transaction) =>
+      this.limitedAccessCaseService.getAllFilesZip(theCase, user, transaction),
     )
 
     res.end(zip)

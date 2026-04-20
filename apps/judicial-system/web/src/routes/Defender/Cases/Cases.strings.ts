@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const defenderCases = defineMessages({
-  casesTitle: {
-    id: 'judicial.system.core:defender_cases.title',
-    defaultMessage: 'Málin þín',
-    description: 'Notaður sem titill á yfirlitssíðu verjanda.',
-  },
   activeCasesTabLabel: {
     id: 'judicial.system.core:defender_cases.active_cases_tab_label',
     defaultMessage: 'Mál í vinnslu',

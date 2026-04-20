@@ -23,7 +23,7 @@ import {
   CivilClaimantExistsGuard,
   CurrentCivilClaimant,
   CurrentDefendant,
-  DefendantExistsGuard,
+  SplitDefendantExistsGuard,
 } from '../defendant'
 import { Case, CivilClaimant, Defendant } from '../repository'
 import { SubpoenaExistsGuard } from '../subpoena'
@@ -113,7 +113,11 @@ export class InternalNotificationController {
       messageEndpoint[MessageType.SUBPOENA_NOTIFICATION]
     }/:defendantId/:subpoenaId`,
   )
-  @UseGuards(CaseHasExistedGuard, DefendantExistsGuard, SubpoenaExistsGuard)
+  @UseGuards(
+    CaseHasExistedGuard,
+    SplitDefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Sends a subpoena notification for an existing subpoena',
@@ -140,7 +144,7 @@ export class InternalNotificationController {
       messageEndpoint[MessageType.DEFENDANT_NOTIFICATION]
     }/:defendantId`,
   )
-  @UseGuards(CaseHasExistedGuard, DefendantExistsGuard)
+  @UseGuards(CaseHasExistedGuard, SplitDefendantExistsGuard)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description:

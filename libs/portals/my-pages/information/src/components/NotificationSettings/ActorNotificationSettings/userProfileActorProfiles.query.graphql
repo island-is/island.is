@@ -3,6 +3,7 @@ query UserProfileActorProfiles {
     data {
       fromNationalId
       fromName
+      email
       emailNotifications
       emailsId
     }

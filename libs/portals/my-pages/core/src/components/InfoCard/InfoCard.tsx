@@ -43,8 +43,8 @@ import React from 'react'
 import { useWindowSize } from 'react-use'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
-import LoaderCard from './LoaderCard'
-import TimeCard from './TimeCard'
+import { LoaderCard } from './LoaderCard'
+import { TimeCard } from './TimeCard'
 
 interface InfoCardDetail {
   label: string
@@ -54,11 +54,13 @@ interface InfoCardDetail {
 }
 
 export interface InfoCardProps {
+  id?: string
   title: string
   description: string
   to?: string
   size?: 'small' | 'large'
   appointment?: {
+    weekday?: string
     date: string
     time: string
     location: {
@@ -97,164 +99,173 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   const detailLength = detail ? detail.length : 0
 
   let detailData = detail
+
   if (detailLength >= 12) {
     detailData = detail?.slice(0, 12)
   }
 
-  if (variant === 'appointment') {
-    return (
-      <TimeCard title={title} data={appointment} description={description} />
-    )
-  }
   if (loading) {
     return <LoaderCard />
   }
-  const content = (
-    <Box
-      border="standard"
-      borderColor="blue200"
-      borderRadius="large"
-      padding={3}
-      className={styles.boxContainer}
-      height="full"
-      background="white"
-    >
-      <GridRow direction="row" className={styles.gridRow}>
-        <GridColumn
-          span={
-            size === 'large'
-              ? img && !isMobile
-                ? to
-                  ? '8/12'
-                  : '9/12'
+
+  const content =
+    variant === 'appointment' ? (
+      <TimeCard
+        title={title}
+        data={appointment}
+        description={description}
+        to={to}
+      />
+    ) : (
+      <Box
+        border="standard"
+        borderColor="blue200"
+        borderRadius="large"
+        padding={[2, 2, 2, 3]}
+        className={styles.boxContainer}
+        height="full"
+        background="white"
+      >
+        <GridRow direction="row" className={styles.gridRow}>
+          <GridColumn
+            span={
+              size === 'large'
+                ? img && !isMobile
+                  ? to
+                    ? '8/12'
+                    : '9/12'
+                  : to
+                  ? '11/12'
+                  : '12/12'
                 : to
                 ? '11/12'
                 : '12/12'
-              : to
-              ? '11/12'
-              : '12/12'
-          }
-          className={styles.contentContainer}
-        >
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            flexGrow={1}
-            marginBottom={detail ? 3 : 0}
+            }
+            className={styles.contentContainer}
           >
-            <Box>
-              <Text
-                variant="h4"
-                marginBottom={variant === 'link' ? 0 : 1}
-                color="blue400"
-              >
-                {title}
-              </Text>
-              <Inline>
-                <Text>{description}</Text>
-                {tooltip && <Tooltip text={tooltip} />}
-              </Inline>
-            </Box>
-          </Box>
-          {detailData && (
             <Box
               display="flex"
-              flexDirection={['column', 'column', 'column', 'column', 'row']}
-              flexWrap="nowrap"
-              alignItems="stretch"
-              justifyContent={'spaceBetween'}
-              width="full"
+              justifyContent="spaceBetween"
+              flexGrow={1}
+              marginBottom={detail ? 3 : 0}
             >
-              {detailData.map((item, index) => (
-                <React.Fragment key={`${item?.label}-${index}`}>
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="spaceBetween"
-                    className={styles.flexItem}
-                  >
-                    <Inline>
-                      <Text variant="small">{item?.label}</Text>
-                      {item?.tooltip && <Tooltip text={item?.tooltip} />}
-                    </Inline>
-                    <Inline alignY="bottom">
-                      <Text variant="h3" as="p">
-                        {item?.value}
-                      </Text>
-                      {item?.subValue && (
-                        <Box marginLeft={1}>
-                          <Text
-                            variant="eyebrow"
-                            color="foregroundPrimaryMinimal"
-                          >
-                            {item?.subValue}
-                          </Text>
-                        </Box>
-                      )}
-                    </Inline>
-                  </Box>
-
-                  {/* Only show divider between items */}
-                  {index < detailData.length - 1 && (
+              <Box>
+                <Text
+                  variant="h4"
+                  marginBottom={variant === 'link' ? 0 : 1}
+                  color="blue400"
+                >
+                  {title}
+                </Text>
+                <Inline>
+                  <Text>{description}</Text>
+                  {tooltip && <Tooltip text={tooltip} />}
+                </Inline>
+              </Box>
+            </Box>
+            {detailData && (
+              <Box
+                display="flex"
+                flexDirection={['column', 'column', 'column', 'column', 'row']}
+                flexWrap="nowrap"
+                alignItems="stretch"
+                justifyContent={'spaceBetween'}
+                width="full"
+              >
+                {detailData.map((item, index) => (
+                  <React.Fragment key={`${item?.label}-${index}`}>
                     <Box
                       display="flex"
-                      className={styles.flexItemBorder}
-                      justifyContent="center"
-                      marginY={[2, 2, 2, 2, 0]}
+                      flexDirection="column"
+                      justifyContent="spaceBetween"
+                      className={styles.flexItem}
                     >
-                      <Box
-                        borderColor="blue200"
-                        borderRightWidth={
-                          displayRightBorder ? 'standard' : undefined
-                        }
-                        borderBottomWidth={
-                          displayBottomBorder ? 'standard' : undefined
-                        }
-                      />
+                      <Inline>
+                        <Text variant="small">{item?.label}</Text>
+                        {item?.tooltip && <Tooltip text={item?.tooltip} />}
+                      </Inline>
+                      <Inline alignY="bottom">
+                        <Text variant="h3" as="p">
+                          {item?.value}
+                        </Text>
+                        {item?.subValue && (
+                          <Box marginLeft={1}>
+                            <Text
+                              variant="eyebrow"
+                              color="foregroundPrimaryMinimal"
+                            >
+                              {item?.subValue}
+                            </Text>
+                          </Box>
+                        )}
+                      </Inline>
                     </Box>
-                  )}
-                </React.Fragment>
-              ))}
-            </Box>
+
+                    {/* Only show divider between items */}
+                    {index < detailData.length - 1 && (
+                      <Box
+                        display="flex"
+                        className={styles.flexItemBorder}
+                        justifyContent="center"
+                        marginY={[2, 2, 2, 2, 0]}
+                      >
+                        <Box
+                          borderColor="blue200"
+                          borderRightWidth={
+                            displayRightBorder ? 'standard' : undefined
+                          }
+                          borderBottomWidth={
+                            displayBottomBorder ? 'standard' : undefined
+                          }
+                        />
+                      </Box>
+                    )}
+                  </React.Fragment>
+                ))}
+              </Box>
+            )}
+          </GridColumn>
+          {size === 'large' && !isMobile && img && (
+            <GridColumn span={'3/12'} className={styles.imageContainer}>
+              <Box
+                alt=""
+                component="img"
+                src={img}
+                marginRight={isMobile ? 2 : 0}
+                className={styles.image}
+              />
+            </GridColumn>
           )}
-        </GridColumn>
-        {size === 'large' && !isMobile && img && (
-          <GridColumn span={'3/12'} className={styles.imageContainer}>
-            <Box
-              alt=""
-              component="img"
-              src={img}
-              marginRight={isMobile ? 2 : 0}
-              className={styles.image}
-            />
-          </GridColumn>
-        )}
-        {to && (
-          <GridColumn span="1/12" className={styles.icon}>
-            <Box display="flex" justifyContent="flexEnd" alignItems="flexStart">
-              <Icon icon="arrowForward" type="outline" color="blue400" />
-            </Box>
-          </GridColumn>
-        )}
-      </GridRow>
-      {tags && tags.length > 0 && (
-        <GridRow>
-          <GridColumn paddingTop={2}>
-            {tags.map((tag, index) => (
-              <Tag
-                variant={tag?.variant}
-                outlined
-                disabled
-                key={`infocard-tag-${tag?.label ?? index}`}
+          {to && (
+            <GridColumn span="1/12" className={styles.icon}>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                alignItems="flexStart"
               >
-                {tag?.label}
-              </Tag>
-            ))}
-          </GridColumn>
+                <Icon icon="arrowForward" type="outline" color="blue400" />
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
-      )}
-    </Box>
-  )
+        {tags && tags.length > 0 && (
+          <GridRow>
+            <GridColumn paddingTop={2}>
+              {tags.map((tag, index) => (
+                <Tag
+                  variant={tag?.variant}
+                  outlined
+                  disabled
+                  key={`infocard-tag-${tag?.label ?? index}`}
+                >
+                  {tag?.label}
+                </Tag>
+              ))}
+            </GridColumn>
+          </GridRow>
+        )}
+      </Box>
+    )
   return (
     <Box
       width={size === 'large' ? 'full' : undefined}

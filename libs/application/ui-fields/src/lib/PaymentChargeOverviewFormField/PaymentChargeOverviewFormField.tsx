@@ -1,4 +1,8 @@
-import { formatText } from '@island.is/application/core'
+import {
+  coreDefaultFieldMessages,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   PaymentChargeOverviewField,
@@ -14,6 +18,12 @@ interface Props extends FieldBaseProps {
   field: PaymentChargeOverviewField
 }
 
+type PaymentData = {
+  priceAmount: number
+  chargeItemName: string
+  chargeItemCode: string
+}
+
 export const PaymentChargeOverviewFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field }) => {
@@ -21,13 +31,10 @@ export const PaymentChargeOverviewFormField: FC<
 
   // get list of selected charge items with info
   const selectedChargeList = field.getSelectedChargeItems(application)
-  const allChargeWithInfoList = application?.externalData?.payment?.data as [
-    {
-      priceAmount: number
-      chargeItemName: string
-      chargeItemCode: string
-    },
-  ]
+  // We assume that the payment catalog has the externalID 'payment'
+  const allChargeWithInfoList =
+    getValueViaPath<PaymentData[]>(application.externalData, 'payment.data') ||
+    []
   const selectedChargeWithInfoList = selectedChargeList.map((charge) => {
     const chargeWithInfo = allChargeWithInfoList.find(
       (chargeWithInfo) =>
@@ -49,32 +56,64 @@ export const PaymentChargeOverviewFormField: FC<
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Box>
-        <Text variant="h5">
+        <Text variant="h3" as="h4" marginY={2}>
           {formatText(field.forPaymentLabel, application, formatMessage)}
         </Text>
-        {selectedChargeWithInfoList.map((charge) => (
-          <Box
-            paddingTop={1}
-            display="flex"
-            justifyContent="spaceBetween"
-            key={charge?.chargeItemCode}
-          >
-            <Text>
+        {selectedChargeWithInfoList.map((charge, index) => (
+          <Box key={charge?.chargeItemCode}>
+            <Text variant="h5">
               {charge?.chargeItemName}
               {charge?.extraLabel
-                ? ` - ${formatText(
-                    charge.extraLabel,
-                    application,
-                    formatMessage,
-                  )}`
-                : ''}
-              {charge?.quantity && charge?.quantity > 1
-                ? ` - x${charge.quantity}`
+                ? ` - ${formatMessage(charge.extraLabel)}`
                 : ''}
             </Text>
-            <Text>
-              {formatIsk((charge?.priceAmount || 0) * (charge?.quantity || 1))}
-            </Text>
+            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+              <Text>
+                {field.unitPriceLabel
+                  ? formatMessage(field.unitPriceLabel)
+                  : formatMessage(
+                      coreDefaultFieldMessages.defaultUnitPriceTitle,
+                    )}
+              </Text>
+              <Text> {formatIsk(charge?.priceAmount || 0)}</Text>
+            </Box>
+            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+              <Text>
+                {field.quantityLabel
+                  ? formatMessage(field.quantityLabel)
+                  : formatMessage(
+                      coreDefaultFieldMessages.defaultQuantityTitle,
+                    )}
+              </Text>
+              <Text>
+                {charge?.quantity || 1}
+                {field.quantityUnitLabel
+                  ? ` ${formatMessage(field.quantityUnitLabel)}`
+                  : ''}
+              </Text>
+            </Box>
+            {selectedChargeWithInfoList.length > 1 && (
+              <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+                <Text variant="h5">
+                  {field.totalPerUnitLabel
+                    ? formatMessage(field.totalPerUnitLabel)
+                    : formatMessage(
+                        coreDefaultFieldMessages.defaultTotalPerUnitTitle,
+                      )}
+                </Text>
+                <Text variant="h5">
+                  {' '}
+                  {formatIsk(
+                    (charge?.priceAmount || 0) * (charge?.quantity || 1),
+                  )}
+                </Text>
+              </Box>
+            )}
+            {index < selectedChargeWithInfoList.length - 1 && (
+              <Box paddingY={3}>
+                <Divider />
+              </Box>
+            )}
           </Box>
         ))}
       </Box>
@@ -82,9 +121,7 @@ export const PaymentChargeOverviewFormField: FC<
         <Divider />
       </Box>
       <Box paddingBottom={4} display="flex" justifyContent="spaceBetween">
-        <Text variant="h5">
-          {formatText(field.totalLabel, application, formatMessage)}
-        </Text>
+        <Text variant="h5">{formatMessage(field.totalLabel)}</Text>
         <Text color="blue400" variant="h3">
           {formatIsk(totalPrice)}
         </Text>

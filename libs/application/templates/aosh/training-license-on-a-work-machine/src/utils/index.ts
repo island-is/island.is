@@ -12,6 +12,7 @@ export * from './isSameAsApplicant'
 export * from './certificateOfTenureAlertMessageConditions'
 export * from './isRejected'
 export * from './setOnMachineNumberChange'
+export * from './getReviewers'
 
 export const getMissingWorkMachines = (answers: FormValue) => {
   const allWorkMachines = (

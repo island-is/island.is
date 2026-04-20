@@ -33,6 +33,7 @@ import {
   Case,
   DateLog,
   Defendant,
+  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -53,6 +54,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     emailService: EmailService,
     eventService: EventService,
     private readonly courtService: CourtService,
+    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
@@ -340,11 +342,12 @@ export class DefendantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
-  private sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
+  private async sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
     const dashboardRoute = getStandardUserDashboardRoute({
       role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
     })
+
     const formattedSubject = this.formatMessage(
       strings.indictmentSentToPrisonAdminSubject,
       {
@@ -361,27 +364,37 @@ export class DefendantNotificationService extends BaseNotificationService {
       },
     )
 
-    // We want to send separate emails to each recipient
-    const to = this.config.email.prisonAdminIndictmentEmails
-      .split(',')
-      .map((email) => email.trim())
-      .map((email) => {
-        return {
-          name: 'Fangelsismálastofnun',
-          email,
-        }
-      })
+    const institutionContact =
+      await this.institutionContactRepositoryService.getInstitutionContact(
+        this.config.prisonAdminId,
+        DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+      )
+
+    if (!institutionContact) {
+      this.logger.error(
+        `No institution contact found for prison admin with id ${this.config.prisonAdminId}`,
+      )
+
+      return { delivered: false }
+    }
 
     return this.sendEmails(
       theCase,
       DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       formattedSubject,
       formattedBody,
-      to,
+      [
+        {
+          name: 'Fangelsismálastofnun',
+          email: institutionContact,
+        },
+      ],
     )
   }
 
-  private sendIndictmentWithdrawnFromPrisonAdminNotification(theCase: Case) {
+  private async sendIndictmentWithdrawnFromPrisonAdminNotification(
+    theCase: Case,
+  ) {
     const courtCaseNumber = theCase.courtCaseNumber
 
     const formattedSubject = this.formatMessage(
@@ -398,23 +411,31 @@ export class DefendantNotificationService extends BaseNotificationService {
       },
     )
 
-    // We want to send separate emails to each recipient
-    const to = this.config.email.prisonAdminIndictmentEmails
-      .split(',')
-      .map((email) => email.trim())
-      .map((email) => {
-        return {
-          name: 'Fangelsismálastofnun',
-          email,
-        }
-      })
+    const institutionContact =
+      await this.institutionContactRepositoryService.getInstitutionContact(
+        this.config.prisonAdminId,
+        DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+      )
+
+    if (!institutionContact) {
+      this.logger.error(
+        `No institution contact found for prison admin with id ${this.config.prisonAdminId}`,
+      )
+
+      return { delivered: false }
+    }
 
     return this.sendEmails(
       theCase,
       DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
       formattedSubject,
       formattedBody,
-      to,
+      [
+        {
+          name: 'Fangelsismálastofnun',
+          email: institutionContact,
+        },
+      ],
     )
   }
 

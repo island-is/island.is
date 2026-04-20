@@ -1,11 +1,11 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -31,7 +31,7 @@ interface Then {
 type GivenWhenThen = (
   state: CaseState,
   transition: CaseTransition,
-  appealState?: CaseAppealState,
+  appealState?: AppealCaseState,
 ) => Promise<Then>
 
 describe('LimitedAccessCaseController - Transition', () => {
@@ -45,37 +45,40 @@ describe('LimitedAccessCaseController - Transition', () => {
     {
       id: defenderAppealBriefId,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
     },
     {
       id: defenderAppealBriefCaseFileId1,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     },
     {
       id: defenderAppealBriefCaseFileId2,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     },
   ]
 
+  let mockQueuedMessages: Message[]
   let transaction: Transaction
-  let mockMessageService: MessageService
   let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      queuedMessages,
       sequelize,
-      messageService,
       caseRepositoryService,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -92,7 +95,7 @@ describe('LimitedAccessCaseController - Transition', () => {
     givenWhenThen = async (
       state: CaseState,
       transition: CaseTransition,
-      appealState?: CaseAppealState,
+      appealState?: AppealCaseState,
     ) => {
       const then = {} as Then
 
@@ -105,7 +108,7 @@ describe('LimitedAccessCaseController - Transition', () => {
             type: CaseType.EXPULSION_FROM_HOME,
             state,
             caseFiles,
-            appealState,
+            appealCase: { appealState },
           } as Case,
           { transition },
         )
@@ -124,7 +127,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         id: caseId,
         state,
         caseFiles,
-        appealState: CaseAppealState.APPEALED,
+        appealCase: { appealState: AppealCaseState.APPEALED },
         accusedPostponedAppealDate: date,
       } as Case
       let then: Then
@@ -137,14 +140,18 @@ describe('LimitedAccessCaseController - Transition', () => {
       })
 
       it('should transition the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
-          appealState: CaseAppealState.APPEALED,
-          accusedPostponedAppealDate: date,
-        })
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          {
+            appealState: AppealCaseState.APPEALED,
+            accusedPostponedAppealDate: date,
+          },
+          { transaction },
+        )
       })
 
       it('should queue a notification message', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
@@ -185,7 +192,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         id: caseId,
         state,
         caseFiles,
-        appealState: CaseAppealState.WITHDRAWN,
+        appealCase: { appealState: AppealCaseState.WITHDRAWN },
       } as Case
       let then: Then
 
@@ -196,19 +203,23 @@ describe('LimitedAccessCaseController - Transition', () => {
         then = await givenWhenThen(
           state,
           CaseTransition.WITHDRAW_APPEAL,
-          CaseAppealState.RECEIVED,
+          AppealCaseState.RECEIVED,
         )
       })
 
       it('should transition the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
-          appealState: CaseAppealState.WITHDRAWN,
-          appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
-        })
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          {
+            appealState: AppealCaseState.WITHDRAWN,
+            appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+          },
+          { transaction },
+        )
       })
 
       it('should queue a notification message', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.NOTIFICATION,
             user,

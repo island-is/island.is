@@ -12,6 +12,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .namespace(serviceName)
     .liveness('/liveness')
     .readiness('/readiness')
+    .serviceAccount('form-system-web')
     .replicaCount({
       default: 2,
       max: 4,

@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { CaseType, User } from '@island.is/judicial-system/types'
 
@@ -25,8 +25,10 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCaseNumber,
-    appealReceivedByCourtDate,
+    appealCase: {
+      appealCaseNumber,
+      appealReceivedByCourtDate,
+    },
   } as Case
 
   let mockCourtService: CourtService

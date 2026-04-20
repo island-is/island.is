@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
@@ -28,7 +28,7 @@ export const dataCollection = buildSection({
           subTitle: m.financialInformationProviderSubtitle,
         }),
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: m.personalInfoProviderTitle,
           subTitle: m.personalInfoProviderSubtitle,
         }),

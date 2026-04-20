@@ -4,53 +4,37 @@ import {
   buildStaticTableField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
-import { CurrentVehicleWithMilage } from '../../utils/types'
-import { hasActiveDayRate } from '../../utils/dayRateUtils'
+import { CarMap } from '../../utils/types'
+import { RateCategory } from '../../utils/constants'
+import { m } from '../../lib/messages'
 
 export const overviewStatistics = buildSection({
   id: 'overviewStatisticsSection',
-  title: 'Yfirlit yfir bifreiðar',
+  title: m.overview.sectionTitle,
   children: [
     buildMultiField({
       id: 'overviewStatisticsMultiField',
-      title: 'Yfirlit yfir bifreiðar',
+      title: m.overview.multiTitle,
       children: [
         buildStaticTableField({
-          header: ['Yfirlit', ''],
+          header: [m.overview.header, ''],
           rows: (application) => {
-            const vehicles =
-              getValueViaPath<Array<CurrentVehicleWithMilage>>(
+            const carMap =
+              getValueViaPath<CarMap>(
                 application.externalData,
-                'getCurrentVehicles.data',
-              ) ?? []
+                'getVehicleCarMap.data',
+              ) ?? {}
 
-            const rates =
-              getValueViaPath<Array<EntryModel>>(
-                application.externalData,
-                'getCurrentVehiclesRateCategory.data',
-              ) ?? []
+            const entries = Object.values(carMap)
+            const total = entries.length
+            const dayRates = entries.filter(
+              (e) => e.category === RateCategory.DAYRATE,
+            ).length
 
             return [
-              ['Fjöldi bifreiða á skrá', vehicles.length.toString()],
-              [
-                'Fjöldi bifreiða á daggjaldi',
-                rates
-                  .filter(
-                    (x) =>
-                      x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
-                  )
-                  .length.toString(),
-              ],
-              [
-                'Fjöldi bifreiða á kílómetragjaldi',
-                rates
-                  .filter(
-                    (x) =>
-                      !x.dayRateEntries || !hasActiveDayRate(x.dayRateEntries),
-                  )
-                  .length.toString(),
-              ],
+              [m.overview.registeredCount, total.toString()],
+              [m.overview.dayRateCount, dayRates.toString()],
+              [m.overview.kmRateCount, (total - dayRates).toString()],
             ]
           },
         }),

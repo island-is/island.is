@@ -1,24 +1,18 @@
 import request from 'supertest'
-import { Cache as CacheManager } from 'cache-manager'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { v4 as uuid } from 'uuid'
 
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
-import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
-import { PaymentMethod, PaymentStatus } from '../../types'
-import { AppModule } from '../app.module'
-import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
-import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import {
   InvoiceErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
-import { Sequelize } from 'sequelize-typescript'
-import { Type } from '@nestjs/common'
-import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { PaymentMethod, PaymentStatus } from '../../types'
+import { AppModule } from '../app.module'
+import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 
 const charges = [
   {
@@ -39,11 +33,8 @@ const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
 
 describe('InvoicePaymentController', () => {
   let app: TestApp
-  let sequelize: Sequelize
   let server: request.SuperTest<request.Test>
-  let cacheManager: CacheManager
   let paymentFlowService: PaymentFlowService
-  let paymentFlowEventModel: typeof PaymentFlowEvent
 
   let paymentFlowId: string
 
@@ -57,21 +48,21 @@ describe('InvoicePaymentController', () => {
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
     })
-    sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
     server = request(app.getHttpServer())
 
-    cacheManager = app.get<CacheManager>(CACHE_MANAGER)
     paymentFlowService = app.get<PaymentFlowService>(PaymentFlowService)
     const chargeFjsService = app.get<ChargeFjsV2ClientService>(
       ChargeFjsV2ClientService,
     )
-    paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
 
     jest
       .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
       .mockReturnValue(
         Promise.resolve({
-          catalogItems: charges,
+          catalogItems: charges.map((charge) => ({
+            ...charge,
+            paymentOptions: ['CARD', 'CLAIM'],
+          })),
           totalPrice: 1000,
           isAlreadyPaid: false,
           hasInvoice: false,
@@ -89,6 +80,7 @@ describe('InvoicePaymentController', () => {
           priceAmount: charge.price,
           performingOrgID: 'TODO',
           chargeItemName: 'TODO',
+          paymentOptions: ['CARD', 'CLAIM'],
         })),
       }),
     )
@@ -143,6 +135,7 @@ describe('InvoicePaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'TODO',
@@ -182,6 +175,7 @@ describe('InvoicePaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'TODO',
@@ -222,6 +216,7 @@ describe('InvoicePaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'TODO',

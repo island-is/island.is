@@ -53,9 +53,8 @@ const template: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.OrderVehicleRegistrationCertificate.translation,
-  ],
   dataSchema: OrderVehicleRegistrationCertificateSchema,
   allowedDelegations: [
     {

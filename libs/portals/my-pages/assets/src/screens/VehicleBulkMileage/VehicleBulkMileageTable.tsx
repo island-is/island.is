@@ -4,15 +4,20 @@ import { EmptyTable, ExpandHeader } from '@island.is/portals/my-pages/core'
 import { useMemo } from 'react'
 import { vehicleMessage } from '../../lib/messages'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { VehicleType } from './types'
+import { OdometerUnit, VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
 
 interface Props {
   vehicles: Array<VehicleType>
   loading: boolean
+  onMileageUpdateCallback?: () => void
 }
 
-const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
+const VehicleBulkMileageTable = ({
+  vehicles,
+  loading,
+  onMileageUpdateCallback,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const rows = useMemo(() => {
@@ -20,9 +25,10 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
       <VehicleBulkMileageRow
         key={`vehicle-row-${item.vehicleId}`}
         vehicle={item}
+        onMileageUpdateCallback={onMileageUpdateCallback}
       />
     ))
-  }, [vehicles])
+  }, [onMileageUpdateCallback, vehicles])
 
   const totalLastMileage = useMemo(() => {
     if (!vehicles.length) {
@@ -36,6 +42,14 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
     )
   }, [vehicles])
 
+  const totalUnit = useMemo((): OdometerUnit | undefined => {
+    const units = new Set(
+      vehicles.map((v) => (v.hasMilesOdometer ? 'mi' : 'km')),
+    )
+    if (units.size !== 1) return undefined
+    return units.has('mi') ? 'mi' : 'km'
+  }, [vehicles])
+
   return (
     <Box>
       <form>
@@ -47,7 +61,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
                 { value: formatMessage(vehicleMessage.type) },
                 { value: formatMessage(vehicleMessage.lastRegistered) },
                 { value: formatMessage(vehicleMessage.lastStatus) },
-                { value: formatMessage(vehicleMessage.odometer) },
+                { value: formatMessage(vehicleMessage.odometerBulkColumn) },
                 { value: '', printHidden: true },
               ]}
             />
@@ -67,7 +81,9 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
                   <td>
                     <Box padding={2}>
                       <Text variant="medium" fontWeight="semiBold">
-                        {displayWithUnit(totalLastMileage, 'km', true)}
+                        {totalUnit
+                          ? displayWithUnit(totalLastMileage, totalUnit, true)
+                          : '-'}
                       </Text>
                     </Box>
                   </td>

@@ -22,6 +22,12 @@ export class CaseFile {
   @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
+  @Field(() => ID, { nullable: true })
+  readonly defendantId?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly civilClaimantId?: string
+
   @Field(() => String, { nullable: true })
   readonly name?: string
 
@@ -68,4 +74,7 @@ export class CaseFile {
   // when users submit files on behalf of case representatives
   @Field(() => String, { nullable: true })
   readonly fileRepresentative?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isKeyAccessible?: boolean
 }

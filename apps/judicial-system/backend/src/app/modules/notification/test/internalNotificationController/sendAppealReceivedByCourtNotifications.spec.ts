@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
@@ -73,7 +73,9 @@ describe('InternalNotificationController - Send appeal received by court notific
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealReceivedByCourtDate: receivedDate,
+            appealCase: {
+              appealReceivedByCourtDate: receivedDate,
+            },
           } as Case,
           {
             user: { id: userId } as User,

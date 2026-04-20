@@ -3,12 +3,14 @@ import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
-import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
 import { usePreventBodyScroll } from './usePreventBodyScroll'
 
 import * as styles from './Filter.css'
+import { useWindowSize } from 'react-use'
+import { FilterDrawerAriakit } from './FilterMobileDrawer'
+import { theme } from '@island.is/island-ui/theme'
 
 export interface FilterProps {
   /** Label for the clear all button. Should be used for localization. */
@@ -32,8 +34,14 @@ export interface FilterProps {
   /** Number of search results to display on the show result button in mobile version*/
   resultCount?: number
 
+  /** Number of filter values chosen */
+  filterCount?: number
+
   /** Filter input component */
   filterInput?: ReactNode
+
+  /** Should Filter input fill up available flex space? */
+  filterInputFluid?: boolean
 
   /** How the filter should be displayed */
   variant?: 'popover' | 'dialog' | 'default'
@@ -50,11 +58,17 @@ export interface FilterProps {
   /** Allow popover to flip upwards */
   popoverFlip?: boolean
 
+  /** Mobile title (deprecated - not used by component) */
+  title?: string
+
   /** Use the popover disclosure button styling */
   usePopoverDiscloureButtonStyling?: boolean
 
   /** Wrap filter input in a mobile version */
   mobileWrap?: boolean
+
+  /** Remove left margin from filter button */
+  removeLeftMargin?: boolean
 }
 
 /**
@@ -71,21 +85,24 @@ export const FilterContext = createContext<FilterContextValue>({
 })
 
 export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
-  labelClearAll = '',
-  labelClear = '',
-  labelOpen = '',
-  labelClose = '',
-  labelTitle = '',
-  labelResult = '',
+  labelClearAll,
+  labelClear,
+  labelOpen,
+  labelClose,
+  labelTitle,
+  labelResult,
   resultCount = 0,
+  filterCount = 0,
   align,
   variant = 'default',
   filterInput,
+  filterInputFluid,
   onFilterClear,
   reverse,
   children,
   popoverFlip = true,
   mobileWrap = true,
+  removeLeftMargin = false,
   usePopoverDiscloureButtonStyling,
 }) => {
   const dialog = useDialogState({ modal: true })
@@ -99,200 +116,333 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   usePreventBodyScroll(dialog.visible && variant === 'dialog')
 
-  return (
-    <FilterContext.Provider value={{ variant }}>
-      {variant === 'popover' && (
-        <>
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.sm
+
+  const filterInputContent = hasFilterInput ? filterInput : null
+  const filterCountNumber = filterCount > 9 ? '9+' : filterCount
+
+  const popoverContent = (component: boolean) => (
+    <Box
+      component={component ? Popover : undefined}
+      background="white"
+      borderRadius="large"
+      boxShadow="subtle"
+      className={styles.popoverContainer}
+      {...popover}
+    >
+      <Stack space={4} dividers={false}>
+        {children}
+      </Stack>
+
+      <Box
+        display="flex"
+        width="full"
+        paddingX={3}
+        paddingY={2}
+        justifyContent="center"
+        background="blue100"
+      >
+        <Button
+          icon="reload"
+          size="small"
+          variant="text"
+          onClick={onFilterClear}
+        >
+          {labelClearAll}
+        </Button>
+      </Box>
+    </Box>
+  )
+
+  const popoverContainer = () => {
+    const inputBox = filterInputContent ? (
+      <Box
+        width={filterInputFluid === true ? 'full' : undefined}
+        flexGrow={
+          filterInputFluid === true
+            ? 1
+            : filterInputFluid === false
+            ? 0
+            : undefined
+        }
+        className={styles.filterInput}
+      >
+        {filterInputContent}
+      </Box>
+    ) : null
+
+    return (
+      <>
+        <Box
+          display="flex"
+          width="full"
+          justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
+        >
           <Box
             display="flex"
-            width="full"
-            justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
+            alignItems="flexEnd"
+            flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+            columnGap={2}
+            flexGrow={
+              filterInputFluid === true
+                ? 1
+                : filterInputFluid === false
+                ? 0
+                : undefined
+            }
           >
-            <Inline
-              space={2}
-              reverse={reverse}
-              alignY="bottom"
-              flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+            {reverse && inputBox}
+            <Box
+              component={PopoverDisclosure}
+              background="white"
+              display="inlineBlock"
+              borderRadius="large"
+              tabIndex={-1}
+              {...popover}
+              className={filterCount ? styles.filterCountButton : undefined}
             >
-              <Box
-                component={PopoverDisclosure}
-                background="white"
-                display="inlineBlock"
-                borderRadius="large"
-                tabIndex={-1}
-                {...popover}
-              >
+              {filterCount ? (
+                <Button
+                  as="span"
+                  variant="utility"
+                  icon={!filterCount ? 'filter' : undefined}
+                  fluid
+                  nowrap
+                >
+                  {labelOpen}
+
+                  <Box
+                    as="span"
+                    background="blue400"
+                    color="white"
+                    className={styles.filterCount}
+                  >
+                    <Text
+                      variant="eyebrow"
+                      color="white"
+                      lineHeight={isMobile ? 'xl' : 'lg'}
+                    >
+                      {filterCountNumber}
+                    </Text>
+                  </Box>
+                </Button>
+              ) : (
                 <Button as="span" variant="utility" icon="filter" fluid nowrap>
                   {labelOpen}
                 </Button>
-              </Box>
-              {hasFilterInput && filterInput}
-            </Inline>
+              )}
+            </Box>
+            {!reverse && inputBox}
+          </Box>
+        </Box>
+        {popoverContent(true)}
+      </>
+    )
+  }
+
+  const dialogContent = () => (
+    <>
+      <DialogDisclosure
+        {...dialog}
+        className={
+          usePopoverDiscloureButtonStyling ? undefined : styles.dialogDisclosure
+        }
+      >
+        {usePopoverDiscloureButtonStyling ? (
+          <Box background="white" borderRadius="large">
+            <Button
+              unfocusable
+              as="span"
+              variant="utility"
+              icon="filter"
+              nowrap
+            >
+              {labelOpen}
+            </Button>
+          </Box>
+        ) : (
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            border="standard"
+            borderColor="blue200"
+            background="white"
+            padding={2}
+            borderRadius="large"
+          >
+            <Text variant="h5" as="h5">
+              {labelOpen}
+            </Text>
+            <Button
+              circle
+              size="small"
+              colorScheme="light"
+              icon="menu"
+              iconType="outline"
+              title={labelOpen}
+              unfocusable
+            />
+          </Box>
+        )}
+      </DialogDisclosure>
+      <Dialog {...dialog} preventBodyScroll={false}>
+        <Box
+          background="white"
+          position="fixed"
+          top={0}
+          bottom={0}
+          left={0}
+          right={0}
+          paddingX={3}
+          paddingY={3}
+          height="full"
+          display="flex"
+          justifyContent="spaceBetween"
+          flexDirection="column"
+          className={styles.dialogContainer}
+        >
+          <Box>
+            <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
+              <Text variant="h4" color="blue600">
+                {labelTitle}
+              </Text>
+              <Button
+                circle
+                colorScheme="light"
+                icon="close"
+                iconType="outline"
+                onClick={dialog.hide}
+                title={labelClose}
+              />
+            </Box>
+
+            <Stack space={4} dividers={false}>
+              {filterInputContent}
+              {children}
+            </Stack>
           </Box>
 
           <Box
-            component={Popover}
-            background="white"
-            borderRadius="large"
-            boxShadow="subtle"
-            className={styles.popoverContainer}
-            {...popover}
+            background="blue100"
+            marginTop={2}
+            paddingTop={4}
+            paddingBottom={3}
           >
-            <Stack space={4} dividers={false}>
-              {children}
-            </Stack>
-
-            <Box
-              display="flex"
-              width="full"
-              paddingX={3}
-              paddingY={2}
-              justifyContent="center"
-              background="blue100"
-            >
+            <Stack space={2} dividers={false} align="center">
+              <Button size="small" onClick={dialog.hide}>
+                {labelResult} ({resultCount})
+              </Button>
               <Button
                 icon="reload"
                 size="small"
                 variant="text"
                 onClick={onFilterClear}
               >
-                {labelClearAll}
+                {labelClear}
               </Button>
-            </Box>
+            </Stack>
           </Box>
-        </>
-      )}
-      {variant === 'dialog' && (
-        <>
-          <DialogDisclosure
-            {...dialog}
-            className={
-              usePopoverDiscloureButtonStyling
-                ? undefined
-                : styles.dialogDisclosure
-            }
-          >
-            {usePopoverDiscloureButtonStyling ? (
-              <Box background="white" borderRadius="large">
+        </Box>
+      </Dialog>
+    </>
+  )
+
+  const defaultContent = () => (
+    <>
+      <Stack space={3} dividers={false}>
+        {filterInputContent}
+        {children}
+      </Stack>
+
+      <Box textAlign="right" paddingTop={2}>
+        <Button
+          icon="reload"
+          size="small"
+          variant="text"
+          onClick={onFilterClear}
+        >
+          {labelClearAll}
+        </Button>
+      </Box>
+    </>
+  )
+
+  if (isMobile) {
+    return (
+      <Box
+        display="flex"
+        alignItems="flexEnd"
+        columnGap={removeLeftMargin ? 0 : 2}
+      >
+        {filterInputContent}
+
+        <FilterDrawerAriakit
+          initialVisibility={false}
+          ariaLabel={''}
+          labelShowResult={labelResult}
+          labelClearAll={labelClearAll}
+          labelTitle={labelTitle}
+          onFilterClear={onFilterClear}
+          disclosure={
+            <Box
+              background="white"
+              marginTop={'auto'}
+              borderRadius="large"
+              tabIndex={-1}
+              className={filterCount ? styles.filterCountButton : undefined}
+            >
+              {filterCount ? (
                 <Button
-                  unfocusable
                   as="span"
                   variant="utility"
-                  icon="filter"
+                  icon={!filterCount ? 'filter' : undefined}
+                  fluid
                   nowrap
                 >
                   {labelOpen}
-                </Button>
-              </Box>
-            ) : (
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                border="standard"
-                borderColor="blue200"
-                background="white"
-                padding={2}
-                borderRadius="large"
-              >
-                <Text variant="h5" as="h5">
-                  {labelOpen}
-                </Text>
-                <Button
-                  circle
-                  size="small"
-                  colorScheme="light"
-                  icon="menu"
-                  iconType="outline"
-                  title={labelOpen}
-                  unfocusable
-                />
-              </Box>
-            )}
-          </DialogDisclosure>
-          <Dialog {...dialog} preventBodyScroll={false}>
-            <Box
-              background="white"
-              position="fixed"
-              top={0}
-              bottom={0}
-              left={0}
-              right={0}
-              paddingX={3}
-              paddingY={3}
-              height="full"
-              display="flex"
-              justifyContent="spaceBetween"
-              flexDirection="column"
-              className={styles.dialogContainer}
-            >
-              <Box>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  marginBottom={2}
-                >
-                  <Text variant="h4" color="blue600">
-                    {labelTitle}
-                  </Text>
-                  <Button
-                    circle
-                    colorScheme="light"
-                    icon="close"
-                    iconType="outline"
-                    onClick={dialog.hide}
-                    title={labelClose}
-                  />
-                </Box>
 
-                <Stack space={4} dividers={false}>
-                  {hasFilterInput && filterInput}
-                  {children}
-                </Stack>
-              </Box>
-
-              <Box
-                background="blue100"
-                marginTop={2}
-                paddingTop={4}
-                paddingBottom={3}
-              >
-                <Stack space={2} dividers={false} align="center">
-                  <Button size="small" onClick={dialog.hide}>
-                    {labelResult} ({resultCount})
-                  </Button>
-                  <Button
-                    icon="reload"
-                    size="small"
-                    variant="text"
-                    onClick={onFilterClear}
+                  <Box
+                    as="span"
+                    background="blue400"
+                    color="white"
+                    className={styles.filterCount}
                   >
-                    {labelClear}
-                  </Button>
-                </Stack>
-              </Box>
+                    <Text
+                      variant="eyebrow"
+                      textAlign="center"
+                      color="white"
+                      lineHeight={isMobile ? 'xl' : 'lg'}
+                    >
+                      {filterCountNumber}
+                    </Text>
+                  </Box>
+                </Button>
+              ) : (
+                <Button as="span" variant="utility" icon="filter" fluid nowrap>
+                  {labelOpen}
+                </Button>
+              )}
             </Box>
-          </Dialog>
-        </>
-      )}
-      {variant === 'default' && (
-        <>
-          <Stack space={3} dividers={false}>
-            {hasFilterInput && filterInput}
-            {children}
-          </Stack>
-
-          <Box textAlign="right" paddingTop={2}>
-            <Button
-              icon="reload"
-              size="small"
-              variant="text"
-              onClick={onFilterClear}
-            >
-              {labelClearAll}
-            </Button>
+          }
+        >
+          <Box width="full" tabIndex={-1}>
+            <Box className={styles.mobilePopoverContainer}>
+              <Stack space={4} dividers={false}>
+                {children}
+              </Stack>
+            </Box>
           </Box>
-        </>
-      )}
+        </FilterDrawerAriakit>
+      </Box>
+    )
+  }
+
+  return (
+    <FilterContext.Provider value={{ variant }}>
+      {variant === 'popover' && popoverContainer()}
+      {variant === 'dialog' && dialogContent()}
+      {variant === 'default' && defaultContent()}
     </FilterContext.Provider>
   )
 }

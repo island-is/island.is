@@ -10,10 +10,14 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class VacancySyncService implements CmsSyncProvider<IVacancy> {
   processSyncData(entries: processSyncDataInput<IVacancy>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IVacancy =>
         entry.sys.contentType.sys.id === 'vacancy' && !!entry.fields.title,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IVacancy[]) {

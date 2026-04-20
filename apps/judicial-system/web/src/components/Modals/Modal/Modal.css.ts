@@ -29,7 +29,7 @@ export const alignItems = styleVariants({
 
 export const modalContainer = style({
   position: 'relative',
-  padding: `${theme.spacing[8]}px ${theme.spacing[8]}px ${theme.spacing[6]}px ${theme.spacing[8]}px`,
+  padding: `${theme.spacing[8]}px ${theme.spacing[8]}px 0px ${theme.spacing[8]}px`,
   background: theme.color.white,
   maxWidth: '90vw',
   maxHeight: '90vh',

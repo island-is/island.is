@@ -10,6 +10,7 @@ import { FlightLegAdminResolver } from './flight-leg-admin/flight-leg-admin.reso
 import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.service'
 import { FlightLegResolver } from './flight-leg/flight-leg.resolver'
 import { FlightLegService } from './flight-leg/flight-leg.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   providers: [
@@ -22,7 +23,7 @@ import { FlightLegService } from './flight-leg/flight-leg.service'
     DiscountAdminResolver,
     DiscountAdminService,
   ],
-  imports: [AirDiscountSchemeClientModule, AuthModule],
+  imports: [AirDiscountSchemeClientModule, AuthModule, FeatureFlagModule],
   exports: [],
 })
 export class AirDiscountSchemeModule {}

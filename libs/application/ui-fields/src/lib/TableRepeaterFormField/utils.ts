@@ -42,10 +42,18 @@ const handleNationalIdWithNameItem = <T>(
       const formattedNationalId = kennitala.format(
         (nestedObject as { nationalId: string })?.nationalId,
       )
+
+      // create flat map from nestedObject
+      const flat: Record<string, T> = {}
+      Object.keys(nestedObject as Record<string, unknown>).forEach((key) => {
+        flat[`${item.id}.${key}`] = (nestedObject as Record<string, T>)[key]
+      })
+
       return {
         ...nestedObject,
         nationalId: formattedNationalId as T,
         ...rest,
+        ...flat,
       }
     }
     return value
@@ -84,10 +92,12 @@ const handleVehiclePermnoWithInfoItem = <T>(
 
 export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
   items
-    .map((item) =>
+    .map((item, index) =>
       // nationalIdWithName is a special case where the value is an object of name and nationalId
       item.component === 'nationalIdWithName'
         ? [coreMessages.name, coreMessages.nationalId]
+        : typeof item.label === 'function'
+        ? item.label(index)
         : item.label,
     )
     .flat(2)

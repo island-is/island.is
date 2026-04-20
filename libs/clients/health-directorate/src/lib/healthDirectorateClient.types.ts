@@ -63,3 +63,5 @@ export enum HealthDirectorateApisId {
   VACCINATIONS = 'vaccinations',
   OCCUPATIONAL_LICENSE = 'occupational-license-and-certificate',
 }
+
+export { DispensationHistoryItemDto } from './clients/health/gen/fetch/types.gen'

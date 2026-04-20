@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsObject, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
+import { CardInformation } from './CardInformation.dto'
 
 class VerificationField {
   @ApiProperty({ description: 'Field name', type: String })
@@ -9,35 +16,6 @@ class VerificationField {
   @ApiProperty({ description: 'Field value', type: String })
   @IsString()
   value!: string
-}
-
-class CardInformation {
-  @ApiProperty({
-    description: 'Card scheme (for example Visa or MasterCard)',
-    type: String,
-  })
-  @IsString()
-  cardScheme!: string
-
-  @ApiProperty({ description: 'Issuing country of the card', type: String })
-  @IsString()
-  issuingCountry!: string
-
-  @ApiProperty({ description: 'Card usage description', type: String })
-  @IsString()
-  cardUsage!: string
-
-  @ApiProperty({ description: 'Card category', type: String })
-  @IsString()
-  cardCategory!: string
-
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: String })
-  @IsString()
-  outOfScaScope!: string
-
-  @ApiProperty({ description: 'Card product category', type: String })
-  @IsString()
-  cardProductCategory!: string
 }
 
 export class VerifyCardResponse {
@@ -76,7 +54,8 @@ export class VerifyCardResponse {
 
   @ApiProperty({ description: 'Script path for further actions', type: String })
   @IsString()
-  scriptPath!: string
+  @IsOptional()
+  scriptPath?: string
 
   @ApiProperty({
     description: 'Response code from the verification',
@@ -84,10 +63,6 @@ export class VerifyCardResponse {
   })
   @IsString()
   responseCode!: string
-
-  @ApiProperty({ description: 'Description of the response', type: String })
-  @IsString()
-  responseDescription!: string
 
   @ApiProperty({
     description: 'Response time of the verification',

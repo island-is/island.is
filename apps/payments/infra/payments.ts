@@ -12,6 +12,7 @@ export const serviceSetup = (services: {
   service(serviceName)
     .image(image)
     .namespace(namespace)
+    .serviceAccount('payments')
     .env({
       BASEPATH: basepath,
       API_INTERNAL_BASEPATH: ref((h) => `http://${h.svc(services.api)}`),
@@ -35,6 +36,11 @@ export const serviceSetup = (services: {
         ),
         staging: 'https://beta.staging01.devland.is',
         prod: 'https://island.is',
+      },
+      ALLOW_APPLE_PAY: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'true',
       },
     })
     .secrets({

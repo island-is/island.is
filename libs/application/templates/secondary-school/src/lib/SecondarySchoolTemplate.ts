@@ -25,6 +25,7 @@ import {
 } from './messages'
 import { SecondarySchoolSchema } from './dataSchema'
 import {
+  ApplicationPeriodApi,
   NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
@@ -73,9 +74,7 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
-    ApplicationConfigurations.SecondarySchool.translation,
-  ],
+  translationNamespaces: ApplicationConfigurations.SecondarySchool.translation,
   dataSchema: SecondarySchoolSchema,
   allowMultipleApplicationsInDraft: false,
   allowedDelegations: [
@@ -130,6 +129,7 @@ const template: ApplicationTemplate<
                 UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,
+                ApplicationPeriodApi,
               ],
             },
           ],

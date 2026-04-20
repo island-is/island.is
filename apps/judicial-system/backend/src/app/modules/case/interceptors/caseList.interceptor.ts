@@ -31,7 +31,11 @@ export class CaseListInterceptor implements NestInterceptor {
                 : undefined
               : DateLog.arraignmentDate(theCase.dateLogs)?.date,
             policeCaseNumbers: theCase.policeCaseNumbers,
-            defendants: transformDefendants(theCase.defendants),
+            defendants: transformDefendants({
+              defendants: theCase.defendants,
+              indictmentRulingDecision: theCase.indictmentRulingDecision,
+              rulingDate: theCase.rulingDate,
+            }),
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
@@ -39,9 +43,10 @@ export class CaseListInterceptor implements NestInterceptor {
             rulingDate: theCase.rulingDate,
             accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
             parentCaseId: theCase.parentCaseId,
-            appealState: theCase.appealState,
-            appealCaseNumber: theCase.appealCaseNumber,
-            appealRulingDecision: theCase.appealRulingDecision,
+            appealState: theCase.appealCase?.appealState,
+            appealCaseNumber: theCase.appealCase?.appealCaseNumber,
+            appealRulingDecision: theCase.appealCase?.appealRulingDecision,
+            appealedByNationalId: theCase.appealCase?.appealedByNationalId,
             postponedIndefinitelyExplanation:
               CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
             indictmentDecision: theCase.indictmentDecision,

@@ -1,13 +1,18 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 
-import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  SkeletonLoader,
+  Text,
+  ActionCard,
+} from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ActionCard } from '@island.is/portals/my-pages/core'
 import { EducationStudentAssessmentPaths } from '@island.is/portals/my-pages/education-student-assessment'
 import { Problem } from '@island.is/react-spa/shared'
+import { useNavigate } from 'react-router-dom'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {
@@ -29,7 +34,7 @@ const CareerCards = () => {
     EducationExamFamilyOverviewsQuery,
   )
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
   const educationExamFamilyOverviews = data?.educationExamFamilyOverviews || []
 
   if (error && !loading) {
@@ -67,10 +72,13 @@ const CareerCards = () => {
                 id: 'sp.education-career:education-more',
                 defaultMessage: 'Skoða nánar',
               }),
-              url: EducationStudentAssessmentPaths.EducationStudentAssessment.replace(
-                ':familyIndex',
-                member.familyIndex.toString(),
-              ),
+              onClick: () =>
+                navigate(
+                  EducationStudentAssessmentPaths.EducationStudentAssessment.replace(
+                    ':familyIndex',
+                    member.familyIndex.toString(),
+                  ),
+                ),
               variant: 'text',
               size: 'small',
             }}

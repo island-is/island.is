@@ -7,24 +7,82 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  CaseFileState,
+  CaseIndictmentRulingDecision,
+  CaseState,
   DefendantEventType,
   EventType,
+  getIndictmentAppealDeadline,
+  isDefenceUser,
+  isIndictmentCase,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRequestCase,
+  ServiceRequirement,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
   Case,
   CaseString,
+  CivilClaimant,
   Defendant,
   DefendantEventLog,
   EventLog,
 } from '../../repository'
 
-export const transformDefendants = (defendants?: Defendant[]) => {
+export const transformDefendants = ({
+  defendants,
+  indictmentRulingDecision,
+  rulingDate,
+}: {
+  defendants?: Defendant[]
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+}) => {
   return defendants?.map((defendant) => {
-    const { verdict } = defendant
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
+    const indictmentCancelledOrDismissedEventLog =
+      DefendantEventLog.getEventLogByEventType(
+        [
+          DefendantEventType.INDICTMENT_CANCELLED,
+          DefendantEventType.INDICTMENT_DISMISSED,
+        ],
+        defendant.eventLogs,
+      )
+    const indictmentCancelledOrDismissedState =
+      indictmentCancelledOrDismissedEventLog
+        ? {
+            type:
+              indictmentCancelledOrDismissedEventLog.eventType ===
+              DefendantEventType.INDICTMENT_CANCELLED
+                ? CaseIndictmentRulingDecision.CANCELLATION
+                : CaseIndictmentRulingDecision.DISMISSAL,
+            time: indictmentCancelledOrDismissedEventLog.created,
+          }
+        : undefined
+
     return {
       ...defendant.toJSON(),
       ...(verdict
@@ -39,6 +97,9 @@ export const transformDefendants = (defendants?: Defendant[]) => {
             },
           }
         : {}),
+      verdicts: undefined,
+      verdictAppealDeadline: appealDeadline,
+      isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
@@ -49,6 +110,7 @@ export const transformDefendants = (defendants?: Defendant[]) => {
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      indictmentCancelledOrDismissedState,
     }
   })
 }
@@ -81,14 +143,14 @@ const transformCaseRepresentatives = (theCase: Case) => {
   const defendantsAndDefenders = theCase.defendants?.flatMap((defendant) => {
     const defendantAndDefender = [
       {
-        name: defendant.name,
+        name: defendant.name ?? '',
         nationalId: defendant.nationalId,
         caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
       },
     ]
     if (defendant.defenderName) {
       defendantAndDefender.push({
-        name: defendant.defenderName,
+        name: defendant.defenderName ?? '',
         nationalId: defendant.defenderNationalId,
         caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
       })
@@ -103,20 +165,129 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case) => {
+const getDefenceUserDefendants = (
+  theCase: Case,
+  user: User,
+): {
+  defendants: Defendant[] | undefined
+  allCancelledOrDismissed: boolean
+  latestCancelledOrDismissedDate: Date | undefined
+} => {
+  const myDefendants = theCase.defendants?.filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(user.nationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+
+  if (!myDefendants?.length) {
+    return {
+      defendants: theCase.defendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
+  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
+    DefendantEventLog.getEventLogByEventType(
+      [
+        DefendantEventType.INDICTMENT_CANCELLED,
+        DefendantEventType.INDICTMENT_DISMISSED,
+      ],
+      defendant.eventLogs,
+    ),
+  )
+
+  const allCancelledOrDismissed = cancelledOrDismissedEventLogs.every(Boolean)
+
+  const latestCancelledOrDismissedDate = allCancelledOrDismissed
+    ? cancelledOrDismissedEventLogs.reduce<Date | undefined>((latest, log) => {
+        if (!log) return latest
+        return !latest || log.created > latest ? log.created : latest
+      }, undefined)
+    : undefined
+
+  return {
+    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  }
+}
+
+const transformCase = (
+  theCase: Case,
+  user: User | undefined,
+): Record<string, unknown> => {
+  const isDefence = isDefenceUser(user)
+  const {
+    defendants: transformedDefendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  } = isDefence && user
+    ? getDefenceUserDefendants(theCase, user)
+    : {
+        defendants: theCase.defendants,
+        allCancelledOrDismissed: false,
+        latestCancelledOrDismissedDate: undefined,
+      }
+
+  const stateOverride =
+    isDefence && isIndictmentCase(theCase.type) && allCancelledOrDismissed
+      ? {
+          state: CaseState.COMPLETED,
+          rulingDate: latestCancelledOrDismissedDate,
+        }
+      : {}
+
   return {
     ...theCase.toJSON(),
-    defendants: transformDefendants(theCase.defendants),
+    ...stateOverride,
+    defendants: transformDefendants({
+      defendants: transformedDefendants,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+    }),
+    caseFiles: theCase.caseFiles?.filter(
+      (file) =>
+        // The user must be known
+        user &&
+        // Rejected files are only visible to relevant parties
+        (file.state !== CaseFileState.REJECTED ||
+          (file.category === CaseFileCategory.PROSECUTOR_CASE_FILE &&
+            isProsecutionUser(user)) ||
+          ((file.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
+            file.category ===
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE) &&
+            Defendant.isConfirmedDefenderOfDefendant(
+              user.nationalId,
+              theCase.defendants,
+            )) ||
+          ((file.category ===
+            CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE ||
+            file.category ===
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE) &&
+            CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+              user.nationalId,
+              theCase.civilClaimants,
+            ))),
+    ),
+    caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
+    penalties:
+      user && isProsecutionUser(user)
+        ? CaseString.penalties(theCase.caseStrings)
+        : null,
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_REVIEWED,
-      theCase.eventLogs,
+    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.INDICTMENT_REVIEWED,
+      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
     ),
     indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -141,24 +312,54 @@ const transformCase = (theCase: Case) => {
       EventType.REQUEST_COMPLETED,
       theCase.eventLogs,
     ),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    indictmentCompletedDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
+    ),
+    eventLogs: undefined,
+    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    rulingModifiedHistory:
+      isRequestCase(theCase.type) &&
+      (isDefenceUser(user) || isPrisonSystemUser(user))
+        ? undefined
+        : theCase.rulingModifiedHistory,
+    parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
+    childCase: theCase.childCase && transformCase(theCase.childCase, user),
+    mergeCase: theCase.mergeCase && transformCase(theCase.mergeCase, user),
+    mergedCases:
+      theCase.mergedCases &&
+      theCase.mergedCases.map((mergedCase) => transformCase(mergedCase, user)),
+    splitCase: theCase.splitCase && transformCase(theCase.splitCase, user),
+    splitCases:
+      theCase.splitCases &&
+      theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
-    return next.handle().pipe(map(transformCase))
+    const request = context.switchToHttp().getRequest()
+
+    const user: User | undefined = request.user?.currentUser
+
+    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
 }
 
 @Injectable()
 export class CasesInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
+    const request = context.switchToHttp().getRequest()
+
+    const user: User | undefined = request.user?.currentUser
+
     return next
       .handle()
       .pipe(
-        map((cases: Case[]) => cases.map((theCase) => transformCase(theCase))),
+        map((cases: Case[]) =>
+          cases.map((theCase) => transformCase(theCase, user)),
+        ),
       )
   }
 }

@@ -6,9 +6,13 @@ import { NotificationsApi } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
 import {
   AdminNotificationsResponse,
+  ActorNotificationsResponse,
   NotificationsInput,
 } from './notifications.model'
-import { adminNotificationMapper } from '../utils/helpers'
+import {
+  adminNotificationMapper,
+  actorNotificationMapper,
+} from '../utils/helpers'
 
 @Injectable()
 export class NotificationsAdminService {
@@ -27,7 +31,7 @@ export class NotificationsAdminService {
     nationalId: string,
     user: User,
     input?: NotificationsInput,
-  ): Promise<AdminNotificationsResponse | null> {
+  ): Promise<AdminNotificationsResponse> {
     const notifications = await this.notificationsWAuth(
       user,
     ).notificationsControllerFindMany({
@@ -38,15 +42,45 @@ export class NotificationsAdminService {
       after: input?.after,
     })
 
-    if (!notifications.data) {
-      this.logger.debug('no admin notification found')
-      return null
+    return {
+      data: notifications.data
+        ? notifications.data.map((item) => adminNotificationMapper(item))
+        : [],
+      totalCount: notifications.totalCount ?? 0,
+      pageInfo: notifications.pageInfo ?? {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
     }
+  }
+
+  async getActorNotifications(
+    nationalId: string,
+    user: User,
+    input?: NotificationsInput,
+  ): Promise<ActorNotificationsResponse> {
+    const actorNotifications = await this.notificationsWAuth(
+      user,
+    ).notificationsControllerFindActorNotifications({
+      xQueryNationalId: nationalId,
+      limit: input?.limit,
+      before: input?.before,
+      after: input?.after,
+    })
 
     return {
-      data: notifications.data.map((item) => adminNotificationMapper(item)),
-      totalCount: notifications.totalCount,
-      pageInfo: notifications.pageInfo,
+      data: actorNotifications.data
+        ? actorNotifications.data.map((item) => actorNotificationMapper(item))
+        : [],
+      totalCount: actorNotifications.totalCount ?? 0,
+      pageInfo: actorNotifications.pageInfo ?? {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
     }
   }
 }

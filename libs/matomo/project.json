@@ -1,0 +1,20 @@
+{
+  "name": "matomo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/matomo/src",
+  "projectType": "library",
+  "tags": ["lib:dom", "scope:dom"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/matomo/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/matomo"]
+    }
+  }
+}

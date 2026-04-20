@@ -5,6 +5,7 @@ export const serviceSetup =
     return service('services-auth-personal-representative-public')
       .namespace('personal-representative')
       .image('services-auth-personal-representative-public')
+      .serviceAccount('services-auth-personal-representative-public')
       .db({
         name: 'servicesauth',
       })
@@ -27,6 +28,7 @@ export const serviceSetup =
           public: false,
         },
       })
+      .grantNamespaces('nginx-ingress-internal')
       .readiness('/health/check')
       .liveness('/liveness')
       .resources({

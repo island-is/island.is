@@ -1,5 +1,7 @@
+import { FormStatus } from '@island.is/form-system/shared'
 import { CreationOptional } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -9,13 +11,13 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Section } from '../../sections/models/section.model'
-import { Organization } from '../../organizations/models/organization.model'
-import { LanguageType } from '../../../dataTypes/languageType.model'
+import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../dataTypes/languageType.model'
+import { Application } from '../../applications/models/application.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../../formUrls/models/formUrl.model'
-import { FormStatus } from '@island.is/form-system/shared'
+import { Organization } from '../../organizations/models/organization.model'
+import { Section } from '../../sections/models/section.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -79,6 +81,34 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: false,
   })
+  zendeskInternal!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  useValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  usePopulate!: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
   hasPayment!: boolean
 
   @Column({
@@ -99,13 +129,19 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  applicationDaysToRemove!: number
+  draftDaysToLive!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 30,
+  })
+  submissionDaysToLive!: number
 
   @Column({
     type: DataType.UUID,
     allowNull: true,
   })
-  derivedFrom!: string
+  derivedFrom!: string | null
 
   @Column({
     type: DataType.ENUM,
@@ -130,11 +166,23 @@ export class Form extends Model<Form> {
   hasSummaryScreen!: boolean
 
   @Column({
-    type: DataType.JSON,
-    allowNull: true,
-    defaultValue: () => new LanguageType(),
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: () => ({
+      title: new LanguageType(),
+      confirmationHeader: new LanguageType(),
+      confirmationText: new LanguageType(),
+      additionalInfo: [],
+    }),
   })
-  completedMessage?: LanguageType
+  completedSectionInfo!: CompletedSectionInfo
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
 
   @Column({
     type: DataType.JSON,
@@ -142,21 +190,11 @@ export class Form extends Model<Form> {
   })
   dependencies?: Dependency[]
 
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-    defaultValue: [],
-  })
-  allowedDelegationTypes!: string[]
-
   @HasMany(() => Section)
   sections!: Section[]
 
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]
-
-  @HasMany(() => FormUrl)
-  formUrls?: FormUrl[]
 
   @ForeignKey(() => Organization)
   @Column({
@@ -165,4 +203,17 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  @BelongsTo(() => Organization, 'organizationId')
+  organization?: Organization
+
+  @HasMany(() => Application)
+  applications?: Application[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'last_modified_by',
+  })
+  lastModifiedBy?: string
 }

@@ -5,6 +5,7 @@ import {
   GridRow as Row,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
@@ -15,10 +16,11 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
+  valueIndex?: number
 }
 
-export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
+export const Banknumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
+  const { lang } = useLocale()
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
@@ -27,21 +29,28 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
   const { control, watch } = useFormContext()
 
+  const bankField = `${item.id}.${valueIndex}_bank`
+  const ledgerField = `${item.id}.${valueIndex}_ledger`
+  const accountField = `${item.id}.${valueIndex}_account`
+
   // Watch all three fields
-  const bank = watch(`${item.id}.bank`)
-  const ledger = watch(`${item.id}.ledger`)
-  const account = watch(`${item.id}.account`)
+  const bank = watch(bankField)
+  const ledger = watch(ledgerField)
+  const account = watch(accountField)
 
   // Combine and dispatch value on change
   useEffect(() => {
-    const combinedValue = `${bank ?? ''}-${ledger ?? ''}-${account ?? ''}`
+    const combinedValue =
+      bank || ledger || account
+        ? `${bank ?? ''}-${ledger ?? ''}-${account ?? ''}`
+        : ''
     if (dispatch) {
       dispatch({
         type: 'SET_BANK_ACCOUNT',
-        payload: { value: combinedValue, id: item.id },
+        payload: { value: combinedValue, id: item.id, valueIndex },
       })
     }
-  }, [bank, ledger, account, dispatch, item.id])
+  }, [bank, ledger, account, dispatch, item.id, valueIndex])
 
   // Helper for leading zeros
   const addLeadingZeros = (originalNumber: string, max: number) => {
@@ -56,7 +65,7 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
     return leadingZeros + originalNumber
   }
 
-  const bankAccountValue = getValue(item, 'bankAccount') ?? ''
+  const bankAccountValue = getValue(item, 'bankAccount', valueIndex) ?? ''
   const [bankDefault, ledgerDefault, accountDefault] =
     bankAccountValue.split('-')
   return (
@@ -64,11 +73,11 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
       <Row>
         <Text variant="h4">{item.name?.[lang]}</Text>
       </Row>
-      <Row marginTop={2}>
+      <Row marginTop={1}>
         <Column span="4/12">
           <Controller
-            key={item.id}
-            name={`${item.id}.bank`}
+            key={`${item.id}-${valueIndex}-bank`}
+            name={bankField}
             control={control}
             rules={{
               required: {
@@ -86,7 +95,9 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
                 ref={inputRefs[0]}
                 name={field.name}
                 label={formatMessage(m.bank)}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                maxLength={4}
                 value={field.value ?? undefined}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')
@@ -109,7 +120,8 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
         </Column>
         <Column span="3/12">
           <Controller
-            name={`${item.id}.ledger`}
+            key={`${item.id}-${valueIndex}-ledger`}
+            name={ledgerField}
             control={control}
             rules={{
               required: {
@@ -127,7 +139,9 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
                 ref={inputRefs[1]}
                 name={field.name}
                 label={formatMessage(m.ledger)}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                maxLength={2}
                 value={field.value ?? ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')
@@ -150,7 +164,8 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
         </Column>
         <Column span="4/12">
           <Controller
-            name={`${item.id}.account`}
+            key={`${item.id}-${valueIndex}-account`}
+            name={accountField}
             control={control}
             rules={{
               required: {
@@ -168,7 +183,9 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
                 ref={inputRefs[2]}
                 name={field.name}
                 label={formatMessage(m.accountNumber)}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
                 value={field.value ?? ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')

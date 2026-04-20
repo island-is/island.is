@@ -80,7 +80,7 @@ export class ValueTypeFactory {
         keys = ['time']
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.FILE:
-        keys = ['s3Key', 's3Url']
+        keys = ['s3Key']
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.PAYMENT:
         keys = ['paymentCode']
@@ -94,7 +94,7 @@ export class ValueTypeFactory {
           'municipality',
           'email',
           'phoneNumber',
-          'delegationType',
+          'applicantType',
           'isLoggedInUser',
         ]
         return this.pickSettings(valueType, keys)

@@ -20,6 +20,8 @@ auth-admin-web:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -38,6 +40,16 @@ auth-admin-web:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'innskra.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/admin'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
   ingress:
@@ -53,8 +65,10 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -71,9 +85,15 @@ auth-admin-web:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
+    NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/auth-admin-web'
+    create: true
+    name: 'auth-admin-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -89,7 +109,7 @@ identity-server:
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
     ad.datadoghq.com/identity-server.init_configs: '[{}]'
-    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]'
     ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
   enabled: true
   env:
@@ -131,6 +151,7 @@ identity-server:
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -150,6 +171,16 @@ identity-server:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'innskra.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
   ingress:
@@ -165,8 +196,8 @@ identity-server:
             - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -237,6 +268,7 @@ services-auth-admin-api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+    NOVA_SENDER_NAME: 'Island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
     SYSLUMENN_TIMEOUT: '3000'
@@ -256,6 +288,8 @@ services-auth-admin-api:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -274,6 +308,16 @@ services-auth-admin-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'innskra.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/backend'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
   ingress:
@@ -288,8 +332,8 @@ services-auth-admin-api:
             - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -311,9 +355,9 @@ services-auth-admin-api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
-    NOVA_URL: '/k8s/services-auth/NOVA_URL'
-    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
+    NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+    NOVA_URL: '/k8s/NOVA_URL_V1'
+    NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
@@ -335,6 +379,7 @@ services-auth-delegation-api:
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
+    CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
@@ -369,6 +414,7 @@ services-auth-delegation-api:
     - 'service-portal'
     - 'user-notification-worker'
     - 'user-notification-birthday-worker'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -387,6 +433,16 @@ services-auth-delegation-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'auth-delegation-api.internal.innskra.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
   ingress:
@@ -400,8 +456,8 @@ services-auth-delegation-api:
             - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -418,6 +474,7 @@ services-auth-delegation-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -455,7 +512,7 @@ services-auth-ids-api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
-    NOVA_ACCEPT_UNAUTHORIZED: 'false'
+    NOVA_SENDER_NAME: 'Island.is'
     PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_MAX_AGE_DAYS: '365'
@@ -484,6 +541,7 @@ services-auth-ids-api:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'datadog'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -543,8 +601,8 @@ services-auth-ids-api:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -564,9 +622,9 @@ services-auth-ids-api:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
-    NOVA_URL: '/k8s/services-auth/NOVA_URL'
-    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
+    NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+    NOVA_URL: '/k8s/NOVA_URL_V1'
+    NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
@@ -601,6 +659,7 @@ services-auth-ids-api-cleanup:
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -623,8 +682,10 @@ services-auth-ids-api-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -644,6 +705,11 @@ services-auth-ids-api-cleanup:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-ids-api-cleanup'
+    create: true
+    name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
   enabled: true
   env:
@@ -676,8 +742,10 @@ services-auth-personal-representative:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -695,6 +763,16 @@ services-auth-personal-representative:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'personal-representative-xrd.internal.innskra.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
   ingress:
@@ -708,8 +786,10 @@ services-auth-personal-representative:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -735,6 +815,11 @@ services-auth-personal-representative:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative'
+    create: true
+    name: 'services-auth-personal-representative'
 services-auth-personal-representative-public:
   enabled: true
   env:
@@ -746,8 +831,10 @@ services-auth-personal-representative-public:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -765,6 +852,16 @@ services-auth-personal-representative-public:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'personal-representative-public-xrd.internal.innskra.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
   ingress:
@@ -778,8 +875,10 @@ services-auth-personal-representative-public:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -798,6 +897,11 @@ services-auth-personal-representative-public:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative-public'
+    create: true
+    name: 'services-auth-personal-representative-public'
 services-auth-public-api:
   enabled: true
   env:
@@ -843,6 +947,8 @@ services-auth-public-api:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -861,6 +967,17 @@ services-auth-public-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'innskra.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
+          rewritePrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
   ingress:
@@ -879,8 +996,8 @@ services-auth-public-api:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
-    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []

@@ -52,7 +52,7 @@ export const RealEstateLookup = ({
   }, [queryLoading])
 
   useEffect(() => {
-    if (!props.readOnly) {
+    if (!props.isInitial) {
       const propertyNumber = propertyNumberInput
         .trim()
         .toUpperCase()

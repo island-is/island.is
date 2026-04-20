@@ -10,6 +10,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { applyUpdateToCase } from '../../formHelper'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
@@ -22,6 +23,7 @@ import {
   useLimitedAccessUpdateCaseMutation,
 } from './limitedAccessUpdateCase.generated'
 import { useSendNotificationMutation } from './sendNotification.generated'
+import { useSplitDefendantFromCaseMutation } from './splitDefendantFromCase.generated'
 import {
   TransitionCaseMutation,
   useTransitionCaseMutation,
@@ -66,6 +68,11 @@ const useCase = () => {
   const [extendCaseMutation, { loading: isExtendingCase }] =
     useExtendCaseMutation()
 
+  const [
+    splitDefendantFromCaseMutation,
+    { loading: isSplittingDefendantFromCase },
+  ] = useSplitDefendantFromCaseMutation()
+
   const createCase = useMemo(
     () =>
       async (theCase: Case): Promise<Case | undefined> => {
@@ -107,22 +114,14 @@ const useCase = () => {
 
   const createCourtCase = useMemo(
     () =>
-      async (
-        workingCase: Case,
-        setWorkingCase: Dispatch<SetStateAction<Case>>,
-      ): Promise<string> => {
+      async (caseId: string): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
             const { data, errors } = await createCourtCaseMutation({
-              variables: { input: { caseId: workingCase.id } },
+              variables: { input: { caseId } },
             })
 
             if (data?.createCourtCase?.courtCaseNumber && !errors) {
-              setWorkingCase((prevWorkingCase) => ({
-                ...prevWorkingCase,
-                courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
-              }))
-
               return data.createCourtCase.courtCaseNumber
             }
           }
@@ -219,7 +218,7 @@ const useCase = () => {
             LimitedAccessTransitionCaseMutation
 
           const state = res?.[resultType]?.state
-          const appealState = res?.[resultType]?.appealState
+          const appealState = res?.[resultType]?.appealCase?.appealState
 
           if (!state && !appealState) {
             return false
@@ -287,6 +286,21 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
+  const splitDefendantFromCase = useMemo(
+    () => async (caseId: string, defendantId: string) => {
+      try {
+        const { data } = await splitDefendantFromCaseMutation({
+          variables: { input: { id: caseId, defendantId } },
+        })
+
+        return data?.splitDefendantFromCase?.id
+      } catch (error) {
+        toast.error('Ekki tókst að kljúfa varnaraðila frá máli')
+      }
+    },
+    [splitDefendantFromCaseMutation],
+  )
+
   const setAndSendCaseToServer = async (
     updates: UpdateCase[],
     workingCase: Case,
@@ -300,10 +314,9 @@ const useCase = () => {
         return false
       }
 
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        ...updatesToCase,
-      }))
+      setWorkingCase((prevWorkingCase) =>
+        applyUpdateToCase(prevWorkingCase, updatesToCase),
+      )
 
       if (!workingCase.id) {
         return false
@@ -340,6 +353,8 @@ const useCase = () => {
     sendNotificationError,
     extendCase,
     isExtendingCase,
+    splitDefendantFromCase,
+    isSplittingDefendantFromCase,
     setAndSendCaseToServer,
   }
 }

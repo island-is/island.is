@@ -5,6 +5,7 @@ import { Query } from '@island.is/api/schema'
 export const useOrganization = (slug?: string) => {
   const { data, loading, error } = useQuery<Query>(GET_ORGANIZATION_QUERY, {
     variables: { input: { slug } },
+    skip: !slug,
   })
 
   return {

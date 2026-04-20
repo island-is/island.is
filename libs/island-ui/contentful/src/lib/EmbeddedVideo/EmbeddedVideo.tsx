@@ -238,6 +238,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
           frameBorder="0"
           allowFullScreen
           className={styles.content}
+          referrerPolicy="strict-origin-when-cross-origin"
         />
       )}
     </Box>

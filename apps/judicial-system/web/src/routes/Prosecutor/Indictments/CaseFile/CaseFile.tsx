@@ -20,13 +20,20 @@ import {
 import {
   CaseFile as TCaseFile,
   CaseFileCategory,
+  PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { caseFile as m } from './CaseFile.strings'
 
 const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const { digitalCaseFiles } = usePoliceDigitalCaseFile(
+    workingCase.id,
+    workingCase.origin,
+  )
 
   const caseFiles = useMemo(() => {
     return new Map<string, TCaseFile[]>(
@@ -40,6 +47,17 @@ const CaseFile = () => {
       ]),
     )
   }, [workingCase.caseFiles, workingCase.policeCaseNumbers])
+
+  const policeDigitalCaseFiles = useMemo(() => {
+    return new Map<string, PoliceDigitalCaseFile[]>(
+      workingCase.policeCaseNumbers?.map((policeCaseNumber) => [
+        policeCaseNumber,
+        digitalCaseFiles?.filter(
+          (file) => file.policeCaseNumber === policeCaseNumber,
+        ) ?? [],
+      ]),
+    )
+  }, [digitalCaseFiles, workingCase.policeCaseNumbers])
 
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState<number>(0)
@@ -79,6 +97,9 @@ const CaseFile = () => {
                     policeCaseNumber={policeCaseNumber}
                     shouldStartExpanded={index === 0}
                     caseFiles={caseFiles.get(policeCaseNumber) ?? []}
+                    policeDigitalCaseFiles={
+                      policeDigitalCaseFiles.get(policeCaseNumber) ?? []
+                    }
                     subtypes={workingCase.indictmentSubtypes}
                     crimeScenes={workingCase.crimeScenes}
                     setEditCount={setEditCount}
@@ -89,18 +110,22 @@ const CaseFile = () => {
           </LayoutGroup>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(m.pdfButtonText, {
-                  policeCaseNumber: policeCaseNumber,
-                })}
-                pdfType="caseFilesRecord"
-                elementId={policeCaseNumber}
-              />
-            </Box>
-          ))}
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+            const caseFilesRecordFileName = formatMessage(m.pdfButtonText, {
+              policeCaseNumber: policeCaseNumber,
+            })
+
+            return (
+              <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={caseFilesRecordFileName}
+                  pdfType="caseFilesRecord"
+                  elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                />
+              </Box>
+            )
+          })}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

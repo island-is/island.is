@@ -18,7 +18,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
       ]),
-      audience: config.audience,
+      ...(config.audience != null &&
+        (Array.isArray(config.audience)
+          ? config.audience.length > 0
+          : true) && {
+          audience: config.audience,
+        }),
       issuer: config.issuer,
       algorithms: ['RS256'],
       ignoreExpiration: false,

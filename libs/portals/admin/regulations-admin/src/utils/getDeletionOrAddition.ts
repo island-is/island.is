@@ -1,5 +1,5 @@
 import qq from '@hugsmidjan/qj/qq'
-import { HTMLText } from '@island.is/regulations-tools/types'
+import { HTMLText } from '@dmr.is/regulations-tools/types'
 
 export const getLiPoint = (num: number, isStaflidur: boolean) => {
   const charNum = num > 22 ? 23 : num - 1

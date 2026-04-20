@@ -205,7 +205,39 @@ export const getConsumerIndexDateOptions = (
 
   const typedArray: ConsumerIndexItem[] = consumerIndexArray
 
+  // Get contract start date to filter out index dates before it
+  const { startDate } = applicationAnswers(application.answers)
+
+  let contractStartDate: Date | undefined
+
+  if (startDate) {
+    contractStartDate = startOfDay(new Date(startDate))
+  }
+
   return [...typedArray]
+    .filter(({ month }) => {
+      if (!contractStartDate) {
+        return true
+      }
+
+      try {
+        const indexDate: Date = month.includes('T')
+          ? new Date(month)
+          : parse(month, 'yyyyMMM', new Date(), { locale: is })
+
+        const contractStartMonth = startOfDay(
+          new Date(
+            contractStartDate.getFullYear(),
+            contractStartDate.getMonth(),
+            1,
+          ),
+        )
+
+        return indexDate >= contractStartMonth
+      } catch {
+        return true
+      }
+    })
     .sort((a, b) => b.month.localeCompare(a.month))
     .map(({ month }) => ({
       value: month,

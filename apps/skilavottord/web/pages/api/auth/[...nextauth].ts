@@ -1,12 +1,10 @@
-import NextAuth, { CallbacksOptions } from 'next-auth'
-import Providers from 'next-auth/providers'
-import { JWT } from 'next-auth/jwt'
-import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
+import NextAuth from 'next-auth'
+import type { NextAuthOptions } from 'next-auth'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 import environment from '../../../environments/environment'
 
 import {
-  AuthUser,
   signIn as handleSignIn,
   jwt as handleJwt,
   session,
@@ -15,48 +13,61 @@ import {
 
 const { identityProvider } = environment
 
-const signIn = (
-  user: AuthUser,
-  account: Record<string, unknown>,
-  profile: Record<string, unknown>,
-): boolean => handleSignIn(user, account, profile, 'identity-server')
-
-const jwt = async (token: JWT, user: AuthUser) => {
-  if (user) {
-    token = {
-      nationalId: user.nationalId,
-      name: user.name,
-      accessToken: user.accessToken,
-      refreshToken: user.refreshToken,
-      idToken: user.idToken,
-      isRefreshTokenExpired: false,
-    }
-  }
-  return await handleJwt(
-    token,
-    '@urvinnslusjodur.is/skilavottord',
-    identityProvider.clientSecret,
-    identityProvider.nextAuth,
-    identityProvider.domain,
-  )
-}
-
-const options = {
+const options: NextAuthOptions = {
   providers: [
-    Providers.IdentityServer4({
+    {
       id: 'identity-server',
       name: 'Skilavottord',
-      scope: 'openid profile offline_access @urvinnslusjodur.is/skilavottord',
+      type: 'oauth',
+      wellKnown: `https://${identityProvider.domain}/.well-known/openid-configuration`,
       clientId: '@urvinnslusjodur.is/skilavottord',
-      domain: identityProvider.domain,
       clientSecret: identityProvider.clientSecret,
-      protection: 'pkce',
-    }),
+      authorization: {
+        params: {
+          scope:
+            'openid profile offline_access @urvinnslusjodur.is/skilavottord',
+        },
+      },
+      checks: ['pkce', 'state'],
+      idToken: true,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          nationalId: profile.nationalId,
+        }
+      },
+    },
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: 'jwt' },
   callbacks: {
-    signIn,
-    jwt,
-    session,
+    async signIn({ account }) {
+      return handleSignIn(account as Record<string, unknown>, 'identity-server')
+    },
+    async jwt({ token, user, account, profile }) {
+      if (account && user) {
+        token = {
+          ...token,
+          nationalId: (profile as any)?.nationalId,
+          name: user.name,
+          accessToken: account.access_token as string,
+          refreshToken: account.refresh_token as string,
+          idToken: account.id_token as string,
+          isRefreshTokenExpired: false,
+        }
+      }
+      return await handleJwt(
+        token,
+        '@urvinnslusjodur.is/skilavottord',
+        identityProvider.clientSecret,
+        identityProvider.nextAuth,
+        identityProvider.domain,
+      )
+    },
+    async session({ session: sess, token }) {
+      return session(sess as unknown as AuthSession, token)
+    },
   },
 }
 

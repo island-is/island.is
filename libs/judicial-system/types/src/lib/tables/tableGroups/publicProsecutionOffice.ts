@@ -8,12 +8,14 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       route: 'ny-sakamal',
       title: 'Ný mál',
       description: 'Ný mál sem á eftir að úthluta í yfirlestur.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW,
       route: 'sakamal-i-yfirlestri',
       title: 'Mál í yfirlestri',
       description: 'Mál sem eru í yfirlestri hjá saksóknara.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
@@ -25,7 +27,8 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
       route: 'frestur-lidinn-i-sakamalum',
       title: 'Frestur liðinn',
-      description: 'Áfrýjunarfrestur liðinn.',
+      description: 'Mál sem eru tilbúin til fullnustu.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
@@ -38,6 +41,19 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       route: 'afryjud-sakamal',
       title: 'Áfrýjuð mál',
       description: 'Mál sem hefur verið áfrýjað.',
+      includeCounter: true,
+    },
+    {
+      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED,
+      route: 'syknudomar',
+      title: 'Sýknudómar',
+      description: 'Yfirlesnir sýknudómar.',
+    },
+    {
+      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL,
+      route: 'afryjunarleyfi',
+      title: 'Áfrýjunarleyfi',
+      description: 'Yfirlesnir dómar með beiðni um áfrýjunarleyfi.',
     },
   ],
 }

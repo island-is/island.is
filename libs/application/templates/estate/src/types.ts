@@ -5,6 +5,16 @@ export type AssetFormField = Asset & { id: string }
 
 export type ErrorValue = { [key: string]: any }
 
+export interface BankAccount {
+  accountNumber?: string
+  balance?: string
+  accruedInterest?: string
+  accountTotal?: string
+  foreignBankAccount?: string[]
+  initial?: boolean
+  enabled?: boolean
+}
+
 export interface EstateMember {
   name: string
   nationalId: string
@@ -21,11 +31,11 @@ export interface EstateMember {
   advocate?: Advocate
 }
 
-export type AssetsRepeaterProps = {
+export type GunsRepeaterProps = {
   field: {
     id: string
     props: {
-      assetName: 'guns' | 'vehicles'
+      assetName: 'guns'
       texts: {
         assetTitle: object
         assetNumber: object

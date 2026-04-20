@@ -81,6 +81,15 @@ const DocumentsFilter = ({
       .filter(isDefined)
   }
 
+  const filterCount =
+    filterValue.activeCategories.length +
+    filterValue.activeSenders.length +
+    (filterValue.archived ? 1 : 0) +
+    (filterValue.bookmarked ? 1 : 0) +
+    (filterValue.showUnread ? 1 : 0) +
+    (isDefined(filterValue.dateTo) ? 1 : 0) +
+    (isDefined(filterValue.dateFrom) ? 1 : 0)
+
   const sendersAvailable = mapToFilterItem(senders)
   const categoriesAvailable = mapToFilterItem(categories)
   return (
@@ -90,10 +99,13 @@ const DocumentsFilter = ({
         variant="popover"
         align="left"
         reverse
+        filterInputFluid
         labelClear={formatMessage(m.clearFilter)}
         labelClearAll={formatMessage(m.clearAllFilters)}
         labelOpen={formatMessage(m.openFilter)}
         labelClose={formatMessage(m.closeFilter)}
+        filterCount={filterCount}
+        onFilterClear={handleClearFilters}
         mobileWrap={false}
         filterInput={
           <Input
@@ -106,7 +118,6 @@ const DocumentsFilter = ({
             icon={{ name: 'search' }}
           />
         }
-        onFilterClear={handleClearFilters}
       >
         <Box
           display="flex"

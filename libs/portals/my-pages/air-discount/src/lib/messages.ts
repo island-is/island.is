@@ -100,4 +100,18 @@ export const messages = defineMessages({
     id: 'sp.air-discount:date',
     defaultMessage: 'Dagsetning',
   },
+  noFunding: {
+    id: 'sp.air-discount:no-funding',
+    defaultMessage:
+      'Afsláttarkóðar Loftbrúar verða aðgengilegir aftur 1. janúar 2026. <link>Nánari upplýsingar hér</link>',
+  },
+  noFundingTitle: {
+    id: 'sp.air-discount:no-funding-title',
+    defaultMessage: 'Tímabundin lokun',
+  },
+  noFundingMoreInfoLink: {
+    id: 'sp.air-discount:no-funding-more-info-link',
+    defaultMessage:
+      'https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru',
+  },
 })

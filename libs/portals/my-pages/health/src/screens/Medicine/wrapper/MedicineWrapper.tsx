@@ -33,6 +33,7 @@ export const MedicinePaymentParticipationWrapper = ({
       intro={formatMessage(m.medicineTitleIntro)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(m.healthTooltip)}
+      childrenWidthFull
     >
       <Hidden print={true}>
         <TabNavigation

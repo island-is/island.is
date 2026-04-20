@@ -10,7 +10,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
@@ -102,9 +102,8 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   name: application.general.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.GeneralFishingLicense.translation,
-  ],
   dataSchema: GeneralFishingLicenseSchema,
   allowedDelegations: [
     { type: AuthDelegationType.ProcurationHolder },
@@ -144,7 +143,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 DepartmentOfFisheriesPaymentCatalogApi,
                 MockPaymentCatalog,
                 ShipRegistryApi,

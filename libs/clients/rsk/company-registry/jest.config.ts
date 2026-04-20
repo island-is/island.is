@@ -5,6 +5,7 @@ export default {
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {},
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',

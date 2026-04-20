@@ -1,3 +1,11 @@
+export type ApplicationPeriod = {
+  allowFreshmanApplication: boolean
+  registrationEndDateGeneral: Date
+  registrationEndDateFreshman: Date
+  reviewStartDateGeneral: Date
+  reviewStartDateFreshman: Date
+}
+
 export type Student = {
   isFreshman: boolean
 }
@@ -13,6 +21,7 @@ export type SecondarySchool = {
   thirdLanguages: Language[]
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
+  requireThirdLanguage: boolean
   isOpenForAdmissionGeneral: boolean
   isOpenForAdmissionFreshman: boolean
 }
@@ -23,4 +32,6 @@ export type Program = {
   nameEn: string
   registrationEndDate: Date
   isSpecialNeedsProgram: boolean
+  programApplicationMessageIs?: string
+  programApplicationMessageEn?: string
 }

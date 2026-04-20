@@ -37,9 +37,25 @@ export class ValueType {
 
   @IsOptional()
   @IsDate()
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @ApiPropertyOptional({ type: Date })
-  date?: Date
+  @Transform(
+    ({ value }) => {
+      // Keep cleared values as null
+      if (value === null || value === undefined || value === '') {
+        return null
+      }
+
+      const d = new Date(value)
+      // Treat unparseable values as null (optional: you can throw instead)
+      if (isNaN(d.getTime())) {
+        return null
+      }
+
+      return d
+    },
+    { toClassOnly: true },
+  )
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  date?: Date | null
 
   @IsOptional()
   @IsString()
@@ -149,14 +165,10 @@ export class ValueType {
   time?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  s3Key?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  s3Url?: string
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: [String] })
+  s3Key?: string[]
 
   @IsOptional()
   @IsString()
@@ -166,7 +178,7 @@ export class ValueType {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  delegationType?: string
+  applicantType?: string
 
   @IsOptional()
   @IsBoolean()

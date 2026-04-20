@@ -20,6 +20,10 @@ export class FieldDto {
 
   @ApiProperty()
   @IsString()
+  identifier!: string
+
+  @ApiProperty()
+  @IsString()
   screenId!: string
 
   @ApiProperty({ type: LanguageType })

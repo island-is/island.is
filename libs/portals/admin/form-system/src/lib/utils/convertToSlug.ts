@@ -27,5 +27,6 @@ export const convertToSlug = (text: string): string => {
     .map((char) => icelandicToEnglishMap[char] || char)
     .join('')
     .replace(/\s+/g, '-')
+    .replace(/\//g, '-')
     .toLowerCase()
 }

@@ -1,14 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import createUse from 'zustand'
-import { persist } from 'zustand/middleware'
-import create, { State } from 'zustand/vanilla'
-import { config, environments } from '../config'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { config } from '../config-constants'
+import { environments } from '../constants/environments'
+import { create, useStore } from 'zustand'
 
 export interface EnvironmentConfig {
   id: string
   label: string
   idsIssuer: string
   apiUrl: string
+  baseUrl: string
   configCat: string | null
   datadog: string | null
 }
@@ -32,7 +33,7 @@ export interface EnvironmentResponse {
   }
 }
 
-export interface EnvironmentStore extends State {
+export interface EnvironmentStore {
   environment: EnvironmentConfig
   cognito: CognitoResponse | null
   loading: boolean
@@ -45,7 +46,7 @@ export interface EnvironmentStore extends State {
   }
 }
 
-export const environmentStore = create<EnvironmentStore>(
+export const environmentStore = create<EnvironmentStore>()(
   persist(
     (set, get) => ({
       environment: config.isTestingApp ? environments.dev : environments.prod,
@@ -73,10 +74,17 @@ export const environmentStore = create<EnvironmentStore>(
                 'X-Cognito-Token': `Bearer ${get().cognito?.accessToken}`,
               },
             }).then((r) => r.json() as Promise<EnvironmentResponse>)
-            const ids = res.results.ids.map((n) => ({
-              ...((environments as any)[n.id] ?? {}),
-              ...n,
-            }))
+            const ids = res.results.ids.map((n) => {
+              const local =
+                environments[n.id as keyof typeof environments] ?? {}
+              const remote = n as any
+              return {
+                ...local,
+                ...n,
+                // Preserve baseUrl from local if remote does not provide it
+                baseUrl: remote.baseUrl ?? remote.apiUrl.replace('/api', ''),
+              }
+            })
             const dev = ids.find((n) => n.id === 'dev')
             const result = [
               ...ids,
@@ -88,9 +96,10 @@ export const environmentStore = create<EnvironmentStore>(
               })),
               environments.local,
               environments.mock,
-            ]
+            ] as EnvironmentConfig[]
             set({ loading: false, fetchedAt: Date.now(), result })
-            return result
+
+            return result as EnvironmentConfig[]
           } catch (err) {
             // noop
           }
@@ -108,21 +117,19 @@ export const environmentStore = create<EnvironmentStore>(
       },
     }),
     {
-      name: '@island/environment13',
-      getStorage: () => AsyncStorage,
-      deserialize(str: string) {
-        const { state, version } = JSON.parse(str)
-        delete state.actions
-        delete state.loading
-
-        if (!config.isTestingApp) {
-          state.environment = environments.prod
-        }
-
-        return { state, version }
-      },
+      name: '@island/environment15',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        environment: !config.isTestingApp
+          ? environments.prod
+          : state.environment,
+        cognito: state.cognito,
+        result: state.result,
+        fetchedAt: state.fetchedAt,
+      }),
     },
   ),
 )
-
-export const useEnvironmentStore = createUse(environmentStore)
+export const useEnvironmentStore = <U = EnvironmentStore>(
+  selector?: (state: EnvironmentStore) => U,
+) => useStore(environmentStore, selector!)

@@ -32,6 +32,12 @@ export class CaseString extends Model {
     )?.value
   }
 
+  static penalties(caseStrings?: CaseString[]) {
+    return caseStrings?.find(
+      (caseString) => caseString.stringType === StringType.PENALTIES,
+    )?.value
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

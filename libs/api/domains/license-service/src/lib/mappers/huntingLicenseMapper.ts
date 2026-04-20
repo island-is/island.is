@@ -7,7 +7,6 @@ import {
   GenericLicenseType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
-import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -21,6 +20,7 @@ import { expiryTag, formatDate, capitalize } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { formatPhoto } from '../utils/formatPhoto'
+import { HuntingLicenseDto } from '@island.is/clients/license-client'
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {

@@ -32,6 +32,7 @@ import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
+import { notificationScopes } from '@island.is/auth/scopes'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
@@ -1323,12 +1324,14 @@ describe('MeUserProfileController', () => {
               fromNationalId: testNationalId1,
               subjectId: null,
               type: 'delegation',
+              customDelegationScopes: null,
             },
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId2,
               subjectId: null,
               type: 'delegation',
+              customDelegationScopes: null,
             },
           ],
           pageInfo: {
@@ -1384,7 +1387,7 @@ describe('MeUserProfileController', () => {
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
-        scope: '@island.is/documents',
+        scopes: notificationScopes.join(','),
         direction: 'incoming',
       })
     })
@@ -1432,12 +1435,14 @@ describe('MeUserProfileController', () => {
               fromNationalId: testNationalId1,
               subjectId: null,
               type: 'delegation',
+              customDelegationScopes: null,
             },
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId2,
               subjectId: null,
               type: 'delegation',
+              customDelegationScopes: null,
             },
           ],
           pageInfo: {
@@ -1538,12 +1543,14 @@ describe('MeUserProfileController', () => {
               fromNationalId: testNationalId1,
               subjectId: null,
               type: 'delegation',
+              customDelegationScopes: null,
             },
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId2,
               subjectId: 'document-123',
               type: 'document-delegation',
+              customDelegationScopes: null,
             },
           ],
           pageInfo: {
@@ -1587,7 +1594,7 @@ describe('MeUserProfileController', () => {
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
-        scope: '@island.is/documents',
+        scopes: notificationScopes.join(','),
         direction: 'incoming',
       })
     })
@@ -1996,6 +2003,7 @@ describe('MeUserProfileController', () => {
               fromNationalId: actorNationalId,
               subjectId: null,
               type: 'delegation',
+              customDelegationScopes: null,
             },
           ],
           pageInfo: {

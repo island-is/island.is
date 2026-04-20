@@ -1,21 +1,22 @@
 import formatISO from 'date-fns/formatISO'
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
+  courtSubtypes,
   IndictmentSubtype,
   IndictmentSubtypeMap,
   investigationCases,
   isIndictmentCase,
+  Subtype,
   User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCourtModule } from './createTestingCourtModule'
 
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
-import { courtSubtypes, Subtype } from '../court.service'
 
 interface Then {
   result: string

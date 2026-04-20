@@ -15,6 +15,12 @@ export const advertDescription = style({
 export const bodyText = style({
   marginTop: '1.6em',
 })
+
+export const hideSignature = style({})
+globalStyle(`${hideSignature} .signature__date`, {
+  display: 'none',
+})
+
 regulationContentStyling(bodyText)
 
 globalStyle(

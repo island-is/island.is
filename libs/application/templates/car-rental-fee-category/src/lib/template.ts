@@ -18,9 +18,11 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import { SkatturApi, VehiclesApi } from '../dataProviders'
+import { VehicleCarMapApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
+import { m } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -28,19 +30,18 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
-  name: 'Bílaleigu gjaldflokkar',
+  name: m.application.name,
   codeOwner: CodeOwners.NordaApplications,
-  institution: 'Skatturinn',
-  translationNamespaces: [
+  institution: m.application.institution,
+  translationNamespaces:
     ApplicationConfigurations.CarRentalFeeCategory.translation,
-  ],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: States.PREREQUISITES,
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
@@ -56,8 +57,16 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [VehiclesApi, SkatturApi],
+              api: [VehicleCarMapApi],
               delete: true,
+            },
+            {
+              id: Roles.NOTALLOWED,
+              formLoader: () =>
+                import('../forms/notAllowed').then((val) =>
+                  Promise.resolve(val.notAllowedForm),
+                ),
+              read: 'all',
             },
           ],
         },
@@ -69,7 +78,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Main form',
+          name: States.DRAFT,
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
@@ -86,8 +95,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [VehicleCarMapApi],
             },
           ],
+          onExit: defineTemplateApi({
+            action: 'postDataToSkatturinn',
+          }),
         },
         on: {
           [DefaultEvents.SUBMIT]: {
@@ -97,7 +110,7 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          name: 'Completed form',
+          name: States.COMPLETED,
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
@@ -112,9 +125,6 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
-          onEntry: defineTemplateApi({
-            action: 'postDataToSkatturinn',
-          }),
         },
       },
     },
@@ -139,11 +149,16 @@ const template: ApplicationTemplate<
       })),
     },
   },
-  mapUserToRole: (
-    _nationalId: string,
+  mapUserToRole(
+    nationalId: string,
     _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  ): ApplicationRole | undefined {
+    // Only allow companies or delegated actors to access the application
+    if (isCompany(nationalId)) {
+      return Roles.APPLICANT
+    }
+
+    return Roles.NOTALLOWED
   },
 }
 

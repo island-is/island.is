@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
-import { getReviewSteps, canReviewerApprove } from '../../utils'
+import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { StatusStep } from './StatusStep'
 import { coreMessages } from '@island.is/application/core'
@@ -21,9 +21,9 @@ export const ApplicationStatus: FC<
 
   const steps = getReviewSteps(application)
 
-  const showReviewButton = canReviewerApprove(
-    reviewerNationalId,
+  const showReviewButton = !hasReviewerApproved(
     application.answers,
+    reviewerNationalId,
   )
 
   return (

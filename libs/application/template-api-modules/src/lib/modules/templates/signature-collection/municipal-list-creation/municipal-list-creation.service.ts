@@ -32,10 +32,21 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     ApplicationTypes.MUNICIPAL_LIST_CREATION,
   )
   async candidate({ auth }: TemplateApiModuleActionProps) {
-    const candidate = await this.signatureCollectionClientService.getSignee(
-      auth,
-      this.collectionType,
-    )
+    let candidate
+    try {
+      candidate = await this.signatureCollectionClientService.getSignee(
+        auth,
+        this.collectionType,
+      )
+    } catch (error) {
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
+      this.logger.warn('Failed to get signee for candidate check', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
+      throw new TemplateApiError(errorMessages.active, 405)
+    }
 
     if (!candidate.canCreate) {
       if (!candidate.canCreateInfo) {
@@ -67,12 +78,12 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   }
 
   async municipalCollection({ auth }: TemplateApiModuleActionProps) {
-    const candidate = await this.signatureCollectionClientService.getSignee(
-      auth,
-      this.collectionType,
-    )
-
     try {
+      const candidate = await this.signatureCollectionClientService.getSignee(
+        auth,
+        this.collectionType,
+      )
+
       const currentCollection =
         await this.signatureCollectionClientService.getLatestCollectionForType(
           CollectionType.LocalGovernmental,
@@ -101,6 +112,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       if (error instanceof TemplateApiError) {
         throw error
       }
+      this.logger.warn('Failed to get municipal collection data', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,

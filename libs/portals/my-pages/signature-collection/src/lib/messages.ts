@@ -117,6 +117,12 @@ export const m = defineMessages({
     defaultMessage: 'Engin söfnun í gangi',
     description: '',
   },
+  noCollectionIsActiveMunicipalDescription: {
+    id: 'sp.signatureCollection:noCollectionIsActiveMunicipalDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við Landskjörstjórn á [postur@landskjorstjorn.is](mailto:postur@landskjorstjorn.is)',
+    description: '',
+  },
   noCollectionIsActiveDescription: {
     id: 'sp.signatureCollection:noCollectionIsActiveDescription#markdown',
     defaultMessage:

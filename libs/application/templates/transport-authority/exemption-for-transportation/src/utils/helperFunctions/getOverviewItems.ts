@@ -23,13 +23,13 @@ import {
   checkHasDolly,
   checkHasDoubleDolly,
   checkHasSingleDolly,
+  getAllConvoyTrailers,
+  getAllConvoyVehicles,
   getConvoyItem,
   getConvoyItems,
   getConvoyShortName,
 } from './convoyUtils'
 import {
-  getAllConvoyTrailersForSpacing,
-  getAllConvoyVehiclesForSpacing,
   getConvoyVehicleSpacing,
   getDollyAxleSpacing,
   getTrailerAxleSpacing,
@@ -256,8 +256,12 @@ export const getConvoyOverviewItems = (
         ...overview.convoy.vehicleLabel,
         values: { permno: convoyItem.vehicle.permno },
       },
-      checkHasSingleDolly(answers) ? [overview.convoy.dollySingleLabel] : [],
-      checkHasDoubleDolly(answers) ? [overview.convoy.dollyDoubleLabel] : [],
+      ...(checkHasSingleDolly(answers)
+        ? [overview.convoy.dollySingleLabel]
+        : []),
+      ...(checkHasDoubleDolly(answers)
+        ? [overview.convoy.dollyDoubleLabel]
+        : []),
       ...(convoyItem.trailer?.permno
         ? [
             {
@@ -427,8 +431,10 @@ export const getAxleSpacingOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const vehicles = getAllConvoyVehiclesForSpacing(answers)
-  const trailers = getAllConvoyTrailersForSpacing(answers)
+  const vehicles = getAllConvoyVehicles(answers)
+  const trailersWithMultipleAxles = getAllConvoyTrailers(answers).filter(
+    (x) => x.numberOfAxles > 1,
+  )
   const hasDoubleDolly = checkHasDoubleDolly(answers)
 
   return [
@@ -457,7 +463,7 @@ export const getAxleSpacingOverviewItems = (
               },
             ]
           : []),
-        ...trailers.map((trailer) => ({
+        ...trailersWithMultipleAxles.map((trailer) => ({
           ...overview.axleSpacing.trailerLabel,
           values: {
             permno: trailer.permno,

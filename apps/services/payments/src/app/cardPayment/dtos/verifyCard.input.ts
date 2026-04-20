@@ -29,11 +29,4 @@ export class VerifyCardInput {
     type: Number,
   })
   expiryYear!: number
-
-  @IsNumber()
-  @ApiProperty({
-    description: 'Total amount to be paid in ISK (not cents)',
-    type: Number,
-  })
-  amount!: number
 }

@@ -35,7 +35,7 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { maxDaysToGiveOrReceive } from '../config'
 import {
   ADOPTION,
@@ -94,7 +94,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   title: parentalLeaveFormMessages.shared.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

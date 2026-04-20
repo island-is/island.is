@@ -1,8 +1,8 @@
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { FormScreen } from '../components/form/FormScreen'
 import { involvedParty } from '../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
+import { ApplicationTypes } from '../lib/constants'
 import { useInvolvedParties } from '../hooks/useInvolvedParties'
 import { OJOISelectController } from '../components/input/OJOISelectController'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
@@ -22,11 +22,10 @@ export const InvolvedPartyScreen = ({
   })
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
-  const user = useUserInfo()
 
   useEffect(() => {
     setSubmitButtonDisabled && setSubmitButtonDisabled(true)
-  }, [])
+  }, [setSubmitButtonDisabled])
 
   const { involvedParties, error, loading } = useInvolvedParties({
     applicationId: application.id,
@@ -38,30 +37,46 @@ export const InvolvedPartyScreen = ({
         data.officialJournalOfIcelandApplicationGetUserInvolvedParties
           .involvedParties
 
-      const userIsInvolvedParty =
-        involvedParties?.some(
-          (involvedParty) =>
-            involvedParty.nationalId === user?.profile?.nationalId,
-        ) ?? false
-
-      if (involvedParties.length === 1 || userIsInvolvedParty) {
+      if (involvedParties.length === 1) {
         const involvedParty = involvedParties[0]
+        const isMinistry = involvedParty.title
+          .toLowerCase()
+          .includes('ráðuneyti')
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
+        setValue(InputFields.advert.involvedPartyTitle, involvedParty.title)
+        setValue(InputFields.requirements.additionalParties, [])
 
         const currentAnswers = structuredClone(application.answers)
 
-        const updatedAnswers = set(
+        set(
           currentAnswers,
           InputFields.advert.involvedPartyId,
           involvedParty.id,
         )
+        set(
+          currentAnswers,
+          InputFields.advert.involvedPartyTitle,
+          involvedParty.title,
+        )
+        set(currentAnswers, InputFields.requirements.additionalParties, [])
 
-        updateApplication(updatedAnswers, () => {
-          submitApplication(DefaultEvents.SUBMIT, () => {
-            refetch && refetch()
+        // Pre-set applicationType for non-ministry parties so the
+        // TypeSelection screen can be skipped entirely.
+        if (!isMinistry) {
+          setValue('applicationType', ApplicationTypes.AD)
+          set(currentAnswers, 'applicationType', ApplicationTypes.AD)
+
+          updateApplication(currentAnswers, () => {
+            submitApplication(DefaultEvents.SUBMIT, () => {
+              refetch && refetch()
+            })
           })
-        })
+          return
+        }
+
+        updateApplication(currentAnswers)
+        setSubmitButtonDisabled && setSubmitButtonDisabled(false)
       }
     },
   })
@@ -114,7 +129,37 @@ export const InvolvedPartyScreen = ({
           applicationId={application.id}
           defaultValue={defaultValue}
           placeholder={involvedParty.inputs.select.placeholder}
-          onChange={() => {
+          onChange={(selectedId) => {
+            // Also persist the party title so downstream screens
+            // can check whether the party is a ministry.
+            const party = involvedParties?.find((p) => p.id === selectedId)
+            if (party) {
+              const answers = structuredClone(application.answers)
+              const additionalParties = (
+                application.answers.additionalParties ?? []
+              ).filter((additionalParty) => additionalParty.id !== party.id)
+
+              set(answers, InputFields.advert.involvedPartyId, party.id)
+              set(answers, InputFields.advert.involvedPartyTitle, party.title)
+              set(
+                answers,
+                InputFields.requirements.additionalParties,
+                additionalParties,
+              )
+
+              if (!party.title.toLowerCase().includes('ráðuneyti')) {
+                setValue('applicationType', ApplicationTypes.AD)
+                set(answers, 'applicationType', ApplicationTypes.AD)
+              }
+
+              setValue(InputFields.advert.involvedPartyId, party.id)
+              setValue(InputFields.advert.involvedPartyTitle, party.title)
+              setValue(
+                InputFields.requirements.additionalParties,
+                additionalParties,
+              )
+              updateApplication(answers)
+            }
             setSubmitButtonDisabled && setSubmitButtonDisabled(false)
           }}
         />

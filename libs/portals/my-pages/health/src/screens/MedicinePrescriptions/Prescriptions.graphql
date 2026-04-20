@@ -2,7 +2,9 @@ query GetMedicinePrescriptions($locale: String) {
   healthDirectoratePrescriptions(locale: $locale) {
     prescriptions {
       id
+      productId
       name
+      strength
       type
       form
       url
@@ -17,13 +19,19 @@ query GetMedicinePrescriptions($locale: String) {
       isRenewable
       renewalBlockedReason
       renewalStatus
+      renewResponseMessage
       amountRemaining
       medCardDrugId
+      medCardDrugCategory
       dispensations {
         id
-        agentName
+        pharmacy
         date
+        name
         count
+        strength
+        itemId
+        amount
       }
     }
   }

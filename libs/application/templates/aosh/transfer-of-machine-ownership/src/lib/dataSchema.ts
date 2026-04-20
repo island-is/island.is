@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -18,8 +19,8 @@ const UserSchemaBase = z.object({
     .string()
     .min(1)
     .refine((phone) => {
-      const countryCodeIS = phone.startsWith('+354')
-      return countryCodeIS ? phone.length === 11 : true
+      const phoneNumParsed = parsePhoneNumberFromString(phone, 'IS')
+      return phoneNumParsed && phoneNumParsed.isValid()
     }),
 })
 
@@ -90,7 +91,7 @@ export const MachineAnswersSchema = z.object({
   seller: UserInformationSchema,
   machine: z
     .object({
-      id: z.string().optional(),
+      id: z.string(),
       date: z.string().optional(),
       type: z.string().optional(),
       plate: z.string().optional(),

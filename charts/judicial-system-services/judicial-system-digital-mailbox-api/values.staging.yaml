@@ -25,10 +25,11 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-internal'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -47,6 +48,16 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'judicial-system-digital-mailbox-api-xrd.internal.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-internal'
+        namespace: 'envoy-gateway-internal'
+    rules:
+      - matches:
+          - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-digital-mailbox-api'
 ingress:
@@ -60,8 +71,8 @@ ingress:
           - '/'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
-  unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  minAvailable: '50%'
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
@@ -71,11 +82,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '200m'
-    memory: '256Mi'
+    cpu: '400m'
+    memory: '512Mi'
   requests:
-    cpu: '100m'
-    memory: '128Mi'
+    cpu: '30m'
+    memory: '256Mi'
 secrets:
   BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

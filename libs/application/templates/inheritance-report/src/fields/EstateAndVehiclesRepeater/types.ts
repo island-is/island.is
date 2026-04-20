@@ -23,6 +23,6 @@ export interface FieldComponentProps {
   fieldName: string
   error?: string
   answers?: Answers
-  readOnly?: boolean
+  isInitial?: boolean
   disabled?: boolean
 }

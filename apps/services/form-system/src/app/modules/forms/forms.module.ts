@@ -7,11 +7,10 @@ import { FormsController } from './forms.controller'
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
 import { Application } from '../applications/models/application.model'
+import { FileModule } from '../file/file.module'
 
 @Module({
   imports: [
@@ -19,14 +18,13 @@ import { Application } from '../applications/models/application.model'
       Form,
       Application,
       FormCertificationType,
-      FormUrl,
       Section,
       Screen,
       Field,
       Organization,
       ListItem,
-      OrganizationUrl,
     ]),
+    FileModule,
   ],
   controllers: [FormsController],
   providers: [FormsService],

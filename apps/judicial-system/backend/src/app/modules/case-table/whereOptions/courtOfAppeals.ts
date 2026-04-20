@@ -1,21 +1,34 @@
-import { Op } from 'sequelize'
+import { AppealCaseState } from '@island.is/judicial-system/types'
 
-import { CaseAppealState } from '@island.is/judicial-system/types'
+import { CaseWhereOptions } from '../caseTable.types'
+import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
-import { courtOfAppealsRequestCasesAccessWhereOptions } from './access'
+// Court of appeals cases
 
-// Court of appeals request cases
+export const courtOfAppealsCasesInProgressWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      appealCase: {
+        attributes: [],
+        required: true,
+        where: {
+          appeal_state: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
+        },
+      },
+    },
+    where: courtOfAppealsCasesAccessWhereOptions(),
+  })
 
-export const courtOfAppealsRequestCasesInProgressWhereOptions = () => ({
-  [Op.and]: [
-    courtOfAppealsRequestCasesAccessWhereOptions,
-    { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN] },
-  ],
-})
-
-export const courtOfAppealsRequestCasesCompletedWhereOptions = () => ({
-  [Op.and]: [
-    courtOfAppealsRequestCasesAccessWhereOptions,
-    { appeal_state: CaseAppealState.COMPLETED },
-  ],
-})
+export const courtOfAppealsCasesCompletedWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      appealCase: {
+        attributes: [],
+        required: true,
+        where: {
+          appeal_state: AppealCaseState.COMPLETED,
+        },
+      },
+    },
+    where: courtOfAppealsCasesAccessWhereOptions(),
+  })

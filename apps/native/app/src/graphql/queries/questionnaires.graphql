@@ -1,0 +1,41 @@
+query GetQuestionnaires($locale: String!) {
+  questionnairesList(locale: $locale) {
+    questionnaires {
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      lastSubmissionId
+      organization
+      department
+    }
+  }
+}
+
+query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      __typename
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmissionId
+      lastSubmitted
+      organization
+      department
+    }
+    expirationDate
+    canSubmit
+    submissions {
+      __typename
+      id
+      isDraft
+      lastUpdated
+      createdAt
+    }
+  }
+}

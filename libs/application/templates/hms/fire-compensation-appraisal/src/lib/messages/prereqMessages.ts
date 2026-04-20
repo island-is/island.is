@@ -34,7 +34,7 @@ export const prereqMessages = defineMessages({
   },
   propertiesTitle: {
     id: 'fca.application:prereq.propertiesTitle',
-    defaultMessage: 'Húsnæðis og mannvirkjastofnun',
+    defaultMessage: 'HMS',
     description: 'Properties title',
   },
   propertiesSubtitle: {
@@ -52,5 +52,16 @@ export const prereqMessages = defineMessages({
     id: 'fca.application:prereq.subTitle',
     defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
     description: 'External information retrieval subtitle',
+  },
+  getPropertiesErrorTitle: {
+    id: 'fca.application:prereq.getPropertiesErrorTitle',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um fasteignir',
+    description: 'Error title for getting properties',
+  },
+  getPropertiesErrorSummary: {
+    id: 'fca.application:prereq.getPropertiesErrorSummary#markdown',
+    defaultMessage:
+      'Vinsamlega hafið samband við HMS í [hms@hms.is](mailto:hms@hms.is)',
+    description: 'Error summary for getting properties',
   },
 })

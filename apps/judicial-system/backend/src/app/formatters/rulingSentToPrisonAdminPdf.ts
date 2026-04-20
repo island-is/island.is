@@ -6,12 +6,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   DefendantEventType,
-  EventType,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-import { Case, DefendantEventLog, EventLog } from '../modules/repository'
+import { Case, DefendantEventLog } from '../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -60,14 +59,18 @@ export const createRulingSentToPrisonAdminPdf = (
 
   doc.moveDown(1.5)
 
-  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
-    DefendantEventType.SENT_TO_PRISON_ADMIN,
-    theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+  const defendantsEventLogs = theCase.defendants?.flatMap(
+    (defendant) => defendant.eventLogs || [],
   )
 
-  const getSignatureDate = EventLog.getEventLogDateByEventType(
-    EventType.INDICTMENT_REVIEWED,
-    theCase.eventLogs,
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
+    defendantsEventLogs,
+  )
+
+  const getSignatureDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.INDICTMENT_REVIEWED,
+    defendantsEventLogs,
   )
 
   addMediumCenteredText(
@@ -116,7 +119,9 @@ export const createRulingSentToPrisonAdminPdf = (
   addEmptyLines(doc, 5)
 
   theCase.defendants?.forEach((defendant, index) => {
-    const { verdict } = defendant
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 

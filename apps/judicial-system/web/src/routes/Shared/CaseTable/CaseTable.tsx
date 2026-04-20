@@ -34,10 +34,13 @@ import {
   ContextMenuCaseActionType,
   StringGroupValue,
   StringValue,
-  TagPairValue,
+  TagGroupValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import {
+  compareArrays,
+  isNonEmptyArray,
+} from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
@@ -85,14 +88,14 @@ const renderTag = (value: TagValue) => {
   )
 }
 
-const renderTagPair = (value: TagPairValue) => {
-  const firstTag = value.firstTag
-  const secondTag = value.secondTag
+const renderTagGroup = (value: TagGroupValue) => {
+  const { firstTag, secondTag, thirdTag } = value
 
   return (
     <TagContainer>
       {renderTag(firstTag)}
       {secondTag && renderTag(secondTag)}
+      {thirdTag && renderTag(thirdTag)}
     </TagContainer>
   )
 }
@@ -111,8 +114,8 @@ const render = (cell: CaseTableCell): ReactNode => {
       return renderStringGroup(value)
     case 'TagValue':
       return renderTag(value)
-    case 'TagPairValue':
-      return renderTagPair(value)
+    case 'TagGroupValue':
+      return renderTagGroup(value)
     // This should never happen, but if it does, we return null
     default:
       return null
@@ -123,8 +126,13 @@ const CaseTable: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
   const { openCaseInNewTab } = useOpenCaseInNewTab()
-  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
-    useCaseList()
+  const {
+    isOpeningCaseId,
+    isOpeningDefendantIds,
+    handleOpenCase,
+    LoadingIndicator,
+    showLoading,
+  } = useCaseList()
   const [rows, setRows] = useState<CaseTableRow[]>([])
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
 
@@ -181,9 +189,14 @@ const CaseTable: FC = () => {
         case CaseActionType.OPEN_CASE:
         default: // Default to opening the case in a new tab
           return {
-            onClick: () => handleOpenCase(r.caseId),
-            isDisabled: isOpeningCaseId === r.caseId,
-            isLoading: isOpeningCaseId === r.caseId && showLoading,
+            onClick: () => handleOpenCase(r.caseId, false, r.defendantIds),
+            isDisabled:
+              isOpeningCaseId === r.caseId &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds),
+            isLoading:
+              isOpeningCaseId === r.caseId &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds) &&
+              showLoading,
           }
       }
     }

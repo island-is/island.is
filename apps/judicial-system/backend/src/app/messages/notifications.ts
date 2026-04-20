@@ -358,22 +358,23 @@ export const notifications = {
   }),
   caseCompleted: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.case_completed.subject_v1',
-      defaultMessage: 'Máli lokið {courtCaseNumber}',
+      id: 'judicial.system.backend:notifications.case_completed.subject_v2',
+      defaultMessage:
+        '{isCorrection, select, true {Mál leiðrétt} other {Máli lokið}} {courtCaseNumber}',
       description:
         'Notaður sem titill í pósti til hagaðila vegna staðfests dóms',
     },
     prosecutorBody: {
-      id: 'judicial.system.backend:notifications.case_completed.prosecutor_body_v2',
+      id: 'judicial.system.backend:notifications.case_completed.prosecutor_body_v3',
       defaultMessage:
-        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        '{isCorrection, select, true {Mál {courtCaseNumber} hjá {courtName} hefur verið leiðrétt.} other {Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}}}<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
     },
     defenderBody: {
-      id: 'judicial.system.backend:notifications.case_completed.defender_body_v4',
+      id: 'judicial.system.backend:notifications.case_completed.defender_body_v5',
       defaultMessage:
-        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.}}.',
+        '{isCorrection, select, true {Mál {courtCaseNumber} hjá {courtName} hefur verið leiðrétt.} other {Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}}}<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.}}.',
       description:
         'Notaður sem texti í pósti til verjanda vegna staðfests dóms',
     },
@@ -827,20 +828,6 @@ export const notifications = {
       defaultMessage:
         'Ákæru vegna lögreglumáls númer {caseNumber} hefur verið hafnað. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
       description: 'Texti í pósti til sækjanda máls þegar ákæru er hafnað',
-    },
-  }),
-  indictmentReturned: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.indictment_returned.subject',
-      defaultMessage: 'Ákæra endursend í máli {caseNumber}',
-      description:
-        'Fyrirsögn í pósti til sækjanda máls þegar ákæra er endursend',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.indictment_returned.body',
-      defaultMessage:
-        '{courtName} hefur endursent ákæru vegna lögreglumáls {caseNumber}. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
-      description: 'Texti í pósti til sækjanda máls þegar ákæra er endursend',
     },
   }),
   courtRevokedIndictmentEmail: defineMessages({

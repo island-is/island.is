@@ -45,6 +45,16 @@ describe('valueToNumber', () => {
     expect(valueToNumber('æ ð þ ö 123 ASDF _-?  4 __d')).toBe(1234)
   })
 
+  it('should preserve negative sign when converting string to number', () => {
+    expect(valueToNumber('-999')).toBe(-999)
+    expect(valueToNumber('-999 kr.')).toBe(-999)
+    expect(valueToNumber('-1.123.123', ',')).toBe(-1123123)
+    expect(valueToNumber('-12.123.421.123,4233 kr.', ',')).toBe(
+      -12123421123.4233,
+    )
+    expect(valueToNumber('  -999  ')).toBe(-999)
+  })
+
   it('should return number zero if not a number string', () => {
     expect(valueToNumber(false)).toBe(0)
     expect(valueToNumber('')).toBe(0)

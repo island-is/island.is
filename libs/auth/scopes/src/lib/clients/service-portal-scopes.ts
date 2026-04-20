@@ -36,6 +36,7 @@ export const servicePortalScopes = [
   ApiScope.company,
   ApiScope.vehicles,
   ApiScope.workMachines,
+  ApiScope.health,
   ApiScope.healthPayments,
   ApiScope.healthMedicines,
   ApiScope.healthAssistiveAndNutrition,

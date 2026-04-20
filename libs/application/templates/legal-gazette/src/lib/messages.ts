@@ -30,10 +30,15 @@ export const m = {
         'Að minnsta kosti ein samskiptaleið þarf að vera til staðar',
       description: 'Villa sem kemur upp ef samskiptaleið er tóm',
     },
-    emptyCategory: {
-      id: 'lg.application:errors.emptyCategory',
+    emptyType: {
+      id: 'lg.application:errors.emptyType',
       defaultMessage: 'Tegund auglýsingar má ekki vera auð',
       description: 'Villa sem kemur upp ef tegund auglýsingar er tóm',
+    },
+    emptyCategory: {
+      id: 'lg.application:errors.emptyCategory',
+      defaultMessage: 'Flokkur auglýsingar má ekki vera auð',
+      description: 'Villa sem kemur upp ef flokkur auglýsingar er tóm',
     },
     emptyEmail: {
       id: 'lg.application:errors.emptyEmail',
@@ -44,6 +49,12 @@ export const m = {
       id: 'lg.application:errors.emptyLocation',
       defaultMessage: 'Undirskriftarstaður má ekki vera auður',
       description: 'Villa sem kemur upp ef undirskriftarstaður er tómur',
+    },
+    emptySignature: {
+      id: 'lg.application:errors.emptySignature',
+      defaultMessage:
+        'Fylla þarf út nafn, staðsetning eða dagsetningu undirritunar',
+      description: 'Villa sem kemur upp ef undirskrift er tóm',
     },
     emptySignatureDate: {
       id: 'lg.application:errors.emptySignatureDate',
@@ -271,12 +282,17 @@ export const m = {
         captionInput: {
           id: 'lg.application:draft.advert.captionInput',
           defaultMessage: 'Yfirskrift',
-          description: 'Titill á textaheiti auglýsingar',
+          description: 'Yfirskrift auglýsingar',
+        },
+        typeInput: {
+          id: 'lg.application:draft.advert.typeInput',
+          defaultMessage: 'Tegund auglýsingar',
+          description: 'Tegund auglýsingar',
         },
         categoryInput: {
           id: 'lg.application:draft.advert.categoryInput',
-          defaultMessage: 'Tegund auglýsingar',
-          description: 'Titill á textaheiti auglýsingar',
+          defaultMessage: 'Flokkur auglýsingar',
+          description: 'Flokkur auglýsingar',
         },
       }),
       signature: defineMessages({
@@ -287,18 +303,38 @@ export const m = {
         },
         location: {
           id: 'lg.application:draft.signature.location',
-          defaultMessage: 'Undirskriftarstaður',
+          defaultMessage: 'Staðsetning',
           description: 'Titill á staðsetningu fyrir undirskrift',
         },
         date: {
           id: 'lg.application:draft.signature.date',
-          defaultMessage: 'Dagsetning undirskriftar',
+          defaultMessage: 'Dagsetning',
           description: 'Titill á dagsetningu fyrir undirskrift',
         },
         name: {
           id: 'lg.application:draft.signature.name',
-          defaultMessage: 'Undirskrift',
+          defaultMessage: 'Nafn',
           description: 'Titill á nafni fyrir undirskrift',
+        },
+        onBehalfOf: {
+          id: 'lg.application:draft.signature.onBehalfOf',
+          defaultMessage: 'Fyrir hönd',
+          description: 'Titill á fyrir hönd fyrir undirskrift',
+        },
+        namePlaceholder: {
+          id: 'lg.application:draft.signature.namePlaceholder',
+          defaultMessage: 'Nafn undirritunar',
+          description: 'Titill á nafni fyrir undirskrift',
+        },
+        locationPlaceholder: {
+          id: 'lg.application:draft.signature.locationPlaceholder',
+          defaultMessage: 'Staðsetning undirritunar',
+          description: 'Titill á staðsetningu fyrir undirskrift',
+        },
+        onBehalfOfPlaceholder: {
+          id: 'lg.application:draft.signature.onBehalfOfPlaceholder',
+          defaultMessage: 'Fyrir hönd undirritunar',
+          description: 'Titill á fyrir hönd fyrir undirskrift',
         },
       }),
       publishing: defineMessages({

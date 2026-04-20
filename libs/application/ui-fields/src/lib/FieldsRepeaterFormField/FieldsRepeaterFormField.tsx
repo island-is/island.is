@@ -88,16 +88,16 @@ export const FieldsRepeaterFormField = ({
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
-      if (
-        isEqual(prev, {
-          ...stableApplication,
-          answers: { ...stableApplication.answers, ...stableAnswers },
-        })
-      ) {
+      const newApp = {
+        ...stableApplication,
+        answers: { ...stableApplication.answers, ...stableAnswers },
+      }
+
+      if (isEqual(prev, newApp)) {
         return prev
       }
 
-      return { ...stableApplication, answers: stableAnswers }
+      return newApp
     })
   }, [stableApplication, stableAnswers])
 
@@ -167,7 +167,10 @@ export const FieldsRepeaterFormField = ({
       : itemCondition
   }
 
-  const showAddButton = !hideAddButton
+  const showAddButton =
+    typeof hideAddButton === 'function'
+      ? !hideAddButton(updatedApplication)
+      : !hideAddButton
   const showRemoveButton = !hideRemoveButton && numberOfItems > minRowsValue
 
   return (
@@ -193,7 +196,7 @@ export const FieldsRepeaterFormField = ({
         />
       )}
       <Box marginTop={description ? 3 : 0}>
-        <Stack space={4}>
+        <Stack space={numberOfItems === 0 ? 0 : 4}>
           {showFormTitle && displayTitleAsAccordion && (
             <Accordion singleExpand={false}>
               {Array.from({ length: numberOfItems }).map((_i, i) => {
@@ -253,7 +256,7 @@ export const FieldsRepeaterFormField = ({
                         {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
                       </Text>
                     </Box>
-                    <GridColumn>{repeaterFields(i)}</GridColumn>
+                    <GridColumn span="1/1">{repeaterFields(i)}</GridColumn>
                   </Fragment>
                 )
               })}

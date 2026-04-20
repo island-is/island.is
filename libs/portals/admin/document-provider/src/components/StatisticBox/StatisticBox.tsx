@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Box, Text, Inline } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { formatNumber } from '../../lib/utils'
 
 interface Props {
   name: string
@@ -14,14 +15,14 @@ export const StatisticBox: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  let displayValue = value.toString()
+  let displayValue = formatNumber(value)
   let displayText = ''
 
   if (value > 1000000) {
-    displayValue = (value / 1000000).toFixed(1)
+    displayValue = formatNumber(Number((value / 1000000).toFixed(1)))
     displayText = formatMessage(m.statisticsBoxMillions)
   } else if (value > 10000) {
-    displayValue = (value / 1000).toFixed(0)
+    displayValue = formatNumber(Number((value / 1000).toFixed(0)))
     displayText = formatMessage(m.statisticsBoxThousands)
   }
 

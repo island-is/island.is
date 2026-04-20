@@ -9,7 +9,7 @@ import { terminationReasonOptions } from '../../utils/options'
 import { isUnboundTermination } from '../../utils/conditions'
 import {
   getSelectedContractStartDate,
-  getOneMonthFromToday,
+  getNMonthsFromToday,
 } from '../../utils/helpers'
 
 export const unboundTerminationSection = buildSection({
@@ -26,7 +26,7 @@ export const unboundTerminationSection = buildSection({
           id: 'unboundTermination.unboundTerminationDate',
           title: m.unboundTerminationMessages.dateTitle,
           minDate: getSelectedContractStartDate,
-          maxDate: getOneMonthFromToday,
+          maxDate: getNMonthsFromToday(9),
         }),
         buildSelectField({
           id: 'unboundTermination.unboundTerminationReason',

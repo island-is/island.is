@@ -1,4 +1,8 @@
-import { AddressDto, formatAddressDto } from './address.dto'
+import {
+  AddressDto,
+  formatAddressDto,
+  formatKerfiskennitalaAddressDto,
+} from './address.dto'
 import { EinstaklingurDTO, EinstaklingurLiteDTO } from '../../../gen/fetch'
 
 export interface IndividualDto {
@@ -47,12 +51,18 @@ export const formatIndividualDto = (
     middleName,
     familyName,
     fullName: individual.nafn ?? null,
-    genderCode: individual.kynKodi ?? '',
-    genderDescription: individual.kynTexti ?? '',
+    genderCode: individual.kynKodi || individual.kyn?.kynKodi || '', //TODO: Kerfiskennitala workaround. Remove this once the API is updated
+    genderDescription: individual.kynTexti || individual.kyn?.kynTexti || '', //TODO: Kerfiskennitala workaround. Remove this once the API is updated
     exceptionFromDirectMarketing: individual.bannmerking ?? false,
     birthdate: individual.faedingardagur ?? new Date(),
-    legalDomicile: formatAddressDto(individual.logheimili),
-    residence: formatAddressDto(individual.adsetur),
+    legalDomicile: individual.logheimili
+      ? formatAddressDto(individual.logheimili)
+      : null,
+    residence: individual.adsetur
+      ? formatAddressDto(individual.adsetur)
+      : individual.heimilisfang
+      ? formatKerfiskennitalaAddressDto(individual.heimilisfang)
+      : null, //TODO: Kerfiskennitala workaround. Remove this once the API is updated
   }
 }
 

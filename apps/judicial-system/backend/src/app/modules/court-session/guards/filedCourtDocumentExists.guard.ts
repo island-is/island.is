@@ -25,9 +25,13 @@ export class FiledCourtDocumentExistsGuard implements CanActivate {
       throw new BadRequestException('Missing court document id')
     }
 
-    const courtDocument = courtSession.filedDocuments?.find(
-      (courtDocument) => courtDocument.id === courtDocumentId,
-    )
+    const courtDocument =
+      courtSession.filedDocuments?.find(
+        (courtDocument) => courtDocument.id === courtDocumentId,
+      ) ||
+      courtSession.mergedFiledDocuments?.find(
+        (courtDocument) => courtDocument.id === courtDocumentId,
+      )
 
     if (!courtDocument) {
       throw new NotFoundException(

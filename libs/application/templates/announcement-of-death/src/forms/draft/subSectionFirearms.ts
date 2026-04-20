@@ -39,6 +39,10 @@ export const subSectionFirearms = buildSubSection({
           component: 'FirearmApplicant',
           condition: (formValue) => formValue.hadFirearms === YES,
         }),
+        buildCustomField({
+          id: 'firearmsWrapper',
+          component: 'FirearmsWrapper',
+        }),
       ],
     }),
   ],

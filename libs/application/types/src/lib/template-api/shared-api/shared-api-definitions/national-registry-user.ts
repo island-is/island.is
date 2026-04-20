@@ -10,6 +10,7 @@ export interface NationalRegistryParameters {
   validateAlreadyHasIcelandicCitizenship?: boolean
   allowPassOnChild?: boolean
   citizenshipWithinEES?: boolean
+  skipMaritalTitle?: boolean
 }
 
 export interface ChildrenCustodyInformationParameters {
@@ -25,5 +26,12 @@ export const NationalRegistryUserApi =
   defineTemplateApi<NationalRegistryParameters>({
     action: 'nationalRegistry',
     namespace: 'NationalRegistry',
+    externalDataId: 'nationalRegistry',
+  })
+
+export const NationalRegistryV3UserApi =
+  defineTemplateApi<NationalRegistryParameters>({
+    action: 'nationalRegistry',
+    namespace: 'NationalRegistryV3',
     externalDataId: 'nationalRegistry',
   })

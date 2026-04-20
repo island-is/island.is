@@ -44,9 +44,8 @@ const template: ApplicationTemplate<
   name: application.name,
   codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.DigitalTachographDriversCard.translation,
-  ],
   dataSchema: DigitalTachographDriversCardSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

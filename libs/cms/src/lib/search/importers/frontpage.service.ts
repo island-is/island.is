@@ -10,7 +10,7 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
   processSyncData(entries: processSyncDataInput<IFrontpage>) {
-    return entries
+    const entriesToUpdate = entries
       .filter(
         (entry: Entry<any>): entry is IFrontpage =>
           entry.sys.contentType.sys.id === 'frontpage',
@@ -33,6 +33,10 @@ export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
         }
         return entry
       })
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IFrontpage[]) {

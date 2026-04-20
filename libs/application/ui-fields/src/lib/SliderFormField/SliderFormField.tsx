@@ -44,7 +44,7 @@ export const SliderFormField: FC<
     marginBottom,
   } = field
   const { clearErrors, setValue } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const computeMax = (
     maybeMax: MaybeWithApplicationAndField<number>,
     memoApplication: Application,
@@ -72,7 +72,7 @@ export const SliderFormField: FC<
         name={field.id}
         defaultValue={
           Number(getValueViaPath(application.answers, id)) ||
-          getDefaultValue(field, application) ||
+          getDefaultValue(field, application, locale) ||
           min
         }
         render={({ field: { onChange, value } }) => (

@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
-  "tags": ["scope:nest"],
+  "tags": ["scope:form-system-api"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -61,6 +61,13 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/services/form-system/**/*.ts"]
+      }
+    },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-form-system-api:build",
+        "args": ["--job", "worker"]
       }
     },
     "test": {

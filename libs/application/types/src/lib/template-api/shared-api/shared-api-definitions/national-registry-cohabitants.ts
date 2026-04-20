@@ -5,3 +5,9 @@ export const NationalRegistryCohabitantsApi = defineTemplateApi({
   namespace: 'NationalRegistry',
   externalDataId: 'nationalRegistryCohabitants',
 })
+
+export const NationalRegistryV3CohabitantsApi = defineTemplateApi({
+  action: 'getCohabitantsDetailed',
+  namespace: 'NationalRegistryV3',
+  externalDataId: 'nationalRegistryCohabitants',
+})

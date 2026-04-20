@@ -16,7 +16,7 @@ import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 import { useDraftingState } from '../state/useDraftingState'
-import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
+import { cleanTitle } from '@dmr.is/regulations-tools/cleanTitle'
 import {
   formatAmendingRegTitle,
   formatAmendingBodyWithArticlePrefix,

@@ -49,7 +49,7 @@ export const Gallery: FC<GalleryProps> = ({
         >
           {loading ? (
             <Box>
-              <LoadingDots large />
+              <LoadingDots size="large" />
             </Box>
           ) : (
             <Box className={styles.galleryImageWrap}>
@@ -130,5 +130,3 @@ export const Gallery: FC<GalleryProps> = ({
     </>
   )
 }
-
-export default Image

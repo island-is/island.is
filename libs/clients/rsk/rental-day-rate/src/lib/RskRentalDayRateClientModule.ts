@@ -4,6 +4,7 @@ import { XRoadConfig, IdsClientConfig } from '@island.is/nest/config'
 import { RskRentalDayRateConfigurationProvider } from './apiConfiguration'
 import { RskRentalDayRateClient } from './RskRentalDayRateClient'
 import { RskRentalDayRateClientConfig } from './RskRentalDayRateClientConfig'
+import { RskRentalDaysClient } from './RskRentalDaysClient'
 
 @Module({
   imports: [
@@ -11,7 +12,11 @@ import { RskRentalDayRateClientConfig } from './RskRentalDayRateClientConfig'
       load: [RskRentalDayRateClientConfig, XRoadConfig, IdsClientConfig],
     }),
   ],
-  providers: [RskRentalDayRateClient, RskRentalDayRateConfigurationProvider],
-  exports: [RskRentalDayRateClient],
+  providers: [
+    RskRentalDayRateClient,
+    RskRentalDaysClient,
+    RskRentalDayRateConfigurationProvider,
+  ],
+  exports: [RskRentalDayRateClient, RskRentalDaysClient],
 })
 export class RskRentalDayRateClientModule {}

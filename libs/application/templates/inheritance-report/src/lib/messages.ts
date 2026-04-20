@@ -77,6 +77,13 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: '',
   },
+  selectEstateInfoMessage: {
+    id: 'ir.application:selectEstateInfoMessage',
+    defaultMessage:
+      'Athugið að eftir að umsókn er hafin hefur þú {days} daga til að skila umsókninni inn.',
+    description:
+      'Info message below estate selection, {days} is APPLICATION_PRUNE_DAYS',
+  },
   applicationNamePrepaid: {
     id: 'ir.application:applicationNamePrepaid',
     defaultMessage: 'Fyrirframgreiddur arfur',
@@ -1561,6 +1568,12 @@ export const m = defineMessages({
     id: 'ir.application:heirAdvocateAgeValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
+    description: '',
+  },
+  heirNationalIdValidation: {
+    id: 'ir.application:heirNationalIdValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi má ekki vera sá sami og arfleifandi',
     description: '',
   },
   advocate: {

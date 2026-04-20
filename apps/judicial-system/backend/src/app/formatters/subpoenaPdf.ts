@@ -17,7 +17,6 @@ import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
 import { Case, Defendant, Subpoena } from '../modules/repository'
 import {
-  addConfirmation,
   addEmptyLines,
   addFooter,
   addHugeHeading,
@@ -25,6 +24,8 @@ import {
   addNormalRightAlignedText,
   addNormalText,
   Confirmation,
+  drawConfirmation,
+  formatActor,
   setTitle,
 } from './pdfHelpers'
 
@@ -165,7 +166,23 @@ export const createSubpoena = (
   addFooter(doc)
 
   if (confirmation) {
-    addConfirmation(doc, confirmation)
+    drawConfirmation(doc, {
+      showLockIcon: false,
+      confirmationText: 'Rafræn staðfesting',
+      date: confirmation.date,
+      boxes: [
+        {
+          title: 'Dómstóll',
+          content: confirmation.institution,
+          widthPercent: 50,
+        },
+        {
+          title: 'Samþykktaraðili',
+          content: formatActor(confirmation.actor, confirmation.title),
+          widthPercent: 50,
+        },
+      ],
+    })
   }
 
   doc.end()

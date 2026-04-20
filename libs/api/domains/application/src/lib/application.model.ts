@@ -57,10 +57,13 @@ export class ApplicationHistory {
 
   @Field(() => String, { nullable: true })
   log?: string
+
+  @Field(() => String, { nullable: true })
+  subLog?: string
 }
 
 @ObjectType()
-class ActionCardMetaData {
+export class ActionCardMetaData {
   @Field(() => String, { nullable: true })
   title?: string
 
@@ -87,6 +90,9 @@ class ActionCardMetaData {
 
   @Field(() => String, { nullable: true })
   historyButton?: string
+
+  @Field(() => Boolean, { nullable: true })
+  displayPruneAt?: boolean
 }
 
 @ObjectType()
@@ -165,6 +171,15 @@ export class ApplicationStatistics {
 
   @Field(() => String)
   name?: string
+
+  @Field(() => String, { nullable: true })
+  institutionName?: string
+
+  @Field(() => String, { nullable: true })
+  institutionNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  institutionContentfulSlug?: string
 }
 
 @ObjectType()
@@ -211,8 +226,14 @@ export class ApplicationAdmin {
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
 
-  @Field(() => ApplicationListAdminResponseDtoTypeIdEnum)
-  typeId!: ApplicationListAdminResponseDtoTypeIdEnum
+  @Field(() => Boolean, { nullable: true })
+  isFormSystem?: boolean
+
+  @Field(() => String)
+  typeId!: string
+
+  @Field(() => String, { nullable: true })
+  formSlug?: string
 
   @Field(() => String, { nullable: true })
   name?: string
@@ -234,6 +255,9 @@ export class ApplicationAdmin {
 
   @Field(() => [ApplicationAdminData], { nullable: true })
   adminData?: ApplicationAdminData[]
+
+  @Field(() => String, { nullable: true })
+  institutionContentfulSlug?: string
 }
 
 @ObjectType()
@@ -260,4 +284,16 @@ export class ApplicationTypeAdminInstitution {
 
   @Field(() => String, { nullable: true })
   name?: string
+}
+
+@ObjectType()
+export class ApplicationInstitution {
+  @Field(() => String)
+  nationalId!: string
+
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => String)
+  contentfulSlug!: string
 }

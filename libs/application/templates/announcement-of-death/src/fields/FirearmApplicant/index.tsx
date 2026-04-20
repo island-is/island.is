@@ -9,7 +9,10 @@ import { m } from '../../lib/messages'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 
 interface FirearmApplicantBaseProps extends FieldBaseProps {
   errors: FieldErrors<FieldValues>
@@ -129,7 +132,7 @@ export const FirearmApplicant: FC<
       </GridRow>
       <GridRow>
         <GridColumn span="6/12">
-          <InputController
+          <PhoneInputController
             id={fieldNames.firearmApplicantPhone}
             name={fieldNames.firearmApplicantPhone}
             label={formatText(

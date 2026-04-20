@@ -376,6 +376,8 @@ ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
 
+  const apiCatalogueSlug = locale === 'en' ? 'webservices' : 'vefthjonustur'
+
   const [
     {
       data: { getOrganizationPage },
@@ -393,6 +395,7 @@ ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
         input: {
           slug: organizationSlug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [apiCatalogueSlug],
         },
       },
     }),
@@ -401,7 +404,7 @@ ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           organizationSlug,
-          slug: locale === 'en' ? 'webservices' : 'vefthjonustur',
+          slug: apiCatalogueSlug,
           lang: locale as ContentLanguage,
         },
       },

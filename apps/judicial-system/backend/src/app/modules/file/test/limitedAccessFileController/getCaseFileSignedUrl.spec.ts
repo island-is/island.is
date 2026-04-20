@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -55,7 +55,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {
       id: caseId,
       type: CaseType.INTERNET_USAGE,
@@ -77,7 +77,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {
       id: uuid(),
       type: CaseType.PHONE_TAPPING,
@@ -104,7 +104,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {} as Case
 
     const url = uuid()
@@ -146,7 +146,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {} as Case
     let then: Then
 
@@ -157,9 +157,9 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
-    it('should remove the key', () => {
+    it('should set isKeyAccessible to false', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { key: null },
+        { isKeyAccessible: false },
         { where: { id: fileId } },
       )
     })
@@ -174,7 +174,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {} as Case
 
     let then: Then
@@ -196,7 +196,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {} as Case
 
     let then: Then

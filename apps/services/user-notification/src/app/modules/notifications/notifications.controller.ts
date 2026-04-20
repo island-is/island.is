@@ -1,4 +1,9 @@
+import { isCompany } from 'kennitala'
+
+import { DogStatsD } from '@island.is/infra-metrics'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
+
+import { METRICS_PREFIX } from './utils'
 import {
   Body,
   Controller,
@@ -25,13 +30,16 @@ import type { Locale } from '@island.is/shared/types'
 import {
   ExtendedPaginationDto,
   PaginatedNotificationDto,
+  PaginatedActorNotificationDto,
 } from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
 
 @Controller('notifications')
 @ApiTags('notifications')
 export class NotificationsController {
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationsService: NotificationsService,
@@ -105,7 +113,26 @@ export class NotificationsController {
     @Headers('X-Query-National-Id') nationalId: string,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    return this.notificationsService.findMany(nationalId, query)
+    return this.notificationsService.findMany(
+      nationalId,
+      query,
+      notificationScopes,
+    )
+  }
+
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/actor')
+  @Documentation({
+    summary:
+      'Returns a paginated list of actor notifications for a national id',
+    response: { status: HttpStatus.OK, type: PaginatedActorNotificationDto },
+  })
+  findActorNotifications(
+    @Headers('X-Query-National-Id') nationalId: string,
+    @Query() query: ExtendedPaginationDto,
+  ): Promise<PaginatedActorNotificationDto> {
+    return this.notificationsService.findActorNotifications(nationalId, query)
   }
 
   @Documentation({
@@ -124,12 +151,20 @@ export class NotificationsController {
     this.notificationsService.validate(template, body.args)
     const validArgs = this.notificationsService.sanitize(template, body.args)
 
+    this.notificationsService.validateSmsDelivery(template)
+
     const sanitizedBody = {
       ...body,
       args: validArgs,
     }
 
     const id = await this.queue.add(sanitizedBody)
+
+    this.metrics.increment('notification.created', 1, {
+      templateId: body.templateId,
+      recipient_type: isCompany(body.recipient) ? 'company' : 'individual',
+    })
+
     const flattenedArgs: Record<string, string> = {}
     for (const arg of validArgs) {
       flattenedArgs[arg.key] = arg.value

@@ -9,11 +9,12 @@ export class HnippNotificationOriginalRecipientDto {
   nationalId!: string
 
   @IsString()
-  @ApiProperty()
-  name!: string
+  @ApiPropertyOptional()
+  @IsOptional()
+  name?: string
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   subjectId?: string
 }
@@ -28,6 +29,10 @@ export class ArgumentDto {
   value!: string
 }
 
+/**
+ * Public DTO for creating notifications via API
+ * This is what external consumers should use
+ */
 export class CreateHnippNotificationDto {
   @IsNationalId()
   @ApiProperty({ example: '1234567890' })
@@ -58,4 +63,10 @@ export class CreateHnippNotificationDto {
     ],
   })
   args!: ArgumentDto[]
+}
+
+export class InternalCreateHnippNotificationDto extends CreateHnippNotificationDto {
+  @IsOptional()
+  @IsString()
+  rootMessageId?: string
 }

@@ -261,6 +261,14 @@ export const AdditionalHeir = ({
                     )}
                     onSelect={() => {
                       clearErrors()
+                      // Recalculate values when relation changes (affects tax calculations)
+                      const currentPercentage =
+                        currentHeir?.heirsPercentage ?? 0
+                      updateValues(
+                        fieldIndex,
+                        parseFloat(currentPercentage),
+                        index,
+                      )
                     }}
                     defaultValue={currentHeir?.relation ?? ''}
                     options={relationOptions}
@@ -277,7 +285,7 @@ export const AdditionalHeir = ({
                     disabled={isDisabledField}
                     label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
-                      updateValues(fieldIndex, val, customFieldIndex)
+                      updateValues(fieldIndex, val, index)
                     }}
                     hasError={!!error?.heirsPercentage}
                     required

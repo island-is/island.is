@@ -56,6 +56,8 @@ export const Select = <
   filterConfig,
   isLoading = false,
   hideSelectedOptions,
+  onMenuOpen,
+  onMenuClose,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -125,6 +127,8 @@ export const Select = <
         isClearable
         backspaceRemovesValue
         menuShouldScrollIntoView={false}
+        onMenuOpen={onMenuOpen}
+        onMenuClose={onMenuClose}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">
@@ -189,6 +193,8 @@ export const Select = <
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}
         menuShouldScrollIntoView={false}
+        onMenuOpen={onMenuOpen}
+        onMenuClose={onMenuClose}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">

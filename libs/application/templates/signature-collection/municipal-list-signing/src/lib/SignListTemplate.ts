@@ -7,7 +7,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -66,7 +66,7 @@ const SignListTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 CanSignApi,
                 GetListApi,

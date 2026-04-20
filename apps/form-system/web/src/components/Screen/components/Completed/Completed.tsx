@@ -1,3 +1,4 @@
+import { FormSystemCompletedSectionInfo } from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
 import {
   Accordion,
@@ -6,15 +7,30 @@ import {
   Box,
   Bullet,
   BulletList,
+  Hidden,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { useLocale } from '@island.is/localization'
+import { useParams } from 'react-router-dom'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 export const Completed = () => {
-  const { formatMessage } = useIntl()
+  const { formatMessage, lang } = useLocale()
   const supportEmail = 'island@island.is'
+  const { slug } = useParams()
+  const { state } = useApplicationContext()
+  const completed = state.application.completedSectionInfo as
+    | Partial<FormSystemCompletedSectionInfo>
+    | undefined
+  const t = completed?.title?.[lang]
+  const header =
+    completed?.confirmationHeader?.[lang] ?? formatMessage(m.completedHeader)
+  const text =
+    completed?.confirmationText?.[lang] ?? formatMessage(m.completedText)
+  const infos = completed?.additionalInfo ?? []
 
-  return (
+  const stafraentIslandForm = () => (
     <Box marginTop={5}>
       <AlertMessage
         type="success"
@@ -36,7 +52,7 @@ export const Completed = () => {
         >
           <AccordionItem
             id="completed-accordion"
-            label={formatMessage(m.completedAccordionTitle)}
+            label={formatMessage(m.completedListHeader)}
             startExpanded
           >
             <Box marginBottom={2}>
@@ -62,5 +78,44 @@ export const Completed = () => {
         </Accordion>
       </Box>
     </Box>
+  )
+
+  return slug === 'umsokn-um-samstarf-vid-stafraent-island' ? (
+    stafraentIslandForm()
+  ) : (
+    <Stack space={3}>
+      {t && (
+        <Text variant="h2" as="h2" marginBottom={1}>
+          {t}
+        </Text>
+      )}
+      <AlertMessage type="success" title={header} message={text} />
+      {infos.length > 0 && (
+        <Box
+          width="full"
+          border="standard"
+          borderColor="blue200"
+          borderRadius="large"
+          padding={3}
+        >
+          <Text variant="h4" as="h4" marginBottom={2}>
+            {formatMessage(m.completedListHeader)}
+          </Text>
+          <BulletList space={1}>
+            {infos.map((info, index) => (
+              <Bullet key={index}>{info?.[lang] || ''}</Bullet>
+            ))}
+          </BulletList>
+        </Box>
+      )}
+
+      <Hidden below="md">
+        <img
+          src={require('../../../../assets/images/cover.png')}
+          alt="Cover"
+          style={{ width: '100%', height: 'auto' }}
+        />
+      </Hidden>
+    </Stack>
   )
 }

@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
@@ -49,6 +49,25 @@ export class DefendantEventLog extends Model {
       ?.created
   }
 
+  static hasValidOpenByPrisonAdminEvent(
+    eventLogs: DefendantEventLog[],
+  ): boolean {
+    const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.SENT_TO_PRISON_ADMIN,
+      eventLogs,
+    )
+    const openedByPrisonAdminDate =
+      DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        eventLogs,
+      )
+    return Boolean(
+      sentToPrisonAdminDate &&
+        openedByPrisonAdminDate &&
+        sentToPrisonAdminDate <= openedByPrisonAdminDate,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -83,4 +102,24 @@ export class DefendantEventLog extends Model {
   })
   @ApiProperty({ enum: DefendantEventType })
   eventType!: DefendantEventType
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  nationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userRole?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userTitle?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  institutionName?: string
 }

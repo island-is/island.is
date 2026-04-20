@@ -2,6 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
   CaseType,
+  isIndictmentCase,
   isPrisonAdminUser,
   User,
   UserRole,
@@ -52,16 +53,12 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
   'indictmentDeniedExplanation',
-  'indictmentReviewDecision',
   'civilDemands',
   'hasCivilClaims',
+  'penalties',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
-  'indictmentReviewerId',
-  'indictmentReviewDecision',
-  'publicProsecutorIsRegisteredInPoliceSystem',
-]
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
@@ -102,7 +99,6 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'rulingModifiedHistory',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
-  'indictmentReturnedExplanation',
   'postponedIndefinitelyExplanation',
   'indictmentRulingDecision',
   'indictmentDecision',
@@ -110,6 +106,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'mergeCaseId',
   'mergeCaseNumber',
   'isCompletedWithoutRuling',
+  'defendantEventLogDecisions',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -202,12 +199,7 @@ export const defenderUpdateRule: RolesRule = {
 export const prisonSystemAdminUpdateRule: RolesRule = {
   role: UserRole.PRISON_SYSTEM_STAFF,
   type: RulesType.FIELD,
-  dtoFields: [
-    'isRegisteredInPrisonSystem',
-    'caseModifiedExplanation',
-    'isolationToDate',
-    'validToDate',
-  ],
+  dtoFields: ['caseModifiedExplanation', 'isolationToDate', 'validToDate'],
   canActivate(request) {
     const user: User = request.user?.currentUser
     // Deny if something is missing or if the user is not a prison admin
@@ -284,58 +276,31 @@ export const defenderTransitionRule: RolesRule = {
   dtoFieldValues: [CaseTransition.APPEAL, CaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => {
     const dto: TransitionCaseDto = request.body
-    const theCase: Case = request.case
-
-    // Deny if something is missing - should never happen
-    if (!dto || !theCase) {
-      return false
-    }
-
-    // Deny withdrawal if defender did not appeal the case
-    if (
-      dto.transition === CaseTransition.WITHDRAW_APPEAL &&
-      !theCase.accusedPostponedAppealDate
-    ) {
-      return false
-    }
-
-    return true
-  },
-}
-
-// Allows defenders to access generated PDFs
-export const defenderGeneratedPdfRule: RolesRule = {
-  role: UserRole.DEFENDER,
-  type: RulesType.BASIC,
-  canActivate: (request) => {
     const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     // Deny if something is missing - should never happen
-    if (!user || !theCase) {
+    if (!dto || !user || !theCase) {
       return false
     }
 
-    // Allow if the user is a defender of a defendant of the case
-    if (
-      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
-        user.nationalId,
-        theCase.defendants,
-      )
-    ) {
-      return true
+    // Deny withdrawal if defender did not appeal the case
+    if (dto.transition === CaseTransition.WITHDRAW_APPEAL) {
+      if (!theCase.accusedPostponedAppealDate) {
+        return false
+      }
+
+      // For indictment cases, only the specific defender who appealed can withdraw
+      if (
+        isIndictmentCase(theCase.type) &&
+        (!theCase.appealCase?.appealedByNationalId ||
+          theCase.appealCase?.appealedByNationalId !== user.nationalId)
+      ) {
+        return false
+      }
     }
 
-    if (
-      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-        user.nationalId,
-        theCase.civilClaimants,
-      )
-    ) {
-      return true
-    }
-
-    return false
+    return true
   },
 }
 
@@ -346,7 +311,6 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.RECEIVE,
-    CaseTransition.RETURN_INDICTMENT,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
@@ -377,7 +341,11 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.COMPLETE],
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.COMPLETE,
+    CaseTransition.REOPEN,
+  ],
 }
 
 // Allows court of appeals judges to transition cases
@@ -427,6 +395,42 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     }
 
     return user.id === theCase.judgeId
+  },
+}
+
+// Allows defenders to access generated PDFs
+export const defenderGeneratedPdfRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.BASIC,
+  canActivate: (request) => {
+    const user: User = request.user?.currentUser
+    const theCase: Case = request.case
+
+    // Deny if something is missing - should never happen
+    if (!user || !theCase) {
+      return false
+    }
+
+    // Allow if the user is a defender of a defendant of the case
+    if (
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+    ) {
+      return true
+    }
+
+    return false
   },
 }
 

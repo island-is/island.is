@@ -35,7 +35,7 @@ export const RedirectToServicePortalFormField: FC<
       marginTop={marginTop}
       marginBottom={marginBottom}
     >
-      <LoadingDots large />
+      <LoadingDots size="large" />
     </Box>
   )
 }

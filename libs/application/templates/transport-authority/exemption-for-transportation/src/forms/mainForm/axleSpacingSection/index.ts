@@ -9,8 +9,8 @@ import {
 } from '@island.is/application/core'
 import { axleSpacing } from '../../../lib/messages'
 import {
-  getConvoyTrailerForSpacing,
-  getConvoyVehicleForSpacing,
+  getConvoyTrailer,
+  getConvoyVehicle,
   getExemptionType,
   MAX_CNT_AXLE,
   MAX_CNT_CONVOY,
@@ -18,8 +18,8 @@ import {
   checkHasDoubleDolly,
   checkHasSingleDolly,
   checkHasFreightPairingItemWithExemptionForWeight,
-  checkHasConvoyVehicleForSpacingAtIndex,
-  checkHasConvoyTrailerForSpacingAtIndex,
+  checkHasConvoyVehicleAtIndex,
+  checkHasConvoyTrailerAtIndexWithMultipleAxles,
   checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { Application } from '@island.is/application/types'
@@ -58,9 +58,9 @@ export const axleSpacingSection = buildSection({
               buildDescriptionField({
                 id: `axleSpacingInfo.vehicleSubtitle.${vehicleIndex}`,
                 condition: (answers) =>
-                  checkHasConvoyVehicleForSpacingAtIndex(answers, vehicleIndex),
+                  checkHasConvoyVehicleAtIndex(answers, vehicleIndex),
                 title: (application) => {
-                  const vehicle = getConvoyVehicleForSpacing(
+                  const vehicle = getConvoyVehicle(
                     application.answers,
                     vehicleIndex,
                   )
@@ -70,7 +70,7 @@ export const axleSpacingSection = buildSection({
                   }
                 },
                 description: (application) => {
-                  const vehicle = getConvoyVehicleForSpacing(
+                  const vehicle = getConvoyVehicle(
                     application.answers,
                     vehicleIndex,
                   )
@@ -84,10 +84,9 @@ export const axleSpacingSection = buildSection({
               buildHiddenInput({
                 id: `axleSpacing.vehicleList.${vehicleIndex}.permno`,
                 condition: (answers) =>
-                  checkHasConvoyVehicleForSpacingAtIndex(answers, vehicleIndex),
+                  checkHasConvoyVehicleAtIndex(answers, vehicleIndex),
                 defaultValue: (application: Application) =>
-                  getConvoyVehicleForSpacing(application.answers, vehicleIndex)
-                    ?.permno,
+                  getConvoyVehicle(application.answers, vehicleIndex)?.permno,
               }),
 
               // Vehicle axle list
@@ -99,13 +98,11 @@ export const axleSpacingSection = buildSection({
                       id: `axleSpacing.vehicleList.${vehicleIndex}.values.${axleIndex}`,
                       condition: (answers) => {
                         const numberOfAxles =
-                          getConvoyVehicleForSpacing(answers, vehicleIndex)
+                          getConvoyVehicle(answers, vehicleIndex)
                             ?.numberOfAxles || 0
                         return (
-                          checkHasConvoyVehicleForSpacingAtIndex(
-                            answers,
-                            vehicleIndex,
-                          ) && axleIndex < numberOfAxles - 1
+                          checkHasConvoyVehicleAtIndex(answers, vehicleIndex) &&
+                          axleIndex < numberOfAxles - 1
                         )
                       },
                       title: {
@@ -166,9 +163,12 @@ export const axleSpacingSection = buildSection({
               buildDescriptionField({
                 id: `axleSpacingInfo.trailerSubtitle.${trailerIndex}`,
                 condition: (answers) =>
-                  checkHasConvoyTrailerForSpacingAtIndex(answers, trailerIndex),
+                  checkHasConvoyTrailerAtIndexWithMultipleAxles(
+                    answers,
+                    trailerIndex,
+                  ),
                 title: (application) => {
-                  const trailer = getConvoyTrailerForSpacing(
+                  const trailer = getConvoyTrailer(
                     application.answers,
                     trailerIndex,
                   )
@@ -178,7 +178,7 @@ export const axleSpacingSection = buildSection({
                   }
                 },
                 description: (application) => {
-                  const trailer = getConvoyTrailerForSpacing(
+                  const trailer = getConvoyTrailer(
                     application.answers,
                     trailerIndex,
                   )
@@ -192,7 +192,10 @@ export const axleSpacingSection = buildSection({
               buildCheckboxField({
                 id: `axleSpacing.trailerList.${trailerIndex}.useSameValues`,
                 condition: (answers) =>
-                  checkHasConvoyTrailerForSpacingAtIndex(answers, trailerIndex),
+                  checkHasConvoyTrailerAtIndexWithMultipleAxles(
+                    answers,
+                    trailerIndex,
+                  ),
                 large: false,
                 backgroundColor: 'white',
                 options: [
@@ -207,10 +210,12 @@ export const axleSpacingSection = buildSection({
               buildHiddenInput({
                 id: `axleSpacing.trailerList.${trailerIndex}.permno`,
                 condition: (answers) =>
-                  checkHasConvoyTrailerForSpacingAtIndex(answers, trailerIndex),
+                  checkHasConvoyTrailerAtIndexWithMultipleAxles(
+                    answers,
+                    trailerIndex,
+                  ),
                 defaultValue: (application: Application) =>
-                  getConvoyTrailerForSpacing(application.answers, trailerIndex)
-                    ?.permno,
+                  getConvoyTrailer(application.answers, trailerIndex)?.permno,
               }),
 
               // Trailer axle list
@@ -222,10 +227,10 @@ export const axleSpacingSection = buildSection({
                       id: `axleSpacing.trailerList.${trailerIndex}.values.${axleIndex}`,
                       condition: (answers) => {
                         const numberOfAxles =
-                          getConvoyTrailerForSpacing(answers, trailerIndex)
+                          getConvoyTrailer(answers, trailerIndex)
                             ?.numberOfAxles || 0
                         return (
-                          checkHasConvoyTrailerForSpacingAtIndex(
+                          checkHasConvoyTrailerAtIndexWithMultipleAxles(
                             answers,
                             trailerIndex,
                           ) &&
@@ -255,7 +260,7 @@ export const axleSpacingSection = buildSection({
               buildTextField({
                 id: `axleSpacing.trailerList.${trailerIndex}.singleValue`,
                 condition: (answers) =>
-                  checkHasConvoyTrailerForSpacingAtIndex(
+                  checkHasConvoyTrailerAtIndexWithMultipleAxles(
                     answers,
                     trailerIndex,
                   ) && shouldUseSameValuesForTrailer(answers, trailerIndex),
@@ -270,12 +275,12 @@ export const axleSpacingSection = buildSection({
               buildHiddenInput({
                 id: `axleSpacing.trailerList.${trailerIndex}.axleCount`,
                 condition: (answers) =>
-                  checkHasConvoyTrailerForSpacingAtIndex(
+                  checkHasConvoyTrailerAtIndexWithMultipleAxles(
                     answers,
                     trailerIndex,
                   ) && shouldUseSameValuesForTrailer(answers, trailerIndex),
                 defaultValue: (application: Application) =>
-                  getConvoyTrailerForSpacing(application.answers, trailerIndex)
+                  getConvoyTrailer(application.answers, trailerIndex)
                     ?.numberOfAxles || 0,
               }),
             ]

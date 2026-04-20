@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemScreen } from '@island.is/api/schema'
 import {
   DELETE_FIELD,
   DELETE_SCREEN,
@@ -6,24 +7,33 @@ import {
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { Box, DialogPrompt } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../context/ControlContext'
 import { MainContent } from '../../MainContent/MainContent'
 import { DeleteButton } from './DeleteButton'
+import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
   const { control, controlDispatch, inSettings } = useContext(ControlContext)
-  const { activeItem, form } = control
-  const { screens, fields } = form
+  const { activeItem, form, isReadOnly } = control
+  const { sections, screens, fields } = form
   const { type } = activeItem
   const { formatMessage } = useIntl()
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
-  const partiesSection =
+  const staticSection =
     activeItem.type === 'Section' &&
-    (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
+    ((activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES' ||
+      (activeItem.data as { sectionType?: string })?.sectionType === 'PAYMENT')
+  const staticScreen =
+    activeItem.type === 'Screen' &&
+    sections?.find(
+      (section) =>
+        section?.id === (activeItem?.data as FormSystemScreen)?.sectionId,
+    )?.sectionType === 'PAYMENT'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -78,14 +88,8 @@ export const MainContentColumn = () => {
   }
 
   return (
-    <Box
-      style={{
-        maxWidth: '1200px',
-        width: '100%',
-        marginLeft: 0,
-      }}
-    >
-      {!inSettings && !partiesSection ? (
+    <Box className={cn(styles.mainColumn)} padding={2}>
+      {!isReadOnly && !inSettings && !staticSection && !staticScreen ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -108,13 +112,9 @@ export const MainContentColumn = () => {
       ) : null}
 
       <Box
-        border="standard"
-        borderRadius="standard"
         width="full"
         style={{
           minHeight: '500px',
-          overflow: 'auto',
-          maxHeight: '70vh',
         }}
       >
         <MainContent />

@@ -24,7 +24,7 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { defaultMultipleBirthsMonths } from '../config'
 import {
   ADOPTION,
@@ -51,7 +51,7 @@ const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
   title: parentalLeaveFormMessages.shared.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

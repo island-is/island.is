@@ -8,17 +8,17 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
-  getHistoryLogApprovedWithSubjectAndActor,
-  getHistoryLogRejectedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import {
@@ -41,7 +41,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import {
   getChargeItems,
   getExtraData,
-  canReviewerApprove,
+  getReviewerRole,
   getReviewers,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -65,43 +65,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
-  }
-}
-
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId) {
-    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: {
-          ...corePendingActionMessages.whoNeedsToReviewDescription,
-          values: {
-            value: getReviewers(application.answers)
-              .filter((x) => !x.hasApproved)
-              .map((x) =>
-                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
-              )
-              .join(', '),
-          },
-        },
-        displayStatus: 'info',
-      }
-    } else if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
-      }
-    }
-  }
-  return {
-    title: corePendingActionMessages.waitingForReviewTitle,
-    content: corePendingActionMessages.waitingForReviewDescription,
-    displayStatus: 'info',
   }
 }
 
@@ -219,18 +182,52 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: getHistoryLogApprovedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwners')
+                    return applicationMessage.historyLogApprovedByOldCoOwner
+                  else if (role === 'coOwners')
+                    return applicationMessage.historyLogApprovedByNewCoOwner
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: getHistoryLogRejectedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwners')
+                    return applicationMessage.historyLogRejectedByOldCoOwner
+                  else if (role === 'coOwners')
+                    return applicationMessage.historyLogRejectedByNewCoOwner
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId,
+                getReviewers(application.answers),
+                true,
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,
@@ -238,6 +235,20 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
+            pruneMessage: (application) => {
+              const plate = getValueViaPath(
+                application.answers,
+                'pickVehicle.plate',
+                undefined,
+              ) as string | undefined
+              return {
+                notificationTemplateId:
+                  NotificationConfig[
+                    NotificationType.ChangeCoOwnerOfVehiclePruned
+                  ].templateId,
+                internalBody: plate ?? '',
+              }
+            },
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,

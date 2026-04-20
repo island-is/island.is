@@ -1,21 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const personalInfo = defineMessages({
-  nationalId: {
-    id: 'dp.application:basicInfo.personalInfo.nationalId',
-    defaultMessage: 'Kennitala',
-    description: 'National ID',
-  },
   address: {
     id: 'dp.application:basicInfo.personalInfo.address',
     defaultMessage: 'Heimili / póstfang ',
     description: 'Address',
   },
-  name: {
-    id: 'dp.application:basicInfo.personalInfo.name',
-    defaultMessage: 'Fullt nafn',
-    description: 'Full name',
-  },
+
   email: {
     id: 'dp.application:basicInfo.personalInfo.email',
     defaultMessage: 'Netfang',
@@ -26,11 +17,7 @@ export const personalInfo = defineMessages({
     defaultMessage: 'Símanúmer',
     description: 'Phone number',
   },
-  postcode: {
-    id: 'dp.application:basicInfo.personalInfo.postCode',
-    defaultMessage: 'Póstnúmer',
-    description: 'Post code',
-  },
+
   municipality: {
     id: 'dp.application:basicInfo.personalInfo.municipality',
     defaultMessage: 'Sveitarfélag',

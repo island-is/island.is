@@ -59,6 +59,29 @@ globalStyle(`${htmlDoc} a`, {
   color: theme.color.blue400,
 })
 
+globalStyle(`${htmlDoc} ul`, {
+  listStyleType: 'disc',
+  paddingLeft: theme.spacing[3],
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[2],
+})
+
+globalStyle(`${htmlDoc} ol`, {
+  listStyleType: 'decimal',
+  paddingLeft: theme.spacing[3],
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[2],
+})
+
+globalStyle(`${htmlDoc} li`, {
+  marginBottom: theme.spacing[1],
+})
+
+globalStyle(`${htmlDoc} p`, {
+  fontSize: theme.typography.baseFontSize,
+  lineHeight: theme.typography.baseLineHeight,
+  marginBottom: theme.spacing[2],
+})
 export const reveal = style({
   position: 'absolute',
   bottom: 20,

@@ -1,4 +1,3 @@
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -11,9 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
 import { PrescriptionItem } from '../../../../utils/types'
 import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
@@ -21,7 +19,7 @@ import * as styles from './RenewPrescriptionModal.css'
 
 interface Props {
   id: string
-  activePrescription: HealthDirectoratePrescription
+  activePrescription: PrescriptionItem
   toggleClose?: boolean
   isVisible: boolean
   setVisible: (isVisible: boolean) => void
@@ -36,7 +34,6 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   setActivePrescription,
 }) => {
   const { formatMessage } = useLocale()
-  const [error, setError] = useState<string>()
   const columnWidth = '7/12'
   const titleWidth = '5/12'
   const modulusCalculations = (index: number) => {
@@ -44,8 +41,13 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   }
   const [modalVisible, setModalVisible] = useState<boolean>(isVisible ?? false)
 
-  const [postRenewal, { data: renewalData, error: renewalError, loading }] =
-    usePostPrescriptionRenewalMutation()
+  useEffect(() => {
+    setModalVisible(isVisible)
+  }, [isVisible])
+
+  const [postRenewal, { loading }] = usePostPrescriptionRenewalMutation({
+    refetchQueries: ['GetMedicinePrescriptions'],
+  })
 
   const data = [
     {
@@ -77,12 +79,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   }
 
   const submitForm = async () => {
-    // TODO: Improve form submission when service is ready
-    if (
-      activePrescription.category === undefined ||
-      activePrescription.id === undefined
-    ) {
-      setError('Please select a valid prescription.')
+    if (activePrescription.id == null) {
+      toast.error(formatMessage(messages.renewalInvalidPrescription))
       return
     }
 
@@ -91,26 +89,16 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         variables: {
           input: {
             id: activePrescription.id,
-            medCardDrugCategory: activePrescription.category ?? '',
-            medCardDrugId: activePrescription.medCardDrugId ?? '',
-            prescribedItemId: activePrescription.id,
           },
         },
       })
       if (data) {
-        setError('')
         closeModal()
-        toast.success(
-          'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
-        )
+        toast.success(formatMessage(messages.renewalRequestSent))
       }
     } catch (error) {
-      setError(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
-      toast.error(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
+      const errorMessage = formatMessage(messages.renewalRequestError)
+      toast.error(errorMessage)
     }
   }
 
@@ -120,7 +108,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       isVisible={modalVisible}
       initialVisibility={false}
       onVisibilityChange={(visibility) => {
-        setModalVisible(visibility)
+        if (!visibility) {
+          closeModal()
+        }
       }}
       toggleClose={toggleClose}
       removeOnClose
@@ -199,17 +189,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                   </Button>
                 </Box>
               </GridColumn>
-              {error && (
-                <GridColumn>
-                  <Box>
-                    <Text>{error}</Text>
-                  </Box>
-                </GridColumn>
-              )}
             </GridRow>
           </GridContainer>
         </Box>
-        {renewalError && !loading && <Problem />}
       </Box>
     </ModalBase>
   )

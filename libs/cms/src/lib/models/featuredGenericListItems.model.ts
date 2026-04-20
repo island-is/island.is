@@ -29,6 +29,9 @@ export class FeaturedGenericListItems {
   @Field(() => String)
   baseUrl!: string
 
+  @Field(() => String, { nullable: true })
+  filterUrl?: string
+
   @Field(() => Boolean, { nullable: true })
   automaticallyFetchItems!: boolean
 
@@ -56,6 +59,7 @@ export const mapFeaturedGenericListItems = ({
 
   const tagGroups = Object.fromEntries(tagGroupsMap)
   let baseUrl = ''
+  let filterUrl = ''
 
   if (
     fields.organizationPage?.fields?.slug &&
@@ -64,6 +68,13 @@ export const mapFeaturedGenericListItems = ({
     baseUrl = `/${getOrganizationPageUrlPrefix(sys.locale)}/${
       fields.organizationPage.fields.slug
     }/${fields.organizationSubpage.fields.slug}`
+    if (fields.genericList?.sys.id) {
+      const tagGroupObject = Object.fromEntries(tagGroupsMap)
+      if (Object.keys(tagGroupObject).length > 0)
+        filterUrl = `${baseUrl}?${
+          fields.genericList.sys.id
+        }tag=${encodeURIComponent(JSON.stringify(tagGroupObject))}`
+    }
   }
 
   return {
@@ -71,6 +82,7 @@ export const mapFeaturedGenericListItems = ({
     id: sys.id,
     automaticallyFetchItems: fields.automaticallyFetchItems ?? false,
     baseUrl,
+    filterUrl,
     seeMoreLinkTextString:
       fields.seeMoreLinkText ||
       (sys.locale === 'is-IS' ? 'Sjá meira' : 'See more'),

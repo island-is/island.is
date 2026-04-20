@@ -1,54 +1,18 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
+import { getReviewers } from './getReviewers'
 
-// Function to check if an application has pending approval
-export const applicationHasPendingApproval = (
+const applicationHasPendingApproval = (
   answers: FormValue,
   excludeNationalId?: string,
 ): boolean => {
-  // Check if buyer has not approved
-  const buyer = getValueViaPath(answers, 'buyer', {}) as UserInformation
-  if (
-    (!excludeNationalId || buyer.nationalId !== excludeNationalId) &&
-    !buyer.approved
-  ) {
-    return true
-  }
+  const reviewers = getReviewers(answers)
 
-  // Check if any buyer's co-owners/operators have not approved
-  const buyerCoOwnersAndOperators = (
-    getValueViaPath(
-      answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
-  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-  if (
-    buyerCoOwnersAndOperators.some(
-      ({ nationalId, approved }) =>
-        (!excludeNationalId || nationalId !== excludeNationalId) && !approved,
-    )
-  ) {
-    return true
-  }
-
-  // Check if any seller's co-owners have not approved
-  const sellerCoOwners = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as CoOwnerAndOperator[]
-  if (
-    sellerCoOwners.some(
-      ({ nationalId, approved }) =>
-        (!excludeNationalId || nationalId !== excludeNationalId) && !approved,
-    )
-  ) {
-    return true
-  }
-
-  return false
+  return reviewers.some(
+    ({ nationalId, hasApproved }) =>
+      nationalId !== excludeNationalId && !hasApproved,
+  )
 }
 
 // Function to check if the current reviewer is the last one who needs to approve

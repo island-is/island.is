@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { VehiclesBulkMileageOrigin } from './bulkMileageOrigin.model'
 
 @ObjectType()
 export class VehiclesBulkMileageReadingResponse {
@@ -14,4 +15,7 @@ export class VehiclesBulkMileageReadingResponse {
 
   @Field({ nullable: true })
   errorMessage?: string
+
+  @Field(() => VehiclesBulkMileageOrigin, { nullable: true })
+  origin?: VehiclesBulkMileageOrigin
 }

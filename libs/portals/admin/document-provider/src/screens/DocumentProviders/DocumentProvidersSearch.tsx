@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Input, ActionCard, Pagination } from '@island.is/island-ui/core'
+import { replaceParams } from '@island.is/react-spa/shared'
 import { OrganisationPreview } from './DocumentProviders'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -58,7 +59,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
           <Box marginBottom={2}></Box>
           {searchResults
             .slice(PAGE_SIZE * (page - 1), PAGE_SIZE * page)
-            .map(({ name, id, nationalId }) => (
+            .map(({ name, id }) => (
               <Box marginBottom={2} key={id}>
                 <ActionCard
                   heading={name}
@@ -69,10 +70,10 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
                     variant: 'text',
                     onClick: () => {
                       navigate(
-                        DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
-                          ':nationalId',
-                          nationalId,
-                        ),
+                        replaceParams({
+                          href: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle,
+                          params: { providerId: id },
+                        }),
                         {
                           state: {
                             id,

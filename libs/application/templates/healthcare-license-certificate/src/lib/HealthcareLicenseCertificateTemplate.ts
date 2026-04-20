@@ -39,9 +39,8 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.HealthcareLicenseCertificate.translation,
-  ],
   dataSchema: HealthcareLicenseCertificateSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

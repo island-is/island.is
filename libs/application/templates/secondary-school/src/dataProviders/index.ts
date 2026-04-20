@@ -2,6 +2,12 @@ import { defineTemplateApi, UserProfileApi } from '@island.is/application/types'
 
 export { NationalRegistryUserApi } from '@island.is/application/types'
 
+export const ApplicationPeriodApi = defineTemplateApi({
+  action: 'getApplicationPeriodInfo',
+  externalDataId: 'applicationPeriodInfo',
+  namespace: 'SecondarySchool',
+})
+
 export const StudentInfoApi = defineTemplateApi({
   action: 'getStudentInfo',
   externalDataId: 'studentInfo',

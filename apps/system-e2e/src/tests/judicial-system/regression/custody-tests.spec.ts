@@ -123,9 +123,11 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.type('Þetta er ekki löglegt')
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
-    await expect(
-      page.getByRole('button', { name: 'Rannsóknargögn' }),
-    ).toBeVisible()
+    // Blur so debounced Case update runs; then wait for form to become valid (footer button enabled).
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('button', { name: 'Halda áfram' })).toBeEnabled(
+      { timeout: 15000 },
+    )
     await Promise.all([
       page.getByRole('button', { name: 'Halda áfram' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -135,7 +137,10 @@ test.describe.serial('Custody tests', () => {
     await expect(page).toHaveURL(`/krafa/rannsoknargogn/${caseId}`)
     await page.locator('textarea[name=caseFilesComments]').click()
     await page.keyboard.type('Engin gögn fylgja')
-    await expect(page.getByRole('button', { name: 'Samantekt' })).toBeVisible()
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('button', { name: 'Halda áfram' })).toBeEnabled(
+      { timeout: 15000 },
+    )
     await Promise.all([
       page.getByRole('button', { name: 'Halda áfram' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -306,51 +311,44 @@ test.describe.serial('Custody tests', () => {
 
     // Defendant
     await expect(page).toHaveURL(`/krafa/sakborningur/${extendedCaseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await page.getByTestId('continueButton').click()
+    await expect(page).toHaveURL(`/krafa/fyrirtaka/${extendedCaseId}`)
 
     // Court date request
-    await expect(page).toHaveURL(`/krafa/fyrirtaka/${extendedCaseId}`)
     await page.locator('input[id=reqCourtDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.getByTestId('reqCourtDate-time').click()
     await page.getByTestId('reqCourtDate-time').fill('10:00')
     await page.getByTestId('continueButton').click()
-    await Promise.all([
-      page.getByTestId('modalSecondaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Prosecutor demands
+    await page.getByTestId('modalSecondaryButton').click()
     await expect(page).toHaveURL(
       `/krafa/domkrofur-og-lagagrundvollur/${extendedCaseId}`,
     )
+
+    // Prosecutor demands
     await page.locator('input[id=reqValidToDate]').fill(extendedCustodyEndDate)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqValidToDate-time]').fill('16:00')
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await page.keyboard.press('Tab')
+    await expect(page.getByTestId('continueButton')).toBeEnabled({
+      timeout: 10000,
+    })
+    await page.getByTestId('continueButton').click()
+    await expect(page).toHaveURL(`/krafa/greinargerd/${extendedCaseId}`)
 
     // Prosecutor statement
-    await expect(page).toHaveURL(`/krafa/greinargerd/${extendedCaseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await page.getByTestId('continueButton').click()
+    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${extendedCaseId}`)
 
     // Case files
-    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${extendedCaseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
+    await page.getByTestId('continueButton').click()
     // Submit to court
     await expect(page).toHaveURL(`/krafa/stadfesta/${extendedCaseId}`)
+    await expect(
+      page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }),
+    ).toBeVisible()
+
+    // Submit to court
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalSecondaryButton').click()
   })

@@ -13,8 +13,8 @@ export interface IProgram {
   departmentNameEn: string
   startingSemesterYear: number
   startingSemesterSeason: Season
-  applicationStartDate: Date
-  applicationEndDate: Date
+  applicationStartDate: Date | null
+  applicationEndDate: Date | null
   schoolAnswerDate?: Date
   studentAnswerDate?: Date
   degreeType: DegreeType

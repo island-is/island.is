@@ -7,17 +7,17 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, IdentityApi } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
 import {
   ActivationAllowanceApi,
   LocaleApi,
   UserProfileApiWithValidation,
 } from '../../dataProviders'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [

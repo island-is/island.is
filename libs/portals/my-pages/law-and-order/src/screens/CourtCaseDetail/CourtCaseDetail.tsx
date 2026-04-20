@@ -1,18 +1,17 @@
 import { Box } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
+  IntroWrapper,
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useParams } from 'react-router-dom'
-import { LawAndOrderPaths } from '../../lib/paths'
-import InfoLines from '../../components/InfoLines/InfoLines'
-import { useEffect } from 'react'
-import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { useParams } from 'react-router-dom'
+import InfoLines from '../../components/VerdictInfoLines/VerdictInfoLines'
+import { messages } from '../../lib/messages'
+import { LawAndOrderPaths } from '../../lib/paths'
+import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 
 type UseParams = {
   id: string
@@ -23,8 +22,7 @@ const CourtCaseDetail = () => {
   const { formatMessage, lang } = useLocale()
 
   const { id } = useParams() as UseParams
-
-  const { data, error, loading, refetch } = useGetCourtCaseQuery({
+  const { data, error, loading } = useGetCourtCaseQuery({
     variables: {
       input: {
         id,
@@ -35,26 +33,25 @@ const CourtCaseDetail = () => {
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
 
-  useEffect(() => {
-    refetch()
-  }, [lang])
+  const hasVerdict = courtCase?.data?.hasVerdict
+  const hasVerdictBeenServed = courtCase?.data?.hasVerdictBeenServed
 
   return (
-    <>
-      <IntroHeader
-        loading={loading}
-        title={
-          courtCase?.data?.caseNumberTitle ??
-          formatMessage(messages.courtCaseNumberNotRegistered)
-        }
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      />
+    <IntroWrapper
+      loading={loading}
+      title={
+        courtCase?.data?.caseNumberTitle ??
+        formatMessage(messages.courtCaseNumberNotRegistered)
+      }
+      intro={messages.courtCasesDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       <Box marginBottom={3} display="flex" flexWrap="wrap">
-        {data?.lawAndOrderCourtCaseDetail && !loading && (
-          <Box paddingRight={2} marginBottom={[1]}>
-            {courtCase?.data?.hasBeenServed && (
+        {data?.lawAndOrderCourtCaseDetail &&
+          !loading &&
+          courtCase?.data?.hasSubpoenaBeenServed && (
+            <Box paddingRight={2} marginBottom={[1]}>
               <LinkButton
                 to={LawAndOrderPaths.SubpoenaDetail.replace(
                   ':id',
@@ -65,7 +62,28 @@ const CourtCaseDetail = () => {
                 variant="utility"
                 size="default"
               />
-            )}
+            </Box>
+          )}
+        {hasVerdict && (
+          <Box paddingRight={2} marginBottom={[1]}>
+            <LinkButton
+              to={
+                hasVerdictBeenServed
+                  ? LawAndOrderPaths.VerdictDetail.replace(
+                      ':id',
+                      courtCase?.data?.id?.toString() || '',
+                    )
+                  : formatMessage(messages.mailboxLink)
+              }
+              text={
+                hasVerdictBeenServed
+                  ? formatMessage(messages.verdict)
+                  : formatMessage(messages.openVerdictInMailbox)
+              }
+              icon="receipt"
+              variant="utility"
+              size="default"
+            />
           </Box>
         )}
       </Box>
@@ -86,7 +104,7 @@ const CourtCaseDetail = () => {
             imgSrc="./assets/images/sofa.svg"
           />
         )}
-    </>
+    </IntroWrapper>
   )
 }
 export default CourtCaseDetail

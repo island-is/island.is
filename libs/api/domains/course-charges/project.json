@@ -1,0 +1,13 @@
+{
+  "name": "api-domains-course-charges",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/course-charges/src",
+  "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

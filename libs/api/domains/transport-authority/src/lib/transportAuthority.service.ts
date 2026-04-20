@@ -473,6 +473,9 @@ export class TransportAuthorityApi {
         make: `${model} ${subModel}`,
         color: vehicle.color,
         numberOfAxles: vehicle.technical?.axle?.axleno || 0,
+        vehicleHasMilesOdometer: vehicle.vehicleHasMilesOdometer
+          ? vehicle.vehicleHasMilesOdometer
+          : false,
       }
     } catch (e) {
       return null

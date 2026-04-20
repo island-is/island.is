@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Form } from '../forms/models/form.model'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
@@ -19,6 +23,8 @@ import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { DeleteFormApplicantTypeDto } from './models/dto/deleteFormApplicantType.dto'
 import { Sequelize } from 'sequelize-typescript'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -33,8 +39,11 @@ export class FormApplicantTypesService {
   ) {}
 
   async create(
+    user: User,
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
   ): Promise<ScreenDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const applicantType = ApplicantTypes.find(
       (applicantType) =>
         applicantType.id === createFormApplicantTypeDto.applicantTypeId,
@@ -54,18 +63,6 @@ export class FormApplicantTypesService {
             model: Section,
             as: 'sections',
             where: { sectionType: SectionTypes.PARTIES },
-            include: [
-              {
-                model: Screen,
-                as: 'screens',
-                include: [
-                  {
-                    model: Field,
-                    as: 'fields',
-                  },
-                ],
-              },
-            ],
           },
         ],
       },
@@ -77,34 +74,16 @@ export class FormApplicantTypesService {
       )
     }
 
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to create form applicant type with id '${createFormApplicantTypeDto.applicantTypeId}'`,
+      )
+    }
+
     let screenDto = new ScreenDto()
 
     await this.sequelize.transaction(async (transaction) => {
-      let allowedDelegationTypes: string[] = []
-
-      if (Array.isArray(form.allowedDelegationTypes)) {
-        allowedDelegationTypes = [...form.allowedDelegationTypes]
-      } else if (
-        form.allowedDelegationTypes &&
-        typeof form.allowedDelegationTypes === 'object'
-      ) {
-        allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-      } else {
-        allowedDelegationTypes = []
-      }
-
-      const delegationType = await this.getDelegationType(
-        createFormApplicantTypeDto.applicantTypeId,
-      )
-      if (
-        delegationType !== 'Other' &&
-        !allowedDelegationTypes.includes(delegationType)
-      ) {
-        allowedDelegationTypes.push(delegationType)
-        form.allowedDelegationTypes = allowedDelegationTypes
-        await form.save({ transaction })
-      }
-
       const newScreen = await this.screenModel.create(
         {
           sectionId: form.sections[0].id, // PARTIES is the only section
@@ -113,13 +92,20 @@ export class FormApplicantTypesService {
         { transaction },
       )
 
+      const fieldSettings: FieldSettings = {
+        applicantType: applicantType.id,
+        ...(applicantType.id !== ApplicantTypesEnum.LEGAL_ENTITY &&
+        applicantType.id !==
+          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
+          ? { isPhoneRequired: true, isEmailRequired: true }
+          : {}),
+      }
+
       const newField = await this.fieldModel.create(
         {
           screenId: newScreen.id,
           fieldType: FieldTypesEnum.APPLICANT,
-          fieldSettings: {
-            applicantType: applicantType.id,
-          } as FieldSettings,
+          fieldSettings: fieldSettings,
         } as Field,
         { transaction },
       )
@@ -130,20 +116,16 @@ export class FormApplicantTypesService {
   }
 
   async delete(
+    user: User,
     deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
   ): Promise<ScreenDto> {
-    const form = await this.formModel.findByPk(
-      deleteFormApplicantTypeDto.formId,
-    )
-
-    if (!form) {
-      throw new NotFoundException(
-        `Form with id '${deleteFormApplicantTypeDto.formId}' not found`,
-      )
-    }
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     const partiesSection = await Section.findOne({
-      where: { formId: form.id, sectionType: SectionTypes.PARTIES },
+      where: {
+        formId: deleteFormApplicantTypeDto.formId,
+        sectionType: SectionTypes.PARTIES,
+      },
       include: [
         {
           model: Screen,
@@ -161,6 +143,21 @@ export class FormApplicantTypesService {
     if (!partiesSection) {
       throw new NotFoundException('PARTIES section not found for form')
     }
+
+    const form = await this.formModel.findByPk(partiesSection.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${partiesSection.formId}' not found`,
+      )
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to delete form applicant type with id '${deleteFormApplicantTypeDto.applicantTypeId}'`,
+      )
+    }
+
     const targetScreen = partiesSection?.screens?.find((screen) =>
       (screen.fields ?? []).some(
         (f) =>
@@ -180,54 +177,21 @@ export class FormApplicantTypesService {
       )
     }
 
-    // Update allowedDelegationTypes
-    let allowedDelegationTypes: string[] = []
-    if (Array.isArray(form.allowedDelegationTypes)) {
-      allowedDelegationTypes = [...form.allowedDelegationTypes]
-    } else if (
-      form.allowedDelegationTypes &&
-      typeof form.allowedDelegationTypes === 'object'
-    ) {
-      allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-    } else {
-      allowedDelegationTypes = []
-    }
-    const delegationType = await this.getDelegationType(
-      deleteFormApplicantTypeDto.applicantTypeId,
-    )
-    const updatedDelegationTypes = allowedDelegationTypes.filter(
-      (type) => type !== delegationType,
-    )
-    form.allowedDelegationTypes = updatedDelegationTypes
-    await form.save()
+    let screenDto: ScreenDto = new ScreenDto()
 
-    const screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
+    screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
 
-    await this.screenModel.destroy({ where: { id: targetScreen.id } })
+    await this.screenModel.destroy({
+      where: { id: targetScreen.id },
+    })
 
     return screenDto
-  }
-
-  private async getDelegationType(applicantType: string): Promise<string> {
-    switch (applicantType) {
-      case ApplicantTypesEnum.INDIVIDUAL:
-        return 'Individual'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL:
-        return 'GeneralMandate'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY:
-        return 'Custom'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION:
-        return 'ProcurationHolder'
-      case ApplicantTypesEnum.LEGAL_GUARDIAN:
-        return 'LegalGuardian'
-      default:
-        return 'Other'
-    }
   }
 
   private mapToScreenDto(screen: Screen, field: Field): ScreenDto {
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'displayOrder',
@@ -244,13 +208,16 @@ export class FormApplicantTypesService {
 
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'displayOrder',
       'isCompleted',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
       'isHidden',
-      'multiset',
+      'multiMax',
+      'isMulti',
     ]
     const screenDto: ScreenDto = defaults(
       pick(screen, screenKeys),

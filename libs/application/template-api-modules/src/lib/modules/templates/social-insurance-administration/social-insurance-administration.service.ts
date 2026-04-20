@@ -15,14 +15,15 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { Application, ApplicationTypes } from '@island.is/application/types'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
-  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
-  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
+  type TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+  type ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
+  SocialInsuranceAdministrationMedicalAndRehabilitationService,
+  SocialInsuranceAdministrationOldAgePensionService,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -35,7 +36,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { sharedModuleConfig } from '../../shared'
 import {
-  getApplicationType,
+  getOAPApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToDeathBenefitsDTO,
   transformApplicationToDisabilityPensionDTO,
@@ -46,6 +47,10 @@ import {
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
 import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
+import {
+  IndividualDto,
+  NationalRegistryV3ApplicationsClientService,
+} from '@island.is/clients/national-registry-v3-applications'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -54,10 +59,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
+    private siaOldAgePensionServiceV2: SocialInsuranceAdministrationOldAgePensionService,
+    private siaMedicalRehabServiceV2: SocialInsuranceAdministrationMedicalAndRehabilitationService,
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly s3Service: S3Service,
-    private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryV3ApplicationsApi: NationalRegistryV3ApplicationsClientService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -411,13 +418,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         attachments,
       )
 
-      const applicationType = getApplicationType(application).toLowerCase()
+      const applicationType = getOAPApplicationType(application)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
+      const response =
+        await this.siaOldAgePensionServiceV2.sendOldAgePensionApplication(
+          auth,
+          oldAgePensionDTO,
+          applicationType,
+        )
 
       return response
     }
@@ -500,11 +508,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const marpDTO =
         transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        marpDTO,
-        application.typeId.toLowerCase(),
-      )
+      const response =
+        await this.siaMedicalRehabServiceV2.sendMedicalAndRehabilitationPaymentsApplication(
+          auth,
+          marpDTO,
+        )
 
       return response
     }
@@ -593,40 +601,29 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getChildrenWithSameDomicile({ auth }: TemplateApiModuleActionProps) {
-    const cohabitants = await this.nationalRegistryApi.getCohabitants(
-      auth.nationalId,
-    )
+    const cohabitantsDetailed =
+      await this.nationalRegistryV3ApplicationsApi.getCohabitantsDetailed(
+        auth.nationalId,
+        auth,
+      )
 
-    const children: Array<ChildInformation | null> = await Promise.all(
-      cohabitants.map(async (cohabitantsNationalId) => {
+    const children: Array<ChildInformation> = []
+
+    cohabitantsDetailed?.cohabitants
+      .filter((c): c is IndividualDto => c !== null)
+      .forEach((cohabitant) => {
         if (
-          cohabitantsNationalId !== auth.nationalId &&
-          kennitala.info(cohabitantsNationalId).age < 18
+          cohabitant.nationalId !== auth.nationalId &&
+          kennitala.info(cohabitant.nationalId).age < 18
         ) {
-          const child = await this.nationalRegistryApi.getIndividual(
-            cohabitantsNationalId,
-          )
-
-          if (!child) {
-            return null
-          }
-
-          return (
-            child && {
-              nationalId: child.nationalId,
-              fullName: child.name,
-            }
-          )
-        } else {
-          return null
+          children.push({
+            nationalId: cohabitant.nationalId,
+            fullName: cohabitant.name,
+          })
         }
-      }),
-    )
+      })
 
-    const filteredChildren = children.filter(
-      (child): child is ChildInformation => child != null,
-    )
-    return filteredChildren
+    return children
   }
 
   async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {

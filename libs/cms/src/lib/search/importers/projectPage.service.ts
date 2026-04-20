@@ -10,10 +10,14 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
   processSyncData(entries: processSyncDataInput<IProjectPage>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IProjectPage =>
         entry.sys.contentType.sys.id === 'projectPage' && !!entry.fields.title,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IProjectPage[]) {

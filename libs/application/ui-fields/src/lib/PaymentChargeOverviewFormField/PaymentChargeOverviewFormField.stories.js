@@ -1,5 +1,3 @@
-import { dedent } from 'ts-dedent'
-
 import { PaymentChargeOverviewFormField } from './PaymentChargeOverviewFormField'
 
 const createMockApplication = (data = {}) => ({
@@ -17,8 +15,13 @@ const createMockApplication = (data = {}) => ({
       data: [
         {
           priceAmount: 100,
-          chargeItemName: 'lorem',
+          chargeItemName: 'Payment code description',
           chargeItemCode: 'ipsum',
+        },
+        {
+          priceAmount: 200,
+          chargeItemName: 'Payment code description two',
+          chargeItemCode: 'muspi',
         },
       ],
     },
@@ -39,7 +42,6 @@ export const Default = {
         title: 'Field title',
         forPaymentLabel: 'label here',
         totalLabel: 'total label here',
-
         getSelectedChargeItems: (_) => [
           {
             chargeItemCode: 'ipsum',
@@ -48,6 +50,57 @@ export const Default = {
       }}
     />
   ),
+}
 
-  name: 'Default',
+export const Multiple = {
+  render: () => (
+    <PaymentChargeOverviewFormField
+      application={createMockApplication()}
+      field={{
+        id: 'field.id',
+        title: 'Field title',
+        forPaymentLabel: 'label here',
+        totalLabel: 'total label here',
+        quantityUnitLabel: 'stk.',
+        getSelectedChargeItems: (_) => [
+          {
+            chargeItemCode: 'ipsum',
+            extraLabel: 'ExtraLabel',
+          },
+          {
+            chargeItemCode: 'muspi',
+            chargeItemQuantity: 3,
+          },
+        ],
+      }}
+    />
+  ),
+}
+
+export const WithCustomStrings = {
+  render: () => (
+    <PaymentChargeOverviewFormField
+      application={createMockApplication()}
+      field={{
+        id: 'field.id',
+        title: 'Field title',
+        forPaymentLabel: 'label here',
+        totalLabel: 'total label here',
+        quantityUnitLabel: 'stk.',
+        quantityLabel: 'custom quantity label',
+        totalPerUnitLabel: 'custom total label',
+        unitPriceLabel: 'custom unit price label',
+        getSelectedChargeItems: (_) => [
+          {
+            chargeItemCode: 'ipsum',
+            extraLabel: 'ExtraLabel',
+          },
+          {
+            chargeItemCode: 'muspi',
+            chargeItemQuantity: 3,
+          },
+        ],
+      }}
+    />
+  ),
 }

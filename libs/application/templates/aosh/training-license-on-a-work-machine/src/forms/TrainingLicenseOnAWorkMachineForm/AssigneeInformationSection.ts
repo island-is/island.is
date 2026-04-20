@@ -31,17 +31,12 @@ export const assigneeInformationSection = buildSection({
           addItemButtonText: assigneeInformation.labels.tableButtonText,
           marginTop: 0,
           table: {
-            format: {
-              company: (value) => {
-                return typeof value === 'string' ? value ?? '' : value['name']
-              },
-            },
             header: [
               assigneeInformation.labels.company,
               assigneeInformation.labels.assignee,
               assigneeInformation.labels.workMachine,
             ],
-            rows: ['company', 'name', 'workMachine'],
+            rows: ['company.name', 'assignee.name', 'workMachine'],
           },
           initActiveFieldIfEmpty: true,
           fields: {

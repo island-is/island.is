@@ -5,7 +5,7 @@ import {
   ExemptionForTransportationAnswers,
   ExemptionType,
 } from '../..'
-import { Convoy } from '../types'
+import { Convoy, Vehicle } from '../types'
 import { getExemptionType } from './getExemptionType'
 import { convoy } from '../../lib/messages'
 
@@ -131,4 +131,69 @@ export const getConvoyLongTermErrorMessage = (
   // Duplicate error
   if (hasDuplicateConvoyItems(answers))
     return convoy.error.duplicateErrorMessage
+}
+
+const uniqueAndSortByPermno = (items: Vehicle[]): Vehicle[] => {
+  const uniqueMap: Record<string, Vehicle> = {}
+
+  for (const item of items) {
+    uniqueMap[item.permno] = item // keeps last occurrence
+  }
+
+  return Object.values(uniqueMap).sort((a, b) =>
+    a.permno.localeCompare(b.permno),
+  )
+}
+
+export const getAllConvoyVehicles = (answers: FormValue): Vehicle[] => {
+  const convoyItems = getConvoyItems(answers)
+  const vehicles: Vehicle[] = convoyItems
+    .map((x) => x.vehicle)
+    .filter((x): x is Vehicle => !!x?.permno)
+  const vehiclesSorted = uniqueAndSortByPermno(vehicles)
+  return vehiclesSorted
+}
+
+export const getConvoyVehicle = (
+  answers: FormValue,
+  vehicleIndex: number,
+): Vehicle | undefined => {
+  const vehiclesSorted = getAllConvoyVehicles(answers)
+  return vehiclesSorted?.[vehicleIndex]
+}
+
+export const getAllConvoyTrailers = (answers: FormValue): Vehicle[] => {
+  const convoyItems = getConvoyItems(answers)
+  const trailers: Vehicle[] = convoyItems
+    .map((x) => x.trailer)
+    .filter((x): x is Vehicle => !!x?.permno)
+  const trailersSorted = uniqueAndSortByPermno(trailers)
+  return trailersSorted
+}
+
+export const getConvoyTrailer = (
+  answers: FormValue,
+  trailerIndex: number,
+): Vehicle | undefined => {
+  const trailersSorted = getAllConvoyTrailers(answers)
+  return trailersSorted?.[trailerIndex]
+}
+
+export const checkHasConvoyVehicleAtIndex = (
+  answers: FormValue,
+  vehicleIndex: number,
+): boolean => {
+  const vehicle = getConvoyVehicle(answers, vehicleIndex)
+  const hasVehicle = !!vehicle?.permno
+  return hasVehicle
+}
+
+export const checkHasConvoyTrailerAtIndexWithMultipleAxles = (
+  answers: FormValue,
+  trailerIndex: number,
+): boolean => {
+  const trailer = getConvoyTrailer(answers, trailerIndex)
+  const hasTrailerWithMultipleAxles =
+    !!trailer?.permno && trailer.numberOfAxles > 1
+  return hasTrailerWithMultipleAxles
 }

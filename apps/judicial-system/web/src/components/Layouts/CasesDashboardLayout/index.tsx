@@ -14,12 +14,10 @@ const CasesDashboardLayout: FC<PropsWithChildren<Props>> = ({
   title,
 }) => {
   return (
-    <>
+    <section>
       <SectionHeading title={title} />
-      <Box marginBottom={[5, 5, 6]} className={styles.gridContainer}>
-        {children}
-      </Box>
-    </>
+      <Box className={styles.gridContainer}>{children}</Box>
+    </section>
   )
 }
 

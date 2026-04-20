@@ -16,7 +16,7 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 }
 export { getSelectedMachine } from './getSelectedMachine'
 export { getReviewSteps } from './getReviewSteps'
-export { hasReviewerApproved } from './hasReviewerApproved'
+export * from './getReviewers'
 export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
 export { doSellerAndBuyerHaveSameNationalId } from './doSellerAndBuyerHaveSameNationalId'

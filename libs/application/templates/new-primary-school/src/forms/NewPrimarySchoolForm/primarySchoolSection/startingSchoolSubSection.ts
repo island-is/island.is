@@ -8,14 +8,15 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { ApplicationType } from '../../../utils/constants'
+import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
+import { shouldShowExpectedEndDate } from '../../../utils/conditionUtils'
 
 export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
-  title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
+  title: primarySchoolMessages.startingSchool.subSectionTitle,
   condition: (answers) => {
     // Only display section if application type is "Application for a new primary school"
     const { applicationType } = getApplicationAnswers(answers)
@@ -24,55 +25,53 @@ export const startingSchoolSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'startingSchool',
-      title: newPrimarySchoolMessages.primarySchool.startingSchoolTitle,
-      description:
-        newPrimarySchoolMessages.primarySchool.startingSchoolDescription,
+      title: primarySchoolMessages.startingSchool.title,
+      description: primarySchoolMessages.startingSchool.description,
       children: [
         buildDateField({
           id: 'startingSchool.expectedStartDate',
-          title: newPrimarySchoolMessages.shared.date,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+          title: primarySchoolMessages.startingSchool.expectedStartDateTitle,
+          placeholder:
+            primarySchoolMessages.startingSchool.expectedStartDatePlaceholder,
           defaultValue: null,
           minDate: () => new Date(),
         }),
-        // Only show for International school types
+        // Only show for International schools and special education - behavior school/dept types
         buildRadioField({
           id: 'startingSchool.temporaryStay',
-          title: newPrimarySchoolMessages.primarySchool.temporaryStay,
+          title: primarySchoolMessages.startingSchool.temporaryStay,
           width: 'half',
           space: 4,
           required: true,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               value: NO,
             },
           ],
-          condition: (answers) => {
-            const { selectedSchoolType } = getApplicationAnswers(answers)
-
-            return selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+          condition: (answers, externalData) => {
+            return shouldShowExpectedEndDate(answers, externalData)
           },
         }),
         buildDescriptionField({
           id: 'startingSchool.expectedEndDate.description',
           title:
-            newPrimarySchoolMessages.primarySchool.expectedEndDateDescription,
+            primarySchoolMessages.startingSchool.expectedEndDateDescription,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const {
-              selectedSchoolType,
               expectedStartDateHiddenInput,
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
+
             return (
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              shouldShowExpectedEndDate(answers, externalData) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )
@@ -80,17 +79,18 @@ export const startingSchoolSubSection = buildSubSection({
         }),
         buildDateField({
           id: 'startingSchool.expectedEndDate',
-          title: newPrimarySchoolMessages.primarySchool.expectedEndDateTitle,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-          condition: (answers) => {
+          title: primarySchoolMessages.startingSchool.expectedEndDateTitle,
+          placeholder:
+            primarySchoolMessages.startingSchool.expectedEndDatePlaceholder,
+          condition: (answers, externalData) => {
             const {
-              selectedSchoolType,
               expectedStartDateHiddenInput,
               expectedStartDate,
               temporaryStay,
             } = getApplicationAnswers(answers)
+
             return (
-              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              shouldShowExpectedEndDate(answers, externalData) &&
               temporaryStay === YES &&
               expectedStartDate === expectedStartDateHiddenInput
             )

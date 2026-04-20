@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const paymentInfo = defineMessages({
-  title: {
-    id: 'dp.application:paymentInfo.title',
-    defaultMessage: 'Greiðsluupplýsingar',
-    description: 'Payment information',
-  },
   noticeTitle: {
     id: 'dp.application:paymentInfo.noticeTitle',
     defaultMessage: 'Til athugunar!',
@@ -23,11 +18,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     defaultMessage: 'Tegund reiknings',
     description: 'Account type',
   },
-  domesticAccount: {
-    id: 'dp.application:paymentInfo.domesticAccount',
-    defaultMessage: 'Íslenskur reikningur',
-    description: 'Domestic account',
-  },
+
   foreignAccount: {
     id: 'dp.application:paymentInfo.foreignAccount',
     defaultMessage: 'Erlendur reikningur',
@@ -69,24 +60,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     defaultMessage: 'Skattþrep',
     description: 'Taxation level',
   },
-  taxationLevelOptionOne: {
-    id: 'dp.application:paymentInfo.taxationLevelOptionOne',
-    defaultMessage:
-      'Ég vil að viðeigandi skattþrep sé reiknað út frá öðrum tekjum sem ég er með',
-    description: 'Taxation level option 1',
-  },
-  taxationLevelOptionTwo: {
-    id: 'dp.application:paymentInfo.taxationLevelOptionTwo',
-    defaultMessage:
-      'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
-    description: 'Taxation level option 2',
-  },
-  taxationLevelOptionThree: {
-    id: 'dp.application:paymentInfo.taxationLevelOptionThree',
-    defaultMessage:
-      'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
-    description: 'Taxation level option 3',
-  },
+
   yes: {
     id: 'dp.application:paymentInfo.yes',
     defaultMessage: 'Já',

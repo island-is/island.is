@@ -50,13 +50,8 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       ]
     case VerdictServiceStatus.LEGAL_PAPER:
       return [
-        `Dómur birtur í Lögbirtingarblaðinu - ${
-          verdict.serviceDate
-            ? `${formatDate(verdict.serviceDate)} kl. ${formatDate(
-                verdict.serviceDate,
-                TIME_FORMAT,
-              )}`
-            : ''
+        `Dómur birtur í Lögbirtingablaðinu - ${
+          verdict.serviceDate ? `${formatDate(verdict.serviceDate)}` : ''
         }`,
       ]
     case VerdictServiceStatus.NOT_APPLICABLE:
@@ -97,18 +92,29 @@ const VerdictStatusAlertMessage = ({
   lawyer?: Lawyer
 }) => {
   const messages = verdict ? mapServiceStatusMessages(verdict, lawyer) : []
-
   const isDeprecatedVerdict =
     verdict?.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE &&
     !verdict.serviceDate
+
   if (isDeprecatedVerdict) return null
 
   const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
+
   if (isServed) {
+    if (verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER) {
+      return (
+        <AlertMessage
+          type="success"
+          title={`Dómur birtur í Lögbirtingablaðinu - ${defendantName}`}
+          message={messages[0]}
+        />
+      )
+    }
+
     return (
       <AlertMessage
         type="success"
-        title={`Birting tókst - ${defendantName}`}
+        title={`Dómur birtur - ${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (
@@ -118,18 +124,6 @@ const VerdictStatusAlertMessage = ({
             ))}
           </Box>
         }
-      />
-    )
-  }
-
-  if (verdict.legalPaperRequestDate) {
-    return (
-      <AlertMessage
-        type="info"
-        title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
-        message={`Dómur sendur ${formatDate(
-          verdict.legalPaperRequestDate,
-        )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
       />
     )
   }
@@ -198,8 +192,8 @@ const VerdictStatusAlert = (props: {
     <Box marginBottom={2}>
       <AlertMessage
         type="error"
-        title={'Ekki tókst að sækja stöðu birtingar'}
-        message={'Vinsamlegast reyndu aftur síðar'}
+        title="Ekki tókst að sækja stöðu birtingar"
+        message="Vinsamlegast reyndu aftur síðar"
       />
     </Box>
   ) : (

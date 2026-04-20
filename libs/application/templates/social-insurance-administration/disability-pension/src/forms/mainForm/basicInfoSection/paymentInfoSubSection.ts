@@ -169,6 +169,10 @@ export const paymentInfoSubSection = buildSubSection({
           options: getYesNoOptions(),
           largeButtons: true,
           required: true,
+          clearOnChange: [
+            `${SectionRouteEnum.PAYMENT_INFO}.personalAllowanceUsage`,
+          ],
+          clearOnChangeDefaultValue: '100',
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.personalAllowanceUsage`,
@@ -187,7 +191,7 @@ export const paymentInfoSubSection = buildSubSection({
           variant: 'number',
           width: 'half',
           maxLength: 4,
-          min: 0,
+          min: 1,
           max: 100,
         }),
         buildRadioField({

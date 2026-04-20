@@ -23,7 +23,6 @@ import { userMonitoring } from '@island.is/user-monitoring'
 import {
   Header,
   Main,
-  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -109,6 +108,10 @@ export interface LayoutProps {
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   customAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
   footerVersion?: 'default' | 'organization'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
@@ -144,6 +147,7 @@ const Layout: Screen<LayoutProps> = ({
   footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
+  footerTagsMenu,
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
@@ -155,6 +159,7 @@ const Layout: Screen<LayoutProps> = ({
   children,
   megaMenuData,
   customTopLoginButtonItem,
+  languageToggleHrefOverride,
 }) => {
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -212,9 +217,15 @@ const Layout: Screen<LayoutProps> = ({
           )}`,
           ...customAlertBannerContent,
         },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
+      ].filter((banner) => {
+        return (
+          !Cookies.get(banner.bannerId) &&
+          banner.showAlertBanner &&
+          (Boolean(banner.title) ||
+            Boolean(banner.description) ||
+            (Boolean(banner.linkTitle) && Boolean(banner.link)))
+        )
+      }),
     )
   }, [
     alertBannerContent,
@@ -379,9 +390,6 @@ const Layout: Screen<LayoutProps> = ({
             closeButtonLabel={activeLocale === 'is' ? 'Loka' : 'Close'}
           />
         ))}
-        <Hidden above="sm">
-          <MobileAppBanner namespace={namespace} />
-        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -410,6 +418,7 @@ const Layout: Screen<LayoutProps> = ({
                 }
                 customTopLoginButtonItem={customTopLoginButtonItem}
                 loginButtonType={n('minarsidurLoginButtonType', 'dropdown')}
+                languageToggleHrefOverride={languageToggleHrefOverride}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -432,27 +441,31 @@ const Layout: Screen<LayoutProps> = ({
                 )}
                 <Footer
                   topLinks={footerUpperInfo}
-                  topLinksContact={footerUpperContact}
-                  bottomLinks={footerLowerMenu}
                   middleLinks={footerMiddleMenu}
-                  bottomLinksTitle={t.siteExternalTitle}
                   middleLinksTitle={String(namespace.footerMiddleLabel)}
-                  languageSwitchLink={{
-                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                    href: activeLocale === 'en' ? '/' : '/en',
-                  }}
-                  privacyPolicyLink={{
-                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
-                    href: n(
-                      'privacyPolicyHref',
-                      '/personuverndarstefna-stafraent-islands',
-                    ),
-                  }}
-                  termsLink={{
-                    title: n('termsTitle', 'Skilmálar'),
-                    href: n('termsHref', '/skilmalar-island-is'),
-                  }}
                   showMiddleLinks
+                  tagLinks={footerTagsMenu}
+                  tagLinksTitle={String(
+                    namespace.footerTagsLabel ?? 'Flýtileiðir',
+                  )}
+                  showTagLinks
+                  bottomBarLinks={[
+                    {
+                      title: n('helpTitle', 'Getum við aðstoðað?'),
+                      href: n('helpHref', '/s/stafraent-island/hafa-samband'),
+                    },
+                    {
+                      title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                      href: n(
+                        'privacyPolicyHref',
+                        '/personuverndarstefna-stafraent-islands',
+                      ),
+                    },
+                    {
+                      title: n('termsTitle', 'Notendaskilmálar'),
+                      href: n('termsHref', '/skilmalar-island-is'),
+                    },
+                  ]}
                 />
               </>
             )}
@@ -569,7 +582,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
         .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
           query: GET_GROUPED_MENU_QUERY,
           variables: {
-            input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+            input: { id: '578dYm6sr8yihBDIClrQYe', lang },
           },
         })
         .then((res) => res.data.getGroupedMenu),
@@ -624,31 +637,31 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
     switch (menu.id) {
       // Footer lower
-      case '6vTuiadpCKOBhAlSjYY8td':
+      case '5c2EheJw1r0QQGb2VDOJHU':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
-      case '7hSbSQm5F5EBc0KxPTFVAS':
+      case '5Hh1PJAmyy9T9PaQd4qMVv':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
-      case '6oGQDyWos4xcKX9BdMHd5R':
+      case '3w5wgyaJo2ZLp74bdm0A0B':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
-      // Footer upper
-      case '62Zh6hUc3bi0JwNRnqV8Nm':
+      // Footer upper info
+      case 'NtmV8H8sIEiXe6xdEKXsV':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
-      case '5yUCZ4U6aZ8rZ9Jigme7GI':
+      case '12W37tLOmkxKDfUrw0X0h7':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
@@ -705,6 +718,10 @@ interface LayoutComponentProps {
     buttonType: string
     blacklistedPathnames?: string[]
   }
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
 }
 
 export const withMainLayout = <T, C extends ScreenContext>(
@@ -753,6 +770,9 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const customTopLoginButtonItem =
       layoutComponentProps?.customTopLoginButtonItem
 
+    const languageToggleHrefOverride =
+      layoutComponentProps?.languageToggleHrefOverride
+
     return {
       layoutProps: {
         ...layoutProps,
@@ -763,6 +783,7 @@ export const withMainLayout = <T, C extends ScreenContext>(
         customAlertBannerContent,
         languageToggleQueryParams,
         customTopLoginButtonItem,
+        languageToggleHrefOverride,
       },
       componentProps,
     }

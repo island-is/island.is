@@ -14,7 +14,7 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
@@ -30,6 +30,8 @@ import {
   CaseRepositoryService,
   CaseString,
   DateLog,
+  DefendantEventLogRepositoryService,
+  PoliceDigitalCaseFileRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
@@ -56,6 +58,8 @@ jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -71,7 +75,6 @@ export const createTestingCaseModule = async () => {
     ],
     providers: [
       SharedAuthModule,
-      MessageService,
       EventLogService,
       CourtService,
       PoliceService,
@@ -86,6 +89,8 @@ export const createTestingCaseModule = async () => {
       SubpoenaService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      DefendantEventLogRepositoryService,
+      PoliceDigitalCaseFileRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -118,8 +123,10 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseString),
         useValue: {
           create: jest.fn(),
+          destroy: jest.fn(),
           findOne: jest.fn(),
           update: jest.fn(),
+          upsert: jest.fn(),
         },
       },
       CaseService,
@@ -134,8 +141,6 @@ export const createTestingCaseModule = async () => {
       }
     })
     .compile()
-
-  const messageService = caseModule.get<MessageService>(MessageService)
 
   const eventLogService = caseModule.get<EventLogService>(EventLogService)
 
@@ -166,6 +171,16 @@ export const createTestingCaseModule = async () => {
 
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
+
+  const defendantEventLogRepositoryService =
+    caseModule.get<DefendantEventLogRepositoryService>(
+      DefendantEventLogRepositoryService,
+    )
+
+  const policeDigitalCaseFileRepositoryService =
+    caseModule.get<PoliceDigitalCaseFileRepositoryService>(
+      PoliceDigitalCaseFileRepositoryService,
+    )
 
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
@@ -199,10 +214,16 @@ export const createTestingCaseModule = async () => {
   const limitedAccessCaseController =
     caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   caseModule.close()
 
   return {
-    messageService,
+    queuedMessages,
     eventLogService,
     courtService,
     policeService,
@@ -215,6 +236,8 @@ export const createTestingCaseModule = async () => {
     indictmentCountService,
     caseRepositoryService,
     caseArchiveRepositoryService,
+    defendantEventLogRepositoryService,
+    policeDigitalCaseFileRepositoryService,
     logger,
     sequelize,
     dateLogModel,

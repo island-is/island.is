@@ -97,6 +97,39 @@ query getPaymentOverviewDocument(
   }
 }
 
+query getPaymentOverviewTotalsServiceTypes {
+  rightsPortalPaymentOverviewTotalsServiceTypes {
+    items {
+      code
+      name
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverviewTotals($input: RightsPortalPaymentOverviewInput!) {
+  rightsPortalPaymentOverviewTotals(input: $input) {
+    items {
+      items {
+        serviceTypeCode
+        serviceTypeName
+        fullCost
+        copayCost
+        patientCost
+      }
+      totalFullCost
+      totalPatientCost
+      totalCopayCost
+    }
+    errors {
+      status
+    }
+    totalsPdfDownloadUrl
+  }
+}
+
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
     isInsured

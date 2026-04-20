@@ -10,13 +10,13 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
-import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
+import { ClipboardAndPencil } from '@island.is/application/assets/graphics'
 
 export const Done: Form = buildForm({
   id: 'done',
   mode: FormModes.COMPLETED,
-  logo: Logo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'doneScreen',
@@ -28,7 +28,7 @@ export const Done: Form = buildForm({
           children: [
             buildImageField({
               id: 'doneImage',
-              image: Jobs,
+              image: ClipboardAndPencil,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'none',

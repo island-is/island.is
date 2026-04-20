@@ -1,4 +1,5 @@
 import { createContext, FC, useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -7,13 +8,19 @@ import {
   ServiceWebDynamicFooter,
   ServiceWebHeader,
   ServiceWebSearchSection,
-  WatsonChatPanel,
 } from '@island.is/web/components'
-import { Organization, ServiceWebPage } from '@island.is/web/graphql/schema'
+import {
+  GetWebChatQuery,
+  Organization,
+  QueryGetWebChatArgs,
+  ServiceWebPage,
+} from '@island.is/web/graphql/schema'
 import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 
-import config, { watsonConfig } from '../config'
+import WebChat from '../../WebChat/WebChat'
+import config from '../config'
 import { BackgroundVariations, Options, TextModes } from '../types'
 import * as styles from './Wrapper.css'
 
@@ -95,6 +102,19 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
       ? pageData.footerItems
       : organization?.footerItems ?? []
 
+  const { data: webChatData, loading } = useQuery<
+    GetWebChatQuery,
+    QueryGetWebChatArgs
+  >(GET_WEB_CHAT, {
+    skip: !organization?.id,
+    variables: {
+      input: {
+        displayLocationIds: [organization?.id],
+        lang: activeLocale,
+      },
+    },
+  })
+
   return (
     <>
       <HeadWithSocialSharing
@@ -147,9 +167,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
-      {organization?.id in watsonConfig[activeLocale] && (
-        <WatsonChatPanel {...watsonConfig[activeLocale][organization.id]} />
-      )}
+      {!loading && <WebChat webChat={webChatData?.getWebChat} />}
     </>
   )
 }

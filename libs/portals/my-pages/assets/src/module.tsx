@@ -6,6 +6,10 @@ import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 import { redirects } from './assetRedirects'
+import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
+import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
+
+const USER_SHIPS_FLAG = 'UserShips'
 
 const IPOverview = lazy(() =>
   import(
@@ -44,6 +48,11 @@ const VehicleHistory = lazy(() =>
   import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+const ShipsOverview = lazy(() =>
+  import('./screens/Ships/Overview/ShipsOverview'),
+)
+const ShipDetail = lazy(() => import('./screens/Ships/Detail/ShipDetail'))
+
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
@@ -101,6 +110,20 @@ export const assetsModule: PortalModule = {
         element: <RealEstateAssetDetail />,
       },
       {
+        name: m.myShips,
+        path: AssetsPaths.AssetsShips,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <ShipsOverview />,
+      },
+      {
+        name: m.myShips,
+        path: AssetsPaths.AssetsShipDetail,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <ShipDetail />,
+      },
+      {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachines,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
@@ -147,25 +170,41 @@ export const assetsModule: PortalModule = {
         name: m.vehiclesBulkMileage,
         path: AssetsPaths.AssetsVehiclesBulkMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
         element: <VehicleBulkMileage />,
       },
       {
         name: m.vehiclesBulkMileageUpload,
         path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <VehicleBulkMileageUpload />,
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageUpload />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesBulkMileageJobOverview,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <VehicleBulkMileageJobOverview />,
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageJobOverview />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesBulkMileageJobDetail,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <VehicleBulkMileageJobDetail />,
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageJobDetail />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesLookup,
@@ -173,6 +212,7 @@ export const assetsModule: PortalModule = {
         enabled:
           userInfo.scopes.includes(ApiScope.internal) ||
           userInfo.scopes.includes(ApiScope.internalProcuring),
+        notAvailableForActors: true,
         element: <Lookup />,
       },
       {

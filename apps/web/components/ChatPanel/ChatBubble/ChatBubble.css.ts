@@ -33,6 +33,7 @@ export const root = style({
 export const hidden = style({
   opacity: 0,
   zIndex: 0,
+  pointerEvents: 'none',
 })
 
 export const message = style({
@@ -53,8 +54,8 @@ export const message = style({
   textAlign: 'center',
   transition: 'bottom 0.3s ease, transform 0.3s ease',
   transform: 'translateY(0)',
-  ':focus': {
-    outline: 0,
+  ':focus-visible': {
+    outline: `4px solid ${theme.color.mint400}`,
     transform: 'translateY(-10px)',
   },
 })
@@ -80,7 +81,7 @@ export const messageArrow = style({
   borderTop: `10px solid ${blue200}`,
   transition: 'all 150ms ease',
   selectors: {
-    [`${message}:focus &`]: {
+    [`${message}:focus-visible &`]: {
       bottom: -13,
       right: 41,
       borderLeft: '13px solid transparent',
@@ -109,4 +110,37 @@ export const loadingDots = style({
   margin: 'auto',
   left: 0,
   right: 0,
+})
+
+export const circleRoot = style({
+  display: 'flex',
+  width: 120,
+  justifyContent: 'center',
+  cursor: 'pointer',
+  position: 'fixed',
+  zIndex: 9999,
+  outline: 0,
+  border: 'none',
+  borderRadius: '100%',
+  color: 'white',
+  right: 0,
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${theme.color.mint400}`,
+    },
+  },
+  transition: 'opacity 1s ease',
+})
+
+export const circleRootPushUp = style({
+  bottom: 72,
+  ...themeUtils.responsiveStyle({
+    md: {
+      bottom: 0,
+    },
+  }),
+})
+
+export const circleRootNoPushUp = style({
+  bottom: 0,
 })

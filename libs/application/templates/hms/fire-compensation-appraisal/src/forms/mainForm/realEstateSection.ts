@@ -5,6 +5,7 @@ import {
   buildCheckboxField,
   getValueViaPath,
   buildDisplayField,
+  YES,
 } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
 import { notkunareiningarOptions } from '../../utils/notkunareiningarUtils'
@@ -18,6 +19,13 @@ import { usageUnitsCondition } from '../../utils/conditionUtils'
 export const realEstateSection = buildSection({
   id: 'realEstateSection',
   title: m.realEstateMessages.title,
+  condition: (answers) => {
+    const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+      answers,
+      'otherPropertiesThanIOwnCheckbox',
+    )
+    return !otherPropertiesThanIOwn?.includes(YES)
+  },
   children: [
     buildMultiField({
       id: 'realEstate',

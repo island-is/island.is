@@ -35,6 +35,12 @@ export class UpdateCourtSessionInput {
 
   @Allow()
   @IsOptional()
+  @IsUUID()
+  @Field(() => String, { nullable: true })
+  readonly judgeId?: string
+
+  @Allow()
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
   @Field(() => Date, { nullable: true })

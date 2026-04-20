@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const single = style({})
 
 export const large = style({})
+export const small = style({})
 
 export const container = style({
   display: 'inline-flex',
@@ -66,8 +67,15 @@ export const dot = style({
       width: 16,
       height: 16,
     },
+    [`${small} &`]: {
+      width: 4,
+      height: 4,
+    },
     '&:not(:last-child)': {
       marginRight: 10,
+    },
+    [`${small} &:not(:last-child)`]: {
+      marginRight: 5,
     },
     [`${large} &:not(:last-child)`]: {
       marginRight: 20,
@@ -89,6 +97,11 @@ export const dot = style({
     [`${large}${single} &`]: {
       width: 32,
       height: 32,
+      marginRight: 0,
+    },
+    [`${small}${single} &`]: {
+      width: 8,
+      height: 8,
       marginRight: 0,
     },
     [`${colors.blue} &`]: {

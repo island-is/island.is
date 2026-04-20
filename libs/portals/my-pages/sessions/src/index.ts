@@ -1,2 +1,2 @@
 export { sessionsModule } from './module'
-export { sessionsNavigation } from './lib/navigation'
+export { sessionsNavigation, sessionsNavigationNew } from './lib/navigation'

@@ -1,5 +1,4 @@
 import { FC, ReactNode } from 'react'
-import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -14,12 +13,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseState,
   Defendant,
   SubpoenaType as SubpoenaTypeEnum,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { strings } from './SubpoenaType.strings'
 import * as styles from '../../Indictments/Subpoena/Subpoena.css'
 
 interface SubpoenaTypeProps {
@@ -40,14 +40,9 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
   workingCase,
   required = true,
 }) => {
-  const { formatMessage } = useIntl()
-
   return (
-    <>
-      <SectionHeading
-        title={formatMessage(strings.title)}
-        required={required}
-      />
+    <div>
+      <SectionHeading title={'Tegund fyrirkalls'} required={required} />
       {subpoenaItems.map((item, index) => (
         <Box
           key={item.defendant.id}
@@ -56,65 +51,65 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
           }
         >
           <Box marginBottom={item.children ? 2 : 0}>
-            <BlueBox>
-              <Text as="h4" variant="h4" marginBottom={2}>
+            <BlueBox className={grid({ gap: 2 })}>
+              <Text as="h4" variant="h4">
                 {item.defendant.name}
               </Text>
-              <Box marginBottom={2}>
-                <Checkbox
-                  id={`alternativeService-${item.defendant.id}`}
-                  label={strings.alternativeService}
-                  checked={Boolean(item.defendant.isAlternativeService)}
-                  onChange={() => {
+              <Checkbox
+                id={`alternativeService-${item.defendant.id}`}
+                label={'Ákæra var birt með öðrum hætti'}
+                checked={Boolean(item.defendant.isAlternativeService)}
+                onChange={() => {
+                  const { id: defendantId } = item.defendant
+                  const { id: caseId } = workingCase
+                  const isAlternativeService =
+                    !item.defendant.isAlternativeService
+
+                  item.toggleNewAlternativeService &&
+                    item.toggleNewAlternativeService()
+
+                  item.onUpdate({ caseId, defendantId, isAlternativeService })
+                }}
+                tooltip={
+                  'Ef ákæra og fyrirkall eru birt utan gáttarinnar, t.d. í þinghaldi eða í Lögbirtingablaðinu, þá er hægt að haka í þennan reit til að komast áfram án þess að gefa út fyrirkall í gegnum Réttarvörslugátt.'
+                }
+                disabled={workingCase.state === CaseState.CORRECTING}
+                backgroundColor="white"
+                large
+                filled
+              />
+              {item.defendant.isAlternativeService && (
+                <Input
+                  name="alternativeServiceDescription"
+                  label={'Skráðu hvernig birting fór fram'}
+                  autoComplete="off"
+                  value={item.defendant.alternativeServiceDescription ?? ''}
+                  placeholder={'T.d. í þinghaldi eða í Lögbirtingablaðinu'}
+                  onChange={(evt) => {
                     const { id: defendantId } = item.defendant
                     const { id: caseId } = workingCase
-                    const isAlternativeService =
-                      !item.defendant.isAlternativeService
+                    const alternativeServiceDescription = evt.target.value
 
-                    item.toggleNewAlternativeService &&
-                      item.toggleNewAlternativeService()
-
-                    item.onUpdate({ caseId, defendantId, isAlternativeService })
+                    item.onUpdate({
+                      caseId,
+                      defendantId,
+                      alternativeServiceDescription,
+                    })
                   }}
-                  tooltip={strings.alternativeServiceTooltip}
-                  backgroundColor="white"
-                  large
-                  filled
+                  disabled={
+                    item.alternativeServiceDescriptionDisabled ||
+                    workingCase.state === CaseState.CORRECTING
+                  }
+                  required
                 />
-              </Box>
-              {item.defendant.isAlternativeService && (
-                <Box marginBottom={2}>
-                  <Input
-                    name="alternativeServiceDescription"
-                    label={strings.alternativeServiceDescriptionLabel}
-                    autoComplete="off"
-                    value={item.defendant.alternativeServiceDescription ?? ''}
-                    placeholder={
-                      strings.alternativeServiceDescriptionPlaceholder
-                    }
-                    onChange={(evt) => {
-                      const { id: defendantId } = item.defendant
-                      const { id: caseId } = workingCase
-                      const alternativeServiceDescription = evt.target.value
-
-                      item.onUpdate({
-                        caseId,
-                        defendantId,
-                        alternativeServiceDescription,
-                      })
-                    }}
-                    disabled={item.alternativeServiceDescriptionDisabled}
-                    required
-                  />
-                </Box>
               )}
               <Box className={styles.subpoenaTypeGrid}>
                 <RadioButton
                   large
-                  name="subpoenaType"
+                  name={`subpoenaType-${item.defendant.id}`}
                   id={`subpoenaTypeAbsence${item.defendant.id}`}
                   backgroundColor="white"
-                  label={formatMessage(strings.absence)}
+                  label={'Útivistarfyrirkall'}
                   checked={
                     item.defendant.subpoenaType === SubpoenaTypeEnum.ABSENCE
                   }
@@ -125,14 +120,17 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
 
                     item.onUpdate({ caseId, defendantId, subpoenaType })
                   }}
-                  disabled={item.subpoenaDisabled}
+                  disabled={
+                    item.subpoenaDisabled ||
+                    workingCase.state === CaseState.CORRECTING
+                  }
                 />
                 <RadioButton
                   large
-                  name="subpoenaType"
+                  name={`subpoenaType-${item.defendant.id}`}
                   id={`subpoenaTypeArrest${item.defendant.id}`}
                   backgroundColor="white"
-                  label={formatMessage(strings.arrest)}
+                  label={'Handtökufyrirkall'}
                   checked={
                     item.defendant.subpoenaType === SubpoenaTypeEnum.ARREST
                   }
@@ -143,7 +141,10 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
 
                     item.onUpdate({ caseId, defendantId, subpoenaType })
                   }}
-                  disabled={item.subpoenaDisabled}
+                  disabled={
+                    item.subpoenaDisabled ||
+                    workingCase.state === CaseState.CORRECTING
+                  }
                 />
               </Box>
             </BlueBox>
@@ -151,7 +152,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
           {item.children}
         </Box>
       ))}
-    </>
+    </div>
   )
 }
 

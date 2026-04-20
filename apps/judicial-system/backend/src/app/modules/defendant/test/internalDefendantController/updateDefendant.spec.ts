@@ -1,8 +1,13 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, Defendant } from '../../../repository'
+import {
+  Case,
+  Defendant,
+  DefendantRepositoryService,
+} from '../../../repository'
 import { InternalUpdateDefendantDto } from '../../dto/internalUpdateDefendant.dto'
 
 interface Then {
@@ -22,7 +27,8 @@ describe('InternalDefendantController - Update defendant', () => {
     nationalId: defendantNationalId,
     ...update,
   }
-  let mockDefendantModel: typeof Defendant
+  let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -30,12 +36,20 @@ describe('InternalDefendantController - Update defendant', () => {
       id: defendantId,
       nationalId: defendantNationalId,
     } as Defendant
-    const { defendantModel, internalDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      sequelize,
+      defendantRepositoryService,
+      internalDefendantController,
+    } = await createTestingDefendantModule()
 
-    mockDefendantModel = defendantModel
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
-    const mockUpdate = mockDefendantModel.update as jest.Mock
+    mockDefendantRepositoryService = defendantRepositoryService
+    const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
@@ -60,15 +74,17 @@ describe('InternalDefendantController - Update defendant', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValue([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValue(updatedDefendant)
 
       then = await givenWhenThen()
     })
     it('should update the defendant', async () => {
-      expect(mockDefendantModel.update).toHaveBeenCalledWith(
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
         { ...update },
-        { where: { id: defendantId, caseId }, returning: true },
+        { transaction },
       )
       expect(then.result).toEqual(updatedDefendant)
     })

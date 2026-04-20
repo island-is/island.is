@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
@@ -74,10 +74,12 @@ describe('InternalNotificationController - Send appeal statement notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealReceivedByCourtDate: receivedDate,
-            appealCaseNumber,
-            appealAssistant: { name: assistant.name, email: assistant.email },
-            appealJudge1: { name: judge1.name, email: judge1.email },
+            appealCase: {
+              appealReceivedByCourtDate: receivedDate,
+              appealCaseNumber,
+              appealAssistant: { name: assistant.name, email: assistant.email },
+              appealJudge1: { name: judge1.name, email: judge1.email },
+            },
           } as Case,
           {
             user,

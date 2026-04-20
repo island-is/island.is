@@ -4,13 +4,13 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../lib/messages'
 
 export const ApplicationApproved: Form = buildForm({
   id: 'ApplicationApproved',
   title: m.application.name,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   children: [
     buildSection({
       id: 'approved',

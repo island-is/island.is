@@ -9,3 +9,15 @@ export const GET_DRIVING_INSTRUCTORS_QUERY = gql`
     }
   }
 `
+
+export const GET_SYSLUMENN_DRIVING_INSTRUCTORS_QUERY = gql`
+  query GetSyslumennDrivingInstructors {
+    getSyslumennDrivingInstructors {
+      list {
+        name
+        postalCode
+        municipality
+      }
+    }
+  }
+`

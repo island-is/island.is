@@ -1,0 +1,49 @@
+fragment PatientDataPermitFields on HealthDirectoratePatientDataPermit {
+  cacheId
+  id
+  status
+  createdAt
+  validFrom
+  validTo
+  countries {
+    code
+    name
+  }
+}
+
+fragment PatientDataPermitHistoryEntryFields on HealthDirectoratePatientDataPermitHistoryEntry {
+  countries {
+    code
+    name
+  }
+  consentTypes
+  validFrom
+  validTo
+  changedAt
+  createdAt
+}
+
+query GetPatientDataPermits($locale: String) {
+  healthDirectoratePatientDataPermits(locale: $locale) {
+    consent {
+      ...PatientDataPermitFields
+    }
+    history {
+      ...PatientDataPermitHistoryEntryFields
+    }
+  }
+}
+
+mutation CreatePatientDataPermit(
+  $input: HealthDirectoratePatientDataPermitInput!
+) {
+  healthDirectoratePatientDataCreatePermit(input: $input) {
+    status
+  }
+}
+
+mutation InvalidatePatientDataPermit {
+  healthDirectoratePatientDataInvalidatePermit {
+    status
+  }
+}

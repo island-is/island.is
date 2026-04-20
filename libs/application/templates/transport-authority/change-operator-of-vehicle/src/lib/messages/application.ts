@@ -35,4 +35,24 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
+  historyLogApprovedByCoOwner: {
+    id: 'ta.cov.application:historyLogApprovedByCoOwner',
+    defaultMessage: 'Samþykkt af meðeiganda',
+    description: 'History log when application is approved by co-owner',
+  },
+  historyLogApprovedByNewOperator: {
+    id: 'ta.cov.application:historyLogApprovedByNewOperator',
+    defaultMessage: 'Samþykkt af nýjum umráðamanni',
+    description: 'History log when application is approved by new operator',
+  },
+  historyLogRejectedByCoOwner: {
+    id: 'ta.cov.application:historyLogRejectedByCoOwner',
+    defaultMessage: 'Hafnað af meðeiganda',
+    description: 'History log when application is rejected by co-owner',
+  },
+  historyLogRejectedByNewOperator: {
+    id: 'ta.cov.application:historyLogRejectedByNewOperator',
+    defaultMessage: 'Hafnað af nýjum umráðamanni',
+    description: 'History log when application is rejected by new operator',
+  },
 })

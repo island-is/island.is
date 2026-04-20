@@ -157,6 +157,14 @@ globalStyle(`${wrapper} .island-select__control${container}`, {
   paddingRight: 70,
   border: 0,
 })
+
+globalStyle(
+  `${wrapper} .island-select__control${container}${containerSizes.xs}`,
+  {
+    paddingRight: theme.spacing[2],
+    minWidth: 100,
+  },
+)
 globalStyle(
   `${wrapper}${wrapperColor.blue} .island-select__control${container}`,
   {
@@ -188,6 +196,48 @@ globalStyle(
 globalStyle(`${wrapper}  .island-select__menu-list`, {
   padding: 0,
   maxHeight: '336px',
+})
+
+export const option = style({
+  selectors: {
+    [`${wrapper} &.island-select__option`]: {
+      display: 'flex',
+      cursor: 'pointer',
+      position: 'relative',
+      fontWeight: theme.typography.light,
+      transition: 'background .2s, color .2s',
+      padding: '23px 24px',
+    },
+    [`${wrapper}${wrapperColor.blue} &`]: {
+      background: theme.color.blue100,
+    },
+    [`${wrapper} .island-select__option&:not(:first-of-type)`]: {
+      borderTop: `1px solid ${theme.color.blue200}`,
+    },
+  },
+})
+
+export const optionExtraSmall = style({
+  selectors: {
+    [`${wrapper} &.island-select__option`]: {
+      display: 'flex',
+      cursor: 'pointer',
+      position: 'relative',
+      fontWeight: theme.typography.light,
+      transition: 'background .2s, color .2s',
+      padding: `${theme.spacing[1]} ${theme.spacing[3]}`,
+    },
+    [`${wrapper}${wrapperColor.blue} &`]: {
+      background: theme.color.blue100,
+    },
+    [`${wrapper} .island-select__option&:not(:first-of-type)`]: {
+      borderTop: `1px solid ${theme.color.blue200}`,
+    },
+  },
+})
+
+export const optionDescription = style({
+  paddingTop: theme.spacing[1],
 })
 
 export const icon = style({
@@ -261,7 +311,7 @@ export const indicatorsContainer = style(
 export const indicatorsContainerExtraSmall = style({
   selectors: {
     [`${wrapper} &`]: {
-      right: 20,
+      right: theme.spacing[2],
     },
   },
 })
@@ -298,29 +348,6 @@ export const menu = style(
   },
   'menu',
 )
-
-export const option = style({
-  selectors: {
-    [`${wrapper} &.island-select__option`]: {
-      display: 'flex',
-      cursor: 'pointer',
-      position: 'relative',
-      fontWeight: theme.typography.light,
-      padding: '23px 24px',
-      transition: 'background .2s, color .2s',
-    },
-    [`${wrapper}${wrapperColor.blue} &`]: {
-      background: theme.color.blue100,
-    },
-    [`${wrapper} .island-select__option&:not(:first-of-type)`]: {
-      borderTop: `1px solid ${theme.color.blue200}`,
-    },
-  },
-})
-
-export const optionDescription = style({
-  paddingTop: theme.spacing[1],
-})
 
 export const optionDescriptionTruncated = style({
   overflow: 'hidden',

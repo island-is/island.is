@@ -12,4 +12,6 @@ export class ScopeDTO {
   domainName!: string
 
   order!: number
+
+  allowsWrite!: boolean
 }

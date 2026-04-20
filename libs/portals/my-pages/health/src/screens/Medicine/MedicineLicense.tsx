@@ -1,12 +1,11 @@
 import {
-  AlertMessage,
+  ActionCard,
   Box,
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  ActionCard,
   IntroWrapper,
   m,
   SJUKRATRYGGINGAR_SLUG,
@@ -15,10 +14,13 @@ import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetDrugCertificatesQuery } from './Medicine.generated'
+import { useNavigate } from 'react-router-dom'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
+  useHealthPlausibleSwap()
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
@@ -35,9 +37,12 @@ export const MedicineLicense = () => {
       ) : (
         <Box marginY={5}>
           {data?.rightsPortalDrugCertificates.length === 0 ? (
-            <AlertMessage
-              type="info"
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.noData)}
               message={formatMessage(messages.medicineNoIssuedCertificates)}
+              imgSrc="./assets/images/nodata.svg"
             />
           ) : (
             <Stack space={3}>
@@ -69,11 +74,19 @@ export const MedicineLicense = () => {
                     cta={{
                       label: formatMessage(m.view),
                       variant: 'text',
-                      url: certificate.id
-                        ? HealthPaths.HealthMedicineCertificate.replace(
-                            ':name',
-                            certificate.drugName ?? certificate.id.toString(),
-                          ).replace(':id', certificate.id.toString())
+                      onClick: certificate.id
+                        ? () =>
+                            navigate(
+                              HealthPaths.HealthMedicineCertificate.replace(
+                                ':name',
+                                certificate.drugName ??
+                                  certificate.id?.toString() ??
+                                  '',
+                              ).replace(
+                                ':id',
+                                certificate.id?.toString() ?? '',
+                              ),
+                            )
                         : undefined,
                     }}
                   />

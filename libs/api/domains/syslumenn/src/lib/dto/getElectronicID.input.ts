@@ -6,8 +6,4 @@ export class GetElectronicIDInput {
   @Field()
   @IsString()
   nationalId!: string
-
-  @Field()
-  @IsString()
-  phoneNumber!: string
 }

@@ -1,3 +1,4 @@
+import { Query } from '@island.is/api/schema'
 import {
   buildDescriptionField,
   buildMultiField,
@@ -5,8 +6,8 @@ import {
   buildTableRepeaterField,
   coreErrorMessages,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
-import { FriggSchoolsByMunicipality } from '../../../utils/types'
+import { Application } from '@island.is/application/types'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/sampleQuery'
 
 export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
@@ -64,6 +65,24 @@ export const tableRepeaterSubsection = buildSubSection({
               },
             ]
           },
+          defaultValue: (_application: Application) => {
+            // Possibility to populate the table with data with default values from the answers or external data
+            // Populated data will be editable and deletable
+            return [
+              {
+                input: 'Gervimaður Doe',
+                select: 'option1',
+                radio: 'option2',
+                checkbox: ['option1', 'option2'],
+                date: '2024-01-01',
+                nationalIdWithName: {
+                  name: 'Test Name 3',
+                  nationalId: '200000-0000',
+                },
+                phone: '6666666',
+              },
+            ]
+          },
           // Possible fields: input, select, radio, checkbox, date, nationalIdWithName
           fields: {
             input: {
@@ -95,6 +114,7 @@ export const tableRepeaterSubsection = buildSubSection({
               component: 'description',
               title: 'Title above checkbox',
               titleVariant: 'h5',
+              displayInTable: false,
             },
             checkbox: {
               component: 'checkbox',
@@ -125,15 +145,14 @@ export const tableRepeaterSubsection = buildSubSection({
               placeholder: 'Placeholder...',
               loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient }) => {
-                const { data } =
-                  await apolloClient.query<FriggSchoolsByMunicipality>({
-                    query: friggSchoolsByMunicipalityQuery,
-                  })
+                const { data } = await apolloClient.query<Query>({
+                  query: friggOrganizationsByTypeQuery,
+                })
 
                 return (
-                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name}`,
-                    label: `${municipality.name}`,
+                  data?.friggOrganizationsByType?.map((organization) => ({
+                    value: `${organization.name}`,
+                    label: `${organization.name}`,
                   })) ?? []
                 )
               },
@@ -145,17 +164,16 @@ export const tableRepeaterSubsection = buildSubSection({
               loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient, selectedValues }) => {
                 try {
-                  const { data } =
-                    await apolloClient.query<FriggSchoolsByMunicipality>({
-                      query: friggSchoolsByMunicipalityQuery,
-                    })
+                  const { data } = await apolloClient.query<Query>({
+                    query: friggOrganizationsByTypeQuery,
+                  })
 
                   return (
-                    data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                      value: `${municipality.name} ${
+                    data?.friggOrganizationsByType?.map((organization) => ({
+                      value: `${organization.name} ${
                         selectedValues?.[0] || ''
                       }`,
-                      label: `${municipality.name} ${
+                      label: `${organization.name} ${
                         selectedValues?.[0] || ''
                       }`,
                     })) ?? []
@@ -165,6 +183,12 @@ export const tableRepeaterSubsection = buildSubSection({
                   return []
                 }
               },
+            },
+            inputWithIndexinLabel: {
+              component: 'input',
+              label: (index) => `Regular input with index in label: ${index}`,
+              width: 'full',
+              type: 'text',
             },
           },
           table: {

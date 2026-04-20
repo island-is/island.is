@@ -1,4 +1,4 @@
-import { EditorFileUploader } from '@island.is/regulations-tools/Editor'
+import { EditorFileUploader } from '@dmr.is/regulations-tools/Editor'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { fileUrl, useS3Upload } from './dataHooks'
 

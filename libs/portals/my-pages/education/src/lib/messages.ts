@@ -72,3 +72,119 @@ export const edMessage = defineMessages({
       'Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla',
   },
 })
+
+export const primarySchoolMessages = defineMessages({
+  studentListIntro: {
+    id: 'sp.education-primary-school:student-list-intro',
+    defaultMessage:
+      'Hér getur þú fundið yfirlit yfir grunnskólanám barna þinna.',
+  },
+  studentListCta: {
+    id: 'sp.education-primary-school:student-list-cta',
+    defaultMessage: 'Skoða upplýsingar',
+  },
+  studentHubIntro: {
+    id: 'sp.education-primary-school:student-hub-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit, námsmat og heimildir',
+  },
+  assessmentTitle: {
+    id: 'sp.education-primary-school:assessment-title',
+    defaultMessage: 'Námsmat',
+  },
+  // Overview screen
+  studentLabel: {
+    id: 'sp.education-primary-school:student-label',
+    defaultMessage: 'Nemandi',
+  },
+  schoolLabel: {
+    id: 'sp.education-primary-school:school-label',
+    defaultMessage: 'Grunnskóli',
+  },
+  contactTeacher: {
+    id: 'sp.education-primary-school:contact-teacher',
+    defaultMessage: 'Umsjónarkennari',
+  },
+  homeRoom: {
+    id: 'sp.education-primary-school:home-room',
+    defaultMessage: 'Umsjónarbekkur',
+  },
+  // Assessment screen
+  schoolYear: {
+    id: 'sp.education-primary-school:school-year',
+    defaultMessage: 'Skólaár',
+  },
+  gradeLevel: {
+    id: 'sp.education-primary-school:grade-level',
+    defaultMessage: 'Bekkur',
+  },
+  gradeLevelFormatted: {
+    id: 'sp.education-primary-school:grade-level-formatted',
+    defaultMessage: '{grade}. bekkur',
+  },
+  examSitting: {
+    id: 'sp.education-primary-school:exam-sitting',
+    defaultMessage: 'Fyrirlögn',
+  },
+  downloadResults: {
+    id: 'sp.education-primary-school:download-results',
+    defaultMessage: 'Sækja niðurstöður',
+  },
+  // Contact type labels
+  contactTypeParent: {
+    id: 'sp.education-primary-school:contact-type-parent',
+    defaultMessage: 'Foreldri',
+  },
+  contactTypeGuardian: {
+    id: 'sp.education-primary-school:contact-type-guardian',
+    defaultMessage: 'Forráðamaður',
+  },
+  contactTypeEmergencyContact: {
+    id: 'sp.education-primary-school:contact-type-emergency-contact',
+    defaultMessage: 'Neyðartengiliður',
+  },
+  contactTypeRelative: {
+    id: 'sp.education-primary-school:contact-type-relative',
+    defaultMessage: 'Ættingi',
+  },
+  contactTypeSibling: {
+    id: 'sp.education-primary-school:contact-type-sibling',
+    defaultMessage: 'Systkini',
+  },
+})
+
+export const uniMessages = defineMessages({
+  degree: {
+    id: 'sp.education-graduation:education-grad-detail-degree',
+    defaultMessage: 'Gráða',
+  },
+  graduationIntro: {
+    id: 'sp.education-graduation:education-graduation-intro',
+    defaultMessage:
+      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
+    description: 'education graduation intro',
+  },
+  seeDetails: {
+    id: 'sp.education-graduation:details',
+    defaultMessage: 'Skoða',
+  },
+  program: {
+    id: 'sp.education-graduation:education-grad-detail-program',
+    defaultMessage: 'Námsleið',
+  },
+  faculty: {
+    id: 'sp.education-graduation:education-grad-detail-faculty',
+    defaultMessage: 'Deild',
+  },
+  school: {
+    id: 'sp.education-graduation:education-grad-detail-school',
+    defaultMessage: 'Svið',
+  },
+  institution: {
+    id: 'sp.education-graduation:education-grad-detail-institution',
+    defaultMessage: 'Stofnun',
+  },
+  graduationFiles: {
+    id: 'sp.education-graduation:graduation-files',
+    defaultMessage: 'Brautskráningargögn',
+  },
+})

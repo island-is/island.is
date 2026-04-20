@@ -101,7 +101,7 @@ export const Modal: FC<React.PropsWithChildren<ModalProps>> = ({
                           <Text variant="h1">{title}</Text>
                           {loading ? (
                             <Box textAlign="center">
-                              <LoadingDots large />
+                              <LoadingDots size="large" />
                             </Box>
                           ) : (
                             <Text variant="intro">{text}</Text>

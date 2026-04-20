@@ -1,8 +1,0 @@
-query RequestCaseStatistics($input: RequestStatisticsInput) {
-  requestCaseStatistics(input: $input) {
-    count
-    inProgressCount
-    completedCount
-    minDate
-  }
-}

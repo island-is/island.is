@@ -1,13 +1,14 @@
 import { useFormContext, Controller } from 'react-hook-form'
 import InputMask from 'react-input-mask'
 
-import { Box, Input } from '@island.is/island-ui/core'
+import { Box, Input, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 import { card, cardValidationError } from '../../messages'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { validateCardCVC, validateCardExpiry } from './CardPayment.utils'
+
+const APPLE_PAY_BUTTON_ID = 'apple-pay-button'
 
 interface CardPaymentInput {
   card: string
@@ -27,10 +28,31 @@ const getCardType = (cardNumber: string) => {
   return 'default'
 }
 
-export const CardPayment = () => {
+export const CardPayment = ({
+  supportsApplePay,
+  initiateApplePay,
+}: {
+  supportsApplePay: boolean
+  initiateApplePay: () => void
+}) => {
   const { control, formState } = useFormContext<CardPaymentInput>()
   const { formatMessage } = useLocale()
   const [cardMask, setCardMask] = useState(CARD_MASK_BY_TYPE['default'])
+
+  // add event listener to apple pay button if available
+  useEffect(() => {
+    if (supportsApplePay) {
+      const applePayButton = document.getElementById(APPLE_PAY_BUTTON_ID)
+      if (applePayButton) {
+        applePayButton.addEventListener('click', initiateApplePay)
+
+        // Cleanup function to remove event listener
+        return () => {
+          applePayButton.removeEventListener('click', initiateApplePay)
+        }
+      }
+    }
+  }, [supportsApplePay, initiateApplePay])
 
   const handleCardChange = (cardNumber: string) => {
     const cardType = getCardType(cardNumber)
@@ -39,8 +61,29 @@ export const CardPayment = () => {
   }
 
   return (
-    <>
-      <PaymentContainer>
+    <Box display="flex" flexDirection="column" rowGap={[2]}>
+      {supportsApplePay && (
+        <>
+          <Box display="flex" flexDirection="row" flexGrow={1}>
+            <apple-pay-button
+              id={APPLE_PAY_BUTTON_ID}
+              buttonstyle="black"
+              type="pay"
+              locale="is-IS" // apple does not support is-IS so this defaults to en-US
+            ></apple-pay-button>
+          </Box>
+          <Box display="flex" alignItems="center" wrap="nowrap" columnGap={2}>
+            <Box flexGrow={1}>
+              <Divider />
+            </Box>
+            <Text variant="small">{formatMessage(card.cardOptionLabel)}</Text>
+            <Box flexGrow={1}>
+              <Divider />
+            </Box>
+          </Box>
+        </>
+      )}
+      <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
         <Controller
           name={'card'}
           control={control}
@@ -135,7 +178,7 @@ export const CardPayment = () => {
             />
           </Box>
         </Box>
-      </PaymentContainer>
-    </>
+      </Box>
+    </Box>
   )
 }

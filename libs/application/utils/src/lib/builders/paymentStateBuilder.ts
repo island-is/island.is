@@ -80,6 +80,12 @@ type PaymentStateConfigOptions<
         cond?: (context: ApplicationContext) => boolean
       }[]
     | string
+
+  /**
+   * Optional payer national ID. If not provided, the logged-in user's national ID is used.
+   * This can be a string or a function that returns a string based on the application data.
+   */
+  payerNationalId?: string | ((application: Application) => string)
 }
 
 /**
@@ -161,6 +167,7 @@ export const buildPaymentState = <
             organizationId: options.organizationId,
             chargeItems: options.chargeItems,
             extraData: options.extraData,
+            payerNationalId: options.payerNationalId,
           },
         }),
         ...(onEntry || []),

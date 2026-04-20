@@ -11,6 +11,7 @@ export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
   INSTITUTION = 'institution',
+  DELEGATE = 'delegate',
 }
 
 export enum Routes {

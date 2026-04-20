@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -8,14 +8,21 @@ import {
 } from '@nestjs/common'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  CourtSessionRulingType,
+  EventType,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
 import {
   CaseRepositoryService,
+  CourtSession,
   DateLog,
   Defendant,
+  EventLog,
   Institution,
   Subpoena,
   User,
@@ -88,8 +95,10 @@ describe('Indictment Case Exists For Defendant Guard', () => {
               },
               {
                 model: Verdict,
-                as: 'verdict',
+                as: 'verdicts',
                 required: false,
+                order: [['created', 'DESC']],
+                separate: true,
               },
             ],
           },
@@ -102,6 +111,25 @@ describe('Indictment Case Exists For Defendant Guard', () => {
             include: [{ model: Institution, as: 'institution' }],
           },
           { model: DateLog, as: 'dateLogs' },
+          {
+            model: EventLog,
+            as: 'eventLogs',
+            required: false,
+            order: [['created', 'DESC']],
+            where: {
+              event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+            },
+          },
+          {
+            model: CourtSession,
+            as: 'courtSessions',
+            required: false,
+            order: [['created', 'DESC']],
+            attributes: ['ruling'],
+            where: {
+              ruling_type: CourtSessionRulingType.JUDGEMENT,
+            },
+          },
         ],
         attributes: [
           'courtCaseNumber',
@@ -109,6 +137,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           'state',
           'indictmentRulingDecision',
           'rulingDate',
+          'ruling',
         ],
         where: {
           type: CaseType.INDICTMENT,

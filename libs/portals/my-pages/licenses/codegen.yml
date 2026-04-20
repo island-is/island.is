@@ -1,7 +1,7 @@
 schema:
   - apps/api/src/api.graphql
 documents:
-  - libs/portals/my-pages/licenses/src/screens/v2/**/*.graphql
+  - libs/portals/my-pages/licenses/src/screens/**/*.graphql
 generates:
   libs/portals/my-pages/licenses/src/:
     preset: 'near-operation-file'

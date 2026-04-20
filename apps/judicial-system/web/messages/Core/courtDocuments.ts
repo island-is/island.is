@@ -40,12 +40,6 @@ export const courtDocuments = {
     }),
   },
   whoFiled: {
-    placeholder: defineMessage({
-      id: 'judicial.system.core:court_documents.who_filed.placeholder',
-      defaultMessage: 'Hver lagði fram?',
-      description:
-        'Notaður sem skýritexti fyrir "Hver lagði fram?" í dómskjala upphlöðun',
-    }),
     prosecutor: defineMessage({
       id: 'judicial.system.core:court_documents.who_filed.prosecutor',
       defaultMessage: 'Sóknaraðili lagði fram',

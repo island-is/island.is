@@ -1,0 +1,15 @@
+fragment CourtCaseGroupsFragment on LawAndOrderGroup {
+  label
+  items {
+    label
+    value
+    link
+    linkType
+    type
+    action {
+      type
+      title
+      data
+    }
+  }
+}

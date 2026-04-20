@@ -6,13 +6,12 @@ import {
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import differenceInYears from 'date-fns/differenceInYears'
 import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
-import { getBirthday } from './helpers/getBirthday'
 import { Action } from './models/v2/actions.model'
 import { MailAction } from './models/v2/bulkMailAction.input'
 import { Category } from './models/v2/category.model'
@@ -29,7 +28,6 @@ import { ReplyInput } from './models/v2/reply.input'
 import { Reply } from './models/v2/reply.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'documents-api-v2'
 
@@ -151,28 +149,38 @@ export class DocumentServiceV2 {
     user: User,
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
-    //If a delegated user is viewing the mailbox, do not return any health related data
+    //If a delegated user is viewing the mailbox, do not return any health or law and order related data
     //Category is now "1,2,3,...,n"
     const { categoryIds, ...restOfInput } = input
-    // If no categoryIds are provided, get all categories
     let mutableCategoryIds = categoryIds ?? []
 
-    if (!mutableCategoryIds.length) {
-      const filteredCategories = await this.getCategories(user)
-      if (isDefined(filteredCategories)) {
-        mutableCategoryIds = filteredCategories.map((c) => c.id)
+    const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
+    const displayAllCategories =
+      !mutableCategoryIds.length && !hiddenCategoryIds.length
+    // if categories input ids is empty and hidden cat ids is empty we dont need to filter categories
+    if (!displayAllCategories) {
+      const filteredCategories = await this.getCategories(
+        user,
+        hiddenCategoryIds,
+      )
+
+      if (!mutableCategoryIds.length) {
+        if (isDefined(filteredCategories)) {
+          mutableCategoryIds = filteredCategories.map((c) => c.id)
+        }
       }
-    }
-    // If categoryIds are provided, filter out correct data
-    else {
-      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
-      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
+      // If categoryIds are provided, filter out correct data
+      else {
+        mutableCategoryIds = mutableCategoryIds.filter(
+          (c) => !hiddenCategoryIds.includes(c),
+        )
+      }
     }
 
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
-      categoryId: mutableCategoryIds.join(),
-      hiddenCategoryIds: this.getHiddenCategoriesIDs(user).join(),
+      categoryId: displayAllCategories ? undefined : mutableCategoryIds.join(),
+      hiddenCategoryIds: hiddenCategoryIds.join(),
       nationalId: user.nationalId,
     })
 
@@ -219,7 +227,10 @@ export class DocumentServiceV2 {
     }
   }
 
-  async getCategories(user: User): Promise<Array<Category> | null> {
+  async getCategories(
+    user: User,
+    hiddenCategoryIds?: string[],
+  ): Promise<Array<Category> | null> {
     let categories
 
     try {
@@ -233,8 +244,8 @@ export class DocumentServiceV2 {
       })
     }
 
-    const filterOutIds = this.getHiddenCategoriesIDs(user) ?? []
-
+    const filterOutIds =
+      hiddenCategoryIds ?? this.getHiddenCategoriesIDs(user) ?? []
     const filteredCategories =
       categories?.categories
         ?.map((c) => {
@@ -502,27 +513,35 @@ export class DocumentServiceV2 {
   }
 
   private getHiddenCategoriesIDs = (user: User) => {
+    // Test users
+    // Parent 121286-1499 (legal guardian)
+    // Teen 271009-1430 (16-17)
+    // Child  010714-1410 (under 16)
     try {
       const isDelegated = isDefined(user.delegationType)
       if (!isDelegated) return []
 
+      const isCompany = user.delegationType?.includes(
+        AuthDelegationType.ProcurationHolder,
+      )
+      const isMinor = user.delegationType?.includes(
+        AuthDelegationType.LegalGuardianMinor, // Delegation is a child under 16
+      )
       const isLegalGuardian = user.delegationType?.includes(
         AuthDelegationType.LegalGuardian,
       )
-      const birthdate = getBirthday(user.nationalId)
-      const childAgeIs16OrOlder = birthdate
-        ? differenceInYears(new Date(), birthdate) > 15
-        : false
 
       // Hide health data if user is a legal guardian and child is 16 or older
-      const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
+      const hideHealthData = isLegalGuardian && !isMinor
+
       // Hide law and order data if user is delegated
       const hideLawAndOrderData = isDelegated
       this.logger.debug('Should hide document categories', {
         hideHealthData,
         hideLawAndOrderData,
         isLegalGuardian,
-        childAgeIs16OrOlder,
+        isMinor,
+        isCompany,
       })
       return [
         ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),

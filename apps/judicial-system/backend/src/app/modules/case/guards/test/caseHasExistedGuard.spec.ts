@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -8,8 +8,7 @@ import {
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { CaseRepositoryService } from '../../../repository'
-import { include } from '../../case.service'
+import { caseInclude, CaseRepositoryService } from '../../../repository'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'
 
 interface Then {
@@ -62,7 +61,7 @@ describe('Case Has Existed Guard', () => {
 
     it('should activate', () => {
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           isArchived: false,

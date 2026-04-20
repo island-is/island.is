@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -47,6 +48,9 @@ export class FjsCharge extends Model<
   })
   paymentFlowId!: string
 
+  @BelongsTo(() => PaymentFlow)
+  paymentFlow?: PaymentFlow
+
   @ApiProperty()
   @Column({
     type: DataType.STRING,
@@ -79,6 +83,15 @@ export class FjsCharge extends Model<
   status!: CreationOptional<
     'unpaid' | 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
   >
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
 
   @CreatedAt
   @Column({

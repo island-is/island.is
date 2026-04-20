@@ -1,12 +1,13 @@
-import { PortalModule } from '@island.is/portals/core'
-import { LawAndOrderPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Navigate } from 'react-router-dom'
+import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
-import { Features } from '@island.is/feature-flags'
+import PoliceCases from './screens/PoliceCases/PoliceCases'
+import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
+import { Navigate } from 'react-router-dom'
+import { LawAndOrderPaths } from './lib/paths'
+import Verdict from './screens/Verdict/Verdict'
 
-const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
 const CourtCaseDetail = lazy(() =>
   import('./screens/CourtCaseDetail/CourtCaseDetail'),
@@ -19,13 +20,14 @@ export const lawAndOrderModule: PortalModule = {
       name: m.lawAndOrder,
       path: LawAndOrderPaths.Root,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <Navigate to={LawAndOrderPaths.Overview} replace />,
+      element: <Navigate to={LawAndOrderPaths.PoliceCases} replace />,
     },
     {
-      name: m.overview,
-      path: LawAndOrderPaths.Overview,
+      name: m.lawAndOrder,
+      path: LawAndOrderPaths.OverviewRedirect,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <Overview />,
+      navHide: true,
+      element: <Navigate to={LawAndOrderPaths.Root} replace />,
     },
     {
       name: m.courtCases,
@@ -44,6 +46,26 @@ export const lawAndOrderModule: PortalModule = {
       path: LawAndOrderPaths.SubpoenaDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
       element: <Subpoena />,
+    },
+    {
+      name: m.policeCases,
+      path: LawAndOrderPaths.PoliceCases,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      key: 'PoliceCases',
+      element: <PoliceCases />,
+    },
+    {
+      name: m.policeCases,
+      path: LawAndOrderPaths.PoliceCasesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      key: 'PoliceCases',
+      element: <PoliceCaseDetail />,
+    },
+    {
+      name: m.case,
+      path: LawAndOrderPaths.VerdictDetail,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      element: <Verdict />,
     },
   ],
 }

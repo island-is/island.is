@@ -4,8 +4,8 @@ This template for an application was generated with the `nx generate-template di
 
 ## Description
 
-- This application template is designed to facilitate the submission of disability pension applications to the Social Insurance Administration (TR). 
-- Gervimenn include: Elmar ÞÍ - 070-4802, Birta Hlín - 160-1430
+- This application template is designed to facilitate the submission of disability pension applications to the Social Insurance Administration (TR).
+- Gervimenn include: Elmar ÞÍ Þórarinsson - 070-1429, Birta Hlín - 160-1430
 
 #### Prerequisites
 
@@ -43,9 +43,6 @@ All localisation can be found on Contentful.
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
-
-
-
 
 ## Running unit tests
 

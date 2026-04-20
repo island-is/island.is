@@ -3,6 +3,7 @@ mutation UpdateUserProfileSettings($input: UpdateUserProfileInput!) {
     nationalId
     documentNotifications
     canNudge
+    smsNotifications
   }
 }
 
@@ -11,5 +12,6 @@ query UserProfileSettings {
     nationalId
     documentNotifications
     canNudge
+    smsNotifications
   }
 }

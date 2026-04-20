@@ -1,72 +1,77 @@
-import NextAuth, { CallbacksOptions } from 'next-auth'
-import Providers from 'next-auth/providers'
-import { uuid } from 'uuidv4'
 import { identityServerConfig } from '@island.is/air-discount-scheme-web/lib'
-import { Role } from '@island.is/air-discount-scheme/types'
 import env from '@island.is/air-discount-scheme-web/lib/environment'
+import { Role } from '@island.is/air-discount-scheme/types'
 import {
-  AuthUser,
-  signIn as handleSignIn,
+  AuthSession,
   jwt as handleJwt,
   session as handleSession,
-  AuthSession,
+  signIn as handleSignIn,
 } from '@island.is/next-ids-auth'
-import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
-import { JWT } from 'next-auth/jwt'
+import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextAuthOptions } from 'next-auth'
+import NextAuth from 'next-auth'
+import { uuid } from 'uuidv4'
 
-const providers = [
-  Providers.IdentityServer4({
-    id: identityServerConfig.id,
-    name: identityServerConfig.name,
-    scope: identityServerConfig.scope,
-    clientId: identityServerConfig.clientId,
-    domain: env.identityServerDomain,
-    clientSecret: env.identityServerSecret,
-    protection: 'pkce',
-  }),
-]
-
-const callbacks: CallbacksOptions = {
-  signIn: signIn,
-  jwt: jwt,
-  session: session,
+const options: NextAuthOptions = {
+  providers: [
+    {
+      id: identityServerConfig.id,
+      name: identityServerConfig.name,
+      type: 'oauth',
+      wellKnown: `https://${env.identityServerDomain}/.well-known/openid-configuration`,
+      clientId: identityServerConfig.clientId,
+      clientSecret: env.identityServerSecret,
+      authorization: {
+        params: { scope: identityServerConfig.scope },
+      },
+      checks: ['pkce', 'state'],
+      idToken: true,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          nationalId: profile.nationalId,
+        }
+      },
+    },
+  ],
+  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: 'jwt' },
+  callbacks: {
+    async signIn({ account }) {
+      return handleSignIn(
+        account as Record<string, unknown>,
+        identityServerConfig.id,
+      )
+    },
+    async jwt({ token, user, account, profile }) {
+      if (account && user) {
+        token = {
+          ...token,
+          nationalId: (profile as unknown as { nationalId: string })
+            ?.nationalId,
+          name: user.name,
+          accessToken: account.access_token as string,
+          refreshToken: account.refresh_token as string,
+          idToken: account.id_token as string,
+          isRefreshTokenExpired: false,
+          folder: token.folder ?? uuid(),
+          role: Role.USER,
+        }
+      }
+      return await handleJwt(
+        token,
+        identityServerConfig.clientId,
+        env.identityServerSecret,
+        env.NEXTAUTH_URL,
+        env.identityServerDomain,
+      )
+    },
+    async session({ session, token }) {
+      return handleSession(session as unknown as AuthSession, token)
+    },
+  },
 }
-
-async function signIn(
-  user: AuthUser,
-  account: Record<string, unknown>,
-  profile: Record<string, unknown>,
-): Promise<boolean> {
-  return handleSignIn(user, account, profile, identityServerConfig.id)
-}
-
-async function jwt(token: JWT, user: AuthUser) {
-  if (user) {
-    token = {
-      nationalId: user.nationalId,
-      name: user.name,
-      accessToken: user.accessToken,
-      refreshToken: user.refreshToken,
-      idToken: user.idToken,
-      isRefreshTokenExpired: false,
-      folder: token.folder ?? uuid(),
-      role: user.role ?? Role.USER,
-    }
-  }
-  return await handleJwt(
-    token,
-    identityServerConfig.clientId,
-    env.identityServerSecret,
-    env.NEXTAUTH_URL,
-    env.identityServerDomain,
-  )
-}
-
-async function session(session: AuthSession, user: AuthUser) {
-  return handleSession(session, user)
-}
-
-const options = { providers, callbacks }
 
 export default (req: NextApiRequest, res: NextApiResponse) =>
   NextAuth(req, res, options)

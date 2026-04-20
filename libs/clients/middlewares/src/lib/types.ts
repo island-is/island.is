@@ -13,7 +13,7 @@ export interface EnhancedRequest extends Request {
   timeout?: number
 }
 
-export type EnhancedRequestInfo = EnhancedRequest | string
+export type EnhancedRequestInfo = EnhancedRequest | string | URL
 
 export type EnhancedFetchAPI = (
   input: EnhancedRequestInfo,
@@ -24,3 +24,5 @@ export interface ApiResponse<T> {
   raw: Response
   value(): Promise<T>
 }
+
+export type AuthSource = 'context' | 'request'

@@ -34,8 +34,14 @@ export enum VerdictServiceStatus {
   ELECTRONICALLY = ServiceStatus.ELECTRONICALLY,
   DEFENDER = ServiceStatus.DEFENDER,
   IN_PERSON = ServiceStatus.IN_PERSON,
+  FAILED = ServiceStatus.FAILED,
   LEGAL_PAPER = 'LEGAL_PAPER',
-  NOT_APPLICABLE = 'NOT_APPLICABLE', // Note: ONLY used for old verdicts prior to delivering verdicts automatically to the police
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // ONLY used for old verdicts prior to delivering verdicts automatically to the police
+}
+
+export enum IndictmentCaseReviewDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
 }
 
 export enum PunishmentType {
@@ -53,10 +59,21 @@ export const successfulServiceStatus: string[] = [
   ServiceStatus.IN_PERSON,
 ]
 
+const successfulVerdictServiceStatus = [
+  ...successfulServiceStatus,
+  VerdictServiceStatus.LEGAL_PAPER,
+]
+
 export const isSuccessfulServiceStatus = (
   status?: ServiceStatus | null,
 ): boolean => {
   return Boolean(status && successfulServiceStatus.includes(status))
+}
+
+export const isSuccessfulVerdictServiceStatus = (
+  status?: VerdictServiceStatus | null,
+): boolean => {
+  return Boolean(status && successfulVerdictServiceStatus.includes(status))
 }
 
 export const isFailedServiceStatus = (status?: ServiceStatus): boolean => {

@@ -2,15 +2,8 @@ import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 import { AssetFormField, ErrorValue } from '../../types'
-import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
@@ -23,12 +16,14 @@ export const AdditionalRealEstate = ({
   remove,
   fieldName,
   error,
+  calculateTotal,
 }: {
   field: AssetFormField
   fieldName: string
   index: number
   remove: (index: number) => void
   error: ErrorValue
+  calculateTotal?: () => void
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
   const propertyNumberField = `${fieldIndex}.assetNumber`
@@ -42,7 +37,7 @@ export const AdditionalRealEstate = ({
   const marketValueField = `${fieldIndex}.marketValue`
   const shareField = `${fieldIndex}.share`
 
-  const { control, setValue, clearErrors, setError } = useFormContext()
+  const { control, setValue, clearErrors, setError, trigger } = useFormContext()
   const { formatMessage } = useLocale()
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(
@@ -86,7 +81,7 @@ export const AdditionalRealEstate = ({
   }, [getProperty, propertyNumberInput, setValue, setError])
 
   return (
-    <Box position="relative" key={field.id} marginTop={2}>
+    <Box position="relative" key={field.id} marginTop={4}>
       <Controller
         name={initialField}
         control={control}
@@ -99,8 +94,7 @@ export const AdditionalRealEstate = ({
         defaultValue={field.enabled || false}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
-      <Box position="absolute" className={styles.removeFieldButton}>
+      <Box display="flex" justifyContent="flexEnd">
         <Button
           variant="ghost"
           size="small"
@@ -140,10 +134,13 @@ export const AdditionalRealEstate = ({
         <GridColumn span={['1/1', '1/2']}>
           <InputController
             id={shareField}
+            name={shareField}
             label={formatMessage(m.propertyShare)}
             defaultValue={String(field.share)}
+            backgroundColor="blue"
             onChange={(e) => {
               setValue(shareField, Number(e.target.value.replace('%', '')))
+              trigger(shareField)
             }}
             error={error?.share}
             type="number"
@@ -157,10 +154,12 @@ export const AdditionalRealEstate = ({
             name={marketValueField}
             label={formatMessage(m.realEstateValueTitle)}
             defaultValue={field.marketValue}
+            backgroundColor="blue"
             placeholder="0 kr."
             error={error?.marketValue}
             currency
             required
+            onChange={() => calculateTotal?.()}
           />
         </GridColumn>
       </GridRow>

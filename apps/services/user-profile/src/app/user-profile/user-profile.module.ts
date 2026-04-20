@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { EmailModule } from '@island.is/email-service'
 import { SmsModule } from '@island.is/nova-sms'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { MeUserProfileController } from './me-user-profile.controller'
 import { UserProfile } from './models/userProfile.model'
@@ -34,6 +35,7 @@ import { ActorUserProfileController } from './actor-user-profile.controller'
     EmailModule,
     SmsModule,
     AuthDelegationApiClientModule,
+    FeatureFlagModule,
   ],
   controllers: [
     MeUserProfileController,

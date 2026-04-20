@@ -36,11 +36,11 @@ export const isTrafficViolationIndictmentCount = (
   indictmentCountSubtypes: IndictmentSubtype[] | undefined | null,
   policeCaseNumberSubTypes: IndictmentSubtype[] | undefined | null,
 ): boolean => {
-  return (
-    indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION) ||
-    (policeCaseNumberSubTypes?.length === 1 &&
-      policeCaseNumberSubTypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION))
-  )
+  return policeCaseNumberSubTypes?.length === 1
+    ? policeCaseNumberSubTypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
+    : Boolean(
+        indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION),
+      )
 }
 
 interface IndictmentCount {

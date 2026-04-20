@@ -1,6 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { FieldInput } from './field.input'
+import { ValidationErrorInput } from './validationError.input'
 
 @InputType('FormSystemCreateScreenDtoInput')
 export class CreateScreenDtoInput {
@@ -23,10 +24,16 @@ export class UpdateSectionDtoInput {
   name?: LanguageTypeInput
 
   @Field(() => Int, { nullable: true })
-  multiset?: number
+  multiMax?: number
 
   @Field(() => Boolean, { nullable: true })
-  callRuleset?: boolean
+  isMulti?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldPopulate?: boolean
 }
 
 @InputType('FormSystemUpdateScreenInput')
@@ -71,6 +78,9 @@ export class ScreenInput {
   id?: string
 
   @Field(() => String, { nullable: true })
+  identifier?: string
+
+  @Field(() => String, { nullable: true })
   sectionId?: string
 
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -86,10 +96,19 @@ export class ScreenInput {
   isCompleted?: boolean
 
   @Field(() => Int, { nullable: true })
-  multiset?: number
+  multiMax?: number
 
   @Field(() => Boolean, { nullable: true })
-  callRuleset?: boolean
+  isMulti?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldPopulate?: boolean
+
+  @Field(() => ValidationErrorInput, { nullable: true })
+  screenError?: ValidationErrorInput
 
   @Field(() => [FieldInput], { nullable: 'itemsAndList' })
   fields?: FieldInput[]

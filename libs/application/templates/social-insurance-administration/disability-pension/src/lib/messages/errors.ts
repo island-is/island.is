@@ -11,33 +11,7 @@ export const errors = defineMessages({
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k. einni greiðslu erlendis',
     description: 'You must add at least one foreign payment',
   },
-  emptyCountry: {
-    id: 'dp.application:errors.countryRequired',
-    defaultMessage: 'Nauðsynlegt er að velja land',
-    description: 'You must select a country',
-  },
-  emptyNationalId: {
-    id: 'dp.application:errors.abroadNationalIdRequired',
-    defaultMessage: 'Nauðsynlegt er að slá inn kennitölu í viðeigandi landi.',
-    description: 'You must supply a foreign national id',
-  },
-  nationalIdAbroadTooShort: {
-    id: 'dp.application:errors.abroadNationalIdTooShort',
-    defaultMessage: 'Kennitala í landi verður að vera a.m.k. 4 tölustafir',
-    description: 'The foreign national ID must be at least 4 digits.',
-  },
-  emptyStartDate: {
-    id: 'dp.application:errors.startDateRequired',
-    defaultMessage: 'Nauðsynlegt er að velja upphaf tímabils',
-    description: 'You must select the start of the period',
-  },
-  emptyEndDate: {
-    id: 'dp.application:errors.endDateRequired',
-    defaultMessage:
-      'Nauðsynlegt er að velja enda tímabils, og að dagsetningin sé á eftir upphafsdagsetningu',
-    description:
-      'You must select the end of the period. The end date must be after the start date.',
-  },
+
   emptyResidenceOtherText: {
     id: 'dp.application:errors.residenceOtherTextRequired',
     defaultMessage:

@@ -69,6 +69,10 @@ export class ExemptionForTransportationClient {
       return {
         isInspected: result.inspected || false,
         isInOrder: result.isInOrder || false,
+        numberOfAxles: result.axleNo || 0,
+        make: result.make || '',
+        color: result.color || '',
+        permno: result.permno || '',
         errorMessages: [],
       }
     } catch (e) {

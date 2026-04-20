@@ -29,7 +29,7 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
 
   processSyncData(entries: processSyncDataInput<ISupportQna>) {
     // only process questions that we consider not to be empty and don't have circular structures
-    return entries.reduce(
+    const entriesToUpdate = entries.reduce(
       (processedEntries: ISupportQna[], entry: Entry<any>) => {
         if (this.validateArticle(entry)) {
           try {
@@ -52,6 +52,10 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
       },
       [],
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ISupportQna[]) {

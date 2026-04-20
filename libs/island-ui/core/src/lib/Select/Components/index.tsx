@@ -28,6 +28,7 @@ import { Icon } from '../../IconRC/Icon'
 import { Text } from '../../Text/Text'
 import { Option as OptionType } from '../Select.types'
 import * as styles from '../Select.css'
+import { Box } from '../../Box/Box'
 
 export const MultiValue = <
   Value,
@@ -93,7 +94,10 @@ export const Option = <
     <components.Option
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      className={cn(styles.option, styles.optionSizes[size])}
+      className={cn(
+        size === 'xs' ? styles.optionExtraSmall : styles.option,
+        styles.optionSizes[size],
+      )}
       {...props}
     >
       <>
@@ -123,21 +127,23 @@ export const Option = <
             </div>
           </>
         )}
-        {props.children}
-        {!!description && (
-          <div
-            data-testid={props.selectProps?.dataTestId}
-            className={cn(
-              styles.optionDescription,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              styles.optionDescriptionSizes[size],
-              { [styles.optionDescriptionTruncated]: descriptionTruncated },
-            )}
-          >
-            {description}
-          </div>
-        )}
+        <Box display="flex" flexDirection="column">
+          {props.children}
+          {!!description && (
+            <div
+              data-testid={props.selectProps?.dataTestId}
+              className={cn(
+                styles.optionDescription,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                styles.optionDescriptionSizes[size],
+                { [styles.optionDescriptionTruncated]: descriptionTruncated },
+              )}
+            >
+              {description}
+            </div>
+          )}
+        </Box>
       </>
     </components.Option>
   )

@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use `Table` from `@island.is/portals/my-pages/core` instead.
+ * `Table` uses @tanstack/react-table v8 and accepts typed `ColumnDef<T>[]` column definitions.
+ */
 import {
   AlertMessage,
   Box,
@@ -116,6 +120,7 @@ export const SortableTable = (props: SortableTableProps) => {
       )}
       {isMobile ? (
         <MobileTable
+          loading={props.tableLoading}
           inner={props.inner}
           header={props.title ?? ''}
           rows={items.map((item) => {

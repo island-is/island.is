@@ -16,4 +16,10 @@ export class SecondarySchoolProgram {
 
   @Field(() => Boolean)
   isSpecialNeedsProgram!: boolean
+
+  @Field(() => String, { nullable: true })
+  programApplicationMessageIs?: string
+
+  @Field(() => String, { nullable: true })
+  programApplicationMessageEn?: string
 }

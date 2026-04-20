@@ -98,9 +98,13 @@ const ApplicationProfile = ({
       content:
         getMonth(new Date(application.appliedDate).getMonth()) +
         format(new Date(application.appliedDate), ' y'),
-      onclick: () => {
-        setAppliedMonthModalVisible(true)
-      },
+      onclick:
+        application.state === ApplicationState.APPROVED ||
+        application.state === ApplicationState.REJECTED
+          ? undefined
+          : () => {
+              setAppliedMonthModalVisible(true)
+            },
     },
 
     aidAmount

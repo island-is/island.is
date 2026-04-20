@@ -4,4 +4,5 @@ export enum ProjectBasePath {
   ApplicationSystem = '/umsoknir',
   AdminPortal = '/stjornbord',
   CarRecycling = '/app/skilavottord',
+  FormSystem = '/form',
 }

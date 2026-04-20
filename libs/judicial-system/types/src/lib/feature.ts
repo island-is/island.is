@@ -1,4 +1,4 @@
 export enum Feature {
   NONE = 'NONE', // must be at least one
-  VERDICT_DELIVERY = 'VERDICT_DELIVERY',
+  INDICTMENT_APPEAL_RULING = 'INDICTMENT_APPEAL_RULING',
 }

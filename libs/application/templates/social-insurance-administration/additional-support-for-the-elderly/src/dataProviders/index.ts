@@ -1,7 +1,7 @@
 import { defineTemplateApi } from '@island.is/application/types'
 
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
@@ -21,5 +21,5 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
 export const NationalRegistryCohabitantsApi = defineTemplateApi({
   action: 'getCohabitants',
   externalDataId: 'nationalRegistryCohabitants',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })

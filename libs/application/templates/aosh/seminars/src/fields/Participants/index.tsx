@@ -349,7 +349,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           justifyContent={'center'}
           marginY={2}
         >
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       )}
       <Controller

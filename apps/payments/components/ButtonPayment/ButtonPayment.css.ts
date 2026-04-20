@@ -1,4 +1,3 @@
-import { style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 
 import { theme } from '@island.is/island-ui/theme'

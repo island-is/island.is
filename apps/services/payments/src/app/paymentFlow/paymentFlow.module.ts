@@ -14,6 +14,7 @@ import { ConfigModule } from '@nestjs/config'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
+import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PaymentFulfillment } from './models/paymentFulfillment.model'
       FjsCharge,
       CardPaymentDetails,
       PaymentFulfillment,
+      PaymentWorkerEvent,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig],
@@ -34,6 +36,6 @@ import { PaymentFulfillment } from './models/paymentFulfillment.model'
   ],
   controllers: [PaymentFlowController],
   providers: [PaymentFlowService],
-  exports: [PaymentFlowService],
+  exports: [PaymentFlowService, SequelizeModule],
 })
 export class PaymentFlowModule {}

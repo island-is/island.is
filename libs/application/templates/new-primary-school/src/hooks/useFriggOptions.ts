@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { friggOptionsQuery } from '../graphql/queries'
-import { OptionsType } from '../utils/constants'
-import { Query } from '@island.is/api/schema'
+import { OptionsType, OTHER_OPTION } from '../utils/constants'
 
 export const useFriggOptions = (type?: OptionsType, useIdAndKey = false) => {
   const { lang } = useLocale()
@@ -14,20 +14,30 @@ export const useFriggOptions = (type?: OptionsType, useIdAndKey = false) => {
     },
   })
 
+  let otherContentValue = ''
+
   const options =
-    data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, key, id }) => {
-        const content = value.find(({ language }) => language === lang)?.content
+    data?.friggOptions
+      ?.flatMap(({ options }) =>
+        options.flatMap(({ value, key, id }) => {
+          const content = value.find(
+            ({ language }) => language === lang,
+          )?.content
 
-        if (!content) return []
+          if (!content) return []
 
-        const contentValue = useIdAndKey ? `${id}::${key}` : id
+          const contentValue = useIdAndKey ? `${id}::${key}` : id
 
-        return { value: contentValue, label: content }
-      }),
-    ) ?? []
+          if (key === OTHER_OPTION) otherContentValue = contentValue
 
-  const otherIndex = options.findIndex((option) => option.value === 'other')
+          return { value: contentValue, label: content }
+        }),
+      )
+      .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+
+  const otherIndex = options.findIndex(
+    (option) => option.value === otherContentValue,
+  )
 
   if (otherIndex >= 0) {
     options.push(options.splice(otherIndex, 1)[0])

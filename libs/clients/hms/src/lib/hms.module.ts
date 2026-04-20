@@ -5,8 +5,10 @@ import {
   HmsStadfangApiProvider,
 } from './hms.provider'
 import { HmsService } from './hms.service'
+import { AssetsClientModule } from '@island.is/clients/assets'
 
 @Module({
+  imports: [AssetsClientModule],
   providers: [
     HmsStadfangApiProvider,
     HmsFasteignApiProvider,

@@ -64,6 +64,15 @@ import {
   DistrictCommissionersLicensesClientConfig,
   DistrictCommissionersLicensesClientModule,
 } from '@island.is/clients/district-commissioners-licenses'
+import {
+  HmsRentalAgreementClientConfig,
+  HmsRentalAgreementClientModule,
+} from '@island.is/clients/hms-rental-agreement'
+import {
+  PrimarySchoolClientConfig,
+  PrimarySchoolClientModule,
+} from '@island.is/clients/mms/primary-school'
+import { RentalAgreementsController } from './modules/rental-agreements/rental-agreements.controller'
 @Module({
   controllers: [
     DocumentController,
@@ -75,6 +84,7 @@ import {
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesController,
+    RentalAgreementsController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -90,6 +100,8 @@ import {
     MMSClientModule,
     RightsPortalClientModule,
     FeatureFlagModule,
+    HmsRentalAgreementClientModule,
+    PrimarySchoolClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -111,6 +123,8 @@ import {
         RightsPortalClientConfig,
         DocumentClientConfig,
         FeatureFlagConfig,
+        HmsRentalAgreementClientConfig,
+        PrimarySchoolClientConfig,
       ],
     }),
   ],

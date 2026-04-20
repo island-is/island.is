@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseOrigin,
@@ -81,9 +81,10 @@ describe('InternalCaseController - Deliver case to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       validToDate,
       conclusion: caseConclusion,
+      policeDefendantNationalId: defendantNationalId,
     } as Case
     const requestPdf = 'test request'
     const courtRecordPdf = 'test court record'

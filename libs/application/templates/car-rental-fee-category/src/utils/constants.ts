@@ -12,6 +12,7 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  NOTALLOWED = 'notAllowed',
 }
 
 export enum UploadSelection {

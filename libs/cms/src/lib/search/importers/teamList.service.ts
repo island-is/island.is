@@ -10,9 +10,13 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
   processSyncData(entries: processSyncDataInput<ITeamList>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry) => entry.sys.contentType.sys.id === 'teamList',
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ITeamList[]): MappedData[] {

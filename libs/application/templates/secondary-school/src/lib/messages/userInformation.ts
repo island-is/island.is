@@ -150,8 +150,8 @@ export const userInformation = {
       description: 'Description of other contact page',
     },
     subtitle: {
-      id: 'ss.application:userInformation.otherContact.subtitle',
-      defaultMessage: 'Aðrir tengiliðir',
+      id: 'ss.application:userInformation.otherContact.subtitle#markdown',
+      defaultMessage: 'Tengiliður {index}',
       description: 'Other contact subtitle',
     },
     addButtonLabel: {

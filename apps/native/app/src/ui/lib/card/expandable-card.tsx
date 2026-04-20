@@ -78,12 +78,15 @@ const Expanded = styled.View`
 interface CardProps {
   titleIcon?: ImageSourcePropType
   title: React.ReactNode
+  titleColor?: string
   message: React.ReactNode
   icon?: ImageSourcePropType
   value?: React.ReactNode
+  topRightValue?: React.ReactNode
   children?: React.ReactNode
   open?: boolean
   onPress?: () => void
+  testID?: string
 }
 
 const toggleAnimation = {
@@ -109,11 +112,14 @@ export const ExpandableCard = ({
   icon,
   title,
   titleIcon,
+  titleColor,
+  topRightValue,
   message,
   value,
   children,
   open,
   onPress,
+  testID,
 }: CardProps) => {
   const theme = useTheme()
   const animationController = useRef(new Animated.Value(0)).current
@@ -136,6 +142,7 @@ export const ExpandableCard = ({
         shadowColor: 'rgb(0, 32, 128)',
         backgroundColor: theme.color.white,
       }}
+      testID={testID}
     >
       <Card
         onPress={() => {
@@ -161,6 +168,7 @@ export const ExpandableCard = ({
                     style={{
                       width: 16,
                       height: 16,
+                      tintColor: titleColor ?? theme.color.blue400,
                       marginRight: theme.spacing.smallGutter,
                     }}
                   />
@@ -169,10 +177,14 @@ export const ExpandableCard = ({
                   numberOfLines={1}
                   ellipsizeMode="tail"
                   variant="body3"
+                  color={titleColor}
                 >
                   {title}
                 </TitleText>
               </Title>
+              {topRightValue && (
+                <Typography variant="body3">{topRightValue}</Typography>
+              )}
             </Row>
           )}
           <Row>

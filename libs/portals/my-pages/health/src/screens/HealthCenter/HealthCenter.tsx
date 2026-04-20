@@ -20,12 +20,14 @@ import { messages as hm, messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import HistoryTable from './HistoryTable'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const location = useLocation()
 

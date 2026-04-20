@@ -18,7 +18,7 @@ import {
 import {
   CurrentUserTypeProvider,
   IdentityApiProvider,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserInfoApi,
 } from '../dataProviders'
 
@@ -80,7 +80,7 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
               api: [
                 CurrentUserTypeProvider,
                 IdentityApiProvider,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserInfoApi,
               ],
             },
@@ -116,7 +116,7 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserInfoApi],
+              api: [NationalRegistryV3UserApi, UserInfoApi],
             },
           ],
         },

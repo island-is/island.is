@@ -1,8 +1,8 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseFileCategory,
   CaseOrigin,
   CaseState,
@@ -73,13 +73,14 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       origin: CaseOrigin.LOKE,
       type: caseType,
       state: caseState,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: { appealState: AppealCaseState.COMPLETED },
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       validToDate,
       conclusion: caseConclusion,
       caseFiles: [caseFile],
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then

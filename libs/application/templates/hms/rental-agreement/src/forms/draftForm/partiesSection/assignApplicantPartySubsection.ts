@@ -3,12 +3,14 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
+import { applicantIsIndividual } from '../../../utils/conditions'
 import { ApplicantsRole } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
 
 export const assignApplicantPartySubsection = buildSubSection({
   id: 'assignApplicantPartySubsection',
   title: m.assignApplicantParty.applicantRole,
+  condition: applicantIsIndividual,
   children: [
     buildMultiField({
       id: 'assignApplicantPartyMultiField',

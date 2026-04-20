@@ -39,6 +39,7 @@ import {
   Application,
   ApplicationConfigurations,
   ApplicationTypes,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import type {
   ApplicationRights,
@@ -51,8 +52,6 @@ import {
 } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import {
   SharedModuleConfig,
@@ -90,6 +89,7 @@ import {
   generateOtherParentRejectedApplicationSms,
 } from './smsGenerators'
 import parseISO from 'date-fns/parseISO'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 
 interface VMSTError {
   type: string
@@ -110,7 +110,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
-    private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
@@ -133,16 +133,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async getPerson({ auth }: TemplateApiModuleActionProps) {
-    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
+    const person = await this.nationalRegistryV3Service.getIndividual(
       auth.nationalId,
+      auth,
     )
-    const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
+
+    const spouse = await this.nationalRegistryV3Service.getSpouse({
+      auth,
+      params: undefined,
+    } as TemplateApiModuleActionProps<NationalRegistrySpouseV3>)
 
     return (
       person && {
         spouse: spouse && {
-          nationalId: spouse.spouseNationalId,
-          name: spouse.spouseName,
+          nationalId: spouse.nationalId,
+          name: spouse.name,
         },
         fullname: person.fullName,
         genderCode: person.genderCode,

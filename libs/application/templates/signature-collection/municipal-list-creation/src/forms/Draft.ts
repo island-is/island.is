@@ -4,13 +4,13 @@ import { Form, FormModes } from '@island.is/application/types'
 import { information } from './sections/information'
 import { overview } from './sections/overview'
 import { confirmation } from './sections/confirmation'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Draft: Form = buildForm({
   id: 'municipalListCreationDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalElectoralCommissionLogo,
   children: [information, overview, confirmation],
 })

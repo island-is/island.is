@@ -27,7 +27,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/new-primary-school/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/new-primary-school/src/**/*.{js,ts,tsx}'"
       }
     }
   }

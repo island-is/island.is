@@ -13,6 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
     .image('regulations-admin-backend')
     .namespace('regulations-admin')
+    .serviceAccount('regulations-admin-backend')
     .codeOwner(CodeOwners.Hugsmidjan)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
@@ -42,6 +43,17 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       requests: { cpu: '100m', memory: '256Mi' },
     })
     .xroad(Base, Client, NationalRegistryB2C)
+    .ingress({
+      primary: {
+        host: {
+          dev: 'regulations-admin-backend-xrd',
+          staging: 'regulations-admin-backend-xrd',
+          prod: 'regulations-admin-backend-xrd',
+        },
+        paths: ['/api'],
+        public: false,
+      },
+    })
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('islandis', 'download-service')
+    .grantNamespaces('islandis', 'download-service', 'nginx-ingress-internal')

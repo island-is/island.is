@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  OperationVariables,
   ApolloCache,
   DefaultContext,
   MutationFunctionOptions,
+  OperationVariables,
 } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
-import { ControlState } from '../../hooks/controlReducer'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { ControlState } from '../../hooks/controlReducer'
 
 export const updateFormFn = async (
   control: ControlState,
@@ -22,6 +22,7 @@ export const updateFormFn = async (
       | undefined,
   ) => Promise<any>,
   updatedForm?: FormSystemForm,
+  userName?: string,
 ): Promise<UpdateFormResponse> => {
   const newForm = updatedForm ? updatedForm : control.form
   try {
@@ -42,17 +43,41 @@ export const updateFormFn = async (
                 ? undefined
                 : newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
-            applicationDaysToRemove: newForm.applicationDaysToRemove,
+            draftDaysToLive: newForm.draftDaysToLive,
+            submissionDaysToLive: newForm.submissionDaysToLive,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
+            zendeskInternal: newForm.zendeskInternal,
+            useValidate: newForm.useValidate,
+            usePopulate: newForm.usePopulate,
+            submissionServiceUrl: newForm.submissionServiceUrl,
             hasSummaryScreen: newForm.hasSummaryScreen,
-            completedMessage: newForm.completedMessage,
+            completedSectionInfo: {
+              title: {
+                is: newForm.completedSectionInfo?.title?.is ?? '',
+                en: newForm.completedSectionInfo?.title?.en ?? '',
+              },
+              confirmationHeader: {
+                is: newForm.completedSectionInfo?.confirmationHeader?.is ?? '',
+                en: newForm.completedSectionInfo?.confirmationHeader?.en ?? '',
+              },
+              confirmationText: {
+                is: newForm.completedSectionInfo?.confirmationText?.is ?? '',
+                en: newForm.completedSectionInfo?.confirmationText?.en ?? '',
+              },
+              additionalInfo:
+                newForm.completedSectionInfo?.additionalInfo?.map((info) => ({
+                  is: info?.is ?? '',
+                  en: info?.en ?? '',
+                })) ?? [],
+            },
             dependencies: newForm.dependencies ?? [],
+            lastModifiedBy: userName,
           },
         },
       },
     })
-    return response.data.formSystemUpdateForm as UpdateFormResponse
+    return response.data.updateFormSystemForm as UpdateFormResponse
   } catch (err) {
     console.error('Error updating form:', err.message)
     throw err

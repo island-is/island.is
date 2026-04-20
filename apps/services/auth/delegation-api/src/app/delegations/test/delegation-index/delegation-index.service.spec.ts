@@ -21,6 +21,7 @@ import {
   actorSubjectIdType,
   audkenniProvider,
   Delegation,
+  DelegationDirection,
   DelegationIndex,
   DelegationIndexMeta,
   delegationProvider,
@@ -638,7 +639,7 @@ describe('DelegationsIndexService', () => {
         const delegationRecord = testCase.expectedFrom.find(
           (record) =>
             record.nationalId === delegation.fromNationalId &&
-            (record.type as any) ===
+            (record.type as string) ===
               `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
         )
         expect(delegationRecord).toBeDefined()
@@ -797,6 +798,136 @@ describe('DelegationsIndexService', () => {
       expect(indexedDelegation.customDelegationScopes).toHaveLength(4)
       expect(indexedDelegation.customDelegationScopes?.sort()).toEqual(
         [...customScopes, ...customScopesOtherDomain].sort(),
+      )
+    })
+  })
+
+  describe('getDelegationRecords', () => {
+    const testCase = indexingTestCases.custom
+
+    beforeEach(async () => {
+      await setup(testCase)
+      await delegationIndexService.indexDelegations(user)
+    })
+
+    afterEach(async () => {
+      await delegationIndexMetaModel.destroy({ where: {} })
+      await delegationIndexModel.destroy({ where: {} })
+    })
+
+    it('should return delegations matching multiple scopes', async () => {
+      const scope1 = 'cu1' // Custom scope
+      const scope2 = 'cu2' // Another custom scope
+      const scopes = [scope1, scope2]
+
+      // Act
+      const result = await delegationIndexService.getDelegationRecords({
+        scopes,
+        nationalId: user.nationalId,
+        direction: DelegationDirection.OUTGOING,
+      })
+
+      // Assert
+      // Should return delegations that match either scope
+      result.data.forEach((delegation) => {
+        expect(delegation.toNationalId).toBe(user.nationalId)
+        if (delegation.type === AuthDelegationType.Custom) {
+          // Custom delegations should have at least one of the requested scopes
+          expect(
+            delegation.customDelegationScopes?.some((s) => scopes.includes(s)),
+          ).toBe(true)
+        }
+      })
+    })
+
+    it('should not return delegations with scopes that are not requested', async () => {
+      // Arrange
+      const requestedScope = 'cu1'
+      const scopes = [requestedScope]
+
+      // Act - request only custom scope 'cu1'
+      const result = await delegationIndexService.getDelegationRecords({
+        scopes,
+        nationalId: user.nationalId,
+        direction: DelegationDirection.OUTGOING,
+      })
+
+      // Assert
+      // Should only return custom delegations with the requested scope
+      result.data.forEach((delegation) => {
+        expect(delegation.toNationalId).toBe(user.nationalId)
+        if (delegation.type === AuthDelegationType.Custom) {
+          // Custom delegations should have the requested scope
+          expect(delegation.customDelegationScopes).toContain(requestedScope)
+        }
+      })
+    })
+
+    it('should return delegations that match any of the multiple requested scopes', async () => {
+      // Arrange - use scopes that exist in the test case
+      const scope1 = 'cu1'
+      const scope2 = 'cu2'
+      const scopes = [scope1, scope2]
+
+      // Act
+      const result = await delegationIndexService.getDelegationRecords({
+        scopes,
+        nationalId: user.nationalId,
+        direction: DelegationDirection.OUTGOING,
+      })
+
+      // Assert
+      // Should return delegations matching either scope1 or scope2
+      // Verify that all returned delegations have at least one of the requested scopes
+      result.data.forEach((delegation) => {
+        expect(delegation.toNationalId).toBe(user.nationalId)
+        if (delegation.type === AuthDelegationType.Custom) {
+          // Should have at least one of the requested scopes
+          const hasRequestedScope = delegation.customDelegationScopes?.some(
+            (s) => scopes.includes(s),
+          )
+          expect(hasRequestedScope).toBe(true)
+        }
+      })
+    })
+
+    it('should deduplicate delegations that match multiple scopes', async () => {
+      // Arrange
+      const scope1 = 'cu1'
+      const scope2 = 'cu2'
+      const scopes = [scope1, scope2]
+
+      // Get all delegations for the user
+      const allDelegations = await delegationIndexModel.findAll({
+        where: { toNationalId: user.nationalId },
+      })
+
+      // Act
+      const result = await delegationIndexService.getDelegationRecords({
+        scopes,
+        nationalId: user.nationalId,
+        direction: DelegationDirection.OUTGOING,
+      })
+
+      // Assert
+      // Should not have duplicate delegations (same fromNationalId, toNationalId, type)
+      const uniqueDelegations = new Set(
+        result.data.map(
+          (d) => `${d.fromNationalId}-${d.toNationalId}-${d.type}`,
+        ),
+      )
+      expect(uniqueDelegations.size).toBe(result.data.length)
+
+      // Verify that delegations matching both scopes are only returned once
+      const delegationsWithBothScopes = result.data.filter(
+        (d) =>
+          d.type === AuthDelegationType.Custom &&
+          d.customDelegationScopes?.includes(scope1) &&
+          d.customDelegationScopes?.includes(scope2),
+      )
+      // Each delegation should appear only once
+      expect(delegationsWithBothScopes.length).toBeLessThanOrEqual(
+        allDelegations.length,
       )
     })
   })

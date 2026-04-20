@@ -23,13 +23,14 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-  SigningModal,
+  SignatureConfirmationModal,
+  SigningMethodSelectionModal,
   UserContext,
-  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseTransition,
+  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -45,7 +46,8 @@ type VisibleModal =
   | 'rulingModifiedModal'
   | 'judgeRequestRulingSignatureModal'
   | 'registrarRequestRulingSignatureModal'
-  | 'signingModal'
+  | 'signingMethodSelectionModal'
+  | 'signingConfirmationModal'
 
 const Confirmation: FC = () => {
   const router = useRouter()
@@ -54,13 +56,11 @@ const Confirmation: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { transitionCase, isTransitioningCase } = useCase()
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-    isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('signingModal'),
-  )
+  const [rulingSignatureResponse, setRulingSignatureResponse] =
+    useState<RequestSignatureResponse>()
+  const [isRulingSignatureAudkenni, setIsRulingSignatureAudkenni] =
+    useState<boolean>(false)
+
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
@@ -102,7 +102,7 @@ const Confirmation: FC = () => {
 
     switch (action) {
       case 'signature':
-        requestRulingSignature()
+        setModalVisible('signingMethodSelectionModal')
         break
       case 'noSignature':
         continueToSignedVerdictOverview()
@@ -158,6 +158,7 @@ const Confirmation: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            elementId={formatMessage(core.pdfButtonRuling)}
           />
         </Box>
         <Box marginBottom={15}>
@@ -165,6 +166,7 @@ const Confirmation: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           />
         </Box>
       </FormContentContainer>
@@ -198,12 +200,14 @@ const Confirmation: FC = () => {
               : 'destructive'
           }
           onNextButtonClick={handleNextButtonClick}
-          nextIsLoading={isTransitioningCase || isRequestingRulingSignature}
+          nextIsLoading={isTransitioningCase}
           hideNextButton={hideNextButton}
           infoBoxText={
-            hideNextButton
-              ? formatMessage(strings.onlyAssigendJudgeCanSign)
-              : undefined
+            !hideNextButton
+              ? undefined
+              : isCorrectingRuling
+              ? 'Einungis skráður dómari eða dómritari getur lokið máli'
+              : 'Einungis skráður dómari getur undirritað úrskurð'
           }
         />
       </FormContentContainer>
@@ -227,7 +231,7 @@ const Confirmation: FC = () => {
       )}
       {modalVisible === 'judgeRequestRulingSignatureModal' && (
         <JudgeRequestRulingSignatureModal
-          onYes={requestRulingSignature}
+          onYes={() => setModalVisible('signingMethodSelectionModal')}
           onNo={continueToSignedVerdictOverview}
         />
       )}
@@ -236,12 +240,39 @@ const Confirmation: FC = () => {
           onContinue={continueToSignedVerdictOverview}
         />
       )}
-      {modalVisible === 'signingModal' && (
-        <SigningModal
+      {modalVisible === 'signingMethodSelectionModal' && (
+        <SigningMethodSelectionModal
           workingCase={workingCase}
-          requestRulingSignature={requestRulingSignature}
-          requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible('none')}
+          signatureType="ruling"
+          onClose={() => {
+            setModalVisible('none')
+          }}
+          onSignatureRequested={(response, isAudkenni) => {
+            setRulingSignatureResponse(response)
+            setIsRulingSignatureAudkenni(isAudkenni)
+            setModalVisible('signingConfirmationModal')
+          }}
+        />
+      )}
+      {modalVisible === 'signingConfirmationModal' && rulingSignatureResponse && (
+        <SignatureConfirmationModal
+          workingCase={workingCase}
+          signatureResponse={rulingSignatureResponse}
+          signatureType="ruling"
+          isAudkenni={
+            rulingSignatureResponse ? isRulingSignatureAudkenni : false
+          }
+          onClose={() => {
+            setRulingSignatureResponse(undefined)
+            setIsRulingSignatureAudkenni(false)
+            setModalVisible('none')
+          }}
+          onRetry={() => {
+            setRulingSignatureResponse(undefined)
+            setIsRulingSignatureAudkenni(false)
+            setModalVisible('signingMethodSelectionModal')
+          }}
+          navigateOnClose={true}
         />
       )}
     </PageLayout>

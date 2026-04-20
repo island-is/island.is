@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
@@ -44,9 +44,10 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     type: caseType,
     state: caseState,
     policeCaseNumbers: [policeCaseNumber],
-    defendants: [{ nationalId: defendantNationalId }],
+    defendants: [{ nationalId: uuid() }],
     courtId,
     courtCaseNumber,
+    policeDefendantNationalId: defendantNationalId,
   } as Case
   const pdf = Buffer.from('test case files record')
 
@@ -58,8 +59,12 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     const mockGet = createCaseFilesRecord as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const { awsS3Service, policeService, internalCaseController } =
-      await createTestingCaseModule()
+    const {
+      awsS3Service,
+      policeDigitalCaseFileRepositoryService,
+      policeService,
+      internalCaseController,
+    } = await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
@@ -70,6 +75,9 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockFindAll =
+      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
     const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
     mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -115,6 +123,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         theCase,
         policeCaseNumber,
         [],
+        expect.any(Array),
         expect.any(Function),
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(

@@ -12,6 +12,7 @@ import {
   Condition,
   FormText,
   FormTextWithLocale,
+  ImageField,
   StaticText,
 } from '@island.is/application/types'
 import { conclusion } from './messages'
@@ -41,6 +42,7 @@ type Props = Partial<{
   condition?: Condition
   infoAlertTitle?: FormText
   infoAlertMessage?: FormTextWithLocale
+  image?: ImageField
 }>
 
 /**
@@ -90,6 +92,7 @@ export const buildFormConclusionSection = ({
   condition,
   infoAlertTitle = undefined,
   infoAlertMessage = undefined,
+  image,
 }: Props) => {
   const expandableDescriptionField = accordion
     ? [
@@ -150,6 +153,7 @@ export const buildFormConclusionSection = ({
               ]
             : []),
           ...expandableDescriptionField,
+          ...(image ? [image] : []),
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionBottomLink',
             url: bottomButtonLink,

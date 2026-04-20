@@ -19,11 +19,13 @@ import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { PaymentsApi } from '@island.is/clients/payments'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private paymentsApi: PaymentsApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)
@@ -40,9 +42,9 @@ export class PaymentService extends BaseTemplateApiService {
     if (!params?.organizationId) {
       throw Error('Missing performing organization ID')
     }
-    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      params.organizationId,
-    )
+    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+      performingOrgID: params.organizationId,
+    })
     return data.item
   }
 
@@ -102,7 +104,8 @@ export class PaymentService extends BaseTemplateApiService {
     params,
     currentUserLocale,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
-    const { organizationId, chargeItems, extraData } = params ?? {}
+    const { organizationId, chargeItems, extraData, payerNationalId } =
+      params ?? {}
     const { shouldUseMockPayment } = application.answers
 
     if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
@@ -129,6 +132,13 @@ export class PaymentService extends BaseTemplateApiService {
         application.id,
         organizationId ?? 'string',
       )
+      const requestId = uuid()
+      await this.paymentModelService.addPaymentUrlAndRequestId(
+        application.id,
+        result.id,
+        'https://fakeUrl.fake/' + requestId,
+        requestId,
+      )
 
       await this.paymentModelService.setUser4(
         application.id,
@@ -136,11 +146,7 @@ export class PaymentService extends BaseTemplateApiService {
         'mockuser4',
       )
 
-      await this.paymentModelService.fulfillPayment(
-        result.id,
-        result.reference_id ?? uuid(),
-        application.id,
-      )
+      await this.paymentModelService.fulfillPayment(result.id, application.id)
 
       const slug = getSlugFromType(application.typeId)
 
@@ -164,6 +170,11 @@ export class PaymentService extends BaseTemplateApiService {
     const extraDataItems =
       typeof extraData === 'function' ? extraData(application) : extraData ?? []
 
+    const resolvedPayerNationalId =
+      typeof payerNationalId === 'function'
+        ? payerNationalId(application)
+        : payerNationalId
+
     const response = await this.paymentModelService.createCharge(
       auth,
       organizationId,
@@ -171,6 +182,7 @@ export class PaymentService extends BaseTemplateApiService {
       application.id,
       extraDataItems,
       currentUserLocale,
+      resolvedPayerNationalId,
     )
 
     if (!response?.paymentUrl) {
@@ -181,10 +193,8 @@ export class PaymentService extends BaseTemplateApiService {
 
   async verifyPayment({
     application,
-    auth,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const paymentStatus = await this.paymentModelService.getStatus(
-      auth,
       application.id,
     )
 
@@ -214,19 +224,36 @@ export class PaymentService extends BaseTemplateApiService {
 
     const paymentUrl = (payment.definition as { paymentUrl: string })
       ?.paymentUrl as string
+    let requestId = payment.request_id as string
 
     try {
-      const url = new URL(paymentUrl)
-      const chargeId = url.pathname.split('/').pop()
+      //if requestId is not set, we need to get it from the paymentUrl
+      if (!requestId && paymentUrl) {
+        const url = new URL(paymentUrl)
+        requestId = url.pathname.split('/').pop() ?? ''
+        this.logger.info(
+          'requestId not set, falling back to getting it from paymentUrl',
+        )
+      }
 
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      if (requestId) {
+        this.logger.info(
+          `Calling refundPayment with application id: ${application.id}`,
+        )
+        await this.paymentModelService.refundPayment(
+          application.id,
+          'Application payment deleted',
+          true,
+        )
+      } else {
+        this.logger.warn('No requestId found, skipping refundPayment')
       }
 
       await this.paymentModelService.delete(application.id, auth)
     } catch (error) {
       this.logger.error('Error deleting payment', {
         error,
+        requestId,
         paymentUrl,
         applicationId: application.id,
       })

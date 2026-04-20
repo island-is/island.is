@@ -9,6 +9,9 @@ export class Field {
   @FieldType(() => String)
   id!: string
 
+  @FieldType(() => String, { nullable: true })
+  identifier?: string
+
   @FieldType(() => String)
   screenId!: string
 

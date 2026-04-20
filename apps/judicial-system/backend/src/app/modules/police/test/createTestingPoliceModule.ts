@@ -1,3 +1,4 @@
+import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,6 +13,10 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import {
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  IndictmentSubtype,
+} from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
@@ -47,6 +52,20 @@ export const createTestingPoliceModule = async () => {
           error: jest.fn(),
         },
       },
+      {
+        provide: getModelToken(IndictmentSubtype),
+        useValue: {
+          findOne: jest.fn(),
+        },
+      },
+      {
+        provide: CaseDefendantPoliceCaseNumberRepositoryService,
+        useValue: {
+          assignDefendantPoliceCaseNumbers: jest
+            .fn()
+            .mockResolvedValue(undefined),
+        },
+      },
     ],
   }).compile()
 
@@ -60,7 +79,18 @@ export const createTestingPoliceModule = async () => {
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    policeModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
+
   policeModule.close()
 
-  return { config, awsS3Service, policeService, policeController }
+  return {
+    config,
+    awsS3Service,
+    policeService,
+    policeController,
+    caseDefendantPoliceCaseNumberRepositoryService,
+  }
 }

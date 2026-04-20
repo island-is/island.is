@@ -1,15 +1,15 @@
 import { defineTemplateApi } from '@island.is/application/types'
 
 export {
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
 export const NationalRegistryResidenceHistoryApi = defineTemplateApi({
   action: 'getResidenceHistory',
   externalDataId: 'nationalRegistryResidenceHistory',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
 
 export const SocialInsuranceAdministrationIsApplicantEligibleApi =
@@ -40,3 +40,17 @@ export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationCategorizedIncomeTypesApi =
+  defineTemplateApi({
+    action: 'getCategorizedIncomeTypes',
+    externalDataId: 'socialInsuranceAdministrationCategorizedIncomeTypes',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationIncomePlanConditionsApi =
+  defineTemplateApi({
+    action: 'getIncomePlanConditions',
+    externalDataId: 'socialInsuranceAdministrationIncomePlanConditions',
+    namespace: 'SocialInsuranceAdministration',
+  })

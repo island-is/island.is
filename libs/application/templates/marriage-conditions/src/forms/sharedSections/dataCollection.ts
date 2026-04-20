@@ -2,7 +2,7 @@ import { buildDataProviderItem } from '@island.is/application/core'
 import {
   DistrictsApi,
   MaritalStatusApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ReligionCodesApi,
   MockableDistrictCommissionersPaymentCatalogApi,
@@ -13,7 +13,7 @@ import { m } from '../../lib/messages'
 
 export const dataCollection = [
   buildDataProviderItem({
-    provider: NationalRegistryUserApi,
+    provider: NationalRegistryV3UserApi,
     title: m.dataCollectionNationalRegistryTitle,
     subTitle: m.dataCollectionNationalRegistrySubtitle,
   }),

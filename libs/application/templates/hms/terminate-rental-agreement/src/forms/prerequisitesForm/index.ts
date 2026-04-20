@@ -10,7 +10,7 @@ import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
 import * as m from '../../lib/messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../../dataProviders'
-import HmsLogo from '../../assets/HmsLogo'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',

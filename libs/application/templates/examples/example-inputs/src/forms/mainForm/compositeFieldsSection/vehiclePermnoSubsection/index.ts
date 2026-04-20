@@ -72,6 +72,7 @@ export const vehiclePermnoSubsection = buildSubSection({
           fallbackErrorMessage: 'Það kom upp villa',
           validationFailedErrorMessage:
             'Það kom upp villa við að athuga hvort ökutæki sé leyfilegt',
+          isTrailer: true,
         }),
       ],
     }),

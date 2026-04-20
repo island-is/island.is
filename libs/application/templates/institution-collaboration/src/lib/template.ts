@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -40,6 +41,8 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: m.application.institutionName,
   dataSchema,
+  translationNamespaces:
+    ApplicationConfigurations.InstitutionCollaboration.translation,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

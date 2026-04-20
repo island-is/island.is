@@ -1,10 +1,16 @@
-export const GET_VEHICLE_BASIC_INFO_BY_PERMNO = `
-  query GetVehicleBasicInfoByPermno($permno: String!) {
-    vehicleBasicInfoByPermno(permno: $permno) {
-      permno
-      make
-      color
+export const GET_EXEMPTION_VALIDATION_BY_PERMNO = `
+  query GetVehicleExemptionValidation($permno: String!, $isTrailer: Boolean!) {
+    vehicleExemptionValidation(permno: $permno, isTrailer: $isTrailer) {
+      isInspected
+      isInOrder
       numberOfAxles
+      color
+      make
+      permno
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
     }
-  } 
+  }
 `

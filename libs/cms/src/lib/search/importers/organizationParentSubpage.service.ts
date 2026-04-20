@@ -13,7 +13,7 @@ export class OrganizationParentSubpageSyncService
   implements CmsSyncProvider<IOrganizationParentSubpage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationParentSubpage>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IOrganizationParentSubpage =>
         entry.sys.contentType.sys.id === 'organizationParentSubpage' &&
         !!entry.fields.title &&
@@ -26,6 +26,10 @@ export class OrganizationParentSubpageSyncService
           entry.fields.organizationPage?.fields?.canBeFoundInSearchResults ??
           true),
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IOrganizationParentSubpage[]) {

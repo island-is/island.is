@@ -99,7 +99,6 @@ export const questionsSubSection = buildSubSection({
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .questionsSelectSchool,
-          required: true,
           width: 'half',
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {

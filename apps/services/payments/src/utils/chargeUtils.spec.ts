@@ -4,11 +4,13 @@ const createCharge = (
   chargeItemCode: string,
   quantity: number,
   price?: number,
+  reference?: string,
 ): ChargeItem => ({
   chargeItemCode,
   quantity,
   price,
   chargeType: 'test',
+  ...(reference !== undefined && { reference }),
 })
 
 describe('processCharges', () => {
@@ -119,5 +121,46 @@ describe('processCharges', () => {
     const result = processCharges(charges)
     expect(result).toEqual(expect.arrayContaining(expected))
     expect(result.length).toBe(expected.length)
+  })
+
+  it('should merge charges with same code, price and reference', () => {
+    const charges: ChargeItem[] = [
+      createCharge('AY1', 1, 100, 'ref-first'),
+      createCharge('AY1', 2, 100, 'ref-first'),
+    ]
+    const result = processCharges(charges)
+    const merged = result.find(
+      (c) =>
+        c.chargeItemCode === 'AY1' &&
+        c.price === 100 &&
+        c.reference === 'ref-first',
+    )
+    expect(merged?.quantity).toBe(3)
+    expect(merged?.reference).toBe('ref-first')
+  })
+
+  it('should not merge charges with same code and price but different reference', () => {
+    const charges: ChargeItem[] = [
+      createCharge('AY1', 1, 100, 'ref-A'),
+      createCharge('AY1', 2, 100, 'ref-B'),
+    ]
+    const result = processCharges(charges)
+    expect(result).toHaveLength(2)
+    expect(result.find((c) => c.reference === 'ref-A')?.quantity).toBe(1)
+    expect(result.find((c) => c.reference === 'ref-B')?.quantity).toBe(2)
+  })
+
+  it('should preserve reference on unique charges', () => {
+    const charges: ChargeItem[] = [
+      createCharge('AY1', 1, undefined, 'ref-ay1'),
+      createCharge('AY2', 2, 50, 'ref-ay2'),
+    ]
+    const result = processCharges(charges)
+    expect(result.find((c) => c.chargeItemCode === 'AY1')?.reference).toBe(
+      'ref-ay1',
+    )
+    expect(result.find((c) => c.chargeItemCode === 'AY2')?.reference).toBe(
+      'ref-ay2',
+    )
   })
 })

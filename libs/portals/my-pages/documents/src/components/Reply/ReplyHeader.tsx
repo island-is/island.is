@@ -154,7 +154,7 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
             </Box>
             {displayEmail &&
               (hasEmail ? (
-                <Inline>
+                <Inline space={'smallGutter'}>
                   <Text variant="medium">{secondSubTitle}</Text>
                   <Tooltip
                     text={formatMessage(messages.replyEmailTooltip, {

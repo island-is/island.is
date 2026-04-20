@@ -77,7 +77,7 @@ const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
           .map(([month, monthItems]) => {
             const monthNumber = parseInt(month) - 1
             return (
-              <>
+              <React.Fragment key={month}>
                 <TaxBreakdownHeadline
                   key={`${month}-taxHeadline`}
                   headline={`${getMonth(
@@ -96,10 +96,13 @@ const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
                       ]}
                     />
                   ) : (
-                    <TaxBreakdownItem items={['Engin staðgreiðsla']} />
+                    <TaxBreakdownItem
+                      key={`${index}-${item.month}-taxBreakdown-${item.payerNationalId}`}
+                      items={['Engin staðgreiðsla']}
+                    />
                   ),
                 )}
-              </>
+              </React.Fragment>
             )
           })}
       </tbody>

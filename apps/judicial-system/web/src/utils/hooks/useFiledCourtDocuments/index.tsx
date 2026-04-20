@@ -19,19 +19,13 @@ const useFiledCourtDocuments = () => {
     : false
 
   const filedCourtDocuments = useMemo(() => {
-    const mergedFiledDocuments =
-      workingCase.mergedCases?.flatMap(
-        (mergedCase) =>
-          (mergedCase.courtSessions ?? [])
-            .filter((session) => session.isConfirmed)
-            .flatMap((session) => session.filedDocuments ?? []) ?? [],
-      ) ?? []
-
-    const filedDocuments =
-      (workingCase.courtSessions ?? [])
-        .filter((session) => session.isConfirmed)
-        .flatMap((session) => session.filedDocuments ?? [])
-        .concat(mergedFiledDocuments) ?? []
+    const filedDocuments = (workingCase.courtSessions ?? [])
+      .filter((session) => session.isConfirmed)
+      .flatMap((session) => {
+        const filedDocuments = session.filedDocuments ?? []
+        const mergedFiledDocuments = session.mergedFiledDocuments ?? []
+        return [...filedDocuments, ...mergedFiledDocuments]
+      })
 
     const uploadedFiledDocuments = filedDocuments.filter(
       (doc) => doc.documentType === CourtDocumentType.UPLOADED_DOCUMENT,
@@ -47,6 +41,15 @@ const useFiledCourtDocuments = () => {
     }
   }, [workingCase])
 
+  const isFiledInConfirmedCourtSession = (caseFileId: string) =>
+    Boolean(
+      workingCase.courtSessions?.some(
+        (session) =>
+          session.isConfirmed &&
+          session.filedDocuments?.some((doc) => doc.caseFileId === caseFileId),
+      ),
+    )
+
   const prefixUploadedDocumentNameWithDocumentOrder = (
     caseFileId: string,
     name: string,
@@ -61,16 +64,25 @@ const useFiledCourtDocuments = () => {
       (doc) => doc.caseFileId === caseFileId,
     )
 
+    const isMergedCaseDocument = workingCase?.mergedCases?.some(
+      (mergedCase) => mergedCase.id === document?.caseId,
+    )
+
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${document.documentOrder}. ${name}`
+    return `${
+      isMergedCaseDocument
+        ? document.mergedDocumentOrder
+        : document.documentOrder
+    }. ${name}`
   }
 
   const prefixGeneratedDocumentNameWithDocumentOrder = (
     partialUri: string,
     name: string,
+    caseId?: string,
   ) => {
     if (shouldNotSeePrefix) {
       return name
@@ -78,18 +90,30 @@ const useFiledCourtDocuments = () => {
 
     const { generatedFiledDocuments } = filedCourtDocuments
 
-    const document = generatedFiledDocuments.find((doc) =>
-      doc.generatedPdfUri?.includes(partialUri),
+    const document = generatedFiledDocuments.find(
+      (doc) =>
+        doc.generatedPdfUri?.includes(caseId ?? workingCase.id) &&
+        doc.generatedPdfUri?.includes(partialUri),
     )
+
+    const isMergedCaseDocument =
+      workingCase?.mergedCases?.some(
+        (mergedCase) => mergedCase.id === document?.caseId,
+      ) && document?.mergedDocumentOrder
 
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${document.documentOrder}. ${name}`
+    return `${
+      isMergedCaseDocument
+        ? document.mergedDocumentOrder
+        : document.documentOrder
+    }. ${name}`
   }
 
   return {
+    isFiledInConfirmedCourtSession,
     prefixUploadedDocumentNameWithDocumentOrder,
     prefixGeneratedDocumentNameWithDocumentOrder,
   }

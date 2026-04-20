@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,7 +7,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
-  core,
   rcDemands,
   rcReportForm,
   titles,
@@ -30,19 +29,16 @@ import {
   CaseDecision,
   CaseType,
   Defendant,
-  Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   toggleInArray,
-  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   UpdateCase,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -53,6 +49,7 @@ import {
   restrictionsCheckboxes,
   travelBanRestrictionsCheckboxes,
 } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './PoliceDemands.css'
@@ -102,15 +99,14 @@ export const PoliceDemands = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
-    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
-  useDeb(workingCase, [
-    'lawsBroken',
-    'legalBasis',
-    'requestedOtherRestrictions',
-  ])
 
+  const lawsBrokenInput = useDebouncedInput('lawsBroken', ['empty'])
+  const legalBasisInput = useDebouncedInput('legalBasis', [])
+  const requestedOtherRestrictionsInput = useDebouncedInput(
+    'requestedOtherRestrictions',
+    [],
+  )
   const initialize = useCallback(() => {
     if (
       !workingCase.requestedOtherRestrictions &&
@@ -188,30 +184,28 @@ export const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcDemands.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(rcDemands.sections.demands.heading)}
-            description={
-              workingCase.parentCase ? (
-                <Text>
-                  {formatMessage(rcDemands.sections.demands.pastRestriction, {
-                    caseType: workingCase.type,
-                  })}
-                  <Text as="span" fontWeight="semiBold">
-                    {formatDate(
-                      workingCase.parentCase.validToDate,
-                      'PPPPp',
-                    )?.replace('dagur,', 'dagsins')}
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(rcDemands.sections.demands.heading)}
+              description={
+                workingCase.parentCase ? (
+                  <Text>
+                    {formatMessage(rcDemands.sections.demands.pastRestriction, {
+                      caseType: workingCase.type,
+                    })}
+                    <Text as="span" fontWeight="semiBold">
+                      {formatDate(
+                        workingCase.parentCase.validToDate,
+                        'PPPPp',
+                      )?.replace('dagur,', 'dagsins')}
+                    </Text>
                   </Text>
-                </Text>
-              ) : undefined
-            }
-          />
-          <BlueBox>
-            <Box
-              marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 2 : 0}
-            >
+                ) : undefined
+              }
+            />
+            <BlueBox className={grid({ gap: 2 })}>
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={formatMessage(
@@ -237,127 +231,101 @@ export const PoliceDemands = () => {
                 blueBox={false}
                 defaultTime="16:00"
               />
-            </Box>
-            {workingCase.type !== CaseType.TRAVEL_BAN && (
-              <div className={styles.grid}>
-                <Checkbox
-                  name="isIsolation"
-                  label={formatMessage(rcDemands.sections.demands.isolation)}
-                  tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
-                  checked={workingCase.requestedCustodyRestrictions?.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                  onChange={() => {
-                    const nextRequestedCustodyRestrictions = toggleInArray(
-                      workingCase.requestedCustodyRestrictions,
+              {workingCase.type !== CaseType.TRAVEL_BAN && (
+                <div className={styles.isIsolationGrid}>
+                  <Checkbox
+                    name="isIsolation"
+                    label={formatMessage(rcDemands.sections.demands.isolation)}
+                    tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                    checked={workingCase.requestedCustodyRestrictions?.includes(
                       CaseCustodyRestrictions.ISOLATION,
-                    )
-                    onDemandsChange(
-                      {
-                        requestedCustodyRestrictions:
-                          nextRequestedCustodyRestrictions,
-                        force: true,
-                      },
-                      workingCase.type,
-                      workingCase.requestedValidToDate,
-                      nextRequestedCustodyRestrictions,
-                    )
-                  }}
-                  large
-                  filled
-                />
-                <Checkbox
-                  name="isAdmissionToFacility"
-                  tooltip={formatMessage(
-                    rcDemands.sections.demands
-                      .admissionToAppropriateFacilityTooltip,
-                  )}
-                  label={formatMessage(
-                    rcDemands.sections.demands.admissionToAppropriateFacility,
-                  )}
-                  checked={workingCase.type === CaseType.ADMISSION_TO_FACILITY}
-                  onChange={(event) => {
-                    if (workingCase.parentCase) {
-                      return
+                    )}
+                    onChange={() => {
+                      const nextRequestedCustodyRestrictions = toggleInArray(
+                        workingCase.requestedCustodyRestrictions,
+                        CaseCustodyRestrictions.ISOLATION,
+                      )
+                      onDemandsChange(
+                        {
+                          requestedCustodyRestrictions:
+                            nextRequestedCustodyRestrictions,
+                          force: true,
+                        },
+                        workingCase.type,
+                        workingCase.requestedValidToDate,
+                        nextRequestedCustodyRestrictions,
+                      )
+                    }}
+                    large
+                    filled
+                  />
+                  <Checkbox
+                    name="isAdmissionToFacility"
+                    tooltip={formatMessage(
+                      rcDemands.sections.demands
+                        .admissionToAppropriateFacilityTooltip,
+                    )}
+                    label={formatMessage(
+                      rcDemands.sections.demands.admissionToAppropriateFacility,
+                    )}
+                    checked={
+                      workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     }
+                    onChange={(event) => {
+                      if (workingCase.parentCase) {
+                        return
+                      }
 
-                    const nextCaseType = event.target.checked
-                      ? CaseType.ADMISSION_TO_FACILITY
-                      : CaseType.CUSTODY
-                    onDemandsChange(
-                      {
-                        type: nextCaseType,
-                        force: true,
-                      },
-                      nextCaseType,
-                      workingCase.requestedValidToDate,
-                      workingCase.requestedCustodyRestrictions,
-                    )
-                  }}
-                  large
-                  filled
-                  disabled={Boolean(workingCase.parentCase)}
-                />
-              </div>
-            )}
-          </BlueBox>
-        </Box>
-        {workingCase.defendants && workingCase.defendants.length > 0 && (
-          <Box component="section" marginBottom={7}>
-            <SectionHeading
-              title={formatMessage(rcDemands.sections.lawsBroken.heading)}
-            />
-            <Input
-              data-testid="lawsBroken"
-              name="lawsBroken"
-              label={formatMessage(rcDemands.sections.lawsBroken.label, {
-                defendant: formatMessage(core.accused, {
-                  suffix:
-                    workingCase.defendants[0].gender === Gender.FEMALE
-                      ? 'u'
-                      : 'a',
-                }),
-              })}
-              placeholder={formatMessage(
-                rcDemands.sections.lawsBroken.placeholder,
+                      const nextCaseType = event.target.checked
+                        ? CaseType.ADMISSION_TO_FACILITY
+                        : CaseType.CUSTODY
+                      onDemandsChange(
+                        {
+                          type: nextCaseType,
+                          force: true,
+                        },
+                        nextCaseType,
+                        workingCase.requestedValidToDate,
+                        workingCase.requestedCustodyRestrictions,
+                      )
+                    }}
+                    large
+                    filled
+                    disabled={Boolean(workingCase.parentCase)}
+                  />
+                </div>
               )}
-              value={workingCase.lawsBroken || ''}
-              errorMessage={lawsBrokenErrorMessage}
-              hasError={lawsBrokenErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  lawsBrokenErrorMessage,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              required
-              textarea
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
-            />
+            </BlueBox>
           </Box>
-        )}
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(rcDemands.sections.legalBasis.heading)}
-            required
-          />
-          <BlueBox>
-            <Box marginBottom={2}>
+          {workingCase.defendants && workingCase.defendants.length > 0 && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(rcDemands.sections.lawsBroken.heading)}
+              />
+              <Input
+                data-testid="lawsBroken"
+                name="lawsBroken"
+                label="Lagaákvæði sem ætluð brot varða við"
+                placeholder={formatMessage(
+                  rcDemands.sections.lawsBroken.placeholder,
+                )}
+                value={lawsBrokenInput.value}
+                errorMessage={lawsBrokenInput.errorMessage}
+                hasError={lawsBrokenInput.hasError}
+                onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+                onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
+                required
+                textarea
+                rows={7}
+              />
+            </Box>
+          )}
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(rcDemands.sections.legalBasis.heading)}
+              required
+            />
+            <BlueBox className={grid({ gap: 2 })}>
               <CheckboxList
                 checkboxes={
                   workingCase.type === CaseType.CUSTODY ||
@@ -376,48 +344,25 @@ export const PoliceDemands = () => {
                   )
                 }
               />
-            </Box>
-            <Input
-              data-testid="legalBasis"
-              name="legalBasis"
-              label={formatMessage(
-                rcDemands.sections.legalBasis.legalBasisLabel,
-              )}
-              placeholder={formatMessage(
-                rcDemands.sections.legalBasis.legalBasisPlaceholder,
-              )}
-              value={workingCase.legalBasis || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'legalBasis',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'legalBasis',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
-            />
-          </BlueBox>
-        </Box>
-        {(workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
-          <Box
-            component="section"
-            marginBottom={10}
-            data-testid="custodyRestrictions"
-          >
-            <Box marginBottom={3}>
+              <Input
+                data-testid="legalBasis"
+                name="legalBasis"
+                label={formatMessage(
+                  rcDemands.sections.legalBasis.legalBasisLabel,
+                )}
+                placeholder={formatMessage(
+                  rcDemands.sections.legalBasis.legalBasisPlaceholder,
+                )}
+                value={legalBasisInput.value}
+                onChange={(evt) => legalBasisInput.onChange(evt.target.value)}
+                textarea
+                rows={7}
+              />
+            </BlueBox>
+          </Box>
+          {(workingCase.type === CaseType.CUSTODY ||
+            workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
+            <Box component="section" data-testid="custodyRestrictions">
               <SectionHeading
                 title={formatMessage(
                   rcDemands.sections.custodyRestrictions.headingV2,
@@ -432,46 +377,40 @@ export const PoliceDemands = () => {
                   },
                 )}
               />
+              <BlueBox>
+                <CheckboxList
+                  checkboxes={restrictionsCheckboxes}
+                  selected={workingCase.requestedCustodyRestrictions}
+                  onChange={(id) =>
+                    setCheckboxAndSendToServer(
+                      'requestedCustodyRestrictions',
+                      id,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                />
+              </BlueBox>
             </Box>
-            <BlueBox>
-              <CheckboxList
-                checkboxes={restrictionsCheckboxes}
-                selected={workingCase.requestedCustodyRestrictions}
-                onChange={(id) =>
-                  setCheckboxAndSendToServer(
-                    'requestedCustodyRestrictions',
-                    id,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
+          )}
+          {workingCase.type === CaseType.TRAVEL_BAN && (
+            <Box component="section" data-testid="travelBanRestrictions">
+              <SectionHeading
+                title={formatMessage(
+                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
+                description={formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               />
-            </BlueBox>
-          </Box>
-        )}
-        {workingCase.type === CaseType.TRAVEL_BAN && (
-          <Box
-            component="section"
-            marginBottom={4}
-            data-testid="travelBanRestrictions"
-          >
-            <SectionHeading
-              title={formatMessage(
-                rcDemands.sections.custodyRestrictions.headingV2,
-                {
-                  caseType: workingCase.type,
-                },
-              )}
-              description={formatMessage(
-                rcDemands.sections.custodyRestrictions.subHeadingV2,
-                {
-                  caseType: workingCase.type,
-                },
-              )}
-            />
-            <BlueBox>
-              <Box marginBottom={3}>
+              <BlueBox className={grid({ gap: 2 })}>
                 <CheckboxList
                   checkboxes={travelBanRestrictionsCheckboxes}
                   selected={workingCase.requestedCustodyRestrictions}
@@ -486,41 +425,26 @@ export const PoliceDemands = () => {
                   }
                   fullWidth
                 />
-              </Box>
-              <Input
-                name="requestedOtherRestrictions"
-                data-testid="requestedOtherRestrictions"
-                label={formatMessage(
-                  rcDemands.sections.custodyRestrictions.label,
-                )}
-                value={workingCase.requestedOtherRestrictions || ''}
-                placeholder={formatMessage(
-                  rcDemands.sections.custodyRestrictions.placeholder,
-                )}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'requestedOtherRestrictions',
-                    event.target.value,
-                    [],
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'requestedOtherRestrictions',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                rows={10}
-                autoExpand={{ on: true, maxHeight: 500 }}
-                textarea
-              />
-            </BlueBox>
-          </Box>
-        )}
+                <Input
+                  name="requestedOtherRestrictions"
+                  data-testid="requestedOtherRestrictions"
+                  label={formatMessage(
+                    rcDemands.sections.custodyRestrictions.label,
+                  )}
+                  value={requestedOtherRestrictionsInput.value}
+                  placeholder={formatMessage(
+                    rcDemands.sections.custodyRestrictions.placeholder,
+                  )}
+                  onChange={(evt) =>
+                    requestedOtherRestrictionsInput.onChange(evt.target.value)
+                  }
+                  rows={10}
+                  textarea
+                />
+              </BlueBox>
+            </Box>
+          )}
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

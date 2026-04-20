@@ -9,11 +9,14 @@ import {
   Icon,
   SkeletonLoader,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
+  FALLBACK_ORG_LOGO_URL,
   LinkResolver,
+  ORG_LOGO_PARAMS,
   PlausiblePageviewDetail,
   ServicePortalPaths,
   m,
@@ -24,9 +27,8 @@ import {
   DocumentsPaths,
   useDocumentList,
 } from '@island.is/portals/my-pages/documents'
-import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { isCompany } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -37,16 +39,17 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import * as styles from './Dashboard.css'
 
+import { m as coreMessages } from '@island.is/portals/core'
+
 export const Dashboard = () => {
   const userInfo = useUserInfo()
 
-  const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
-  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+  const IS_COMPANY = isCompany(userInfo)
   const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
 
   const { filteredDocuments, data, loading } = useDocumentList()
@@ -69,11 +72,32 @@ export const Dashboard = () => {
     a && a.dispatchEvent(new Event('click'))
   }
 
+  const getDisabledReasonText = (reason: string, moduleName: string) => {
+    switch (reason) {
+      case 'default':
+        return formatMessage(coreMessages.disabledReasonDefault, {
+          moduleName,
+        })
+      case 'notAvailableForActors':
+        return formatMessage(coreMessages.disabledReasonNotAvailableForActors, {
+          moduleName,
+        })
+      case 'notMinor':
+        return formatMessage(coreMessages.disabledReasonNotMinor, {
+          moduleName,
+        })
+      default:
+        return formatMessage(coreMessages.disabledReasonDefault, {
+          moduleName,
+        })
+    }
+  }
+
   const displayCards = () => {
     // eslint-disable-next-line no-lone-blocks
     {
       return navigation?.children
-        ?.filter((item) => !item.navHide)
+        ?.filter((item) => !item.navHide || item.customShortcut)
         .map(
           (navRoot, index) =>
             navRoot.path !== ServicePortalPaths.Root &&
@@ -97,13 +121,22 @@ export const Dashboard = () => {
                   {navRoot.path && (
                     <>
                       {navRoot.enabled === false && (
-                        <Icon
-                          color="blue600"
-                          type="outline"
-                          icon="lockClosed"
-                          size="small"
-                          className={styles.lock}
-                        />
+                        <Tooltip
+                          placement="top"
+                          text={getDisabledReasonText(
+                            navRoot.disabledReason ?? 'default',
+                            formatMessage(navRoot.name),
+                          )}
+                        >
+                          <span className={styles.lock}>
+                            <Icon
+                              color="blue600"
+                              type="outline"
+                              icon="lockClosed"
+                              size="small"
+                            />
+                          </span>
+                        </Tooltip>
                       )}
 
                       {navRoot.subscribesTo === 'documents' && (
@@ -138,9 +171,13 @@ export const Dashboard = () => {
                             ) : undefined)
                           )
                         }
-                        heading={formatMessage(navRoot.name)}
+                        heading={formatMessage(
+                          navRoot.customShortcut?.name ?? navRoot.name,
+                        )}
                         text={
-                          navRoot.description
+                          navRoot.customShortcut?.description
+                            ? formatMessage(navRoot.customShortcut.description)
+                            : navRoot.description
                             ? formatMessage(navRoot.description)
                             : formatMessage(navRoot.name)
                         }
@@ -221,14 +258,9 @@ export const Dashboard = () => {
                     <Box key={doc.id}>
                       <DocumentLine
                         img={
-                          doc?.sender?.name
-                            ? getOrganizationLogoUrl(
-                                doc?.sender?.name,
-                                organizations,
-                                60,
-                                'none',
-                              )
-                            : undefined
+                          doc?.sender?.logoUrl
+                            ? doc.sender.logoUrl.concat(ORG_LOGO_PARAMS)
+                            : FALLBACK_ORG_LOGO_URL
                         }
                         documentLine={doc}
                         active={false}

@@ -35,35 +35,14 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
-  actionCardWaitingForSchool: {
-    id: 'id.application:actionCardWaitingForSchool',
-    defaultMessage: 'Í vinnslu hjá skóla',
-    description:
-      'Description of application state/status when the application is in progress at the university',
-  },
-  historyApprovedBySchool: {
-    id: 'id.application:historyApprovedBySchool',
-    defaultMessage: 'Samþykkt af skóla',
-    description: 'Description of acceptance by school',
-  },
   submit: {
     id: 'id.application:submit',
     defaultMessage: 'Senda umsókn',
     description: 'submit button label',
   },
-  pendingActionSchool: {
-    id: 'id.application:pendingActionSchool',
-    defaultMessage: 'Háskólinn fer nú yfir umsóknina þína',
-    description: 'pending action from school label',
-  },
-  pendingActionStudent: {
-    id: 'id.application:pendingActionStudent',
-    defaultMessage: 'Vinsamlegast staðfestu skólavist',
-    description: 'pending action from student label',
-  },
-  historyWaitingForParentB: {
-    id: 'id.application:historyWaitingForParentB',
-    defaultMessage: 'Beðið eftir samþykki forráðamanns',
-    description: 'History waiting for parentB',
+  historyLogApprovedByParentB: {
+    id: 'id.application:historyLogApprovedByParentB',
+    defaultMessage: 'Samþykkt af forsjáraðila 2',
+    description: 'History log approved by parentB',
   },
 })

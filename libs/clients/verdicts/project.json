@@ -21,7 +21,7 @@
         "commands": [
           "curl https://foris.gopro.net/domssm/services/swagger/docs/v1 > src/goproClientConfig.json",
           "prettier --write src/goproClientConfig.json",
-          "curl https://dom-haestirettur.eu.ngrok.io/api/v2/docs.yaml > src/supremeCourtClientConfig.yaml",
+          "curl https://umsysla.haestirettur.is/api/v2/docs.yaml > src/supremeCourtClientConfig.yaml",
           "prettier --write src/supremeCourtClientConfig.yaml"
         ],
         "parallel": false,

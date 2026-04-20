@@ -27,6 +27,10 @@ type LanguageTogglerProps = {
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   queryParams?: LayoutProps['languageToggleQueryParams']
+  hrefOverride?: {
+    is?: string
+    en?: string
+  }
 }
 
 export const LanguageToggler = ({
@@ -35,11 +39,12 @@ export const LanguageToggler = ({
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
   queryParams,
+  hrefOverride,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } =
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace, linkType } =
     useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
@@ -49,6 +54,12 @@ export const LanguageToggler = ({
   const getOtherLanguagePath = async () => {
     if (showDialog) {
       return null
+    }
+
+    if (hrefOverride) {
+      if (hrefOverride[otherLanguage])
+        return goToOtherLanguagePage(hrefOverride[otherLanguage])
+      return setShowDialog(true)
     }
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
@@ -118,7 +129,12 @@ export const LanguageToggler = ({
       activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
-    if ((type as string) === 'genericListItem' || resolveLinkTypeLocally) {
+    if (linkType) {
+      type = linkType
+    } else if (
+      (type as string) === 'genericListItem' ||
+      resolveLinkTypeLocally
+    ) {
       const localType = typeResolver(pathWithoutQueryParams)?.type
       if (localType) {
         type = localType
@@ -178,18 +194,24 @@ export const LanguageToggler = ({
       // @ts-ignore make web strict
       (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
+      const pagePath = linkResolver(
+        type as LinkType,
+        slugs.map((s) => s[otherLanguage]),
+        otherLanguage,
+      ).href
+
+      if (pagePath === '/404') {
+        return setShowDialog(true)
+      }
+
       const queryParamsString = new URLSearchParams(
         queryParams?.[otherLanguage],
       ).toString()
 
       return goToOtherLanguagePage(
-        `${
-          linkResolver(
-            type as LinkType,
-            slugs.map((s) => s[otherLanguage]),
-            otherLanguage,
-          ).href
-        }${queryParamsString.length > 0 ? '?' : ''}${queryParamsString}`,
+        `${pagePath}${
+          queryParamsString.length > 0 ? '?' : ''
+        }${queryParamsString}`,
       )
     }
 

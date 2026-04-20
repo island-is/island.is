@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
-import { NationalRegistryUserApi } from '../../../dataProviders'
+import { NationalRegistryV3UserApi } from '../../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -29,7 +29,7 @@ export const Prerequisites = buildForm({
               subTitle: 'User profile',
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: 'National registry',
               subTitle: 'National registry',
             }),

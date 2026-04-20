@@ -62,6 +62,17 @@ export const overview = {
       defaultMessage: 'Tegund undanþágu',
       description: 'Overview exemption period type label',
     },
+    errorTitle: {
+      id: 'ta.eft.application:overview.exemptionPeriod.errorTitle',
+      defaultMessage: 'Athugið',
+      description: 'Overview exemption period error title',
+    },
+    errorMessage: {
+      id: 'ta.eft.application:overview.exemptionPeriod.errorMessage',
+      defaultMessage:
+        'Dagsetning fyrir "Undanþága frá" má ekki vera aftur í tímann',
+      description: 'Overview exemption period error message',
+    },
   }),
   shortTermlocation: defineMessages({
     subtitle: {

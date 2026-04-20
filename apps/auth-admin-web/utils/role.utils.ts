@@ -1,4 +1,4 @@
-import { getSession } from 'next-auth/client'
+import { getSession } from 'next-auth/react'
 
 export class RoleUtils {
   private static readonly adminRoleScope: Array<string> = [

@@ -85,7 +85,8 @@ const AppliedMonthModal = ({
 
   return (
     <ModalBase
-      baseId="changeStatus"
+      baseId="appliedMonth"
+      modalLabel="Change applied month modal"
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {

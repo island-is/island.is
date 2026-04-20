@@ -8,8 +8,8 @@ import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { EmployersTable } from '../../components/EmployersTable'
-import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
-import { Employment } from '../../../lib/constants'
+import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
+import { Employment } from '../../../utils/constants'
 
 export const Employers = ({
   application,
@@ -43,10 +43,7 @@ export const Employers = ({
       </GridRow>
       {employmentStatus === Employment.EMPLOYEE && (
         <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '12/12']}
-            paddingTop={3}
-          >
+          <GridColumn span="12/12" paddingTop={3}>
             <Label>
               {formatMessage(oldAgePensionFormMessage.employer.employerTitle)}
             </Label>

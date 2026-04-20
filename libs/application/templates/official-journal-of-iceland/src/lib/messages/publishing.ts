@@ -49,8 +49,13 @@ export const publishing = {
     fastTrackMessage: {
       id: 'ojoi.application:publishing.headings.fastTrackMessage',
       defaultMessage:
-        'Mál sem eru send til birtingar með birtingar dag innan við næstu 10 daga eru merkt í hraðbirtingu.',
+        'Mál sem send eru til birtingar með birtingardag innan við næstu 10 virka daga eru merkt í hraðbirtingu.',
       description: 'Message of the fast track section',
+    },
+    categoryMessageTitle: {
+      id: 'ojoi.application:publishing.headings.categoryMessageTitle',
+      defaultMessage: 'Efnisflokkar í Stjórnartíðindum',
+      description: 'Title for the category select in Official Journal',
     },
   }),
   inputs: {

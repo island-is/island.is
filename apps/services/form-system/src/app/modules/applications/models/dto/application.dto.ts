@@ -1,14 +1,18 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { SectionDto } from '../../../sections/models/dto/section.dto'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
+import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { ApplicationEventDto } from './applicationEvent.dto'
 import { ValueDto } from './value.dto'
-import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
   id?: string
+
+  @ApiPropertyOptional()
+  nationalId?: string
 
   @ApiPropertyOptional({ type: LanguageType })
   organizationName?: LanguageType
@@ -44,6 +48,12 @@ export class ApplicationDto {
   status?: string
 
   @ApiPropertyOptional()
+  draftFinishedSteps?: number
+
+  @ApiPropertyOptional()
+  draftTotalSteps?: number
+
+  @ApiPropertyOptional()
   allowProceedOnValidationFail?: boolean
 
   @ApiPropertyOptional()
@@ -63,4 +73,22 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
+
+  @ApiPropertyOptional({ type: CompletedSectionInfo })
+  completedSectionInfo?: CompletedSectionInfo
+
+  @ApiPropertyOptional()
+  zendeskInternal?: boolean
+
+  @ApiPropertyOptional()
+  useValidate?: boolean
+
+  @ApiPropertyOptional()
+  usePopulate?: boolean
+
+  @ApiPropertyOptional()
+  submissionServiceUrl?: string
+
+  @ApiPropertyOptional()
+  organizationNationalId?: string
 }

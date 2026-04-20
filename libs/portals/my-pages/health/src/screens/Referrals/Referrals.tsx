@@ -1,23 +1,49 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
-  m,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
-import { Stack } from '@island.is/island-ui/core'
+import { Stack, ActionCard, TagVariant } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { useGetReferralsQuery } from './Referrals.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
+import { useNavigate } from 'react-router-dom'
+import { HealthDirectorateReferralStatusEnum } from '@island.is/api/schema'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+
+const referralStatusToTagVariant = (
+  status?: HealthDirectorateReferralStatusEnum | null,
+): TagVariant => {
+  switch (status) {
+    case HealthDirectorateReferralStatusEnum.Open:
+      return 'blue'
+    case HealthDirectorateReferralStatusEnum.Withdrawn:
+    case HealthDirectorateReferralStatusEnum.Completed:
+    case HealthDirectorateReferralStatusEnum.Finished:
+      return 'purple'
+    case HealthDirectorateReferralStatusEnum.InTreatment:
+      return 'mint'
+    case HealthDirectorateReferralStatusEnum.Rejected:
+    case HealthDirectorateReferralStatusEnum.Deleted:
+    case HealthDirectorateReferralStatusEnum.Expired:
+      return 'red'
+    case HealthDirectorateReferralStatusEnum.Unknown:
+    default:
+      return 'blue'
+  }
+}
 
 const Referrals: React.FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
+
   const { data, loading, error } = useGetReferralsQuery({
     variables: {
       locale: lang,
@@ -32,14 +58,14 @@ const Referrals: React.FC = () => {
       intro={formatMessage(messages.referralsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirReferralTooltip,
       )}
     >
       {!loading && !error && referrals?.length === 0 && (
         <Problem
           type="no_data"
           noBorder={false}
-          title={formatMessage(m.noData)}
+          title={formatMessage(messages.noReferralsTitle)}
           message={formatMessage(messages.noReferrals)}
           imgSrc="./assets/images/nodata.svg"
         />
@@ -48,12 +74,13 @@ const Referrals: React.FC = () => {
       {!error && loading && <CardLoader />}
 
       <Stack space={2}>
-        {referrals?.map((referral, index) => (
+        {referrals?.map((referral) => (
           <ActionCard
-            key={`referral-${index}`}
+            key={referral.id}
             heading={referral?.serviceName ?? ''}
+            headingVariant="h4"
             text={[
-              formatMessage(messages.medicineValidTo),
+              formatMessage(messages.referralValidTo),
               formatDate(referral.validUntilDate),
             ]
               .filter((item) => isDefined(item))
@@ -61,15 +88,17 @@ const Referrals: React.FC = () => {
             tag={{
               label: referral?.stateDisplay ?? '',
               outlined: false,
-              variant: 'blue',
+              variant: referralStatusToTagVariant(referral?.status ?? null),
             }}
             cta={{
-              url: HealthPaths.HealthReferralsDetail.replace(
-                ':id',
-                referral?.id ?? '',
-              ),
+              onClick: () =>
+                navigate(
+                  HealthPaths.HealthReferralsDetail.replace(
+                    ':id',
+                    referral?.id ?? '',
+                  ),
+                ),
               label: formatMessage(messages.seeMore),
-              centered: true,
               variant: 'text',
             }}
           />

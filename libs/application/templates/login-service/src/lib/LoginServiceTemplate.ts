@@ -42,7 +42,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   name: application.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
-  translationNamespaces: [ApplicationConfigurations.LoginService.translation],
+  translationNamespaces: ApplicationConfigurations.LoginService.translation,
   dataSchema: LoginServiceSchema,
   stateMachineConfig: {
     initial: States.draft,

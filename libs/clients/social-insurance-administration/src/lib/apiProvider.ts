@@ -4,28 +4,40 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import {
-  ApplicantApi,
-  ApplicationApi,
-  Configuration,
-  DeathBenefitsApi,
-  DocumentsApi,
-  GeneralApi,
-  IncomePlanApi,
-  MedicalDocumentsApi,
-  PaymentPlanApi,
-  PensionCalculatorApi,
-  QuestionnairesApi,
-} from '../../gen/fetch'
 import { ConfigFactory } from './configFactory'
-import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 import {
   Api,
   ApplicationWriteApi,
+  BankInformationWriteApi,
+  PersonalTaxCreditWriteApi,
   MedicalDocumentApiForDisabilityPension,
   QuestionnairesApiForDisabilityPension,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
+import {
+  ApplicationApi,
+  ApplicantApi,
+  BankInformationApi,
+  GeneralApi,
+  DocumentsApi,
+  IncomePlanApi,
+  PaymentPlanApi,
+  PaymentTypesOverviewApi,
+  PensionCalculatorApi,
+  DeathBenefitsApi,
+  MedicalDocumentsApi,
+  QuestionnairesApi,
+  PersonalTaxCreditApi,
+  Configuration,
+} from '../../gen/fetch/v1'
+import {
+  ApplicationApi as ApplicationWriteApiV2,
+  Configuration as ConfigurationV2,
+} from '../../gen/fetch/v2'
+import { Provider } from '@nestjs/common'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
+import { SocialInsuranceAdministrationClientConfigV2 } from './config/socialInsuranceAdministrationClientV2.config'
 
 const apiCollection: Array<{
   api: Api
@@ -34,7 +46,7 @@ const apiCollection: Array<{
 }> = [
   {
     api: ApplicationWriteApi,
-    scopes: ['@tr.is/umsoknir:write'],
+    scopes: ['@tr.is/umsoknir:write', '@tr.is/fylgiskjol:write'],
     autoAuth: true,
   },
   {
@@ -50,6 +62,16 @@ const apiCollection: Array<{
   {
     api: GeneralApi,
     scopes: ['@tr.is/almennt:read'],
+    autoAuth: true,
+  },
+  {
+    api: BankInformationApi,
+    scopes: ['@tr.is/bankaupplysingar:read'],
+    autoAuth: true,
+  },
+  {
+    api: BankInformationWriteApi,
+    scopes: ['@tr.is/bankaupplysingar:write'],
     autoAuth: true,
   },
   {
@@ -89,15 +111,66 @@ const apiCollection: Array<{
   },
   {
     api: MedicalDocumentApiForDisabilityPension,
-    scopes: ['@tr.is/ororkulifeyrir:read'],
+    scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
     autoAuth: true,
   },
   {
     api: QuestionnairesApiForDisabilityPension,
-    scopes: ['@tr.is/ororkulifeyrir:read'],
+    scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
+    autoAuth: true,
+  },
+  {
+    api: PersonalTaxCreditApi,
+    scopes: ['@tr.is/personuafslattur:read'],
+    autoAuth: true,
+  },
+  {
+    api: PersonalTaxCreditWriteApi,
+    scopes: ['@tr.is/personuafslattur:write'],
+    autoAuth: true,
+  },
+  {
+    api: PaymentTypesOverviewApi,
+    scopes: ['@tr.is/yfirlitgreidslutegunda:read'],
     autoAuth: true,
   },
 ]
+
+export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
+  provide: ApplicationWriteApiV2,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof SocialInsuranceAdministrationClientConfigV2>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
+    new ApplicationWriteApiV2(
+      new ConfigurationV2({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-tr',
+          organizationSlug: 'tryggingastofnun',
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: ['@tr.is/umsoknir:write'],
+              }
+            : undefined,
+        }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        headers: {
+          'X-Road-Client': xroadConfig.xRoadClient,
+        },
+      }),
+    ),
+  inject: [
+    XRoadConfig.KEY,
+    SocialInsuranceAdministrationClientConfigV2.KEY,
+    IdsClientConfig.KEY,
+  ],
+}
 
 export const apiProvider = apiCollection.map((apiRecord) => ({
   provide: apiRecord.api,

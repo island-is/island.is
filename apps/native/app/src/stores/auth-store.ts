@@ -1,34 +1,34 @@
-import { Alert } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
+  prefetchConfiguration,
   refresh as authRefresh,
   RefreshResult,
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
-import createUse from 'zustand'
-import create, { State } from 'zustand/vanilla'
-import { Navigation } from 'react-native-navigation'
 
 import { bundleId, getConfig } from '../config'
-import { getIntl } from '../contexts/i18n-provider'
-import { getApolloClientAsync } from '../graphql/client'
+import { getIntl } from '../components/providers/locale-provider'
+import { getApolloClientAsync } from '../graphql/client-instance'
 import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
-import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
-import { featureFlagClient } from '../contexts/feature-flag-provider'
+import { featureFlagClient } from '../lib/feature-flag-client'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
-import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
 import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
+import { setAuthStoreRef } from './auth-store-ref'
+import { create, useStore } from 'zustand'
+import { clearAllStorages } from './mmkv'
+import { router } from 'expo-router'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -43,12 +43,16 @@ interface UserInfo {
   name: string
 }
 
-interface AuthStore extends State {
+type KeychainAuthorizeCredentials = Awaited<
+  ReturnType<typeof Keychain.getGenericPassword>
+>
+
+interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
-  noLockScreenUntilNextAppStateActive: boolean
+  lockScreenSuppressedUntil: number | undefined
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -64,13 +68,35 @@ interface AuthStore extends State {
 
 const getAppAuthConfig = () => {
   const config = getConfig()
-  const android = isAndroid && !config.isTestingApp ? '.auth' : ''
+  const android = isAndroid ? '.auth' : ''
+  const clientId =
+    config.isTestingApp && config.id === 'prod'
+      ? // Use this custom client ID for testing on prod.
+        '@island.is/island.dev-appid'
+      : config.idsClientId
 
   return {
     issuer: config.idsIssuer,
-    clientId: config.idsClientId,
+    clientId,
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
+  }
+}
+
+export async function prefetchAuthConfig() {
+  if (!isAndroid) {
+    return
+  }
+
+  try {
+    const appAuthConfig = getAppAuthConfig()
+    await prefetchConfiguration({
+      ...appAuthConfig,
+      warmAndPrefetchChrome: true,
+    })
+  } catch (error) {
+    // Prefetch is optional, don't block app startup
+    console.log('Auth prefetch failed:', error)
   }
 }
 
@@ -116,7 +142,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
-  noLockScreenUntilNextAppStateActive: false,
+  lockScreenSuppressedUntil: undefined,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -176,7 +202,8 @@ export const authStore = create<AuthStore>((set, get) => ({
         )
 
         await get().logout(true)
-        await Navigation.setRoot({ root: await getAppRoot() })
+        // await Navigation.setRoot({ root: await getAppRoot() })
+        router.replace('/login')
       }
       throw e
     }
@@ -189,7 +216,10 @@ export const authStore = create<AuthStore>((set, get) => ({
     await Keychain.setGenericPassword(
       KEYCHAIN_AUTH_KEY,
       JSON.stringify(authorizeResult),
-      { service: KEYCHAIN_AUTH_KEY },
+      {
+        service: KEYCHAIN_AUTH_KEY,
+        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      },
     )
     set({ authorizeResult })
   }),
@@ -202,6 +232,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         prompt_delegations: 'true',
         ui_locales: preferencesStore.getState().locale,
         externalUserAgent: 'yes',
+        // login_prompt: 'select_account',
       },
     })
 
@@ -209,7 +240,10 @@ export const authStore = create<AuthStore>((set, get) => ({
       await Keychain.setGenericPassword(
         KEYCHAIN_AUTH_KEY,
         JSON.stringify(authorizeResult),
-        { service: KEYCHAIN_AUTH_KEY },
+        {
+          service: KEYCHAIN_AUTH_KEY,
+          accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        },
       )
       set({ authorizeResult })
       return true
@@ -238,14 +272,19 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const tokenToRevoke = get().authorizeResult!.accessToken!
+    const tokenToRevoke = get().authorizeResult?.accessToken
     try {
-      await revoke(appAuthConfig, {
-        tokenToRevoke,
-        includeBasicAuth: true,
-        sendClientId: true,
-      })
+      if (tokenToRevoke) {
+        await revoke(appAuthConfig, {
+          tokenToRevoke,
+          includeBasicAuth: true,
+          sendClientId: true,
+        })
+      } else {
+        throw new Error('No token to revoke')
+      }
     } catch (e) {
+      console.log('Failed to revoke token', e)
       // NOOP
     }
 
@@ -267,26 +306,101 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
 }))
 
-export const useAuthStore = createUse(authStore)
+// Register ref so graphql/client.ts can access authStore without a circular import
+setAuthStoreRef(authStore)
+
+export const useAuthStore = <U = AuthStore>(
+  selector?: (state: AuthStore) => U,
+) => useStore(authStore, selector!)
+
+const LOCK_SCREEN_SUPPRESS_MAX_MS = 15 * 60 * 1000 // 60 min safety cap
+
+/**
+ * Suppress the app lock screen until explicitly cleared or the safety cap expires.
+ * Call `clearLockScreenSuppression()` when the flow ends.
+ */
+export function suppressLockScreen() {
+  authStore.setState({
+    lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+  })
+}
+
+export function isLockScreenSuppressed() {
+  const until = authStore.getState().lockScreenSuppressedUntil
+  return until != null && Date.now() < until
+}
+
+export function clearLockScreenSuppression() {
+  authStore.setState({ lockScreenSuppressedUntil: undefined })
+}
 
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
+  // We already have an authorization result in memory, nothing else to do.
   if (authorizeResult) {
     return
   }
 
-  try {
-    const res = await Keychain.getGenericPassword({
-      service: KEYCHAIN_AUTH_KEY,
-    })
+  // Attempt to restore the last known authorization data from the secure keychain.
+  const keychainResult = await readStoredAuthorizeCredentials()
+  if (!keychainResult) {
+    // Prefetch auth configuration on Android (non-blocking optimization) once we know we don't have an authorize result
+    void prefetchAuthConfig()
 
-    if (res) {
-      const authRes = JSON.parse(res.password)
-      authStore.setState({ authorizeResult: authRes })
-    }
+    return
+  }
+
+  const restoredAuthorizeResult = parseAuthorizeResult(keychainResult.password)
+  if (!restoredAuthorizeResult) {
+    return
+  }
+
+  // Persist the restored authorization result in memory for the rest of the session.
+  authStore.setState({ authorizeResult: restoredAuthorizeResult })
+
+  // Look into the preferences store for hasOnboardedPinCode, if the value is false, this looks like a fresh install.
+  const hasOnboardedPinCode =
+    preferencesStore.getState().hasOnboardedPinCode ?? false
+
+  // Fresh installs should clear out any surviving keychain credentials unless we've already done so once.
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+    await forceLogoutAfterFreshInstall()
+    return
+  }
+}
+
+async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCredentials> {
+  try {
+    return await Keychain.getGenericPassword({
+      service: KEYCHAIN_AUTH_KEY,
+      // authenticationPrompt: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY
+      // accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+    })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
+    return false
+  }
+}
+
+async function forceLogoutAfterFreshInstall(): Promise<void> {
+  try {
+    await authStore.getState().logout(true)
+  } catch (err) {
+    console.log('Unable to force logout after fresh install: ', err)
+  }
+}
+
+function parseAuthorizeResult(
+  serializedAuthorizeResult: string,
+): AuthorizeResult | RefreshResult | undefined {
+  try {
+    return JSON.parse(serializedAuthorizeResult) as
+      | AuthorizeResult
+      | RefreshResult
+  } catch (err) {
+    console.log('Unable to parse authorize result: ', err)
+    return undefined
   }
 }
 

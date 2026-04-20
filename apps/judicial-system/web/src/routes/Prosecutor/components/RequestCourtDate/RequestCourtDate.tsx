@@ -1,9 +1,12 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
+import {
+  DateTime,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
@@ -16,14 +19,10 @@ const RequestCourtDate: FC<Props> = ({ workingCase, onChange }) => {
 
   return (
     <>
-      <Box marginBottom={3}>
-        <Text as="h3" variant="h3">
-          {formatMessage(m.heading)}{' '}
-          <Box data-testid="requested-court-date-tooltip" component="span">
-            <Tooltip text={formatMessage(m.tooltip)} />
-          </Box>
-        </Text>
-      </Box>
+      <SectionHeading
+        title={formatMessage(m.heading)}
+        tooltip={formatMessage(m.tooltip)}
+      />
       <DateTime
         name="reqCourtDate"
         selectedDate={workingCase.requestedCourtDate}

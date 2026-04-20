@@ -14,7 +14,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name)}
+          {RenderPersonalData({ name })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -34,7 +34,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -56,7 +56,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -78,7 +78,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -100,7 +100,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -122,7 +122,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -142,7 +142,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -164,7 +164,7 @@ describe('RenderPersonalInfo', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData(name, email, phoneNumber, breakSpaces)}
+          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
         </LocaleProvider>
       </MockedProvider>,
     )

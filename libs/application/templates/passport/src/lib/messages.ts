@@ -101,6 +101,11 @@ export const m = defineMessages({
     defaultMessage: 'Í gildi til',
     description: 'Some description',
   },
+  validTagWithDate: {
+    id: 'pa.application:selectPassport.validTagWithDate',
+    defaultMessage: 'Í gildi til {date}',
+    description: 'Valid passport tag with expiration date',
+  },
   noPassport: {
     id: 'pa.application:selectPassport.noPassport',
     defaultMessage: 'Vegabréf ekki til',
@@ -223,6 +228,11 @@ export const m = defineMessages({
     defaultMessage: 'Almenn afhending',
     description: 'Some description',
   },
+  serviceTypeRegularLabel: {
+    id: 'pa.application:service.type.regular.label',
+    defaultMessage: 'Almenn afhending - {price}',
+    description: 'Label for regular service type radio option, includes price',
+  },
   serviceTypeRegularSublabel: {
     id: 'pa.application:service.regular.sublabel',
     defaultMessage: 'Innan 10 virkra daga frá myndatöku',
@@ -242,6 +252,11 @@ export const m = defineMessages({
     id: 'pa.application:service.type.express',
     defaultMessage: 'Hraðafhending',
     description: 'Some description',
+  },
+  serviceTypeExpressLabel: {
+    id: 'pa.application:service.type.express.label',
+    defaultMessage: 'Hraðafhending - {price}',
+    description: 'Label for express service type radio option, includes price',
   },
   serviceTypeExpressSublabel: {
     id: 'pa.application:service.express.sublabel',
@@ -322,6 +337,17 @@ export const m = defineMessages({
     id: 'pa.application:error.dataProvider',
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
+  },
+  errorExpirationValidationTitle: {
+    id: 'pa.application:error.expirationValidationTitle',
+    defaultMessage: 'Villa kom upp við að skila inn umsókn',
+    description: 'Error title when expiration validation fails',
+  },
+  errorExpirationValidationSummary: {
+    id: 'pa.application:error.expirationValidationSummary',
+    defaultMessage:
+      'Ekki tókst að staðfesta að vegabréfið þitt renni út innan 6 mánaða',
+    description: 'Error summary when expiration validation fails',
   },
 
   /* Waiting For Confirmation Section */

@@ -13,13 +13,7 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
@@ -48,9 +42,8 @@ export class PaymentController {
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @CurrentUser() user: User,
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
-    return await this.paymentService.getStatus(user, applicationId)
+    return await this.paymentService.getStatus(applicationId)
   }
 }

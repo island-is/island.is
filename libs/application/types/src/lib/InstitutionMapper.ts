@@ -1,7 +1,9 @@
 import { ApplicationTypes } from './ApplicationTypes'
-import { InstitutionTypes } from './InstitutionTypes'
-import { InstitutionContentfulIds } from './InstitutionContentfulIds'
-import { InstitutionNationalIds } from './InstitutionNationalIds'
+import {
+  InstitutionContentfulIds,
+  InstitutionNationalIds,
+  InstitutionTypes,
+} from './Institution'
 
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
@@ -259,11 +261,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
@@ -459,12 +456,22 @@ export const institutionMapper = {
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
+  [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
+  },
+  [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
     nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
     slug: InstitutionTypes.INNHEIMTUMADUR,
     contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
@@ -483,5 +490,20 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
+  },
+  [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.MILE_CAR]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
+  },
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
+    nationalId: InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+    slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+    contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
   },
 }

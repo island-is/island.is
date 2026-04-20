@@ -105,11 +105,6 @@ export const m = {
       defaultMessage: 'Kennitala',
       description: 'Kennitala',
     },
-    senderNationalIdSkippedLabel: {
-      id: 'web.landspitali.memorialCard:info.senderNationalIdSkippedLabel',
-      defaultMessage: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-      description: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
-    },
     senderAddressLabel: {
       id: 'web.landspitali.memorialCard:info.senderAddressLabel',
       defaultMessage: 'Heimilisfang',
@@ -147,6 +142,11 @@ export const m = {
     },
   }),
   overview: defineMessages({
+    recipientEmail: {
+      id: 'web.landspitali.memorialCard:overview.recipientEmail',
+      defaultMessage: 'Netfang:',
+      description: 'Netfang',
+    },
     errorTitle: {
       id: 'web.landspitali.memorialCard:overview.errorTitle',
       defaultMessage: 'Villa',

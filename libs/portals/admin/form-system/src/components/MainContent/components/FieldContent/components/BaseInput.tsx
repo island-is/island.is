@@ -1,19 +1,21 @@
-import { useContext } from 'react'
-import { ControlContext } from '../../../../../context/ControlContext'
 import { FormSystemField } from '@island.is/api/schema'
-import {
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
-  Select,
-  Option,
-  Input,
-  Checkbox,
-} from '@island.is/island-ui/core'
-import { SingleValue } from 'react-select'
-import { useIntl } from 'react-intl'
-import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
+import {
+  Checkbox,
+  GridColumn as Column,
+  Input,
+  Option,
+  GridRow as Row,
+  Select,
+  Stack,
+} from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
+import { ControlContext } from '../../../../../context/ControlContext'
+import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
+import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
 
 export const BaseInput = () => {
   const {
@@ -24,18 +26,40 @@ export const BaseInput = () => {
     fieldTypes,
     updateActiveItem,
     getTranslation,
+    selectStatus,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, form, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
-  const selectList = fieldTypesSelectObject()
+  const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
-  // console.log(selectList)
   const defaultOption: Option<string> | undefined = defaultValue
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
   const { formatMessage } = useIntl()
+  const screen = control.form.screens?.find(
+    (s) => s && s.id === currentItem.screenId,
+  )
+  const renderDescription = () => {
+    if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.TEXTBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    return false
+  }
+
   return (
     <Stack space={2}>
       <Row>
@@ -48,6 +72,9 @@ export const BaseInput = () => {
             backgroundColor="blue"
             isSearchable
             value={defaultOption}
+            isDisabled={
+              selectStatus === NavbarSelectStatus.NORMAL || isReadOnly
+            }
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
                 type: 'CHANGE_FIELD_TYPE',
@@ -70,6 +97,7 @@ export const BaseInput = () => {
             name="name"
             value={currentItem?.name?.is ?? ''}
             backgroundColor="blue"
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -91,6 +119,7 @@ export const BaseInput = () => {
             name="nameEn"
             value={currentItem?.name?.en ?? ''}
             backgroundColor="blue"
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -120,7 +149,7 @@ export const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['MESSAGE'].includes(currentItem?.fieldType ?? '') && (
+      {renderDescription() && (
         <>
           <Row>
             <Column span="10/10">
@@ -130,6 +159,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.is ?? ''}
                 textarea
                 backgroundColor="blue"
+                readOnly={isReadOnly}
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 onChange={(e) =>
@@ -152,6 +182,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.en ?? ''}
                 textarea
                 backgroundColor="blue"
+                readOnly={isReadOnly}
                 onFocus={async (e) => {
                   if (
                     !currentItem?.description?.en &&
@@ -185,23 +216,48 @@ export const BaseInput = () => {
           </Row>
         </>
       )}
-      <Row>
-        {/* Required checkbox */}
-        <Column span="5/10">
-          <Checkbox
-            label={formatMessage(m.required)}
-            checked={currentItem.isRequired ?? false}
-            onChange={() =>
-              controlDispatch({
-                type: 'CHANGE_IS_REQUIRED',
-                payload: {
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-        </Column>
-      </Row>
+      {/* Required checkbox */}
+      {screen?.isMulti &&
+        currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX &&
+        currentItem.fieldType !== FieldTypesEnum.FILE &&
+        currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
+          <Row>
+            <Column span="5/10">
+              <Checkbox
+                label={formatMessage(m.isPartOfMulti)}
+                checked={currentItem.isPartOfMultiset ?? false}
+                disabled={isReadOnly}
+                onChange={() =>
+                  controlDispatch({
+                    type: 'CHANGE_IS_PART_OF_MULTI',
+                    payload: {
+                      update: updateActiveItem,
+                    },
+                  })
+                }
+              />
+            </Column>
+          </Row>
+        )}
+      {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
+        <Row>
+          <Column span="5/10">
+            <Checkbox
+              label={formatMessage(m.required)}
+              checked={currentItem.isRequired ?? false}
+              disabled={isReadOnly}
+              onChange={() =>
+                controlDispatch({
+                  type: 'CHANGE_IS_REQUIRED',
+                  payload: {
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
     </Stack>
   )
 }

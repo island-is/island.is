@@ -28,6 +28,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
 import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
+import { formatDateToMonthString } from '../../utils/format'
 import {
   useGetCopaymentPeriodsQuery,
   useGetCopaymentStatusQuery,
@@ -188,7 +189,9 @@ export const PaymentPartication = () => {
                       periods?.rightsPortalCopaymentPeriods.items.map(
                         (period, index) => ({
                           key: index,
-                          title: period.month ?? formatMessage(m.month),
+                          title:
+                            formatDateToMonthString('', period.month ?? '') ??
+                            formatMessage(m.month),
                           data: [
                             {
                               title: formatMessage(messages.statusOfRights),

@@ -46,6 +46,7 @@ export const CheckboxFormField = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
@@ -97,7 +98,7 @@ export const CheckboxFormField = ({
           backgroundColor={backgroundColor}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? [] : undefined)
           }
           strong={strong}
@@ -123,6 +124,7 @@ export const CheckboxFormField = ({
             }),
           )}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>

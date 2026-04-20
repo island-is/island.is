@@ -16,7 +16,7 @@ import {
 import { m } from '../../lib/messages'
 import { PortalModuleComponent } from '@island.is/portals/core'
 
-const Dashboard: PortalModuleComponent = ({ userInfo }) => {
+const Dashboard: PortalModuleComponent = () => {
   const { formatMessage } = useLocale()
 
   interface Data {

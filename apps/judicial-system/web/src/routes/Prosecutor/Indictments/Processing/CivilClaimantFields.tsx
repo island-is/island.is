@@ -11,6 +11,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
+  IconButton,
   InputAdvocate,
   InputName,
   InputNationalId,
@@ -42,16 +43,20 @@ export const CivilClaimantFields = ({
 }) => {
   const { formatMessage } = useIntl()
   const { setWorkingCase } = useContext(FormContext)
-  const { personData } = useNationalRegistry(civilClaimant.nationalId)
+
+  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
+    useState<{ nationalId: string | null; civilClaimantId: string }>()
+  const [lookupNationalId, setLookupNationalId] = useState<string | null>(
+    civilClaimant.nationalId ?? null,
+  )
+
+  const { personData, businessData, notFound } =
+    useNationalRegistry(lookupNationalId)
   const {
     updateCivilClaimant,
     updateCivilClaimantState,
     setAndSendCivilClaimantToServer,
   } = useCivilClaimants()
-
-  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string | null; civilClaimantId: string }>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const handleUpdateCivilClaimant = (update: UpdateCivilClaimant) => {
     updateCivilClaimant({ caseId, ...update })
@@ -94,33 +99,47 @@ export const CivilClaimantFields = ({
       })
     } else {
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
-      setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId || null,
-        civilClaimantId,
-      })
+      setLookupNationalId(cleanNationalId || null)
+
+      if (cleanNationalId.length === 10) {
+        setCivilClaimantNationalIdUpdate({
+          nationalId: cleanNationalId || null,
+          civilClaimantId,
+        })
+      }
     }
   }
 
   useEffect(() => {
-    if (!civilClaimantNationalIdUpdate) {
+    if (
+      !civilClaimantNationalIdUpdate ||
+      civilClaimantNationalIdUpdate.nationalId?.length !== 10
+    ) {
       return
     }
 
-    const items = personData?.items || []
-    const person = items[0]
+    let name: string | undefined
 
-    setNationalIdNotFound(items.length === 0)
+    // Separately handle person and business data in order to populate
+    // name correctly for companies as well.
+    if (personData) {
+      const person = personData.items?.[0]
+      name = person?.name
+    } else if (businessData) {
+      const business = businessData.items?.[0]
+      name = business?.full_name
+    }
 
     const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
       nationalId: civilClaimantNationalIdUpdate.nationalId,
-      ...(person?.name ? { name: person.name } : {}),
+      ...(name ? { name } : {}),
     }
 
     handleSetAndSendCivilClaimantToServer(update)
-    // We want this hook to run exclusively when personData changes.
+    // We want this hook to run exclusively when personData or businessData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData])
+  }, [personData, businessData])
 
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
@@ -129,15 +148,12 @@ export const CivilClaimantFields = ({
     <>
       {civilClaimantIndex > 0 && (
         <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-          <Button
-            variant="text"
-            colorScheme="destructive"
-            onClick={() => {
-              removeCivilClaimantById(civilClaimant.id)
-            }}
-          >
-            {formatMessage(strings.remove)}
-          </Button>
+          <IconButton
+            icon="trash"
+            colorScheme="blue"
+            onClick={() => removeCivilClaimantById(civilClaimant.id)}
+            tooltipText="Eyða kröfuhafa"
+          />
         </Box>
       )}
       <Box marginBottom={2}>
@@ -163,20 +179,11 @@ export const CivilClaimantFields = ({
           value={civilClaimant.nationalId ?? undefined}
           required={Boolean(!civilClaimant.noNationalId)}
           onChange={(val) => {
-            if (val.length < 11) {
-              setNationalIdNotFound(false)
-            } else if (val.length === 11) {
-              handleCivilClaimantNationalIdBlur(
-                val,
-                civilClaimant.noNationalId,
-                civilClaimant.id,
-              )
-            }
-
-            handleUpdateCivilClaimantState({
-              civilClaimantId: civilClaimant.id ?? '',
-              nationalId: val,
-            })
+            handleCivilClaimantNationalIdBlur(
+              val,
+              civilClaimant.noNationalId,
+              civilClaimant.id,
+            )
           }}
           onBlur={(val) =>
             handleCivilClaimantNationalIdBlur(
@@ -186,7 +193,7 @@ export const CivilClaimantFields = ({
             )
           }
         />
-        {civilClaimant.nationalId?.length === 11 && nationalIdNotFound && (
+        {notFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
           </Text>
@@ -204,30 +211,42 @@ export const CivilClaimantFields = ({
         required
       />
       <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-        <Button
-          variant="text"
-          colorScheme={
-            civilClaimant.hasSpokesperson ? 'destructive' : 'default'
-          }
-          onClick={() => {
-            handleSetAndSendCivilClaimantToServer({
-              civilClaimantId: civilClaimant.id,
-              hasSpokesperson: !civilClaimant.hasSpokesperson,
-              spokespersonEmail: null,
-              spokespersonPhoneNumber: null,
-              spokespersonName: null,
-              spokespersonIsLawyer: null,
-              spokespersonNationalId: null,
-              caseFilesSharedWithSpokesperson: null,
-            })
-          }}
-        >
-          {formatMessage(
-            civilClaimant.hasSpokesperson
-              ? strings.removeDefender
-              : strings.addDefender,
-          )}
-        </Button>
+        {civilClaimant.hasSpokesperson ? (
+          <IconButton
+            icon="trash"
+            colorScheme="blue"
+            onClick={() =>
+              handleSetAndSendCivilClaimantToServer({
+                civilClaimantId: civilClaimant.id,
+                hasSpokesperson: false,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+              })
+            }
+          />
+        ) : (
+          <Button
+            variant="text"
+            onClick={() =>
+              handleSetAndSendCivilClaimantToServer({
+                civilClaimantId: civilClaimant.id,
+                hasSpokesperson: true,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+              })
+            }
+          >
+            {formatMessage(strings.addDefender)}
+          </Button>
+        )}
       </Box>
       {civilClaimant.hasSpokesperson && (
         <>
@@ -287,10 +306,15 @@ export const CivilClaimantFields = ({
                   spokespersonNationalId,
                   spokespersonEmail,
                   spokespersonPhoneNumber,
-                  caseFilesSharedWithSpokesperson: spokespersonNationalId
-                    ? civilClaimant.caseFilesSharedWithSpokesperson
-                    : null,
+                  caseFilesSharedWithSpokesperson: Boolean(
+                    spokespersonNationalId,
+                  ),
                 })
+
+                // handleSetAndSendCivilClaimantToServer({
+                //   civilClaimantId: civilClaimant.id,
+                //   caseFilesSharedWithSpokesperson: Boolean(spokespersonName),
+                // })
               }}
               onEmailChange={(spokespersonEmail: string | null) =>
                 handleUpdateCivilClaimantState({

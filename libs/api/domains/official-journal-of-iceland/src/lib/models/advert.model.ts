@@ -175,6 +175,9 @@ export class Advert {
   @Field(() => String)
   publicationDate!: string | null
 
+  @Field(() => Boolean, { nullable: true })
+  hideSignatureDate?: boolean | null
+
   @Field(() => [AdvertEntity])
   categories!: AdvertCategory[]
 

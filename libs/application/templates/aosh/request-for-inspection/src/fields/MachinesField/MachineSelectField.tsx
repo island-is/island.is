@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -12,18 +12,23 @@ import {
 } from '@island.is/island-ui/core'
 import { information, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
-import { useLazyMachineDetails } from '../../hooks/useLazyMachineDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { MachineDto } from '@island.is/clients/work-machines'
+import { MachineForInspectionDto } from '@island.is/clients/work-machines'
 
 interface MachineSearchFieldProps {
-  currentMachineList: MachineDto[]
+  currentMachineList: MachineForInspectionDto[]
 }
 
 export const MachineSelectField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, setFieldLoadingState, field }) => {
+> = ({
+  currentMachineList,
+  application,
+  setFieldLoadingState,
+  field,
+  setSubmitButtonDisabled,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const machineValue = getValueViaPath(
@@ -36,23 +41,14 @@ export const MachineSelectField: FC<
   const currentMachine = currentMachineList[parseInt(machineValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedMachine, setSelectedMachine] = useState<MachineDto | null>(
-    currentMachine && currentMachine.regNumber ? currentMachine : null,
-  )
+  const [selectedMachine, setSelectedMachine] =
+    useState<MachineForInspectionDto | null>(
+      currentMachine && currentMachine.registrationNumber
+        ? currentMachine
+        : null,
+    )
   const [machineId, setMachineId] = useState<string>(
     getValueViaPath<string>(application.answers, 'machine.id', '') || '',
-  )
-
-  const getMachineDetails = useLazyMachineDetails()
-  const getMachineDetailsCallback = useCallback(
-    async (id: string) => {
-      const { data } = await getMachineDetails({
-        id: id,
-        rel: 'requestInspection',
-      })
-      return data
-    },
-    [getMachineDetails],
   )
 
   const onChange = (option: Option) => {
@@ -60,42 +56,20 @@ export const MachineSelectField: FC<
     setIsLoading(true)
     setSelected(true)
     if (currentMachine.id) {
-      getMachineDetailsCallback(currentMachine.id)
-        .then((response) => {
-          setSelectedMachine(response.getWorkerMachineDetails)
-          setValue(
-            'machine.regNumber',
-            response.getWorkerMachineDetails.regNumber,
-          )
-          setValue(
-            'machine.category',
-            response.getWorkerMachineDetails.category,
-          )
+      setSelectedMachine(currentMachine)
+      setValue('machine.regNumber', currentMachine.registrationNumber)
+      setValue('machine.category', currentMachine.category)
 
-          setValue('machine.type', response.getWorkerMachineDetails.type || '')
-          setValue(
-            'machine.subType',
-            response.getWorkerMachineDetails.subType || '',
-          )
-          setValue(
-            'machine.plate',
-            response.getWorkerMachineDetails.plate || '',
-          )
-          setValue(
-            'machine.ownerNumber',
-            response.getWorkerMachineDetails.ownerNumber || '',
-          )
-          setValue('machine.id', response.getWorkerMachineDetails.id)
-          setValue('machine.date', new Date().toISOString())
-          setValue('machine.findVehicle', true)
-          setValue(
-            'machine.isValid',
-            response.getWorkerMachineDetails.disabled ? undefined : true,
-          )
-          setMachineId(currentMachine?.id || '')
-          setIsLoading(false)
-        })
-        .catch((error) => console.error(error))
+      setValue('machine.type', currentMachine.type || '')
+      setValue('machine.subType', currentMachine.subType || '')
+      setValue('machine.plate', currentMachine.licensePlateNumber || '')
+      setValue('machine.ownerNumber', currentMachine.owner?.number || '')
+      setValue('machine.id', currentMachine.id)
+      setValue('machine.findVehicle', true)
+      setValue('machine.isValid', currentMachine.disabled ? undefined : true)
+      setMachineId(currentMachine?.id || '')
+      setIsLoading(false)
+      setSubmitButtonDisabled?.(false)
     }
   }
 
@@ -113,7 +87,7 @@ export const MachineSelectField: FC<
         options={currentMachineList.map((machine, index) => {
           return {
             value: index.toString(),
-            label: `${machine.type}` || '',
+            label: `${machine.registrationNumber}` || '',
           }
         })}
         placeholder={formatMessage(information.labels.pickMachine.placeholder)}
@@ -127,7 +101,7 @@ export const MachineSelectField: FC<
             {selectedMachine && (
               <ActionCard
                 backgroundColor={selectedMachine.disabled ? 'red' : 'blue'}
-                heading={selectedMachine.regNumber || ''}
+                heading={selectedMachine.registrationNumber || ''}
                 text={`${selectedMachine.type} ${selectedMachine.subType}`}
                 focused={true}
               />

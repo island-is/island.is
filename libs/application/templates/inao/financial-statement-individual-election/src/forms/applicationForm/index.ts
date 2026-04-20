@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../../components/Logo'
+import { InaoLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 import { clientInfoSection } from './clientInfoSection'
 import { individualKeyNumbersSection } from './individualKeyNumbersSection'
@@ -16,7 +16,7 @@ export const FinancialStatementIndividualElectionForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: InaoLogo,
   children: [
     clientInfoSection,
     selectElectionSection,

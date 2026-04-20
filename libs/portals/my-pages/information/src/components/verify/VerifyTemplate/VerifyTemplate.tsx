@@ -67,12 +67,30 @@ export const VerifyTemplate = ({
           return undefined
         } else if (remainingAttempts === 0) {
           return formatMessage(emailsMsg.noAttemptsLeftError)
+        } else if (remainingAttempts < 0) {
+          // remainingAttempts === -1 means max attempts already exceeded
+          return formatMessage(emailsMsg.tooManyAttempts)
         }
-      } else if (
-        problem.status === 400 &&
-        problem.detail?.toLowerCase().includes('email already exists')
-      ) {
-        return formatMessage(emailsMsg.emailAlreadyExists)
+      }
+
+      const detail = problem?.detail?.toLowerCase() ?? ''
+
+      if (problem?.status === 400) {
+        if (detail.includes('email already exists')) {
+          return formatMessage(emailsMsg.emailAlreadyExists)
+        }
+        if (detail.includes('expired')) {
+          return formatMessage(emailsMsg.verificationExpired)
+        }
+        if (
+          detail.includes('does not match') ||
+          detail.includes('does not exist')
+        ) {
+          return formatMessage(emailsMsg.verificationNotFound)
+        }
+        if (detail.includes('too many failed')) {
+          return formatMessage(emailsMsg.tooManyAttempts)
+        }
       }
     }
 

@@ -97,9 +97,9 @@ export const icRuling = {
           'Notaður sem titill fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í rannsóknarheimildum.',
       },
       placeholder: {
-        id: 'judicial.system.core:investigation_cases.ruling.conclusion.placeholder',
+        id: 'judicial.system.core:investigation_cases.ruling.conclusion.placeholder_v2',
         defaultMessage:
-          'Tillaga að úrskurðarorðum forbókast hér þegar lyktir máls eru valdar',
+          'Tillaga að úrskurðarorði forbókast hér þegar lyktir máls eru valdar',
         description:
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í rannsóknarheimildum.',
       },

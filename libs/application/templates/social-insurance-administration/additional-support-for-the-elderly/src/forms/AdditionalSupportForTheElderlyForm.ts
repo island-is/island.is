@@ -14,7 +14,7 @@ import {
   buildTextField,
   YES,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
@@ -44,7 +44,7 @@ import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

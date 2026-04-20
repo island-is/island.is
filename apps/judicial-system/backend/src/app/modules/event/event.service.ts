@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import partition from 'lodash/partition'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -13,6 +14,7 @@ import {
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  AppealCaseTransition,
   CaseTransition,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
@@ -38,7 +40,24 @@ const errorEmojis = [
   ':x:',
 ]
 
-const caseEvent: Record<CaseEvent, string> = {
+type CaseEvent =
+  | CaseTransition
+  | 'ARCHIVE'
+  | 'CREATE'
+  | 'CREATE_XRD'
+  | 'EXTEND'
+  | 'RESUBMIT'
+  | 'SCHEDULE_ARRAIGNMENT_DATE'
+  | 'SCHEDULE_COURT_DATE'
+  | 'SPLIT'
+  | 'SUBPOENA_SERVICE_STATUS'
+  | 'VERDICT_SERVICE_STATUS'
+
+type AppealCaseEvent = AppealCaseTransition | 'CREATE_APPEAL'
+
+type Event = CaseEvent | AppealCaseEvent
+
+const eventHeading: Record<Event, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
@@ -46,47 +65,43 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  CREATE: ':new: Mál stofnað',
+  CREATE_APPEAL: ':judge: Kæra',
+  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
   [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
-  CREATE: ':new: Mál stofnað',
-  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   EXTEND: ':recycle: Mál framlengt',
+  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
   [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað aftur',
+  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
-  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
+  SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
-  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
+  SPLIT: ':scissors: Mál klofið',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
+  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
+  VERDICT_SERVICE_STATUS:
+    ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
   [CaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæra afturkölluð',
-  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
 }
 
-export type CaseEvent =
-  | CaseTransition
-  | 'ARCHIVE'
-  | 'CREATE'
-  | 'CREATE_XRD'
-  | 'EXTEND'
-  | 'RESUBMIT'
-  | 'SCHEDULE_COURT_DATE'
-  | 'SUBPOENA_SERVICE_STATUS'
-
 const caseEventsToLog = [
+  'ACCEPT',
   'CREATE',
   'CREATE_XRD',
+  'COMPLETE',
+  'DISMISS',
+  'REJECT',
+  'SCHEDULE_ARRAIGNMENT_DATE',
   'SCHEDULE_COURT_DATE',
   'SUBPOENA_SERVICE_STATUS',
-  'COMPLETE',
-  'ACCEPT',
-  'REJECT',
-  'DISMISS',
+  'VERDICT_SERVICE_STATUS',
 ]
 
 @Injectable()
@@ -99,7 +114,7 @@ export class EventService {
   ) {}
 
   async postEvent(
-    event: CaseEvent,
+    event: Event,
     theCase: Case,
     eventOnly = false,
     info?: { [key: string]: string | boolean | Date | undefined },
@@ -109,7 +124,7 @@ export class EventService {
         return
       }
 
-      const title = `${caseEvent[event]}${
+      const title = `${eventHeading[event]}${
         eventOnly ? ' - aðgerð ekki framkvæmd' : ''
       }`
       const typeText = `${capitalize(formatCaseType(theCase.type))}${
@@ -128,11 +143,11 @@ export class EventService {
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
           }`
         : ''
-      const courtOfAppealsText = theCase.appealCaseNumber
-        ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
+      const courtOfAppealsText = theCase.appealCase?.appealCaseNumber
+        ? `\n>Landsréttur *${theCase.appealCase?.appealCaseNumber}*`
         : ''
       const courtDateText =
-        event === 'SCHEDULE_COURT_DATE'
+        event === 'SCHEDULE_COURT_DATE' || event === 'SCHEDULE_ARRAIGNMENT_DATE'
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
             }\n>Dómritari ${
@@ -199,6 +214,63 @@ export class EventService {
       })
     } catch (error) {
       this.logger.error(`Failed to reset lawyer registry`, {
+        error,
+      })
+    }
+  }
+
+  async postDailyVerdictServiceDeliveryEvent(
+    delivered: {
+      delivered: boolean
+      caseId: string
+      defendantId: string
+    }[],
+  ) {
+    const [success, failure] = partition(
+      delivered,
+      (result) => result.delivered,
+    )
+    const title = ':outbox_tray: Birtingarvottorð dóma'
+    const hasFailedDeliveries = failure.length > 0
+
+    const successList = success.map((result) => {
+      return `>Dómfelldi: ${result.defendantId}, Mál: ${result.caseId}`
+    })
+    const successText = `Alls ${
+      success.length
+    } birtingarvottorð send í LÖKE: \n${successList.join('\n')}`
+
+    const failureList = failure.map((result) => {
+      return `>Dómfelldi: ${result.defendantId}, Mál: ${result.caseId}`
+    })
+    const failureText = hasFailedDeliveries
+      ? `Tókst ekki að senda ${
+          failure.length
+        } birtingarvottorð í LÖKE: \n${failureList.join('\n')}`
+      : ''
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${successText}\n${failureText}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to log verdict service delivery event`, {
         error,
       })
     }
@@ -301,7 +373,7 @@ export class EventService {
     return infoText
   }
 
-  logInfo = (event: CaseEvent, theCase: Case) => {
+  logInfo = (event: Event, theCase: Case) => {
     if (!caseEventsToLog.includes(event)) {
       return
     }
@@ -309,6 +381,7 @@ export class EventService {
     let extraInfo
 
     switch (event) {
+      case 'SCHEDULE_ARRAIGNMENT_DATE':
       case 'SCHEDULE_COURT_DATE':
         extraInfo = `courtDate: ${formatDate(
           DateLog.courtDate(theCase.dateLogs)?.date ??

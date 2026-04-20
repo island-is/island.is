@@ -13,6 +13,7 @@ export type OJOIAdvertDisplayProps = {
   advertSubject: string
   advertText: string
   isLegacy: boolean
+  hiddenSignatureDate?: boolean
   additions?: OfficialJournalOfIcelandAdvertAppendix[]
 }
 
@@ -22,6 +23,7 @@ export const OJOIAdvertDisplay = ({
   advertType,
   advertSubject,
   advertText,
+  hiddenSignatureDate,
   additions,
 }: OJOIAdvertDisplayProps) => {
   if (!advertText) {
@@ -43,9 +45,11 @@ export const OJOIAdvertDisplay = ({
         <Text variant="eyebrow" color="purple400">
           Nr. {advertNumber}
         </Text>
-        <Text variant="eyebrow" color="purple400">
-          {signatureDate}
-        </Text>
+        {hiddenSignatureDate ? null : (
+          <Text variant="eyebrow" color="purple400">
+            {signatureDate}
+          </Text>
+        )}
       </Box>
       <Box textAlign="center" display="flex" flexDirection="column">
         <Text variant="h3">{advertType}</Text>
@@ -54,7 +58,9 @@ export const OJOIAdvertDisplay = ({
         </Text>
       </Box>
       <Box
-        className={c(s.bodyText, 'ojoi-advert-display-wrapper')}
+        className={c(s.bodyText, 'ojoi-advert-display-wrapper', {
+          [s.hideSignature]: hiddenSignatureDate,
+        })}
         dangerouslySetInnerHTML={{ __html: advertText }}
       ></Box>
       {additions && additions.length > 0 && (

@@ -5,13 +5,15 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   TeachersApi,
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   JurisdictionApi,
   QualityPhotoApi,
+  QualityPhotoAndSignatureApi,
+  AllPhotosFromThjodskraApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
 import {
@@ -30,7 +32,7 @@ export const sectionExternalData = buildSubSection({
       checkboxLabel: m.externalDataAgreement,
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: m.nationalRegistryTitle,
           subTitle: m.nationalRegistrySubTitle,
         }),
@@ -46,37 +48,33 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GlassesCheckApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: QualityPhotoApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: DrivingAssessmentApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: JurisdictionApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: SyslumadurPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: MockableSyslumadurPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: TeachersApi,
-          title: '',
+        }),
+        buildDataProviderItem({
+          provider: AllPhotosFromThjodskraApi,
+        }),
+        buildDataProviderItem({
+          provider: QualityPhotoAndSignatureApi,
         }),
         buildDataProviderItem({
           provider: ExistingApplicationApi,
-          title: '',
         }),
       ],
     }),

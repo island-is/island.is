@@ -1,13 +1,13 @@
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseOrigin,
   CaseType,
+  courtSubtypes,
   EventType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 
@@ -24,8 +24,9 @@ export interface RequestCaseEvent {
   // event specific fields
   requestDecision?: CaseDecision
   requestDecisionDescriptor?: string
-  courtOfAppealDecision?: CaseAppealRulingDecision
+  courtOfAppealDecision?: AppealCaseRulingDecision
   courtOfAppealDecisionDescriptor?: string
+  parentCaseId?: string
 }
 
 // utility functions
@@ -48,10 +49,11 @@ const commonFields = (c: Case) => {
     requestDecisionDescriptor: c.decision
       ? getDecisionDescriptor(c.decision)
       : '',
-    courtOfAppealDecision: c.appealRulingDecision,
-    courtOfAppealDecisionDescriptor: c.appealRulingDecision
-      ? getAppealRulingDecisionDescriptor(c.appealRulingDecision)
+    courtOfAppealDecision: c.appealCase?.appealRulingDecision,
+    courtOfAppealDecisionDescriptor: c.appealCase?.appealRulingDecision
+      ? getAppealRulingDecisionDescriptor(c.appealCase?.appealRulingDecision)
       : '',
+    parentCaseId: c.parentCaseId,
   }
 }
 
@@ -79,31 +81,31 @@ const getDecisionDescriptor = (decision: CaseDecision) => {
 }
 
 const getAppealRulingDecisionDescriptor = (
-  appealRulingDecision: CaseAppealRulingDecision,
+  appealRulingDecision: AppealCaseRulingDecision,
 ) => {
   switch (appealRulingDecision) {
-    case CaseAppealRulingDecision.ACCEPTING: {
+    case AppealCaseRulingDecision.ACCEPTING: {
       return 'Staðfesting'
     }
-    case CaseAppealRulingDecision.REPEAL: {
+    case AppealCaseRulingDecision.REPEAL: {
       return 'Fella úr gildi'
     }
-    case CaseAppealRulingDecision.CHANGED: {
+    case AppealCaseRulingDecision.CHANGED: {
       return 'Niðurstöðu breytt'
     }
-    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY: {
+    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY: {
       return 'Niðurstöðu breytt að verulegu leyti'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
       return 'Frávísun frá Landsrétti'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT: {
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT: {
       return 'Frávísun frá héraðsdómi'
     }
-    case CaseAppealRulingDecision.REMAND: {
+    case AppealCaseRulingDecision.REMAND: {
       return 'Ómerking og heimvísun'
     }
-    case CaseAppealRulingDecision.DISCONTINUED: {
+    case AppealCaseRulingDecision.DISCONTINUED: {
       return 'Niðurfelling'
     }
     default: {
@@ -272,7 +274,7 @@ const requestCompleted = (c: Case): RequestCaseEvent | undefined => {
 const caseReceivedByCourtOfAppeals = (
   c: Case,
 ): RequestCaseEvent | undefined => {
-  const date = c.appealReceivedByCourtDate?.toISOString()
+  const date = c.appealCase?.appealReceivedByCourtDate?.toISOString()
   if (!date) {
     return undefined
   }

@@ -31,7 +31,7 @@ interface VimeoApiResponse {
 
 const fetchVimeoVideoThumbnailUrl = async (vimeoUrl: string) => {
   const response = await fetch(
-    `https://vimeo.com/api/oembed.json?url=${vimeoUrl}`,
+    `https://vimeo.com/api/oembed.json?url=${vimeoUrl}&width=960`,
   )
   const data: VimeoApiResponse = await response.json()
   return data.thumbnail_url

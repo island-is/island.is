@@ -37,6 +37,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     indictmentCreated,
     civilClaimants,
     registrar,
+    appealCaseNumber,
+    appealAssistant,
+    appealJudges,
   } = useInfoCardItems()
 
   const {
@@ -51,12 +54,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'defendants-section',
           items: [
-            defendants(
-              workingCase.type,
+            defendants({
+              caseType: workingCase.type,
               displayAppealExpirationInfo,
               displayVerdictViewDate,
               displaySentToPrisonAdminDate,
-            ),
+            }),
           ],
         },
         ...(workingCase.hasCivilClaims
@@ -78,6 +81,23 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           ],
           columns: 2,
         },
+        ...(workingCase.appealCase?.appealCaseNumber
+          ? [
+              {
+                id: 'court-of-appeal-section',
+                items: [
+                  appealCaseNumber,
+                  ...(appealAssistant ? [appealAssistant] : []),
+                  ...(workingCase.appealCase?.appealJudge1 &&
+                  workingCase.appealCase?.appealJudge2 &&
+                  workingCase.appealCase?.appealJudge3
+                    ? [appealJudges]
+                    : []),
+                ],
+                columns: 2,
+              },
+            ]
+          : []),
         ...(workingCase.indictmentReviewer?.name &&
         (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user))
           ? [
@@ -85,7 +105,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                 id: 'additional-data-section',
                 items: [
                   indictmentReviewer,
-                  ...(workingCase.indictmentReviewDecision
+                  ...(workingCase.defendants?.some(
+                    (d) => d.indictmentReviewDecision,
+                  )
                     ? [indictmentReviewDecision]
                     : []),
                   ...(workingCase.indictmentReviewedDate

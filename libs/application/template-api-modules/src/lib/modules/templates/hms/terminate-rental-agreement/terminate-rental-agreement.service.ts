@@ -89,7 +89,6 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
         this.logger.error('Failed to get files:', e.message)
         throw e
       }
-
       if (isCancellation(application)) {
         try {
           parsedApplication = parseCancelContract(application, files)

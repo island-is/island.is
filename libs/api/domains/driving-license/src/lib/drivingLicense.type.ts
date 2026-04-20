@@ -38,11 +38,36 @@ export interface NewTemporaryDrivingLicenseInput {
   sendLicenseInMail: boolean
 }
 
+export interface NewBEDrivingLicenseContentItem {
+  fileName: string
+  fileExtension: string
+  contentType: string
+  content: string
+  description: string
+}
+
+export interface NewBEHealthDeclaration {
+  isDisabled: boolean
+  hasDiabetes: boolean
+  hasEpilepsy: boolean
+  isAlcoholic: boolean
+  hasHeartDisease: boolean
+  hasMentalIllness: boolean
+  hasOtherDiseases: boolean
+  usesMedicalDrugs: boolean
+  usesContactGlasses: boolean
+  hasReducedPeripheralVision: boolean
+}
+
 export interface NewBEDrivingLicenseInput {
   jurisdiction: number
   instructorSSN: string
   primaryPhoneNumber: string
   studentEmail: string
+  contentList?: NewBEDrivingLicenseContentItem[]
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
+  healthDeclarationModel?: NewBEHealthDeclaration
 }
 
 export interface NewDrivingLicenseResult {
@@ -85,8 +110,6 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
   noExtendedDrivingLicense = 'NoExtendedDrivingLicense',
 }
 

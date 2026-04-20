@@ -42,18 +42,21 @@ export const ApplicationCardHistory = ({ items }: Props) => {
       <AnimateHeight height={height} duration={300}>
         <div ref={containerRef}>
           <HistoryStepper
-            sections={items.map(({ date, title, content }, index) => (
-              <HistorySection
-                key={`history-section-${index}`}
-                section={title}
-                sectionIndex={index}
-                isComplete
-                theme={FormStepperThemes.PURPLE}
-                isLast={index + 1 === items.length}
-                date={date}
-                description={content}
-              />
-            ))}
+            sections={items.map(
+              ({ date, title, content, subjectAndActor }, index) => (
+                <HistorySection
+                  key={`history-section-${index}`}
+                  section={title}
+                  sectionIndex={index}
+                  isComplete
+                  theme={FormStepperThemes.PURPLE}
+                  isLast={index + 1 === items.length}
+                  date={date}
+                  description={content}
+                  subjectAndActor={subjectAndActor}
+                />
+              ),
+            )}
           />
         </div>
       </AnimateHeight>

@@ -192,7 +192,7 @@ export class MessageService {
     })
   }
 
-  async sendMessagesToQueue(
+  async addMessagesToQueue(
     messages: Message[],
     isRetry = false,
   ): Promise<void> {
@@ -228,7 +228,7 @@ export class MessageService {
           }
 
           // Retry once
-          return this.sendMessagesToQueue(messages, true)
+          return this.addMessagesToQueue(messages, true)
         })
     }
 
@@ -237,7 +237,7 @@ export class MessageService {
       const numSentNow = Math.min(messages.length - i, MAX_BATCH_SIZE)
       const messagesToSend = messages.slice(i, i + numSentNow)
 
-      await this.sendMessagesToQueue(messagesToSend, isRetry)
+      await this.addMessagesToQueue(messagesToSend, isRetry)
     }
   }
 

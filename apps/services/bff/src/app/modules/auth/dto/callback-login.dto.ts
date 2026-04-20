@@ -22,4 +22,14 @@ export class CallbackLoginDto {
   @IsOptional()
   @IsString()
   invalid_request?: string
+
+  // IDS responds with error and error_description when authentication fails
+  // @see https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
+  @IsOptional()
+  @IsString()
+  error?: string
+
+  @IsOptional()
+  @IsString()
+  error_description?: string
 }

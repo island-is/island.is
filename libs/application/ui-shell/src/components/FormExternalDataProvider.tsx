@@ -231,6 +231,7 @@ const FormExternalDataProvider: FC<
     dataProviders,
     otherPermissions,
     subTitle,
+    subDescription,
     description,
     checkboxLabel,
   } = externalDataProvider
@@ -382,6 +383,11 @@ const FormExternalDataProvider: FC<
           )
         }}
       />
+      {subDescription && (
+        <Box marginTop={4}>
+          <Markdown>{formatMessage(subDescription)}</Markdown>
+        </Box>
+      )}
       {enableMockPayment &&
         (isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')) && (
           <Controller

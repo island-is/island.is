@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { FC, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import React, { FC, forwardRef, useRef, useState } from 'react'
 import { VisuallyHidden } from '@ariakit/react'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
@@ -64,7 +64,6 @@ export const Input = forwardRef(
       step,
       size = 'md',
       fixedFocusState,
-      autoExpand,
       loading,
       buttons,
       oneDigit,
@@ -90,29 +89,6 @@ export const Input = forwardRef(
     const containerBackground = Array.isArray(backgroundColor)
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
-
-    useLayoutEffect(() => {
-      const input = inputRef.current
-
-      if (autoExpand?.on && input) {
-        const handler = () => {
-          input.style.height = 'auto'
-          // The +1 here prevents a scrollbar from appearing in the textarea
-          input.style.height = `${input.scrollHeight + 1}px`
-          input.style.maxHeight = autoExpand.maxHeight
-            ? `${autoExpand.maxHeight}px`
-            : `${window.innerHeight - 50}px`
-        }
-
-        handler()
-
-        input.addEventListener('input', handler, false)
-
-        return function cleanup() {
-          input.removeEventListener('input', handler)
-        }
-      }
-    }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
 
     return (
       <div>
@@ -259,6 +235,7 @@ export const Input = forwardRef(
               loading={!!loading}
               hasError={hasError}
               hasLabel={hasLabel}
+              disabled={!!disabled}
             />
           )}
         </Box>
@@ -271,12 +248,23 @@ export const Input = forwardRef(
 )
 
 const AsideIcons: FC<AsideProps> = (props) => {
-  const { icon, buttons = [], size, loading, hasError, hasLabel } = props
+  const {
+    icon,
+    buttons = [],
+    size,
+    loading,
+    hasError,
+    hasLabel,
+    disabled,
+  } = props
   const displayedIcon: InputIcon | undefined = hasError
     ? { name: 'warning' }
     : icon
 
-  const renderIcon = (item: InputIcon) => (
+  const renderIcon = (item: {
+    name: InputIcon['name']
+    type?: InputIcon['type']
+  }) => (
     <Icon
       icon={item.name}
       type={item.type}
@@ -291,13 +279,33 @@ const AsideIcons: FC<AsideProps> = (props) => {
       {loading ? (
         <Box className={styles.spinner} flexShrink={0} borderRadius="full" />
       ) : displayedIcon ? (
-        <div
-          className={styles.iconWrapper({ size })}
-          key={displayedIcon.name}
-          aria-hidden
-        >
-          {renderIcon(displayedIcon)}
-        </div>
+        displayedIcon.onClick ? (
+          <button
+            type="button"
+            className={styles.iconWrapper({ size })}
+            key={displayedIcon.name}
+            onClick={displayedIcon.onClick}
+            onMouseDown={(e) => e.nativeEvent.stopPropagation()}
+            aria-label={displayedIcon.ariaLabel || displayedIcon.name}
+            disabled={disabled}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: disabled ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {renderIcon(displayedIcon)}
+          </button>
+        ) : (
+          <div
+            className={styles.iconWrapper({ size })}
+            key={displayedIcon.name}
+            aria-hidden
+          >
+            {renderIcon(displayedIcon)}
+          </div>
+        )
       ) : null}
 
       {buttons.map((item) => {

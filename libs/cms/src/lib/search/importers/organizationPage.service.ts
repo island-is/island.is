@@ -12,12 +12,16 @@ export class OrganizationPageSyncService
   implements CmsSyncProvider<IOrganizationPage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationPage>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IOrganizationPage =>
         entry.sys.contentType.sys.id === 'organizationPage' &&
         !!entry.fields.title &&
         (entry.fields.canBeFoundInSearchResults ?? true),
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IOrganizationPage[]) {

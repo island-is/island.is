@@ -43,7 +43,7 @@ const template: ApplicationTemplate<
   name: m.name,
   codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
+  translationNamespaces: ApplicationConfigurations.CriminalRecord.translation,
   dataSchema: CriminalRecordSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

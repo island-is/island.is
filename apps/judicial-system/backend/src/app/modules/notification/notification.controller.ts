@@ -60,7 +60,7 @@ export class NotificationController {
     type: SendNotificationResponse,
     description: 'Adds a new notification for an existing case to queue',
   })
-  async sendCaseNotification(
+  sendCaseNotification(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -70,7 +70,7 @@ export class NotificationController {
       `Adding ${notificationDto.type} notification for case ${caseId} to queue`,
     )
 
-    return this.notificationService.addNotificationMessagesToQueue(
+    return this.notificationService.addMessagesForNotificationToQueue(
       notificationDto.type,
       notificationDto.eventOnly,
       theCase,

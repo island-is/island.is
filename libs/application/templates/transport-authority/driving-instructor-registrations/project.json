@@ -1,0 +1,19 @@
+{
+  "name": "application-templates-driving-instructor-registrations",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/transport-authority/driving-instructor-registrations/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/transport-authority/driving-instructor-registrations/src/lib/messages.ts"
+      }
+    }
+  }
+}

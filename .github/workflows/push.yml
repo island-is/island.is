@@ -21,6 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
@@ -38,10 +39,9 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '3'
   MAX_JOBS: '2'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   YARN_ENABLE_HARDENED_MODE: '0'
@@ -74,18 +74,41 @@ jobs:
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
     steps:
+      - name: Cache server health check
+        run: |
+          if curl -sf --max-time 3 "${ACTIONS_RESULTS_URL:-http://gha-cache.internal:3000/}" > /dev/null 2>&1; then
+            echo "✅ Cache server: ${ACTIONS_RESULTS_URL:-not set}"
+          else
+            echo "⚠️ Cache server unreachable (${ACTIONS_RESULTS_URL:-not set}) — using GitHub cache"
+          fi
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs
         uses: ./.github/actions/set-shas
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Install infra modules
+        working-directory: infra
+        run: |
+          corepack enable && CI=true yarn install --immutable
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
 
+        # Edtit this
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.get-token.outputs.token }}
           slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Prepare pre-release
@@ -159,14 +182,6 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Install infra modules
-        working-directory: infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -445,12 +460,23 @@ jobs:
           } >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          # APP_ID
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.get-token.outputs.token }}
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
@@ -504,11 +530,10 @@ jobs:
         with:
           working-directory: monorepo
 
-      - name: Install infra modules
-        id: install-infra-modules
-        working-directory: monorepo/infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
+      - name: Setup yarn
+        uses: ./monorepo/.github/actions/setup-yarn
+        with:
+          working-directory: monorepo/infra
 
       - name: Generate islandis feature-deployment charts for ArgoCD
         working-directory: monorepo/infra
@@ -519,11 +544,6 @@ jobs:
         run: |
           IMAGES=$(echo "$IMAGES" | tr -d "'\\ ")
           ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
-
-      - name: load-deps
-        uses: ./monorepo/.github/actions/load-deps
-        with:
-          working-directory: monorepo
 
       - name: Prepare artifact to be uploaded
         working-directory: monorepo
@@ -551,17 +571,16 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
           working-directory: monorepo
-
       - name: Get token
         id: get-token
-        working-directory: monorepo
         shell: bash
+        working-directory: monorepo
         env:
+          # APP_ID
           APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
           PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
         run: |
-          node scripts/ci/docker/get-github-token.mjs
-
+          node ./scripts/ci/docker/get-github-token.mjs
       - name: Dispatch workflow to helm-values repository
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}

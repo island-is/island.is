@@ -19,7 +19,7 @@ import { mapManualChapterItem } from '../../models/manualChapterItem.model'
 export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
     // only process manuals that contain chapter items
-    return entries.filter((entry) => {
+    const entriesToUpdate = entries.filter((entry) => {
       return (
         isManual(entry) &&
         entry.fields.chapters?.length > 0 &&
@@ -32,6 +32,10 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
         )
       )
     })
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IManual[]) {

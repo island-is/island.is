@@ -1,6 +1,9 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
+import { m } from '../messages'
+import { FormatMessage } from '@island.is/cms-translations'
+import { MessageDescriptor } from 'react-intl'
 
 export interface MileageRecord {
   permno: string
@@ -19,20 +22,22 @@ const vehicleIndexTitle = [
   'okutaeki',
   'fastanumer',
 ]
-const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
+const mileageIndexTitle = [
+  'kilometrastada',
+  'skra stodu',
+  'mileage',
+  'odometer',
+]
 
-export const errorMap: Record<number, string> = {
-  1: `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
-    ', ',
-  )}`,
-  2: `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
-    ', ',
-  )}`,
+export const errorMap: Record<number, MessageDescriptor> = {
+  1: m.invalidVehicleColumnHeader,
+  2: m.invalidMileageColumnHeader,
 }
 
 export const parseBufferToMileageRecord = async (
   buffer: Buffer,
   type: 'csv' | 'xlsx',
+  formatMessage: FormatMessage,
 ): Promise<Array<MileageRecord> | MileageError> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsvFromBuffer(buffer)
@@ -40,20 +45,15 @@ export const parseBufferToMileageRecord = async (
 
   const [rawHeader, ...values] = parsedLines
 
-  // strip BOM, trim, and lowercase each header cell
-  const header = rawHeader.map((h) =>
-    h
-      .replace(/^\uFEFF/, '')
-      .trim()
-      .toLowerCase(),
-  )
+  // strip BOM, trim, lowercase, and normalize Icelandic/accented chars each header cell
+  const header = rawHeader.map((h) => normalizeHeader(h))
 
   const vehicleIndex = header.findIndex((h) => vehicleIndexTitle.includes(h))
 
   if (vehicleIndex < 0) {
     return {
       code: 1,
-      message: errorMap[1],
+      message: formatMessage(errorMap[1]),
     }
   }
 
@@ -64,7 +64,7 @@ export const parseBufferToMileageRecord = async (
   if (mileageIndex < 0) {
     return {
       code: 2,
-      message: errorMap[2],
+      message: formatMessage(errorMap[2]),
     }
   }
 
@@ -151,6 +151,18 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     parser.end()
   })
 }
+
+// Normalize accented header strings to plain ASCII so any permutation of
+// accented/unaccented chars matches the lookup arrays. ð is handled explicitly
+// before NFD since it has no canonical decomposition.
+const normalizeHeader = (h: string): string =>
+  h
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .toLowerCase()
+    .replace(/ð/g, 'd')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 

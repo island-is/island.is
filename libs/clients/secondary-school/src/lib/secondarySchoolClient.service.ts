@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { SchoolsApi, ApplicationsApi, StudentsApi } from '../../gen/fetch/apis'
 import {
   Application,
+  ApplicationPeriod,
   Program,
   SecondarySchool,
   Student,
@@ -26,6 +27,22 @@ export class SecondarySchoolClient {
 
   private studentsApiWithAuth(auth: Auth) {
     return this.studentsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getApplicationPeriodInfo(auth: User): Promise<ApplicationPeriod> {
+    const periodInfo = await this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsApplicationPeriodGet({ date: new Date() })
+    return {
+      allowFreshmanApplication: periodInfo?.allowFreshmenApplication || false,
+      registrationEndDateGeneral:
+        periodInfo?.registrationEndDateGeneral || new Date(),
+      registrationEndDateFreshman:
+        periodInfo?.registrationEndDateFreshman || new Date(),
+      reviewStartDateGeneral: periodInfo?.reviewStartDateGeneral || new Date(),
+      reviewStartDateFreshman:
+        periodInfo?.reviewStartDateFreshman || new Date(),
+    }
   }
 
   async getStudentInfo(auth: User): Promise<Student> {
@@ -57,6 +74,7 @@ export class SecondarySchoolClient {
           name: language.name || '',
         })) || [],
       allowRequestDormitory: school.availableDormitory || false,
+      requireThirdLanguage: school.requireThirdLanguage || false,
       isOpenForAdmissionGeneral: school.anyOpenForAdmissionGeneral || false,
       isOpenForAdmissionFreshman: school.anyOpenForAdmissionFreshman || false,
     }))
@@ -72,8 +90,6 @@ export class SecondarySchoolClient {
     ).v1SchoolsSchoolIdProgrammesGet({
       schoolId,
       onlyFreshmenEnabled: isFreshman,
-      rowOffset: undefined,
-      fetchSize: undefined,
     })
 
     return res.map((program) => ({
@@ -84,6 +100,9 @@ export class SecondarySchoolClient {
       }`,
       registrationEndDate: program.registryEndDate || new Date(),
       isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
+      programApplicationMessageIs: program.programmeApplicationMessage || '',
+      programApplicationMessageEn:
+        program.programmeApplicationMessageEnglish || '',
     }))
   }
 

@@ -8,6 +8,7 @@ import * as styles from './ApplicationCard.css'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
+import { ApplicationStatus } from '@island.is/form-system/enums'
 
 interface Props {
   application: FormSystemApplication
@@ -33,7 +34,7 @@ export const ApplicationCard = ({
     navigate(`../${slug}/${application.id}`)
   }
 
-  const shouldRenderProgress = status === 'IN_PROGRESS'
+  const shouldRenderProgress = status === ApplicationStatus.DRAFT
   return (
     <Box
       display="flex"

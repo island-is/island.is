@@ -487,17 +487,22 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
   }),
 
   incomePlan: defineMessages({
+    incomePlanInstructionsSubSectionTitle: {
+      id: 'sia.application:income.plan.instructions.sub.section.title',
+      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
+      description: 'Income Plan - Instructions',
+    },
     subSectionTitle: {
       id: 'sia.application:income.plan.sub.section.title',
       defaultMessage: 'Tekjuáætlun',
       description: 'Income Plan',
     },
     description: {
-      id: 'sia.application:income.plan.description',
+      id: 'sia.application:income.plan.description#markdown',
       defaultMessage:
-        'Hér setur þú inn þær tekjur sem þú munt hafa árið {incomePlanYear} samhliða greiðslum frá Tryggingastofnun. Til þess að auðvelda skráningu þá sýnum við 5 algengustu tekjutegundir síðustu ára hér fyrir neðan. Hægt er að eyða út tekjutegundum eða breyta þeim eftir því sem við á. Upphæðir sem settar eru inn þurfa að vera fyrir skatt. Athygli er vakin á því að hjá hjónum og sambúðarfólki þarf að setja inn samanlagðar fjármagnstekjur beggja aðila.',
+        'Hér setur þú inn þær tekjur sem þú munt hafa árið {incomePlanYear} samhliða greiðslum frá Tryggingastofnun. Til þess að auðvelda skráningu þá sýnum við 5 algengustu tekjutegundir síðustu ára hér fyrir neðan. Hægt er að eyða út tekjutegundum eða breyta þeim eftir því sem við á. Upphæðir sem settar eru inn þurfa að vera fyrir skatt. Athygli er vakin á því að hjá hjónum og sambúðarfólki þarf að setja inn samanlagðar fjármagnstekjur beggja aðila. Mikilvægt er að fjárhæðir í tekjuáætlun endurspegli sem best raunveruleikann, til að tryggja skilvirka  úrvinnslu.',
       description:
-        'Below you can enter your proposed income for the year {incomePlanYear} along with payments from the Social Insurance Administration. To simplify the registration process we have provided the top 5 registered income types from the last few years below. You can delete or change income types as needed. Please enter your pre-tax income. Note that couples must supply the combined income for both parties.',
+        'Below you can enter your proposed income for the year {incomePlanYear} along with payments from the Social Insurance Administration. To simplify the registration process we have provided the top 5 registered income types from the last few years below. You can delete or change income types as needed. Please enter your pre-tax income. Note that couples must supply the combined income for both parties. It is important that the amounts in the income plan reflect reality as best as possible, in order to ensure efficient processing.',
     },
     registerIncome: {
       id: 'sia.application:income.plan.register.income',
@@ -595,6 +600,20 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:income.plan.select.currency',
       defaultMessage: 'Veldu gjaldmiðil',
       description: 'Select currency',
+    },
+    alertMessage: {
+      id: 'sia.application:income.plan.alert.message',
+      defaultMessage:
+        'Þú hefur ekki sett inn neina upphæð í tekjuáætlun. Ertu viss um að tekjuáætlunin sem þú sért að senda inn sé rétt? Röng tekjuáætlun getur leitt til kröfu sem þú þarft að greiða.',
+      description:
+        'You have not entered any amount in the income plan. Are you sure the income plan you are submitting is correct? An incorrect income plan may result in a claim that you will have to pay.',
+    },
+    noOtherIncomeConfirmation: {
+      id: 'sia.application:income.plan.no.other.income.confirmation',
+      defaultMessage:
+        'Ertu viss um að þú sért ekki með neinar tekjur frá öðrum en Tryggingastofnun á árinu?',
+      description:
+        'Are you sure you do not have any income from sources other than the Social Insurance Administration during the year?',
     },
   }),
 
@@ -761,6 +780,11 @@ export const errorMessages = defineMessages({
     id: 'sia.application:error.income.plan.required',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni tekjutegund',
     description: 'You must add at least one income type',
+  },
+  selfAssessmentQuestionRequired: {
+    id: 'sia.application:error.self.assessment.questionnaire.required',
+    defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
+    description: 'You have to fill in a field on this page.',
   },
 })
 

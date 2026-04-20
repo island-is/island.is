@@ -28,7 +28,8 @@ const AidAmountModal = ({
 
   return (
     <ModalBase
-      baseId="changeStatus"
+      baseId="changeAidAmount"
+      modalLabel="Change aid amount modal"
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {

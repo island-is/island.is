@@ -57,7 +57,6 @@ export const examineeSection = buildSection({
               component: 'input',
               label: examinee.labels.licenceNumber,
               width: 'half',
-              format: '#########################',
               displayInTable: false,
               required: true,
             },

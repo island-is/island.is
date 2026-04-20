@@ -1,5 +1,5 @@
 import { onError, ErrorResponse } from '@apollo/client/link/error'
-import { signIn } from 'next-auth/client'
+import { signIn } from 'next-auth/react'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {

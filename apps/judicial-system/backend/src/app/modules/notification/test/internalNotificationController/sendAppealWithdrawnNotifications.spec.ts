@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { ConfigType } from '@nestjs/config'
 
@@ -102,16 +102,18 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealReceivedByCourtDate,
-            appealAssistant: {
-              name: appealAssistant.name,
-              email: appealAssistant.email,
+            appealCase: {
+              appealReceivedByCourtDate,
+              appealAssistant: {
+                name: appealAssistant.name,
+                email: appealAssistant.email,
+              },
+              appealJudge1: {
+                name: appealJudge1.name,
+                email: appealJudge1.email,
+              },
             },
             judge: { name: judge.name, email: judge.email },
-            appealJudge1: {
-              name: appealJudge1.name,
-              email: appealJudge1.email,
-            },
             registrar: { name: registrar.name, email: registrar.email },
             notifications,
           } as Case,

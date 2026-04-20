@@ -56,7 +56,9 @@ export const SingleValue = <T extends ReactSelectOption>(
 export const Option = <T extends ReactSelectOption>(props: OptionProps<T>) => {
   return (
     <components.Option {...props}>
-      <Text variant="small">{props.children}</Text>
+      <Text variant="small" color={!props.data.value ? 'dark300' : 'dark400'}>
+        {props.children}
+      </Text>
     </components.Option>
   )
 }
