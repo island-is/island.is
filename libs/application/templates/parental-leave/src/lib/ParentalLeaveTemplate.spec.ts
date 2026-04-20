@@ -1050,9 +1050,11 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
-      const [hasAborted, abortedState, abortedApplication] = helper.changeState({
-        type: DefaultEvents.ABORT,
-      })
+      const [hasAborted, abortedState, abortedApplication] = helper.changeState(
+        {
+          type: DefaultEvents.ABORT,
+        },
+      )
 
       expect(hasAborted).toBe(true)
       expect(abortedState).toBe(ApplicationStates.APPROVED)
