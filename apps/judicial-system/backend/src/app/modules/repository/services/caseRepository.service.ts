@@ -448,11 +448,6 @@ export class CaseRepositoryService {
         { transaction: options.transaction },
       )
 
-      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
-        [result],
-        { transaction: options.transaction },
-      )
-
       return result
     } catch (error) {
       this.logger.error('Error creating a new case with data:', {
@@ -531,9 +526,16 @@ export class CaseRepositoryService {
 
       const { id: splitCaseId } = result
 
+      const unassignedPoliceCaseNumbersForSplit =
+        await this.caseDefendantPoliceCaseNumberRepositoryService.findUnassignedPoliceCaseNumbersForSplit(
+          caseId,
+          defendantId,
+          { transaction },
+        )
+
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         splitCaseId,
-        caseToSplit.policeCaseNumbers ?? [],
+        unassignedPoliceCaseNumbersForSplit,
         { transaction },
       )
 

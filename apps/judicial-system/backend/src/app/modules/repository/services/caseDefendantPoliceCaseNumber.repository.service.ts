@@ -71,6 +71,43 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
   }
 
+  /**
+   * Police case numbers that are not assigned to any defendant on the case need to move to the new case.
+   */
+  async findUnassignedPoliceCaseNumbersForSplit(
+    caseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<string[]> {
+    const rows = await this.model.findAll({
+      where: { caseId },
+      attributes: ['defendantId', 'policeCaseNumber'],
+      transaction: options.transaction,
+    })
+
+    const normalize = (policeCaseNumber: string) => policeCaseNumber.trim()
+
+    const defendantNumbers = new Set(
+      rows
+        .filter((row) => row.defendantId === defendantId)
+        .map((row) => normalize(row.policeCaseNumber))
+        .filter((policeCaseNumber) => policeCaseNumber.length > 0),
+    )
+
+    const unassigned = rows
+      .filter((row) => row.defendantId == null)
+      .map((row) => normalize(row.policeCaseNumber))
+      .filter(
+        (policeCaseNumber) =>
+          policeCaseNumber.length > 0 &&
+          !defendantNumbers.has(policeCaseNumber),
+      )
+
+    return unassigned
+      .sort((a, b) => a.localeCompare(b))
+      .filter((n, i) => i === 0 || n !== unassigned[i - 1])
+  }
+
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },

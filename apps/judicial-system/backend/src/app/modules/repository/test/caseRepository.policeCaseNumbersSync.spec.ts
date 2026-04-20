@@ -63,6 +63,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     .mockResolvedValue(new Map())
 
   const resolvePoliceCaseNumbersForCases = jest.fn()
+  const findUnassignedPoliceCaseNumbersForSplit = jest
+    .fn()
+    .mockResolvedValue([])
 
   let caseRepositoryService: CaseRepositoryService
   let caseModel: ReturnType<typeof mockSequelizeModel>
@@ -157,6 +160,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
             moveAssignedRowsToCaseForDefendant,
             findDistinctPoliceCaseNumbersByCaseIds,
             resolvePoliceCaseNumbersForCases,
+            findUnassignedPoliceCaseNumbersForSplit,
           },
         },
         CaseRepositoryService,
@@ -297,14 +301,21 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
         new Map([['parent-case-id', ['007-2024-1', '007-2024-2']]]),
       )
+      findUnassignedPoliceCaseNumbersForSplit.mockResolvedValue(['007-2024-1'])
 
       await caseRepositoryService.split('parent-case-id', 'defendant-id', {
         transaction,
       })
 
+      expect(findUnassignedPoliceCaseNumbersForSplit).toHaveBeenCalledWith(
+        'parent-case-id',
+        'defendant-id',
+        { transaction },
+      )
+
       expect(replaceUnassigned).toHaveBeenCalledWith(
         'split-case-id',
-        ['007-2024-1', '007-2024-2'],
+        ['007-2024-1'],
         { transaction },
       )
 
