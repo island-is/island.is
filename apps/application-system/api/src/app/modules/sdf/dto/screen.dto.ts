@@ -90,6 +90,19 @@ export class ComponentDto {
   description?: string
 
   @ApiPropertyOptional()
+  subTitle?: string
+
+  @ApiPropertyOptional()
+  checkboxLabel?: string
+
+  @ApiPropertyOptional({ type: [Object] })
+  dataProviders?: Array<{
+    id: string
+    title: string
+    subTitle?: string
+  }>
+
+  @ApiPropertyOptional()
   introText?: string
 
   @ApiPropertyOptional()
@@ -118,6 +131,14 @@ export class ComponentDto {
 
   @ApiPropertyOptional()
   maxLength?: number
+
+  /** Mirrors `TextField.variant` (e.g. `textarea`, `number`). */
+  @ApiPropertyOptional()
+  inputVariant?: string
+
+  /** Mirrors `TextField.rows` when `inputVariant` is `textarea`. */
+  @ApiPropertyOptional()
+  textareaRows?: number
 
   @ApiPropertyOptional()
   maxSize?: number
@@ -160,6 +181,43 @@ export class ComponentDto {
 
   @ApiPropertyOptional()
   maxItems?: number
+
+  @ApiPropertyOptional({ type: [Object] })
+  informationCardItems?: Array<{ label: string; value: string }>
+
+  @ApiPropertyOptional()
+  paymentChargeHeading?: string
+
+  @ApiPropertyOptional({ type: [Object] })
+  paymentChargeLines?: Array<{
+    description: string
+    quantity?: string
+    amount: string
+  }>
+
+  @ApiPropertyOptional()
+  paymentChargeTotalLabel?: string
+
+  @ApiPropertyOptional()
+  paymentChargeTotalAmount?: string
+
+  @ApiPropertyOptional()
+  pdfDescription?: string
+
+  @ApiPropertyOptional()
+  pdfLinkTitle?: string
+
+  @ApiPropertyOptional()
+  pdfLinkUrl?: string
+
+  @ApiPropertyOptional()
+  copyLinkTitle?: string
+
+  @ApiPropertyOptional()
+  copyLinkText?: string
+
+  @ApiPropertyOptional()
+  copyButtonTitle?: string
 }
 
 export class PageDto {

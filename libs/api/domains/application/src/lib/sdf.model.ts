@@ -115,6 +115,13 @@ export class SdfTextField {
   @Field({ nullable: true })
   defaultValue?: string
 
+  /** Same values as application `TextField.variant` (`text`, `textarea`, `number`, …). */
+  @Field({ nullable: true })
+  inputVariant?: string
+
+  @Field(() => Int, { nullable: true })
+  textareaRows?: number
+
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
@@ -761,6 +768,99 @@ export class SdfVehiclePermnoWithInfoField {
   clientCondition?: typeof SdfClientCondition
 }
 
+@ObjectType('SdfInformationCardItem')
+export class SdfInformationCardItem {
+  @Field()
+  label!: string
+
+  @Field()
+  value!: string
+}
+
+@ObjectType('SdfInformationCardField')
+export class SdfInformationCardField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => [SdfInformationCardItem])
+  informationCardItems!: SdfInformationCardItem[]
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfPaymentChargeLine')
+export class SdfPaymentChargeLine {
+  @Field()
+  description!: string
+
+  @Field({ nullable: true })
+  quantity?: string
+
+  @Field()
+  amount!: string
+}
+
+@ObjectType('SdfPaymentChargeOverviewField')
+export class SdfPaymentChargeOverviewField {
+  @Field()
+  id!: string
+
+  @Field()
+  paymentChargeHeading!: string
+
+  @Field(() => [SdfPaymentChargeLine])
+  paymentChargeLines!: SdfPaymentChargeLine[]
+
+  @Field()
+  paymentChargeTotalLabel!: string
+
+  @Field()
+  paymentChargeTotalAmount!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfPdfLinkButtonField')
+export class SdfPdfLinkButtonField {
+  @Field()
+  id!: string
+
+  @Field()
+  pdfDescription!: string
+
+  @Field()
+  pdfLinkTitle!: string
+
+  @Field()
+  pdfLinkUrl!: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
+@ObjectType('SdfCopyLinkField')
+export class SdfCopyLinkField {
+  @Field()
+  id!: string
+
+  @Field({ nullable: true })
+  copyLinkTitle?: string
+
+  @Field()
+  copyLinkText!: string
+
+  @Field({ nullable: true })
+  copyButtonTitle?: string
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+}
+
 @ObjectType('SdfCustomComponent')
 export class SdfCustomComponent {
   @Field({ nullable: true })
@@ -842,6 +942,10 @@ const allComponentTypes = () =>
     SdfFieldsRepeaterField,
     SdfOverviewField,
     SdfVehiclePermnoWithInfoField,
+    SdfInformationCardField,
+    SdfPaymentChargeOverviewField,
+    SdfPdfLinkButtonField,
+    SdfCopyLinkField,
     SdfRepeaterComponent,
     SdfCustomComponent,
   ] as const
@@ -894,10 +998,10 @@ const resolveComponentTypeByName = (
     VEHICLE_SELECT: SdfSelectField,
     REPEATER: SdfRepeaterComponent,
     CUSTOM: SdfCustomComponent,
-    INFORMATION_CARD: SdfCustomComponent,
-    PAYMENT_CHARGE_OVERVIEW: SdfCustomComponent,
-    PDF_LINK_BUTTON: SdfCustomComponent,
-    COPY_LINK: SdfCustomComponent,
+    INFORMATION_CARD: SdfInformationCardField,
+    PAYMENT_CHARGE_OVERVIEW: SdfPaymentChargeOverviewField,
+    PDF_LINK_BUTTON: SdfPdfLinkButtonField,
+    COPY_LINK: SdfCopyLinkField,
   }
   return typeMap[typeName]
 }

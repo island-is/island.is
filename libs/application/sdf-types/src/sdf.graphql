@@ -104,6 +104,17 @@ union Component =
   | ImageField
   | BankAccountField
   | SliderField
+  | ExternalDataProviderField
+  | TitleField
+  | PaginatedSearchableTableField
+  | NationalIdWithNameField
+  | FieldsRepeaterField
+  | OverviewField
+  | VehiclePermnoWithInfoField
+  | InformationCardField
+  | PaymentChargeOverviewField
+  | PdfLinkButtonField
+  | CopyLinkField
   | RepeaterComponent
   | CustomComponent
 
@@ -377,6 +388,100 @@ type SliderField {
   min: Int!
   max: Int!
   step: Int
+  clientCondition: ClientCondition
+}
+
+type ExternalDataProviderField {
+  id: String!
+  label: String!
+  subTitle: String
+  description: String
+  checkboxLabel: String
+  dataProviders: [ExternalDataProviderItem!]
+}
+
+type ExternalDataProviderItem {
+  id: String!
+  title: String!
+  subTitle: String
+}
+
+type TitleField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type PaginatedSearchableTableField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type NationalIdWithNameField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type FieldsRepeaterField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type OverviewField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type VehiclePermnoWithInfoField {
+  id: String!
+  label: String!
+  clientCondition: ClientCondition
+}
+
+type InformationCardItem {
+  label: String!
+  value: String!
+}
+
+type InformationCardField {
+  id: String!
+  label: String!
+  informationCardItems: [InformationCardItem!]!
+  clientCondition: ClientCondition
+}
+
+type PaymentChargeLine {
+  description: String!
+  quantity: String
+  amount: String!
+}
+
+type PaymentChargeOverviewField {
+  id: String!
+  paymentChargeHeading: String!
+  paymentChargeLines: [PaymentChargeLine!]!
+  paymentChargeTotalLabel: String!
+  paymentChargeTotalAmount: String!
+  clientCondition: ClientCondition
+}
+
+type PdfLinkButtonField {
+  id: String!
+  pdfDescription: String!
+  pdfLinkTitle: String!
+  pdfLinkUrl: String!
+  clientCondition: ClientCondition
+}
+
+type CopyLinkField {
+  id: String!
+  copyLinkTitle: String
+  copyLinkText: String!
+  copyButtonTitle: String
   clientCondition: ClientCondition
 }
 

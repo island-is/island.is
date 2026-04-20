@@ -31,3 +31,8 @@ In this monorepo, code is shared via the `libs/` directory. You MUST respect the
 - Match the established style in nearby files instead of introducing ad-hoc patterns just because they compile.
 - Do NOT disable, bypass, or weaken lint rules unless the user explicitly asks for that change.
 - After substantive edits, check the files you changed for lint issues and fix any new problems you introduced before considering the task complete.
+
+# TypeScript style (AI-authored code)
+
+- **No `any`.** Prefer precise types, `unknown` with narrowing, or safe assertions to a named type (e.g. `FormText`). Do not use `any` to silence the compiler.
+- **Function style:** This repo sets ESLint `func-style` to **expression** — use `const name = (…) => { … }` or `const name = function (…) { … }` for module-scope functions. Avoid **function declarations** (`function name() {}`) at the top level; they trigger `func-style` warnings.

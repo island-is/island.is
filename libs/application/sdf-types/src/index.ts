@@ -10,3 +10,7 @@ export {
   SDF_CMP_CONTAINS,
   SDF_CMP_NOT_CONTAINS,
 } from './SdfComparators'
+export {
+  ALL_SDF_FIELD_TYPES,
+  FIELD_TYPE_TO_GRAPHQL_TYPENAME,
+} from './sdfFieldTypesContract'

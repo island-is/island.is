@@ -10,7 +10,9 @@ import { evaluateClientCondition } from '../lib/evaluateClientCondition'
 import {
   getCustomComponent,
   validateCustomComponentProps,
+  isCustomComponentWriteAllowed,
 } from './registry'
+import { SDF_FIELD_BLOCK_MARGIN_BOTTOM } from './sdfLayoutTokens'
 import {
   AlertMessage,
   AccordionCard,
@@ -46,6 +48,8 @@ const FULL_ROW_TYPES = new Set([
   'SdfTitleField',
   'SdfDescriptionField',
   'SdfExternalDataProviderField',
+  'SdfInformationCardField',
+  'SdfPaymentChargeOverviewField',
 ])
 
 const isHalfWidthCandidate = (comp: SdfComponentData): boolean =>
@@ -188,9 +192,11 @@ const ComponentSwitch = ({
   const currentValue = component.id ? answers[component.id] : undefined
 
   switch (component.__typename) {
-    case 'SdfTextField':
+    case 'SdfTextField': {
+      const inputVariant = component.inputVariant ?? 'text'
+      const isTextarea = inputVariant === 'textarea'
       return (
-        <Box marginBottom={3}>
+        <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
           <Input
             id={component.id ?? ''}
             name={component.id ?? ''}
@@ -206,13 +212,30 @@ const ComponentSwitch = ({
             }
             onChange={(e) => handleChange(e.target.value)}
             size="md"
+            textarea={isTextarea}
+            rows={
+              isTextarea ? component.textareaRows ?? undefined : undefined
+            }
+            type={
+              !isTextarea && inputVariant !== 'currency'
+                ? inputVariant === 'number'
+                  ? 'number'
+                  : inputVariant === 'email'
+                    ? 'email'
+                    : inputVariant === 'tel'
+                      ? 'tel'
+                      : 'text'
+                : 'text'
+            }
+            currency={inputVariant === 'currency'}
           />
         </Box>
       )
+    }
 
     case 'SdfSelectField':
       return (
-        <Box marginBottom={3}>
+        <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
           <Select
             name={component.id ?? ''}
             label={component.label ?? ''}
@@ -262,7 +285,7 @@ const ComponentSwitch = ({
     case 'SdfRadioField': {
       const radioSplit = component.width === 'HALF' ? '1/2' : '1/1'
       return (
-        <Box marginBottom={3} paddingTop={2}>
+        <Box marginBottom={3} paddingTop={0}>
           <Text variant="h4" as="h4" marginBottom={2}>
             {component.label}
           </Text>
@@ -582,6 +605,92 @@ const ComponentSwitch = ({
         </Box>
       )
 
+    case 'SdfInformationCardField': {
+      const rows = component.informationCardItems ?? []
+      return (
+        <Box
+          marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}
+          border="standard"
+          borderColor="blue200"
+          borderWidth="standard"
+          paddingY={2}
+          paddingX={2}
+        >
+          {rows.map((row, i) => (
+            <Box display="flex" key={`${row.label}-${i}`} paddingY={1}>
+              <Text fontWeight="semiBold">
+                {row.label}
+                &nbsp;
+              </Text>
+              <Box>
+                <Text>{row.value}</Text>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      )
+    }
+
+    case 'SdfPaymentChargeOverviewField': {
+      const lines = component.paymentChargeLines ?? []
+      return (
+        <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+          <Text variant="h3" as="h4" marginY={2}>
+            {component.paymentChargeHeading}
+          </Text>
+          {lines.map((line, i) => (
+            <Box
+              key={`${line.description}-${i}`}
+              paddingTop={1}
+              display="flex"
+              justifyContent="spaceBetween"
+            >
+              <Text>{line.description}</Text>
+              <Text>{line.amount}</Text>
+            </Box>
+          ))}
+          <Box paddingY={3}>
+            <Divider />
+          </Box>
+          <Box display="flex" justifyContent="spaceBetween" paddingBottom={2}>
+            <Text variant="h5">{component.paymentChargeTotalLabel}</Text>
+            <Text color="blue400" variant="h3">
+              {component.paymentChargeTotalAmount}
+            </Text>
+          </Box>
+        </Box>
+      )
+    }
+
+    case 'SdfPdfLinkButtonField':
+      return (
+        <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+          <Text variant="small" marginBottom={1}>
+            {component.pdfDescription}
+          </Text>
+          <LinkV2 href={component.pdfLinkUrl ?? '#'}>
+            {component.pdfLinkTitle}
+          </LinkV2>
+        </Box>
+      )
+
+    case 'SdfCopyLinkField':
+      return (
+        <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+          {component.copyLinkTitle && (
+            <Text variant="h5" marginBottom={1}>
+              {component.copyLinkTitle}
+            </Text>
+          )}
+          <Text>{component.copyLinkText}</Text>
+          {component.copyButtonTitle && (
+            <Box marginTop={2}>
+              <Button size="small">{component.copyButtonTitle}</Button>
+            </Box>
+          )}
+        </Box>
+      )
+
     case 'SdfCustomComponent':
       return (
         <CustomComponentRenderer
@@ -835,6 +944,7 @@ const CustomComponentRenderer = ({
 }) => {
   const { component: Component } = getCustomComponent(componentName)
   const { parsed } = validateCustomComponentProps(componentName, rawProps)
+  const allowWrites = isCustomComponentWriteAllowed(componentName)
 
   const DynComponent = Component as React.ComponentType<
     Record<string, unknown>
@@ -843,7 +953,7 @@ const CustomComponentRenderer = ({
   return (
     <DynComponent
       componentName={componentName}
-      onAnswerChange={onAnswerChange}
+      onAnswerChange={allowWrites ? onAnswerChange : undefined}
       {...parsed}
     />
   )

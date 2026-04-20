@@ -12,6 +12,11 @@ import { z } from 'zod'
  * Security: Custom components that write to the answers store MUST go through
  * the onAnswerChange callback, not direct local state (§8, Constraint 5).
  * The Zod schema catches prop mismatches before rendering (§8, Constraint 15).
+ *
+ * **Write policy:** Only names in {@link ALLOWED_CUSTOM_COMPONENT_NAMES} receive
+ * `onAnswerChange`. All other names render read-only (props still validated when
+ * registered). Add a name here when the template + security review approves
+ * server-validated writes for that escape hatch.
  */
 
 const FallbackComponent = dynamic(
@@ -38,6 +43,13 @@ const registry: Record<string, RegistryEntry> = {
   //   }),
   // },
 }
+
+/** Escape hatches allowed to receive `onAnswerChange` (server round-trips only). */
+export const ALLOWED_CUSTOM_COMPONENT_NAMES = new Set<string>([])
+
+export const isCustomComponentWriteAllowed = (
+  componentName: string,
+): boolean => ALLOWED_CUSTOM_COMPONENT_NAMES.has(componentName)
 
 export const getCustomComponent = (componentName: string): RegistryEntry => {
   return (

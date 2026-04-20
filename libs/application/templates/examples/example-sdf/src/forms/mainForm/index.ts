@@ -1,6 +1,6 @@
 import { FormBuilder } from '@island.is/application/core'
-import type { DynamicCheck } from '@island.is/application/types'
-import { dataSchema } from '../../lib/dataSchema'
+import type { Application, DynamicCheck } from '@island.is/application/types'
+import { dataSchema, type ExampleSdfAnswers } from '../../lib/dataSchema'
 import { PlotDetailsApi } from '../../dataProviders'
 
 interface Plot {
@@ -10,12 +10,25 @@ interface Plot {
   sizeSqm: number
 }
 
-const getPlots = (app: any): Plot[] =>
-  app.externalData?.getMyPlots?.data?.plots ?? []
+type ExampleSdfApplication = Application<ExampleSdfAnswers>
 
-const getSelectedPlot = (app: any): Plot | undefined => {
+const isPlotsPayload = (data: unknown): data is { plots: Plot[] } => {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'plots' in data &&
+    Array.isArray((data as { plots: unknown }).plots)
+  )
+}
+
+const getPlots = (app: ExampleSdfApplication): Plot[] => {
+  const data = app.externalData?.getMyPlots?.data
+  return isPlotsPayload(data) ? data.plots : []
+}
+
+const getSelectedPlot = (app: ExampleSdfApplication): Plot | undefined => {
   const plots = getPlots(app)
-  return plots.find((p: Plot) => p.id === app.answers?.selectedPlot)
+  return plots.find((p) => p.id === app.answers.selectedPlot)
 }
 
 type PlotDetailsData = {
@@ -26,8 +39,24 @@ type PlotDetailsData = {
   leaseExpires: string
 }
 
-const getPlotDetailsData = (app: any): PlotDetailsData | null =>
-  app.externalData?.getPlotDetails?.data ?? null
+const isPlotDetailsData = (data: unknown): data is PlotDetailsData => {
+  if (typeof data !== 'object' || data === null) return false
+  const o = data as Record<string, unknown>
+  return (
+    typeof o.soilType === 'string' &&
+    typeof o.sunlightExposure === 'string' &&
+    typeof o.availableTools === 'string' &&
+    typeof o.neighboringPlots === 'string' &&
+    typeof o.leaseExpires === 'string'
+  )
+}
+
+const getPlotDetailsData = (
+  app: ExampleSdfApplication,
+): PlotDetailsData | null => {
+  const data = app.externalData?.getPlotDetails?.data
+  return isPlotDetailsData(data) ? data : null
+}
 
 /**
  * Server-evaluated: only show after a successful getPlotDetails payload.
@@ -59,8 +88,8 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
           'Select the garden plot you would like to request an enlargement for. The plots listed below are registered to your account.',
         )
         .addSelectField('selectedPlot', 'My garden plots', {
-          options: (app: any) =>
-            getPlots(app).map((p: Plot) => ({
+          options: (app: ExampleSdfApplication) =>
+            getPlots(app).map((p) => ({
               label: `${p.name} — ${p.address} (${p.sizeSqm} sqm)`,
               value: p.id,
             })),
@@ -76,31 +105,36 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
         .addKeyValueField(
           'plotSoilType',
           'Soil',
-          (app: any) => getPlotDetailsData(app)?.soilType ?? '—',
+          (app: ExampleSdfApplication) =>
+            getPlotDetailsData(app)?.soilType ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotSunlight',
           'Sunlight',
-          (app: any) => getPlotDetailsData(app)?.sunlightExposure ?? '—',
+          (app: ExampleSdfApplication) =>
+            getPlotDetailsData(app)?.sunlightExposure ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotTools',
           'Available tools',
-          (app: any) => getPlotDetailsData(app)?.availableTools ?? '—',
+          (app: ExampleSdfApplication) =>
+            getPlotDetailsData(app)?.availableTools ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotNeighbors',
           'Neighboring plots',
-          (app: any) => getPlotDetailsData(app)?.neighboringPlots ?? '—',
+          (app: ExampleSdfApplication) =>
+            getPlotDetailsData(app)?.neighboringPlots ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotLease',
           'Lease until',
-          (app: any) => getPlotDetailsData(app)?.leaseExpires ?? '—',
+          (app: ExampleSdfApplication) =>
+            getPlotDetailsData(app)?.leaseExpires ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
     })
@@ -114,17 +148,21 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
         .addKeyValueField(
           'plotName',
           'Plot name',
-          (app: any) => getSelectedPlot(app)?.name ?? '—',
+          (app: ExampleSdfApplication) => getSelectedPlot(app)?.name ?? '—',
         )
         .addKeyValueField(
           'plotAddress',
           'Address',
-          (app: any) => getSelectedPlot(app)?.address ?? '—',
+          (app: ExampleSdfApplication) => getSelectedPlot(app)?.address ?? '—',
         )
-        .addKeyValueField('plotCurrentSize', 'Current size', (app: any) => {
-          const plot = getSelectedPlot(app)
-          return plot ? `${plot.sizeSqm} sqm` : '—'
-        })
+        .addKeyValueField(
+          'plotCurrentSize',
+          'Current size',
+          (app: ExampleSdfApplication) => {
+            const plot = getSelectedPlot(app)
+            return plot ? `${plot.sizeSqm} sqm` : '—'
+          },
+        )
     })
   })
   .addSection('enlargement', 'Enlargement Request', (section) => {
