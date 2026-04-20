@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import initApollo from '@island.is/web/graphql/client'
-import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
 import {
   GetCourtAgendasQuery,
   GetCourtAgendasQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { GET_COURT_AGENDAS_QUERY } from '@island.is/web/screens/queries/CourtAgendas'
+import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
 
 interface Item {
   date: string | null | undefined
