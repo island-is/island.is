@@ -93,7 +93,10 @@ describe('CaseRepositoryService — police case number junction sync', () => {
           opts,
         )
         for (const c of cases) {
-          c.setDataValue('policeCaseNumbers', map.get(c.id) ?? [])
+          const fromJunction = map.get(c.id) ?? []
+          if (fromJunction.length > 0) {
+            c.setDataValue('policeCaseNumbers', fromJunction)
+          }
         }
       },
     )
@@ -292,9 +295,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       caseModel.create.mockResolvedValue(splitCase)
 
       findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
-        new Map([
-          ['parent-case-id', ['007-2024-1', '007-2024-2']],
-        ]),
+        new Map([['parent-case-id', ['007-2024-1', '007-2024-2']]]),
       )
 
       await caseRepositoryService.split('parent-case-id', 'defendant-id', {

@@ -448,6 +448,11 @@ export class CaseRepositoryService {
         { transaction: options.transaction },
       )
 
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [result],
+        { transaction: options.transaction },
+      )
+
       return result
     } catch (error) {
       this.logger.error('Error creating a new case with data:', {

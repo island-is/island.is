@@ -4,9 +4,9 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   Case,
-  CaseAppealRulingDecision,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
@@ -211,6 +211,7 @@ export const isDefendantStepValidRC = (
   return Boolean(
     policeCaseNumbers &&
       policeCaseNumbers.length > 0 &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
       !firstDefendantIsInvalid(workingCase) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
@@ -230,7 +231,8 @@ export const isDefendantStepValidRC = (
 
 export const isDefendantStepValidIC = (workingCase: Case): boolean => {
   return Boolean(
-    !someDefendantIsInvalid(workingCase) &&
+    (workingCase.defendants?.length ?? 0) > 0 &&
+      !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
@@ -711,7 +713,7 @@ export const isCourtOfAppealRulingStepFieldsValid = (
   return Boolean(
     workingCase.appealCase?.appealRulingDecision &&
       (workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
+        AppealCaseRulingDecision.DISCONTINUED ||
         validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
           .isValid),
   )
@@ -721,7 +723,7 @@ export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
   return Boolean(
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
       (workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
+        AppealCaseRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,
         )),

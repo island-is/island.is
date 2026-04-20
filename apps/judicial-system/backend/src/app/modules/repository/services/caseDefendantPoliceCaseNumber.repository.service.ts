@@ -128,7 +128,10 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       )
 
       for (const c of cases) {
-        c.setDataValue('policeCaseNumbers', map.get(c.id) ?? [])
+        const fromJunction = map.get(c.id) ?? []
+        if (fromJunction.length > 0) {
+          c.setDataValue('policeCaseNumbers', fromJunction)
+        }
       }
     } catch (error) {
       this.logger.error(

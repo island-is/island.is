@@ -439,6 +439,9 @@ export class FileController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
@@ -470,6 +473,9 @@ export class FileController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('policeDigitalCaseFileTokenUrl')
   @ApiOkResponse({
