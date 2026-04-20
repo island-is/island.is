@@ -69,12 +69,14 @@ export const parseBufferToMileageRecord = async (
   }
 
   const filteredValues = values.filter((row) => {
+    const permno = row[vehicleIndex]
     const mileageValue = row[mileageIndex]
     const sanitizedMileage = sanitizeNumber(mileageValue || '')
     const numericMileage = Number(sanitizedMileage)
 
-    // Keep row if mileage is not NaN, not 0, and not empty
     return (
+      permno?.trim() !== '' &&
+      permno != null &&
       !Number.isNaN(numericMileage) &&
       numericMileage > 0 &&
       mileageValue?.trim() !== ''
