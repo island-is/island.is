@@ -1142,7 +1142,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     )}
                   </Stack>
                 </GridColumn>
-                <GridColumn span={['1/1', '1/1', '1/1', '3/12', '3/12']}>
+                <GridColumn span={['1/1', '1/1', '1/1', '0', '3/12']}>
                   <Hidden below="xl">
                     <Box
                       display="flex"
