@@ -7,7 +7,7 @@ on:
 
 jobs:
   notify:
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     continue-on-error: true
     permissions:
       pull-requests: write

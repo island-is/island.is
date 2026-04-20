@@ -52,7 +52,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -83,7 +83,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     env:
       CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -149,7 +149,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 15
     steps:
       - name: checkout
@@ -182,7 +182,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -208,7 +208,7 @@ jobs:
 
   lintfix-changed-files:
     name: Lintfix Changed Files
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
     steps:
       - name: Checkout code
@@ -244,7 +244,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 35
     env:
       NODE_OPTIONS: --max-old-space-size=4096
@@ -265,7 +265,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -288,7 +288,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
