@@ -42,6 +42,61 @@ interface ScreenIntrospection {
   children?: ScreenIntrospection[] | null
 }
 
+/** Deduped union of `messageDescriptors` on each screen (already flattened for multifields on the API). */
+const mergeScreensMessageDescriptors = (
+  screens: ScreenIntrospection[],
+): MessageDescriptor[] => {
+  const seen = new Set<string>()
+  const out: MessageDescriptor[] = []
+  for (const screen of screens) {
+    for (const d of screen.messageDescriptors) {
+      if (!seen.has(d.id)) {
+        seen.add(d.id)
+        out.push(d)
+      }
+    }
+  }
+  return out
+}
+
+/** One sidebar entry for a whole section (matches stepper when there are no subsections). */
+const buildSectionNavigationScreen = (
+  sectionId: string,
+  title: string | null | undefined,
+  screens: ScreenIntrospection[],
+): ScreenIntrospection => ({
+  id: `__navigation:section:${sectionId}`,
+  type: 'SECTION_NAV_GROUP',
+  title: title ?? sectionId,
+  messageDescriptors: mergeScreensMessageDescriptors(screens),
+})
+
+/** One sidebar entry per subsection (matches stepper subsection tabs). */
+const buildSubSectionNavigationScreen = (
+  subSectionId: string,
+  title: string | null | undefined,
+  screens: ScreenIntrospection[],
+): ScreenIntrospection => ({
+  id: `__navigation:subsection:${subSectionId}`,
+  type: 'SUBSECTION_NAV_GROUP',
+  title: title ?? subSectionId,
+  messageDescriptors: mergeScreensMessageDescriptors(screens),
+})
+
+/**
+ * Section-level leaf not under a subsection (uncommon). Keeps translations for that leaf only,
+ * labeled by the leaf title so the sidebar stays usable if both patterns appear in one section.
+ */
+const buildSectionLeafNavigationScreen = (
+  sectionId: string,
+  screen: ScreenIntrospection,
+): ScreenIntrospection => ({
+  id: `__navigation:sectionLeaf:${sectionId}:${screen.id}`,
+  type: 'SECTION_LEAF_NAV_GROUP',
+  title: screen.title ?? screen.id,
+  messageDescriptors: mergeScreensMessageDescriptors([screen]),
+})
+
 const AI_TRANSLATE_QUERY = gql`
   query aiTranslateStrings(
     $namespace: String!
@@ -71,6 +126,21 @@ const shortenForToast = (text: string): string => {
     return firstLine
   }
   return `${firstLine.slice(0, TOAST_ERROR_MAX_LENGTH)}…`
+}
+
+/** Sidebar label for a template role's form (accordion). */
+const getRoleFormAccordionLabel = (roleId: string): string => {
+  switch (roleId.toLowerCase()) {
+    case 'applicant':
+      return 'Applicant form'
+    case 'delegate':
+      return 'Delegate form'
+    default: {
+      const rest = roleId.slice(1)
+      const initial = roleId.charAt(0).toUpperCase()
+      return `${initial}${rest} form`
+    }
+  }
 }
 
 const getTranslationSaveErrorDetail = (err: unknown): string => {
@@ -119,10 +189,7 @@ const TranslationWorkspace = () => {
   })
 
   const persistedByKey = useMemo(() => {
-    const map: Record<
-      string,
-      { valueIs: string; valueEn?: string | null }
-    > = {}
+    const map: Record<string, { valueIs: string; valueEn?: string | null }> = {}
     for (const row of translationsData?.applicationTranslations ?? []) {
       map[row.messageKey] = {
         valueIs: row.valueIs,
@@ -141,9 +208,7 @@ const TranslationWorkspace = () => {
     (messageKey: string) => {
       const row = persistedByKey[messageKey]
       if (!row) return ''
-      return activeLocale === 'en'
-        ? (row.valueEn ?? '')
-        : row.valueIs
+      return activeLocale === 'en' ? row.valueEn ?? '' : row.valueIs
     },
     [persistedByKey, activeLocale],
   )
@@ -190,19 +255,15 @@ const TranslationWorkspace = () => {
     return introspection?.allMessageDescriptors ?? []
   }, [selectedScreen, introspection])
 
-  const handleValueChange = useCallback(
-    (messageKey: string, value: string) => {
-      setEditedValues((prev) => ({ ...prev, [messageKey]: value }))
-    },
-    [],
-  )
+  const handleValueChange = useCallback((messageKey: string, value: string) => {
+    setEditedValues((prev) => ({ ...prev, [messageKey]: value }))
+  }, [])
 
   const handleAiTranslate = useCallback(async () => {
     const descriptorsToTranslate = currentDescriptors.filter((d) => {
       if (activeLocale !== 'en') return false
       const hasPending = editedValues[d.id] !== undefined
-      const hasEn =
-        (persistedByKey[d.id]?.valueEn ?? '').trim().length > 0
+      const hasEn = (persistedByKey[d.id]?.valueEn ?? '').trim().length > 0
       return !hasPending && !hasEn
     })
 
@@ -212,8 +273,7 @@ const TranslationWorkspace = () => {
     }
 
     try {
-      const namespace =
-        introspection?.translationNamespaces[0] ?? typeId ?? ''
+      const namespace = introspection?.translationNamespaces[0] ?? typeId ?? ''
 
       const { data: aiData } = await fetchAiTranslation({
         variables: {
@@ -249,13 +309,11 @@ const TranslationWorkspace = () => {
     if (dirtyEntries.length === 0) return
 
     try {
-      const translationsToSave = dirtyEntries.map(
-        ([messageKey, value]) => ({
-          namespace,
-          messageKey,
-          ...(activeLocale === 'en' ? { valueEn: value } : { valueIs: value }),
-        }),
-      )
+      const translationsToSave = dirtyEntries.map(([messageKey, value]) => ({
+        namespace,
+        messageKey,
+        ...(activeLocale === 'en' ? { valueEn: value } : { valueIs: value }),
+      }))
 
       const { data: mutationData } = await bulkUpdate({
         variables: { input: { translations: translationsToSave } },
@@ -316,20 +374,20 @@ const TranslationWorkspace = () => {
     )
   }
 
-  if (error || translationsError) {
-    const err = error ?? translationsError
-    const fromGraphQl = err.graphQLErrors
+  const loadError = error ?? translationsError
+  if (loadError) {
+    const fromGraphQl = loadError.graphQLErrors
       ?.map((e) => e.message)
       .filter(Boolean)
       .join('\n')
     const fromNetwork =
-      err.networkError instanceof Error
-        ? err.networkError.message
-        : err.networkError
-          ? String(err.networkError)
-          : ''
+      loadError.networkError instanceof Error
+        ? loadError.networkError.message
+        : loadError.networkError
+        ? String(loadError.networkError)
+        : ''
     const detailMessage =
-      fromGraphQl || fromNetwork || err.message || 'Unknown error'
+      fromGraphQl || fromNetwork || loadError.message || 'Unknown error'
 
     return (
       <GridContainer>
@@ -394,19 +452,8 @@ const TranslationWorkspace = () => {
         </Box>
 
         <Box display="flex" columnGap={2}>
-          <Tabs
-            label="Language"
-            contentBackground="white"
-            selected={activeLocale}
-            tabs={[
-              { id: 'is', label: 'IS', content: <></> },
-              { id: 'en', label: 'EN', content: <></> },
-            ]}
-            onChange={(id: string) =>
-              setActiveLocale(id as 'is' | 'en')
-            }
-          />
-          {activeLocale === 'en' && (
+          {/* This functionality has to be implemented later */}
+          {/* {activeLocale === 'en' && (
             <Button
               variant="ghost"
               size="small"
@@ -419,15 +466,20 @@ const TranslationWorkspace = () => {
                   : m.translationAiTranslateAll,
               )}
             </Button>
-          )}
+          )} */}
+          <Tabs
+            label="Language"
+            contentBackground="white"
+            selected={activeLocale}
+            tabs={[
+              { id: 'is', label: 'IS', content: <></> },
+              { id: 'en', label: 'EN', content: <></> },
+            ]}
+            onChange={(id: string) => setActiveLocale(id as 'is' | 'en')}
+          />
           {hasUnsavedChanges && (
-            <Button
-              size="small"
-              loading={saving}
-              onClick={handleSaveAll}
-            >
-              {formatMessage(m.translationSaveAll)} (
-              {unsavedCount})
+            <Button size="small" loading={saving} onClick={handleSaveAll}>
+              {formatMessage(m.translationSaveAll)} ({unsavedCount})
             </Button>
           )}
         </Box>
@@ -441,83 +493,114 @@ const TranslationWorkspace = () => {
             padding={2}
             style={{ maxHeight: '75vh', overflow: 'auto' }}
           >
-            <Text variant="h5" marginBottom={2}>
-              Screens
-            </Text>
-            <Button
-              variant={selectedScreen === null ? 'primary' : 'ghost'}
-              size="small"
-              onClick={() => setSelectedScreen(null)}
-            >
-              All strings
-            </Button>
             <Box marginTop={2}>
+              <Text variant="h3" marginBottom={2}>
+                States
+              </Text>
               <Accordion singleExpand={false}>
                 {introspection.states.map((state) => (
                   <AccordionItem
                     key={state.stateKey}
                     id={state.stateKey}
-                    label={`${state.stateName} (${state.status})`}
+                    label={`${state.stateName}`}
                   >
-                    {state.roles.map((role) => (
-                      <Box key={role.roleId} marginBottom={2}>
-                        <Text variant="eyebrow" marginBottom={1}>
-                          {role.roleId}
-                        </Text>
-                        {role.form?.sections.map((section) => (
-                          <Box key={section.id} marginLeft={2} marginBottom={1}>
-                            <Text variant="small" fontWeight="semiBold">
-                              {section.title ?? section.id}
-                            </Text>
-                            {section.screens.map((screen) => (
-                              <Box
-                                key={screen.id}
-                                marginLeft={2}
-                                cursor="pointer"
-                                onClick={() => setSelectedScreen(screen as ScreenIntrospection)}
-                                background={
-                                  selectedScreen?.id === screen.id
-                                    ? 'blue100'
-                                    : undefined
-                                }
-                                borderRadius="standard"
-                                padding={1}
-                              >
-                                <Text variant="small">
-                                  {screen.title ?? screen.id}
-                                </Text>
-                              </Box>
-                            ))}
-                            {section.subSections.map((sub) => (
-                              <Box key={sub.id} marginLeft={2}>
-                                <Text variant="small" color="dark300">
-                                  {sub.title ?? sub.id}
-                                </Text>
-                                {sub.screens.map((screen) => (
-                                  <Box
-                                    key={screen.id}
-                                    marginLeft={2}
-                                    cursor="pointer"
-                                    onClick={() => setSelectedScreen(screen as ScreenIntrospection)}
-                                    background={
-                                      selectedScreen?.id === screen.id
-                                        ? 'blue100'
-                                        : undefined
-                                    }
-                                    borderRadius="standard"
-                                    padding={1}
+                    <Box paddingLeft={2}>
+                      <Accordion singleExpand={false}>
+                        {state.roles.map((role) => (
+                          <AccordionItem
+                            key={`${state.stateKey}-${role.roleId}`}
+                            id={`${state.stateKey}-${role.roleId}`}
+                            label={getRoleFormAccordionLabel(role.roleId)}
+                            labelVariant="medium"
+                            labelUse="div"
+                            iconVariant="small"
+                          >
+                            {role.form?.sections.map((section) => {
+                              const screens =
+                                section.screens as ScreenIntrospection[]
+                              const { subSections } = section
+
+                              if (
+                                subSections.length === 0 &&
+                                screens.length === 0
+                              ) {
+                                return null
+                              }
+
+                              const navRow = (
+                                nav: ScreenIntrospection,
+                                key: string,
+                                labelWeight?: 'semiBold',
+                              ) => (
+                                <Box
+                                  key={key}
+                                  marginLeft={2}
+                                  marginTop={1}
+                                  cursor="pointer"
+                                  onClick={() => setSelectedScreen(nav)}
+                                  background={
+                                    selectedScreen?.id === nav.id
+                                      ? 'blue100'
+                                      : undefined
+                                  }
+                                  borderRadius="standard"
+                                  padding={1}
+                                >
+                                  <Text
+                                    variant="small"
+                                    fontWeight={labelWeight}
                                   >
-                                    <Text variant="small">
-                                      {screen.title ?? screen.id}
-                                    </Text>
+                                    {nav.title}
+                                  </Text>
+                                </Box>
+                              )
+
+                              if (subSections.length === 0) {
+                                const nav = buildSectionNavigationScreen(
+                                  section.id,
+                                  section.title,
+                                  screens,
+                                )
+                                return (
+                                  <Box key={section.id} marginBottom={1}>
+                                    {navRow(nav, section.id, 'semiBold')}
                                   </Box>
-                                ))}
-                              </Box>
-                            ))}
-                          </Box>
+                                )
+                              }
+
+                              return (
+                                <Box key={section.id} marginBottom={1}>
+                                  <Text variant="small" fontWeight="semiBold">
+                                    {section.title ?? section.id}
+                                  </Text>
+                                  {subSections.map((sub) => {
+                                    const subScreens =
+                                      sub.screens as ScreenIntrospection[]
+                                    if (subScreens.length === 0) {
+                                      return null
+                                    }
+                                    const nav =
+                                      buildSubSectionNavigationScreen(
+                                        sub.id,
+                                        sub.title,
+                                        subScreens,
+                                      )
+                                    return navRow(nav, sub.id)
+                                  })}
+                                  {screens.map((screen) => {
+                                    const nav = buildSectionLeafNavigationScreen(
+                                      section.id,
+                                      screen,
+                                    )
+                                    return navRow(nav, screen.id)
+                                  })}
+                                </Box>
+                              )
+                            })}
+                          </AccordionItem>
                         ))}
-                      </Box>
-                    ))}
+                      </Accordion>
+                    </Box>
                   </AccordionItem>
                 ))}
               </Accordion>
@@ -591,9 +674,7 @@ const TranslationWorkspace = () => {
                       onChange={(e) =>
                         handleValueChange(descriptor.id, e.target.value)
                       }
-                      textarea={
-                        (descriptor.defaultMessage?.length ?? 0) > 80
-                      }
+                      textarea={(descriptor.defaultMessage?.length ?? 0) > 80}
                       rows={3}
                     />
                   </Box>
