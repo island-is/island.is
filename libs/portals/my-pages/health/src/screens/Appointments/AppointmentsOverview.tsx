@@ -108,7 +108,7 @@ const AppointmentsOverview = () => {
                   setSearchTerm('')
                 }}
               >
-                {/* Hide until we decide to display more then booked (upcoming) appointments */}
+                {/* Hide until we decide to display more than booked (upcoming) appointments */}
                 {/* <Box
                   display="flex"
                   flexDirection="column"
