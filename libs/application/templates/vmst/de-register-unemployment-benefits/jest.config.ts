@@ -7,5 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/application/templates/vmst-actions/de-register-unemployment-benefits',
+    '../../../../../coverage/libs/application/templates/vmst/de-register-unemployment-benefits',
 }

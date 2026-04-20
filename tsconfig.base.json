@@ -663,8 +663,8 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
-      "@island.is/application/templates/vmst-actions/de-register-unemployment-benefits": [
-        "libs/application/templates/vmst-actions/de-register-unemployment-benefits/src/index.ts"
+      "@island.is/application/templates/vmst/de-register-unemployment-benefits": [
+        "libs/application/templates/vmst/de-register-unemployment-benefits/src/index.ts"
       ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"

@@ -281,7 +281,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/hh/courses'),
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: () =>
     import(
-      '@island.is/application/templates/vmst-actions/de-register-unemployment-benefits'
+      '@island.is/application/templates/vmst/de-register-unemployment-benefits'
     ),
 }
 

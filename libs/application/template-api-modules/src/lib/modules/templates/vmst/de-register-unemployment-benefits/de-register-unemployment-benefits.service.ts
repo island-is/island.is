@@ -10,7 +10,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { errorMsgs } from '@island.is/application/templates/vmst-actions/de-register-unemployment-benefits'
+import { errorMsgs } from '@island.is/application/templates/vmst/de-register-unemployment-benefits'
 
 @Injectable()
 export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiService {
