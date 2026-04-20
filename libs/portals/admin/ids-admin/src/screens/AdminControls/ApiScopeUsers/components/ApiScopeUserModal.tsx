@@ -89,9 +89,7 @@ export const ApiScopeUserModal = ({ modal }: ApiScopeUserModalProps) => {
               name="nationalId"
               label={formatMessage(m.apiScopeUsersNationalId)}
               value={modal.formData.nationalId}
-              onChange={(e) =>
-                modal.setFormField('nationalId', e.target.value)
-              }
+              onChange={(e) => modal.setFormField('nationalId', e.target.value)}
               disabled={modal.isEditing}
               size="sm"
               backgroundColor="blue"
@@ -163,9 +161,7 @@ export const ApiScopeUserModal = ({ modal }: ApiScopeUserModalProps) => {
                         onChange={() =>
                           modal.handleEnvironmentCheckboxChange(env)
                         }
-                        disabled={
-                          !modal.configuredEnvironments.includes(env)
-                        }
+                        disabled={!modal.configuredEnvironments.includes(env)}
                         large
                       />
                     </Box>
