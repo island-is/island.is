@@ -32,7 +32,7 @@ env:
 jobs:
   dedupe:
     name: Deduplicate
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     steps:
       - uses: actions/checkout@v4
         with:
