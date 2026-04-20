@@ -9,7 +9,6 @@ import { InputProps } from './types'
 
 const InputDate: FC<InputProps> = ({
   value,
-  defaultValue,
   onBlur,
   onChange,
   label,
@@ -18,9 +17,7 @@ const InputDate: FC<InputProps> = ({
   disabled,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [inputValue, setInputValue] = useState<string>(
-    value ?? defaultValue ?? '',
-  )
+  const [inputValue, setInputValue] = useState<string>(value ?? '')
 
   const handleBlur = (
     evt: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
