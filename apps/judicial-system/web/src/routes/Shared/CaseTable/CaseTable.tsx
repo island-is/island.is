@@ -171,13 +171,15 @@ const CaseTable: FC = () => {
             case ContextMenuCaseActionType.DELETE_CASE:
               return deleteCase(r.caseId)
             case ContextMenuCaseActionType.WITHDRAW_APPEAL:
-              return r.appealCaseId && withdrawAppeal(r.caseId, r.appealCaseId)
+              return r.appealCaseId
+                ? withdrawAppeal(r.caseId, r.appealCaseId)
+                : null
             case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
             default: // Default to opening the case in a new tab
               return openCaseInNewTab(r.caseId)
           }
         })
-        .filter((i) => i)
+        .filter((i) => i !== null)
     }
 
     const getRowClickAction = () => {
