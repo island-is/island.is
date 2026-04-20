@@ -41,7 +41,7 @@ import {
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
 import { AppointmentDetail } from './models/appointment-detail.model'
-import { AppointmentStatusEnum, PermitStatusEnum } from './models/enums'
+import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,

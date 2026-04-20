@@ -101,9 +101,10 @@ const AppointmentsOverview = () => {
                     backgroundColor="blue"
                   />
                 }
-                onFilterClear={() =>
+                onFilterClear={() => {
                   setFilter({ statuses: [], dates: undefined })
-                }
+                  setSearchTerm('')
+                }}
               >
                 {/* Hide until we decide to display more then booked (upcoming) appointments */}
                 {/* <Box

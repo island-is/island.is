@@ -17,6 +17,7 @@ query getAppointmentDetail($id: String!) {
       country
       latitude
       longitude
+      link
     }
   }
 }
