@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+import format from 'date-fns/fp/format'
 import { parseAsStringEnum, useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client'
 
@@ -25,7 +26,6 @@ import {
 
 import { GET_PHARMACIES } from './queries'
 import { m } from './translation.strings'
-import format from 'date-fns/fp/format'
 
 interface Props {
   slice: ConnectedComponent
