@@ -163,10 +163,6 @@ export class ApplicationLifeCycleService {
         )
       }
     }
-    console.log('--------------------------------')
-    console.log('notificationsToSend')
-    console.dir(notificationsToSend, { depth: null })
-    console.log('--------------------------------')
     // Pass them off to be sent
     await this.sendScheduledNotifications(notificationsToSend)
   }
@@ -195,10 +191,10 @@ export class ApplicationLifeCycleService {
         // do not add to the list of sent ids to be marked as sent, so that the notification will be retried
       }
     }
-    console.log('--------------------------------')
-    console.log('sentIds')
-    console.log(sentIds)
-    console.log('--------------------------------')
+
+    this.logger.info(
+      `Marking ${sentIds.length} scheduled notifications as sent.`,
+    )
 
     await this.applicationService.markScheduledNotificationsSent(sentIds)
   }
