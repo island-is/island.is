@@ -1,4 +1,5 @@
 export { AppealCase } from './models/appealCase.model'
+export { AppealEventLog } from './models/appealEventLog.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
@@ -26,6 +27,7 @@ export { User } from './models/user.model'
 export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
+export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'

@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { ConfigModule } from '@island.is/nest/config'
 
 import { AppealCase } from './models/appealCase.model'
+import { AppealEventLog } from './models/appealEventLog.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
@@ -22,6 +23,7 @@ import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
+import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
@@ -39,6 +41,7 @@ import { repositoryModuleConfig } from './repository.config'
   imports: [
     SequelizeModule.forFeature([
       AppealCase,
+      AppealEventLog,
       Case,
       CaseArchive,
       CaseFile,
@@ -61,6 +64,7 @@ import { repositoryModuleConfig } from './repository.config'
     ConfigModule.forFeature(repositoryModuleConfig),
   ],
   providers: [
+    AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
@@ -74,6 +78,7 @@ import { repositoryModuleConfig } from './repository.config'
     VerdictRepositoryService,
   ],
   exports: [
+    AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
