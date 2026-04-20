@@ -101,7 +101,7 @@ export const CategoryItems = ({
                   {title}
                 </Text>
                 {description && (
-                  <Text paddingTop={2} variant="medium" fontWeight="light">
+                  <Text paddingTop={2} variant="default" fontWeight="light">
                     {description}
                   </Text>
                 )}

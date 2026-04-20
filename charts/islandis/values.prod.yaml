@@ -3368,11 +3368,7 @@ services-form-system-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
-    XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
-    XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/'
-    XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
@@ -3472,8 +3468,6 @@ services-form-system-api:
     SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'
-    XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
-    XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
