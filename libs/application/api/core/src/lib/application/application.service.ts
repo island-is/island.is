@@ -564,6 +564,21 @@ export class ApplicationService {
     )
   }
 
+  async markScheduledNotificationsSent(ids: string[]) {
+    if (!ids.length) return [0]
+
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.SENT },
+      {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+        },
+      },
+    )
+  }
+
   async createScheduledNotifications(
     applicationId: string,
     state: string,

@@ -107,6 +107,100 @@ export class ApplicationLifeCycleService {
     this.logger.info(
       `Found ${scheduledNotifications.length} scheduled notifications to be processed.`,
     )
+    const notificationsToSend: {
+      notificationId: string
+      applicationId: string
+      dto: CreateHnippNotificationDto
+    }[] = []
+    for (const notification of scheduledNotifications) {
+      try {
+        // Fetch the application to get the applicant details
+        const application = await this.applicationService.findOneById(
+          notification.application_id,
+        )
+        if (!application) {
+          continue // Or handle missing application
+        }
+        // Convert the JSON Record<string, string> args to the Array<ArgumentDto> format
+        const argsArray = Object.entries(notification.args || {}).map(
+          ([key, value]) => ({
+            key,
+            value: String(value),
+          }),
+        )
+        // Handle applicant actors (delegations) vs normal applicant
+        if (
+          application.applicantActors &&
+          application.applicantActors.length > 0
+        ) {
+          application.applicantActors.forEach((actor) => {
+            notificationsToSend.push({
+              notificationId: notification.id,
+              applicationId: application.id,
+              dto: {
+                recipient: actor,
+                onBehalfOf: { nationalId: application.applicant },
+                templateId: notification.template,
+                args: argsArray,
+              },
+            })
+          })
+        } else {
+          notificationsToSend.push({
+            notificationId: notification.id,
+            applicationId: application.id,
+            dto: {
+              recipient: application.applicant,
+              templateId: notification.template,
+              args: argsArray,
+            },
+          })
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to prepare scheduled notification ${notification.id}`,
+          error,
+        )
+      }
+    }
+    console.log('--------------------------------')
+    console.log('notificationsToSend')
+    console.dir(notificationsToSend, { depth: null })
+    console.log('--------------------------------')
+    // Pass them off to be sent
+    await this.sendScheduledNotifications(notificationsToSend)
+  }
+
+  private async sendScheduledNotifications(
+    notificationsToSend: {
+      notificationId: string
+      applicationId: string
+      dto: CreateHnippNotificationDto
+    }[],
+  ) {
+    let sentIds: string[] = []
+    for (const notification of notificationsToSend) {
+      try {
+        await this.notificationApi.notificationsControllerCreateHnippNotification(
+          {
+            createHnippNotificationDto: notification.dto,
+          },
+        )
+        sentIds.push(notification.notificationId) // add successfully sent notifications to the list fo marking as sent
+      } catch (error) {
+        this.logger.error(
+          `Failed to send scheduled notification ${notification.notificationId} for application ${notification.applicationId}`,
+          error,
+        )
+        // do not add to the list of sent ids to be marked as sent, so that the notification will be retried
+      }
+    }
+    console.log('--------------------------------')
+    console.log('sentIds')
+    console.log(sentIds)
+    console.log('--------------------------------')
+
+    await this.applicationService.markScheduledNotificationsSent(sentIds)
   }
 
   private async pruneAttachments() {
