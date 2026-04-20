@@ -73,23 +73,26 @@ export const dataSchema = z.object({
       OTHER_NO_CHILDREN_FOUND,
     ]),
   }),
-  fosterCareOrAdoption: z.object({
-    birthDate: z.string().refine(
-      (p) => {
-        const birthDateDob = new Date(p)
-        const today = new Date()
-        const minimumStartDate = new Date(
-          today.setMonth(
-            today.getMonth() - yearFosterCareOrAdoption * yearInMonths,
-          ),
+  fosterCareOrAdoption: z
+    .object({
+      birthDate: z.string(),
+      adoptionDate: z.string(),
+    })
+    .refine(
+      ({ birthDate, adoptionDate }) => {
+        // Eligibility is "child was under 8 on the placement date", a stable
+        // historical fact — not a sliding window against today. Otherwise an
+        // already-approved application becomes uneditable the day the child
+        // turns 8 (zendesk #461551).
+        const referenceDate = adoptionDate ? new Date(adoptionDate) : new Date()
+        const minimumStartDate = new Date(referenceDate)
+        minimumStartDate.setMonth(
+          referenceDate.getMonth() - yearFosterCareOrAdoption * yearInMonths,
         )
-
-        return birthDateDob >= minimumStartDate
+        return new Date(birthDate) >= minimumStartDate
       },
-      { params: errorMessages.fosterCare },
+      { path: ['birthDate'], params: errorMessages.fosterCare },
     ),
-    adoptionDate: z.string(),
-  }),
   noPrimaryParent: z.object({
     questionOne: z.enum([YES, NO]),
     questionTwo: z.enum([YES, NO]),
