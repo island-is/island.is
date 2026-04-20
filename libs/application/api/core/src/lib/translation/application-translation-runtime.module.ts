@@ -1,0 +1,30 @@
+import { Global, Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
+
+import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/cms-translations'
+
+import { ApplicationTranslation } from './application-translation.model'
+import { ApplicationTranslationLog } from './application-translation-log.model'
+import { ApplicationTranslationService } from './application-translation.service'
+import { ApplicationTranslationProviderImpl } from './application-translation.provider'
+
+/**
+ * Registers DB-backed `APPLICATION_TRANSLATION_PROVIDER` so CmsTranslationsService resolves
+ * application namespaces from Postgres instead of Contentful.
+ * Must be imported after `SequelizeModule.forRoot` (application-system API).
+ */
+@Global()
+@Module({
+  imports: [
+    SequelizeModule.forFeature([ApplicationTranslation, ApplicationTranslationLog]),
+  ],
+  providers: [
+    ApplicationTranslationService,
+    {
+      provide: APPLICATION_TRANSLATION_PROVIDER,
+      useClass: ApplicationTranslationProviderImpl,
+    },
+  ],
+  exports: [ApplicationTranslationService, APPLICATION_TRANSLATION_PROVIDER],
+})
+export class ApplicationTranslationRuntimeModule {}

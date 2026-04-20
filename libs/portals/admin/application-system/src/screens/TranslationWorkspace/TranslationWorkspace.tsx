@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { gql, useLazyQuery } from '@apollo/client'
+import { ApolloError, gql, useLazyQuery } from '@apollo/client'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 import {
   Box,
   Text,
@@ -23,6 +24,7 @@ import { m } from '../../lib/messages'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import {
   useGetApplicationTemplateIntrospectionQuery,
+  useGetApplicationTranslationsQuery,
   useBulkUpdateApplicationTranslationsMutation,
 } from '../../queries/translations.generated'
 
@@ -60,6 +62,38 @@ const AI_TRANSLATE_QUERY = gql`
 
 type EditedTranslations = Record<string, string>
 
+/** Toasts should not show multi-line stack traces or huge Sequelize messages. */
+const TOAST_ERROR_MAX_LENGTH = 240
+
+const shortenForToast = (text: string): string => {
+  const firstLine = text.trim().split(/\r?\n/)[0] ?? ''
+  if (firstLine.length <= TOAST_ERROR_MAX_LENGTH) {
+    return firstLine
+  }
+  return `${firstLine.slice(0, TOAST_ERROR_MAX_LENGTH)}…`
+}
+
+const getTranslationSaveErrorDetail = (err: unknown): string => {
+  let raw = ''
+  if (err instanceof ApolloError) {
+    const problem = findProblemInApolloError(err)
+    if (problem?.detail) {
+      raw = problem.detail
+    } else if (err.graphQLErrors?.length) {
+      raw = err.graphQLErrors.map((e) => e.message).join('; ')
+    } else if (err.networkError) {
+      raw = err.networkError.message
+    }
+  }
+  if (!raw && err instanceof Error) {
+    raw = err.message
+  }
+  if (!raw) {
+    raw = String(err)
+  }
+  return shortenForToast(raw)
+}
+
 const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
   const navigate = useNavigate()
@@ -72,10 +106,52 @@ const TranslationWorkspace = () => {
 
   const introspection = data?.applicationTemplateIntrospection ?? null
 
+  const namespace = introspection?.translationNamespaces[0] ?? typeId ?? ''
+
+  const {
+    data: translationsData,
+    loading: translationsLoading,
+    error: translationsError,
+    refetch: refetchTranslations,
+  } = useGetApplicationTranslationsQuery({
+    variables: { namespace },
+    skip: !typeId || !introspection,
+  })
+
+  const persistedByKey = useMemo(() => {
+    const map: Record<
+      string,
+      { valueIs: string; valueEn?: string | null }
+    > = {}
+    for (const row of translationsData?.applicationTranslations ?? []) {
+      map[row.messageKey] = {
+        valueIs: row.valueIs,
+        valueEn: row.valueEn,
+      }
+    }
+    return map
+  }, [translationsData])
+
   const [activeLocale, setActiveLocale] = useState<'is' | 'en'>('en')
   const [selectedScreen, setSelectedScreen] =
     useState<ScreenIntrospection | null>(null)
   const [editedValues, setEditedValues] = useState<EditedTranslations>({})
+
+  const getPersistedForLocale = useCallback(
+    (messageKey: string) => {
+      const row = persistedByKey[messageKey]
+      if (!row) return ''
+      return activeLocale === 'en'
+        ? (row.valueEn ?? '')
+        : row.valueIs
+    },
+    [persistedByKey, activeLocale],
+  )
+
+  /** Drop pending edits when switching locale so EN/IS drafts do not mix in one field. */
+  useEffect(() => {
+    setEditedValues({})
+  }, [activeLocale])
 
   const [bulkUpdate, { loading: saving }] =
     useBulkUpdateApplicationTranslationsMutation()
@@ -123,11 +199,11 @@ const TranslationWorkspace = () => {
 
   const handleAiTranslate = useCallback(async () => {
     const descriptorsToTranslate = currentDescriptors.filter((d) => {
-      const isEdited = editedValues[d.id] !== undefined
-      if (activeLocale === 'en') {
-        return !isEdited
-      }
-      return false
+      if (activeLocale !== 'en') return false
+      const hasPending = editedValues[d.id] !== undefined
+      const hasEn =
+        (persistedByKey[d.id]?.valueEn ?? '').trim().length > 0
+      return !hasPending && !hasEn
     })
 
     if (descriptorsToTranslate.length === 0) {
@@ -161,17 +237,19 @@ const TranslationWorkspace = () => {
     editedValues,
     activeLocale,
     introspection,
+    persistedByKey,
     typeId,
     fetchAiTranslation,
   ])
 
   const handleSaveAll = useCallback(async () => {
-    if (Object.keys(editedValues).length === 0) return
+    const dirtyEntries = Object.entries(editedValues).filter(
+      ([messageKey, value]) => value !== getPersistedForLocale(messageKey),
+    )
+    if (dirtyEntries.length === 0) return
 
     try {
-      const namespace =
-        introspection?.translationNamespaces[0] ?? typeId ?? ''
-      const translationsToSave = Object.entries(editedValues).map(
+      const translationsToSave = dirtyEntries.map(
         ([messageKey, value]) => ({
           namespace,
           messageKey,
@@ -183,16 +261,52 @@ const TranslationWorkspace = () => {
         variables: { input: { translations: translationsToSave } },
       })
 
-      if (mutationData?.bulkUpdateApplicationTranslations) {
+      if (
+        mutationData?.bulkUpdateApplicationTranslations &&
+        mutationData.bulkUpdateApplicationTranslations.length > 0
+      ) {
+        await refetchTranslations()
         setEditedValues({})
         toast.success(formatMessage(m.translationSave))
+      } else {
+        toast.error(
+          formatMessage(m.translationSaveFailed, {
+            detail: 'Engin gögn komu til baka frá vefþjónustu.',
+          }),
+        )
       }
-    } catch {
-      toast.error('Failed to save')
+    } catch (err) {
+      const detail = getTranslationSaveErrorDetail(err)
+      console.error('bulkUpdateApplicationTranslations failed', err)
+      toast.error(formatMessage(m.translationSaveFailed, { detail }))
     }
-  }, [editedValues, activeLocale, introspection, typeId, formatMessage, bulkUpdate])
+  }, [
+    editedValues,
+    activeLocale,
+    namespace,
+    formatMessage,
+    bulkUpdate,
+    getPersistedForLocale,
+    refetchTranslations,
+  ])
 
-  if (loading) {
+  const hasUnsavedChanges = useMemo(
+    () =>
+      Object.entries(editedValues).some(
+        ([k, v]) => v !== getPersistedForLocale(k),
+      ),
+    [editedValues, getPersistedForLocale],
+  )
+
+  const unsavedCount = useMemo(
+    () =>
+      Object.entries(editedValues).filter(
+        ([k, v]) => v !== getPersistedForLocale(k),
+      ).length,
+    [editedValues, getPersistedForLocale],
+  )
+
+  if (loading || (introspection && translationsLoading)) {
     return (
       <GridContainer>
         <Box marginTop={4}>
@@ -202,19 +316,20 @@ const TranslationWorkspace = () => {
     )
   }
 
-  if (error) {
-    const fromGraphQl = error.graphQLErrors
+  if (error || translationsError) {
+    const err = error ?? translationsError
+    const fromGraphQl = err.graphQLErrors
       ?.map((e) => e.message)
       .filter(Boolean)
       .join('\n')
     const fromNetwork =
-      error.networkError instanceof Error
-        ? error.networkError.message
-        : error.networkError
-          ? String(error.networkError)
+      err.networkError instanceof Error
+        ? err.networkError.message
+        : err.networkError
+          ? String(err.networkError)
           : ''
     const detailMessage =
-      fromGraphQl || fromNetwork || error.message || 'Unknown error'
+      fromGraphQl || fromNetwork || err.message || 'Unknown error'
 
     return (
       <GridContainer>
@@ -239,8 +354,6 @@ const TranslationWorkspace = () => {
       </GridContainer>
     )
   }
-
-  const hasUnsavedChanges = Object.keys(editedValues).length > 0
 
   return (
     <GridContainer>
@@ -314,7 +427,7 @@ const TranslationWorkspace = () => {
               onClick={handleSaveAll}
             >
               {formatMessage(m.translationSaveAll)} (
-              {Object.keys(editedValues).length})
+              {unsavedCount})
             </Button>
           )}
         </Box>
@@ -434,8 +547,13 @@ const TranslationWorkspace = () => {
 
             <Box marginTop={3}>
               {currentDescriptors.map((descriptor) => {
-                const currentValue = editedValues[descriptor.id] ?? ''
-                const isEdited = editedValues[descriptor.id] !== undefined
+                const currentValue =
+                  editedValues[descriptor.id] ??
+                  getPersistedForLocale(descriptor.id)
+                const isDirty =
+                  editedValues[descriptor.id] !== undefined &&
+                  editedValues[descriptor.id] !==
+                    getPersistedForLocale(descriptor.id)
 
                 return (
                   <Box
@@ -443,7 +561,7 @@ const TranslationWorkspace = () => {
                     marginBottom={3}
                     padding={2}
                     borderRadius="standard"
-                    border={isEdited ? 'focus' : 'standard'}
+                    border={isDirty ? 'focus' : 'standard'}
                   >
                     <Box
                       display="flex"
@@ -453,7 +571,7 @@ const TranslationWorkspace = () => {
                       <Text variant="eyebrow" color="dark300">
                         {descriptor.id}
                       </Text>
-                      {isEdited && (
+                      {isDirty && (
                         <Tag variant="blueberry" outlined>
                           Unsaved
                         </Tag>

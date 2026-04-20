@@ -20,6 +20,16 @@ export interface UpsertTranslationInput {
   valueEn?: string
 }
 
+/** Columns translated_by, reviewed_by, changed_by are VARCHAR(20) in the DB. */
+const MAX_ACTOR_ID_LENGTH = 20
+
+function truncateActorId(id: string | undefined): string | undefined {
+  if (id === undefined) {
+    return undefined
+  }
+  return id.length <= MAX_ACTOR_ID_LENGTH ? id : id.slice(0, MAX_ACTOR_ID_LENGTH)
+}
+
 @Injectable()
 export class ApplicationTranslationService {
   constructor(
@@ -41,8 +51,9 @@ export class ApplicationTranslationService {
 
     const result: Record<string, string> = {}
     for (const t of translations) {
-      const value = locale === 'en' ? t.valueEn : t.valueIs
-      if (value != null) {
+      const value =
+        locale === 'en' ? (t.valueEn ?? t.valueIs) : t.valueIs
+      if (value != null && value !== '') {
         result[t.messageKey] = value
       }
     }
@@ -61,8 +72,9 @@ export class ApplicationTranslationService {
 
     const result: Record<string, string> = {}
     for (const t of translations) {
-      const value = locale === 'en' ? t.valueEn : t.valueIs
-      if (value != null) {
+      const value =
+        locale === 'en' ? (t.valueEn ?? t.valueIs) : t.valueIs
+      if (value != null && value !== '') {
         result[t.messageKey] = value
       }
     }
@@ -82,6 +94,8 @@ export class ApplicationTranslationService {
     input: UpsertTranslationInput,
     translatedBy?: string,
   ): Promise<ApplicationTranslation> {
+    const actor = truncateActorId(translatedBy)
+
     const existing = await this.translationModel.findOne({
       where: {
         namespace: input.namespace,
@@ -106,8 +120,8 @@ export class ApplicationTranslationService {
       }
 
       if (Object.keys(updates).length > 0) {
-        if (translatedBy) {
-          updates.translatedBy = translatedBy
+        if (actor) {
+          updates.translatedBy = actor
         }
         updates.isReviewed = false
         await existing.update(updates)
@@ -116,7 +130,7 @@ export class ApplicationTranslationService {
           translationId: existing.id,
           oldValue: logOldValue,
           newValue: logNewValue,
-          changedBy: translatedBy,
+          changedBy: actor,
           action: 'update',
         })
       }
@@ -129,14 +143,14 @@ export class ApplicationTranslationService {
       messageKey: input.messageKey,
       valueIs: input.valueIs ?? '',
       valueEn: input.valueEn,
-      translatedBy,
+      translatedBy: actor,
       isReviewed: false,
     })
 
     await this.logModel.create({
       translationId: created.id,
       newValue: input.valueEn ?? input.valueIs,
-      changedBy: translatedBy,
+      changedBy: actor,
       action: 'create',
     })
 
@@ -159,6 +173,8 @@ export class ApplicationTranslationService {
     id: string,
     reviewedBy: string,
   ): Promise<ApplicationTranslation | null> {
+    const reviewer = truncateActorId(reviewedBy)
+
     const translation = await this.translationModel.findByPk(id)
     if (!translation) {
       return null
@@ -166,12 +182,12 @@ export class ApplicationTranslationService {
 
     await translation.update({
       isReviewed: true,
-      reviewedBy,
+      reviewedBy: reviewer,
     })
 
     await this.logModel.create({
       translationId: translation.id,
-      changedBy: reviewedBy,
+      changedBy: reviewer,
       action: 'review',
     })
 

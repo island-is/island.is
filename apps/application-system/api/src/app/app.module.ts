@@ -79,12 +79,14 @@ import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-ag
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { TranslationModule } from './modules/translation/translation.module'
+import { ApplicationTranslationRuntimeModule } from '@island.is/application/api/core'
 
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ApplicationTranslationRuntimeModule,
     ApplicationModule,
     TranslationModule,
     ProblemModule,

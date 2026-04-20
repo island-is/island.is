@@ -1,6 +1,7 @@
 export * from './lib/applicationApiCore.module'
 export * from './lib/application/application.service'
 export * from './lib/application/application.model'
+export * from './lib/translation/application-translation-runtime.module'
 export * from './lib/translation/application-translation.model'
 export * from './lib/translation/application-translation-log.model'
 export * from './lib/translation/application-translation.service'

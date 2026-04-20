@@ -23,6 +23,22 @@ export class ApplicationTranslationApiService {
     return `${this.config.baseApiUrl}/admin/translations${path}`
   }
 
+  private getAuthorizationHeader(user: User): string {
+    const raw = user.authorization
+    if (!raw) {
+      throw new Error(
+        'Missing authorization token for application translation API',
+      )
+    }
+    const token = raw.replace(/^Bearer\s+/i, '').trim()
+    if (!token) {
+      throw new Error(
+        'Invalid authorization token for application translation API',
+      )
+    }
+    return `Bearer ${token}`
+  }
+
   private async request<T>(
     user: User,
     path: string,
@@ -34,7 +50,7 @@ export class ApplicationTranslationApiService {
       response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.authorization.replace('Bearer ', '')}`,
+          Authorization: this.getAuthorizationHeader(user),
         },
         ...options,
       })
