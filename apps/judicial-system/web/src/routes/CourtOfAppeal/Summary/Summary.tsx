@@ -19,8 +19,8 @@ import {
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -63,7 +63,7 @@ const Summary: FC = () => {
 
     if (caseTransitioned) {
       workingCase.appealCase?.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED
+      AppealCaseRulingDecision.DISCONTINUED
         ? setVisibleModal('AppealDiscontinued')
         : setVisibleModal('AppealCompleted')
     }

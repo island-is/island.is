@@ -865,6 +865,10 @@ export const m = defineMessages({
     defaultMessage:
       'Select which tags this permission is relevant for. This helps users understand when they might need this permission.',
   },
+  categoryRequired: {
+    id: 'ap.ids-admin:category-required',
+    defaultMessage: 'At least one category must be selected',
+  },
   noCategories: {
     id: 'ap.ids-admin:no-categories',
     defaultMessage: 'No categories available',

@@ -69,11 +69,6 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         // Municipal
         {
-          customShortcut: {
-            name: m.signatureCollectionMunicipalLists,
-            description:
-              m.signatureCollectionMunicipalListsNavigationDescription,
-          },
           name: m.signatureCollectionMunicipalLists,
           path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
           icon: { icon: 'document' },

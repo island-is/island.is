@@ -52,8 +52,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: '',
-        prod: '',
+        staging: 'INDICTMENT_APPEAL_RULING',
+        prod: 'INDICTMENT_APPEAL_RULING',
       },
       REDIS_NODES: {
         dev: json([
