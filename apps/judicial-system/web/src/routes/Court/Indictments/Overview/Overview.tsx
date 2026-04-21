@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -31,7 +31,6 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
@@ -44,15 +43,12 @@ const OverviewBody = ({
 
   const router = useRouter()
 
-  const { workingCase, isLoadingWorkingCase, setWorkingCase } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
-  const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
   return (
@@ -84,10 +80,10 @@ const OverviewBody = ({
           <Box component="section">
             <InfoCardActiveIndictment displayOpenCaseReference={true} />
           </Box>
-          {/* 
+          {/*
             NOTE: Temporarily hidden while list of laws broken is not complete in
             indictment cases
-            
+
             {lawsBroken.size > 0 && (
               <Box marginBottom={5}>
                 <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
@@ -156,25 +152,8 @@ const OverviewBody = ({
             )
           }
           nextButtonText={formatMessage(core.continue)}
-          /* 
-            The return indictment feature has been removed for the time being but
-            we want to hold on to the functionality for now, since we are likely
-            to change this feature in the future.
-          */
-          // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-          // actionButtonColorScheme={'destructive'}
-          // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
-          // onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
         />
       </FormContentContainer>
-      {modalVisible === 'RETURN_INDICTMENT' && (
-        <ReturnIndictmentModal
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          onClose={() => setModalVisible(undefined)}
-          onComplete={() => router.push(getStandardUserDashboardRoute(user))}
-        />
-      )}
     </>
   )
 }

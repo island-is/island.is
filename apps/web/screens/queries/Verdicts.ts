@@ -73,6 +73,12 @@ export const GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY = gql`
           typeOfOption
         }
       }
+      retrialCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
       all {
         options {
           label

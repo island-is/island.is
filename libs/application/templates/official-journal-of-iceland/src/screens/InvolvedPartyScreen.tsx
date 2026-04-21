@@ -25,7 +25,7 @@ export const InvolvedPartyScreen = ({
 
   useEffect(() => {
     setSubmitButtonDisabled && setSubmitButtonDisabled(true)
-  }, [])
+  }, [setSubmitButtonDisabled])
 
   const { involvedParties, error, loading } = useInvolvedParties({
     applicationId: application.id,
@@ -39,9 +39,13 @@ export const InvolvedPartyScreen = ({
 
       if (involvedParties.length === 1) {
         const involvedParty = involvedParties[0]
+        const isMinistry = involvedParty.title
+          .toLowerCase()
+          .includes('ráðuneyti')
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
         setValue(InputFields.advert.involvedPartyTitle, involvedParty.title)
+        setValue(InputFields.requirements.additionalParties, [])
 
         const currentAnswers = structuredClone(application.answers)
 
@@ -55,19 +59,24 @@ export const InvolvedPartyScreen = ({
           InputFields.advert.involvedPartyTitle,
           involvedParty.title,
         )
+        set(currentAnswers, InputFields.requirements.additionalParties, [])
 
         // Pre-set applicationType for non-ministry parties so the
         // TypeSelection screen can be skipped entirely.
-        if (!involvedParty.title.toLowerCase().includes('ráðuneyti')) {
+        if (!isMinistry) {
           setValue('applicationType', ApplicationTypes.AD)
           set(currentAnswers, 'applicationType', ApplicationTypes.AD)
+
+          updateApplication(currentAnswers, () => {
+            submitApplication(DefaultEvents.SUBMIT, () => {
+              refetch && refetch()
+            })
+          })
+          return
         }
 
-        updateApplication(currentAnswers, () => {
-          submitApplication(DefaultEvents.SUBMIT, () => {
-            refetch && refetch()
-          })
-        })
+        updateApplication(currentAnswers)
+        setSubmitButtonDisabled && setSubmitButtonDisabled(false)
       }
     },
   })
@@ -126,14 +135,29 @@ export const InvolvedPartyScreen = ({
             const party = involvedParties?.find((p) => p.id === selectedId)
             if (party) {
               const answers = structuredClone(application.answers)
+              const additionalParties = (
+                application.answers.additionalParties ?? []
+              ).filter((additionalParty) => additionalParty.id !== party.id)
+
+              set(answers, InputFields.advert.involvedPartyId, party.id)
               set(answers, InputFields.advert.involvedPartyTitle, party.title)
+              set(
+                answers,
+                InputFields.requirements.additionalParties,
+                additionalParties,
+              )
 
               if (!party.title.toLowerCase().includes('ráðuneyti')) {
                 setValue('applicationType', ApplicationTypes.AD)
                 set(answers, 'applicationType', ApplicationTypes.AD)
               }
 
+              setValue(InputFields.advert.involvedPartyId, party.id)
               setValue(InputFields.advert.involvedPartyTitle, party.title)
+              setValue(
+                InputFields.requirements.additionalParties,
+                additionalParties,
+              )
               updateApplication(answers)
             }
             setSubmitButtonDisabled && setSubmitButtonDisabled(false)

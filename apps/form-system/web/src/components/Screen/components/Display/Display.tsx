@@ -34,6 +34,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.RADIO_BUTTONS]: DefaultDisplay,
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
   [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
+  [FieldTypesEnum.PAYMENT_QUANTITY]: DefaultDisplay,
 } as const
 
 export const Display = ({ field, valueIndex = 0 }: Props) => {

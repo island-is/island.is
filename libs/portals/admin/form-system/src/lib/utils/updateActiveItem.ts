@@ -5,12 +5,12 @@ import {
   MutationTuple,
   OperationVariables,
 } from '@apollo/client'
-import { ActiveItem } from './interfaces'
 import {
-  FormSystemSection,
-  FormSystemScreen,
   FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
 } from '@island.is/api/schema'
+import { ActiveItem } from './interfaces'
 
 export const updateActiveItemFn = async (
   activeItem: ActiveItem,
@@ -34,7 +34,7 @@ export const updateActiveItemFn = async (
   >,
   currentActiveItem?: ActiveItem,
 ) => {
-  const { type } = activeItem
+  const { type } = currentActiveItem ? currentActiveItem : activeItem
   const [updateSection] = sectionMutation
   const [updateScreen] = screenMutation
   const [updateField] = fieldMutation

@@ -23,4 +23,5 @@ export const FieldTypesEnum = {
   FILE: 'FILE',
   PAYMENT: 'PAYMENT',
   APPLICANT: 'APPLICANT',
+  PAYMENT_QUANTITY: 'PAYMENT_QUANTITY',
 }

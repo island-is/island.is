@@ -1,4 +1,6 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { CacheField } from '@island.is/nest/graphql'
 import { ICourse, ICourseInstance } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -88,6 +90,15 @@ export class Course {
 
   @Field(() => Boolean, { nullable: true })
   showPlaceholderTextIfNoCourseInstances?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  intro?: string | null
+
+  @Field(() => String, { nullable: true })
+  organizationTitle?: string | null
+
+  @Field(() => String, { nullable: true })
+  courseHref?: string | null
 }
 
 @ObjectType()
@@ -109,6 +120,24 @@ export class CourseDetails {
 }
 
 export const mapCourse = ({ fields, sys }: ICourse): Course => {
+  let courseHref = undefined
+
+  let basePath = ''
+  if (fields.courseListPage?.sys?.id === '6pkONOn80xzGTGij6qtjai')
+    basePath = `/${getOrganizationPageUrlPrefix(sys.locale)}/hh/${
+      sys.locale === 'en'
+        ? 'courses-for-the-public'
+        : 'namskeid-fyrir-almenning'
+    }`
+  else if (fields.courseListPage?.sys?.id === '147YftiWFQsBcbUFFe2rj1')
+    basePath = `/${getOrganizationPageUrlPrefix(sys.locale)}/hh/${
+      sys.locale === 'en'
+        ? 'courses-for-professionals'
+        : 'namskeid-fyrir-fagfolk'
+    }`
+
+  if (basePath) courseHref = `${basePath}/${fields.slug || sys.id}`
+
   return {
     id: sys.id,
     title: (fields.title ?? '').trim(),
@@ -124,6 +153,12 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
     slug: fields.slug?.trim() ?? null,
     showPlaceholderTextIfNoCourseInstances:
       fields.showPlaceholderTextIfNoCourseInstances ?? true,
+    intro: fields.cardIntro
+      ? documentToPlainTextString(fields.cardIntro).trim()
+      : '',
+    organizationTitle:
+      fields.courseListPage?.fields?.organization?.fields?.title ?? '',
+    courseHref,
   }
 }
 

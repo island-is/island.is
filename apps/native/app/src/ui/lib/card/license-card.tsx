@@ -21,11 +21,12 @@ import { LicenseCardPresets } from './license-list-card'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
-import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass.constants'
+import { BARCODE_MAX_WIDTH } from '@/constants/wallet.constants'
 import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
+import { testIDs } from '../../../utils/test-ids'
 
 const Host = styled(Animated.View)`
   position: relative;
@@ -224,7 +225,11 @@ export function LicenseCard({
                     tintColor: error && theme.color.yellow600,
                   }}
                 />
-                <Typography color={textColor} variant="eyebrow">
+                <Typography
+                  color={textColor}
+                  variant="eyebrow"
+                  testID={testIDs.LICENSE_STATUS}
+                >
                   {intl.formatMessage({
                     id: error
                       ? 'walletPass.errorFetchingLicense'

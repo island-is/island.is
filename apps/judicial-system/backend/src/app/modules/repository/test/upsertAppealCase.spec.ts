@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { CaseAppealState } from '@island.is/judicial-system/types'
+import { AppealCaseState } from '@island.is/judicial-system/types'
 
 import { createTestingRepositoryModule } from './createTestingRepositoryModule'
 
@@ -47,7 +47,7 @@ describe('CaseRepositoryService - upsertAppealCase', () => {
     const caseId = uuid()
     const appealCaseId = uuid()
     const data: UpdateAppealCase = {
-      appealState: CaseAppealState.APPEALED,
+      appealState: AppealCaseState.APPEALED,
       appealCaseNumber: undefined,
       appealReceivedByCourtDate: undefined,
       prosecutorStatementDate: undefined,
@@ -93,7 +93,7 @@ describe('CaseRepositoryService - upsertAppealCase', () => {
   describe('when upsert throws', () => {
     const caseId = uuid()
     const data: UpdateAppealCase = {
-      appealState: CaseAppealState.COMPLETED,
+      appealState: AppealCaseState.COMPLETED,
       appealCaseNumber: undefined,
       appealReceivedByCourtDate: undefined,
       prosecutorStatementDate: undefined,

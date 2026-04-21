@@ -301,7 +301,15 @@ function PaymentPage({
               />
 
               <Box marginTop={4} width="full">
-                <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                <LinkV2
+                  href={
+                    isInvoicePending
+                      ? paymentFlow.invoiceReturnUrl ??
+                        paymentFlow.returnUrl ??
+                        'https://island.is'
+                      : paymentFlow.returnUrl ?? 'https://island.is'
+                  }
+                >
                   <Button fluid unfocusable>
                     {formatMessage(generic.buttonFinishAndReturn)}
                   </Button>

@@ -32,6 +32,9 @@ export class CaseFilterOptionsResponse {
   @CacheField(() => CaseFilterOptionsPerCourt)
   districtCourt!: CaseFilterOptionsPerCourt
 
+  @CacheField(() => CaseFilterOptionsPerCourt, { nullable: true })
+  retrialCourt?: CaseFilterOptionsPerCourt | null = null
+
   @CacheField(() => CaseFilterOptionsPerCourt)
   all!: CaseFilterOptionsPerCourt
 }

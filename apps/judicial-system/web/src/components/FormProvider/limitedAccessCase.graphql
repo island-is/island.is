@@ -47,6 +47,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         fileRepresentative
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
     }
     caseFiles {
@@ -65,6 +66,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       fileRepresentative
       isKeyAccessible
       defendantId
+      civilClaimantId
     }
     defendants {
       id
@@ -203,6 +205,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
+      appealedByNationalId
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
@@ -427,6 +430,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         submittedBy
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
       policeCaseNumbers
       indictmentSubtypes

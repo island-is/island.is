@@ -25,14 +25,14 @@ import {
 import { generateApplicationRejectEmail } from './emailGenerators/rejectApplicationEmail'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
 import { info } from 'kennitala'
-import { PaymentsApi } from '@island.is/clients/payments'
+import { PaymentService } from '@island.is/application/api/payment'
 @Injectable()
 export class IdCardService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private passportApi: PassportsService,
-    private readonly paymentsApi: PaymentsApi,
+    private readonly paymentService: PaymentService,
   ) {
     super(ApplicationTypes.ID_CARD)
   }
@@ -192,12 +192,11 @@ export class IdCardService extends BaseTemplateApiService {
     // 1. Delete charge so that the seller gets reimbursed
     const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      await this.paymentsApi.refundControllerRefund({
-        refundPaymentInput: {
-          paymentFlowId: chargeId,
-          reasonForRefund: 'Application rejected',
-        },
-      })
+      await this.paymentService.refundPayment(
+        application.id,
+        'Application rejected',
+        true,
+      )
     }
     // 2. Notify everyone in the process that the application has been withdrawn
     const answers = application.answers as IdCardAnswers

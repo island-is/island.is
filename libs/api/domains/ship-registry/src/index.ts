@@ -1,1 +1,2 @@
-export * from './lib/ship-registry.module'
+export { ShipRegistryModule } from './lib/shipRegistry.module'
+export { UserShipsService } from './lib/services/userShips.service'

@@ -28,9 +28,9 @@ export const BaseInput = () => {
     getTranslation,
     selectStatus,
   } = useContext(ControlContext)
-  const { activeItem, isPublished } = control
+  const { activeItem, form, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
-  const selectList = fieldTypesSelectObject()
+  const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
@@ -73,7 +73,7 @@ export const BaseInput = () => {
             isSearchable
             value={defaultOption}
             isDisabled={
-              selectStatus === NavbarSelectStatus.NORMAL || isPublished
+              selectStatus === NavbarSelectStatus.NORMAL || isReadOnly
             }
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
@@ -97,7 +97,7 @@ export const BaseInput = () => {
             name="name"
             value={currentItem?.name?.is ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -119,7 +119,7 @@ export const BaseInput = () => {
             name="nameEn"
             value={currentItem?.name?.en ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -159,7 +159,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.is ?? ''}
                 textarea
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 onChange={(e) =>
@@ -182,7 +182,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.en ?? ''}
                 textarea
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onFocus={async (e) => {
                   if (
                     !currentItem?.description?.en &&
@@ -216,15 +216,17 @@ export const BaseInput = () => {
           </Row>
         </>
       )}
+      {/* Required checkbox */}
       {screen?.isMulti &&
         currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX &&
-        currentItem.fieldType !== FieldTypesEnum.FILE && (
+        currentItem.fieldType !== FieldTypesEnum.FILE &&
+        currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
           <Row>
             <Column span="5/10">
               <Checkbox
                 label={formatMessage(m.isPartOfMulti)}
                 checked={currentItem.isPartOfMultiset ?? false}
-                disabled={isPublished}
+                disabled={isReadOnly}
                 onChange={() =>
                   controlDispatch({
                     type: 'CHANGE_IS_PART_OF_MULTI',
@@ -243,7 +245,7 @@ export const BaseInput = () => {
             <Checkbox
               label={formatMessage(m.required)}
               checked={currentItem.isRequired ?? false}
-              disabled={isPublished}
+              disabled={isReadOnly}
               onChange={() =>
                 controlDispatch({
                   type: 'CHANGE_IS_REQUIRED',

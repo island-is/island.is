@@ -159,7 +159,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       isKeyAccessible
     }
     isAppealDeadlineExpired
-    isAppealGracePeriodExpired
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
@@ -221,7 +220,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
     }
-    indictmentReturnedExplanation
     indictmentDecision
     indictmentDeniedExplanation
     mergeCase {

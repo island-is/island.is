@@ -28,14 +28,14 @@ import {
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
-import { PaymentsApi } from '@island.is/clients/payments'
+import { PaymentService } from '@island.is/application/api/payment'
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly workMachineClientService: WorkMachinesClientService,
-    private readonly paymentsApi: PaymentsApi,
+    private readonly paymentService: PaymentService,
   ) {
     super(ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP)
   }
@@ -292,12 +292,11 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     const chargeId = getPaymentIdFromExternalData(application)
     try {
       if (chargeId) {
-        await this.paymentsApi.refundControllerRefund({
-          refundPaymentInput: {
-            paymentFlowId: chargeId,
-            reasonForRefund: 'Charge deleted',
-          },
-        })
+        await this.paymentService.refundPayment(
+          application.id,
+          'Charge deleted',
+          true,
+        )
       }
     } catch (error) {
       this.logger.error(
@@ -372,12 +371,11 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     // 1. Delete charge so that the seller gets reimbursed
     const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      await this.paymentsApi.refundControllerRefund({
-        refundPaymentInput: {
-          paymentFlowId: chargeId,
-          reasonForRefund: 'Application rejected',
-        },
-      })
+      await this.paymentService.refundPayment(
+        application.id,
+        'Application rejected',
+        true,
+      )
     }
 
     // 2. Delete owner change in work machines

@@ -14,7 +14,9 @@ import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
+import { NotificationDelivery } from './notification-delivery.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
+import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
@@ -64,6 +66,8 @@ export class NotificationsService {
     private readonly notificationModel: typeof Notification,
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+    @InjectModel(NotificationDelivery)
+    private readonly notificationDeliveryModel: typeof NotificationDelivery,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -545,5 +549,32 @@ export class NotificationsService {
       ...result,
       data: mappedData,
     }
+  }
+
+  /**
+   * Finds delivery records for a notification. When `isActor` is true, looks up
+   * deliveries by actor_notification_id; otherwise returns only direct
+   * deliveries for the user notification (actor_notification_id IS NULL).
+   */
+  async findDeliveries(
+    id: number,
+    isActor = false,
+  ): Promise<NotificationDeliveryDto[]> {
+    const where = isActor
+      ? { actorNotificationId: id }
+      : { userNotificationId: id, actorNotificationId: null }
+
+    const deliveries = await this.notificationDeliveryModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      attributes: ['id', 'channel', 'sentTo', 'created'],
+    })
+
+    return deliveries.map((d) => ({
+      id: d.id,
+      channel: d.channel,
+      sentTo: d.sentTo,
+      created: d.created,
+    }))
   }
 }

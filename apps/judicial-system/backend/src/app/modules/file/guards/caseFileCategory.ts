@@ -1,7 +1,9 @@
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseState,
   CaseType,
+  DefendantEventType,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -11,7 +13,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../repository'
+import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
 
 const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -43,6 +45,21 @@ const defenderCaseFileCategoriesForIndictmentCases =
     CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
     CaseFileCategory.DEFENDANT_CASE_FILE,
     CaseFileCategory.CIVIL_CLAIM,
+    // Appeal file categories — in indictment cases, all appeal files are
+    // visible to defence users (unlike request cases where prosecution
+    // case files are hidden)
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+    CaseFileCategory.APPEAL_RULING,
+    CaseFileCategory.APPEAL_COURT_RECORD,
   )
 
 const prisonAdminCaseFileCategories = [
@@ -54,6 +71,54 @@ const prisonAdminCaseFileCategories = [
 ]
 
 const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
+
+export const getDefenceUserCutoffDate = (
+  nationalId: string,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+): Date | undefined => {
+  if (
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+      nationalId,
+      civilClaimants,
+    )
+  ) {
+    return undefined
+  }
+
+  const myDefendants = defendants?.filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(nationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+
+  if (!myDefendants?.length) {
+    return undefined
+  }
+
+  const dismissalEvents = myDefendants.map((defendant) =>
+    DefendantEventLog.getEventLogByEventType(
+      [
+        DefendantEventType.INDICTMENT_CANCELLED,
+        DefendantEventType.INDICTMENT_DISMISSED,
+      ],
+      defendant.eventLogs,
+    ),
+  )
+
+  if (!dismissalEvents.every(Boolean)) {
+    return undefined
+  }
+
+  return dismissalEvents.reduce<Date | undefined>((latest, event) => {
+    if (!event) return latest
+    if (!latest) return event.created
+    return event.created > latest ? event.created : latest
+  }, undefined)
+}
 
 const canDefenceUserViewCaseFileOfRequestCase = (
   caseState: CaseState,
@@ -112,6 +177,7 @@ const canDefenceUserViewCaseFile = ({
   defendants,
   civilClaimants,
   defendantId,
+  fileCreated,
 }: {
   nationalId: string
   userName: string
@@ -123,12 +189,23 @@ const canDefenceUserViewCaseFile = ({
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
   defendantId?: string
+  fileCreated?: Date
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
   }
 
   if (isIndictmentCase(caseType)) {
+    const cutoffDate = getDefenceUserCutoffDate(
+      nationalId,
+      defendants,
+      civilClaimants,
+    )
+
+    if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
+      return false
+    }
+
     if (
       (caseFileCategory === CaseFileCategory.CRIMINAL_RECORD ||
         caseFileCategory === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
@@ -151,6 +228,7 @@ const canDefenceUserViewCaseFile = ({
     const hasUserSubmittedCaseFile =
       (submittedBy || fileRepresentative) &&
       (userName === submittedBy || userName === fileRepresentative)
+
     return (
       canDefenceUserViewCaseFileOfIndictmentCase(
         nationalId,
@@ -194,6 +272,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendants,
   civilClaimants,
   defendantId,
+  fileCreated,
 }: {
   user: User
   caseType: CaseType
@@ -204,6 +283,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
   defendantId?: string
+  fileCreated?: Date
 }) => {
   if (!caseFileCategory) {
     return false
@@ -221,6 +301,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       defendants,
       civilClaimants,
       defendantId,
+      fileCreated,
     })
   }
 

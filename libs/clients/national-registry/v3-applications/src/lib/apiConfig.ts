@@ -77,7 +77,21 @@ export const exportedApis = [
   {
     provide: EinstaklingarApi,
     useFactory: (configuration: Configuration) => {
-      return new EinstaklingarApi(configuration)
+      return new EinstaklingarApi(configuration).withMiddleware({
+        post: async ({ response }) => {
+          // Intercept 204 No Content and mock an empty JSON response.
+          // Note: We use status 200 because creating a Response object
+          // with status 204 and a body throws a TypeError in Node.js.
+          if (response.status === 204) {
+            return new Response('null', {
+              status: 200,
+              headers: response.headers,
+              statusText: response.statusText,
+            })
+          }
+          return response
+        },
+      })
     },
     inject: [ApiConfigWithIdsAuth.provide],
   },

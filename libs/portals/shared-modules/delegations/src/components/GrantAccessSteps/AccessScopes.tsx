@@ -73,7 +73,7 @@ export const AccessScopes = () => {
     return [
       {
         id: 'tags',
-        label: 'Tags',
+        label: formatMessage(m.filterTags),
         selected: filter.tags,
         filters:
           tagsData?.authScopeTags.map((tag) => ({
@@ -83,12 +83,12 @@ export const AccessScopes = () => {
       },
       {
         id: 'domains',
-        label: 'Stofnun',
+        label: formatMessage(m.filterDomains),
         selected: filter.domains,
         filters: domainOptions,
       },
     ]
-  }, [tagsData, filter, domainOptions])
+  }, [tagsData, filter, domainOptions, formatMessage])
 
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
@@ -160,7 +160,7 @@ export const AccessScopes = () => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="flexStart">
-      <Text variant="h4" marginBottom={2}>
+      <Text variant="h3" marginBottom={2}>
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <RecipientsTag />
