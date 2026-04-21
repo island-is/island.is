@@ -94,12 +94,15 @@ const PersonalTaxCredit = () => {
   // Sync selected value from server once loaded
   const effectiveTaxBracket = selectedTaxBracket ?? serverTaxBracket
 
-  const taxBracketChanged = selectedTaxBracket !== undefined && selectedTaxBracket !== serverTaxBracket
+  const taxBracketChanged =
+    selectedTaxBracket !== undefined && selectedTaxBracket !== serverTaxBracket
 
   const handleSaveTaxBracket = async () => {
     if (!taxBracketChanged || !selectedTaxBracket) return
     try {
-      await setTaxBracketMutation({ variables: { taxBracket: selectedTaxBracket } })
+      await setTaxBracketMutation({
+        variables: { taxBracket: selectedTaxBracket },
+      })
       await refetchTaxBracket()
       setSelectedTaxBracket(undefined)
       toast.success(formatMessage(m.taxBracketSaveSuccess))
@@ -160,7 +163,12 @@ const PersonalTaxCredit = () => {
           />
 
           <Box>
-            <Box display="flex" alignItems="center" columnGap={1} marginBottom={3}>
+            <Box
+              display="flex"
+              alignItems="center"
+              columnGap={1}
+              marginBottom={3}
+            >
               <Text variant="h4">
                 {formatMessage(m.taxBracketSectionTitle)}
               </Text>
@@ -180,24 +188,45 @@ const PersonalTaxCredit = () => {
                   name="tax-bracket"
                   label={formatMessage(m.taxBracketIncomePlan)}
                   value={SocialInsuranceTaxBracketAction.IncomePlan}
-                  checked={effectiveTaxBracket === SocialInsuranceTaxBracketAction.IncomePlan}
-                  onChange={() => setSelectedTaxBracket(SocialInsuranceTaxBracketAction.IncomePlan)}
+                  checked={
+                    effectiveTaxBracket ===
+                    SocialInsuranceTaxBracketAction.IncomePlan
+                  }
+                  onChange={() =>
+                    setSelectedTaxBracket(
+                      SocialInsuranceTaxBracketAction.IncomePlan,
+                    )
+                  }
                 />
                 <RadioButton
                   id="tax-bracket-bracket1"
                   name="tax-bracket"
                   label={formatMessage(m.taxBracketBracket1)}
                   value={SocialInsuranceTaxBracketAction.Bracket1}
-                  checked={effectiveTaxBracket === SocialInsuranceTaxBracketAction.Bracket1}
-                  onChange={() => setSelectedTaxBracket(SocialInsuranceTaxBracketAction.Bracket1)}
+                  checked={
+                    effectiveTaxBracket ===
+                    SocialInsuranceTaxBracketAction.Bracket1
+                  }
+                  onChange={() =>
+                    setSelectedTaxBracket(
+                      SocialInsuranceTaxBracketAction.Bracket1,
+                    )
+                  }
                 />
                 <RadioButton
                   id="tax-bracket-bracket2"
                   name="tax-bracket"
                   label={formatMessage(m.taxBracketBracket2)}
                   value={SocialInsuranceTaxBracketAction.Bracket2}
-                  checked={effectiveTaxBracket === SocialInsuranceTaxBracketAction.Bracket2}
-                  onChange={() => setSelectedTaxBracket(SocialInsuranceTaxBracketAction.Bracket2)}
+                  checked={
+                    effectiveTaxBracket ===
+                    SocialInsuranceTaxBracketAction.Bracket2
+                  }
+                  onChange={() =>
+                    setSelectedTaxBracket(
+                      SocialInsuranceTaxBracketAction.Bracket2,
+                    )
+                  }
                 />
                 <Button
                   onClick={handleSaveTaxBracket}

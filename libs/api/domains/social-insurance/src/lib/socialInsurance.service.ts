@@ -331,9 +331,7 @@ export class SocialInsuranceService {
     return data ? data.map(mapChildBenefitInformation) : null
   }
 
-  async getTaxBracket(
-    user: User,
-  ): Promise<PersonalTaxCreditTaxBracket | null> {
+  async getTaxBracket(user: User): Promise<PersonalTaxCreditTaxBracket | null> {
     const data = await this.personalTaxCreditClient
       .getTaxBracket(user)
       .catch(handle404)
