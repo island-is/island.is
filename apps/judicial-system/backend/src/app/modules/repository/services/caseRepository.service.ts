@@ -38,9 +38,7 @@ import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import {
-  UpdateCase,
-} from '../types/caseRepository.types'
+import { UpdateCase } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
@@ -755,13 +753,10 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const [numberOfAffectedRows, cases] = await this.caseModel.update(
-        data,
-        {
-          ...updateOptions,
-          returning: true,
-        },
-      )
+      const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
+        ...updateOptions,
+        returning: true,
+      })
 
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
@@ -804,5 +799,4 @@ export class CaseRepositoryService {
       throw error
     }
   }
-
 }
