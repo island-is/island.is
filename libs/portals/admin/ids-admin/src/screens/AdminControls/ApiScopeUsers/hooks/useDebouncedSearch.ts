@@ -5,8 +5,7 @@ export const useDebouncedSearch = (delay = 500) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const searchValue = searchParams.get('search') ?? ''
   const rawPage = parseInt(searchParams.get('page') ?? '1', 10)
-  const currentPage =
-    Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1
+  const currentPage = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1
 
   const [localSearch, setLocalSearch] = useState(searchValue)
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
