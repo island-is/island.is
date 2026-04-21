@@ -6,6 +6,7 @@ import {
   ActionCard,
   Box,
   Button,
+  DropdownMenu,
   SkeletonLoader,
   Tabs,
 } from '@island.is/island-ui/core'
@@ -25,39 +26,25 @@ const Status = () => {
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
   const availableActions = overview?.availableActions
-  const actionButtons = [
+  const showContactButton = availableActions?.canContact !== false
+  const dropdownActions = [
     {
-      key: 'contact',
-      icon: 'open' as const,
-      label: formatMessage(um.statusContactUs),
-      href: formatMessage(um.statusContactUsUrl),
-      visible: availableActions?.canContact !== false,
-    },
-    {
-      key: 'submit',
-      icon: 'documents' as const,
-      label: formatMessage(um.statusSubmitDocuments),
+      title: formatMessage(um.statusSubmitDocuments),
       href: formatMessage(um.statusSubmitDocumentsUrl),
       visible: availableActions?.canSubmitDocuments !== false,
     },
     {
-      key: 'income',
-      icon: 'wallet' as const,
-      label: formatMessage(um.statusReportIncome),
+      title: formatMessage(um.statusReportIncome),
       href: formatMessage(um.statusReportIncomeUrl),
       visible: availableActions?.canReportWork !== false,
     },
     {
-      key: 'travel',
-      icon: 'airplane' as const,
-      label: formatMessage(um.statusReportTravel),
+      title: formatMessage(um.statusReportTravel),
       href: formatMessage(um.statusReportTravelUrl),
       visible: availableActions?.canReportTravel !== false,
     },
     {
-      key: 'unsubscribe',
-      icon: 'logOut' as const,
-      label: formatMessage(um.statusUnsubscribe),
+      title: formatMessage(um.statusUnsubscribe),
       href: formatMessage(um.statusUnsubscribeUrl),
       visible: availableActions?.canUnregister !== false,
     },
@@ -73,65 +60,34 @@ const Status = () => {
       }}
       loading={loading}
     >
-      {/* Desktop Buttons: flex row, natural width, wraps to next row, all buttons same height */}
-      {!loading && (
-        <Box
-          display={['none', 'none', 'none', 'flex']}
-          flexWrap="wrap"
-          columnGap={2}
-          rowGap={2}
-          alignItems="stretch"
-          marginBottom={4}
-        >
-          {actionButtons.map(({ key, icon, label, href }) => (
-            <a key={key} href={href} target="_blank" rel="noreferrer">
+      {!loading && (showContactButton || dropdownActions.length > 0) && (
+        <Box display="flex" columnGap={2} alignItems="center" marginBottom={4}>
+          {showContactButton && (
+            <a
+              href={formatMessage(um.statusContactUsUrl)}
+              target="_blank"
+              rel="noreferrer"
+            >
               <Button
                 as="span"
                 unfocusable
                 variant="utility"
                 size="small"
-                icon={icon}
+                icon="open"
                 iconType="outline"
               >
-                {label}
+                {formatMessage(um.statusContactUs)}
               </Button>
             </a>
-          ))}
-        </Box>
-      )}
-      {/* Mobile Buttons: wrapping row, buttons share space on each row */}
-      {!loading && (
-        <Box
-          display={['flex', 'flex', 'flex', 'none']}
-          flexWrap="wrap"
-          columnGap={2}
-          rowGap={2}
-          alignItems="stretch"
-          marginTop={4}
-          marginBottom={4}
-        >
-          {actionButtons.map(({ key, icon, label, href }) => (
-            <Box key={key} flexGrow={1} display="flex" alignItems="stretch">
-              <a
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                style={{ display: 'flex', width: '100%' }}
-              >
-                <Button
-                  as="span"
-                  unfocusable
-                  variant="utility"
-                  size="small"
-                  icon={icon}
-                  iconType="outline"
-                  fluid
-                >
-                  {label}
-                </Button>
-              </a>
-            </Box>
-          ))}
+          )}
+          {dropdownActions.length > 0 && (
+            <DropdownMenu
+              icon="ellipsisVertical"
+              menuLabel={formatMessage(um.statusMoreActions)}
+              title={formatMessage(um.statusMoreActions)}
+              items={dropdownActions}
+            />
+          )}
         </Box>
       )}
       {!loading && availableActions?.canConfirmJobSearch !== false && (

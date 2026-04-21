@@ -57,6 +57,10 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:statusUnsubscribeUrl',
     defaultMessage: 'https://island.is/umsoknir/afskra-af-botum',
   },
+  statusMoreActions: {
+    id: 'sp.social-benefits-unemployment:statusMoreActions',
+    defaultMessage: 'Fleiri aðgerðir',
+  },
   statusTabApplication: {
     id: 'sp.social-benefits-unemployment:statusTabApplication',
     defaultMessage: 'Yfirlit yfir stöðu umsóknar',
