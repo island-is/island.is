@@ -38,7 +38,7 @@ export const useFeatureFlag = <T extends SettingValue>(
     return () => {
       mounted = false
     }
-  }, [featureFlagClient, setState])
+  }, [featureFlagClient, featureFlag, defaultValue])
 
   return state
 }

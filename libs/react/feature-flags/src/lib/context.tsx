@@ -3,58 +3,56 @@ import {
   FeatureFlagUser,
   SettingTypeOf,
   SettingValue,
-  createClientFactory,
 } from '@island.is/feature-flags'
+import { gql, useQuery } from '@apollo/client'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import * as ConfigCatJS from 'configcat-js'
 import React, { FC, createContext, useContext, useMemo } from 'react'
 
-const createClient = createClientFactory(ConfigCatJS)
+type FeatureFlagRecord = Record<string, boolean | string>
+
+const FEATURE_FLAGS_QUERY = gql`
+  query FeatureFlags {
+    featureFlags {
+      flags
+    }
+  }
+`
+
+const EMPTY_FLAGS: FeatureFlagRecord = {}
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
     Promise.resolve(defaultValue as SettingTypeOf<T>),
+  getAllValues: () => Promise.resolve(EMPTY_FLAGS),
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   dispose() {},
 })
 
-export interface FeatureFlagContextProviderProps {
-  sdkKey: string
-  defaultUser?: FeatureFlagUser
-}
-
-export const FeatureFlagProvider: FC<
-  React.PropsWithChildren<FeatureFlagContextProviderProps>
-> = ({ children, sdkKey, defaultUser: userProp }) => {
+export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const userInfo = useUserInfo()
-  const featureFlagClient = useMemo(() => {
-    return createClient({ sdkKey })
-  }, [sdkKey])
+  const isAuthenticated = !!userInfo?.profile?.nationalId
+  const { data } = useQuery<{ featureFlags: { flags: FeatureFlagRecord } }>(
+    FEATURE_FLAGS_QUERY,
+    { skip: !isAuthenticated },
+  )
+  const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-  const context = useMemo<FeatureFlagClient>(() => {
-    const userAuth =
-      userInfo && userInfo.profile.nationalId !== undefined
-        ? {
-            id: userInfo.profile.nationalId,
-            attributes: {
-              nationalId: userInfo.profile.nationalId,
-              subjectType: userInfo.profile.subjectType,
-            },
-          }
-        : undefined
-    const defaultUser = userProp ?? userAuth
-
-    return {
-      getValue<T extends SettingValue>(
+  const context = useMemo<FeatureFlagClient>(
+    () => ({
+      getValue: async <T extends SettingValue>(
         key: string,
         defaultValue: T,
-        user: FeatureFlagUser | undefined = defaultUser,
-      ) {
-        return featureFlagClient.getValue(key, defaultValue, user)
+        _user?: FeatureFlagUser,
+      ) => {
+        return (flags[key] ?? defaultValue) as SettingTypeOf<T>
       },
-      dispose: () => featureFlagClient.dispose(),
-    }
-  }, [featureFlagClient, userInfo, userProp])
+      getAllValues: async () => flags,
+      dispose: () => {},
+    }),
+    [flags],
+  )
 
   return (
     <FeatureFlagContext.Provider value={context}>
@@ -62,8 +60,6 @@ export const FeatureFlagProvider: FC<
     </FeatureFlagContext.Provider>
   )
 }
-
-type FeatureFlagRecord = Record<string, boolean | string>
 
 export interface MockedFeatureFlagProviderProps {
   flags: string[] | FeatureFlagRecord
@@ -86,6 +82,7 @@ export const MockedFeatureFlagProvider: FC<
       ) {
         return (cleanFlags[key] ?? defaultValue) as SettingTypeOf<T>
       },
+      getAllValues: async () => cleanFlags as FeatureFlagRecord,
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       dispose() {},
     }

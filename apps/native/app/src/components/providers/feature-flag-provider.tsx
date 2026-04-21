@@ -1,32 +1,32 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as configcat from 'configcat-js'
 import React, {
   FC,
-  ReactNode,
   createContext,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
-import { environments } from '@/constants/environments'
+import { gql, useQuery } from '@apollo/client'
 import { useAuthStore } from '@/stores/auth-store'
-import { useEnvironmentStore } from '@/stores/environment-store'
-import { Platform } from 'react-native'
-import * as Application from 'expo-application'
+import { setFeatureFlagCache } from '@/lib/feature-flag-client'
 
-interface FeatureFlagUser {
-  identifier: string
-  custom: { [key: string]: string }
-}
+type FeatureFlagRecord = Record<string, boolean | string>
+
+const FEATURE_FLAGS_QUERY = gql`
+  query FeatureFlags {
+    featureFlags {
+      flags
+    }
+  }
+`
+
+const EMPTY_FLAGS: FeatureFlagRecord = {}
 
 export interface FeatureFlagClient {
   getValue(
     key: string,
     defaultValue: boolean | string,
-    user?: FeatureFlagUser,
   ): Promise<boolean | string>
-
   dispose(): void
 }
 
@@ -36,88 +36,31 @@ const FeatureFlagContext = createContext<FeatureFlagClient>({
   dispose() {},
 })
 
-export interface FeatureFlagContextProviderProps {
-  children: ReactNode
-  defaultUser?: FeatureFlagUser
-}
+export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
+  const { authorizeResult } = useAuthStore()
+  const isAuthenticated = !!authorizeResult
+  const { data } = useQuery<{ featureFlags: { flags: FeatureFlagRecord } }>(
+    FEATURE_FLAGS_QUERY,
+    { skip: !isAuthenticated },
+  )
+  const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-class ConfigCatAsyncStorageCache {
-  set(key: string, config: string) {
-    return AsyncStorage.setItem(key, config)
-  }
-  async get(key: string) {
-    const item = await AsyncStorage.getItem(key)
-    if (item) {
-      try {
-        return item
-      } catch (err) {
-        // noop
-      }
-    }
-    return null
-  }
-}
-
-import { setFeatureFlagClient } from '@/lib/feature-flag-client'
-
-export const FeatureFlagProvider: FC<
-  React.PropsWithChildren<FeatureFlagContextProviderProps>
-> = ({ children }) => {
-  const { userInfo } = useAuthStore()
-  const [time, setTime] = useState(Date.now())
-  const { environment = environments.prod } = useEnvironmentStore()
-
-  const client = useMemo(() => {
-    return configcat.getClient(
-      environment.configCat ?? '',
-      configcat.PollingMode.AutoPoll,
-      {
-        dataGovernance: configcat.DataGovernance.EuOnly,
-        cache: new ConfigCatAsyncStorageCache(),
-        logger: configcat.createConsoleLogger(configcat.LogLevel.Off),
-      },
-    )
-  }, [environment])
-  setFeatureFlagClient(client)
-
+  // Keep the module-level cache in sync for non-React usages
   useEffect(() => {
-    const listener = () => setTime(Date.now())
-    client.addListener('configChanged', listener)
+    setFeatureFlagCache(flags)
+  }, [flags])
 
-    return () => {
-      client.removeListener('configChanged', listener)
-    }
-  }, [client])
-
-  const context = useMemo<FeatureFlagClient>(() => {
-    const appVersion = Application.nativeApplicationVersion ?? ''
-    // Convert OS to lowercase to match the feature flag key
-    const os = Platform.OS.toLowerCase()
-
-    const userAuth =
-      userInfo && userInfo.nationalId
-        ? {
-            identifier: userInfo.nationalId,
-            custom: {
-              nationalId: userInfo.nationalId,
-              name: userInfo.name,
-              appVersion,
-              os,
-            },
-          }
-        : undefined
-    return {
-      getValue(
-        key: string,
-        defaultValue: boolean | string,
-        user: FeatureFlagUser | undefined = userAuth,
-      ) {
-        return client.getValueAsync(key, defaultValue, user)
+  const context = useMemo<FeatureFlagClient>(
+    () => ({
+      getValue: async (key: string, defaultValue: boolean | string) => {
+        return flags[key] ?? defaultValue
       },
-      dispose: () => client.dispose(),
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, userInfo, time])
+      dispose: () => {},
+    }),
+    [flags],
+  )
 
   return (
     <FeatureFlagContext.Provider value={context}>

@@ -102,6 +102,9 @@
       "@island.is/api/domains/farmers": [
         "libs/api/domains/farmers/src/index.ts"
       ],
+      "@island.is/api/domains/feature-flags": [
+        "libs/api/domains/feature-flags/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],

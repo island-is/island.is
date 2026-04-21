@@ -19,6 +19,9 @@ export interface FeatureFlagClient {
     defaultValue: T,
     user?: FeatureFlagUser,
   ) => Promise<SettingTypeOf<T>>
+  getAllValues: (
+    user?: FeatureFlagUser,
+  ) => Promise<Record<string, boolean | string>>
 }
 
 export interface FeatureFlagClientProps {
