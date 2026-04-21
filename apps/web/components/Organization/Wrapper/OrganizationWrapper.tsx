@@ -92,7 +92,6 @@ import {
   SyslumennFooter,
 } from './Themes/SyslumennTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import * as styles from './OrganizationWrapper.css'
@@ -239,6 +238,12 @@ export const OrganizationHeader: React.FC<
     mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
     isSubpage,
   }
+
+  console.log({
+    organizationPage,
+    defaultProps,
+    isSubpage,
+  })
 
   switch (organizationPage.theme) {
     case 'syslumenn':
@@ -659,12 +664,6 @@ export const OrganizationFooter: React.FC<
           logo={organization.logo?.url}
           title={organization.title}
         />
-      )
-      break
-    case 'haskolanam':
-    case 'university-studies':
-      OrganizationFooterComponent = (
-        <UniversityStudiesFooter organization={organization} />
       )
       break
     case 'gev':
