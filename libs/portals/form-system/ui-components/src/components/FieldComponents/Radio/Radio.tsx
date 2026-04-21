@@ -39,7 +39,9 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
   const listValue = getValue(item, 'listValue', valueIndex)
 
   const defaultSelectedValue =
-    (typeof listValue === 'string' ? listValue : listValue?.label?.is) ??
+    (typeof listValue === 'string'
+      ? listValue || undefined
+      : listValue?.label?.is) ??
     selected?.label?.is ??
     ''
 
