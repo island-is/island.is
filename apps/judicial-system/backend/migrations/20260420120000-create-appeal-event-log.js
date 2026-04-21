@@ -21,13 +21,11 @@ module.exports = {
             case_id: {
               type: Sequelize.UUID,
               allowNull: false,
-              onDelete: 'CASCADE',
               references: { model: 'case', key: 'id' },
             },
             appeal_case_id: {
               type: Sequelize.UUID,
               allowNull: false,
-              onDelete: 'CASCADE',
               references: { model: 'appeal_case', key: 'id' },
             },
             event_type: {
@@ -41,13 +39,11 @@ module.exports = {
             defendant_id: {
               type: Sequelize.UUID,
               allowNull: true,
-              onDelete: 'CASCADE',
               references: { model: 'defendant', key: 'id' },
             },
             civil_claimant_id: {
               type: Sequelize.UUID,
               allowNull: true,
-              onDelete: 'CASCADE',
               references: { model: 'civil_claimant', key: 'id' },
             },
           },
