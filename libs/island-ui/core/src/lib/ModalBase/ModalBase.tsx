@@ -22,11 +22,17 @@ import { DisclosureProps } from 'reakit/ts'
 interface BackdropDivProps {
   backdropWhite?: ModalBaseProps['backdropWhite']
   backdropDark?: ModalBaseProps['backdropDark']
+  backdropTransparent?: ModalBaseProps['backdropTransparent']
 }
 
 export const BackdropDiv = forwardRef(
   (
-    { backdropWhite, backdropDark, ...props }: DialogProps & BackdropDivProps,
+    {
+      backdropWhite,
+      backdropDark,
+      backdropTransparent,
+      ...props
+    }: DialogProps & BackdropDivProps,
     ref: Ref<HTMLDivElement>,
   ) => {
     const [mounted, setMounted] = useState(false)
@@ -39,7 +45,13 @@ export const BackdropDiv = forwardRef(
         className={cn(
           styles.backdrop,
           styles.backdropColor[
-            backdropWhite ? 'white' : backdropDark ? 'dark' : 'default'
+            backdropTransparent
+              ? 'transparent'
+              : backdropWhite
+                ? 'white'
+                : backdropDark
+                  ? 'dark'
+                  : 'default'
           ],
         )}
         {...props}
@@ -78,6 +90,10 @@ export type ModalBaseProps = {
   ) => ReactElement
   backdropWhite?: boolean
   backdropDark?: boolean
+  /**
+   * No dimming overlay; backdrop stays invisible and non-interactive so content behind stays visible and clickable.
+   */
+  backdropTransparent?: boolean
   /**
    * Aria label for the modal
    */
@@ -123,6 +139,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   renderDisclosure = (disclosure) => disclosure,
   backdropWhite,
   backdropDark,
+  backdropTransparent,
   modalLabel,
   removeOnClose,
   isVisible,
@@ -176,6 +193,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
           as={BackdropDiv}
           backdropWhite={backdropWhite}
           backdropDark={backdropDark}
+          backdropTransparent={backdropTransparent}
         >
           <BaseDialog
             {...modal}

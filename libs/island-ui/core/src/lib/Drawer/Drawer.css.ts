@@ -6,6 +6,9 @@ export const drawer = style({
   top: 0,
   width: '100%',
   height: '100vh',
+  /** Re-enable hits on the panel when the backdrop uses `pointer-events: none` (transparent backdrop). */
+  pointerEvents: 'auto',
+  zIndex: 1,
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   opacity: 1,
   transition: 'transform 400ms ease-in-out',

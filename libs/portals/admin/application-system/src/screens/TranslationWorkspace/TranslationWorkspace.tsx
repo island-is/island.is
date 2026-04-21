@@ -24,9 +24,12 @@ import {
   RadioButton,
   FormStepperV2,
   Section,
+  Drawer,
+  Icon,
 } from '@island.is/island-ui/core'
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import { useLocale } from '@island.is/localization'
+import { coreMessages } from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
 import { m } from '../../lib/messages'
 import { ApplicationSystemPaths } from '../../lib/paths'
@@ -48,6 +51,10 @@ interface ScreenIntrospection {
   type: string
   title: string | null
   description?: string | null
+  pageTitle?: string | null
+  subTitle?: string | null
+  subDescription?: string | null
+  checkboxLabel?: string | null
   width?: string | null
   space?: number | null
   marginTop?: unknown
@@ -288,6 +295,67 @@ const resolveTranslatableStaticText = (
   return staticText
 }
 
+/** Matches `useLocale().formatMessage` for preview fallbacks (e.g. core messages). */
+type PreviewFormatMessage = (
+  descriptor: { id: string; defaultMessage?: string | null },
+  values?: Record<string, string | number | boolean | null | undefined>,
+) => string
+
+const renderExternalDataSourcePreview = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+): JSX.Element => {
+  const layout = fieldPreviewLayoutProps(screen)
+  const pageTitleResolved = screen.pageTitle
+    ? resolveTranslatableStaticText(
+        screen.pageTitle,
+        screen.messageDescriptors,
+        resolvePreviewString,
+      ).trim()
+    : ''
+  const titleResolved = resolveTranslatableStaticText(
+    screen.title ?? '',
+    screen.messageDescriptors,
+    resolvePreviewString,
+  )
+  const subResolved = resolveTranslatableStaticText(
+    screen.description ?? '',
+    screen.messageDescriptors,
+    resolvePreviewString,
+  ).trim()
+
+  return (
+    <Box marginBottom={3} {...layout}>
+      {pageTitleResolved.length > 0 && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="flexStart"
+          marginTop={5}
+        >
+          <Box marginRight={1}>
+            <Icon
+              icon="fileTrayFull"
+              size="medium"
+              color="blue400"
+              type="outline"
+            />
+          </Box>
+          <Text variant="h4">{pageTitleResolved}</Text>
+        </Box>
+      )}
+      <Text variant="h4" color="blue400">
+        {titleResolved}
+      </Text>
+      {screen.description && subResolved.length > 0 && (
+        <Box component="div" marginTop={1}>
+          <Markdown>{subResolved}</Markdown>
+        </Box>
+      )}
+    </Box>
+  )
+}
+
 const resolvePreviewLabel = (
   screen: ScreenIntrospection,
   resolvePreviewString: ResolvePreviewString,
@@ -367,26 +435,89 @@ const renderTextDisplayPreviewNodes = (
 const renderLeafFieldPreview = (
   screen: ScreenIntrospection,
   resolvePreviewString: ResolvePreviewString,
+  formatMessage: PreviewFormatMessage,
 ): JSX.Element => {
   const label = resolvePreviewLabel(screen, resolvePreviewString)
   const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
 
-  if (screen.type === 'EXTERNAL_DATA_PROVIDER') {
+  if (screen.type === 'EXTERNAL_DATA_SOURCE') {
     return (
-      <Box
-        key={key}
-        marginBottom={2}
-        padding={3}
-        border="standard"
-        borderRadius="large"
-        background="white"
-        {...layout}
-      >
-        <Text variant="small" color="dark300">
-          External data provider
-        </Text>
-        <Text variant="h5">{label}</Text>
+      <Box key={key} {...layout}>
+        {renderExternalDataSourcePreview(screen, resolvePreviewString)}
+      </Box>
+    )
+  }
+
+  if (screen.type === 'EXTERNAL_DATA_PROVIDER') {
+    const intro = resolveTranslatableStaticText(
+      screen.subTitle ?? '',
+      screen.messageDescriptors,
+      resolvePreviewString,
+    )
+    const checkboxStatic = screen.checkboxLabel ?? ''
+    const checkboxResolved = checkboxStatic
+      ? resolveTranslatableStaticText(
+          checkboxStatic,
+          screen.messageDescriptors,
+          resolvePreviewString,
+        )
+      : formatMessage(coreMessages.externalDataAgreement)
+
+    return (
+      <Box key={key} {...layout}>
+        <Box marginTop={2} marginBottom={5}>
+          <Box display="flex" alignItems="center" justifyContent="flexStart">
+            <Box marginRight={1}>
+              <Icon
+                icon="fileTrayFull"
+                size="medium"
+                color="blue400"
+                type="outline"
+              />
+            </Box>
+            <Text variant="h4">{intro}</Text>
+          </Box>
+          {screen.description && (
+            <Box marginTop={4}>
+              <Markdown>
+                {resolveTranslatableStaticText(
+                  screen.description,
+                  screen.messageDescriptors,
+                  resolvePreviewString,
+                )}
+              </Markdown>
+            </Box>
+          )}
+        </Box>
+        <Box marginBottom={5}>
+          {screen.children
+            ?.filter((c) => c.type === 'EXTERNAL_DATA_SOURCE')
+            .map((child) => (
+              <Box key={child.id}>
+                {renderExternalDataSourcePreview(child, resolvePreviewString)}
+              </Box>
+            ))}
+        </Box>
+        <Checkbox
+          large
+          name={`preview-external-data-${key}`}
+          onChange={noop}
+          checked={false}
+          backgroundColor="blue"
+          label={<Markdown>{checkboxResolved}</Markdown>}
+        />
+        {screen.subDescription && (
+          <Box marginTop={4}>
+            <Markdown>
+              {resolveTranslatableStaticText(
+                screen.subDescription,
+                screen.messageDescriptors,
+                resolvePreviewString,
+              )}
+            </Markdown>
+          </Box>
+        )}
       </Box>
     )
   }
@@ -532,6 +663,7 @@ const renderLeafFieldPreview = (
 const renderFieldPreview = (
   screen: ScreenIntrospection,
   resolvePreviewString: ResolvePreviewString,
+  formatMessage: PreviewFormatMessage,
 ): JSX.Element => {
   if (screen.type === 'MULTI_FIELD') {
     const space = (screen.space ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
@@ -563,7 +695,11 @@ const renderFieldPreview = (
                 paddingBottom={isLast ? 0 : space}
               >
                 <Box>
-                  {renderLeafFieldPreview(child, resolvePreviewString)}
+                  {renderLeafFieldPreview(
+                    child,
+                    resolvePreviewString,
+                    formatMessage,
+                  )}
                 </Box>
               </GridColumn>
             )
@@ -573,7 +709,7 @@ const renderFieldPreview = (
     )
   }
 
-  return renderLeafFieldPreview(screen, resolvePreviewString)
+  return renderLeafFieldPreview(screen, resolvePreviewString, formatMessage)
 }
 
 const TranslationWorkspace = () => {
@@ -617,6 +753,7 @@ const TranslationWorkspace = () => {
   const [selectedLocation, setSelectedLocation] =
     useState<SidebarNavLocation | null>(null)
   const [editedValues, setEditedValues] = useState<EditedTranslations>({})
+  const [stringsDrawerOpen, setStringsDrawerOpen] = useState(true)
 
   const getPersistedForLocale = useCallback(
     (messageKey: string) => {
@@ -645,6 +782,12 @@ const TranslationWorkspace = () => {
   useEffect(() => {
     setEditedValues({})
   }, [activeLocale])
+
+  useEffect(() => {
+    if (selectedScreen) {
+      setStringsDrawerOpen(true)
+    }
+  }, [selectedScreen?.id])
 
   useEffect(() => {
     if (!introspection) return
@@ -1046,6 +1189,17 @@ const TranslationWorkspace = () => {
               {formatMessage(m.translationSaveAll)} ({unsavedCount})
             </Button>
           )}
+          {selectedScreen && !stringsDrawerOpen && (
+            <Button
+              size="small"
+              variant="ghost"
+              onClick={() => setStringsDrawerOpen(true)}
+            >
+              {formatMessage(m.translationStringsOpenButton, {
+                count: currentDescriptors.length,
+              })}
+            </Button>
+          )}
         </Box>
       </Box>
 
@@ -1234,6 +1388,7 @@ const TranslationWorkspace = () => {
                         renderFieldPreview(
                           screen as ScreenIntrospection,
                           resolvePreviewString,
+                          formatMessage as PreviewFormatMessage,
                         ),
                       )}
                     </GridColumn>
@@ -1243,9 +1398,20 @@ const TranslationWorkspace = () => {
                       paddingBottom={5}
                       paddingTop={3}
                       display="flex"
-                      justifyContent="flexEnd"
+                      flexDirection="rowReverse"
+                      alignItems="center"
+                      justifyContent="spaceBetween"
                     >
-                      <Button icon="arrowForward">Halda áfram</Button>
+                      <Box display="inlineFlex" padding={2} paddingRight="none">
+                        <Button icon="arrowForward" type="button">
+                          {formatMessage(coreMessages.buttonNext)}
+                        </Button>
+                      </Box>
+                      <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
+                        <Button variant="ghost" type="button">
+                          {formatMessage(coreMessages.buttonBack)}
+                        </Button>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
@@ -1388,8 +1554,17 @@ const TranslationWorkspace = () => {
       </GridRow>
 
       {selectedScreen && (
-        <Box marginTop={4}>
-          <Box background="white" borderRadius="large" padding={3}>
+        <Drawer
+          ariaLabel={formatMessage(m.translationStringsDrawerAriaLabel)}
+          baseId="translation-workspace-strings-drawer"
+          position="right"
+          isVisible={stringsDrawerOpen}
+          onVisibilityChange={setStringsDrawerOpen}
+          backdropTransparent
+          hideOnClickOutside={false}
+          preventBodyScroll={false}
+        >
+          <Box marginTop={5}>
             <Box
               display="flex"
               justifyContent="spaceBetween"
@@ -1468,7 +1643,7 @@ const TranslationWorkspace = () => {
               )}
             </Box>
           </Box>
-        </Box>
+        </Drawer>
       )}
     </GridContainer>
   )

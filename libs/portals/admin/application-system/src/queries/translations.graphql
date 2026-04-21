@@ -71,6 +71,10 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                 type
                 title
                 description
+                pageTitle
+                subTitle
+                subDescription
+                checkboxLabel
                 width
                 space
                 marginTop
@@ -86,6 +90,10 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                   type
                   title
                   description
+                  pageTitle
+                  subTitle
+                  subDescription
+                  checkboxLabel
                   width
                   space
                   marginTop
@@ -104,6 +112,10 @@ query getApplicationTemplateIntrospection($typeId: String!) {
               type
               title
               description
+              pageTitle
+              subTitle
+              subDescription
+              checkboxLabel
               width
               space
               marginTop
@@ -119,6 +131,10 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                 type
                 title
                 description
+                pageTitle
+                subTitle
+                subDescription
+                checkboxLabel
                 width
                 space
                 marginTop

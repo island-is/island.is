@@ -201,6 +201,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationSaveAll',
     defaultMessage: 'Vista allt',
   },
+  translationStringsDrawerAriaLabel: {
+    id: 'admin-portal.application-system:translationStringsDrawerAriaLabel',
+    defaultMessage: 'Þýðingastrengir',
+  },
+  translationStringsOpenButton: {
+    id: 'admin-portal.application-system:translationStringsOpenButton',
+    defaultMessage: 'Þýðingastrengir ({count})',
+  },
   translationSaveFailed: {
     id: 'admin-portal.application-system:translationSaveFailed',
     defaultMessage: 'Ekki tókst að vista. {detail}',

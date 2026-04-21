@@ -88,6 +88,18 @@ export class ScreenIntrospectionGql {
   description?: string | null
 
   @Field(() => String, { nullable: true })
+  pageTitle?: string | null
+
+  @Field(() => String, { nullable: true })
+  subTitle?: string | null
+
+  @Field(() => String, { nullable: true })
+  subDescription?: string | null
+
+  @Field(() => String, { nullable: true })
+  checkboxLabel?: string | null
+
+  @Field(() => String, { nullable: true })
   width?: string | null
 
   @Field(() => Int, { nullable: true })

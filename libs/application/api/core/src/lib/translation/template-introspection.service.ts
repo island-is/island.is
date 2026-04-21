@@ -15,6 +15,7 @@ import type {
   StaticText,
   FormText,
   FormTextWithLocale,
+  DataProviderItem,
 } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import type { MessageDescriptor } from 'react-intl'
@@ -64,6 +65,14 @@ export interface ScreenIntrospection {
   type: string
   title: string | null
   description: string | null
+  /** `EXTERNAL_DATA_SOURCE` (data provider row): optional heading above the blue title. */
+  pageTitle: string | null
+  /** `EXTERNAL_DATA_PROVIDER`: intro line next to the icon (matches `subTitle`). */
+  subTitle: string | null
+  /** `EXTERNAL_DATA_PROVIDER`: optional copy after the checkbox (matches `subDescription`). */
+  subDescription: string | null
+  /** `EXTERNAL_DATA_PROVIDER`: consent label (matches `checkboxLabel`). */
+  checkboxLabel: string | null
   width: string | null
   /** `MULTI_FIELD` only: vertical gap between child fields (matches `FormMultiField`). */
   space: number | null
@@ -117,6 +126,44 @@ function extractMessageDescriptorsFromFormText(
   return []
 }
 
+function walkExternalDataSourceItem(
+  syntheticId: string,
+  provider: DataProviderItem,
+): ScreenIntrospection {
+  const descriptors: MessageDescriptorInfo[] = []
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(
+      provider.pageTitle as FormText | undefined,
+    ),
+  )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(provider.title as FormText | undefined),
+  )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(
+      provider.subTitle as FormText | undefined,
+    ),
+  )
+
+  return {
+    id: syntheticId,
+    type: 'EXTERNAL_DATA_SOURCE',
+    title: extractStaticText(provider.title as StaticText | undefined),
+    description: extractStaticText(provider.subTitle as StaticText | undefined),
+    pageTitle: extractStaticText(provider.pageTitle as StaticText | undefined),
+    subTitle: null,
+    subDescription: null,
+    checkboxLabel: null,
+    width: null,
+    space: null,
+    marginTop: null,
+    marginBottom: null,
+    paddingTop: null,
+    messageDescriptors: descriptors,
+    children: undefined,
+  }
+}
+
 function extractMessageDescriptorsFromField(
   field: Field,
 ): MessageDescriptorInfo[] {
@@ -163,6 +210,9 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
   const leafRecord = leaf as unknown as Record<string, unknown>
 
   let description: string | null = null
+  let subTitle: string | null = null
+  let subDescription: string | null = null
+  let checkboxLabel: string | null = null
   let width: string | null = null
   let space: number | null = null
   let marginTop: unknown = null
@@ -206,7 +256,38 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
         edp.checkboxLabel as FormText | undefined,
       ),
     )
+    descriptors.push(
+      ...extractMessageDescriptorsFromFormText(
+        edp.subDescription as FormText | undefined,
+      ),
+    )
     description = extractStaticText(edp.description as StaticText | undefined)
+    subTitle = extractStaticText(edp.subTitle as StaticText | undefined)
+    subDescription = extractStaticText(edp.subDescription as StaticText | undefined)
+    checkboxLabel = extractStaticText(edp.checkboxLabel as StaticText | undefined)
+
+    const dataProviders = (edp.dataProviders as DataProviderItem[] | undefined) ?? []
+    for (const provider of dataProviders) {
+      if (!provider?.id) continue
+      const childScreen = walkExternalDataSourceItem(
+        `${leaf.id ?? 'external'}::${provider.id}`,
+        provider,
+      )
+      children.push(childScreen)
+      descriptors.push(...childScreen.messageDescriptors)
+    }
+
+    const otherPermissions =
+      (edp.otherPermissions as DataProviderItem[] | undefined) ?? []
+    for (const permission of otherPermissions) {
+      if (!permission?.id) continue
+      const childScreen = walkExternalDataSourceItem(
+        `${leaf.id ?? 'external'}::perm::${permission.id}`,
+        permission,
+      )
+      children.push(childScreen)
+      descriptors.push(...childScreen.messageDescriptors)
+    }
   } else {
     const field = leaf as Field
     descriptors.push(...extractMessageDescriptorsFromField(field))
@@ -228,6 +309,10 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     type: leaf.type ?? 'FIELD',
     title: extractStaticText(leaf.title as StaticText | undefined),
     description,
+    pageTitle: null,
+    subTitle,
+    subDescription,
+    checkboxLabel,
     width,
     space,
     marginTop,
