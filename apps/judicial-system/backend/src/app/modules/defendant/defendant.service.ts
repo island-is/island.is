@@ -45,28 +45,20 @@ export class DefendantService {
   ) {}
 
   private validateDefenderInfoRemoval(
+    defendant: Defendant,
     update: Pick<
       UpdateDefendantDto | InternalUpdateDefendantDto,
-      | 'defenderNationalId'
-      | 'defenderName'
-      | 'defenderEmail'
-      | 'defenderPhoneNumber'
+      'defenderNationalId' | 'defenderName'
     >,
   ): void {
     if (
+      defendant.defenderName &&
       'defenderNationalId' in update &&
       update.defenderNationalId === null &&
-      !(
-        'defenderName' in update &&
-        update.defenderName === null &&
-        'defenderEmail' in update &&
-        update.defenderEmail === null &&
-        'defenderPhoneNumber' in update &&
-        update.defenderPhoneNumber === null
-      )
+      update.defenderName !== null
     ) {
       throw new BadRequestException(
-        'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
+        'DefenderNationalId can only be set to null when defenderName is also set to null.',
       )
     }
   }
@@ -386,7 +378,7 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    this.validateDefenderInfoRemoval(update)
+    this.validateDefenderInfoRemoval(defendant, update)
 
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
@@ -417,7 +409,7 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    this.validateDefenderInfoRemoval(update)
+    this.validateDefenderInfoRemoval(defendant, update)
 
     // If there is a change in the defender choice after the judge has confirmed the choice,
     // we need to set the isDefenderChoiceConfirmed to false
