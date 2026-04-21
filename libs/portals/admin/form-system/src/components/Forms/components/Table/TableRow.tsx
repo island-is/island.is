@@ -44,6 +44,7 @@ interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
   url?: string
+  lastModifiedBy?: string
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
@@ -65,6 +66,7 @@ export const TableRow = ({
   id,
   name,
   lastModified,
+  lastModifiedBy,
   setFormsState,
   slug,
   status,
@@ -317,6 +319,7 @@ export const TableRow = ({
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
       state: {
         id,
+        readOnly: true,
       },
     })
   }
@@ -355,6 +358,20 @@ export const TableRow = ({
 
           <Column span="1/12">
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <Button
+                  icon="eye"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={() => view()}
+                  title="Skoða"
+                />
+              </Box>
               {(status === FormStatus.IN_DEVELOPMENT ||
                 status === FormStatus.PUBLISHED_BEING_CHANGED) && (
                 <Box
@@ -368,21 +385,7 @@ export const TableRow = ({
                     colorScheme="negative"
                     inline
                     onClick={() => updateForm(status)}
-                  />
-                </Box>
-              )}
-              {status === FormStatus.PUBLISHED && (
-                <Box
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
-                >
-                  <Button
-                    icon="eye"
-                    circle
-                    colorScheme="negative"
-                    inline
-                    onClick={() => view()}
+                    title="Breyta"
                   />
                 </Box>
               )}
@@ -456,6 +459,11 @@ export const TableRow = ({
               <Row>
                 <Text variant="medium" className={styles.capitalizeText}>
                   <strong>Móttökukerfi:</strong> {url || '—'}
+                </Text>
+              </Row>
+              <Row>
+                <Text variant="medium">
+                  <strong>Síðast breytt af:</strong> {lastModifiedBy ?? '—'}
                 </Text>
               </Row>
             </Stack>

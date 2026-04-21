@@ -531,7 +531,7 @@ export const eligibleText = (externalData: ExternalData) => {
         .hasActivePaymentsDescription
     case EligibleReasonCodes.INACTIVE_PAYMENTS_FOR_TOO_LONG:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
-        .baseCertOlderThanSevenYearsDescription
+        .inactivePaymentsForTooLongDescription
     case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertNotFoundDescription

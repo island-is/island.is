@@ -12,8 +12,8 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -162,10 +162,10 @@ export class AppealCase extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(CaseAppealRulingDecision),
+    values: Object.values(AppealCaseRulingDecision),
   })
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  appealRulingDecision?: CaseAppealRulingDecision
+  @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
+  appealRulingDecision?: AppealCaseRulingDecision
 
   /**********
    * The appeal conclusion

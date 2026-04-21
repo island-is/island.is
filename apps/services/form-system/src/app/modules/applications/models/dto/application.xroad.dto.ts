@@ -26,9 +26,10 @@ export class ApplicationXroadFieldDto {
   @IsString()
   identifier!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  screenIdentifier!: string
+  screenIdentifier?: string
 
   @ApiProperty()
   @IsString()
@@ -48,7 +49,7 @@ export class ApplicationXroadDto {
 
   @ApiProperty()
   @IsString()
-  formId!: string
+  slug!: string
 
   @ApiProperty()
   @IsBoolean()
@@ -63,6 +64,18 @@ export class ApplicationXroadDto {
   @IsDate()
   @Type(() => Date)
   submittedAt?: Date | null
+
+  @ApiProperty({ type: [ApplicationXroadFieldDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ApplicationXroadFieldDto)
+  fields!: ApplicationXroadFieldDto[]
+}
+
+export class ValidationScreenDto {
+  @ApiProperty()
+  @IsString()
+  screenIdentifier!: string
 
   @ApiProperty({ type: [ApplicationXroadFieldDto] })
   @IsArray()
