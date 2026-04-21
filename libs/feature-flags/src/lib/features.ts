@@ -177,6 +177,8 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
+  // University micro-credentials (örnám)
+  servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
 }
 
 export enum ServerSideFeature {

@@ -5,6 +5,7 @@ import {
   BifrostStudentTrackOverview,
   UnakStudentTrackOverview,
   HIStudentTrackOverview,
+  LHIStudentTrackOverview,
 } from '../clients'
 import { UniversityId } from '../universityCareers.types'
 import { StudentFileDto, mapToStudentFileDto } from './studentFileDto'
@@ -23,7 +24,8 @@ export const mapToStudentTrackOverviewDto = (
     | LbhiStudentTrackOverview
     | BifrostStudentTrackOverview
     | UnakStudentTrackOverview
-    | HIStudentTrackOverview,
+    | HIStudentTrackOverview
+    | LHIStudentTrackOverview,
   institutionId: UniversityId,
 ): StudentTrackOverviewDto | null => {
   if (!overview.transcript) {

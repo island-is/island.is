@@ -94,7 +94,7 @@ export class StudentTrackResolver {
         }
         return {
           ...f,
-          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${f.locale}/${institution.shortId}/${trackNumber}/${type}`,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${track.locale ?? 'is'}/${institution.shortId}/${trackNumber}/${type}`,
         }
       })
       .filter(isDefined)

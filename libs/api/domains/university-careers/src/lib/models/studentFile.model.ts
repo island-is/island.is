@@ -11,13 +11,13 @@ export class StudentFile {
   type!: FileType
 
   @Field()
-  locale!: string
-
-  @Field()
   displayName!: string
 
   @Field()
   fileName!: string
+
+  @Field({ nullable: true })
+  url?: string
 
   @Field({ nullable: true })
   downloadServiceURL?: string

@@ -1,4 +1,7 @@
-import { UniversityCareersUniversityId } from '@island.is/api/schema'
+import {
+  UniversityCareersStudyType,
+  UniversityCareersUniversityId,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -17,7 +20,7 @@ import {
   InfoLine,
   formatDate,
   m,
-  IntroWrapper,
+  IntroWrapperV2,
   formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { useParams } from 'react-router-dom'
@@ -34,7 +37,11 @@ type UseParams = {
   uni: string
 }
 
-export const UniversityGraduationDetail = () => {
+type Props = {
+  studyType?: UniversityCareersStudyType
+}
+
+export const UniversityGraduationDetail = ({ studyType }: Props) => {
   useNamespaces('sp.education-graduation')
   const { id, uni } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
@@ -69,11 +76,17 @@ export const UniversityGraduationDetail = () => {
   const fileDownloadDisplay: 'dropdown' | 'inline' | undefined =
     downloadCount > 2 ? 'dropdown' : downloadCount > 0 ? 'inline' : undefined
 
+  const serviceProviderSlug = mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'
+
   return (
-    <IntroWrapper
-      title={m.educationGraduation}
+    <IntroWrapperV2
+      title={
+        studyType === UniversityCareersStudyType.ORNAM
+          ? m.educationMicroCredentials
+          : m.educationGraduation
+      }
       intro={text?.description || ''}
-      serviceProviderSlug={mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'}
+      serviceProvider={{ slug: serviceProviderSlug }}
     >
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">
@@ -166,7 +179,11 @@ export const UniversityGraduationDetail = () => {
             />
             {studentInfo?.degree && (
               <InfoLine
-                label={formatMessage(uniMessages.degree)}
+                label={formatMessage(
+                  studyType === UniversityCareersStudyType.ORNAM
+                    ? uniMessages.studyLevel
+                    : uniMessages.degree,
+                )}
                 loading={loading}
                 content={formatNationalId(studentInfo.degree)}
               />
@@ -201,7 +218,7 @@ export const UniversityGraduationDetail = () => {
           </Box>
         </>
       )}
-    </IntroWrapper>
+    </IntroWrapperV2>
   )
 }
 

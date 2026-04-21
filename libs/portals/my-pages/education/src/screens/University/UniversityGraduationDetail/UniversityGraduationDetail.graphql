@@ -17,7 +17,6 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
     }
     files {
       type
-      locale
       displayName
       fileName
       downloadServiceURL

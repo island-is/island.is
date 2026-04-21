@@ -19,6 +19,11 @@ export enum FileType {
   MICRO_CREDENTIALS_TRANSCRIPT,
 }
 
+export enum UniversityCareersStudyType {
+  HASKOLANAM = 'HASKOLANAM',
+  ORNAM = 'ORNAM',
+}
+
 export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {
   unak: '02210',
   bifrost: 'bifrost-university',

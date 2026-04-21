@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  IntroWrapper,
+  IntroWrapperV2,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { isDefined } from '@island.is/shared/utils'
@@ -13,8 +13,13 @@ import { useStudentInfoQuery } from './UniversityGraduation.generated'
 import { useMemo } from 'react'
 import { mapUniversityToSlug } from '../../../utils/mapUniversitySlug'
 import { uniMessages } from '../../../lib/messages'
+import { UniversityCareersStudyType } from '@island.is/api/schema'
 
-export const UniversityGraduation = () => {
+type Props = {
+  studyType?: UniversityCareersStudyType
+}
+
+export const UniversityGraduation = ({ studyType }: Props) => {
   useNamespaces('sp.education-graduation')
   const { lang, formatMessage } = useLocale()
 
@@ -22,6 +27,7 @@ export const UniversityGraduation = () => {
     variables: {
       input: {
         locale: lang,
+        studyType,
       },
     },
   })
@@ -39,9 +45,17 @@ export const UniversityGraduation = () => {
   }, [errors])
 
   return (
-    <IntroWrapper
-      title={coreMessages.educationGraduation}
-      intro={uniMessages.graduationIntro}
+    <IntroWrapperV2
+      title={
+        studyType === UniversityCareersStudyType.ORNAM
+          ? coreMessages.educationMicroCredentials
+          : coreMessages.educationGraduation
+      }
+      intro={
+        studyType === UniversityCareersStudyType.ORNAM
+          ? uniMessages.microCredentialsIntro
+          : uniMessages.graduationIntro
+      }
     >
       {!!errors?.length && !error && !loading && (
         <Box marginBottom={2}>
@@ -93,13 +107,12 @@ export const UniversityGraduation = () => {
                   variant: 'text',
                   url:
                     item?.trackNumber && item?.institution?.id
-                      ? EducationPaths.EducationHaskoliGraduationDetail.replace(
-                          ':id',
-                          item.trackNumber.toString(),
-                        ).replace(
-                          ':uni',
-                          mapUniversityToSlug(item.institution.id),
+                      ? (studyType === UniversityCareersStudyType.ORNAM
+                          ? EducationPaths.EducationHaskoliMicroCredentialsDetail
+                          : EducationPaths.EducationHaskoliGraduationDetail
                         )
+                          .replace(':id', item.trackNumber.toString())
+                          .replace(':uni', mapUniversityToSlug(item.institution.id))
                       : '',
                 }}
                 image={
@@ -114,7 +127,7 @@ export const UniversityGraduation = () => {
             )
           })}
       </Stack>
-    </IntroWrapper>
+    </IntroWrapperV2>
   )
 }
 

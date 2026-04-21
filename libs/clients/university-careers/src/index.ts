@@ -16,3 +16,4 @@ export {
   IcelandUniversityOfTheArtsCareerClientConfig,
 } from './lib/clients'
 export * from './lib/dto'
+export { HIStudyType as StudyType } from './lib/clients/university-of-iceland'

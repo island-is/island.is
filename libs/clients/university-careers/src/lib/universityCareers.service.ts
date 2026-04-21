@@ -32,6 +32,7 @@ import {
   UnakLocale,
   UnakTranscriptLocale,
 } from './clients'
+import { NemandiGetTegundNamsEnum } from './clients/university-of-iceland/gen/fetch'
 import { Locale } from '@island.is/shared/types'
 import { StudentFileType, UniversityId } from './universityCareers.types'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -126,12 +127,14 @@ export class UniversityCareersClientService {
     user: User,
     university: UniversityId,
     locale?: Locale,
+    studyType?: NemandiGetTegundNamsEnum,
   ): Promise<Array<StudentTrackDto> | null> => {
     const { api, locales } = this.getApi(university, user)
     const data = await api
       .nemandiGet({
         locale:
           locale === 'en' ? locales.studentLocale.En : locales.studentLocale.Is,
+        ...(studyType !== undefined && { tegundNams: studyType }),
       })
       .catch(handle404)
 

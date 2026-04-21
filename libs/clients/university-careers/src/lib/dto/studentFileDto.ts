@@ -7,13 +7,26 @@ import {
   LHIStudentFile,
 } from '../clients'
 import { StudentFileType } from '../universityCareers.types'
-import { mapStudentFileType } from './studentFileType.dto'
 
 export interface StudentFileDto {
   type: StudentFileType
-  locale?: string
+  url?: string
   displayName?: string
   fileName?: string
+}
+
+const FILE_TYPE_MAP: Record<string, StudentFileType> = {
+  transcript: 'transcript',
+  diploma: 'diploma',
+  diploma_supplement: 'diploma_supplement',
+  course_descriptions: 'course_descriptions',
+  micro_credentials_supplement: 'micro_credentials_supplement',
+  micro_credentials_transcript: 'micro_credentials_transcript',
+}
+
+const typeFromUrl = (url?: string): StudentFileType | null => {
+  const segment = url?.split('/').pop()
+  return segment ? (FILE_TYPE_MAP[segment] ?? null) : null
 }
 
 export const mapToStudentFileDto = (
@@ -25,12 +38,15 @@ export const mapToStudentFileDto = (
     | HIStudentFile
     | LHIStudentFile,
 ): StudentFileDto | null => {
-  if (!transcript.type) {
+  const type = typeFromUrl(transcript.url)
+  if (!type) {
     return null
   }
 
   return {
-    type: mapStudentFileType(transcript.type),
-    ...transcript,
+    type,
+    url: transcript.url,
+    displayName: transcript.displayName,
+    fileName: transcript.fileName,
   }
 }

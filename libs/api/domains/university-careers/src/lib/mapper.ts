@@ -4,6 +4,7 @@ import {
   StudentTrackOverviewDto,
 } from '@island.is/clients/university-careers'
 import { isDefined } from '@island.is/shared/utils'
+import { Locale } from '@island.is/shared/types'
 import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { Institution } from './models/institution.model'
@@ -90,6 +91,7 @@ export const mapToStudent = (
 export const mapToStudentTrackModel = (
   data: StudentTrackOverviewDto,
   institution: InstitutionProps,
+  locale: Locale,
 ): StudentTrack | null => {
   if (
     !data.transcript ||
@@ -112,13 +114,13 @@ export const mapToStudentTrackModel = (
       data.files
         ?.map((d) => {
           const type = mapTypeToEnum(d.type)
-          if (!type || !d.locale || !d.displayName || !d.fileName) {
+          if (!type || !d.displayName || !d.fileName) {
             return null
           }
 
           return {
             type,
-            locale: d.locale,
+            url: d.url,
             displayName: d.displayName,
             fileName: d.fileName,
           }
@@ -129,5 +131,6 @@ export const mapToStudentTrackModel = (
       footer: data?.body?.footer,
       unconfirmedData: data?.body?.unconfirmedData,
     },
+    locale,
   }
 }

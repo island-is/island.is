@@ -15,6 +15,7 @@ paths:
         - 'studentTranscript'
       parameters:
         - $ref: '#/components/parameters/locale'
+        - $ref: '#/components/parameters/tegund_nams'
       responses:
         '200':
           description: 'Skilar lista af ferlum sem nemandi hefur útskrifast af'
@@ -41,6 +42,8 @@ paths:
         ningaryfirliti"
       tags:
         - 'studentTranscript'
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/ferill'
         - $ref: '#/components/parameters/locale'
@@ -85,45 +88,31 @@ paths:
           description: 'Unexpected error.'
   /nemandi/ferill/{ferill}/file/{type}:
     get:
-      summary: 'Skilar útskriftargögnum á pdf formi'
+      summary: 'Sækir skjal tengt brautskráningu nemanda'
       tags:
         - 'studentTranscript'
+      security:
+        - bearerAuth: []
       parameters:
-        - name: 'type'
-          in: 'path'
-          required: true
-          description: 'Tegund skjalas'
-          schema:
-            $ref: '#/components/schemas/fileType'
         - $ref: '#/components/parameters/ferill'
+        - $ref: '#/components/parameters/type'
         - $ref: '#/components/parameters/locale'
       responses:
         '200':
-          description: 'PDF skjal'
+          description: 'Skilar PDF skjali'
           content:
             application/pdf:
               schema:
                 type: 'string'
                 format: 'binary'
         '400':
-          description: 'Bad request. Invalid kennitala'
+          description: 'Bad request. Invalid ferill eða type'
         '404':
-          description:
-            "Nemandi hefur enga brautskráða ferla, ferill ekki til, er\
-            \ ekki brautskráður fyrir feril."
+          description: 'Skjal ekki til'
         '5XX':
           description: 'Unexpected error.'
 components:
   schemas:
-    fileType:
-      type: 'string'
-      enum:
-        - 'transcript'
-        - 'diploma'
-        - 'diploma_supplement'
-        - 'course_descriptions'
-        - 'micro_credentials_supplement'
-        - 'micro_credentials_transcript'
     studentTrack:
       type: 'object'
       properties:
@@ -177,12 +166,11 @@ components:
     studentFile:
       type: 'object'
       properties:
-        type:
-          $ref: '#/components/schemas/fileType'
-        locale:
+        url:
           type: 'string'
-          description: 'Tungumál fyrir file'
-          example: 'is'
+          format: 'uri-reference'
+          description: 'Skilar slóð á viðeigandi skjal'
+          example: '/brautskraning/nemandi/ferill/12/file/transcript'
         displayName:
           type: 'string'
           description: 'TODO'
@@ -201,6 +189,16 @@ components:
           - 'is'
           - 'en'
         default: 'is'
+    tegund_nams:
+      name: 'tegund_nams'
+      in: 'query'
+      schema:
+        type: 'string'
+        enum:
+          - 'haskolanam'
+          - 'ornam'
+        default: 'haskolanam'
+      description: 'Tegund náms sem á að sækja brautskráningar fyrir'
     ferill:
       in: 'path'
       name: 'ferill'
@@ -208,10 +206,22 @@ components:
         type: 'integer'
       required: true
       description: 'Ferilsnúmer nemenda'
+    type:
+      in: 'path'
+      name: 'type'
+      schema:
+        type: 'string'
+        enum:
+          - 'transcript'
+          - 'diploma'
+          - 'diploma_supplement'
+          - 'course_descriptions'
+          - 'micro_credentials_transcript'
+          - 'micro_credentials_supplement'
+      required: true
+      description: 'Tegund skjals'
   securitySchemes:
     bearerAuth:
       type: 'http'
       scheme: 'bearer'
       bearerFormat: 'JWT'
-security:
-  - bearerAuth: []
