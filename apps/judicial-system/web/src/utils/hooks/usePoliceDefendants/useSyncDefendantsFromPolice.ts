@@ -1,11 +1,15 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useRef } from 'react'
 
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapStringToGender } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { usePoliceDefendantsQuery } from './policeDefendants.generated'
+import {
+  PoliceDefendantsQuery,
+  usePoliceDefendantsQuery,
+} from './policeDefendants.generated'
 
 /**
  * Fetches defendants from the police API (LOKE) and syncs by nationalId:
@@ -16,80 +20,91 @@ import { usePoliceDefendantsQuery } from './policeDefendants.generated'
 export const useSyncDefendantsFromPolice = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { createDefendant } = useDefendants()
+  const syncingRef = useRef(false)
 
-  const {
-    data: policeDefendantsData,
-    loading,
-    error,
-    refetch,
-  } = usePoliceDefendantsQuery({
+  const { loading, error, refetch } = usePoliceDefendantsQuery({
     variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE || !workingCase.id,
     fetchPolicy: 'cache-first',
-  })
-
-  useEffect(() => {
-    if (!workingCase.id) {
-      return
-    }
-    const policeDefendants = policeDefendantsData?.policeDefendants
-    if (!policeDefendants?.length) {
-      return
-    }
-
-    const existingNationalIds = new Set(
-      (workingCase.defendants ?? [])
-        .map((d) => d.nationalId)
-        .filter((id): id is string => Boolean(id)),
-    )
-
-    const toAdd = policeDefendants.filter(
-      (p) => p.nationalId && !existingNationalIds.has(p.nationalId),
-    )
-    if (toAdd.length === 0) {
-      return
-    }
-
-    const sync = async () => {
-      const defendantPromises = toAdd.map(async (p) => {
-        const defendant = await createDefendant({
-          caseId: workingCase.id,
-          nationalId: p.nationalId ?? undefined,
-          name: p.name ?? undefined,
-          gender: mapStringToGender(p.gender),
-          address: p.address ?? undefined,
-          citizenship: p.citizenship ?? undefined,
-        })
-        return defendant ? { defendantId: defendant, p } : null
-      })
-      const results = await Promise.all(defendantPromises)
-      const newDefendants = results
-        .filter((p): p is { defendantId: string; p: typeof toAdd[number] } =>
-          Boolean(p),
-        )
-        .map(({ defendantId, p }) => ({
-          id: defendantId,
-          nationalId: p.nationalId,
-          name: p.name,
-          gender: mapStringToGender(p.gender),
-          address: p.address,
-          citizenship: p.citizenship,
-        }))
-      if (newDefendants.length > 0) {
-        setWorkingCase((prev) => ({
-          ...prev,
-          defendants: [...(prev.defendants ?? []), ...newDefendants],
-        }))
+    onCompleted: (data: PoliceDefendantsQuery) => {
+      const policeDefendants = data?.policeDefendants
+      if (!policeDefendants?.length || syncingRef.current) {
+        return
       }
-    }
-    sync()
-  }, [
-    workingCase.id,
-    workingCase.defendants,
-    policeDefendantsData?.policeDefendants,
-    createDefendant,
-    setWorkingCase,
-  ])
+
+      syncingRef.current = true
+
+      setWorkingCase((prev) => {
+        const existingNationalIds = new Set(
+          (prev.defendants ?? [])
+            .map((d) => d.nationalId)
+            .filter((id): id is string => Boolean(id)),
+        )
+
+        if (
+          isRestrictionCase(workingCase.type) &&
+          (prev.defendants?.length ?? 0) > 0
+        ) {
+          syncingRef.current = false
+          return prev
+        }
+
+        const toAdd = policeDefendants
+          .filter((p) => p.nationalId && !existingNationalIds.has(p.nationalId))
+          .slice(0, isRestrictionCase(workingCase.type) ? 1 : undefined)
+
+        if (toAdd.length === 0) {
+          syncingRef.current = false
+          return prev
+        }
+
+        const sync = async () => {
+          const defendantPromises = toAdd.map(async (p) => {
+            const defendant = await createDefendant({
+              caseId: workingCase.id,
+              nationalId: p.nationalId ?? undefined,
+              name: p.name ?? undefined,
+              gender: mapStringToGender(p.gender),
+              address: p.address ?? undefined,
+              citizenship: p.citizenship ?? undefined,
+            })
+            return defendant ? { defendantId: defendant, p } : null
+          })
+          const results = await Promise.all(defendantPromises)
+          const newDefendants = results
+            .filter(
+              (
+                r,
+              ): r is {
+                defendantId: string
+                p: typeof toAdd[number]
+              } => Boolean(r),
+            )
+            .map(({ defendantId, p }) => ({
+              id: defendantId,
+              nationalId: p.nationalId,
+              name: p.name,
+              gender: mapStringToGender(p.gender),
+              address: p.address,
+              citizenship: p.citizenship,
+            }))
+
+          if (newDefendants.length > 0) {
+            setWorkingCase((prev) => ({
+              ...prev,
+              defendants: [...(prev.defendants ?? []), ...newDefendants],
+            }))
+          }
+
+          syncingRef.current = false
+        }
+
+        sync()
+
+        return prev
+      })
+    },
+  })
 
   return { loading, error, refetch }
 }

@@ -381,7 +381,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
-  isPublished: boolean
+  isReadOnly: boolean
 }
 
 export const controlReducer = (
@@ -1371,6 +1371,7 @@ export const controlReducer = (
         },
         fieldSettings: {
           ...field.fieldSettings,
+          __typename: undefined,
           chargeItemCode,
           chargeItemName,
           chargeType,
@@ -1378,6 +1379,7 @@ export const controlReducer = (
           priceAmount,
         },
       }
+      console.log('Updating payment settings with', newField.fieldSettings)
       update({ type: 'Field', data: newField })
       return {
         ...state,

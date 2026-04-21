@@ -5,7 +5,7 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationResponseDto } from '../applications/models/dto/notification.response.dto'
 import { NotificationDto } from '../applications/models/dto/notification.dto'
 import { LoginResponseDto } from './models/login.response.dto'
 import { BodyRequestDto } from './models/body.request.dto'
@@ -75,12 +75,12 @@ export class NotifyService {
         this.logger.error(
           `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return { operationSuccessful: false }
       }
       const responseData = await response.json()
       const externalSystemResponse: NotificationResponseDto = {
-        operationSuccessful: responseData.success === true,
+        operationSuccessful: response.ok,
         screen: responseData.screen,
+        screenError: responseData.screenError,
       }
       return externalSystemResponse
     } catch (error) {

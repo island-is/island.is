@@ -23,7 +23,7 @@ export const Completed = () => {
     setFocus,
     getTranslation,
   } = useContext(ControlContext)
-  const { isPublished } = control
+  const { isReadOnly } = control
   const { completedSectionInfo } = control.form
   const { title, confirmationHeader, confirmationText, additionalInfo } =
     completedSectionInfo || {}
@@ -88,7 +88,7 @@ export const Completed = () => {
         name="title"
         label={formatMessage(m.completedTitleLabel)}
         backgroundColor="blue"
-        readOnly={isPublished}
+        readOnly={isReadOnly}
         value={title?.is || ''}
         onFocus={(e) => setFocus(e.target.value)}
         onChange={(e) => {
@@ -107,7 +107,7 @@ export const Completed = () => {
         label={formatMessage(m.completedTitleLabelEnglish)}
         backgroundColor="blue"
         value={title?.en || ''}
-        readOnly={isPublished}
+        readOnly={isReadOnly}
         onFocus={async (e) => {
           if ((!title?.en || title?.en === '') && title?.is) {
             const translation = await getTranslation(title.is)
@@ -149,7 +149,7 @@ export const Completed = () => {
         label={formatMessage(m.confirmationHeaderLabel)}
         backgroundColor="blue"
         value={confirmationHeader?.is || ''}
-        readOnly={isPublished}
+        readOnly={isReadOnly}
         onFocus={(e) => setFocus(e.target.value)}
         onChange={(e) => {
           controlDispatch({
@@ -167,7 +167,7 @@ export const Completed = () => {
         label={formatMessage(m.confirmationHeaderLabelEnglish)}
         backgroundColor="blue"
         value={confirmationHeader?.en || ''}
-        readOnly={isPublished}
+        readOnly={isReadOnly}
         onFocus={async (e) => {
           if (
             (!confirmationHeader?.en || confirmationHeader?.en === '') &&
@@ -205,7 +205,7 @@ export const Completed = () => {
         backgroundColor="blue"
         textarea
         value={confirmationText?.is || ''}
-        readOnly={isPublished}
+        readOnly={isReadOnly}
         onFocus={(e) => setFocus(e.target.value)}
         onChange={(e) => {
           controlDispatch({
@@ -224,7 +224,7 @@ export const Completed = () => {
         backgroundColor="blue"
         textarea
         value={confirmationText?.en || ''}
-        readOnly={isPublished}
+        readOnly={isReadOnly}
         onFocus={async (e) => {
           if (
             (!confirmationText?.en || confirmationText?.en === '') &&
@@ -268,7 +268,7 @@ export const Completed = () => {
           variant="text"
           preTextIcon="add"
           onClick={add}
-          disabled={isPublished}
+          disabled={isReadOnly}
         >
           {formatMessage(m.add)}
         </Button>

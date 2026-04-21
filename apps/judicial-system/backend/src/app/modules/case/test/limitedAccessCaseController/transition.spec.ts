@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
@@ -31,7 +31,7 @@ interface Then {
 type GivenWhenThen = (
   state: CaseState,
   transition: CaseTransition,
-  appealState?: CaseAppealState,
+  appealState?: AppealCaseState,
 ) => Promise<Then>
 
 describe('LimitedAccessCaseController - Transition', () => {
@@ -95,7 +95,7 @@ describe('LimitedAccessCaseController - Transition', () => {
     givenWhenThen = async (
       state: CaseState,
       transition: CaseTransition,
-      appealState?: CaseAppealState,
+      appealState?: AppealCaseState,
     ) => {
       const then = {} as Then
 
@@ -127,7 +127,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         id: caseId,
         state,
         caseFiles,
-        appealCase: { appealState: CaseAppealState.APPEALED },
+        appealCase: { appealState: AppealCaseState.APPEALED },
         accusedPostponedAppealDate: date,
       } as Case
       let then: Then
@@ -143,7 +143,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
           caseId,
           {
-            appealState: CaseAppealState.APPEALED,
+            appealState: AppealCaseState.APPEALED,
             accusedPostponedAppealDate: date,
           },
           { transaction },
@@ -192,7 +192,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         id: caseId,
         state,
         caseFiles,
-        appealCase: { appealState: CaseAppealState.WITHDRAWN },
+        appealCase: { appealState: AppealCaseState.WITHDRAWN },
       } as Case
       let then: Then
 
@@ -203,7 +203,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         then = await givenWhenThen(
           state,
           CaseTransition.WITHDRAW_APPEAL,
-          CaseAppealState.RECEIVED,
+          AppealCaseState.RECEIVED,
         )
       })
 
@@ -211,7 +211,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
           caseId,
           {
-            appealState: CaseAppealState.WITHDRAWN,
+            appealState: AppealCaseState.WITHDRAWN,
             appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
           },
           { transaction },

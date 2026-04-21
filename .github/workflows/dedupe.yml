@@ -27,13 +27,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
 
 jobs:
   dedupe:
     name: Deduplicate
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     steps:
       - uses: actions/checkout@v4
         with:

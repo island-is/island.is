@@ -26,6 +26,18 @@ export const PaymentQuantity = ({ item, dispatch }: Props) => {
     return options
   }
 
+  const dropDownValue = () => {
+    const listVal = getValue(item, 'number')
+    const hasValue = listVal !== undefined && listVal !== null
+    if (hasValue) {
+      return {
+        label: listVal,
+        value: listVal,
+      }
+    }
+    return undefined
+  }
+
   return (
     <Box>
       <Controller
@@ -56,6 +68,7 @@ export const PaymentQuantity = ({ item, dispatch }: Props) => {
               options={selectOptions()}
               placeholder="Veldu fjölda"
               errorMessage={fieldState.error?.message}
+              value={dropDownValue()}
               onChange={(e) => {
                 field.onChange(e)
                 if (dispatch) {
@@ -77,6 +90,7 @@ export const PaymentQuantity = ({ item, dispatch }: Props) => {
               type="number"
               placeholder="Veldu fjölda"
               errorMessage={fieldState.error?.message}
+              value={getValue(item, 'number') ?? ''}
               onChange={(e) => {
                 field.onChange(e)
                 if (dispatch) {

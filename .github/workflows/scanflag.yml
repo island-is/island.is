@@ -18,7 +18,7 @@ env:
 
 jobs:
   scanflags:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -2,8 +2,8 @@ mutation TransitionCase($input: TransitionCaseInput!) {
   transitionCase(input: $input) {
     state
     appealCase {
-      appealState
       appealReceivedByCourtDate
+      appealState
     }
     statementDeadline
   }

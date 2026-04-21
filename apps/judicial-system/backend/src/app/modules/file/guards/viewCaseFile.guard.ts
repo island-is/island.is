@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseState,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -57,9 +57,9 @@ export class ViewCaseFileGuard implements CanActivate {
       isCompletedCase(theCase.state) &&
       theCase.appealCase?.appealState &&
       [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
-        CaseAppealState.WITHDRAWN,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+        AppealCaseState.WITHDRAWN,
       ].includes(theCase.appealCase?.appealState)
     ) {
       return true

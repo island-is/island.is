@@ -15,6 +15,7 @@ export const GET_COURSE_BY_ID_QUERY = gql`
   query GetCourseById($input: GetCourseByIdInput!) {
     getCourseById(input: $input) {
       course {
+        courseListPageId
         instances {
           id
           startDate

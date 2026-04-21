@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { tableStyles } from '../../utils/utils'
 
@@ -9,6 +10,7 @@ interface Props {
   data: Array<string[]>
   loading?: boolean
   emptyMessage?: string
+  flush?: boolean
 }
 
 export const NestedFullTable = ({
@@ -16,9 +18,13 @@ export const NestedFullTable = ({
   data,
   loading,
   emptyMessage,
+  flush,
 }: Props) => {
   return (
-    <Box className={styles.wrapper} background="white">
+    <Box
+      className={cn(styles.wrapper, { [styles.wrapperFlush]: flush })}
+      background="white"
+    >
       {!loading && !!data.length && (
         <T.Table>
           <T.Head>
@@ -28,12 +34,16 @@ export const NestedFullTable = ({
                   box={{
                     textAlign: i > 1 ? 'right' : 'left',
                     paddingRight: 2,
-                    paddingLeft: 2,
+                    paddingLeft: flush && i === 0 ? 1 : 2,
                     className: styles.noBorder,
                   }}
                   key={i}
                   text={{ truncate: true }}
-                  style={tableStyles}
+                  style={
+                    flush && i === 0
+                      ? { ...tableStyles, paddingLeft: 8 }
+                      : tableStyles
+                  }
                 >
                   <Text variant="small" fontWeight="semiBold">
                     {item}
@@ -49,13 +59,17 @@ export const NestedFullTable = ({
                   <T.Data
                     box={{
                       paddingRight: 2,
-                      paddingLeft: 2,
+                      paddingLeft: flush && ii === 0 ? 1 : 2,
                       textAlign: ii > 1 ? 'right' : 'left',
                       background: i % 2 === 0 ? 'white' : undefined,
                       className: styles.noBorder,
                     }}
                     key={ii}
-                    style={tableStyles}
+                    style={
+                      flush && ii === 0
+                        ? { ...tableStyles, paddingLeft: 8 }
+                        : tableStyles
+                    }
                   >
                     <Text variant="small">{value}</Text>
                   </T.Data>

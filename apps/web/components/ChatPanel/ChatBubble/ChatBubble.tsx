@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import cn from 'classnames'
 
-import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 
 import {
   EmbedDisclaimer,
@@ -37,8 +37,7 @@ const DefaultVariant = ({
 }: DefaultVariantProps) => {
   return (
     <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>
-      <FocusableBox
-        component="button"
+      <button
         data-testid="chatbot"
         tabIndex={0}
         className={cn(styles.message, pushUp && styles.messagePushUp)}
@@ -60,7 +59,7 @@ const DefaultVariant = ({
         </Box>
         <div className={styles.messageArrow} />
         <div className={styles.messageArrowBorder} />
-      </FocusableBox>
+      </button>
     </div>
   )
 }

@@ -21,6 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
@@ -41,7 +42,6 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   YARN_ENABLE_HARDENED_MODE: '0'
@@ -52,7 +52,7 @@ jobs:
     secrets: inherit
 
   prepare:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -74,6 +74,13 @@ jobs:
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
     steps:
+      - name: Cache server health check
+        run: |
+          if curl -sf --max-time 3 "${ACTIONS_RESULTS_URL:-http://gha-cache.internal:3000/}" > /dev/null 2>&1; then
+            echo "✅ Cache server: ${ACTIONS_RESULTS_URL:-not set}"
+          else
+            echo "⚠️ Cache server unreachable (${ACTIONS_RESULTS_URL:-not set}) — using GitHub cache"
+          fi
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -267,7 +274,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     permissions:
@@ -414,7 +421,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -476,7 +483,7 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   deploy-feature:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
@@ -588,7 +595,7 @@ jobs:
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -603,7 +610,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -623,7 +630,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

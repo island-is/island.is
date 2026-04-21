@@ -11,12 +11,9 @@ concurrency:
   group: push-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
-
 jobs:
   check-rename:
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     steps:
       - uses: actions/checkout@v4
         with:

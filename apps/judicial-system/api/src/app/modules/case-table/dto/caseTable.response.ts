@@ -47,7 +47,7 @@ export class TagValue {
 }
 
 @ObjectType()
-export class TagPairValue {
+export class TagGroupValue {
   @Field(() => TagValue, { description: 'The first tag value' })
   readonly firstTag!: TagValue
 
@@ -56,11 +56,18 @@ export class TagPairValue {
     nullable: true,
   })
   readonly secondTag?: TagValue
+
+  @Field(() => TagValue, {
+    description: 'The third tag value',
+    nullable: true,
+  })
+  readonly thirdTag?: TagValue
 }
 
 const CaseTableCellValue = createUnionType({
   name: 'CaseTableCellValue',
-  types: () => [StringValue, StringGroupValue, TagValue, TagPairValue] as const,
+  types: () =>
+    [StringValue, StringGroupValue, TagValue, TagGroupValue] as const,
   resolveType(value) {
     if ('str' in value) {
       return StringValue
@@ -75,7 +82,7 @@ const CaseTableCellValue = createUnionType({
     }
 
     if ('firstTag' in value) {
-      return TagPairValue
+      return TagGroupValue
     }
 
     // This should never happen, but if it does, we return null

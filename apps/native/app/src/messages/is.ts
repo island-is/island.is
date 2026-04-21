@@ -60,6 +60,7 @@ export const is = {
     'Nota fingrafarsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
+  'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen
   'personalInfo.screenTitle': 'Persónuupplýsingar',
@@ -137,6 +138,8 @@ export const is = {
 
   // user: personal info
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',
+  'user.natreg.description':
+    'Hér fyrir neðan eru gögn um þig sótt frá Þjóðskrá',
   'user.natreg.displayName': 'Fullt nafn',
   'user.natreg.nationalId': 'Kennitala',
   'user.natreg.birthPlace': 'Fæðingarstaður',
@@ -202,6 +205,7 @@ export const is = {
   'homeOptions.applications': 'Umsóknir',
   'homeOptions.vehicles': 'Ökutæki',
   'homeOptions.airDiscount': 'Loftbrú',
+  'homeOptions.appointments': 'Tímabókanir',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
@@ -336,6 +340,7 @@ export const is = {
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
+  'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
   // vehicle mileage
   'vehicle.mileage.errorTitle': 'Villa',
@@ -464,6 +469,7 @@ export const is = {
   'wallet.update': 'Uppfæra',
   'wallet.yourLicenses': 'Þín skírteini',
   'wallet.childLicenses': 'Skírteini barna þinna',
+  'wallet.scanButton': 'Skanna',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',

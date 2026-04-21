@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import {
   Box,
@@ -13,6 +13,8 @@ import { LifeEventPage } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
+import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 
 interface LifeEventsSectionProps {
   heading: string
@@ -20,6 +22,8 @@ interface LifeEventsSectionProps {
   seeMoreText: string
   items: LifeEventPage[]
   cardsButtonTitle?: string
+  whiteCards?: boolean
+  indicator?: ScrollIndicatorColors
 }
 
 export const LifeEventsSection = ({
@@ -28,8 +32,11 @@ export const LifeEventsSection = ({
   items = [],
   seeMoreText,
   cardsButtonTitle = '',
+  whiteCards,
+  indicator,
 }: LifeEventsSectionProps) => {
   const { linkResolver } = useLinkResolver()
+  const scrollContainerRef = useRef<HTMLElement>(null)
 
   return (
     <>
@@ -44,6 +51,7 @@ export const LifeEventsSection = ({
                 icon="arrowForward"
                 iconType="filled"
                 variant="text"
+                size="small"
                 as="span"
               >
                 {seeMoreText}
@@ -59,14 +67,15 @@ export const LifeEventsSection = ({
         paddingBottom={3}
         insideGridContainer
         third
+        scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
         {items
           .slice(0, 6)
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
-          .map((lifeEvent, index: number) => {
+          .map((lifeEvent) => {
             return (
               <CardWithFeaturedItems
-                key={index}
+                key={lifeEvent.slug}
                 heading={lifeEvent.shortTitle || lifeEvent.title}
                 imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
                 dataTestId={'lifeevent-card-with-featured-items'}
@@ -76,6 +85,7 @@ export const LifeEventsSection = ({
                   ]).href
                 }
                 featuredItems={lifeEvent.featured}
+                white={whiteCards}
                 buttonTitle={
                   lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
                     ? lifeEvent.seeMoreText
@@ -99,6 +109,7 @@ export const LifeEventsSection = ({
                 icon="arrowForward"
                 iconType="filled"
                 variant="text"
+                size="small"
                 as="span"
               >
                 {seeMoreText}
@@ -107,6 +118,9 @@ export const LifeEventsSection = ({
           </Box>
         </GridContainer>
       </Hidden>
+      {indicator && (
+        <ScrollIndicator scrollRef={scrollContainerRef} colors={indicator} />
+      )}
     </>
   )
 }

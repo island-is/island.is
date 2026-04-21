@@ -14,13 +14,10 @@ concurrency:
   group: push-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
 
-env:
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
-
 jobs:
   close_feature:
     name: Terminate feature deployment
-    runs-on: arc-shared
+    runs-on: [self-hosted, ec2-runners, shared-v2]
     if: ${{ github.event.label.name == 'deploy-feature' || github.event.pull_request.merged == true }}
     permissions:
       id-token: write
