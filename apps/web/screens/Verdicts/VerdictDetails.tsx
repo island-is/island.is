@@ -421,5 +421,6 @@ export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictDetails),
   {
     footerVersion: 'organization',
+    organizationSearchFilter: 'domstolar',
   },
 )
