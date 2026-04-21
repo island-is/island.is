@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
+  InsertRentalDaysModel,
   RskRentalDayRateClient,
   RskRentalDaysClient,
 } from '@island.is/clients-rental-day-rate'
@@ -76,10 +77,10 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         })
         .apiDayRateEntriesEntityIdPeriodsPeriodGet({
           entityId: auth.nationalId,
-          period: `${String(targetMonthIndex + 1).padStart(
+          period: `${targetYear}-${String(targetMonthIndex + 1).padStart(
             2,
             '0',
-          )}-${targetYear}`,
+          )}`,
         })
 
       const entries: Array<DayRateRecord> = resp
@@ -169,7 +170,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         )
       }
 
-      const entries = records.map((record) => {
+      const entries: Array<InsertRentalDaysModel> = records.map((record) => {
         const dayRateEntryId = dayRateRecordsByPermno.get(
           record.vehicleId,
         )?.dayRateEntryId
@@ -193,14 +194,14 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           permno: record.vehicleId,
           numberOfDays: record.prevPeriodUsage,
           dayRateEntryId,
-          month: lastMonthIndex + 1,
-          year: lastMonthDate.getFullYear(),
         }
       })
 
       await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
         entityId: auth.nationalId,
         rentalDayRegistrationModel: {
+          year: lastMonthDate.getFullYear(),
+          month: lastMonthIndex + 1,
           entries,
         },
       })
