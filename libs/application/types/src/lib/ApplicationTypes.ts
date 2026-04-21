@@ -100,6 +100,7 @@ export enum ApplicationTypes {
   MILE_CAR = 'MileCar',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
+  UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
 }
 
 export const ApplicationConfigurations = {
@@ -510,5 +511,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
     slug: 'afskraning-atvinnuleysisbota',
     translation: ['vmst.dub.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
+    slug: 'atvinnuleysisbaetur-stadfesting-ferda',
+    translation: ['vmst.uct.application', 'uiForms.application'],
   },
 }
