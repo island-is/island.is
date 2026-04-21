@@ -151,7 +151,11 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                       span={['12/12', '12/12', '6/12', '6/12', '5/12']}
                     >
                       <Select
-                        label={activeLocale === 'is' ? 'Veldu ársskýrslu' : 'Select annual report'}
+                        label={
+                          activeLocale === 'is'
+                            ? 'Veldu ársskýrslu'
+                            : 'Select annual report'
+                        }
                         name="select-annual-report"
                         size="sm"
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

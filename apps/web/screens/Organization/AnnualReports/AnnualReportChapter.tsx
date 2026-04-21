@@ -46,7 +46,9 @@ export type AnnualReportChapterType = NonNullable<
   GetAnnualReportQuery['getAnnualReport']
 >['chapters'][number]
 
-export type AnnualReportType = NonNullable<GetAnnualReportQuery['getAnnualReport']>
+export type AnnualReportType = NonNullable<
+  GetAnnualReportQuery['getAnnualReport']
+>
 
 export interface AnnualReportChapterProps {
   organizationPage: OrganizationPage
@@ -103,16 +105,19 @@ const AnnualReportChapter: Screen<
                     },
                     {
                       title: organizationPage?.title ?? '',
-                      href: linkResolver('organizationpage', [
-                        organizationPage?.slug ?? '',
-                      ], activeLocale).href,
+                      href: linkResolver(
+                        'organizationpage',
+                        [organizationPage?.slug ?? ''],
+                        activeLocale,
+                      ).href,
                     },
                     {
                       title: annualReport?.title ?? '',
-                      href: linkResolver('annualreport', [
-                        organizationPage?.slug ?? '',
-                        annualReport.slug,
-                      ], activeLocale).href,
+                      href: linkResolver(
+                        'annualreport',
+                        [organizationPage?.slug ?? '', annualReport.slug],
+                        activeLocale,
+                      ).href,
                     },
                   ]}
                 />
