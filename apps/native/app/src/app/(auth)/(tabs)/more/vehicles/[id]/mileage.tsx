@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Alert, FlatList, View } from 'react-native'
+import { Alert, FlatList, Keyboard, View } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import { router } from 'expo-router'
 
@@ -153,6 +153,7 @@ export default function VehicleMileageScreen() {
   }
 
   const onSubmit = useCallback(() => {
+    Keyboard.dismiss()
     const mileage = parseMileage(input)
     if (!mileage) return
 
@@ -165,6 +166,7 @@ export default function VehicleMileageScreen() {
         if (res.data?.vehicleMileagePost?.mileage !== String(mileage)) {
           handleFailedToUpdate()
         } else {
+          setInput('')
           Alert.alert(
             intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
             intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
