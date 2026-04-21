@@ -23,7 +23,7 @@ import {
   D1,
   D1E,
   DE,
-} from '../assets/drivingLicenses'
+} from '@island.is/application/assets/graphics'
 
 const SUPPORT_PATH = 'currentApplicationInformation.data.supportData'
 
