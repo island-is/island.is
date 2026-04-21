@@ -23,6 +23,7 @@ import {
 } from './types'
 import { ApplicantsRole, NextStepInReviewOptions } from '../utils/enums'
 import { isCompany } from 'kennitala'
+import { Locale } from '@island.is/shared/types'
 
 const mapParticipantInfo = (participant: ApplicantsInfo): ApplicantsInfo => {
   return {
@@ -335,6 +336,7 @@ export const applicationAnswers = (
 export const draftAnswers = (
   answers: RentalAgreementAnswers,
   contractId: string,
+  currentUserLocale: Locale,
 ): DraftAnswers => {
   return {
     contractId,
@@ -389,5 +391,6 @@ export const draftAnswers = (
     heatingCostMeterStatus: answers.heatingCostMeterStatus,
     otherCostPayedByTenant: answers.otherCostPayedByTenant ?? YesOrNoEnum.NO,
     otherCostItems: answers.otherCostItems || [], // '' is not nullish
+    currentUserLocale: currentUserLocale ?? 'is',
   }
 }

@@ -17,8 +17,8 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -447,8 +447,8 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => CaseAppealRulingDecision, { nullable: true })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @Field(() => AppealCaseRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @Allow()
   @IsOptional()
@@ -481,11 +481,6 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly indictmentDeniedExplanation?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly indictmentReturnedExplanation?: string
 
   @Allow()
   @IsOptional()

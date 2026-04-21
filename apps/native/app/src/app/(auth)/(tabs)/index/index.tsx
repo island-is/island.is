@@ -90,6 +90,11 @@ export default function HomeScreen() {
     'isIdentityDocumentEnabled',
     false,
   )
+  const isAppointmentsEnabled = useFeatureFlag(
+    'isAppointmentsEnabled',
+    false,
+    null,
+  )
   const [refetching, setRefetching] = useState(false)
 
   const vehiclesWidgetEnabled = usePreferencesStore(
@@ -166,7 +171,7 @@ export default function HomeScreen() {
       status: BaseAppointmentStatuses,
     },
     fetchPolicy: 'network-only',
-    skip: !appointmentsWidgetEnabled,
+    skip: !appointmentsWidgetEnabled || !isAppointmentsEnabled,
   })
 
   useEffect(() => {
@@ -190,27 +195,29 @@ export default function HomeScreen() {
         ...airDiscountRes,
       })
 
-      const shouldShowAppointmentsWidget = validateAppointmentsInitialData({
-        ...appointmentsRes,
-      })
-
       preferencesStore.setState({
         inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
-        appointmentsWidgetEnabled: shouldShowAppointmentsWidget,
+        ...(isAppointmentsEnabled !== null && {
+          appointmentsWidgetEnabled: isAppointmentsEnabled
+            ? validateAppointmentsInitialData({ ...appointmentsRes })
+            : false,
+        }),
       })
 
       // Don't set initialized state if any of the queries are still loading
+      // or the appointments feature flag has not resolved yet
       if (
         licensesRes.loading ||
         applicationsRes.loading ||
         inboxRes.loading ||
         airDiscountRes.loading ||
         vehiclesRes.loading ||
-        appointmentsRes.loading
+        appointmentsRes.loading ||
+        isAppointmentsEnabled === null
       ) {
         return
       }
@@ -231,6 +238,7 @@ export default function HomeScreen() {
     vehiclesRes,
     airDiscountRes,
     appointmentsRes,
+    isAppointmentsEnabled,
   ])
 
   const renderItem = useCallback(
@@ -275,7 +283,9 @@ export default function HomeScreen() {
         licensesWidgetEnabled && licensesRes.refetch(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
-        appointmentsWidgetEnabled && appointmentsRes.refetch(),
+        appointmentsWidgetEnabled &&
+          isAppointmentsEnabled &&
+          appointmentsRes.refetch(),
       ].filter(Boolean)
 
       await Promise.all(promises)
@@ -297,6 +307,7 @@ export default function HomeScreen() {
     licensesWidgetEnabled,
     inboxWidgetEnabled,
     appointmentsWidgetEnabled,
+    isAppointmentsEnabled,
   ])
 
   const data = [
@@ -314,9 +325,10 @@ export default function HomeScreen() {
     },
     {
       id: 'appointments',
-      component: appointmentsWidgetEnabled ? (
-        <AppointmentsModule {...appointmentsRes} />
-      ) : null,
+      component:
+        appointmentsWidgetEnabled && isAppointmentsEnabled ? (
+          <AppointmentsModule {...appointmentsRes} />
+        ) : null,
     },
     {
       id: 'licenses',

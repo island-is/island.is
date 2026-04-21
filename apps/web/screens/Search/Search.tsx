@@ -41,6 +41,7 @@ import {
   AnchorPage,
   Article,
   ContentLanguage,
+  Course,
   GetNamespaceQuery,
   GetSearchCountTagsQuery,
   GetSearchResultsDetailedQuery,
@@ -100,6 +101,7 @@ const ALL_TYPES: `${SearchableContentTypes}`[] = [
   'webManual',
   'webManualChapterItem',
   'webOrganizationParentSubpage',
+  'webCourse',
 ]
 
 type SearchQueryFilters = {
@@ -135,7 +137,8 @@ export type SearchEntryType = Article &
   ProjectPage &
   Manual &
   ManualChapterItem &
-  OrganizationParentSubpage
+  OrganizationParentSubpage &
+  Course
 
 const connectedTypes: Partial<
   Record<
@@ -155,6 +158,7 @@ const connectedTypes: Partial<
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
   webManual: ['WebManual', 'WebManualChapterItem'],
+  webCourse: ['WebCourse'],
 }
 
 const stringToArray = (value: string | string[] | undefined) =>
@@ -259,6 +263,9 @@ const Search: Screen<CategoryProps> = ({
           labels.push(item.organizationPageTitle)
         }
         break
+      case 'Course':
+        if (item.organizationTitle) labels.push(item.organizationTitle)
+        break
       default:
         break
     }
@@ -361,6 +368,11 @@ const Search: Screen<CategoryProps> = ({
       return (item.href as string) ?? ''
     }
 
+    if (item.__typename === 'Course') {
+      if (item.courseHref) return item.courseHref
+      return ''
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/')).href
@@ -417,7 +429,9 @@ const Search: Screen<CategoryProps> = ({
     return !filters.category || filters.category === item.categorySlug
   }
 
-  const filteredItems = [...searchResultsItems].filter(noUncategorized)
+  const filteredItems = [...searchResultsItems]
+    .filter(noUncategorized)
+    .filter((item) => Boolean(item.link))
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
@@ -454,6 +468,36 @@ const Search: Screen<CategoryProps> = ({
       window.scrollTo(0, 0)
     })
   }, [state, pathname, q, routerReplace])
+
+  useEffect(() => {
+    const queryType = stringToArray(query.type) as SearchableContentTypes[]
+    const queryCategory = stringToArray(query.category)
+    const queryOrganization = stringToArray(query.organization)
+
+    const stateType = state.query.type ?? []
+    const stateCategory = state.query.category ?? []
+    const stateOrganization = state.query.organization ?? []
+
+    const hasChanged =
+      JSON.stringify(queryType) !== JSON.stringify(stateType) ||
+      JSON.stringify(queryCategory) !== JSON.stringify(stateCategory) ||
+      JSON.stringify(queryOrganization) !== JSON.stringify(stateOrganization)
+
+    if (hasChanged) {
+      dispatch({
+        type: ActionType.SET_PARAMS,
+        payload: {
+          query: {
+            type: queryType,
+            category: queryCategory,
+            organization: queryOrganization,
+          },
+          searchLocked: true,
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.type, query.category, query.organization])
 
   const getSearchParams = (contentType: string) => {
     return {

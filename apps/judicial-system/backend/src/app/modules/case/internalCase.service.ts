@@ -125,7 +125,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'crimeScenes',
   'indictmentIntroduction',
   'indictmentDeniedExplanation',
-  'indictmentReturnedExplanation',
 ]
 
 const appealCaseEncryptionProperties: (keyof AppealCase)[] = [

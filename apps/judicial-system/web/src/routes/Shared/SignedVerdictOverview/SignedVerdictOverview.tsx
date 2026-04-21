@@ -45,8 +45,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseDecision,
   CaseState,
   Institution,
@@ -55,7 +55,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UpdateCase,
-  useAppealCase,
+  useAppealCaseUI,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -215,7 +215,7 @@ export const SignedVerdictOverview: FC = () => {
     isSendingNotification,
   } = useCase()
 
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseUI()
 
   /**
    * If the case is not rejected it must be accepted because
@@ -364,7 +364,7 @@ export const SignedVerdictOverview: FC = () => {
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
-    workingCase.appealCase?.appealState === CaseAppealState.COMPLETED
+    workingCase.appealCase?.appealState === AppealCaseState.COMPLETED
 
   return (
     <>
@@ -526,7 +526,7 @@ export const SignedVerdictOverview: FC = () => {
               judgeName={workingCase.judge?.name}
             />
             {workingCase.appealCase?.appealState ===
-              CaseAppealState.COMPLETED &&
+              AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title={formatMessage(conclusion.appealTitle)}

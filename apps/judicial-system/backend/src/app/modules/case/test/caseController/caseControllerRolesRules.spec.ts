@@ -121,6 +121,9 @@ describe('CaseController - Get case files record pdf rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 
@@ -166,6 +169,9 @@ describe('CaseController - Get indictment pdf rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 

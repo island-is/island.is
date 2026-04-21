@@ -99,6 +99,7 @@ export enum ApplicationTypes {
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
   MILE_CAR = 'MileCar',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
+  DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
 }
 
 export const ApplicationConfigurations = {
@@ -505,5 +506,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
     slug: 'hh-namskeid',
     translation: ['hh.courses.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
+    slug: 'afskraning-atvinnuleysisbota',
+    translation: ['vmst.dub.application', 'uiForms.application'],
   },
 }

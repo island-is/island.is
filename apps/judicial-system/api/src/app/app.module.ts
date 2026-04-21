@@ -16,6 +16,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import {
+  AppealCaseModule,
   AuthModule,
   authModuleConfig,
   BackendModule,
@@ -70,6 +71,7 @@ const autoSchemaFile = production
     AuthModule,
     UserModule,
     CaseModule,
+    AppealCaseModule,
     CaseListModule,
     StatisticsModule,
     DefendantModule,

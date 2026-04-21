@@ -97,6 +97,24 @@ class ApplicationServiceMock {
     return createPostPruneApplications()
   }
 
+  async findCurrentScheduledNotifications() {
+    return []
+  }
+
+  async cancelScheduledNotifications(id: string) {
+    // do nothing
+  }
+
+  async findOneById(id: string) {
+    return null
+  }
+  async markScheduledNotificationsSent(ids: string[]) {
+    return Promise.resolve()
+  }
+  async markScheduledNotificationsFailed(ids: string[]) {
+    return Promise.resolve()
+  }
+
   update(
     id: string,
     application: Partial<
