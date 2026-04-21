@@ -63,9 +63,7 @@ const CaseNumberInput: FC = () => {
             })
           }
         } else {
-          setAppealCaseNumberErrorMessage(
-            validationResult.errorMessage ?? '',
-          )
+          setAppealCaseNumberErrorMessage(validationResult.errorMessage ?? '')
         }
       }}
       required
