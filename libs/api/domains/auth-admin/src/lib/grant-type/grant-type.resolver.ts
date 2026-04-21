@@ -75,6 +75,10 @@ export class GrantTypeResolver {
     @Args('input', { type: () => DeleteGrantTypeInput })
     input: DeleteGrantTypeInput,
   ): Promise<boolean> {
-    return this.grantTypeService.deleteGrantType(user, input.name)
+    return this.grantTypeService.deleteGrantType(
+      user,
+      input.name,
+      input.environments,
+    )
   }
 }

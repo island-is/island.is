@@ -12,6 +12,7 @@ import { GrantTypesInput } from './dto/grant-types.input'
 import { CreateGrantTypeInput } from './dto/create-grant-type.input'
 import { UpdateGrantTypeInput } from './dto/update-grant-type.input'
 import { GrantType } from './models/grant-type.model'
+import { GrantTypeEnvironmentData } from './models/grant-type-environment-data.model'
 
 interface GrantTypeResponse {
   name: string
@@ -56,9 +57,13 @@ interface GrantTypesApi {
   }): Promise<ApiResponse<void>>
 }
 
-const mapGrantType = (gt: GrantTypeResponse): GrantType => ({
+const mapGrantType = (
+  gt: GrantTypeResponse,
+  environment: Environment,
+): GrantTypeEnvironmentData => ({
   name: gt.name,
   description: gt.description,
+  environment: environment,
   // The OpenAPI client converts `null` to `new Date(0)` (epoch), so we
   // check for a meaningful timestamp rather than just null/undefined.
   archived: gt.archived && gt.archived.getTime() > 0 ? gt.archived : undefined,
@@ -86,19 +91,47 @@ export class GrantTypeService extends MultiEnvironmentService {
     user: User,
     input: GrantTypesInput,
   ): Promise<GrantTypesPayload> {
-    for (const environment of environments) {
-      const result = await this.typedRequest(user, environment, (api) =>
-        api.meGrantTypesControllerFindAndCountAllRaw({
-          searchString: input.searchString ?? '',
-          page: input.page,
-          count: input.count,
-        }),
-      )
+    const results = await Promise.allSettled(
+      environments.map(async (environment) => {
+        const result = await this.typedRequest(user, environment, (api) =>
+          api.meGrantTypesControllerFindAndCountAllRaw({
+            searchString: input.searchString ?? '',
+            page: input.page,
+            count: input.count,
+          }),
+        )
+        return result ? { environment, data: result } : null
+      }),
+    )
 
-      if (result) {
+    // Build a map of grant type name -> environments it exists in
+    const envMap = new Map<string, Environment[]>()
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        const { environment, data } = result.value
+        for (const row of data.rows) {
+          const existing = envMap.get(row.name) ?? []
+          existing.push(environment)
+          envMap.set(row.name, existing)
+        }
+      }
+    }
+
+    // Use the first successful environment as the primary result for pagination
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        const { data } = result.value
         return {
-          rows: result.rows.map(mapGrantType),
-          totalCount: result.count,
+          rows: data.rows.map((row: GrantTypeResponse) => ({
+            name: row.name,
+            availableEnvironments: envMap.get(row.name),
+            description: row.description,
+            archived:
+              row.archived && row.archived.getTime() > 0
+                ? row.archived
+                : undefined,
+          })),
+          totalCount: data.count,
         }
       }
     }
@@ -106,12 +139,9 @@ export class GrantTypeService extends MultiEnvironmentService {
     return { rows: [], totalCount: 0 }
   }
 
-  async getGrantType(
-    user: User,
-    name: string,
-  ): Promise<GrantType | null> {
-    let grantTypeData: GrantType | null = null
+  async getGrantType(user: User, name: string): Promise<GrantType | null> {
     const availableEnvironments: Environment[] = []
+    const environmentsData: GrantTypeEnvironmentData[] = []
 
     for (const environment of environments) {
       const result = await this.typedRequest(user, environment, (api) =>
@@ -120,17 +150,22 @@ export class GrantTypeService extends MultiEnvironmentService {
 
       if (result) {
         availableEnvironments.push(environment)
-        if (!grantTypeData) {
-          grantTypeData = mapGrantType(result)
-        }
+        environmentsData.push({
+          ...mapGrantType(result, environment),
+        })
       }
     }
 
-    if (grantTypeData) {
-      grantTypeData.availableEnvironments = availableEnvironments
+    if (environmentsData.length === 0) {
+      return null
     }
 
-    return grantTypeData
+    const first = environmentsData[0]
+    return {
+      name: first.name,
+      availableEnvironments,
+      environments: environmentsData,
+    }
   }
 
   async createGrantType(
@@ -142,7 +177,8 @@ export class GrantTypeService extends MultiEnvironmentService {
       ? environments.filter((env) => inputEnvironments.includes(env))
       : environments
 
-    let lastResult: GrantType | null = null
+    const availableEnvironments: Environment[] = []
+    const environmentsData: GrantTypeEnvironmentData[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -156,7 +192,10 @@ export class GrantTypeService extends MultiEnvironmentService {
         )
 
         if (result) {
-          lastResult = mapGrantType(result)
+          availableEnvironments.push(environment)
+          environmentsData.push({
+            ...mapGrantType(result, environment),
+          })
         }
       } catch (error) {
         this.logger.error(
@@ -166,8 +205,13 @@ export class GrantTypeService extends MultiEnvironmentService {
       }
     }
 
-    if (lastResult) {
-      return lastResult
+    if (environmentsData.length > 0) {
+      const first = environmentsData[0]
+      return {
+        name: first.name,
+        availableEnvironments,
+        environments: environmentsData,
+      }
     }
 
     throw new Error('Failed to create grant type')
@@ -177,12 +221,18 @@ export class GrantTypeService extends MultiEnvironmentService {
     user: User,
     input: UpdateGrantTypeInput,
   ): Promise<GrantType> {
-    const inputEnvironments = input.environments
-    const targetEnvironments = inputEnvironments?.length
-      ? environments.filter((env) => inputEnvironments.includes(env))
-      : environments
+    const targetEnvironments = input.environments
 
-    let lastResult: GrantType | null = null
+    if (!targetEnvironments) {
+      const existing = await this.getGrantType(user, input.name)
+      if (!existing) {
+        throw new Error('Grant type not found')
+      }
+      return existing
+    }
+
+    const availableEnvironments: Environment[] = []
+    const environmentsData: GrantTypeEnvironmentData[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -196,7 +246,10 @@ export class GrantTypeService extends MultiEnvironmentService {
         )
 
         if (result) {
-          lastResult = mapGrantType(result)
+          availableEnvironments.push(environment)
+          environmentsData.push({
+            ...mapGrantType(result, environment),
+          })
         }
       } catch (error) {
         this.logger.error(
@@ -206,18 +259,32 @@ export class GrantTypeService extends MultiEnvironmentService {
       }
     }
 
-    if (lastResult) {
-      return lastResult
+    if (environmentsData.length > 0) {
+      const first = environmentsData[0]
+      return {
+        name: first.name,
+        availableEnvironments,
+        environments: environmentsData,
+      }
     }
 
     throw new Error('Failed to update grant type')
   }
 
-  async deleteGrantType(user: User, name: string): Promise<boolean> {
+  async deleteGrantType(
+    user: User,
+    name: string,
+    targetEnvironments?: Environment[],
+  ): Promise<boolean> {
+    const envsToDelete =
+      targetEnvironments && targetEnvironments.length > 0
+        ? targetEnvironments
+        : environments
+
     let anyRequestMade = false
     let lastError: unknown = null
 
-    for (const environment of environments) {
+    for (const environment of envsToDelete) {
       let requestMade = false
 
       try {

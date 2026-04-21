@@ -41,10 +41,7 @@ export const grantTypesLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     if (envsResult.error) {
-      console.error(
-        'Failed to fetch configured environments',
-        envsResult.error,
-      )
+      console.error('Failed to fetch configured environments', envsResult.error)
     }
 
     return {

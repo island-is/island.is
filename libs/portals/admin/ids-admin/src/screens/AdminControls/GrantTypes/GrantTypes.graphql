@@ -4,6 +4,7 @@ query GetGrantTypes($input: AuthAdminGrantTypesInput!) {
       name
       description
       archived
+      availableEnvironments
     }
     totalCount
   }
@@ -12,9 +13,13 @@ query GetGrantTypes($input: AuthAdminGrantTypesInput!) {
 query GetGrantType($name: String!) {
   authAdminGrantType(name: $name) {
     name
-    description
-    archived
     availableEnvironments
+    environments {
+      environment
+      name
+      description
+      archived
+    }
   }
 }
 
@@ -25,16 +30,26 @@ query GetGrantTypeConfiguredEnvironments {
 mutation CreateGrantType($input: CreateAuthAdminGrantTypeInput!) {
   createAuthAdminGrantType(input: $input) {
     name
-    description
-    archived
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      archived
+    }
   }
 }
 
 mutation UpdateGrantType($input: UpdateAuthAdminGrantTypeInput!) {
   updateAuthAdminGrantType(input: $input) {
     name
-    description
-    archived
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      archived
+    }
   }
 }
 

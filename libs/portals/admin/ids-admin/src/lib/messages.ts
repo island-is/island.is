@@ -1221,6 +1221,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-error-environment-required',
     defaultMessage: 'Select at least one environment',
   },
+  grantTypesDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:grant-types-delete-select-environments',
+    defaultMessage: 'Select environments to archive from',
+  },
+  grantTypesDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:grant-types-delete-environment-required',
+    defaultMessage: 'Select at least one environment to archive from',
+  },
+  grantTypesEnvironments: {
+    id: 'ap.ids-admin:grant-types-environments',
+    defaultMessage: 'Environments',
+  },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
     defaultMessage: 'IDP Providers',

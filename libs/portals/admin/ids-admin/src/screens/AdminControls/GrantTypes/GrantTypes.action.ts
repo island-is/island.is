@@ -94,6 +94,7 @@ export const grantTypesAction: WrappedActionFn =
             variables: {
               input: {
                 name: formData.get('name') as string,
+                environments: parseEnvironments(formData),
               },
             },
           })
