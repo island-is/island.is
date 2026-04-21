@@ -140,10 +140,6 @@ export const m = {
     },
   }),
   footer: defineMessages({
-    logoAlt: {
-      id: 'web.secondarySchoolStudies:footer.logoAlt',
-      defaultMessage: 'Stjórnarráð Íslands',
-    },
     government: {
       id: 'web.secondarySchoolStudies:footer.government',
       defaultMessage: 'Stjórnarráð Íslands',
