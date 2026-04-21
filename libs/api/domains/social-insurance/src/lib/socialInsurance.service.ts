@@ -48,6 +48,8 @@ import {
 } from './mappers/mapPaymentTypesOverview'
 import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
 import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
+import { PersonalTaxCreditTaxBracket } from './models/personalTaxCredit/taxBracket.model'
+import { TaxBracketAction } from './enums/taxBracketAction'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -327,5 +329,23 @@ export class SocialInsuranceService {
       .getChildBenefitsInformation(user)
       .catch(handle404)
     return data ? data.map(mapChildBenefitInformation) : null
+  }
+
+  async getTaxBracket(
+    user: User,
+  ): Promise<PersonalTaxCreditTaxBracket | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracket(user)
+      .catch(handle404)
+    if (!data || !data.taxBracket) {
+      return null
+    }
+    return {
+      value: data.taxBracket as TaxBracketAction,
+    }
+  }
+
+  async setTaxBracket(user: User, taxBracket: TaxBracketAction): Promise<void> {
+    return this.personalTaxCreditClient.setTaxBracket(user, taxBracket)
   }
 }

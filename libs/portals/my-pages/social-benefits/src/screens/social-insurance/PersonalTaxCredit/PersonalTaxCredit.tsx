@@ -1,6 +1,8 @@
 import {
   AlertMessage,
   Box,
+  Button,
+  RadioButton,
   Stack,
   Text,
   toast,
@@ -9,12 +11,18 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   IntroWrapper,
+  Tooltip,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { m } from '../../../lib/messages'
-import { useGetPersonalTaxCreditQuery } from './PersonalTaxCredit.generated'
+import { SocialInsuranceTaxBracketAction } from '@island.is/api/schema'
+import {
+  useGetPersonalTaxCreditQuery,
+  useGetPersonalTaxCreditTaxBracketQuery,
+  useSetSocialInsurancePersonalTaxCreditTaxBracketMutation,
+} from './PersonalTaxCredit.generated'
 import { useTaxCardAllowance } from './useTaxCardAllowance'
 import { MyTaxCreditForm } from './components/MyTaxCreditForm'
 import { PersonalTaxCreditTable } from './components/PersonalTaxCreditTable'
@@ -63,6 +71,40 @@ const PersonalTaxCredit = () => {
     } catch (e) {
       setRefetching(false)
       toast.error(formatMessage(m.personalTaxCreditSaveError))
+    }
+  }
+
+  const {
+    data: taxBracketData,
+    loading: taxBracketQueryLoading,
+    error: taxBracketQueryError,
+    refetch: refetchTaxBracket,
+  } = useGetPersonalTaxCreditTaxBracketQuery({ errorPolicy: 'all' })
+
+  const serverTaxBracket =
+    taxBracketData?.socialInsurancePersonalTaxCreditTaxBracket?.value
+
+  const [setTaxBracketMutation, { loading: taxBracketSaving }] =
+    useSetSocialInsurancePersonalTaxCreditTaxBracketMutation()
+
+  const [selectedTaxBracket, setSelectedTaxBracket] = useState<
+    SocialInsuranceTaxBracketAction | undefined
+  >(undefined)
+
+  // Sync selected value from server once loaded
+  const effectiveTaxBracket = selectedTaxBracket ?? serverTaxBracket
+
+  const taxBracketChanged = selectedTaxBracket !== undefined && selectedTaxBracket !== serverTaxBracket
+
+  const handleSaveTaxBracket = async () => {
+    if (!taxBracketChanged || !selectedTaxBracket) return
+    try {
+      await setTaxBracketMutation({ variables: { taxBracket: selectedTaxBracket } })
+      await refetchTaxBracket()
+      setSelectedTaxBracket(undefined)
+      toast.success(formatMessage(m.taxBracketSaveSuccess))
+    } catch (e) {
+      toast.error(formatMessage(m.taxBracketSaveError))
     }
   }
 
@@ -116,6 +158,58 @@ const PersonalTaxCredit = () => {
               </Text>
             }
           />
+
+          <Box>
+            <Box display="flex" alignItems="center" columnGap={1} marginBottom={3}>
+              <Text variant="h4">
+                {formatMessage(m.taxBracketSectionTitle)}
+              </Text>
+              <Tooltip
+                text={formatMessage(m.taxBracketSectionTooltip)}
+                variant="light"
+              />
+            </Box>
+            {taxBracketQueryLoading && <CardLoader />}
+            {taxBracketQueryError && (
+              <Problem error={taxBracketQueryError} noBorder={false} />
+            )}
+            {!taxBracketQueryLoading && !taxBracketQueryError && (
+              <Stack space={3}>
+                <RadioButton
+                  id="tax-bracket-income-plan"
+                  name="tax-bracket"
+                  label={formatMessage(m.taxBracketIncomePlan)}
+                  value={SocialInsuranceTaxBracketAction.IncomePlan}
+                  checked={effectiveTaxBracket === SocialInsuranceTaxBracketAction.IncomePlan}
+                  onChange={() => setSelectedTaxBracket(SocialInsuranceTaxBracketAction.IncomePlan)}
+                />
+                <RadioButton
+                  id="tax-bracket-bracket1"
+                  name="tax-bracket"
+                  label={formatMessage(m.taxBracketBracket1)}
+                  value={SocialInsuranceTaxBracketAction.Bracket1}
+                  checked={effectiveTaxBracket === SocialInsuranceTaxBracketAction.Bracket1}
+                  onChange={() => setSelectedTaxBracket(SocialInsuranceTaxBracketAction.Bracket1)}
+                />
+                <RadioButton
+                  id="tax-bracket-bracket2"
+                  name="tax-bracket"
+                  label={formatMessage(m.taxBracketBracket2)}
+                  value={SocialInsuranceTaxBracketAction.Bracket2}
+                  checked={effectiveTaxBracket === SocialInsuranceTaxBracketAction.Bracket2}
+                  onChange={() => setSelectedTaxBracket(SocialInsuranceTaxBracketAction.Bracket2)}
+                />
+                <Button
+                  onClick={handleSaveTaxBracket}
+                  loading={taxBracketSaving}
+                  disabled={taxBracketSaving || !taxBracketChanged}
+                  size="small"
+                >
+                  {formatMessage(m.taxBracketSave)}
+                </Button>
+              </Stack>
+            )}
+          </Box>
         </Stack>
       )}
     </IntroWrapper>

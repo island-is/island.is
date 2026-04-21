@@ -15,6 +15,8 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
+import { PersonalTaxCreditTaxBracket } from '../models/personalTaxCredit/taxBracket.model'
+import { TaxBracketAction } from '../enums/taxBracketAction'
 import { RegisterTaxCardAllowanceInput } from '../dtos/registerTaxCardAllowance.input'
 import { UpdateTaxCardAllowanceInput } from '../dtos/updateTaxCardAllowance.input'
 import { DiscontinueTaxCardAllowanceInput } from '../dtos/discontinueTaxCardAllowance.input'
@@ -72,6 +74,29 @@ export class PersonalTaxCreditResolver {
     @CurrentUser() user: User,
   ): Promise<boolean> {
     await this.service.discontinueTaxCardAllowance(user, input)
+    return true
+  }
+
+  @Query(() => PersonalTaxCreditTaxBracket, {
+    name: 'socialInsurancePersonalTaxCreditTaxBracket',
+    nullable: true,
+  })
+  @Audit()
+  getPersonalTaxCreditTaxBracket(
+    @CurrentUser() user: User,
+  ): Promise<PersonalTaxCreditTaxBracket | null> {
+    return this.service.getTaxBracket(user)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'setSocialInsurancePersonalTaxCreditTaxBracket',
+  })
+  @Audit()
+  async setSocialInsurancePersonalTaxCreditTaxBracket(
+    @Args('taxBracket', { type: () => TaxBracketAction }) taxBracket: TaxBracketAction,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.service.setTaxBracket(user, taxBracket)
     return true
   }
 }

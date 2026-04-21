@@ -313,4 +313,40 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:no-payment-types-found',
     defaultMessage: 'Engar greiðslutegundir fundust.',
   },
+  taxBracketSectionTitle: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-section-title',
+    defaultMessage: 'Skattþrep',
+  },
+  taxBracketSectionTooltip: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-section-tooltip',
+    defaultMessage:
+      'Við röðun í skattþrep er almenna reglan sú að staðgreiðsluskyldum tekjum í tekjuáætlun er raðað í lægsta skattþrep og eftir atvikum annað skattþrep og greiðslur Tryggingastofnunar koma svo þar ofan á.',
+  },
+  taxBracketIncomePlan: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-income-plan',
+    defaultMessage:
+      'Ég vil að staðgreiðsla sé reiknuð út frá tekjuáætlun minni',
+  },
+  taxBracketBracket1: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-bracket1',
+    defaultMessage:
+      'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,49% af tekjum 0-472.005 kr.).',
+  },
+  taxBracketBracket2: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-bracket2',
+    defaultMessage:
+      'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,99% af tekjum 472.006 - 1.325.127 kr.).',
+  },
+  taxBracketSave: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-save',
+    defaultMessage: 'Vista',
+  },
+  taxBracketSaveSuccess: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-save-success',
+    defaultMessage: 'Skattþrep hefur verið vistað',
+  },
+  taxBracketSaveError: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-save-error',
+    defaultMessage: 'Ekki tókst að vista skattþrep',
+  },
 })
