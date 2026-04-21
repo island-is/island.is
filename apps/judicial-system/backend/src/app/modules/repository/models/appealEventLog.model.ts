@@ -5,7 +5,6 @@ import {
   ForeignKey,
   Model,
   Table,
-  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -19,7 +18,7 @@ import { Defendant } from './defendant.model'
 
 @Table({
   tableName: 'appeal_event_log',
-  timestamps: true,
+  timestamps: false,
 })
 export class AppealEventLog extends Model {
   static getEventLogByEventType(
@@ -129,6 +128,7 @@ export class AppealEventLog extends Model {
   id!: string
 
   @CreatedAt
+  @Column({ type: DataType.DATE })
   @ApiProperty({ type: Date })
   created!: Date
 

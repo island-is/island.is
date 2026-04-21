@@ -40,7 +40,6 @@ import {
 import {
   AppealCase,
   AppealEventLog,
-  AppealEventLogRepositoryService,
   Case,
   CaseFile,
   CaseRepositoryService,
@@ -517,7 +516,6 @@ export class LimitedAccessCaseService {
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
     private readonly caseRepositoryService: CaseRepositoryService,
-    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
