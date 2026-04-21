@@ -12,7 +12,6 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseFile,
   Defendant,
   DefendantPlea,
   Gender,

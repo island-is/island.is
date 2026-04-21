@@ -1,6 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { isValid, parse } from 'date-fns'
+import isValid from 'date-fns/isValid'
+import parse from 'date-fns/parse'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
