@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use `Table` from `@island.is/portals/my-pages/core` instead.
+ * `Table` uses @tanstack/react-table v8 and accepts typed `ColumnDef<T>[]` column definitions.
+ */
 import {
   AlertMessage,
   Box,
@@ -18,7 +22,7 @@ import { useSortableData } from './useSortableData'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
-import { EmptyTable } from '../EmptyTable/EmptyTable'
+import { EmptyTable } from '@island.is/portals/core'
 
 /**
  * SortableTable component renders a table that can be sorted and is responsive to different screen sizes.

@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
+import { LanguageTypeInput } from './languageType.input'
 import { ListItemInput } from './listItem.input'
 
 @InputType('FormSystemUpdateFieldSettingsInput')
@@ -21,11 +22,11 @@ export class UpdateFieldSettingsInput {
   @Field(() => Date, { nullable: true })
   maxDate?: Date
 
-  @Field(() => String, { nullable: true })
-  minAmount?: string
+  @Field(() => Int, { nullable: true })
+  minAmount?: number
 
-  @Field(() => String, { nullable: true })
-  maxAmount?: string
+  @Field(() => Int, { nullable: true })
+  maxAmount?: number
 
   @Field(() => Int, { nullable: true })
   year?: number
@@ -36,8 +37,8 @@ export class UpdateFieldSettingsInput {
   @Field(() => String, { nullable: true })
   url?: string
 
-  @Field(() => String, { nullable: true })
-  buttonText?: string
+  @Field(() => LanguageTypeInput, { nullable: true })
+  buttonText?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
   hasPropertyInput?: boolean
@@ -83,4 +84,25 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => Boolean, { nullable: true })
   isEmailRequired?: boolean
+
+  @Field(() => String, { nullable: true })
+  chargeItemCode?: string
+
+  @Field(() => String, { nullable: true })
+  chargeItemName?: string
+
+  @Field(() => String, { nullable: true })
+  chargeType?: string
+
+  @Field(() => String, { nullable: true })
+  performingOrgID?: string
+
+  @Field(() => Int, { nullable: true })
+  priceAmount?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isDropdown?: boolean
+
+  @Field(() => String, { nullable: true })
+  paymentQuantityId?: string
 }

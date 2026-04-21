@@ -3717,6 +3717,12 @@ export interface IOrganizationPageFields {
 
   /** Show past events option */
   showPastEventsOption?: boolean | undefined
+
+  /** News Overview Card Variant */
+  newsOverviewCardVariant?:
+    | 'First 3 cards have an image'
+    | 'All cards have an image'
+    | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -4464,6 +4470,9 @@ export interface IServicePortalPageFields {
 
   /** FAQ List */
   faqList?: IFaqList | undefined
+
+  /** FAQ List - Company */
+  faqListCompany?: IFaqList | undefined
 
   /** Empty State Message */
   emptyStateMessage?: Document | undefined
@@ -5696,7 +5705,12 @@ export interface IWebChatFields {
   internalTitle: string
 
   /** Display Locations */
-  displayLocations: (IOrganization | IArticle | IOrganizationPage)[]
+  displayLocations: (
+    | IOrganization
+    | IArticle
+    | IOrganizationPage
+    | IFrontpage
+  )[]
 
   /** Web Chat Configuration */
   webChatConfiguration?: Record<string, any> | undefined

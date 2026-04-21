@@ -1,68 +1,62 @@
-import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, GridContainer, Icon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  LinkV2,
+  Text,
+} from '@island.is/island-ui/core'
 
 import { m } from '../../messages/messages'
-import * as styles from './Footer.css'
+
+const BACKGROUND_COLOR = '#1A3869'
 
 export const Footer = () => {
   const { formatMessage } = useIntl()
 
   return (
-    <Box width="full" paddingY={5}>
-      <GridContainer>
-        <Box className={styles.footer}>
-          <Box className={styles.footerContent}>
-            {/* Logo and ministry name */}
-            <Box display="flex" alignItems="center" columnGap={2}>
-              <img
-                src="/assets/skjaldarmerki.svg"
-                alt={formatMessage(m.footer.logoAlt)}
-                className={styles.logo}
-              />
-              <Box
-                style={{ borderLeft: 'solid 1px white' }}
-                paddingLeft={4}
-                alignItems={'baseline'}
-              >
-                <Text variant="eyebrow" color="white">
-                  {formatMessage(m.footer.government)}
-                </Text>
-                <Text variant="small" color="white">
-                  {formatMessage(m.footer.ministry)}
-                </Text>
-              </Box>
-              {/* Links */}
-              <Box
-                className={styles.linksSection}
-                display={'flex'}
-                flexDirection={'column'}
-                rowGap={0}
-                style={{ borderLeft: 'solid 1px white' }}
-                paddingLeft={4}
-              >
-                <Text variant="small" color="white">
+    <GridContainer>
+      <Box
+        component="footer"
+        style={{ background: BACKGROUND_COLOR }}
+        paddingY={3}
+        paddingX={[3, 3, 5, 8, 12]}
+      >
+        <Text variant="h3" as="h2" color="white" marginBottom={3}>
+          {formatMessage(m.home.title)}
+        </Text>
+        <GridRow>
+          <GridColumn span={['1/1', '1/1', '1/1', '4/12']} paddingBottom={3}>
+            <Text fontWeight="semiBold" color="white" marginBottom={1}>
+              {formatMessage(m.footer.government)}
+            </Text>
+            <Text color="white">{formatMessage(m.footer.ministry)}</Text>
+          </GridColumn>
+          <GridColumn span={['1/1', '1/1', '1/1', '4/12']} paddingBottom={3}>
+            <LinkV2
+              href={`https://${formatMessage(m.footer.website)}`}
+              color="white"
+              underline="normal"
+            >
+              <Text color="white" variant="medium" marginBottom={1}>
+                <span
+                  style={{
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '4px',
+                  }}
+                >
                   {formatMessage(m.footer.website)}
-                </Text>
-                <Box display="flex" columnGap={1}>
-                  <Box display={'flex'} columnGap={1} alignItems={'center'}>
-                    <Icon
-                      icon="mail"
-                      color="white"
-                      type="outline"
-                      size="small"
-                    />
-                    <Text variant="small" color="white">
-                      {formatMessage(m.footer.email)}
-                    </Text>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-      </GridContainer>
-    </Box>
+                </span>
+              </Text>
+            </LinkV2>
+            <Text color="white" variant="medium">
+              {formatMessage(m.footer.email)}
+            </Text>
+          </GridColumn>
+        </GridRow>
+      </Box>
+    </GridContainer>
   )
 }

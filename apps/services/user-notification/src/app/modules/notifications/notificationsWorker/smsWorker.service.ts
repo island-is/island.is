@@ -66,7 +66,7 @@ export class SmsWorkerService {
         normalizedNumber,
         smsContent,
         {
-          metricTags: smsPayer ? { payer: smsPayer } : undefined,
+          payer: smsPayer,
         },
       )
 

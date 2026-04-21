@@ -1859,6 +1859,23 @@ export const m = defineMessages({
     id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
   },
+  personalTaxCredit: {
+    id: 'service.portal:personal-tax-credit',
+    defaultMessage: 'Persónuafsláttur',
+  },
+  personalTaxCreditDescription: {
+    id: 'service.portal:personal-tax-credit-description',
+    defaultMessage: 'Persónuafsláttur er 72.492. á mánuði á árinu 2026.',
+  },
+  paymentTypesOverview: {
+    id: 'service.portal:payment-types-overview',
+    defaultMessage: 'Greiðslutegundir',
+  },
+  paymentTypesOverviewDescription: {
+    id: 'service.portal:payment-types-overview-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
+  },
   paymentsReasoning: {
     id: 'service.portal:payments-reasoning',
     defaultMessage: 'Forsenda greiðslna',

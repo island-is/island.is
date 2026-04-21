@@ -38,7 +38,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { LandingPage, LandingPageFooter } from './LandingPage'
+import { LandingPage } from './LandingPage'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (!organization?.link) return ''
@@ -207,10 +207,7 @@ const OrganizationHomePage = ({
         }
       >
         {organizationPage?.bottomSlices.map((slice, index) => {
-          if (
-            slice.__typename === 'LatestNewsSlice' &&
-            slice.news.length >= 3
-          ) {
+          if (slice.__typename === 'LatestNewsSlice') {
             return (
               <Box
                 paddingTop={[5, 5, 8]}
@@ -251,11 +248,6 @@ const OrganizationHomePage = ({
           )
         })}
       </Stack>
-      {organizationPage?.theme === 'landing_page' && (
-        <LandingPageFooter
-          footerItems={organizationPage.organization?.footerItems}
-        />
-      )}
     </OrganizationWrapper>
   )
 }

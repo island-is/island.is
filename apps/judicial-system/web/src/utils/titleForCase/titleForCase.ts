@@ -1,6 +1,9 @@
 import { IntlShape } from 'react-intl'
 
-import { isInvestigationCase } from '@island.is/judicial-system/types'
+import {
+  isIndictmentCase,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
 import {
   Case,
   CaseDecision,
@@ -14,6 +17,10 @@ export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
   theCase: Case,
 ) => {
+  if (isIndictmentCase(theCase.type)) {
+    return 'Máli lokið'
+  }
+
   if (theCase.state === CaseState.REJECTED) {
     return isInvestigationCase(theCase.type)
       ? formatMessage(strings.investigationCaseRejectedTitle)

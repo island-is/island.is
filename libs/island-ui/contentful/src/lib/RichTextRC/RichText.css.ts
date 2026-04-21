@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const orderedList = style({
@@ -109,4 +109,26 @@ export const heading = style({
 
 export const clearBoth = style({
   clear: 'both',
+})
+
+// Table styles to override default table styles from island-ui/core when rendering tables from rich text content. See Figma for reference
+export const tableContainer = style({})
+
+globalStyle(`${tableContainer} th`, {
+  padding: theme.spacing[2],
+})
+
+globalStyle(`${tableContainer} td`, {
+  padding: `${theme.spacing.p5}px ${theme.spacing[2]}px`,
+})
+
+globalStyle(`${tableContainer} th p`, {
+  fontSize: '14px',
+  lineHeight: '16px',
+  fontWeight: theme.typography.semiBold,
+  margin: 0,
+})
+
+globalStyle(`${tableContainer} td p`, {
+  margin: 0,
 })
