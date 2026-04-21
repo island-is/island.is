@@ -189,13 +189,13 @@ export const uniMessages = defineMessages({
   },
   microCredentialsIntro: {
     id: 'sp.education-graduation:micro-credentials-intro',
-    defaultMessage:
-      'Hér getur þú fundið yfirlit yfir örnám frá háskólanámi',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir örnám frá háskólanámi',
     description: 'Micro-credentials list intro',
   },
   studyLevel: {
     id: 'sp.education-graduation:study-level',
     defaultMessage: 'Námsstig',
-    description: 'Level of study label (used instead of degree for micro-credentials)',
+    description:
+      'Level of study label (used instead of degree for micro-credentials)',
   },
 })

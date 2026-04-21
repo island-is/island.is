@@ -33,7 +33,7 @@ export const mapToStudentFileDto = (
     | HIStudentFile
     | LHIStudentFile,
 ): StudentFileDto | null => {
-  const type = transcript.type ? (FILE_TYPE_MAP[transcript.type] ?? null) : null
+  const type = transcript.type ? FILE_TYPE_MAP[transcript.type] ?? null : null
   if (!type) {
     return null
   }

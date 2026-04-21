@@ -39,7 +39,11 @@ import {
   UnakTranscriptLocale,
 } from './clients'
 import { Locale } from '@island.is/shared/types'
-import { StudentFileType, StudyType, UniversityId } from './universityCareers.types'
+import {
+  StudentFileType,
+  StudyType,
+  UniversityId,
+} from './universityCareers.types'
 import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'

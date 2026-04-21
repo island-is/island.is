@@ -19,9 +19,7 @@ import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { StudentTrackTranscriptError } from './models/studentTrackTranscriptError.model'
 import { StudyType } from './universityCareers.types'
 
-const mapStudyType = (
-  studyType?: StudyType,
-): ClientStudyType | undefined => {
+const mapStudyType = (studyType?: StudyType): ClientStudyType | undefined => {
   switch (studyType) {
     case StudyType.UNIVERSITY_STUDIES:
       return 'haskolanam'
@@ -55,7 +53,12 @@ export class UniversityCareersService {
     studyType?: StudyType,
   ): Promise<StudentTrackHistory | null> {
     const promises = Object.values(UniversityId).map(async (uni) => {
-      return this.getStudentTrackHistoryByUniversity(user, uni, locale, studyType)
+      return this.getStudentTrackHistoryByUniversity(
+        user,
+        uni,
+        locale,
+        studyType,
+      )
     })
 
     const transcripts: Array<StudentTrackTranscript> = []
@@ -99,7 +102,12 @@ export class UniversityCareersService {
     }
     const data: Array<StudentTrackDto> | StudentTrackTranscriptError | null =
       await this.universityCareers
-        .getStudentTrackHistory(user, university, locale, mapStudyType(studyType))
+        .getStudentTrackHistory(
+          user,
+          university,
+          locale,
+          mapStudyType(studyType),
+        )
         .catch((e: Error | FetchError) => {
           this.logger.warn('Student track history fetch failed', {
             university,

@@ -112,7 +112,10 @@ export const UniversityGraduation = ({ studyType }: Props) => {
                           : EducationPaths.EducationHaskoliGraduationDetail
                         )
                           .replace(':id', item.trackNumber.toString())
-                          .replace(':uni', mapUniversityToSlug(item.institution.id))
+                          .replace(
+                            ':uni',
+                            mapUniversityToSlug(item.institution.id),
+                          )
                       : '',
                 }}
                 image={

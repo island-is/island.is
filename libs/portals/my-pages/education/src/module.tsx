@@ -21,7 +21,6 @@ const UniversityGraduationDetail = lazy(() =>
   ),
 )
 
-
 const SecondarySchoolCareer = lazy(() =>
   import(
     './screens/SecondarySchool/SecondarySchoolCareer/SecondarySchoolCareer'
@@ -186,13 +185,21 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <UniversityGraduation studyType={UniversityCareersStudyType.HASKOLANAM} />,
+      element: (
+        <UniversityGraduation
+          studyType={UniversityCareersStudyType.HASKOLANAM}
+        />
+      ),
     },
     {
       name: 'Brautskráning - nánar ',
       path: EducationPaths.EducationHaskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <UniversityGraduationDetail studyType={UniversityCareersStudyType.HASKOLANAM} />,
+      element: (
+        <UniversityGraduationDetail
+          studyType={UniversityCareersStudyType.HASKOLANAM}
+        />
+      ),
     },
 
     // Haskoli - Örnám (micro-credentials)
@@ -201,14 +208,20 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationHaskoliMicroCredentials,
       key: MICRO_CREDENTIALS_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <UniversityGraduation studyType={UniversityCareersStudyType.ORNAM} />,
+      element: (
+        <UniversityGraduation studyType={UniversityCareersStudyType.ORNAM} />
+      ),
     },
     {
       name: 'Örnám - nánar',
       path: EducationPaths.EducationHaskoliMicroCredentialsDetail,
       key: MICRO_CREDENTIALS_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <UniversityGraduationDetail studyType={UniversityCareersStudyType.ORNAM} />,
+      element: (
+        <UniversityGraduationDetail
+          studyType={UniversityCareersStudyType.ORNAM}
+        />
+      ),
     },
 
     // Driving lessons
