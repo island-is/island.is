@@ -92,6 +92,7 @@ export const useApiScopeUserModal = ({
     ScopeOption[] | null
   >(null)
   const [loadingScopes, setLoadingScopes] = useState(false)
+  const openEditRequestId = useRef(0)
 
   const [fetchUser] = useLazyQuery<
     GetApiScopeUserQuery,
@@ -167,6 +168,8 @@ export const useApiScopeUserModal = ({
   }
 
   const openEditModal = async (user: ApiScopeUserRow) => {
+    const requestId = ++openEditRequestId.current
+
     setIsEditing(true)
     setOriginalHadName(!!user.name)
     setFormData({
@@ -187,6 +190,9 @@ export const useApiScopeUserModal = ({
       const result = await fetchUser({
         variables: { nationalId: user.nationalId },
       })
+
+      if (requestId !== openEditRequestId.current) return
+
       const userData = result.data?.authAdminApiScopeUser
 
       const envData: EnvironmentUserData[] = []
@@ -224,6 +230,9 @@ export const useApiScopeUserModal = ({
         const scopesResult = await fetchScopes({
           variables: { environment: firstEnv },
         })
+
+        if (requestId !== openEditRequestId.current) return
+
         if (scopesResult.data?.authAdminAccessControlledScopes) {
           setEditScopeOptions(
             mapScopesToOptions(
@@ -234,10 +243,13 @@ export const useApiScopeUserModal = ({
         setLoadingScopes(false)
       }
     } catch {
+      if (requestId !== openEditRequestId.current) return
       toast.error(formatMessage(m.apiScopeUsersError))
       setModalVisible(false)
     } finally {
-      setLoadingUser(false)
+      if (requestId === openEditRequestId.current) {
+        setLoadingUser(false)
+      }
     }
   }
 
@@ -327,6 +339,36 @@ export const useApiScopeUserModal = ({
 
       setUserAvailableEnvironments((prev) => [...prev, targetEnvironment])
       updateEnvironment(targetEnvironment)
+      setEditEnvironment(targetEnvironment)
+
+      setEnvironmentsData((prev) => [
+        ...prev,
+        {
+          environment: targetEnvironment,
+          name: formData.name,
+          email: formData.email,
+          scopes: [...activeScopes],
+        },
+      ])
+
+      setLoadingScopes(true)
+      try {
+        const scopesResult = await fetchScopes({
+          variables: { environment: targetEnvironment },
+        })
+        if (scopesResult.data?.authAdminAccessControlledScopes) {
+          setEditScopeOptions(
+            mapScopesToOptions(
+              scopesResult.data.authAdminAccessControlledScopes,
+            ),
+          )
+        }
+      } catch {
+        setEditScopeOptions(null)
+      } finally {
+        setLoadingScopes(false)
+      }
+
       toast.success(
         formatMessage(m.apiScopeUsersPublishSuccess, {
           environment: targetEnvironment,
@@ -379,7 +421,7 @@ export const useApiScopeUserModal = ({
         setLoadingScopes(false)
       }
     } else {
-      handlePublish(env)
+      await handlePublish(env)
     }
   }
 

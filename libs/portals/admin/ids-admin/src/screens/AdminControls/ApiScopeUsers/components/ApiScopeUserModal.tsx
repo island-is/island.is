@@ -1,4 +1,5 @@
 import React from 'react'
+import type { MultiValue } from 'react-select'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
@@ -18,6 +19,7 @@ import { Modal } from '@island.is/react/components'
 import { m } from '../../../../lib/messages'
 import { authAdminEnvironments } from '../../../../utils/environments'
 import type { ApiScopeUserModalState } from '../hooks/useApiScopeUserModal'
+import type { ScopeOption } from '../ApiScopeUsers.types'
 
 interface ApiScopeUserModalProps {
   modal: ApiScopeUserModalState
@@ -40,7 +42,7 @@ export const ApiScopeUserModal = ({ modal }: ApiScopeUserModalProps) => {
           : formatMessage(m.apiScopeUsersCreateTitle)
       }
       onClose={modal.resetModalState}
-      closeButtonLabel={formatMessage(m.apiScopeUsersCancelButton)}
+      closeButtonLabel={formatMessage(m.closeModal)}
       scrollType="outside"
     >
       <Box paddingX={4}>
@@ -128,7 +130,7 @@ export const ApiScopeUserModal = ({ modal }: ApiScopeUserModalProps) => {
                     options={modal.activeScopeOptions}
                     onChange={(value) => {
                       modal.handleScopeChange(
-                        value as { label: string; value: string }[],
+                        value as MultiValue<ScopeOption>,
                       )
                     }}
                     isMulti

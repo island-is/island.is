@@ -1028,12 +1028,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-save-button',
     defaultMessage: 'Save',
   },
+  /** @deprecated Use m.create instead */
   apiScopeUsersCreateButton: {
-    id: 'ap.ids-admin:api-scope-users-create-button',
+    id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
   },
+  /** @deprecated Use m.cancel instead */
   apiScopeUsersCancelButton: {
-    id: 'ap.ids-admin:api-scope-users-cancel-button',
+    id: 'ap.ids-admin:cancel',
     defaultMessage: 'Cancel',
   },
   apiScopeUsersCreateSuccess: {
@@ -1092,9 +1094,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-error-national-id-check-failed',
     defaultMessage: 'Unable to verify national ID. Please try again.',
   },
+  /** @deprecated Use m.errorEnvironment instead */
   apiScopeUsersErrorEnvironmentRequired: {
-    id: 'ap.ids-admin:api-scope-users-error-environment-required',
-    defaultMessage: 'Select at least one environment',
+    id: 'ap.ids-admin:error-environment',
+    defaultMessage: 'Choose at least one environment.',
   },
   apiScopeUsersEnvironments: {
     id: 'ap.ids-admin:api-scope-users-environments',

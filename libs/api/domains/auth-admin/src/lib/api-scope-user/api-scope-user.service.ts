@@ -84,7 +84,7 @@ interface ApiScopeUsersApi {
 export class ApiScopeUserService extends MultiEnvironmentService {
   private typedRequest<T>(
     user: User,
-    environment: typeof environments[number],
+    environment: Environment,
     request: (api: ApiScopeUsersApi) => Promise<ApiResponse<T>>,
   ) {
     return this.makeRequest(
@@ -214,6 +214,11 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     input: CreateApiScopeUserInput,
   ): Promise<ApiScopeUser> {
     const inputEnvironments = input.environments
+
+    if (inputEnvironments && inputEnvironments.length === 0) {
+      throw new Error('environments must be specified')
+    }
+
     const targetEnvironments = inputEnvironments?.length
       ? environments.filter((env) => inputEnvironments.includes(env))
       : environments
@@ -275,7 +280,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
   ): Promise<ApiScopeUser> {
     const targetEnvironments = input.environments
 
-    if (!targetEnvironments) {
+    if (!targetEnvironments || targetEnvironments.length === 0) {
       const existing = await this.getApiScopeUser(user, input.nationalId)
       if (!existing) {
         throw new Error('API scope user not found')
