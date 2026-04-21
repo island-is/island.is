@@ -88,6 +88,7 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           scheduledNotifications: [
+            // accepts an array of objects, a single object, or a function returning a single object
             {
               template: NotificationConfig[NotificationType.System].templateId,
               delayInMs: 10000,
