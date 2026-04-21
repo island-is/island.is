@@ -13,6 +13,8 @@ import {
   getAlertMessageConditionAddThirdSelection,
   getAlertMessageConditionSpecialNeedsProgram,
   getAlertMessageSpecialNeedsProgram,
+  getFallbackThirdLanguageOptions,
+  getConditionFallbackThirdLanguage,
   getConditionNordicLanguage,
   getConditionProgramApplicationMessage,
   getConditionRequestDormitory,
@@ -23,6 +25,7 @@ import {
   getNordicLanguageOptions,
   getProgramApplicationMessage,
   getRequestDormitoryOptions,
+  getRequireFallbackThirdLanguage,
   getRequireSecondProgram,
   getRequireThirdLanguage,
   getRowsLimitCount,
@@ -31,6 +34,7 @@ import {
   getUpdateOnSelectFirstProgram,
   getUpdateOnSelectSecondProgram,
   loadProgramOptions,
+  setOnChangeFallbackThirdLanguage,
   setOnChangeFirstProgram,
   setOnChangeNordicLanguage,
   setOnChangeSchool,
@@ -177,6 +181,24 @@ export const schoolSection = buildSection({
                 getThirdLanguageOptions(application, activeField),
               setOnChange: async (option, application, index, activeField) =>
                 setOnChangeThirdLanguage(
+                  option,
+                  application,
+                  index,
+                  activeField,
+                ),
+            },
+            'fallbackThirdLanguage.code': {
+              component: 'select',
+              label: school.selection.fallbackThirdLanguageLabel,
+              required: (_, activeField) =>
+                getRequireFallbackThirdLanguage(activeField),
+              isClearable: true,
+              condition: (application, activeField) =>
+                getConditionFallbackThirdLanguage(application, activeField),
+              options: (application, activeField) =>
+                getFallbackThirdLanguageOptions(application, activeField),
+              setOnChange: async (option, application, index, activeField) =>
+                setOnChangeFallbackThirdLanguage(
                   option,
                   application,
                   index,
