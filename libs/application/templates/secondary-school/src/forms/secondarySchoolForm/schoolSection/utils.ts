@@ -172,6 +172,10 @@ export const setOnChangeSchool = (
       value: undefined,
     },
     {
+      key: `selection[${index}].fallbackThirdLanguage`,
+      value: undefined,
+    },
+    {
       key: `selection[${index}].nordicLanguage`,
       value: undefined,
     },
@@ -182,6 +186,10 @@ export const setOnChangeSchool = (
     {
       key: `selection[${index}].thirdLanguageRequire`,
       value: selectedSchool?.requireThirdLanguage,
+    },
+    {
+      key: `selection[${index}].fallbackThirdLanguageRequire`,
+      value: selectedSchool?.requireFallbackThirdLanguage,
     },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
   ]
@@ -409,6 +417,57 @@ export const setOnChangeThirdLanguage = (
   return [
     {
       key: `selection[${index}].thirdLanguage.name`,
+      value: languageInfo?.name,
+    },
+  ]
+}
+
+export const getRequireFallbackThirdLanguage = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const fallbackThirdLanguageRequire =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'fallbackThirdLanguageRequire')) ||
+    false
+  return fallbackThirdLanguageRequire
+}
+
+export const getConditionFallbackThirdLanguage = (
+  application: Application,
+  activeField?: Record<string, string>,
+): boolean => {
+  return (
+    getRequireFallbackThirdLanguage(activeField) &&
+    !!getFallbackThirdLanguageOptions(application, activeField).length
+  )
+}
+
+export const getFallbackThirdLanguageOptions = (
+  application: Application,
+  activeField?: Record<string, string>,
+): RepeaterOption[] => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  return (schoolInfo?.thirdLanguages || []).map((language) => {
+    return {
+      label: language.name,
+      value: language.code,
+    }
+  })
+}
+
+export const setOnChangeFallbackThirdLanguage = (
+  optionValue: RepeaterOptionValue,
+  application: Application,
+  index: number,
+  activeField?: Record<string, string>,
+) => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  const languageInfo = schoolInfo?.thirdLanguages?.find(
+    (x) => x.code === getStringFromOptionValue(optionValue),
+  )
+  return [
+    {
+      key: `selection[${index}].fallbackThirdLanguage.name`,
       value: languageInfo?.name,
     },
   ]

@@ -1,20 +1,19 @@
-import { useContext, useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { FormSystemField } from '@island.is/api/schema'
+import { UPDATE_FIELD } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
 import {
   Box,
+  Button,
+  Checkbox,
   Input,
   RadioButton,
   Stack,
   Text,
-  Button,
-  Divider,
-  Checkbox,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/form-system/ui'
-import { ControlContext } from '../../../../context/ControlContext'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
-import { UPDATE_FIELD } from '@island.is/form-system/graphql'
-import { FormSystemField } from '@island.is/api/schema'
+import { ControlContext } from '../../../../context/ControlContext'
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -27,7 +26,7 @@ export const SubmissionUrls = () => {
     submissionUrlInput,
     setSubmissionUrlInput,
   } = useContext(ControlContext)
-  const { form, isPublished } = control
+  const { form, isReadOnly } = control
   const [updateField] = useMutation(UPDATE_FIELD)
   const [showInput, setShowInput] = useState(false)
 
@@ -77,7 +76,7 @@ export const SubmissionUrls = () => {
           <Button
             onClick={() => setShowInput(true)}
             variant="ghost"
-            disabled={isPublished}
+            disabled={isReadOnly}
           >
             {formatMessage(m.addFormUrl)}
           </Button>
@@ -91,7 +90,7 @@ export const SubmissionUrls = () => {
             placeholder="/r1/IS/..."
             name="submission-url"
             value={submissionUrlInput}
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             backgroundColor="white"
             onChange={(e) => {
               setSubmissionUrlInput(e.target.value)
@@ -116,7 +115,7 @@ export const SubmissionUrls = () => {
           large
           name="submissionUrl"
           id="customSubmissionUrl"
-          disabled={isPublished}
+          disabled={isReadOnly}
           checked={form.submissionServiceUrl === submissionUrlInput}
           onChange={() => {
             controlDispatch({
@@ -142,7 +141,7 @@ export const SubmissionUrls = () => {
                 large
                 name="submissionUrl"
                 id={`submission-url-${sanitizeId(url ?? '')}`}
-                disabled={isPublished}
+                disabled={isReadOnly}
                 checked={form.submissionServiceUrl === url}
                 onChange={() => {
                   controlDispatch({
@@ -162,7 +161,7 @@ export const SubmissionUrls = () => {
         name="submissionUrl"
         id="zendesk"
         checked={form.submissionServiceUrl === 'zendesk'}
-        disabled={isPublished}
+        disabled={isReadOnly}
         onChange={async (e) => {
           controlDispatch({
             type: 'CHANGE_SUBMISSION_URL',
@@ -177,7 +176,7 @@ export const SubmissionUrls = () => {
         <Checkbox
           label={formatMessage(m.zendeskPrivate)}
           checked={!!form.zendeskInternal}
-          disabled={isPublished}
+          disabled={isReadOnly}
           onChange={(e) => {
             controlDispatch({
               type: 'CHANGE_ZENDESK_INTERNAL',
@@ -193,7 +192,7 @@ export const SubmissionUrls = () => {
           <Checkbox
             label={formatMessage(m.useValidate)}
             checked={!!form.useValidate}
-            disabled={isPublished}
+            disabled={isReadOnly}
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_USE_VALIDATE',
@@ -205,7 +204,7 @@ export const SubmissionUrls = () => {
           <Checkbox
             label={formatMessage(m.usePopulate)}
             checked={!!form.usePopulate}
-            disabled={isPublished}
+            disabled={isReadOnly}
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_USE_POPULATE',
