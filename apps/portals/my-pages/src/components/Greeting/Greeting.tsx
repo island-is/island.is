@@ -14,7 +14,11 @@ import { useEffect, useState } from 'react'
 import { SearchInput } from '../SearchInput/SearchInput'
 import * as styles from './Greeting.css'
 
-const Greeting = () => {
+interface GreetingProps {
+  compact?: boolean
+}
+
+const Greeting = ({ compact = false }: GreetingProps) => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const currentHour = new Date().getHours()
@@ -45,7 +49,7 @@ const Greeting = () => {
           span={['12/12', '12/12', '12/12', '5/12']}
           offset={['0', '0', '0', '1/12']}
         >
-          <Box marginTop={9} data-testid="greeting">
+          <Box marginTop={compact ? 4 : 9} data-testid="greeting">
             <Text
               variant="eyebrow"
               marginBottom={2}
@@ -59,10 +63,12 @@ const Greeting = () => {
             <Text translate="no" variant="h2" as="h1" marginBottom={1}>
               {userInfo?.profile.name}
             </Text>
-            <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
-              {formatMessage(m.greetingIntro)}
-            </Text>
-            {showSearch && (
+            {!compact && (
+              <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
+                {formatMessage(m.greetingIntro)}
+              </Text>
+            )}
+            {(compact || showSearch) && (
               <Box marginY={3}>
                 <SearchInput
                   colorScheme="blue"
