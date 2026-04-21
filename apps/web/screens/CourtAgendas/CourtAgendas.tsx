@@ -1456,5 +1456,6 @@ export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.CourtAgendas, CourtAgendas),
   {
     footerVersion: 'organization',
+    organizationSearchFilter: 'domstolar',
   },
 )
