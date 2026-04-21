@@ -28,6 +28,7 @@ export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
 export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
+export { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
@@ -44,5 +45,4 @@ export {
   caseInclude,
   UpdateCase,
   UpdateAppealCase,
-  appealCaseFields,
 } from './types/caseRepository.types'

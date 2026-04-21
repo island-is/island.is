@@ -1,4 +1,3 @@
-import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import {
   CountOptions,
@@ -28,7 +27,6 @@ import {
   StringType,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -40,11 +38,7 @@ import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import {
-  appealCaseFields,
-  UpdateAppealCase,
-  UpdateCase,
-} from '../types/caseRepository.types'
+import { UpdateCase } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
@@ -103,10 +97,6 @@ interface UpdateCaseOptions {
   transaction: Transaction
 }
 
-interface UpsertAppealCaseOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class CaseRepositoryService {
   constructor(
@@ -124,8 +114,6 @@ export class CaseRepositoryService {
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
-    @InjectModel(AppealCase)
-    private readonly appealCaseModel: typeof AppealCase,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -415,22 +403,9 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
-      const caseData = omit(data, appealCaseFields)
-
-      const result = await this.caseModel.create(caseData, options)
+      const result = await this.caseModel.create(data, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
-
-      const appealData = pick(
-        data,
-        appealCaseFields,
-      ) as Partial<UpdateAppealCase>
-
-      if (Object.keys(appealData).length > 0) {
-        await this.upsertAppealCase(result.id, appealData as UpdateAppealCase, {
-          transaction: options.transaction,
-        })
-      }
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         result.id,
@@ -778,60 +753,28 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const caseData = omit(data, appealCaseFields)
+      const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
+        ...updateOptions,
+        returning: true,
+      })
 
-      let updatedCase: Case
-
-      if (Object.keys(caseData).length > 0) {
-        const [numberOfAffectedRows, cases] = await this.caseModel.update(
-          caseData,
-          {
-            ...updateOptions,
-            returning: true,
-          },
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not update case ${caseId}`,
         )
-
-        if (numberOfAffectedRows < 1) {
-          throw new InternalServerErrorException(
-            `Could not update case ${caseId}`,
-          )
-        }
-
-        if (numberOfAffectedRows > 1) {
-          // Tolerate failure, but log error
-          this.logger.error(
-            `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
-            { data: Object.keys(data) },
-          )
-        }
-
-        updatedCase = cases[0]
-      } else {
-        const theCase = await this.caseModel.findByPk(caseId, {
-          transaction: options.transaction,
-        })
-
-        if (!theCase) {
-          throw new InternalServerErrorException(
-            `Could not update case ${caseId}`,
-          )
-        }
-
-        updatedCase = theCase
       }
+
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
+          { data: Object.keys(data) },
+        )
+      }
+
+      const updatedCase = cases[0]
 
       this.logger.debug(`Updated case ${caseId}`)
-
-      const appealData = pick(
-        data,
-        appealCaseFields,
-      ) as Partial<UpdateAppealCase>
-
-      if (Object.keys(appealData).length > 0) {
-        await this.upsertAppealCase(caseId, appealData as UpdateAppealCase, {
-          transaction: options.transaction,
-        })
-      }
 
       if ('policeCaseNumbers' in data) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
@@ -852,43 +795,6 @@ export class CaseRepositoryService {
         data: Object.keys(data),
         error,
       })
-
-      throw error
-    }
-  }
-
-  async upsertAppealCase(
-    caseId: string,
-    data: UpdateAppealCase,
-    options: UpsertAppealCaseOptions,
-  ): Promise<AppealCase> {
-    try {
-      this.logger.debug(`Upserting appeal case for case ${caseId} with data:`, {
-        data: Object.keys(data),
-      })
-
-      const existing = await this.appealCaseModel.findOne({
-        where: { caseId },
-        transaction: options.transaction,
-      })
-
-      const [result] = await this.appealCaseModel.upsert(
-        { ...existing?.toJSON(), ...data, caseId },
-        {
-          transaction: options.transaction,
-          returning: true,
-          conflictFields: ['case_id'],
-        },
-      )
-
-      this.logger.debug(`Upserted appeal case for case ${caseId}`)
-
-      return result
-    } catch (error) {
-      this.logger.error(
-        `Error upserting appeal case for case ${caseId} with data:`,
-        { data: Object.keys(data), error },
-      )
 
       throw error
     }
