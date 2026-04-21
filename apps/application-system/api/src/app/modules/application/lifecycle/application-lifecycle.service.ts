@@ -112,6 +112,7 @@ export class ApplicationLifeCycleService {
       applicationId: string
       dto: CreateHnippNotificationDto
     }[] = []
+    const failedIds: string[] = []
     for (const notification of scheduledNotifications) {
       try {
         // Fetch the application to get the applicant details
@@ -161,6 +162,13 @@ export class ApplicationLifeCycleService {
           `Failed to prepare scheduled notification ${notification.id}`,
           error,
         )
+        failedIds.push(notification.id)
+      } finally {
+        if (failedIds.length > 0) {
+          await this.applicationService.markScheduledNotificationsFailed(
+            failedIds,
+          )
+        }
       }
     }
     // Pass them off to be sent
@@ -198,7 +206,13 @@ export class ApplicationLifeCycleService {
     )
 
     await this.applicationService.markScheduledNotificationsSent(sentIds)
-    await this.applicationService.markScheduledNotificationsFailed(failedIds)
+    if (failedIds.length > 0) {
+      const sentSet = new Set(sentIds)
+      const failedIdsToMark = failedIds.filter((id) => !sentSet.has(id)) // filter out notifications that only partially failed
+      await this.applicationService.markScheduledNotificationsFailed(
+        failedIdsToMark,
+      )
+    }
   }
 
   private async pruneAttachments() {

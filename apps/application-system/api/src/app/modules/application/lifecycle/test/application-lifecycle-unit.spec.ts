@@ -108,8 +108,12 @@ class ApplicationServiceMock {
   async findOneById(id: string) {
     return null
   }
-  async markScheduledNotificationsSent(ids: string[]) {}
-  async markScheduledNotificationsFailed(ids: string[]) {}
+  async markScheduledNotificationsSent(ids: string[]) {
+    return Promise.resolve()
+  }
+  async markScheduledNotificationsFailed(ids: string[]) {
+    return Promise.resolve()
+  }
 
   update(
     id: string,
