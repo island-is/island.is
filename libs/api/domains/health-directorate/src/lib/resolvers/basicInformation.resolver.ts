@@ -28,11 +28,7 @@ import type { Locale } from '@island.is/shared/types'
 import { HealthDirectorateReferralInput } from '.././dto/referral.input'
 import { HealthDirectorateWaitlistInput } from '.././dto/waitlist.input'
 import { HealthDirectorateService } from '.././health-directorate.service'
-import {
-  DonorInput,
-  Organ,
-  OrganDonation,
-} from '.././models/organ-donation.model'
+import { DonorInput, Organ, OrganDonation } from '../models/organDonation.model'
 
 import { ReferralDetail } from '.././models/referral.model'
 import { Referrals } from '.././models/referrals.model'
@@ -40,7 +36,7 @@ import { Vaccinations } from '.././models/vaccinations.model'
 import { WaitlistDetail } from '.././models/waitlist.model'
 import { Waitlists } from '.././models/waitlists.model'
 import { Appointments } from '../models/appointments.model'
-import { AppointmentDetail } from '../models/appointment-detail.model'
+import { AppointmentDetail } from '../models/appointmentDetail.model'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,

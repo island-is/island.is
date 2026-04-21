@@ -11,6 +11,7 @@ import {
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
@@ -40,7 +41,7 @@ import {
 } from './mappers/medicineMapper'
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
-import { AppointmentDetail } from './models/appointment-detail.model'
+import { AppointmentDetail } from './models/appointmentDetail.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -50,7 +51,7 @@ import {
 } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { Donor, DonorInput, Organ } from './models/organ-donation.model'
+import { Donor, DonorInput, Organ } from './models/organDonation.model'
 import { Countries } from './models/permits/country.model'
 import { Permit } from './models/permits/permit.model'
 import { PermitHistoryEntry } from './models/permits/permitHistoryEntry.model'
@@ -561,10 +562,7 @@ export class HealthDirectorateService {
       input.from,
       input.status
         ?.map((status) => mapAppointmentStatus(status))
-        .filter(
-          (status): status is UserVisibleAppointmentStatuses =>
-            status !== null,
-        ),
+        .filter(isDefined),
     )
     if (!data) {
       return null
