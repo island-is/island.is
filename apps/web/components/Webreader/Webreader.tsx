@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
+import { zIndex } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/web/i18n'
 
 import { CUSTOMER_ID, SCRIPT_URL } from './config'
@@ -110,7 +111,11 @@ const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom} printHidden={true}>
-      <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
+      <div
+        id="readspeaker_button1"
+        className="rs_skip rsbtn rs_preserve"
+        style={{ zIndex: zIndex.base }}
+      >
         <a
           rel="nofollow"
           className="rsbtn_play"
