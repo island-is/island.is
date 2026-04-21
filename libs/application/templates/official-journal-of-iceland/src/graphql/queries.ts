@@ -445,6 +445,22 @@ export const REGULATION_OPTION_SEARCH_QUERY = gql`
   }
 `
 
+export const REGULATION_OPTION_LIST_QUERY = gql`
+  query OJOIAGetRegulationOptionList(
+    $input: OJOIAGetRegulationOptionListInput!
+  ) {
+    OJOIAGetRegulationOptionList(input: $input) {
+      regulations {
+        name
+        title
+        type
+        migrated
+        repealed
+      }
+    }
+  }
+`
+
 export const REGULATION_FROM_API_QUERY = gql`
   query OJOIAGetRegulationFromApi($input: OJOIAGetRegulationFromApiInput!) {
     OJOIAGetRegulationFromApi(input: $input)

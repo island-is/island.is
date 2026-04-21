@@ -1,0 +1,9 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    appId: ${APP_ID}
+    clearState: true
+- assertVisible:
+    id: 'SCREEN_LOGIN'
+- assertVisible:
+    id: 'LOGIN_BUTTON_AUTHENTICATE'

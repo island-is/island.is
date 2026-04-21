@@ -82,6 +82,10 @@ export const fieldReducer = (
       const { value, id } = action.payload
       return setFieldValue(state, 's3Key', id, value)
     }
+    case 'SET_PAYMENT_QUANTITY': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'number', id, value)
+    }
     default:
       return state
   }

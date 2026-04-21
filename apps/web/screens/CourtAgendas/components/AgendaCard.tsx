@@ -58,12 +58,6 @@ export const AgendaCard = ({
     })
   }
 
-  if (closedHearingText) {
-    detailLines.push({
-      text: closedHearingText,
-    })
-  }
-
   const renderDetails = () => {
     return (
       <Stack space={1}>
@@ -102,11 +96,18 @@ export const AgendaCard = ({
                 <Text variant="h5" as="h2">
                   {caseNumber}
                 </Text>
-                {Boolean(type) && (
-                  <Tag variant="blue" disabled>
-                    {type}
-                  </Tag>
-                )}
+                <Inline space={2} alignY="center">
+                  {Boolean(type) && (
+                    <Tag variant="blue" outlined={true} disabled>
+                      {type}
+                    </Tag>
+                  )}
+                  {Boolean(closedHearingText) && (
+                    <Tag variant="red" outlined={true} disabled>
+                      {closedHearingText}
+                    </Tag>
+                  )}
+                </Inline>
               </Inline>
               <Text variant="medium" color="purple400" fontWeight="semiBold">
                 {date}
@@ -141,11 +142,18 @@ export const AgendaCard = ({
                 <Text variant="h5" as="h2">
                   {caseNumber}
                 </Text>
-                {Boolean(type) && (
-                  <Tag variant="blue" disabled>
-                    {type}
-                  </Tag>
-                )}
+                <Inline space={2} alignY="center">
+                  {Boolean(type) && (
+                    <Tag variant="blue" outlined={true} disabled>
+                      {type}
+                    </Tag>
+                  )}
+                  {Boolean(closedHearingText) && (
+                    <Tag variant="red" outlined={true} disabled>
+                      {closedHearingText}
+                    </Tag>
+                  )}
+                </Inline>
               </Inline>
               <Text variant="medium" color="purple400" fontWeight="semiBold">
                 {date}

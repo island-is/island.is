@@ -6,7 +6,8 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { getManualMileageTableRows } from '../../utils/carCategoryUtils'
-import { UploadSelection } from '../../utils/constants'
+import { RateCategory, UploadSelection } from '../../utils/constants'
+import { CarMap } from '../../utils/types'
 
 export const tableViewSelectionSection = buildSection({
   condition: (answers) => {
@@ -29,15 +30,14 @@ export const tableViewSelectionSection = buildSection({
           rowIdKey: 'permno',
           rows: (application) => {
             return getManualMileageTableRows(
-              getValueViaPath(
+              getValueViaPath<CarMap>(
                 application.externalData,
-                'getCurrentVehicles.data',
+                'getVehicleCarMap.data',
               ),
-              getValueViaPath(
-                application.externalData,
-                'getCurrentVehiclesRateCategory.data',
+              getValueViaPath<RateCategory>(
+                application.answers,
+                'categorySelectionRadio',
               ),
-              getValueViaPath(application.answers, 'categorySelectionRadio'),
             )
           },
           headers: [
@@ -51,6 +51,7 @@ export const tableViewSelectionSection = buildSection({
               editable: true,
               inputType: 'number',
               min: 0,
+              placeholderKey: 'currentMilage',
             },
           ],
           searchLabel: m.tableView.searchLabel,

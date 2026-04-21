@@ -4,6 +4,7 @@ import {
   CountOptions,
   CreateOptions,
   FindAndCountOptions,
+  FindAttributeOptions,
   FindOptions,
   Transaction,
   UpdateOptions,
@@ -44,6 +45,7 @@ import {
   UpdateAppealCase,
   UpdateCase,
 } from '../types/caseRepository.types'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -124,8 +126,22 @@ export class CaseRepositoryService {
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @InjectModel(AppealCase)
     private readonly appealCaseModel: typeof AppealCase,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  /**
+   * When the Sequelize query includes `policeCaseNumbers`, resolve that field from the junction table.
+   */
+  private shouldResolvePoliceCaseNumbers(
+    attributes?: FindAttributeOptions,
+  ): boolean {
+    if (!attributes) return true
+    if (Array.isArray(attributes)) {
+      return attributes.some((attr) => attr === 'policeCaseNumbers')
+    }
+    return !attributes.exclude?.includes('policeCaseNumbers')
+  }
 
   async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
     try {
@@ -144,6 +160,13 @@ export class CaseRepositoryService {
       const result = await this.caseModel.findByPk(id, findOptions)
 
       this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+          [result],
+          { transaction: options?.transaction },
+        )
+      }
 
       return result
     } catch (error) {
@@ -184,6 +207,13 @@ export class CaseRepositoryService {
       const result = await this.caseModel.findOne(findOptions)
 
       this.logger.debug(`Case ${result ? 'found' : 'not found'}`)
+
+      if (result && this.shouldResolvePoliceCaseNumbers(options?.attributes)) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+          [result],
+          { transaction: options?.transaction },
+        )
+      }
 
       return result
     } catch (error) {
@@ -243,6 +273,16 @@ export class CaseRepositoryService {
       const results = await this.caseModel.findAll(findOptions)
 
       this.logger.debug(`Found ${results.length} cases`)
+
+      if (
+        results.length > 0 &&
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
+      ) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+          results,
+          { transaction: options?.transaction },
+        )
+      }
 
       return results
     } catch (error) {
@@ -307,6 +347,17 @@ export class CaseRepositoryService {
       this.logger.debug(
         `Found and counted ${results.count} total cases, returning ${results.rows.length} rows`,
       )
+
+      if (
+        results.rows.length > 0 &&
+        !options?.raw &&
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
+      ) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+          results.rows,
+          { transaction: options?.transaction },
+        )
+      }
 
       return results
     } catch (error) {
@@ -381,6 +432,17 @@ export class CaseRepositoryService {
         })
       }
 
+      await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+        result.id,
+        result.policeCaseNumbers ?? [],
+        { transaction: options.transaction },
+      )
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [result],
+        { transaction: options.transaction },
+      )
+
       return result
     } catch (error) {
       this.logger.error('Error creating a new case with data:', {
@@ -424,7 +486,6 @@ export class CaseRepositoryService {
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
-        'indictmentReturnedExplanation',
         'indictmentHash',
         'hasCivilClaims',
       ]
@@ -460,6 +521,12 @@ export class CaseRepositoryService {
       )
 
       const { id: splitCaseId } = result
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+        splitCaseId,
+        result.policeCaseNumbers ?? [],
+        { transaction },
+      )
 
       // Create a promise collection to await later
       const promises: Promise<unknown>[] = []
@@ -669,6 +736,18 @@ export class CaseRepositoryService {
 
       await Promise.all(promises)
 
+      await this.caseDefendantPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant(
+        caseId,
+        splitCaseId,
+        defendantId,
+        { transaction },
+      )
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [result],
+        { transaction },
+      )
+
       this.logger.debug(
         `Split defendant ${defendantId} from case ${caseId} into a new case ${result.id}`,
       )
@@ -753,6 +832,19 @@ export class CaseRepositoryService {
           transaction: options.transaction,
         })
       }
+
+      if ('policeCaseNumbers' in data) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+          caseId,
+          updatedCase.policeCaseNumbers ?? [],
+          { transaction: options.transaction },
+        )
+      }
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [updatedCase],
+        { transaction: options.transaction },
+      )
 
       return updatedCase
     } catch (error) {

@@ -65,6 +65,9 @@ export type FieldTypeMapping = {
     name?: FormSystemValue['name']
     nationalId?: FormSystemValue['nationalId']
   }
+  [FieldTypesEnum.PAYMENT_QUANTITY]: {
+    number?: FormSystemValue['number']
+  }
 }
 
 export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
@@ -114,6 +117,8 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
       return { iskNumber: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.APPLICANT:
       return { name: undefined, nationalId: undefined } as FieldTypeMapping[T]
+    case FieldTypesEnum.PAYMENT_QUANTITY:
+      return { number: undefined } as FieldTypeMapping[T]
     default:
       throw new Error(`Field type ${fieldType} not supported`)
   }

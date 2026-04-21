@@ -1,21 +1,21 @@
+import { m } from '@island.is/form-system/ui'
 import {
   Box,
   GridColumn,
   GridRow,
-  Stack,
   Input,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { Text } from '@island.is/island-ui/core'
-import { ControlContext } from '../../../../context/ControlContext'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../context/ControlContext'
 
 export const Lifetime = () => {
   const { formatMessage } = useIntl()
   const { control, controlDispatch, setFocus, focus, formUpdate } =
     useContext(ControlContext)
-  const { form, isPublished } = control
+  const { form, isReadOnly } = control
 
   return (
     <>
@@ -42,7 +42,7 @@ export const Lifetime = () => {
                   form.draftDaysToLive === 0 ? '' : form.draftDaysToLive ?? ''
                 }
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 type="number"
                 max={60}
                 min={1}
@@ -85,7 +85,7 @@ export const Lifetime = () => {
                     : form.submissionDaysToLive ?? ''
                 }
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 type="number"
                 max={30}
                 min={1}

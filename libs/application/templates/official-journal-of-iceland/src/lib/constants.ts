@@ -32,6 +32,7 @@ export enum ApplicationTypes {
 export enum Routes {
   REQUIREMENTS = 'requirements',
   INVOLVED_PARTY = 'involvedParty',
+  ADDITIONAL_PARTIES = 'additionalParties',
   TYPE_SELECTION = 'typeSelection',
   COMMENTS = 'comments',
   ADVERT = 'advert',

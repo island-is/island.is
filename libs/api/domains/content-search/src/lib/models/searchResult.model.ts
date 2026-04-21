@@ -14,6 +14,7 @@ import {
   Manual,
   ManualChapterItem,
   OrganizationParentSubpage,
+  Course,
 } from '@island.is/cms'
 
 import { TagCount } from './tagCount'
@@ -35,6 +36,7 @@ const Items = createUnionType({
     Manual,
     ManualChapterItem,
     OrganizationParentSubpage,
+    Course,
   ], // add new return types here
   resolveType: (document) => document.typename, // typename is appended to request on mapping
 })

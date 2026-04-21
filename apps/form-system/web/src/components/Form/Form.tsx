@@ -1,17 +1,17 @@
+import { FormSystemSection } from '@island.is/api/schema'
+import { FormStepper } from '@island.is/form-system/ui'
 import {
   Box,
-  GridContainer as Grid,
   GridColumn as Column,
+  GridContainer as Grid,
   GridRow as Row,
 } from '@island.is/island-ui/core'
-import * as styles from './Form.css'
-import { useHeaderInfo } from '../../context/HeaderInfoProvider'
-import { FormStepper } from '@island.is/form-system/ui'
-import { FormSystemSection } from '@island.is/api/schema'
-import { Screen } from '../Screen/Screen'
-import { useApplicationContext } from '../../context/ApplicationProvider'
-import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
+import { useEffect } from 'react'
+import { useApplicationContext } from '../../context/ApplicationProvider'
+import { useHeaderInfo } from '../../context/HeaderInfoProvider'
+import { Screen } from '../Screen/Screen'
+import * as styles from './Form.css'
 
 export const Form = () => {
   const { setInfo } = useHeaderInfo()
@@ -75,6 +75,7 @@ export const Form = () => {
                   currentSection={state.currentSection}
                   currentScreen={state.currentScreen}
                   hasSummaryScreen={state.application.hasSummaryScreen ?? false}
+                  hasPayment={state.application.hasPayment ?? false}
                 />
               </Box>
             </Column>

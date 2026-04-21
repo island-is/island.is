@@ -88,4 +88,7 @@ export class ApplicationDto {
 
   @ApiPropertyOptional()
   submissionServiceUrl?: string
+
+  @ApiPropertyOptional()
+  organizationNationalId?: string
 }

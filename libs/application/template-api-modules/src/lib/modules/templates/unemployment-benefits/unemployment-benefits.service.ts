@@ -425,7 +425,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       }
 
     const response = await this.vmstUnemploymentClientService.submitApplication(
-      auth,
       submitResponse,
     )
 

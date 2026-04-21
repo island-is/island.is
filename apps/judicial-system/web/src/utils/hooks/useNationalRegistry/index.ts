@@ -9,7 +9,16 @@ import {
 import { isBusiness } from '../../utils'
 import { validate } from '../../validate'
 
-const useNationalRegistry = (nationalId?: string | null) => {
+export type UseNationalRegistryOptions = {
+  /** When true, no request is made and cached lookup state is cleared. */
+  skip?: boolean
+}
+
+const useNationalRegistry = (
+  nationalId?: string | null,
+  options?: UseNationalRegistryOptions,
+) => {
+  const skip = options?.skip ?? false
   const [personData, setPersonData] = useState<NationalRegistryResponsePerson>()
   const [businessData, setBusinessData] =
     useState<NationalRegistryResponseBusiness>()
@@ -18,6 +27,15 @@ const useNationalRegistry = (nationalId?: string | null) => {
   const [notFound, setNotFound] = useState<boolean>(false)
 
   useEffect(() => {
+    if (skip) {
+      setPersonData(undefined)
+      setBusinessData(undefined)
+      setError(undefined)
+      setNotFound(false)
+      setIsLoading(false)
+      return
+    }
+
     const cleanNationalId = nationalId?.replace('-', '')
     const isValidNationalId = validate([
       [cleanNationalId, ['national-id']],
@@ -79,7 +97,7 @@ const useNationalRegistry = (nationalId?: string | null) => {
       })
 
     return () => controller.abort()
-  }, [nationalId])
+  }, [nationalId, skip])
 
   return { personData, businessData, error, isLoading, notFound }
 }

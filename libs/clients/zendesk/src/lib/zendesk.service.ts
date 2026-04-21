@@ -36,7 +36,14 @@ export type SubmitTicketInput = {
   subject?: string
   message: string
   requesterId?: number
+  requester?: {
+    name: string
+    email: string
+  }
   tags?: Array<string>
+  customFields?: Array<UpdateCustomField>
+  brandId?: number
+  ticketFormId?: number
 }
 
 export type User = {
@@ -155,14 +162,22 @@ export class ZendeskService {
     message,
     subject,
     requesterId,
+    requester,
     tags = [],
+    customFields = [],
+    brandId,
+    ticketFormId,
   }: SubmitTicketInput): Promise<boolean> {
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: requesterId,
+        requester,
         subject: subject?.trim() ?? '',
         comment: { body: message ?? '' },
         tags,
+        custom_fields: customFields,
+        brand_id: brandId,
+        ticket_form_id: ticketFormId,
       },
     })
 

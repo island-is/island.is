@@ -12,6 +12,15 @@ export const container = style({
   overflowX: 'auto',
 })
 
+export const hideScrollbar = style({
+  scrollbarWidth: 'none',
+  selectors: {
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  },
+})
+
 export const wrapper = style({
   display: 'grid',
   ...themeUtils.responsiveStyle({

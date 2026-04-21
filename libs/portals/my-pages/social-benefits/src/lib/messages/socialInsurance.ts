@@ -164,4 +164,153 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-plan-breakdown',
     defaultMessage: 'Sundurliðun',
   },
+  personalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit',
+    defaultMessage: 'Persónuafsláttur',
+  },
+  personalTaxCreditDescription: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
+    defaultMessage: 'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
+  },
+  personalTaxCreditNotRegistered: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
+    defaultMessage: 'Þú ert ekki með skráðan persónuafslátt hjá TR.',
+  },
+  myPersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:my-personal-tax-credit',
+    defaultMessage: 'Persónuafslátturinn minn',
+  },
+  registerPersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:register-personal-tax-credit',
+    defaultMessage: 'Ég óska eftir að nýta persónuafslátt hjá TR.',
+  },
+  editPersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:edit-personal-tax-credit',
+    defaultMessage:
+      'Ég vil breyta núverandi hlutfalli persónuafsláttar sem skráð er hjá TR (breytist við næstu greiðslukeyrslu TR).',
+  },
+  discontinuePersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:discontinue-personal-tax-credit',
+    defaultMessage: 'Ég óska eftir að hætta að nýta persónuafslátt hjá TR.',
+  },
+  spousePersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit',
+    defaultMessage: 'Persónuafsláttur maka',
+  },
+  spouseDeceasedTaxCredit: {
+    id: 'sp.social-insurance-maintenance:spouse-deceased-tax-credit',
+    defaultMessage: 'Ég óska eftir að nýta persónuafslátt vegna andláts maka.',
+  },
+  spouseDeceasedInfo: {
+    id: 'sp.social-insurance-maintenance:spouse-deceased-info',
+    defaultMessage:
+      'Ath. skattkort vegna andláts maka má vera skráð frá og með 1. næsta mánaðar eftir andlát og verður nýtt næstu 8 mánuði á eftir.',
+  },
+  grantSpouseTaxCredit: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
+    defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
+  },
+  grantSpouseTaxCreditInfo: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit-info',
+    defaultMessage:
+      'Bæði þú og maki getið ekki nýtt persónuafsláttinn á sama tíma.',
+  },
+  taxBracketInfo: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-info',
+    defaultMessage:
+      'Skatthlutfall í staðgreiðslu samanstendur annars vegar af tekjuskatti og hins vegar meðalútsvari (14,94%). Skatthlutfallið er\n\n• 31,49% af tekjum 0 - 498.122 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 498.123 - 1.398.450 (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.398.450 (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
+  },
+  taxCardTypePersonalTaxAllowance: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-personal-tax-allowance',
+    defaultMessage: 'Skattkort',
+  },
+  taxCardTypeSpouseTaxAllowance: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-spouse-tax-allowance',
+    defaultMessage: 'Skattkort maka',
+  },
+  taxCardTypeRegardingTheEstate: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-regarding-the-estate',
+    defaultMessage: 'V/ dánarbús',
+  },
+  taxCardTypeTaxExemption: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-tax-exemption',
+    defaultMessage: 'Skattundanþága',
+  },
+  taxCardTypeUnknown: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-unknown',
+    defaultMessage: 'Óþekkt tegund skattkorts',
+  },
+  personalTaxCreditSaveSuccess: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-save-success',
+    defaultMessage: 'Persónuafsláttur hefur verið vistaður',
+  },
+  personalTaxCreditSaveError: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-save-error',
+    defaultMessage: 'Ekki tókst að vista persónuafsláttinn',
+  },
+  month: {
+    id: 'sp.social-insurance-maintenance:month',
+    defaultMessage: 'Mánuður',
+  },
+  theYear: {
+    id: 'sp.social-insurance-maintenance:the-year',
+    defaultMessage: 'Ár',
+  },
+  fromWhatTime: {
+    id: 'sp.social-insurance-maintenance:from-what-time',
+    defaultMessage: 'Frá hvaða tíma',
+  },
+  percentageFromNextMonth: {
+    id: 'sp.social-insurance-maintenance:percentage-from-next-month',
+    defaultMessage: 'Hlutfall afsláttar frá næstu mánaðarmótum',
+  },
+  dateFrom: {
+    id: 'sp.social-insurance-maintenance:date-from',
+    defaultMessage: 'Dagsetning frá',
+  },
+  dateTo: {
+    id: 'sp.social-insurance-maintenance:date-to',
+    defaultMessage: 'Dagsetning til',
+  },
+  percentage: {
+    id: 'sp.social-insurance-maintenance:percentage',
+    defaultMessage: 'Prósenta',
+  },
+  paymentTypesOverview: {
+    id: 'sp.social-insurance-maintenance:payment-types-overview',
+    defaultMessage: 'Greiðslutegundir',
+  },
+  paymentTypesOverviewDescription: {
+    id: 'sp.social-insurance-maintenance:payment-types-overview-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
+  },
+  paymentTypesSectionTitle: {
+    id: 'sp.social-insurance-maintenance:payment-types-section-title',
+    defaultMessage: 'Greiðslur til þín og gildistími þeirra',
+  },
+  childBenefitsSectionTitle: {
+    id: 'sp.social-insurance-maintenance:child-benefits-section-title',
+    defaultMessage: 'TR greiðir til þín vegna eftirfarandi barna',
+  },
+  paymentTypeName: {
+    id: 'sp.social-insurance-maintenance:payment-type-name',
+    defaultMessage: 'Heiti',
+  },
+  name: {
+    id: 'sp.social-insurance-maintenance:name',
+    defaultMessage: 'Nafn',
+  },
+  nationalId: {
+    id: 'sp.social-insurance-maintenance:national-id',
+    defaultMessage: 'Kennitala',
+  },
+  calculateMyRights: {
+    id: 'sp.social-insurance-maintenance:calculate-my-rights',
+    defaultMessage: 'Reikna mín réttindi',
+  },
+  noPaymentTypesFound: {
+    id: 'sp.social-insurance-maintenance:no-payment-types-found',
+    defaultMessage: 'Engar greiðslutegundir fundust.',
+  },
 })

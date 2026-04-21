@@ -38,6 +38,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-general-mandate',
     defaultMessage: 'Allsherjarumboð',
   },
+  delegationTypeGeneralMandateOutgoing: {
+    id: 'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
+    defaultMessage: 'Allsherjarumboð þú hefur veitt öðrum',
+  },
+  delegationTypeGeneralMandateIncoming: {
+    id: 'sp.access-control-delegations:delegation-type-general-mandate-incoming',
+    defaultMessage: 'Allsherjarumboð sem þú hefur fengið',
+  },
   delegationTypeProcurationHolder: {
     id: 'sp.access-control-delegations:delegation-type-procuration-holder',
     defaultMessage: 'Prókúra',
@@ -110,6 +118,10 @@ export const m = defineMessages({
   whichDelegationsSuit: {
     id: 'sp.access-control-delegations:whichDelegationsSuit',
     defaultMessage: 'Hvaða umboð henta í hvaða tilvikum?',
+  },
+  delegationTypes: {
+    id: 'sp.access-control-delegations:delegationTypes',
+    defaultMessage: 'Tegundir umboða',
   },
   delegationsThatSuit: {
     id: 'sp.access-control-delegations:delegationsThatSuit',
@@ -301,6 +313,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-create-error',
     defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
   },
+  grantDeceasedTitle: {
+    id: 'sp.access-control-delegations:grant-deceased-title',
+    defaultMessage: 'Ekki er hægt að stofna umboð',
+  },
+  grantDeceasedMessage: {
+    id: 'sp.access-control-delegations:grant-deceased-message',
+    defaultMessage: 'Ekki er hægt að veita umboð til látins einstaklings.',
+  },
   grantRequiredSsn: {
     id: 'sp.access-control-delegations:grant-required-ssn',
     defaultMessage: 'Þú þarft að setja inn kennitölu',
@@ -435,6 +455,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:filter-clear',
     defaultMessage: 'Hreinsa síu',
   },
+  filterTags: {
+    id: 'sp.access-control-delegations:filter-tags',
+    defaultMessage: 'Tags',
+  },
+  filterDomains: {
+    id: 'sp.access-control-delegations:filter-domains',
+    defaultMessage: 'Stofnanir',
+  },
   filterOpen: {
     id: 'sp.access-control-delegations:filter-open',
     defaultMessage: 'Opna síu',
@@ -447,6 +475,15 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-access-scopes-intro',
     defaultMessage:
       'Hérna getur þú, í þremur skrefum, veitt einstaklingum umboð til að sinna þínum erindum á vefsvæðum opinberra stofnana',
+  },
+  editAccessStepsTitle: {
+    id: 'sp.access-control-delegations:edit-access-steps-title',
+    defaultMessage: 'Breyta umboði',
+  },
+  editAccessStepsIntro: {
+    id: 'sp.access-control-delegations:edit-access-steps-intro',
+    defaultMessage:
+      'Hérna getur þú bætt við umboðum, fjarlægt eða breytt gildistíma.',
   },
   accessPeriodSame: {
     id: 'sp.access-control-delegations:access-period-same',
@@ -546,6 +583,10 @@ export const m = defineMessages({
   headerName: {
     id: 'sp.access-control-delegations:header-name',
     defaultMessage: 'Nafn',
+  },
+  headerCompanyName: {
+    id: 'sp.access-control-delegations:header-company-name',
+    defaultMessage: 'Heiti',
   },
   headerDomain: {
     id: 'sp.access-control-delegations:header-domain',

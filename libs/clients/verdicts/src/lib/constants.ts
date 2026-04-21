@@ -10,3 +10,4 @@ export const ALL_DISTRICT_COURTS = [
   'hd-sudurland',
   'hd-reykjanes',
 ]
+export const RETRIAL_COURT = 'Endurupptokudomur'

@@ -5,12 +5,14 @@ import {
   GeneralApi,
   IncomePlanApi,
   PaymentPlanApi,
+  PaymentTypesOverviewApi,
   PensionCalculatorApi,
   DeathBenefitsApi,
   TestApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
   BankInformationApi,
+  PersonalTaxCreditApi,
 } from '../../gen/fetch/v1'
 
 export type Scope =
@@ -27,6 +29,9 @@ export type Scope =
   | '@tr.is/ororkulifeyrir:read'
   | '@tr.is/bankaupplysingar:write'
   | '@tr.is/bankaupplysingar:read'
+  | '@tr.is/personuafslattur:read'
+  | '@tr.is/personuafslattur:write'
+  | '@tr.is/yfirlitgreidslutegunda:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -43,9 +48,13 @@ export type Api =
   | typeof QuestionnairesApi
   | typeof BankInformationApi
   | typeof BankInformationWriteApi
+  | typeof PersonalTaxCreditApi
+  | typeof PersonalTaxCreditWriteApi
+  | typeof PaymentTypesOverviewApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
 export class BankInformationWriteApi extends BankInformationApi {}
+export class PersonalTaxCreditWriteApi extends PersonalTaxCreditApi {}
 export class MedicalDocumentApiForDisabilityPension extends MedicalDocumentsApi {}
 export class QuestionnairesApiForDisabilityPension extends QuestionnairesApi {}
 
