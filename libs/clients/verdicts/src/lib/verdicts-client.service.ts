@@ -606,6 +606,7 @@ export class VerdictsClientService {
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
           caseSubType: agenda.caseSubType ?? '',
+          hearingTime: agenda.length ?? '',
         })
       }
     } else {
