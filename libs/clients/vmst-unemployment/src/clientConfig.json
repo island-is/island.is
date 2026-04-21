@@ -370,33 +370,21 @@
         ]
       }
     },
-    "/api/ActivationGrant/{applicationId}/withdraw": {
+    "/api/ActivationGrant/withdraw": {
       "post": {
         "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_WithdrawApplication",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "request",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawLatestActivationGrantRequest"
               }
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -511,6 +499,88 @@
             "x-position": 1
           }
         ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/applications/valid": {
+      "get": {
+        "tags": ["Applicant"],
+        "operationId": "Applicant_HasValidApplication",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Requests_HasValidApplicationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{ssn}/foreignTravel": {
+      "post": {
+        "tags": ["Applicant"],
+        "operationId": "Applicant_Create",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Applicant_CreateForeignStayRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
         "responses": {
           "200": {
             "description": "",
@@ -1496,22 +1566,10 @@
         ]
       }
     },
-    "/api/UnemploymentApplication/{applicationId}/withdraw": {
+    "/api/UnemploymentApplication/withdraw": {
       "post": {
         "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_WithdrawApplication",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "request",
           "content": {
@@ -1522,7 +1580,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -5213,12 +5271,13 @@
           }
         }
       },
-      "Galdur_External_Domain_Requests_WithdrawApplicationRequest": {
+      "Galdur_External_Domain_Requests_WithdrawLatestActivationGrantRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "applicantSSN": {
-            "type": "string"
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
           },
           "withdrawDate": {
             "type": "string",
@@ -5334,6 +5393,36 @@
           "proficiency": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_HasValidApplicationResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "valid": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_External_Domain_Requests_Applicant_CreateForeignStayRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dateFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -5628,6 +5717,10 @@
           "currentPostCodeId": {
             "type": "string",
             "format": "guid",
+            "nullable": true
+          },
+          "currentAddressDifferent": {
+            "type": "boolean",
             "nullable": true
           },
           "passCode": {
@@ -9746,6 +9839,24 @@
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_EmployerSettlementDTO"
               }
             ]
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_WithdrawApplicationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "withdrawDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reasonId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       }

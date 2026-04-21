@@ -11,7 +11,7 @@ import {
   LanguagesInAnswers,
   BankAccountInAnswers,
   OtherAddressInAnswers,
-} from '@island.is/application/templates/vmst-actions/edit-unemployment-information'
+} from '@island.is/application/templates/vmst/edit-unemployment-information'
 
 export const generateAnswers = (
   answers: FormValue,

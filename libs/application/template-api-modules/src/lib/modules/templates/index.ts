@@ -1,5 +1,7 @@
-import { EditUnemploymentInformationModule } from './vmst-actions/edit-unemployment-information/edit-unemployment-information.module'
-import { EditUnemploymentInformationService } from './vmst-actions/edit-unemployment-information/edit-unemployment-information.service'
+import { EditUnemploymentInformationModule } from './vmst/edit-unemployment-information/edit-unemployment-information.module'
+import { EditUnemploymentInformationService } from './vmst/edit-unemployment-information/edit-unemployment-information.service'
+import { DeRegisterUnemploymentBenefitsModule } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.module'
+import { DeRegisterUnemploymentBenefitsService } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
 import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
@@ -279,6 +281,7 @@ export const modules = [
   MileCarModule,
   CoursesModule,
   EditUnemploymentInformationModule,
+  DeRegisterUnemploymentBenefitsModule,
 ]
 
 export const services = [
@@ -374,4 +377,5 @@ export const services = [
   MileCarService,
   CoursesService,
   EditUnemploymentInformationService,
+  DeRegisterUnemploymentBenefitsService,
 ]

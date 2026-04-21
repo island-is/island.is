@@ -1,5 +1,5 @@
 export default {
-  displayName: 'edit-unemployment-information',
+  displayName: 'de-register-unemployment-benefits',
   preset: '../../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
@@ -7,5 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/application/templates/vmst-actions/edit-unemployment-information',
+    '../../../../../coverage/libs/application/templates/vmst/de-register-unemployment-benefits',
 }
