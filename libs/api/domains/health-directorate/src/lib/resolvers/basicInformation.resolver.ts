@@ -28,7 +28,11 @@ import type { Locale } from '@island.is/shared/types'
 import { HealthDirectorateReferralInput } from '.././dto/referral.input'
 import { HealthDirectorateWaitlistInput } from '.././dto/waitlist.input'
 import { HealthDirectorateService } from '.././health-directorate.service'
-import { DonorInput, Organ, OrganDonation } from '../models/organDonation.model'
+import {
+  DonorInput,
+  Organ,
+  OrganDonation,
+} from '../models/organ-donation.model'
 
 import { ReferralDetail } from '.././models/referral.model'
 import { Referrals } from '.././models/referrals.model'

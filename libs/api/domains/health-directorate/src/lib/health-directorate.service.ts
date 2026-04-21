@@ -51,7 +51,7 @@ import {
 } from './models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { Donor, DonorInput, Organ } from './models/organDonation.model'
+import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import { Countries } from './models/permits/country.model'
 import { Permit } from './models/permits/permit.model'
 import { PermitHistoryEntry } from './models/permits/permitHistoryEntry.model'
