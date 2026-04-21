@@ -85,9 +85,11 @@ const PharmaciesAccordion = ({ slice }: Props) => {
   ]
 
   const filteredPharmacies = pharmacies.filter((pharmacy) => {
-    const matchesSearch = pharmacy.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
+    const query = searchQuery.toLowerCase()
+    const matchesSearch =
+      pharmacy.name.toLowerCase().includes(query) ||
+      (pharmacy.licenseHolder ?? '').toLowerCase().includes(query) ||
+      (pharmacy.address ?? '').toLowerCase().includes(query)
     const matchesRegion =
       selectedRegion == null || pharmacy.region === selectedRegion
     return matchesSearch && matchesRegion
