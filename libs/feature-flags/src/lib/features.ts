@@ -39,6 +39,7 @@ export enum Features {
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
   RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
+  isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
