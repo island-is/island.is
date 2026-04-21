@@ -3147,6 +3147,7 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
+    - 'services-payments'
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
@@ -3277,6 +3278,7 @@ services-form-system-api-worker:
     S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'services-payments'
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
