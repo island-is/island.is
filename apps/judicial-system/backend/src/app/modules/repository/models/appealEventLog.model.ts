@@ -132,10 +132,6 @@ export class AppealEventLog extends Model {
   @ApiProperty({ type: Date })
   created!: Date
 
-  @UpdatedAt
-  @ApiProperty({ type: Date })
-  modified!: Date
-
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
