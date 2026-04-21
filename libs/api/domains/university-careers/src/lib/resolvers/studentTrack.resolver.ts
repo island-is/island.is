@@ -52,7 +52,7 @@ export class StudentTrackResolver {
       user,
       input.universityId,
       input.trackNumber,
-      input.locale as Locale,
+      input.locale ?? 'is',
     )
 
     if (!student) {

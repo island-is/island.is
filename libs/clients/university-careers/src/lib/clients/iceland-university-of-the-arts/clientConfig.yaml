@@ -166,6 +166,15 @@ components:
     studentFile:
       type: 'object'
       properties:
+        type:
+          type: 'string'
+          enum:
+            - 'transcript'
+            - 'diploma'
+            - 'diploma_supplement'
+            - 'course_descriptions'
+            - 'micro_credentials_transcript'
+            - 'micro_credentials_supplement'
         url:
           type: 'string'
           format: 'uri-reference'

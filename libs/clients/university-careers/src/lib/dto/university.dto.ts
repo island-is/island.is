@@ -29,6 +29,12 @@ import {
   LHITranscriptLocale,
   LbhiTranscriptLocale,
   UnakTranscriptLocale,
+  HIStudyType,
+  LbhiStudyType,
+  BifrostStudyType,
+  HolarStudyType,
+  UnakStudyType,
+  LHIStudyType,
 } from '../clients'
 
 export interface UniversityDto {
@@ -40,6 +46,13 @@ export interface UniversityDto {
     | typeof BifrostFileType
     | typeof HIFileType
     | typeof LHIFileType
+  studyTypeEnum:
+    | typeof LbhiStudyType
+    | typeof UnakStudyType
+    | typeof HolarStudyType
+    | typeof BifrostStudyType
+    | typeof HIStudyType
+    | typeof LHIStudyType
   locales: {
     studentLocale:
       | typeof UnakLocale

@@ -2,7 +2,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   StudentTrackDto,
-  StudyType,
+  StudyType as ClientStudyType,
   UniversityCareersClientService,
   UniversityId,
   UniversityIdMap,
@@ -17,16 +17,16 @@ import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackHistory } from './models/studentTrackHistory.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { StudentTrackTranscriptError } from './models/studentTrackTranscriptError.model'
-import { UniversityCareersStudyType } from './universityCareers.types'
+import { StudyType } from './universityCareers.types'
 
 const mapStudyType = (
-  studyType?: UniversityCareersStudyType,
-): StudyType | undefined => {
+  studyType?: StudyType,
+): ClientStudyType | undefined => {
   switch (studyType) {
-    case UniversityCareersStudyType.HASKOLANAM:
-      return StudyType.Haskolanam
-    case UniversityCareersStudyType.ORNAM:
-      return StudyType.Ornam
+    case StudyType.UNIVERSITY_STUDIES:
+      return 'haskolanam'
+    case StudyType.MICRO_CREDENTIALS:
+      return 'ornam'
     default:
       return undefined
   }
@@ -52,7 +52,7 @@ export class UniversityCareersService {
   async getStudentTrackHistory(
     user: User,
     locale: Locale,
-    studyType?: UniversityCareersStudyType,
+    studyType?: StudyType,
   ): Promise<StudentTrackHistory | null> {
     const promises = Object.values(UniversityId).map(async (uni) => {
       return this.getStudentTrackHistoryByUniversity(user, uni, locale, studyType)
@@ -82,7 +82,7 @@ export class UniversityCareersService {
     user: User,
     university: UniversityId,
     locale: Locale,
-    studyType?: UniversityCareersStudyType,
+    studyType?: StudyType,
   ): Promise<
     Array<StudentTrackTranscript> | StudentTrackTranscriptError | null
   > {

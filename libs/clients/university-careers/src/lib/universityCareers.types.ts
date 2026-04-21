@@ -1,26 +1,4 @@
 import { z } from 'zod'
-import {
-  UnakLocale,
-  LbhiLocale,
-  BifrostLocale,
-  HolarLocale,
-  HILocale,
-  BifrostFerillLocale,
-  BifrostTranscriptLocale,
-  HIFerillLocale,
-  HITranscriptLocale,
-  HolarFerillLocale,
-  HolarTranscriptLocale,
-  LbhiFerillLocale,
-  LbhiTranscriptLocale,
-  UnakFerillLocale,
-  UnakTranscriptLocale,
-  UnakApi,
-  BifrostApi,
-  HIApi,
-  HolarApi,
-  LbhiApi,
-} from './clients'
 
 export const schema = z.object({
   xroadPath: z.string(),
@@ -62,35 +40,6 @@ export type UniversityIdShort =
   | 'hi'
   | 'lhi'
 
-export type UniversityApi = LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi
-
-export type UniversityLocales = {
-  studentLocale: StudentLocale
-  studentTransriptLocale: StudentTranscriptLocale
-  studentTrackLocale: StudentTrackLocale
-}
-
-export type StudentLocale =
-  | typeof UnakLocale
-  | typeof LbhiLocale
-  | typeof BifrostLocale
-  | typeof HolarLocale
-  | typeof HILocale
-
-export type StudentTranscriptLocale =
-  | typeof UnakTranscriptLocale
-  | typeof LbhiTranscriptLocale
-  | typeof BifrostTranscriptLocale
-  | typeof HolarTranscriptLocale
-  | typeof HITranscriptLocale
-
-export type StudentTrackLocale =
-  | typeof UnakFerillLocale
-  | typeof LbhiFerillLocale
-  | typeof BifrostFerillLocale
-  | typeof HolarFerillLocale
-  | typeof HIFerillLocale
-
 export type StudentFileType =
   | 'transcript'
   | 'diploma'
@@ -99,3 +48,5 @@ export type StudentFileType =
   | 'micro_credentials_supplement'
   | 'micro_credentials_transcript'
   | 'unknown'
+
+export type StudyType = 'haskolanam' | 'ornam'

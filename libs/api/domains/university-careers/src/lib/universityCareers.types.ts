@@ -19,9 +19,9 @@ export enum FileType {
   MICRO_CREDENTIALS_TRANSCRIPT,
 }
 
-export enum UniversityCareersStudyType {
-  HASKOLANAM = 'HASKOLANAM',
-  ORNAM = 'ORNAM',
+export enum StudyType {
+  UNIVERSITY_STUDIES = 'HASKOLANAM',
+  MICRO_CREDENTIALS = 'ORNAM',
 }
 
 export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {

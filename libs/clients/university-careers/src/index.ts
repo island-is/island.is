@@ -6,6 +6,7 @@ export {
   UniversityIdMap,
   UniversityShortIdMap,
   StudentFileType,
+  StudyType,
 } from './lib/universityCareers.types'
 export {
   UniversityOfIcelandCareerClientConfig,
@@ -16,4 +17,3 @@ export {
   IcelandUniversityOfTheArtsCareerClientConfig,
 } from './lib/clients'
 export * from './lib/dto'
-export { HIStudyType as StudyType } from './lib/clients/university-of-iceland'

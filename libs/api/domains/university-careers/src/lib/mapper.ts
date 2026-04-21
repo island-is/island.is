@@ -120,7 +120,6 @@ export const mapToStudentTrackModel = (
 
           return {
             type,
-            url: d.url,
             displayName: d.displayName,
             fileName: d.fileName,
           }

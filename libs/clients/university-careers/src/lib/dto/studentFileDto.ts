@@ -24,11 +24,6 @@ const FILE_TYPE_MAP: Record<string, StudentFileType> = {
   micro_credentials_transcript: 'micro_credentials_transcript',
 }
 
-const typeFromUrl = (url?: string): StudentFileType | null => {
-  const segment = url?.split('/').pop()
-  return segment ? (FILE_TYPE_MAP[segment] ?? null) : null
-}
-
 export const mapToStudentFileDto = (
   transcript:
     | HolarStudentFile
@@ -38,7 +33,7 @@ export const mapToStudentFileDto = (
     | HIStudentFile
     | LHIStudentFile,
 ): StudentFileDto | null => {
-  const type = typeFromUrl(transcript.url)
+  const type = transcript.type ? (FILE_TYPE_MAP[transcript.type] ?? null) : null
   if (!type) {
     return null
   }

@@ -5,36 +5,41 @@ import {
   BifrostFerillLocale,
   BifrostFileType,
   BifrostLocale,
+  BifrostStudyType,
   BifrostTranscriptLocale,
   HIApi,
   HIFerillLocale,
   HIFileType,
   HILocale,
+  HIStudyType,
   HITranscriptLocale,
   HolarApi,
   HolarFerillLocale,
   HolarFileType,
   HolarLocale,
+  HolarStudyType,
   HolarTranscriptLocale,
   LHIApi,
   LHIFerillLocale,
   LHIFileType,
   LHILocale,
+  LHIStudyType,
   LHITranscriptLocale,
   LbhiApi,
   LbhiFerillLocale,
   LbhiFileType,
   LbhiLocale,
+  LbhiStudyType,
   LbhiTranscriptLocale,
   UnakApi,
   UnakFerillLocale,
   UnakFileType,
   UnakLocale,
+  UnakStudyType,
   UnakTranscriptLocale,
 } from './clients'
-import { NemandiGetTegundNamsEnum } from './clients/university-of-iceland/gen/fetch'
 import { Locale } from '@island.is/shared/types'
-import { StudentFileType, UniversityId } from './universityCareers.types'
+import { StudentFileType, StudyType, UniversityId } from './universityCareers.types'
 import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
@@ -64,6 +69,7 @@ export class UniversityCareersClientService {
         return {
           api: this.lbhiApi.withMiddleware(new AuthMiddleware(user as Auth)),
           fileTypeEnum: LbhiFileType,
+          studyTypeEnum: LbhiStudyType,
           locales: {
             studentLocale: LbhiLocale,
             studentTranscriptLocale: LbhiTranscriptLocale,
@@ -74,6 +80,7 @@ export class UniversityCareersClientService {
         return {
           api: this.bifrostApi.withMiddleware(new AuthMiddleware(user as Auth)),
           fileTypeEnum: BifrostFileType,
+          studyTypeEnum: BifrostStudyType,
           locales: {
             studentLocale: BifrostLocale,
             studentTranscriptLocale: BifrostTranscriptLocale,
@@ -84,6 +91,7 @@ export class UniversityCareersClientService {
         return {
           api: this.holarApi.withMiddleware(new AuthMiddleware(user as Auth)),
           fileTypeEnum: HolarFileType,
+          studyTypeEnum: HolarStudyType,
           locales: {
             studentLocale: HolarLocale,
             studentTranscriptLocale: HolarTranscriptLocale,
@@ -94,6 +102,7 @@ export class UniversityCareersClientService {
         return {
           api: this.unakApi.withMiddleware(new AuthMiddleware(user as Auth)),
           fileTypeEnum: UnakFileType,
+          studyTypeEnum: UnakStudyType,
           locales: {
             studentLocale: UnakLocale,
             studentTranscriptLocale: UnakTranscriptLocale,
@@ -104,6 +113,7 @@ export class UniversityCareersClientService {
         return {
           api: this.hiApi.withMiddleware(new AuthMiddleware(user as Auth)),
           fileTypeEnum: HIFileType,
+          studyTypeEnum: HIStudyType,
           locales: {
             studentLocale: HILocale,
             studentTranscriptLocale: HITranscriptLocale,
@@ -114,6 +124,7 @@ export class UniversityCareersClientService {
         return {
           api: this.lhiApi.withMiddleware(new AuthMiddleware(user as Auth)),
           fileTypeEnum: LHIFileType,
+          studyTypeEnum: LHIStudyType,
           locales: {
             studentLocale: LHILocale,
             studentTranscriptLocale: LHITranscriptLocale,
@@ -123,18 +134,32 @@ export class UniversityCareersClientService {
     }
   }
 
+  private mapStudyType = (
+    studyType: StudyType,
+    studyTypeEnum: UniversityDto['studyTypeEnum'],
+  ) => {
+    switch (studyType) {
+      case 'haskolanam':
+        return studyTypeEnum.Haskolanam
+      case 'ornam':
+        return studyTypeEnum.Ornam
+    }
+  }
+
   getStudentTrackHistory = async (
     user: User,
     university: UniversityId,
     locale?: Locale,
-    studyType?: NemandiGetTegundNamsEnum,
+    studyType?: StudyType,
   ): Promise<Array<StudentTrackDto> | null> => {
-    const { api, locales } = this.getApi(university, user)
+    const { api, locales, studyTypeEnum } = this.getApi(university, user)
     const data = await api
       .nemandiGet({
         locale:
           locale === 'en' ? locales.studentLocale.En : locales.studentLocale.Is,
-        ...(studyType !== undefined && { tegundNams: studyType }),
+        ...(studyType !== undefined && {
+          tegundNams: this.mapStudyType(studyType, studyTypeEnum),
+        }),
       })
       .catch(handle404)
 

@@ -12,7 +12,6 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { StudentTrackHistory } from '../models/studentTrackHistory.model'
 import { UniversityCareersService } from '../universityCareers.service'
 import { StudentInfoInput } from '../dto/studentInfo.input'
-import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,7 +31,7 @@ export class TrackHistoryResolver {
   ): Promise<StudentTrackHistory | null> {
     return this.service.getStudentTrackHistory(
       user,
-      input.locale as Locale,
+      input.locale ?? 'is',
       input.studyType,
     )
   }
