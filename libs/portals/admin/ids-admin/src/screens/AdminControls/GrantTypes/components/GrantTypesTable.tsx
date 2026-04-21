@@ -4,21 +4,17 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   Box,
   Button,
-  Checkbox,
-  InputError,
   Pagination,
   Stack,
   Table as T,
   Tag,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Modal } from '@island.is/react/components'
 import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../../../lib/messages'
-import { authAdminEnvironments } from '../../../../utils/environments'
 import type { GrantTypeRow } from '../GrantTypes.types'
+import { GrantTypeConfirmModal } from './GrantTypeConfirmModal'
 
 interface GrantTypesTableProps {
   rows: GrantTypeRow[]
@@ -43,90 +39,23 @@ export const GrantTypesTable = ({
 }: GrantTypesTableProps) => {
   const { formatMessage } = useLocale()
 
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<GrantTypeRow | null>(null)
-  const [deleteEnvironments, setDeleteEnvironments] = useState<
-    AuthAdminEnvironment[]
-  >([])
-  const [deleteError, setDeleteError] = useState<string | undefined>(undefined)
-
-  const [restoreModalVisible, setRestoreModalVisible] = useState(false)
   const [restoreTarget, setRestoreTarget] = useState<GrantTypeRow | null>(null)
-  const [restoreEnvironments, setRestoreEnvironments] = useState<
-    AuthAdminEnvironment[]
-  >([])
-  const [restoreError, setRestoreError] = useState<string | undefined>(
-    undefined,
-  )
 
-  const openDeleteModal = (grantType: GrantTypeRow) => {
-    setDeleteTarget(grantType)
-    setDeleteEnvironments(grantType.availableEnvironments ?? [])
-    setDeleteError(undefined)
-    setDeleteModalVisible(true)
-  }
-
-  const closeDeleteModal = () => {
-    setDeleteModalVisible(false)
+  const handleDeleteConfirm = (
+    name: string,
+    environments: AuthAdminEnvironment[],
+  ) => {
+    onDelete(name, environments)
     setDeleteTarget(null)
-    setDeleteEnvironments([])
-    setDeleteError(undefined)
   }
 
-  const handleDeleteEnvironmentChange = (env: AuthAdminEnvironment) => {
-    setDeleteEnvironments((prev) =>
-      prev.includes(env) ? prev.filter((e) => e !== env) : [...prev, env],
-    )
-    if (deleteError) {
-      setDeleteError(undefined)
-    }
-  }
-
-  const handleDeleteConfirm = () => {
-    if (deleteEnvironments.length === 0) {
-      setDeleteError(formatMessage(m.grantTypesDeleteEnvironmentRequired))
-      return
-    }
-    if (deleteTarget) {
-      onDelete(deleteTarget.name, deleteEnvironments)
-      closeDeleteModal()
-    }
-  }
-
-  const openRestoreModal = (grantType: GrantTypeRow) => {
-    setRestoreTarget(grantType)
-    setRestoreEnvironments(grantType.availableEnvironments ?? [])
-    setRestoreError(undefined)
-    setRestoreModalVisible(true)
-  }
-
-  const closeRestoreModal = () => {
-    setRestoreModalVisible(false)
+  const handleRestoreConfirm = (
+    name: string,
+    environments: AuthAdminEnvironment[],
+  ) => {
+    onRestore(name, environments)
     setRestoreTarget(null)
-    setRestoreEnvironments([])
-    setRestoreError(undefined)
-  }
-
-  const handleRestoreEnvironmentChange = (env: AuthAdminEnvironment) => {
-    setRestoreEnvironments((prev) =>
-      prev.includes(env) ? prev.filter((e) => e !== env) : [...prev, env],
-    )
-    if (restoreError) {
-      setRestoreError(undefined)
-    }
-  }
-
-  const handleRestoreConfirm = () => {
-    if (restoreEnvironments.length === 0) {
-      setRestoreError(
-        formatMessage(m.grantTypesRestoreEnvironmentRequired),
-      )
-      return
-    }
-    if (restoreTarget) {
-      onRestore(restoreTarget.name, restoreEnvironments)
-      closeRestoreModal()
-    }
   }
 
   if (rows.length === 0) {
@@ -173,13 +102,7 @@ export const GrantTypesTable = ({
                   </Box>
                 </T.Data>
                 <T.Data>
-                  <Box
-                    display="flex"
-                    flexWrap="wrap"
-                    columnGap={1}
-                    rowGap={1}
-                    style={isArchived ? { opacity: 0.6 } : undefined}
-                  >
+                  <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
                     {isArchived ? (
                       <Tag variant="red" outlined disabled>
                         {formatMessage(m.grantTypesArchived)}
@@ -195,12 +118,12 @@ export const GrantTypesTable = ({
                 </T.Data>
                 <T.Data>
                   {isArchived ? (
-                    <Box display="flex" justifyContent="flexEnd">
+                    <Box display="flex" justifyContent="flexStart">
                       <Button
                         variant="ghost"
                         size="small"
                         icon="reload"
-                        onClick={() => openRestoreModal(grantType)}
+                        onClick={() => setRestoreTarget(grantType)}
                       />
                     </Box>
                   ) : (
@@ -216,7 +139,7 @@ export const GrantTypesTable = ({
                         size="small"
                         icon="trash"
                         colorScheme="destructive"
-                        onClick={() => openDeleteModal(grantType)}
+                        onClick={() => setDeleteTarget(grantType)}
                       />
                     </Box>
                   )}
@@ -241,154 +164,24 @@ export const GrantTypesTable = ({
         </Box>
       )}
 
-      {deleteModalVisible && deleteTarget && (
-        <Modal
-          id={`delete-${deleteTarget.name}`}
-          isVisible={deleteModalVisible}
-          label={formatMessage(m.grantTypesDeleteConfirmTitle)}
-          onClose={closeDeleteModal}
-          closeButtonLabel={formatMessage(m.grantTypesCancelButton)}
-          scrollType="outside"
-        >
-          <Box paddingX={4}>
-            <Text variant="h2" as="h2" marginBottom={2}>
-              {formatMessage(m.grantTypesDeleteConfirmTitle)}
-            </Text>
-            <Text marginBottom={3}>
-              {formatMessage(m.grantTypesDeleteConfirmMessage)}
-            </Text>
-
-            <Box marginBottom={3}>
-              <Text variant="h4" marginBottom={2}>
-                {formatMessage(m.grantTypesDeleteSelectEnvironments)}
-              </Text>
-              <Box
-                display="flex"
-                flexDirection={['column', 'row']}
-                columnGap={3}
-                rowGap={2}
-              >
-                {authAdminEnvironments.map((env) => {
-                  const isGrantTypeEnv =
-                    deleteTarget.availableEnvironments?.includes(env) ?? false
-                  return (
-                    <Box width="full" key={env}>
-                      <Checkbox
-                        label={env}
-                        name="deleteEnvironments"
-                        id={`deleteEnvironments.${env}`}
-                        value={env}
-                        checked={deleteEnvironments.includes(env)}
-                        onChange={() => handleDeleteEnvironmentChange(env)}
-                        disabled={
-                          !isGrantTypeEnv ||
-                          !configuredEnvironments.includes(env)
-                        }
-                        large
-                      />
-                    </Box>
-                  )
-                })}
-              </Box>
-              {deleteError && (
-                <InputError
-                  id="delete-environments-error"
-                  errorMessage={deleteError}
-                />
-              )}
-            </Box>
-
-            <Box
-              paddingTop={2}
-              paddingBottom={4}
-              display="flex"
-              justifyContent="spaceBetween"
-              columnGap={2}
-            >
-              <Button variant="ghost" onClick={closeDeleteModal}>
-                {formatMessage(m.grantTypesCancelButton)}
-              </Button>
-              <Button colorScheme="destructive" onClick={handleDeleteConfirm}>
-                {formatMessage(m.grantTypesDeleteButton)}
-              </Button>
-            </Box>
-          </Box>
-        </Modal>
+      {deleteTarget && (
+        <GrantTypeConfirmModal
+          variant="delete"
+          target={deleteTarget}
+          configuredEnvironments={configuredEnvironments}
+          onConfirm={handleDeleteConfirm}
+          onClose={() => setDeleteTarget(null)}
+        />
       )}
 
-      {restoreModalVisible && restoreTarget && (
-        <Modal
-          id={`restore-${restoreTarget.name}`}
-          isVisible={restoreModalVisible}
-          label={formatMessage(m.grantTypesRestoreConfirmTitle)}
-          onClose={closeRestoreModal}
-          closeButtonLabel={formatMessage(m.grantTypesCancelButton)}
-          scrollType="outside"
-        >
-          <Box paddingX={4}>
-            <Text variant="h2" as="h2" marginBottom={2}>
-              {formatMessage(m.grantTypesRestoreConfirmTitle)}
-            </Text>
-            <Text marginBottom={3}>
-              {formatMessage(m.grantTypesRestoreConfirmMessage)}
-            </Text>
-
-            <Box marginBottom={3}>
-              <Text variant="h4" marginBottom={2}>
-                {formatMessage(m.grantTypesRestoreSelectEnvironments)}
-              </Text>
-              <Box
-                display="flex"
-                flexDirection={['column', 'row']}
-                columnGap={3}
-                rowGap={2}
-              >
-                {authAdminEnvironments.map((env) => {
-                  const isGrantTypeEnv =
-                    restoreTarget.availableEnvironments?.includes(env) ?? false
-                  return (
-                    <Box width="full" key={env}>
-                      <Checkbox
-                        label={env}
-                        name="restoreEnvironments"
-                        id={`restoreEnvironments.${env}`}
-                        value={env}
-                        checked={restoreEnvironments.includes(env)}
-                        onChange={() => handleRestoreEnvironmentChange(env)}
-                        disabled={
-                          !isGrantTypeEnv ||
-                          !configuredEnvironments.includes(env)
-                        }
-                        large
-                      />
-                    </Box>
-                  )
-                })}
-              </Box>
-              {restoreError && (
-                <InputError
-                  id="restore-environments-error"
-                  errorMessage={restoreError}
-                />
-              )}
-            </Box>
-
-            <Box
-              paddingTop={2}
-              paddingBottom={4}
-              display="flex"
-              justifyContent="spaceBetween"
-              columnGap={2}
-            >
-              <Button variant="ghost" onClick={closeRestoreModal}>
-                {formatMessage(m.grantTypesCancelButton)}
-              </Button>
-              <Button onClick={handleRestoreConfirm}>
-                {formatMessage(m.grantTypesRestoreButton)}
-              </Button>
-            </Box>
-          </Box>
-        </Modal>
+      {restoreTarget && (
+        <GrantTypeConfirmModal
+          variant="restore"
+          target={restoreTarget}
+          configuredEnvironments={configuredEnvironments}
+          onConfirm={handleRestoreConfirm}
+          onClose={() => setRestoreTarget(null)}
+        />
       )}
     </Stack>
   )
