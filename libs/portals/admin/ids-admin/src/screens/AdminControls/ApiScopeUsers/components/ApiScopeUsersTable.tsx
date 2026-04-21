@@ -128,7 +128,7 @@ export const ApiScopeUsersTable = ({
                 <T.Data>
                   <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
                     {user.availableEnvironments?.map((env) => (
-                      <Tag key={env} variant="blue" outlined>
+                      <Tag key={env} variant="blue" outlined disabled>
                         {env}
                       </Tag>
                     ))}

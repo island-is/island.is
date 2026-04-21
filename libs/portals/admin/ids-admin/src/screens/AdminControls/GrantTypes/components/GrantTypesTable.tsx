@@ -126,9 +126,15 @@ export const GrantTypesTable = ({
                   </Box>
                 </T.Data>
                 <T.Data>
-                  <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
+                  <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    columnGap={1}
+                    rowGap={1}
+                    style={isArchived ? { opacity: 0.6 } : undefined}
+                  >
                     {grantType.availableEnvironments?.map((env) => (
-                      <Tag key={env} variant="blue" outlined>
+                      <Tag key={env} variant="blue" outlined disabled>
                         {env}
                       </Tag>
                     ))}
@@ -136,9 +142,11 @@ export const GrantTypesTable = ({
                 </T.Data>
                 <T.Data>
                   {isArchived ? (
-                    <Tag variant="red" outlined>
-                      {formatMessage(m.grantTypesArchived)}
-                    </Tag>
+                    <Box display="flex" justifyContent="center">
+                      <Tag variant="red" outlined disabled>
+                        {formatMessage(m.grantTypesArchived)}
+                      </Tag>
+                    </Box>
                   ) : (
                     <Box display="flex" columnGap={2} justifyContent="flexEnd">
                       <Button
