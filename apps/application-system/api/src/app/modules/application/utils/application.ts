@@ -386,10 +386,18 @@ export const handleScheduledNotifications = async (
 
   for (const configItem of configArray) {
     let config: ScheduledNotificationConfig
-    if (typeof configItem === 'function') {
-      config = configItem(application)
-    } else {
-      config = configItem
+    try {
+      if (typeof configItem === 'function') {
+        config = configItem(application)
+      } else {
+        config = configItem
+      }
+    } catch (error) {
+      console.error(
+        `Failed to evaluate schedule configuration for application ${application.id} in state ${newState}`,
+        error,
+      )
+      continue
     }
     try {
       let time: Date
