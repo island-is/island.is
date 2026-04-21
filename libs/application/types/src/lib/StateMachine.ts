@@ -177,6 +177,7 @@ export interface ApplicationStateMeta<
   scheduledNotifications?:
     | ScheduledNotificationConfig[]
     | ScheduledNotificationConfig
+    | ((application: Application) => ScheduledNotificationConfig)
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

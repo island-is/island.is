@@ -579,6 +579,20 @@ export class ApplicationService {
     )
   }
 
+  async markScheduledNotificationsFailed(ids: string[]) {
+    if (!ids.length) return [0]
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.FAILED },
+      {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+        },
+      },
+    )
+  }
+
   async createScheduledNotifications(
     applicationId: string,
     state: string,

@@ -54,7 +54,7 @@ export class ApplicationLifeCycleService {
     // Pruning
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
-    await this.fetchCurrentScheduledNotifications()
+    await this.fetchAndSendCurrentScheduledNotifications()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
     await this.pruneApplicationData()
@@ -100,7 +100,7 @@ export class ApplicationLifeCycleService {
     }
   }
 
-  private async fetchCurrentScheduledNotifications() {
+  private async fetchAndSendCurrentScheduledNotifications() {
     const scheduledNotifications =
       await this.applicationService.findCurrentScheduledNotifications()
 
@@ -175,6 +175,7 @@ export class ApplicationLifeCycleService {
     }[],
   ) {
     const sentIds: string[] = []
+    const failedIds: string[] = []
     for (const notification of notificationsToSend) {
       try {
         await this.notificationApi.notificationsControllerCreateHnippNotification(
@@ -188,7 +189,7 @@ export class ApplicationLifeCycleService {
           `Failed to send scheduled notification ${notification.notificationId} for application ${notification.applicationId}`,
           error,
         )
-        // do not add to the list of sent ids to be marked as sent, so that the notification will be retried
+        failedIds.push(notification.notificationId) // add failed notifications to the list to be marked as failed
       }
     }
 
@@ -197,6 +198,7 @@ export class ApplicationLifeCycleService {
     )
 
     await this.applicationService.markScheduledNotificationsSent(sentIds)
+    await this.applicationService.markScheduledNotificationsFailed(failedIds)
   }
 
   private async pruneAttachments() {

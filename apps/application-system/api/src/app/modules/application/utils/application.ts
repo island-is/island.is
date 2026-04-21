@@ -13,6 +13,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationWithAttachments,
+  ScheduledNotificationConfig,
 } from '@island.is/application/types'
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
@@ -383,7 +384,13 @@ export const handleScheduledNotifications = async (
   const notificationsToSchedule = []
   const configArray = Array.isArray(configs) ? configs : [configs]
 
-  for (const config of configArray) {
+  for (const configItem of configArray) {
+    let config: ScheduledNotificationConfig
+    if (typeof configItem === 'function') {
+      config = configItem(application)
+    } else {
+      config = configItem
+    }
     try {
       let time: Date
 
