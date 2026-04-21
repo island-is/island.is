@@ -562,8 +562,7 @@ export class HealthDirectorateService {
       input.status
         ?.map((status) => mapAppointmentStatus(status))
         .filter(
-          (status): status is UserVisibleAppointmentStatuses =>
-            status !== null,
+          (status): status is UserVisibleAppointmentStatuses => status !== null,
         ),
     )
     if (!data) {
