@@ -574,6 +574,7 @@ export class ApplicationService {
           id: {
             [Op.in]: ids,
           },
+          schedule_status: NotificationStatus.PENDING,
         },
       },
     )
@@ -588,6 +589,7 @@ export class ApplicationService {
           id: {
             [Op.in]: ids,
           },
+          schedule_status: NotificationStatus.PENDING,
         },
       },
     )
