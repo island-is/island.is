@@ -87,24 +87,15 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
-          // scheduledNotifications: [
-          //   {
-          //     template: NotificationConfig[NotificationType.System].templateId,
-          //     delayInMs: 10000,
-          //     args: {
-          //       documentId: '1234567890',
-          //     },
-          //   },
-          // ],
-          scheduledNotifications: (application: Application) => {
-            return {
+          scheduledNotifications: [
+            {
               template: NotificationConfig[NotificationType.System].templateId,
               delayInMs: 10000,
               args: {
-                documentId: Date.now().toString(),
+                documentId: '1234567890',
               },
-            }
-          },
+            },
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
