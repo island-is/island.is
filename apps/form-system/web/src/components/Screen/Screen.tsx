@@ -121,7 +121,6 @@ export const Screen = () => {
           },
         })
 
-        console.log('Notify external service response:', data)
         const updatedScreen = removeTypename(
           data?.notifyFormSystemExternalSystem?.screen,
         )
