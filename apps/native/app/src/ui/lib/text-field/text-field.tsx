@@ -94,9 +94,9 @@ export const TextField = ({
   const inputRef = useRef<TextInput>(null)
 
   return (
-    <View>
-      <Host onPress={() => inputRef.current?.focus()} style={style as any}>
-        <View>
+    <View style={style}>
+      <Host onPress={() => inputRef.current?.focus()}>
+        <View style={{ flex: 1 }}>
           <Label readOnly={readOnly} variant="eyebrow">
             {label}
           </Label>
