@@ -239,12 +239,6 @@ export const OrganizationHeader: React.FC<
     isSubpage,
   }
 
-  console.log({
-    organizationPage,
-    defaultProps,
-    isSubpage,
-  })
-
   switch (organizationPage.theme) {
     case 'syslumenn':
       return (
