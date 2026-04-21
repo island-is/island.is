@@ -2447,6 +2447,10 @@ export const messages = defineMessages({
     id: 'sp.health:no-appointments',
     defaultMessage: 'Engar tímabókanir framundan',
   },
+  appointmentWith: {
+    id: 'sp.health:appointment-with',
+    defaultMessage: 'Tími hjá: {arg}',
+  },
   appointmentAtSimple: {
     id: 'sp.health:appointment-at-simple',
     defaultMessage: 'Tími hjá',
@@ -2597,5 +2601,13 @@ export const messages = defineMessages({
   argWithMinutes: {
     defaultMessage: '{arg} mínútur',
     id: 'sp.health:arg-with-minutes',
+  },
+  phoneNumber: {
+    id: 'sp.health:phone-number',
+    defaultMessage: 'Símanúmer',
+  },
+  openingHours: {
+    id: 'sp.health:opening-hours',
+    defaultMessage: 'Opnunartímar',
   },
 })

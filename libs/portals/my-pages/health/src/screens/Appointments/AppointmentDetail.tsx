@@ -62,6 +62,22 @@ const AppointmentDetail = () => {
             }
             loading={loading}
           />
+          {appointment?.instruction && (
+            <InfoLine
+              label={formatMessage(messages.instructions)}
+              content={appointment.instruction}
+              loading={loading}
+            />
+          )}
+          {appointment?.duration && (
+            <InfoLine
+              label={formatMessage(messages.duration)}
+              content={formatMessage(messages.argWithMinutes, {
+                arg: appointment.duration,
+              })}
+              loading={loading}
+            />
+          )}
           <InfoLine
             loading={loading}
             label={formatMessage(messages.locationAddress)}
@@ -72,7 +88,7 @@ const AppointmentDetail = () => {
                     type: 'link',
                     to: appointment.location.link,
                     icon: 'link',
-                    label: formatMessage(messages.seeMore),
+                    label: formatMessage(messages.organizationWebsite),
                   }
                 : undefined
             }
@@ -101,22 +117,6 @@ const AppointmentDetail = () => {
                 : undefined
             }
           />
-          {appointment?.instruction && (
-            <InfoLine
-              label={formatMessage(messages.instructions)}
-              content={appointment.instruction}
-              loading={loading}
-            />
-          )}
-          {appointment?.duration && (
-            <InfoLine
-              label={formatMessage(messages.duration)}
-              content={formatMessage(messages.argWithMinutes, {
-                arg: appointment.duration,
-              })}
-              loading={loading}
-            />
-          )}
           {(appointment?.practitioners?.length ?? 0) > 0 && (
             <InfoLine
               loading={loading}
@@ -124,6 +124,20 @@ const AppointmentDetail = () => {
               content={appointment?.practitioners.join(', ')}
             />
           )}
+          {appointment?.location?.phoneNumber ? (
+            <InfoLine
+              loading={loading}
+              label={formatMessage(messages.phoneNumber)}
+              content={appointment.location.phoneNumber}
+            />
+          ) : null}
+          {appointment?.location?.openingHoursText ? (
+            <InfoLine
+              loading={loading}
+              label={formatMessage(messages.openingHours)}
+              content={appointment.location.openingHoursText}
+            />
+          ) : null}
           {appointment?.location?.organization ? (
             <InfoLine
               loading={loading}

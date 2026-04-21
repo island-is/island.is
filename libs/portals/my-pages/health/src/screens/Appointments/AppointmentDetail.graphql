@@ -18,6 +18,8 @@ query getAppointmentDetail($id: String!) {
       latitude
       longitude
       link
+      phoneNumber
+      openingHoursText
     }
   }
 }

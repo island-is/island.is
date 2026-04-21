@@ -42,7 +42,12 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         loading: false,
         error: data?.error,
         title: appointment.title ?? '',
-        description: '',
+        description:
+          (appointment.practitioners ?? []).length > 0
+            ? `${formatMessage(messages.appointmentWith, {
+                arg: appointment.practitioners.join(', '),
+              })}`
+            : '',
         to: HealthPaths.HealthAppointmentDetail.replace(':id', appointment.id),
         appointment: {
           date: formatDate(appointment.date ?? ''),

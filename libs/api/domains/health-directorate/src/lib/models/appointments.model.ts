@@ -38,6 +38,12 @@ export class AppointmentLocation {
 
   @Field(() => Float, { nullable: true })
   longitude?: number
+
+  @Field({ nullable: true })
+  phoneNumber?: string
+
+  @Field({ nullable: true })
+  openingHoursText?: string
 }
 
 @ObjectType('HealthDirectorateAppointment')
@@ -60,17 +66,10 @@ export class Appointment {
   @Field(() => Int, { nullable: true, description: 'Duration in minutes' })
   duration?: number
 
-  @Field({
-    nullable: true,
-    deprecationReason:
-      'Use healthDirectorateAppointment query for full appointment details',
-  })
+  @Field({ nullable: true })
   instruction?: string
 
-  @Field(() => [String], {
-    deprecationReason:
-      'Use healthDirectorateAppointment query for full appointment details',
-  })
+  @Field(() => [String])
   practitioners!: string[]
 }
 

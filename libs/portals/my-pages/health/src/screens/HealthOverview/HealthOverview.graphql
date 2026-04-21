@@ -66,6 +66,7 @@ query getAppointmentsOverview(
       id
       title
       date
+      practitioners
       location {
         __typename
         name

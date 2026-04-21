@@ -593,9 +593,8 @@ export class HealthDirectorateService {
               longitude: item.location.longitude,
             }
           : undefined,
-        // Deprecated: not available from the list endpoint — use healthDirectorateAppointment for full details
-        instruction: undefined,
-        practitioners: [],
+        instruction: item.patientInstruction,
+        practitioners: item.practitioners ?? [],
       }))
       return { data: appointments }
     } catch (error) {
@@ -637,6 +636,8 @@ export class HealthDirectorateService {
               country: item.location.country,
               latitude: item.location.latitude,
               longitude: item.location.longitude,
+              phoneNumber: item.location.phoneNumber,
+              openingHoursText: item.location.openingHours?.text,
             }
           : undefined,
         practitioners: item.practitioners ?? [],
