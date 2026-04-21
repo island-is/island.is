@@ -18,11 +18,6 @@ module.exports = {
               defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
               allowNull: false,
             },
-            modified: {
-              type: 'TIMESTAMP WITH TIME ZONE',
-              defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-              allowNull: false,
-            },
             case_id: {
               type: Sequelize.UUID,
               allowNull: false,
