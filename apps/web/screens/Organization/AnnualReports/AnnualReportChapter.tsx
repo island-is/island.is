@@ -190,7 +190,7 @@ const AnnualReportChapter: Screen<
                     >
                       <Sticky>
                         <AnchorNavigation
-                          title={'Á þessari síðu'}
+                        title={activeLocale === 'is' ? 'Á þessari síðu' : 'On this page'}
                           navigation={navigation}
                           position="right"
                         />
