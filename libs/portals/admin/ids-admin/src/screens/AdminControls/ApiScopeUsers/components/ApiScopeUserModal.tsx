@@ -129,9 +129,7 @@ export const ApiScopeUserModal = ({ modal }: ApiScopeUserModalProps) => {
                     value={modal.selectedScopeOptions}
                     options={modal.activeScopeOptions}
                     onChange={(value) => {
-                      modal.handleScopeChange(
-                        value as MultiValue<ScopeOption>,
-                      )
+                      modal.handleScopeChange(value as MultiValue<ScopeOption>)
                     }}
                     isMulti
                     size="sm"
