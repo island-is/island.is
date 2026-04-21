@@ -97,9 +97,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         )
         for (const c of cases) {
           const fromJunction = map.get(c.id) ?? []
-          if (fromJunction.length > 0) {
-            c.setDataValue('policeCaseNumbers', fromJunction)
-          }
+          c.setDataValue('policeCaseNumbers', fromJunction)
         }
       },
     )
@@ -189,6 +187,17 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         { transaction: undefined },
       )
       expect(res?.policeCaseNumbers).toEqual(['007-2024-a', '007-2024-z'])
+    })
+
+    it('sets policeCaseNumbers to [] when junction has no rows', async () => {
+      const built = stubCase('c1', ['should-not-remain'])
+
+      caseModel.findByPk.mockResolvedValue(built)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(new Map())
+
+      const res = await caseRepositoryService.findById('c1')
+
+      expect(res?.policeCaseNumbers).toEqual([])
     })
   })
 
