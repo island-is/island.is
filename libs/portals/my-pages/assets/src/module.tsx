@@ -120,7 +120,7 @@ export const assetsModule: PortalModule = {
         name: m.myShips,
         path: AssetsPaths.AssetsShipDetail,
         key: USER_SHIPS_FLAG,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
+        enabled: userInfo.scopes.includes(ApiScope.ships),
         element: <ShipDetail />,
       },
       {
