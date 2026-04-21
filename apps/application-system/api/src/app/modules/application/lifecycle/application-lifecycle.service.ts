@@ -54,6 +54,7 @@ export class ApplicationLifeCycleService {
     // Pruning
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
+    await this.fetchAndSendCurrentScheduledNotifications()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
     await this.pruneApplicationData()
@@ -96,6 +97,121 @@ export class ApplicationLifeCycleService {
       if (notifications && notifications.length > 0) {
         this.pruneNotifications.set(application.id, notifications)
       }
+    }
+  }
+
+  private async fetchAndSendCurrentScheduledNotifications() {
+    const scheduledNotifications =
+      await this.applicationService.findCurrentScheduledNotifications()
+
+    this.logger.info(
+      `Found ${scheduledNotifications.length} scheduled notifications to be processed.`,
+    )
+    const notificationsToSend: {
+      notificationId: string
+      applicationId: string
+      dto: CreateHnippNotificationDto
+    }[] = []
+    const failedIds: string[] = []
+    for (const notification of scheduledNotifications) {
+      try {
+        // Fetch the application to get the applicant details
+        const application = await this.applicationService.findOneById(
+          notification.application_id,
+        )
+        if (!application) {
+          continue // Or handle missing application
+        }
+        // Convert the JSON Record<string, string> args to the Array<ArgumentDto> format
+        const argsArray = Object.entries(notification.args || {}).map(
+          ([key, value]) => ({
+            key,
+            value: String(value),
+          }),
+        )
+        // Handle applicant actors (delegations) vs normal applicant
+        if (
+          application.applicantActors &&
+          application.applicantActors.length > 0
+        ) {
+          application.applicantActors.forEach((actor) => {
+            notificationsToSend.push({
+              notificationId: notification.id,
+              applicationId: application.id,
+              dto: {
+                recipient: actor,
+                onBehalfOf: { nationalId: application.applicant },
+                templateId: notification.template,
+                args: argsArray,
+              },
+            })
+          })
+        } else {
+          notificationsToSend.push({
+            notificationId: notification.id,
+            applicationId: application.id,
+            dto: {
+              recipient: application.applicant,
+              templateId: notification.template,
+              args: argsArray,
+            },
+          })
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to prepare scheduled notification ${notification.id}`,
+          error,
+        )
+        failedIds.push(notification.id)
+      } finally {
+        if (failedIds.length > 0) {
+          await this.applicationService.markScheduledNotificationsFailed(
+            failedIds,
+          )
+        }
+      }
+    }
+    // Pass them off to be sent
+    await this.sendScheduledNotifications(notificationsToSend)
+  }
+
+  private async sendScheduledNotifications(
+    notificationsToSend: {
+      notificationId: string
+      applicationId: string
+      dto: CreateHnippNotificationDto
+    }[],
+  ) {
+    const sentIds: string[] = []
+    const failedIds: string[] = []
+    for (const notification of notificationsToSend) {
+      try {
+        await this.notificationApi.notificationsControllerCreateHnippNotification(
+          {
+            createHnippNotificationDto: notification.dto,
+          },
+        )
+        sentIds.push(notification.notificationId) // add successfully sent notifications to the list fo marking as sent
+      } catch (error) {
+        this.logger.error(
+          `Failed to send scheduled notification ${notification.notificationId} for application ${notification.applicationId}`,
+          error,
+        )
+        failedIds.push(notification.notificationId) // add failed notifications to the list to be marked as failed
+      }
+    }
+
+    this.logger.info(
+      `Marking ${sentIds.length} scheduled notifications as sent.`,
+    )
+
+    await this.applicationService.markScheduledNotificationsSent(sentIds)
+    if (failedIds.length > 0) {
+      const sentSet = new Set(sentIds)
+      const failedIdsToMark = failedIds.filter((id) => !sentSet.has(id)) // filter out notifications that only partially failed
+      await this.applicationService.markScheduledNotificationsFailed(
+        failedIdsToMark,
+      )
     }
   }
 
@@ -159,6 +275,9 @@ export class ApplicationLifeCycleService {
 
         let postPruneAt
         if (prune.pruned) {
+          await this.applicationService.cancelScheduledNotifications(
+            prune.application.id,
+          )
           postPruneAt = addMilliseconds(
             new Date(),
             template?.adminDataConfig?.postPruneDelayOverride ??
