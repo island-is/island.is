@@ -1,10 +1,10 @@
-import { Field, ObjectType, Int, GraphQLISODateTime } from '@nestjs/graphql'
+import { Field, ObjectType, Int, GraphQLISODateTime, ID } from '@nestjs/graphql'
 import { AppointmentStatusEnum } from './enums'
 import { AppointmentLocation } from './appointments.model'
 
 @ObjectType('HealthDirectorateAppointmentDetail')
 export class AppointmentDetail {
-  @Field(()=> ID)
+  @Field(() => ID)
   id!: string
 
   @Field({ nullable: true })

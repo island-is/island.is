@@ -12,13 +12,11 @@ import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import { generateGoogleMapsLink } from '../../../utils/googleMaps'
 import { mapWeekday } from '../../../utils/mappers'
-import { GetAppointmentsQuery } from '../../Appointments/Appointments.generated'
 import { DataState } from '../../../utils/types'
-
-type AppointmentList = GetAppointmentsQuery['healthDirectorateAppointments']
+import { HealthDirectorateAppointments } from '@island.is/api/schema'
 
 interface Props {
-  data?: DataState<AppointmentList>
+  data?: DataState<HealthDirectorateAppointments>
   showLinkButton?: boolean
 }
 

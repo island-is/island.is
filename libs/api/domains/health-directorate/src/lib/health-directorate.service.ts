@@ -598,10 +598,6 @@ export class HealthDirectorateService {
       }))
       return { data: appointments }
     } catch (error) {
-      this.logger.warn(
-        'Error fetching appointments from Health Directorate API',
-        error,
-      )
       return null
     }
   }
@@ -643,10 +639,6 @@ export class HealthDirectorateService {
         practitioners: item.practitioners ?? [],
       }
     } catch (error) {
-      this.logger.warn(
-        'Error fetching appointment by id from Health Directorate API',
-        error,
-      )
       return null
     }
   }
