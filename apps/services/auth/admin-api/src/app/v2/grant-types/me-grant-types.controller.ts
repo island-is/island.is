@@ -127,7 +127,10 @@ export class MeGrantTypesController {
         alsoLog: true,
         meta: { fields: Object.keys(input) },
       },
-      this.grantTypeService.update({ name, description: input.description }, name),
+      this.grantTypeService.update(
+        { name, description: input.description },
+        name,
+      ),
     )
   }
 

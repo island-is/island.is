@@ -29,9 +29,7 @@ const GrantTypes = () => {
     configuredEnvironments,
   })
 
-  const totalPages = Math.ceil(
-    (data?.grantTypes.totalCount ?? 0) / PAGE_SIZE,
-  )
+  const totalPages = Math.ceil((data?.grantTypes.totalCount ?? 0) / PAGE_SIZE)
 
   return (
     <Box>

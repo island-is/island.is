@@ -48,8 +48,8 @@ const AdminControls = lazy(() =>
 const ApiScopeUsers = lazy(() =>
   import('./screens/AdminControls/ApiScopeUsers/ApiScopeUsers'),
 )
-const GrantTypes = lazy(
-  () => import('./screens/AdminControls/GrantTypes/GrantTypes'),
+const GrantTypes = lazy(() =>
+  import('./screens/AdminControls/GrantTypes/GrantTypes'),
 )
 const IdpProviders = lazy(() => import('./screens/AdminControls/IdpProviders'))
 

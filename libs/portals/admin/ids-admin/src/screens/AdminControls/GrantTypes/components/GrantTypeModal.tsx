@@ -128,9 +128,7 @@ export const GrantTypeModal = ({ modal }: GrantTypeModalProps) => {
                         onChange={() =>
                           modal.handleEnvironmentCheckboxChange(env)
                         }
-                        disabled={
-                          !modal.configuredEnvironments.includes(env)
-                        }
+                        disabled={!modal.configuredEnvironments.includes(env)}
                         large
                       />
                     </Box>
