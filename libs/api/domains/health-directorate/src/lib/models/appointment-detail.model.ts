@@ -4,7 +4,7 @@ import { AppointmentLocation } from './appointments.model'
 
 @ObjectType('HealthDirectorateAppointmentDetail')
 export class AppointmentDetail {
-  @Field()
+  @Field(()=> ID)
   id!: string
 
   @Field({ nullable: true })
