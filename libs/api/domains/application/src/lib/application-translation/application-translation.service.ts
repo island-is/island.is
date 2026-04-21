@@ -190,4 +190,20 @@ export class ApplicationTranslationApiService {
       `/templates/${typeId}/introspect`,
     )
   }
+
+  async loadRoleForm(
+    user: User,
+    typeId: string,
+    stateKey: string,
+    roleId: string,
+  ): Promise<unknown> {
+    const params = new URLSearchParams({
+      stateKey,
+      roleId,
+    })
+    return this.request<unknown>(
+      user,
+      `/templates/${encodeURIComponent(typeId)}/form?${params.toString()}`,
+    )
+  }
 }

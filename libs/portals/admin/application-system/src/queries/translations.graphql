@@ -33,6 +33,18 @@ query getApplicationTranslations($namespace: String!) {
   }
 }
 
+query getApplicationTemplateRoleForm(
+  $typeId: String!
+  $stateKey: String!
+  $roleId: String!
+) {
+  applicationTemplateRoleForm(
+    typeId: $typeId
+    stateKey: $stateKey
+    roleId: $roleId
+  )
+}
+
 query getApplicationTemplateIntrospection($typeId: String!) {
   applicationTemplateIntrospection(typeId: $typeId) {
     typeId
@@ -58,6 +70,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                 id
                 type
                 title
+                description
+                width
+                space
                 messageDescriptors {
                   id
                   defaultMessage
@@ -67,6 +82,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                   id
                   type
                   title
+                  description
+                  width
+                  space
                   messageDescriptors {
                     id
                     defaultMessage
@@ -79,6 +97,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
               id
               type
               title
+              description
+              width
+              space
               messageDescriptors {
                 id
                 defaultMessage
@@ -88,6 +109,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                 id
                 type
                 title
+                description
+                width
+                space
                 messageDescriptors {
                   id
                   defaultMessage

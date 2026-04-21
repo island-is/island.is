@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -174,6 +175,28 @@ export class TranslationController {
   async introspectTemplate(@Param('typeId') typeId: string) {
     return this.introspectionService.introspectTemplate(
       typeId as ApplicationTypes,
+    )
+  }
+
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  @Get('templates/:typeId/form')
+  async loadRoleForm(
+    @Param('typeId') typeId: string,
+    @Query('stateKey') stateKey: string,
+    @Query('roleId') roleId: string,
+  ) {
+    if (!stateKey?.trim() || !roleId?.trim()) {
+      throw new BadRequestException(
+        'Query parameters stateKey and roleId are required',
+      )
+    }
+    return this.introspectionService.loadRoleForm(
+      typeId as ApplicationTypes,
+      stateKey,
+      roleId,
     )
   }
 }

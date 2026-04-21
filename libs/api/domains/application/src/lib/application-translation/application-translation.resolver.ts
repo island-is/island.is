@@ -1,5 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import graphqlTypeJson from 'graphql-type-json'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -154,5 +155,19 @@ export class ApplicationTranslationResolver {
     @Args('typeId') typeId: string,
   ): Promise<TemplateIntrospectionGql> {
     return this.translationService.introspectTemplate(user, typeId)
+  }
+
+  @Query(() => graphqlTypeJson, { nullable: true })
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  async applicationTemplateRoleForm(
+    @CurrentUser() user: User,
+    @Args('typeId') typeId: string,
+    @Args('stateKey') stateKey: string,
+    @Args('roleId') roleId: string,
+  ): Promise<unknown> {
+    return this.translationService.loadRoleForm(user, typeId, stateKey, roleId)
   }
 }

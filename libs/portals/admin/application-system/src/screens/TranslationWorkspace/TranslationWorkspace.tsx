@@ -18,6 +18,12 @@ import {
   AccordionItem,
   Accordion,
   toast,
+  Checkbox,
+  DatePicker,
+  Select,
+  RadioButton,
+  FormStepperV2,
+  Section,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -26,6 +32,7 @@ import {
   useGetApplicationTemplateIntrospectionQuery,
   useGetApplicationTranslationsQuery,
   useBulkUpdateApplicationTranslationsMutation,
+  useGetApplicationTemplateRoleFormLazyQuery,
 } from '../../queries/translations.generated'
 
 interface MessageDescriptor {
@@ -38,8 +45,23 @@ interface ScreenIntrospection {
   id: string
   type: string
   title: string | null
+  description?: string | null
+  width?: string | null
+  space?: number | null
   messageDescriptors: MessageDescriptor[]
   children?: ScreenIntrospection[] | null
+}
+
+/** Where in the template tree a sidebar row was clicked (for debugging / tooling). */
+interface SidebarNavLocation {
+  stateKey: string
+  stateName: string
+  roleId: string
+  sectionId: string
+  sectionTitle?: string | null
+  subsectionId?: string
+  subsectionTitle?: string | null
+  leafSourceScreenId?: string
 }
 
 /** Deduped union of `messageDescriptors` on each screen (already flattened for multifields on the API). */
@@ -68,6 +90,9 @@ const buildSectionNavigationScreen = (
   id: `__navigation:section:${sectionId}`,
   type: 'SECTION_NAV_GROUP',
   title: title ?? sectionId,
+  description: null,
+  width: null,
+  space: null,
   messageDescriptors: mergeScreensMessageDescriptors(screens),
 })
 
@@ -80,6 +105,9 @@ const buildSubSectionNavigationScreen = (
   id: `__navigation:subsection:${subSectionId}`,
   type: 'SUBSECTION_NAV_GROUP',
   title: title ?? subSectionId,
+  description: null,
+  width: null,
+  space: null,
   messageDescriptors: mergeScreensMessageDescriptors(screens),
 })
 
@@ -94,6 +122,9 @@ const buildSectionLeafNavigationScreen = (
   id: `__navigation:sectionLeaf:${sectionId}:${screen.id}`,
   type: 'SECTION_LEAF_NAV_GROUP',
   title: screen.title ?? screen.id,
+  description: null,
+  width: null,
+  space: null,
   messageDescriptors: mergeScreensMessageDescriptors([screen]),
 })
 
@@ -164,6 +195,246 @@ const getTranslationSaveErrorDetail = (err: unknown): string => {
   return shortenForToast(raw)
 }
 
+const INPUT_FIELD_TYPES = new Set([
+  'TEXT',
+  'PHONE',
+  'EMAIL',
+  'NATIONAL_ID_WITH_NAME',
+  'BANK_ACCOUNT',
+  'COMPANY_SEARCH',
+  'ASYNC_SELECT',
+  'COPY_LINK',
+  'HIDDEN_INPUT',
+  'HIDDEN_INPUT_WITH_WATCHED_VALUE',
+  'FIND_VEHICLE',
+  'VEHICLE_PERMNO_WITH_INFO',
+])
+
+const TEXT_DISPLAY_TYPES = new Set([
+  'DESCRIPTION',
+  'TITLE',
+  'ALERT_MESSAGE',
+  'EXPANDABLE_DESCRIPTION',
+  'LINK',
+  'MESSAGE_WITH_LINK_BUTTON_FIELD',
+  'INFORMATION_CARD',
+  'DISPLAY',
+  'ACCORDION',
+])
+
+const PLACEHOLDER_TYPES = new Set([
+  'KEY_VALUE',
+  'STATIC_TABLE',
+  'TABLE_REPEATER',
+  'FIELDS_REPEATER',
+  'PAGINATED_SEARCHABLE_TABLE',
+  'ACTION_CARD_LIST',
+  'SLIDER',
+  'IMAGE',
+  'PDF_LINK_BUTTON',
+  'OVERVIEW',
+])
+
+const noop = () => {
+  /* intentionally empty */
+}
+
+const HALF_WIDTH_IGNORED_TYPES = new Set(['RADIO', 'CHECKBOX'])
+
+/** Renders a single leaf field as an island-ui preview component. */
+const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
+  const label = screen.title ?? screen.id
+  const key = screen.id
+
+  if (screen.type === 'EXTERNAL_DATA_PROVIDER') {
+    return (
+      <Box
+        key={key}
+        marginBottom={2}
+        padding={3}
+        border="standard"
+        borderRadius="large"
+        background="white"
+      >
+        <Text variant="small" color="dark300">
+          External data provider
+        </Text>
+        <Text variant="h5">{label}</Text>
+      </Box>
+    )
+  }
+
+  if (INPUT_FIELD_TYPES.has(screen.type)) {
+    return (
+      <Box key={key}>
+        <Input label={label} name={key} placeholder={label} disabled />
+      </Box>
+    )
+  }
+
+  if (screen.type === 'CHECKBOX') {
+    return (
+      <Box key={key}>
+        <Checkbox label={label} name={key} onChange={noop} />
+      </Box>
+    )
+  }
+
+  if (screen.type === 'DATE') {
+    return (
+      <Box key={key}>
+        <DatePicker
+          label={label}
+          placeholderText="dd.mm.yyyy"
+          handleChange={noop}
+        />
+      </Box>
+    )
+  }
+
+  if (
+    screen.type === 'SELECT' ||
+    screen.type === 'VEHICLE_SELECT' ||
+    screen.type === 'VEHICLE_RADIO'
+  ) {
+    return (
+      <Box key={key}>
+        <Select label={label} name={key} options={[]} isDisabled />
+      </Box>
+    )
+  }
+
+  if (screen.type === 'RADIO') {
+    return (
+      <Box key={key}>
+        <Text variant="small" fontWeight="semiBold" marginBottom={1}>
+          {label}
+        </Text>
+        <Box display="flex" flexDirection="column" rowGap={1}>
+          <RadioButton label="Option 1" name={key} value="1" onChange={noop} />
+          <RadioButton label="Option 2" name={key} value="2" onChange={noop} />
+        </Box>
+      </Box>
+    )
+  }
+
+  if (screen.type === 'FILEUPLOAD') {
+    return (
+      <Box
+        key={key}
+        padding={3}
+        border="standard"
+        borderRadius="large"
+        background="white"
+        style={{ borderStyle: 'dashed' }}
+      >
+        <Text variant="small" color="dark300">
+          {label}
+        </Text>
+        <Text variant="small" color="blue400">
+          Upload file
+        </Text>
+      </Box>
+    )
+  }
+
+  if (TEXT_DISPLAY_TYPES.has(screen.type)) {
+    return (
+      <Box key={key}>
+        <Text>{label}</Text>
+      </Box>
+    )
+  }
+
+  if (screen.type === 'DIVIDER') {
+    return (
+      <Box key={key}>
+        <Divider />
+      </Box>
+    )
+  }
+
+  if (screen.type === 'SUBMIT') {
+    return (
+      <Box key={key}>
+        <Button size="small">{label}</Button>
+      </Box>
+    )
+  }
+
+  if (PLACEHOLDER_TYPES.has(screen.type)) {
+    return (
+      <Box
+        key={key}
+        padding={2}
+        border="standard"
+        borderRadius="standard"
+        background="white"
+      >
+        <Text variant="eyebrow" color="dark300">
+          {screen.type}
+        </Text>
+        <Text variant="small">{label}</Text>
+      </Box>
+    )
+  }
+
+  return (
+    <Box
+      key={key}
+      padding={2}
+      border="standard"
+      borderRadius="standard"
+      background="white"
+    >
+      <Text variant="eyebrow" color="dark300">
+        {screen.type}
+      </Text>
+      <Text variant="small">{label}</Text>
+    </Box>
+  )
+}
+
+/**
+ * Renders a screen matching the real application form layout.
+ * MULTI_FIELD screens use GridRow/GridColumn with width-based spans.
+ */
+const renderFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
+  if (screen.type === 'MULTI_FIELD') {
+    const space = (screen.space ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+    return (
+      <Box key={screen.id}>
+        {screen.description && (
+          <Box marginBottom={3}>
+            <Text color="dark400">{screen.description}</Text>
+          </Box>
+        )}
+        <Box width="full" marginTop={screen.description ? 3 : 4} />
+        <GridRow>
+          {screen.children?.map((child, index) => {
+            const isHalfColumn =
+              !HALF_WIDTH_IGNORED_TYPES.has(child.type) &&
+              child.width === 'half'
+            const span = isHalfColumn ? '1/2' : '1/1'
+            const isLast = index === (screen.children?.length ?? 0) - 1
+            return (
+              <GridColumn
+                key={child.id || index}
+                span={['1/1', '1/1', '1/1', span]}
+                paddingBottom={isLast ? 0 : space}
+              >
+                <Box>{renderLeafFieldPreview(child)}</Box>
+              </GridColumn>
+            )
+          })}
+        </GridRow>
+      </Box>
+    )
+  }
+
+  return renderLeafFieldPreview(screen)
+}
+
 const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
   const navigate = useNavigate()
@@ -202,6 +473,8 @@ const TranslationWorkspace = () => {
   const [activeLocale, setActiveLocale] = useState<'is' | 'en'>('en')
   const [selectedScreen, setSelectedScreen] =
     useState<ScreenIntrospection | null>(null)
+  const [selectedLocation, setSelectedLocation] =
+    useState<SidebarNavLocation | null>(null)
   const [editedValues, setEditedValues] = useState<EditedTranslations>({})
 
   const getPersistedForLocale = useCallback(
@@ -218,11 +491,51 @@ const TranslationWorkspace = () => {
     setEditedValues({})
   }, [activeLocale])
 
+  useEffect(() => {
+    if (!introspection) return
+
+    const mapScreen = (screen: ScreenIntrospection) => ({
+      type: screen.type,
+      name: screen.id,
+      label: screen.title,
+    })
+
+    const mapScreens = (screens: ScreenIntrospection[]) =>
+      screens.flatMap((s) =>
+        s.type === 'MULTI_FIELD' && s.children?.length
+          ? s.children.map(mapScreen)
+          : [mapScreen(s)],
+      )
+
+    const parsed = introspection.states.map((state) => ({
+      state: state.stateKey,
+      roles: state.roles.map((role) => ({
+        role: role.roleId,
+        form: role.form
+          ? {
+              sections: role.form.sections.map((section) => ({
+                title: section.title ?? section.id,
+                subsections: section.subSections.map((sub) => ({
+                  title: sub.title ?? sub.id,
+                  fields: mapScreens(sub.screens as ScreenIntrospection[]),
+                })),
+                fields: mapScreens(section.screens as ScreenIntrospection[]),
+              })),
+            }
+          : null,
+      })),
+    }))
+
+    console.log('[TranslationWorkspace] Parsed application structure', parsed)
+  }, [introspection])
+
   const [bulkUpdate, { loading: saving }] =
     useBulkUpdateApplicationTranslationsMutation()
 
   const [fetchAiTranslation, { loading: aiTranslating }] =
     useLazyQuery(AI_TRANSLATE_QUERY)
+
+  const [fetchRoleForm] = useGetApplicationTemplateRoleFormLazyQuery()
 
   const allScreens = useMemo(() => {
     if (!introspection) return []
@@ -241,6 +554,55 @@ const TranslationWorkspace = () => {
     }
     return screens
   }, [introspection])
+
+  const activeStateKey = selectedLocation?.stateKey ?? ''
+  const activeStateName = selectedLocation?.stateName ?? ''
+  const activeRoleId = selectedLocation?.roleId ?? ''
+
+  const activeForm = useMemo(() => {
+    if (!selectedLocation || !introspection) return null
+    const state = introspection.states.find(
+      (s) => s.stateKey === selectedLocation.stateKey,
+    )
+    const role = state?.roles.find((r) => r.roleId === selectedLocation.roleId)
+    return role?.form ?? null
+  }, [selectedLocation, introspection])
+
+  const activeSections = useMemo(
+    () => activeForm?.sections ?? [],
+    [activeForm],
+  )
+  const activeFormTitle = activeForm?.title ?? null
+
+  const previewScreens = useMemo((): ScreenIntrospection[] => {
+    if (!selectedLocation || !introspection) return []
+    const state = introspection.states.find(
+      (s) => s.stateKey === selectedLocation.stateKey,
+    )
+    const role = state?.roles.find((r) => r.roleId === selectedLocation.roleId)
+    const section = role?.form?.sections.find(
+      (s) => s.id === selectedLocation.sectionId,
+    )
+    if (!section) return []
+    if (selectedLocation.leafSourceScreenId) {
+      const screen = (section.screens as ScreenIntrospection[]).find(
+        (s) => s.id === selectedLocation.leafSourceScreenId,
+      )
+      return screen ? [screen] : []
+    }
+    if (selectedLocation.subsectionId) {
+      const sub = section.subSections.find(
+        (s) => s.id === selectedLocation.subsectionId,
+      )
+      return (sub?.screens ?? []) as ScreenIntrospection[]
+    }
+    return [
+      ...(section.screens as ScreenIntrospection[]),
+      ...section.subSections.flatMap(
+        (s) => s.screens as ScreenIntrospection[],
+      ),
+    ]
+  }, [selectedLocation, introspection])
 
   const currentDescriptors = useMemo(() => {
     if (selectedScreen) {
@@ -354,6 +716,53 @@ const TranslationWorkspace = () => {
         ([k, v]) => v !== getPersistedForLocale(k),
       ),
     [editedValues, getPersistedForLocale],
+  )
+
+  const handleSidebarNavClick = useCallback(
+    (nav: ScreenIntrospection, location: SidebarNavLocation) => {
+      if (!introspection) return
+
+      const resolvedTypeId = introspection.typeId ?? typeId ?? ''
+
+      void fetchRoleForm({
+        variables: {
+          typeId: resolvedTypeId,
+          stateKey: location.stateKey,
+          roleId: location.roleId,
+        },
+        fetchPolicy: 'network-only',
+      }).then((result) => {
+        if (result.error) {
+          console.error(
+            '[TranslationWorkspace] loadRoleForm (formLoader) failed',
+            result.error,
+          )
+          toast.error(
+            shortenForToast(
+              result.error.message ?? 'Could not load form from server',
+            ),
+          )
+          return
+        }
+        console.log(
+          '[TranslationWorkspace] form from formLoader (serialized JSON)',
+          {
+            template: {
+              typeId: resolvedTypeId,
+              name: introspection.name,
+              slug: introspection.slug,
+            },
+            location,
+            nav,
+            form: result.data?.applicationTemplateRoleForm,
+          },
+        )
+      })
+
+      setSelectedScreen(nav)
+      setSelectedLocation(location)
+    },
+    [introspection, typeId, fetchRoleForm],
   )
 
   const unsavedCount = useMemo(
@@ -530,6 +939,7 @@ const TranslationWorkspace = () => {
                               const navRow = (
                                 nav: ScreenIntrospection,
                                 key: string,
+                                location: SidebarNavLocation,
                                 labelWeight?: 'semiBold',
                               ) => (
                                 <Box
@@ -537,7 +947,9 @@ const TranslationWorkspace = () => {
                                   marginLeft={2}
                                   marginTop={1}
                                   cursor="pointer"
-                                  onClick={() => setSelectedScreen(nav)}
+                                  onClick={() =>
+                                    handleSidebarNavClick(nav, location)
+                                  }
                                   background={
                                     selectedScreen?.id === nav.id
                                       ? 'blue100'
@@ -563,7 +975,18 @@ const TranslationWorkspace = () => {
                                 )
                                 return (
                                   <Box key={section.id} marginBottom={1}>
-                                    {navRow(nav, section.id, 'semiBold')}
+                                    {navRow(
+                                      nav,
+                                      section.id,
+                                      {
+                                        stateKey: state.stateKey,
+                                        stateName: state.stateName,
+                                        roleId: role.roleId,
+                                        sectionId: section.id,
+                                        sectionTitle: section.title,
+                                      },
+                                      'semiBold',
+                                    )}
                                   </Box>
                                 )
                               }
@@ -579,20 +1002,35 @@ const TranslationWorkspace = () => {
                                     if (subScreens.length === 0) {
                                       return null
                                     }
-                                    const nav =
-                                      buildSubSectionNavigationScreen(
-                                        sub.id,
-                                        sub.title,
-                                        subScreens,
-                                      )
-                                    return navRow(nav, sub.id)
+                                    const nav = buildSubSectionNavigationScreen(
+                                      sub.id,
+                                      sub.title,
+                                      subScreens,
+                                    )
+                                    return navRow(nav, sub.id, {
+                                      stateKey: state.stateKey,
+                                      stateName: state.stateName,
+                                      roleId: role.roleId,
+                                      sectionId: section.id,
+                                      sectionTitle: section.title,
+                                      subsectionId: sub.id,
+                                      subsectionTitle: sub.title,
+                                    })
                                   })}
                                   {screens.map((screen) => {
-                                    const nav = buildSectionLeafNavigationScreen(
-                                      section.id,
-                                      screen,
-                                    )
-                                    return navRow(nav, screen.id)
+                                    const nav =
+                                      buildSectionLeafNavigationScreen(
+                                        section.id,
+                                        screen,
+                                      )
+                                    return navRow(nav, screen.id, {
+                                      stateKey: state.stateKey,
+                                      stateName: state.stateName,
+                                      roleId: role.roleId,
+                                      sectionId: section.id,
+                                      sectionTitle: section.title,
+                                      leafSourceScreenId: screen.id,
+                                    })
                                   })}
                                 </Box>
                               )
@@ -609,6 +1047,184 @@ const TranslationWorkspace = () => {
         </GridColumn>
 
         <GridColumn span="9/12">
+          {previewScreens.length > 0 ? (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+                <Box
+                  paddingTop={[3, 6, 10]}
+                  height="full"
+                  borderRadius="large"
+                  background="white"
+                >
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="spaceBetween"
+                    height="full"
+                  >
+                    <GridColumn
+                      span={['12/12', '12/12', '10/12', '7/9']}
+                      offset={['0', '0', '1/12', '1/9']}
+                    >
+                      <Text variant="h2" as="h2" marginBottom={1}>
+                        {previewScreens[0]?.title ?? ''}
+                      </Text>
+                      {previewScreens.map((screen) =>
+                        renderFieldPreview(screen as ScreenIntrospection),
+                      )}
+                    </GridColumn>
+
+                    <Box
+                      paddingX={[3, 5, 12]}
+                      paddingBottom={5}
+                      paddingTop={3}
+                      display="flex"
+                      justifyContent="flexEnd"
+                    >
+                      <Button icon="arrowForward">Halda áfram</Button>
+                    </Box>
+                  </Box>
+                </Box>
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="spaceBetween"
+                  height="full"
+                  paddingTop={[0, 0, 8]}
+                  paddingLeft={[0, 0, 0, 4]}
+                >
+                  <FormStepperV2
+                    sections={[
+                      <Box
+                        marginLeft={1}
+                        key="stepper-title"
+                        paddingBottom={[0, 0, 4]}
+                      >
+                        <Text variant="h4">
+                          {activeFormTitle ?? introspection.name}
+                        </Text>
+                      </Box>,
+                      ...activeSections.map((section, i) => (
+                        <Box
+                          key={section.id}
+                          cursor="pointer"
+                          onClick={() => {
+                            const sectionData = section
+                            const screens =
+                              sectionData.screens as ScreenIntrospection[]
+                            const firstSubSection = sectionData.subSections[0]
+                            const location: SidebarNavLocation = {
+                              stateKey: activeStateKey,
+                              stateName: activeStateName,
+                              roleId: activeRoleId,
+                              sectionId: section.id,
+                              sectionTitle: section.title,
+                              ...(firstSubSection
+                                ? {
+                                    subsectionId: firstSubSection.id,
+                                    subsectionTitle: firstSubSection.title,
+                                  }
+                                : {}),
+                            }
+                            const navScreens = firstSubSection
+                              ? (firstSubSection.screens as ScreenIntrospection[])
+                              : screens
+                            const nav = firstSubSection
+                              ? buildSubSectionNavigationScreen(
+                                  firstSubSection.id,
+                                  firstSubSection.title,
+                                  navScreens,
+                                )
+                              : buildSectionNavigationScreen(
+                                  section.id,
+                                  section.title,
+                                  navScreens,
+                                )
+                            handleSidebarNavClick(nav, location)
+                          }}
+                        >
+                          <Section
+                            section={section.title ?? section.id}
+                            sectionIndex={i}
+                            isActive={
+                              selectedLocation?.sectionId === section.id
+                            }
+                            isComplete={
+                              activeSections.findIndex(
+                                (s) => s.id === selectedLocation?.sectionId,
+                              ) > i
+                            }
+                            subSections={
+                              section.subSections.length > 1
+                                ? section.subSections.map((sub) => (
+                                    <Box
+                                      key={sub.id}
+                                      cursor="pointer"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        const subScreens =
+                                          sub.screens as ScreenIntrospection[]
+                                        if (subScreens.length === 0) return
+                                        const nav =
+                                          buildSubSectionNavigationScreen(
+                                            sub.id,
+                                            sub.title,
+                                            subScreens,
+                                          )
+                                        handleSidebarNavClick(nav, {
+                                          stateKey: activeStateKey,
+                                          stateName: activeStateName,
+                                          roleId: activeRoleId,
+                                          sectionId: section.id,
+                                          sectionTitle: section.title,
+                                          subsectionId: sub.id,
+                                          subsectionTitle: sub.title,
+                                        })
+                                      }}
+                                    >
+                                      <Text
+                                        variant="medium"
+                                        fontWeight={
+                                          selectedLocation?.subsectionId ===
+                                          sub.id
+                                            ? 'semiBold'
+                                            : 'regular'
+                                        }
+                                      >
+                                        {sub.title ?? sub.id}
+                                      </Text>
+                                    </Box>
+                                  ))
+                                : undefined
+                            }
+                          />
+                        </Box>
+                      )),
+                    ]}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          ) : (
+            <Box
+              paddingTop={[3, 6, 10]}
+              borderRadius="large"
+              background="white"
+              padding={[3, 5, 8]}
+            >
+              <Text color="dark300">
+                Select a section from the sidebar to preview.
+              </Text>
+            </Box>
+          )}
+        </GridColumn>
+      </GridRow>
+
+      {selectedScreen && (
+        <Box marginTop={4}>
           <Box background="white" borderRadius="large" padding={3}>
             <Box
               display="flex"
@@ -617,9 +1233,7 @@ const TranslationWorkspace = () => {
               marginBottom={3}
             >
               <Text variant="h4">
-                {selectedScreen
-                  ? selectedScreen.title ?? selectedScreen.id
-                  : 'All translatable strings'}
+                {selectedScreen.title ?? selectedScreen.id}
               </Text>
               <Text variant="small" color="dark300">
                 {currentDescriptors.length} strings
@@ -690,8 +1304,8 @@ const TranslationWorkspace = () => {
               )}
             </Box>
           </Box>
-        </GridColumn>
-      </GridRow>
+        </Box>
+      )}
     </GridContainer>
   )
 }

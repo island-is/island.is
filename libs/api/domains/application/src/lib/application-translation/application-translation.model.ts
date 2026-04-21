@@ -84,6 +84,15 @@ export class ScreenIntrospectionGql {
   @Field(() => String, { nullable: true })
   title?: string | null
 
+  @Field(() => String, { nullable: true })
+  description?: string | null
+
+  @Field(() => String, { nullable: true })
+  width?: string | null
+
+  @Field(() => Int, { nullable: true })
+  space?: number | null
+
   @Field(() => [MessageDescriptorGql])
   messageDescriptors!: MessageDescriptorGql[]
 

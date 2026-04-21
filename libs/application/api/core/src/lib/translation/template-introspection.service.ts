@@ -63,6 +63,9 @@ export interface ScreenIntrospection {
   id: string
   type: string
   title: string | null
+  description: string | null
+  width: string | null
+  space: number | null
   messageDescriptors: MessageDescriptorInfo[]
   children?: ScreenIntrospection[]
 }
@@ -152,6 +155,11 @@ function extractMessageDescriptorsFromField(
 function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
   const descriptors: MessageDescriptorInfo[] = []
   const children: ScreenIntrospection[] = []
+  const leafRecord = leaf as unknown as Record<string, unknown>
+
+  let description: string | null = null
+  let width: string | null = null
+  let space: number | null = null
 
   descriptors.push(...extractMessageDescriptorsFromFormText(leaf.title))
 
@@ -160,6 +168,12 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     descriptors.push(
       ...extractMessageDescriptorsFromFormText(multiField.description),
     )
+    description = extractStaticText(
+      multiField.description as StaticText | undefined,
+    )
+    if (typeof leafRecord.space === 'number') {
+      space = leafRecord.space as number
+    }
     if (multiField.children) {
       for (const child of multiField.children) {
         const childScreen = walkFormLeaf(child)
@@ -168,7 +182,7 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
       }
     }
   } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-    const edp = leaf as unknown as Record<string, unknown>
+    const edp = leafRecord
     descriptors.push(
       ...extractMessageDescriptorsFromFormText(
         edp.subTitle as FormText | undefined,
@@ -184,14 +198,25 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
         edp.checkboxLabel as FormText | undefined,
       ),
     )
+    description = extractStaticText(edp.description as StaticText | undefined)
   } else {
-    descriptors.push(...extractMessageDescriptorsFromField(leaf as Field))
+    const field = leaf as Field
+    descriptors.push(...extractMessageDescriptorsFromField(field))
+    description = extractStaticText(
+      leafRecord.description as StaticText | undefined,
+    )
+    if (typeof field.width === 'string') {
+      width = field.width
+    }
   }
 
   return {
     id: leaf.id ?? '',
     type: leaf.type ?? 'FIELD',
     title: extractStaticText(leaf.title as StaticText | undefined),
+    description,
+    width,
+    space,
     messageDescriptors: descriptors,
     children: children.length > 0 ? children : undefined,
   }
@@ -276,8 +301,90 @@ function collectAllDescriptors(
   return all
 }
 
+function serializeLoadedFormForApi(form: Form): unknown {
+  try {
+    return JSON.parse(JSON.stringify(form)) as unknown
+  } catch (e) {
+    throw new Error(
+      `Loaded form could not be serialized to JSON: ${
+        e instanceof Error ? e.message : String(e)
+      }`,
+    )
+  }
+}
+
 @Injectable()
 export class TemplateIntrospectionService {
+  /**
+   * Runs the template's `formLoader` for the given state and role (same as introspection)
+   * and returns the raw form object as JSON-serializable data for admin tooling.
+   */
+  async loadRoleForm(
+    typeId: ApplicationTypes,
+    stateKey: string,
+    roleId: string,
+  ): Promise<unknown> {
+    let template
+    try {
+      template = await getApplicationTemplateByTypeId(typeId)
+    } catch (e) {
+      throw new Error(
+        `Failed to load application template "${typeId}": ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+      )
+    }
+
+    const statesConfig = template.stateMachineConfig?.states as
+      | Record<string, unknown>
+      | undefined
+    if (!statesConfig || !statesConfig[stateKey]) {
+      throw new Error(`Unknown state "${stateKey}" for template "${typeId}"`)
+    }
+
+    const stateConfig = statesConfig[stateKey] as Record<string, unknown>
+    const meta = stateConfig.meta as Record<string, unknown> | undefined
+    if (!meta) {
+      throw new Error(`State "${stateKey}" has no meta`)
+    }
+
+    const metaRoles = (meta.roles as Array<Record<string, unknown>>) ?? []
+    const role = metaRoles.find((r) => String(r.id) === String(roleId))
+
+    if (!role) {
+      throw new Error(
+        `Role "${roleId}" not found in state "${stateKey}" (template "${typeId}")`,
+      )
+    }
+
+    if (!role.formLoader || typeof role.formLoader !== 'function') {
+      throw new Error(
+        `Role "${roleId}" in state "${stateKey}" has no formLoader`,
+      )
+    }
+
+    const mockFeatureFlagClient = {
+      getValue: () => Promise.resolve(undefined),
+    }
+
+    let form: Form
+    try {
+      form = await (
+        role.formLoader as (args: {
+          featureFlagClient: unknown
+        }) => Promise<Form>
+      )({ featureFlagClient: mockFeatureFlagClient })
+    } catch (e) {
+      throw new Error(
+        `formLoader failed for "${typeId}" / "${stateKey}" / "${roleId}": ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+      )
+    }
+
+    return serializeLoadedFormForApi(form)
+  }
+
   async introspectTemplate(
     typeId: ApplicationTypes,
   ): Promise<TemplateIntrospection> {
