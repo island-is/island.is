@@ -5,8 +5,17 @@ import {
   ObjectType,
   Int,
   InputType,
+  registerEnumType,
 } from '@nestjs/graphql'
 import { PaginatedResponse, PaginationInput } from '@island.is/nest/pagination'
+
+export enum NotificationChannel {
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
+  PUSH = 'PUSH',
+}
+
+registerEnumType(NotificationChannel, { name: 'NotificationChannel' })
 
 @ObjectType()
 export class NotificationMetadata {
@@ -135,6 +144,30 @@ export class ActorNotification {
 
   @Field(() => GraphQLISODateTime)
   created!: Date
+}
+
+@ObjectType()
+export class NotificationDelivery {
+  @Field(() => Int)
+  id!: number
+
+  @Field(() => NotificationChannel)
+  channel!: NotificationChannel
+
+  @Field()
+  sentTo!: string
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date
+}
+
+@InputType()
+export class AdminNotificationDeliveriesInput {
+  @Field(() => Int)
+  notificationId!: number
+
+  @Field({ defaultValue: false })
+  isActor!: boolean
 }
 
 @InputType()

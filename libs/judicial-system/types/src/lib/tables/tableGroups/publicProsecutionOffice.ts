@@ -22,6 +22,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       route: 'yfirlesin-sakamal',
       title: 'Yfirlesin mál',
       description: 'Mál sem hafa verið lesin yfir og eru óbirt eða á fresti.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
@@ -48,12 +49,14 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       route: 'syknudomar',
       title: 'Sýknudómar',
       description: 'Yfirlesnir sýknudómar.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL,
       route: 'afryjunarleyfi',
       title: 'Áfrýjunarleyfi',
       description: 'Yfirlesnir dómar með beiðni um áfrýjunarleyfi.',
+      includeCounter: true,
     },
   ],
 }

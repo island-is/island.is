@@ -98,6 +98,7 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
@@ -251,6 +252,9 @@ export const webRenderConnectedComponent = (
       break
     case 'LatestVerdicts':
       connectedComponent = <LatestVerdicts slice={slice} />
+      break
+    case 'Landsrettur/AfryjudMal':
+      connectedComponent = <LandsretturCourtOfAppealAppeals slice={slice} />
       break
     case 'KVTH/Rulings':
       connectedComponent = <ComplaintsCommitteeRulings slice={slice} />
