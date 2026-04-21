@@ -18,7 +18,13 @@ import {
 import { FormCertificationTypesService } from './formCertificationTypes.service'
 import { CreateFormCertificationTypeDto } from './models/dto/createFormCertificationType.dto'
 import { FormCertificationTypeDto } from './models/dto/formCertificationType.dto'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -38,9 +44,11 @@ export class FormCertificationTypesController {
   @ApiBody({ type: CreateFormCertificationTypeDto })
   @Post()
   create(
+    @CurrentUser() user: User,
     @Body() createFormCertificationTypeDto: CreateFormCertificationTypeDto,
   ): Promise<FormCertificationTypeDto> {
     return this.formCertificationTypesService.create(
+      user,
       createFormCertificationTypeDto,
     )
   }
@@ -51,7 +59,10 @@ export class FormCertificationTypesController {
   })
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.formCertificationTypesService.delete(id)
+  async delete(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.formCertificationTypesService.delete(user, id)
   }
 }

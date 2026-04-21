@@ -42,4 +42,7 @@ export class ApplicationCard {
 
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
+
+  @Field(() => Date, { nullable: true })
+  pruneAt?: Date
 }

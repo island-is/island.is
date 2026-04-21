@@ -8,6 +8,7 @@ import {
   PaymentOrchestrator,
 } from '../cardPayment.orchestrator'
 import { CardPaymentService } from '../cardPayment.service'
+import { RefundService } from '../../refund/refund.service'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   createApplePayPaymentContext,
@@ -36,6 +37,7 @@ type SagaConfig =
       ) => CardPaymentContext
       createSaga: (
         cardService: CardPaymentService,
+        refundService: RefundService,
         flowService: PaymentFlowService,
         logger: Logger,
       ) => ReturnType<typeof createCardPaymentSaga>
@@ -52,6 +54,7 @@ type SagaConfig =
       ) => ApplePayPaymentContext
       createSaga: (
         cardService: CardPaymentService,
+        refundService: RefundService,
         flowService: PaymentFlowService,
         logger: Logger,
       ) => ReturnType<typeof createApplePayPaymentSaga>
@@ -65,7 +68,8 @@ const sagaConfigs: SagaConfig[] = [
   {
     name: 'CardPayment',
     createContext: createCardPaymentContext,
-    createSaga: createCardPaymentSaga,
+    createSaga: (cardService, _refundService, flowService, logger) =>
+      createCardPaymentSaga(cardService, flowService, logger),
     chargeStepName: 'CHARGE_CARD',
     getInput: getChargeCardInput,
     expectedNotifyMessage: 'Card payment completed successfully',
@@ -95,11 +99,13 @@ describe('Card Payment Saga - Shared Steps', () => {
     it('both sagas have same step structure (VALIDATE, charge, PERSIST, NOTIFY)', () => {
       const mockLogger = createMockLogger()
       const mockCard = {} as CardPaymentService
+      const mockRefund = {} as RefundService
       const mockFlow = {} as PaymentFlowService
 
       const cardSaga = createCardPaymentSaga(mockCard, mockFlow, mockLogger)
       const appleSaga = createApplePayPaymentSaga(
         mockCard,
+        mockRefund,
         mockFlow,
         mockLogger,
       )
@@ -129,11 +135,18 @@ describe('Card Payment Saga - Shared Steps', () => {
   describe.each(sagaConfigs)('$name - shared step behavior', (config) => {
     let mockLogger: Logger
     let mockCardPaymentService: jest.Mocked<CardPaymentService>
+    let mockRefundService: jest.Mocked<RefundService>
     let mockPaymentFlowService: jest.Mocked<PaymentFlowService>
 
     beforeEach(() => {
       mockLogger = createMockLogger()
       mockCardPaymentService = createMockCardPaymentService()
+      mockRefundService = {
+        refundWithCorrelationId: jest.fn().mockResolvedValue({
+          isSuccess: true,
+          acquirerReferenceNumber: 'refund-arn',
+        }),
+      } as unknown as jest.Mocked<RefundService>
       mockPaymentFlowService = createMockPaymentFlowService()
     })
 
@@ -142,6 +155,7 @@ describe('Card Payment Saga - Shared Steps', () => {
       const context = config.createContext(input.paymentFlowId, input as never)
       const saga = config.createSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )

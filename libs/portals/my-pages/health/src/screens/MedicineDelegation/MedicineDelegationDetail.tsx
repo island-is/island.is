@@ -20,9 +20,11 @@ import {
   useDeleteMedicineDelegationMutation,
   useGetMedicineDelegationsQuery,
 } from './MedicineDelegation.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const MedicineDelegationDetail = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [modalVisible, setModalVisible] = useState(false)

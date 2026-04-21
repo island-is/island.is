@@ -3,7 +3,7 @@ import {
   EinstaklingurDTOGrunn,
   EinstaklingurDTOLogForeldriItem,
 } from '@island.is/clients/national-registry-v3'
-import { Student } from '../education.type'
+import { Student } from '../types'
 
 // Note: this family is generated from a real family, but the names and
 // national IDs have been changed to protect the identity of said family.

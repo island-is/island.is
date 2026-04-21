@@ -14,7 +14,7 @@ export const mapToElAnswer = (
 ): SubmitQuestionnaireDto => {
   const replies: SubmitQuestionnaireDto['replies'] = input.entries.map(
     (entry) => {
-      const questionId = entry.entryID
+      const questionId = entry.entryId
       const answerValues = entry.answers.map((a) => a.value)
 
       // Handle multi-select / checkbox (ListReply)

@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'motion/react'
@@ -9,11 +9,13 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
+  getCaseTableGroups,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
+  CaseTableType,
   CaseType,
   SearchCasesRow,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -44,6 +46,7 @@ interface ResultsProps {
   caseType: CaseType
   descriptor: string
   caseNumber?: string | null
+  caseTableTitles?: string[]
   onClick: () => void
 }
 
@@ -52,9 +55,11 @@ const SearchResultButton: FC<ResultsProps> = ({
   caseType,
   descriptor,
   caseNumber,
+  caseTableTitles,
   onClick,
 }: ResultsProps) => {
   const { handleOpenCase } = useCaseList()
+  const hasMeta = caseNumber || (caseTableTitles && caseTableTitles.length > 0)
 
   return (
     <button
@@ -70,10 +75,25 @@ const SearchResultButton: FC<ResultsProps> = ({
           <Text variant="h3" as="p" fontWeight="light" textAlign="left">
             {descriptor}
           </Text>
-          {caseNumber && (
-            <Text variant="small" color="dark300">
-              {`Málsnúmer: ${caseNumber}`}
-            </Text>
+          {hasMeta && (
+            <Box
+              display="flex"
+              flexWrap="wrap"
+              columnGap={2}
+              rowGap={1}
+              marginTop={1}
+            >
+              {caseNumber && (
+                <Text variant="small" color="dark300">
+                  {`Málsnúmer: ${caseNumber}`}
+                </Text>
+              )}
+              {caseTableTitles && caseTableTitles.length > 0 && (
+                <Text variant="small" color="dark300">
+                  {`Málalistar: ${caseTableTitles.join(', ')}`}
+                </Text>
+              )}
+            </Box>
           )}
         </Box>
       </Box>
@@ -84,6 +104,17 @@ const SearchResultButton: FC<ResultsProps> = ({
 const SearchModal: FC<Props> = ({ onClose }) => {
   const { handleOpenCase } = useCaseList()
   const { user } = useContext(UserContext)
+
+  const tableTypeToTitle = useMemo(() => {
+    const groups = getCaseTableGroups(user)
+    const map = new Map<CaseTableType, string>()
+    groups.forEach((g) => {
+      g.tables.forEach((t) => {
+        map.set(t.type as CaseTableType, t.title)
+      })
+    })
+    return map
+  }, [user])
 
   const [searchString, setSearchString] = useState<string>('')
   const [debouncedQuery, setDebouncedQuery] = useState<string>('')
@@ -259,6 +290,9 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                           ? row.appealCaseNumber
                           : undefined
                         : undefined
+                      const caseTableTitles = (row.caseTableTypes ?? [])
+                        .map((t) => tableTypeToTitle.get(t))
+                        .filter((t): t is string => Boolean(t))
                       return (
                         <li
                           key={`${row.caseId}-${index}`}
@@ -273,6 +307,11 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                             caseId={row.caseId}
                             caseType={row.caseType}
                             caseNumber={caseNumber}
+                            caseTableTitles={
+                              caseTableTitles.length > 0
+                                ? caseTableTitles
+                                : undefined
+                            }
                             descriptor={`${row.matchedValue}${
                               row.matchedField === 'defendantName' ||
                               !row.defendantName

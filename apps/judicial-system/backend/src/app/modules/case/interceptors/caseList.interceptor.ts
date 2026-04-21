@@ -43,9 +43,10 @@ export class CaseListInterceptor implements NestInterceptor {
             rulingDate: theCase.rulingDate,
             accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
             parentCaseId: theCase.parentCaseId,
-            appealState: theCase.appealState,
-            appealCaseNumber: theCase.appealCaseNumber,
-            appealRulingDecision: theCase.appealRulingDecision,
+            appealState: theCase.appealCase?.appealState,
+            appealCaseNumber: theCase.appealCase?.appealCaseNumber,
+            appealRulingDecision: theCase.appealCase?.appealRulingDecision,
+            appealedByNationalId: theCase.appealCase?.appealedByNationalId,
             postponedIndefinitelyExplanation:
               CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
             indictmentDecision: theCase.indictmentDecision,

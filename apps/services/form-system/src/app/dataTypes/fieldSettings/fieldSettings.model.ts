@@ -132,4 +132,49 @@ export class FieldSettings {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   hasDescription?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isPhoneRequired?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isEmailRequired?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  chargeItemCode?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  chargeItemName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  chargeType?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  performingOrgID?: string
+
+  @IsOptional()
+  @IsNumber()
+  @ApiPropertyOptional({ type: Number })
+  priceAmount?: number
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDropdown?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  paymentQuantityId?: string
 }

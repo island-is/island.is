@@ -19,6 +19,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET',
+      NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET',
     })
     .xroad(Base, Client, NationalRegistry)
     .env({

@@ -1,0 +1,20 @@
+diff --git a/plugins/metro-resolver.js b/plugins/metro-resolver.js
+index 0df6ab6f113be6279a1450eddb0f10028ecf8525..db8f6a0558abad0448456c8ee4d8686e3c42585e 100644
+--- a/plugins/metro-resolver.js
++++ b/plugins/metro-resolver.js
+@@ -97,7 +97,14 @@ function getMatcher(debug) {
+         const result = (0, tsconfig_paths_1.loadConfig)();
+         if (result.resultType === 'success') {
+             absoluteBaseUrl = result.absoluteBaseUrl;
+-            paths = result.paths;
++            // Support ${configDir} variable in tsconfig paths
++            const configDirAbs = (0, path_1.dirname)(result.configFileAbsolutePath);
++            const configDir = (0, path_1.relative)(devkit_1.workspaceRoot, configDirAbs);
++            paths = Object.entries(result.paths).reduce((acc, [key, value]) => {
++                acc[key] = value.map((p) => p.replace('${configDir}', configDir));
++                return acc;
++            }, {});
++            // End of support for ${configDir}
+             if (debug) {
+                 console.log(pc.cyan(`[Nx] Located tsconfig at ${pc.bold(absoluteBaseUrl)}`));
+                 console.log(pc.cyan(`[Nx] Found the following paths:\n:${pc.bold(JSON.stringify(paths, null, 2))}`));

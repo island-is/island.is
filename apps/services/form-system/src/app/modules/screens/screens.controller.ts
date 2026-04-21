@@ -21,7 +21,13 @@ import {
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
 import { ScreenDto } from './models/dto/screen.dto'
 import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayOrder.dto'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -38,8 +44,11 @@ export class ScreensController {
   })
   @ApiBody({ type: CreateScreenDto })
   @Post()
-  create(@Body() createScreenDto: CreateScreenDto): Promise<ScreenDto> {
-    return this.screensService.create(createScreenDto)
+  create(
+    @CurrentUser() user: User,
+    @Body() createScreenDto: CreateScreenDto,
+  ): Promise<ScreenDto> {
+    return this.screensService.create(user, createScreenDto)
   }
 
   @ApiOperation({ summary: 'Update screen' })
@@ -52,8 +61,9 @@ export class ScreensController {
   async update(
     @Param('id') id: string,
     @Body() updateScreenDto: UpdateScreenDto,
+    @CurrentUser() user: User,
   ): Promise<void> {
-    return await this.screensService.update(id, updateScreenDto)
+    return await this.screensService.update(user, id, updateScreenDto)
   }
 
   @ApiOperation({ summary: 'Update display order of screens' })
@@ -64,8 +74,12 @@ export class ScreensController {
   @Put()
   async updateDisplayOrder(
     @Body() updateScreensDisplayOrderDto: UpdateScreensDisplayOrderDto,
+    @CurrentUser() user: User,
   ): Promise<void> {
-    return this.screensService.updateDisplayOrder(updateScreensDisplayOrderDto)
+    return this.screensService.updateDisplayOrder(
+      user,
+      updateScreensDisplayOrderDto,
+    )
   }
 
   @ApiOperation({ summary: 'Delete screen by id' })
@@ -74,7 +88,10 @@ export class ScreensController {
   })
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.screensService.delete(id)
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.screensService.delete(user, id)
   }
 }

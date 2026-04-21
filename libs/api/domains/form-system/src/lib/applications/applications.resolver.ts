@@ -13,7 +13,6 @@ import {
   SubmitApplicationResponse,
 } from '../../models/applications.model'
 import {
-  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,
@@ -38,17 +37,6 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
-  }
-
-  @Query(() => ApplicationResponse, {
-    name: 'formSystemApplications',
-  })
-  async getApplications(
-    @Args('input', { type: () => ApplicationsInput })
-    input: ApplicationsInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponse> {
-    return this.applicationsService.getApplications(user, input)
   }
 
   @Query(() => ApplicationResponse, {

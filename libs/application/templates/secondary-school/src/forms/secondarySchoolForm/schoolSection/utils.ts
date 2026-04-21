@@ -9,6 +9,7 @@ import {
   checkIsFreshman,
   getSchoolsData,
   getTranslatedProgram,
+  getTranslatedString,
   LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
@@ -140,13 +141,8 @@ export const filterSchoolOptions = (
   return options.filter((x) => !otherSchoolIds.includes(x.value))
 }
 
-export const clearOnChangeSchool = (index: number) => {
-  return [
-    `selection[${index}].firstProgram.id`,
-    `selection[${index}].secondProgram.id`,
-    `selection[${index}].thirdLanguage.code`,
-    `selection[${index}].nordicLanguage.code`,
-  ]
+export const clearOnChangeSchool = () => {
+  return [] as string[]
 }
 
 export const setOnChangeSchool = (
@@ -164,12 +160,36 @@ export const setOnChangeSchool = (
       value: selectedSchool?.name,
     },
     {
-      key: `selection[${index}].secondProgram.require`,
+      key: `selection[${index}].firstProgram`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].secondProgram`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].thirdLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].fallbackThirdLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].nordicLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].secondProgramRequire`,
       value: checkIsFreshman(application.answers),
     },
     {
-      key: `selection[${index}].thirdLanguage.require`,
+      key: `selection[${index}].thirdLanguageRequire`,
       value: selectedSchool?.requireThirdLanguage,
+    },
+    {
+      key: `selection[${index}].fallbackThirdLanguageRequire`,
+      value: selectedSchool?.requireFallbackThirdLanguage,
     },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
   ]
@@ -219,7 +239,7 @@ export const loadProgramOptions = async (
     const programs = data?.secondarySchoolProgramsBySchoolId || []
 
     setValueAtIndex?.('programOptions', programs)
-    setValueAtIndex?.('secondProgram.include', programs.length > 1)
+    setValueAtIndex?.('secondProgramInclude', programs.length > 1)
 
     return programs
       .map((program) => ({
@@ -264,7 +284,15 @@ export const setOnChangeFirstProgram = (
       value: programInfo?.isSpecialNeedsProgram,
     },
     {
-      key: `selection[${index}].secondProgram.require`,
+      key: `selection[${index}].firstProgram.programApplicationMessageIs`,
+      value: programInfo?.programApplicationMessageIs,
+    },
+    {
+      key: `selection[${index}].firstProgram.programApplicationMessageEn`,
+      value: programInfo?.programApplicationMessageEn,
+    },
+    {
+      key: `selection[${index}].secondProgramRequire`,
       value:
         checkIsFreshman(application.answers) &&
         !programInfo?.isSpecialNeedsProgram,
@@ -277,7 +305,7 @@ export const getRequireSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require')) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramRequire')) ||
     false
   return secondProgramRequire
 }
@@ -287,7 +315,7 @@ export const getIsClearableSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require')) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramRequire')) ||
     false
   return !secondProgramRequire
 }
@@ -297,7 +325,7 @@ export const getConditionSecondProgram = (
 ): boolean => {
   const secondProgramInclude =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.include')) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramInclude')) ||
     false
   return secondProgramInclude
 }
@@ -335,6 +363,14 @@ export const setOnChangeSecondProgram = (
       key: `selection[${index}].secondProgram.isSpecialNeedsProgram`,
       value: programInfo?.isSpecialNeedsProgram,
     },
+    {
+      key: `selection[${index}].secondProgram.programApplicationMessageIs`,
+      value: programInfo?.programApplicationMessageIs,
+    },
+    {
+      key: `selection[${index}].secondProgram.programApplicationMessageEn`,
+      value: programInfo?.programApplicationMessageEn,
+    },
   ]
 }
 
@@ -343,7 +379,7 @@ export const getRequireThirdLanguage = (
 ): boolean => {
   const thirdLanguageRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'thirdLanguage.require')) ||
+      getValueViaPath<boolean>(activeField, 'thirdLanguageRequire')) ||
     false
   return thirdLanguageRequire
 }
@@ -381,6 +417,57 @@ export const setOnChangeThirdLanguage = (
   return [
     {
       key: `selection[${index}].thirdLanguage.name`,
+      value: languageInfo?.name,
+    },
+  ]
+}
+
+export const getRequireFallbackThirdLanguage = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const fallbackThirdLanguageRequire =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'fallbackThirdLanguageRequire')) ||
+    false
+  return fallbackThirdLanguageRequire
+}
+
+export const getConditionFallbackThirdLanguage = (
+  application: Application,
+  activeField?: Record<string, string>,
+): boolean => {
+  return (
+    getRequireFallbackThirdLanguage(activeField) &&
+    !!getFallbackThirdLanguageOptions(application, activeField).length
+  )
+}
+
+export const getFallbackThirdLanguageOptions = (
+  application: Application,
+  activeField?: Record<string, string>,
+): RepeaterOption[] => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  return (schoolInfo?.thirdLanguages || []).map((language) => {
+    return {
+      label: language.name,
+      value: language.code,
+    }
+  })
+}
+
+export const setOnChangeFallbackThirdLanguage = (
+  optionValue: RepeaterOptionValue,
+  application: Application,
+  index: number,
+  activeField?: Record<string, string>,
+) => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  const languageInfo = schoolInfo?.thirdLanguages?.find(
+    (x) => x.code === getStringFromOptionValue(optionValue),
+  )
+  return [
+    {
+      key: `selection[${index}].fallbackThirdLanguage.name`,
       value: languageInfo?.name,
     },
   ]
@@ -496,4 +583,37 @@ export const getAlertMessageSpecialNeedsProgram = (
       programNameList: programNames.join(', '),
     },
   }
+}
+
+export const getProgramApplicationMessage = (
+  programField: 'firstProgram' | 'secondProgram',
+  answers: FormValue,
+  index?: number,
+  lang?: Locale,
+) => {
+  if (index === undefined) {
+    return ''
+  }
+
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    answers,
+    'selection',
+  )
+
+  const program = selection?.[index]?.[programField]
+
+  return getTranslatedString(
+    lang,
+    program?.programApplicationMessageIs,
+    program?.programApplicationMessageEn,
+  )
+}
+
+export const getConditionProgramApplicationMessage = (
+  programField: 'firstProgram' | 'secondProgram',
+  answers: FormValue,
+  index?: number,
+  lang?: Locale,
+) => {
+  return !!getProgramApplicationMessage(programField, answers, index, lang)
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   FrambodApi,
   FrambodDTO,
@@ -565,80 +565,74 @@ export class SignatureCollectionClientService {
   ): Promise<Signee> {
     const collection = await this.getLatestCollectionForType(collectionType)
     const { electionId, isActive, areas } = collection
-    try {
-      const user = await this.getApiWithAuth(
-        this.electionsApi,
-        auth,
-      ).kosningIDEinsInfoKennitalaGet({
-        kennitala: nationalId ?? auth.nationalId,
-        iD: parseInt(electionId ?? '0'),
-      })
+    const user = await this.getApiWithAuth(
+      this.electionsApi,
+      auth,
+    ).kosningIDEinsInfoKennitalaGet({
+      kennitala: nationalId ?? auth.nationalId,
+      iD: parseInt(electionId ?? '0'),
+    })
 
-      const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
-      const activeSignature = user.medmaeli?.find(
-        (signature) => signature.valid,
-      )
-      const signatures = user.medmaeli?.map((signature) =>
-        mapSignature(signature),
-      )
-      const ownedLists =
-        user.medmaelalistar && candidate
-          ? user.medmaelalistar?.map((list) =>
-              mapListBase(
-                list,
-                collection.areas.some(
-                  (area) => area.id === list.svaedi?.id?.toString(),
-                ),
+    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
+    const activeSignature = user.medmaeli?.find((signature) => signature.valid)
+    const signatures = user.medmaeli?.map((signature) =>
+      mapSignature(signature),
+    )
+    const ownedLists =
+      user.medmaelalistar && candidate
+        ? user.medmaelalistar?.map((list) =>
+            mapListBase(
+              list,
+              collection.areas.some(
+                (area) => area.id === list.svaedi?.id?.toString(),
               ),
-            )
-          : []
+            ),
+          )
+        : []
 
-      const { success: canCreate, reasons: canCreateInfo } =
-        this.sharedService.canCreate({
-          requirementsMet: user.maFrambod,
-          canCreateInfo: user.maFrambodInfo,
-          ownedLists,
-          collectionType,
-          isActive,
-          areas,
-        })
-
-      const { success: canSign, reasons: canSignInfo } = await this.canSign({
-        requirementsMet: user.maKjosa,
-        canSignInfo: user.maKjosaInfo,
-        activeSignature,
-        signatures,
+    const { success: canCreate, reasons: canCreateInfo } =
+      this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        collectionType,
+        isActive,
+        areas,
       })
 
-      return {
-        nationalId: user.kennitala ?? '',
-        name: user.nafn ?? '',
-        electionName: user.kosningNafn ?? '',
-        canSign,
-        canSignInfo,
-        canCreate,
-        canCreateInfo,
-        area: user.svaedi && {
-          id: user.svaedi?.id?.toString() ?? '',
-          name: user.svaedi?.nafn?.toString() ?? '',
-          isActive:
-            collection.areas.find(
-              (area) => area.id === user.svaedi?.id?.toString(),
-            )?.isActive ?? false,
-        },
+    const { success: canSign, reasons: canSignInfo } = await this.canSign({
+      requirementsMet: user.maKjosa,
+      canSignInfo: user.maKjosaInfo,
+      activeSignature,
+      signatures,
+    })
 
-        signatures,
-        ownedLists,
-        isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
-        candidate,
-        hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
-        partyBallotLetterInfo: {
-          letter: user.listabokstafur?.listabokstafur ?? '',
-          name: user.listabokstafur?.frambodNafn ?? '',
-        },
-      }
-    } catch (e) {
-      throw new NotFoundException('User not found')
+    return {
+      nationalId: user.kennitala ?? '',
+      name: user.nafn ?? '',
+      electionName: user.kosningNafn ?? '',
+      canSign,
+      canSignInfo,
+      canCreate,
+      canCreateInfo,
+      area: user.svaedi && {
+        id: user.svaedi?.id?.toString() ?? '',
+        name: user.svaedi?.nafn?.toString() ?? '',
+        isActive:
+          collection.areas.find(
+            (area) => area.id === user.svaedi?.id?.toString(),
+          )?.isActive ?? false,
+      },
+
+      signatures,
+      ownedLists,
+      isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
+      candidate,
+      hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
+      partyBallotLetterInfo: {
+        letter: user.listabokstafur?.listabokstafur ?? '',
+        name: user.listabokstafur?.frambodNafn ?? '',
+      },
     }
   }
 

@@ -33,7 +33,18 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-const getFiledBy = (document: CourtDocument, files: CaseFile[]): string => {
+const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
+  if (submitterText === 'Sækjandi') {
+    return 'Sækjandi lagði fram:'
+  }
+
+  return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')
+}
+
+export const getFiledBy = (
+  document: CourtDocument,
+  files: CaseFile[],
+): string => {
   if (document.documentType === CourtDocumentType.EXTERNAL_DOCUMENT) {
     const split = document.submittedBy?.split('|')
 
@@ -42,9 +53,8 @@ const getFiledBy = (document: CourtDocument, files: CaseFile[]): string => {
         prosecutor: 'Sækjandi',
         notRegistered: '',
       })
-      return `${submitterText}${submitterText ? ' ' : ''}${
-        split[0]
-      } lagði fram:`
+
+      return formatFiledBy(submitterText, split[0])
     }
   } else if (document.documentType === CourtDocumentType.UPLOADED_DOCUMENT) {
     const file = files?.find((file) => file.id === document.caseFileId)
@@ -65,9 +75,10 @@ const getFiledBy = (document: CourtDocument, files: CaseFile[]): string => {
         notRegistered: '',
       })
 
-      return `${submitterText}${submitterText ? ' ' : ''}${
-        file.fileRepresentative ?? file.submittedBy
-      } lagði fram:`
+      return formatFiledBy(
+        submitterText,
+        file.fileRepresentative ?? file.submittedBy,
+      )
     }
   }
 

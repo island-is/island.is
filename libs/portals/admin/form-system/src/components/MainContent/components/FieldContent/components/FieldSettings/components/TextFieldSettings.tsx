@@ -8,7 +8,7 @@ import { ControlContext } from '../../../../../../../context/ControlContext'
 export const TextFieldSettings = () => {
   const { control, controlDispatch, updateActiveItem, focus, setFocus } =
     useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { isLarge, hasDescription, maxLength } = fieldSettings || {}
@@ -19,6 +19,7 @@ export const TextFieldSettings = () => {
       <Checkbox
         checked={hasDescription ?? false}
         label={formatMessage(m.hasDescription)}
+        disabled={isReadOnly}
         onChange={(e) =>
           controlDispatch({
             type: 'SET_FIELD_SETTINGS',
@@ -34,6 +35,7 @@ export const TextFieldSettings = () => {
         <Checkbox
           checked={isLarge ?? false}
           label={formatMessage(m.largeTextArea)}
+          disabled={isReadOnly}
           onChange={(e) =>
             controlDispatch({
               type: 'SET_FIELD_SETTINGS',
@@ -53,6 +55,7 @@ export const TextFieldSettings = () => {
             value={maxLength || ''}
             size="sm"
             backgroundColor="blue"
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'SET_ANY_FIELD_SETTING',

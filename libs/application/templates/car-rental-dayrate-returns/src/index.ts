@@ -4,6 +4,8 @@ export const getFields = () => import('./fields/')
 export * from './utils/types'
 export * from './utils/constants'
 export * from './utils/UploadCarDayRateUsageUtils'
+export * from './utils/dayRateTableUtils'
 export * from './utils/errorFormatUtils'
+export * as messages from './lib/messages'
 
 export default template

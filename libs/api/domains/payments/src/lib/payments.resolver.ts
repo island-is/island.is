@@ -41,6 +41,8 @@ import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 export class PaymentsResolver {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.payments)
   @Query(() => GetPaymentFlowsResponse, { name: 'paymentsGetFlows' })
   async getPaymentFlows(
     @Args('input', { type: () => GetPaymentFlowsInput })

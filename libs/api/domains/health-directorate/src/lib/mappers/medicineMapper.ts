@@ -3,7 +3,7 @@ import {
   PrescribedItemCategory,
   PrescriptionCommissionStatus,
   PrescriptionRenewalBlockedReason,
-  PrescriptionRenewalStatus,
+  PrescriptionRenewalStatusDisplay,
 } from '@island.is/clients/health-directorate'
 import {
   PermitStatusEnum,
@@ -43,17 +43,17 @@ export const mapPrescriptionRenewalBlockedReason = (
 }
 
 export const mapPrescriptionRenewalStatus = (
-  status: PrescriptionRenewalStatus,
+  status: PrescriptionRenewalStatusDisplay,
 ): PrescribedItemRenewalStatusEnum => {
   switch (status) {
-    case PrescriptionRenewalStatus[0]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_0
-    case PrescriptionRenewalStatus[1]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_1
-    case PrescriptionRenewalStatus[2]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_2
+    case PrescriptionRenewalStatusDisplay.APPROVED:
+      return PrescribedItemRenewalStatusEnum.Approved
+    case PrescriptionRenewalStatusDisplay.REJECTED:
+      return PrescribedItemRenewalStatusEnum.Rejected
+    case PrescriptionRenewalStatusDisplay.DISMISSED:
+      return PrescribedItemRenewalStatusEnum.Dismissed
     default:
-      return PrescribedItemRenewalStatusEnum.NUMBER_0
+      return PrescribedItemRenewalStatusEnum.Pending
   }
 }
 

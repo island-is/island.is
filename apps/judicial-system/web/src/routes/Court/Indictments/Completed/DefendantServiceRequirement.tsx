@@ -179,7 +179,6 @@ export const DefendantServiceRequirement = ({
         </div>
         <AnimatedSection
           show={
-            !verdict.isDefaultJudgement &&
             verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
           }
           keyProp="verdict-appeal-decision"

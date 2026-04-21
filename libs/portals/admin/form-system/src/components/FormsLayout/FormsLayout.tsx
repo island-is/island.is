@@ -1,5 +1,5 @@
 import { InfoButton, m } from '@island.is/form-system/ui'
-import { Box, Breadcrumbs } from '@island.is/island-ui/core'
+import { Box, Breadcrumbs, ToastContainer } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FormsContext } from '../../context/FormsContext'
@@ -8,9 +8,8 @@ import { Forms } from '../Forms/Forms'
 import { FormsHeader } from './components/FormsHeader'
 
 export const FormsLayout = () => {
-  const { location } = useContext(FormsContext)
+  const { location, isAdmin } = useContext(FormsContext)
   const { formatMessage } = useIntl()
-
   return (
     <>
       <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
@@ -22,12 +21,13 @@ export const FormsLayout = () => {
         />
         <InfoButton />
       </Box>
-      <FormsHeader />
+      {isAdmin && <FormsHeader />}
       {location === 'forms' ? (
         <Forms />
       ) : location === 'admin' ? (
         <Admin />
       ) : null}
+      <ToastContainer useKeyframeStyles={false} closeButton timeout={10000} />
     </>
   )
 }

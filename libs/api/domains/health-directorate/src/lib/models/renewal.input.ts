@@ -6,16 +6,4 @@ export class HealthDirectorateRenewalInput {
   @Field(() => String)
   @IsString()
   id!: string
-
-  @Field(() => String)
-  @IsString()
-  prescribedItemId!: string
-
-  @Field(() => String)
-  @IsString()
-  medCardDrugId!: string
-
-  @Field(() => String)
-  @IsString()
-  medCardDrugCategory!: string
 }

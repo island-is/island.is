@@ -5,8 +5,8 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { codesRequiringHealthCertificate } from '../lib/constants'
 import { DrivingLicense, Remark } from '../lib/types'
+import { DrivingLicenseFakeData } from '../lib/constants'
 
 const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -18,16 +18,25 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       'currentLicense.data',
     )?.remarks || []
 
+  const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+    application.answers,
+    'fakeData',
+  )
+  const fakeRemarksOff =
+    fakeData?.useFakeData === YES && fakeData?.remarks === NO
+
   const { setValue } = useFormContext()
 
   useEffect(() => {
     setValue(
       'hasHealthRemarks',
-      remarks.some((r) => codesRequiringHealthCertificate.includes(r.code))
-        ? YES
-        : NO,
+      !fakeRemarksOff && remarks.length > 0 ? YES : NO,
     )
-  }, [remarks, setValue])
+  }, [remarks, fakeRemarksOff, setValue])
+
+  if (fakeRemarksOff) {
+    return null
+  }
 
   return (
     <Box marginBottom={3}>

@@ -11,20 +11,26 @@ fragment PatientDataPermitFields on HealthDirectoratePatientDataPermit {
   }
 }
 
-query GetPatientDataPermits(
-  $locale: String
-  $input: HealthDirectoratePatientDataPermitsInput!
-) {
-  healthDirectoratePatientDataPermits(locale: $locale, input: $input) {
-    data {
-      ...PatientDataPermitFields
-    }
+fragment PatientDataPermitHistoryEntryFields on HealthDirectoratePatientDataPermitHistoryEntry {
+  countries {
+    code
+    name
   }
+  consentTypes
+  validFrom
+  validTo
+  changedAt
+  createdAt
 }
 
-query GetPatientDataPermit($locale: String, $id: String!) {
-  healthDirectoratePatientDataPermit(locale: $locale, id: $id) {
-    ...PatientDataPermitFields
+query GetPatientDataPermits($locale: String) {
+  healthDirectoratePatientDataPermits(locale: $locale) {
+    consent {
+      ...PatientDataPermitFields
+    }
+    history {
+      ...PatientDataPermitHistoryEntryFields
+    }
   }
 }
 
@@ -36,10 +42,8 @@ mutation CreatePatientDataPermit(
   }
 }
 
-mutation InvalidatePatientDataPermit(
-  $input: HealthDirectoratePatientDataInvalidatePermitInput!
-) {
-  healthDirectoratePatientDataInvalidatePermit(input: $input) {
+mutation InvalidatePatientDataPermit {
+  healthDirectoratePatientDataInvalidatePermit {
     status
   }
 }

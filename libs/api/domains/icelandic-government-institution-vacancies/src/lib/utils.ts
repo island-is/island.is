@@ -63,7 +63,7 @@ export type VacancyWithCreationDate =
     _creationDate?: Date
   }
 
-const parseDisplayDate = (dateStr: string): Date | null => {
+export const parseDisplayDate = (dateStr: string): Date | null => {
   const [day, month, year] = dateStr.split('.')
   if (!day || !month || !year) return null
   // Note: month - 1 because JavaScript months are 0-indexed

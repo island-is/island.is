@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 import { useGetInsuranceConfirmationLazyQuery } from '../Payments.generated'
+import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 type Props = {
   children: React.ReactNode
@@ -18,6 +19,7 @@ type Props = {
 
 export const PaymentsWrapper = ({ children, pathname }: Props) => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
   const [displayConfirmationErrorAlert, setDisplayConfirmationErrorAlert] =
     useState(false)
 

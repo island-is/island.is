@@ -18,10 +18,17 @@ export const thead = style({
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
 })
 
+export const tbody = style({})
+
 export const tableRowContainer = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
   transition: 'all .5s ease-in-out',
+  selectors: {
+    [`${tbody} &:nth-child(even)`]: {
+      background: theme.color.blue100,
+    },
+  },
 })
 
 export const userManagementContainer = style({

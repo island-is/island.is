@@ -1,8 +1,21 @@
-import React from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
+import { MultiValue } from 'react-select'
 
 import { useLocale } from '@island.is/localization'
-import { Checkbox, Hidden, Stack, Text } from '@island.is/island-ui/core'
-import { AuthDelegationProvider } from '@island.is/shared/types'
+import {
+  Box,
+  Checkbox,
+  Hidden,
+  Select,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -13,11 +26,25 @@ import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
 import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
+import {
+  GetScopeCategoriesDocument,
+  GetScopeCategoriesQuery,
+  GetScopeTagsDocument,
+  GetScopeTagsQuery,
+} from './PermissionCategoriesAndTags.generated'
 
 const FIELD_PREFIX = 'field-'
 
-export const PermissionDelegations = () => {
-  const { formatMessage } = useLocale()
+type Option = { label: string; value: string; description: string }
+type Category = GetScopeCategoriesQuery['authAdminScopeCategories'][number]
+type Tag = GetScopeTagsQuery['authAdminScopeTags'][number]
+
+export const PermissionDelegations = ({
+  isNewPermissionsOptionsEnabled = false,
+}: {
+  isNewPermissionsOptionsEnabled?: boolean
+} = {}) => {
+  const { formatMessage, lang } = useLocale()
   const { selectedPermission, permission } = usePermission()
   const { isSuperAdmin } = useSuperAdmin()
   const {
@@ -48,6 +75,94 @@ export const PermissionDelegations = () => {
     addedDelegationTypes: [],
     removedDelegationTypes: [],
   })
+
+  const showCategoriesAndTags =
+    isNewPermissionsOptionsEnabled &&
+    inputValues.supportedDelegationTypes?.includes(AuthDelegationType.Custom)
+
+  const { data: categoriesData, loading: categoriesLoading } = useQuery(
+    GetScopeCategoriesDocument,
+    {
+      variables: { lang },
+      skip: !showCategoriesAndTags,
+    },
+  )
+  const { data: tagsData, loading: tagsLoading } = useQuery(
+    GetScopeTagsDocument,
+    {
+      variables: { lang },
+      skip: !showCategoriesAndTags,
+    },
+  )
+
+  const categories: Option[] = useMemo(
+    () =>
+      categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
+        label: cat.title,
+        value: cat.id,
+        description: cat.description ?? '',
+      })) ?? [],
+    [categoriesData?.authAdminScopeCategories],
+  )
+  const tags: Option[] = useMemo(
+    () =>
+      tagsData?.authAdminScopeTags.map((tag: Tag) => ({
+        label: tag.title,
+        value: tag.id,
+        description: tag.description ?? '',
+      })) ?? [],
+    [tagsData?.authAdminScopeTags],
+  )
+
+  const [selectedCategories, setSelectedCategories] = useEnvironmentState<
+    MultiValue<Option>
+  >([])
+  const [selectedTags, setSelectedTags] = useEnvironmentState<
+    MultiValue<Option>
+  >([])
+  const [categoriesTagsDirty, setCategoriesTagsDirty] =
+    useEnvironmentState(false)
+
+  useEffect(() => {
+    if (
+      !showCategoriesAndTags ||
+      (tags.length === 0 && categories.length === 0)
+    )
+      return
+    setSelectedCategories(
+      (selectedPermission.categoryIds ?? [])
+        .map((id) => categories.find((c) => c.value === id))
+        .filter((c): c is Option => c !== undefined),
+    )
+    setSelectedTags(
+      (selectedPermission.tagIds ?? [])
+        .map((id) => tags.find((t) => t.value === id))
+        .filter((t): t is Option => t !== undefined),
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCategoriesAndTags, tags, categories])
+
+  const customValidation = useCallback(
+    (_newFormData: FormData, _prevFormData: FormData) => {
+      if (!showCategoriesAndTags) return false
+      return categoriesTagsDirty
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      showCategoriesAndTags,
+      categoriesTagsDirty,
+      selectedCategories,
+      selectedTags,
+    ],
+  )
+
+  const categoryRequired =
+    showCategoriesAndTags &&
+    !categoriesLoading &&
+    categories.length > 0 &&
+    selectedCategories.length === 0
+
+  const loadingCategoriesAndTags = categoriesLoading || tagsLoading
 
   const toggleDelegationType = (field: string, checked: boolean) => {
     const type = field.split('-')[1]
@@ -112,7 +227,10 @@ export const PermissionDelegations = () => {
       intent={PermissionFormTypes.DELEGATIONS}
       inSync={checkEnvironmentsSync(permission.environments, [
         'supportedDelegationTypes',
+        ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
+      customValidation={customValidation}
+      submitDisabled={categoryRequired}
     >
       <Stack space={4}>
         {providers.map((provider) =>
@@ -146,6 +264,134 @@ export const PermissionDelegations = () => {
                         toggleDelegationType(e.target.name, e.target.checked)
                       }
                       subLabel={delegationType.description}
+                      children={
+                        provider.id === AuthDelegationProvider.Custom &&
+                        delegationType.id === AuthDelegationType.Custom &&
+                        showCategoriesAndTags ? (
+                          <Stack space={3}>
+                            <Box marginBottom={2}>
+                              <Text paddingBottom={1}>
+                                {formatMessage(m.categories)}
+                              </Text>
+                              <Text variant="small" as="p">
+                                {formatMessage(m.categoriesDescription)}
+                              </Text>
+                              {loadingCategoriesAndTags ? (
+                                <Text>{formatMessage(m.loading)}</Text>
+                              ) : categories.length === 0 ? (
+                                <Text>{formatMessage(m.noCategories)}</Text>
+                              ) : (
+                                <Stack space={1}>
+                                  <input
+                                    type="hidden"
+                                    name="categoryIds"
+                                    value={JSON.stringify(
+                                      selectedCategories.map((c) => c.value),
+                                    )}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="originalCategoryIds"
+                                    value={JSON.stringify(
+                                      selectedPermission.categoryIds ?? [],
+                                    )}
+                                  />
+                                  <Select
+                                    value={selectedCategories}
+                                    options={categories}
+                                    onChange={(value) => {
+                                      const newIds = (
+                                        value as MultiValue<Option>
+                                      ).map((c) => c.value)
+                                      setCategoriesTagsDirty(
+                                        !isEqual(
+                                          newIds,
+                                          selectedPermission.categoryIds ?? [],
+                                        ) ||
+                                          !isEqual(
+                                            selectedTags.map((t) => t.value),
+                                            selectedPermission.tagIds ?? [],
+                                          ),
+                                      )
+                                      setSelectedCategories(
+                                        value as MultiValue<Option>,
+                                      )
+                                    }}
+                                    placeholder={formatMessage(
+                                      m.selectCategoriesPlaceholder,
+                                    )}
+                                    hasError={categoryRequired}
+                                    errorMessage={formatMessage(
+                                      m.categoryRequired,
+                                    )}
+                                    isMulti
+                                    size="sm"
+                                  />
+                                </Stack>
+                              )}
+                            </Box>
+                            <Box>
+                              <Text paddingBottom={1}>
+                                {formatMessage(m.tags)}
+                              </Text>
+                              <Text variant="small" as="p">
+                                {formatMessage(m.tagsDescription)}
+                              </Text>
+                              {loadingCategoriesAndTags ? (
+                                <Text>{formatMessage(m.loading)}</Text>
+                              ) : tags.length === 0 ? (
+                                <Text>{formatMessage(m.noTags)}</Text>
+                              ) : (
+                                <Stack space={1}>
+                                  <input
+                                    type="hidden"
+                                    name="tagIds"
+                                    value={JSON.stringify(
+                                      selectedTags.map((t) => t.value),
+                                    )}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="originalTagIds"
+                                    value={JSON.stringify(
+                                      selectedPermission.tagIds ?? [],
+                                    )}
+                                  />
+                                  <Select
+                                    value={selectedTags}
+                                    options={tags}
+                                    onChange={(value) => {
+                                      const newIds = (
+                                        value as MultiValue<Option>
+                                      ).map((t) => t.value)
+                                      setCategoriesTagsDirty(
+                                        !isEqual(
+                                          selectedCategories.map(
+                                            (c) => c.value,
+                                          ),
+                                          selectedPermission.categoryIds ?? [],
+                                        ) ||
+                                          !isEqual(
+                                            newIds,
+                                            selectedPermission.tagIds ?? [],
+                                          ),
+                                      )
+                                      setSelectedTags(
+                                        value as MultiValue<Option>,
+                                      )
+                                    }}
+                                    placeholder={formatMessage(
+                                      m.selectTagsPlaceholder,
+                                    )}
+                                    isMulti
+                                    size="sm"
+                                  />
+                                </Stack>
+                              )}
+                            </Box>
+                          </Stack>
+                        ) : undefined
+                      }
                     />
                   ),
                 )}

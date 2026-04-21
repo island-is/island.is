@@ -62,7 +62,14 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: 0,
   })
-  multiset!: number
+  multiMax!: number
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isMulti!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

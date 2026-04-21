@@ -35,26 +35,28 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCaseNumber,
-    appealAssistantId,
-    appealJudge1Id,
-    appealJudge2Id,
-    appealJudge3Id,
-    appealAssistant: {
-      nationalId: appealAssistantNationalId,
-      name: appealAssistantName,
-    },
-    appealJudge1: {
-      nationalId: appealJudge1NationalId,
-      name: appealJudge1Name,
-    },
-    appealJudge2: {
-      nationalId: appealJudge2NationalId,
-      name: appealJudge2Name,
-    },
-    appealJudge3: {
-      nationalId: appealJudge3NationalId,
-      name: appealJudge3Name,
+    appealCase: {
+      appealCaseNumber,
+      appealAssistantId,
+      appealJudge1Id,
+      appealJudge2Id,
+      appealJudge3Id,
+      appealAssistant: {
+        nationalId: appealAssistantNationalId,
+        name: appealAssistantName,
+      },
+      appealJudge1: {
+        nationalId: appealJudge1NationalId,
+        name: appealJudge1Name,
+      },
+      appealJudge2: {
+        nationalId: appealJudge2NationalId,
+        name: appealJudge2Name,
+      },
+      appealJudge3: {
+        nationalId: appealJudge3NationalId,
+        name: appealJudge3Name,
+      },
     },
   } as Case
 

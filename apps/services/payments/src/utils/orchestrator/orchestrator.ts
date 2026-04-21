@@ -51,15 +51,25 @@ export class Orchestrator<
     context: TContext,
     executionHistory: ExecutionRecord[],
   ) => Promise<void>
+  private logContext?: (context: TContext) => string
   private stepTimeoutMs?: number
   private rollbackStepTimeoutMs?: number
 
   constructor(config: OrchestratorConfig<TContext, TStepResults>) {
     this.logger = config.logger
     this.onRollbackFailure = config.onRollbackFailure
+    this.logContext = config.logContext
     this.stepTimeoutMs = config.stepTimeoutMs
     this.rollbackStepTimeoutMs =
       config.rollbackStepTimeoutMs ?? config.stepTimeoutMs
+  }
+
+  private getLogPrefix(context: TContext): string {
+    return this.logContext ? this.logContext(context) : ''
+  }
+
+  private elapsedMs(since: number): number {
+    return Date.now() - since
   }
 
   getExecutionHistory(): ExecutionRecord[] {
@@ -92,6 +102,11 @@ export class Orchestrator<
     this.completedSteps = []
     this.executionHistory = []
 
+    const prefix = this.getLogPrefix(context)
+    const sagaStart = Date.now()
+
+    this.logger.info(`${prefix}[ORCHESTRATOR] Saga started`)
+
     try {
       if (Array.isArray(saga)) {
         // Linear flow
@@ -103,6 +118,9 @@ export class Orchestrator<
             type: 'step_started',
             step: step.name,
           })
+
+          this.logger.info(`${prefix}[ORCHESTRATOR] Step ${step.name} started`)
+          const stepStart = Date.now()
 
           // Execute and capture result (with optional timeout)
           const executePromise = step.execute(context)
@@ -129,6 +147,12 @@ export class Orchestrator<
             type: 'step_completed',
             step: step.name,
           })
+
+          this.logger.info(
+            `${prefix}[ORCHESTRATOR] Step ${
+              step.name
+            } completed (${this.elapsedMs(stepStart)}ms)`,
+          )
         }
       } else {
         // Branching flow
@@ -149,6 +173,11 @@ export class Orchestrator<
             type: 'step_started',
             step: currentStep.name,
           })
+
+          this.logger.info(
+            `${prefix}[ORCHESTRATOR] Step ${currentStep.name} started`,
+          )
+          const stepStart = Date.now()
 
           // Execute and capture result (with optional timeout)
           const executePromise = currentStep.execute(context)
@@ -177,6 +206,12 @@ export class Orchestrator<
             step: currentStep.name,
           })
 
+          this.logger.info(
+            `${prefix}[ORCHESTRATOR] Step ${
+              currentStep.name
+            } completed (${this.elapsedMs(stepStart)}ms)`,
+          )
+
           // Determine next step
           const nextStep =
             typeof currentStep.nextStep === 'function'
@@ -191,29 +226,60 @@ export class Orchestrator<
         }
       }
 
+      this.logger.info(
+        `${prefix}[ORCHESTRATOR] Saga completed successfully (${this.elapsedMs(
+          sagaStart,
+        )}ms)`,
+      )
+
       context.currentStep = undefined
       return { success: true, context, executionHistory: this.executionHistory }
     } catch (error) {
-      context.failedStep = currentStep ? currentStep.name : 'unknown'
+      const failedStepName = currentStep ? currentStep.name : 'unknown'
+      context.failedStep = failedStepName
       context.error = error
 
       this.recordEvent({
         type: 'step_failed',
-        step: currentStep ? currentStep.name : 'unknown',
+        step: failedStepName,
         metadata: {
           error: (error as Error).message,
           ...(isStepTimeoutError(error) && { timeout: true }),
         },
       })
 
-      await this.rollback(context)
+      this.logger.error(
+        `${prefix}[ORCHESTRATOR] Step ${failedStepName} failed: ${
+          (error as Error).message
+        }`,
+      )
+
+      await this.rollback(context, prefix)
+
+      this.logger.error(
+        `${prefix}[ORCHESTRATOR] Saga failed (${this.elapsedMs(sagaStart)}ms)`,
+      )
+
       throw error
     }
   }
 
-  private async rollback(context: TContext) {
+  private async rollback(context: TContext, prefix = '') {
+    const stepsToCompensate = [...this.completedSteps]
+      .reverse()
+      .filter((s) => s.compensate)
+
+    this.logger.warn(
+      `${prefix}[ORCHESTRATOR] Rollback started, compensating ${stepsToCompensate.length} step(s)`,
+    )
+    const rollbackStart = Date.now()
+
     for (const step of [...this.completedSteps].reverse()) {
       if (step.compensate) {
+        this.logger.warn(
+          `${prefix}[ORCHESTRATOR] Compensating step ${step.name}`,
+        )
+        const stepStart = Date.now()
         try {
           const compensatePromise = step.compensate(context)
           const timeoutMs = this.rollbackStepTimeoutMs
@@ -227,6 +293,11 @@ export class Orchestrator<
           } else {
             await compensatePromise
           }
+          this.logger.warn(
+            `${prefix}[ORCHESTRATOR] Step ${
+              step.name
+            } compensated (${this.elapsedMs(stepStart)}ms)`,
+          )
         } catch (compensateError) {
           const message =
             step.rollbackFailureMessage ||
@@ -256,5 +327,11 @@ export class Orchestrator<
         }
       }
     }
+
+    this.logger.warn(
+      `${prefix}[ORCHESTRATOR] Rollback completed (${this.elapsedMs(
+        rollbackStart,
+      )}ms)`,
+    )
   }
 }

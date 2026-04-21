@@ -48,15 +48,28 @@ export class WorkerService {
 
     // Step 1: Find all payment flows that are paid (have fulfillment) but missing FJS charge
     const allFlows = await this.findPaymentFlowsToProcess()
+    this.logger.info(
+      `Found ${allFlows.length} payment flow(s) pending FJS charge`,
+    )
 
     // Step 2: Filter out flows that have reached the failure limit (manual intervention required)
-    const paymentFlowsToProcess = allFlows.filter(
-      (flow) =>
-        !this.shouldSkipDueToFailureCount(
-          flow.workerEvents ?? [],
-          this.workerConfig.workerMaxFailureEventsPerFlow,
-        ),
-    )
+    const paymentFlowsToProcess = allFlows.filter((flow) => {
+      const shouldSkip = this.shouldSkipDueToFailureCount(
+        flow.workerEvents ?? [],
+        this.workerConfig.workerMaxFailureEventsPerFlow,
+      )
+
+      if (shouldSkip) {
+        const failureCount = (flow.workerEvents ?? []).filter(
+          (e) => e.status === 'failure',
+        ).length
+        this.logger.warn(
+          `[${flow.id}] Skipping payment flow — exceeded max failure attempts (failures: ${failureCount}, limit: ${this.workerConfig.workerMaxFailureEventsPerFlow}). Manual intervention required.`,
+        )
+      }
+
+      return !shouldSkip
+    })
 
     const skippedCount = allFlows.length - paymentFlowsToProcess.length
 
@@ -69,6 +82,7 @@ export class WorkerService {
         const createdFjsCharge = await this.createFjsChargeForPaymentFlow(
           paymentFlow,
         )
+
         await this.recordWorkerEvent(
           paymentFlow.id,
           WorkerTaskType.CreateFjsCharge,
@@ -83,46 +97,41 @@ export class WorkerService {
       } catch (error) {
         const err = error as { message?: string } & Error
         const msg = err?.message
+        failedCount++
 
-        // No FJS response (network/transient): do not record; worker will retry next run
         if (msg === FJS_NETWORK_ERROR) {
           this.logger.warn(
             `[${paymentFlow.id}] FJS request failed (network/transient), will retry`,
           )
-          continue
-        }
-
-        // Charge already exists in FJS but our DB was not updated: do not record; requires manual reconciliation
-        if (msg === FjsErrorCode.AlreadyCreatedCharge) {
-          this.logger.warn(
-            `[${paymentFlow.id}] FJS charge already exists, flow/fulfillment not updated — manual reconciliation required`,
+        } else {
+          await this.recordWorkerEvent(
+            paymentFlow.id,
+            WorkerTaskType.CreateFjsCharge,
+            'failure',
+            {
+              errorCode: msg,
+              message: err?.message,
+              metadata: { stack: err?.stack },
+            },
           )
-          continue
-        }
 
-        await this.recordWorkerEvent(
-          paymentFlow.id,
-          WorkerTaskType.CreateFjsCharge,
-          'failure',
-          {
-            errorCode: msg,
-            message: err?.message,
-            metadata: { stack: err?.stack },
-          },
-        )
-        failedCount++
-        this.logger.error(
-          `[${paymentFlow.id}] Failed to create FJS charge for paid payment flow`,
-          { error: err?.message, stack: err?.stack },
-        )
+          if (msg === FjsErrorCode.AlreadyCreatedCharge) {
+            this.logger.warn(
+              `[${paymentFlow.id}] FJS charge already exists, flow/fulfillment not updated — manual reconciliation required`,
+            )
+          } else {
+            this.logger.error(
+              `[${paymentFlow.id}] Failed to create FJS charge for paid payment flow`,
+              { error: err?.message, stack: err?.stack },
+            )
+          }
+        }
       }
     }
 
-    this.logger.info('Payment worker run complete', {
-      created: createdFJSCharges,
-      failed: failedCount,
-      manualInterventionNeeded: skippedCount,
-    })
+    this.logger.info(
+      `Payment worker run complete — created: ${createdFJSCharges}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}`,
+    )
 
     timer.done()
   }

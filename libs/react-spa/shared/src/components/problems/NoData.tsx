@@ -13,6 +13,7 @@ type NoDataProps = {
   title?: string
   message?: Message
   size?: ProblemSize
+  imgClassName?: string
 } & CommonProblemProps
 
 export const NoData = ({
@@ -25,6 +26,7 @@ export const NoData = ({
   noBorder,
   dataTestId,
   titleSize = 'h2',
+  imgClassName,
   ...rest
 }: NoDataProps & TestSupport) => {
   const { formatMessage } = useLocale()
@@ -64,7 +66,11 @@ export const NoData = ({
           </Text>
           <Text whiteSpace="preLine">{message}</Text>
         </Box>
-        <img src={imgSrc} alt={imgAlt ?? title} className={styleImg} />
+        <img
+          src={imgSrc}
+          alt={imgAlt ?? title}
+          className={imgClassName ?? styleImg}
+        />
       </Box>
     )
   }

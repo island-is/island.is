@@ -33,4 +33,5 @@ export interface ApplicationDTO {
   incomePlan?: IncomePlanInfo
   livesAloneUserReply?: boolean
   livesAloneNationalRegistryData?: boolean
+  awarenessOfIncomeDeclaration?: boolean
 }

@@ -217,7 +217,7 @@ const VehiclesOverview = () => {
             </Stack>
           </Box>
         )}
-        {!loading && !searchLoading && filteredVehicles.length > 0 && (
+        {!loading && !searchLoading && (vehicles?.paging?.totalPages ?? 0) > 1 && (
           <Box>
             <Pagination
               page={vehicles?.paging?.pageNumber ?? 0}

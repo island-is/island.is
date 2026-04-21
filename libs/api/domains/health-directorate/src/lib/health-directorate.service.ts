@@ -5,7 +5,6 @@ import {
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
-  PrescriptionRenewalRequestDto,
   UserVisibleAppointmentStatuses,
   VaccinationDto,
   organLocale,
@@ -13,7 +12,6 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
-import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
@@ -21,11 +19,7 @@ import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
-import {
-  InvalidatePermitInput,
-  PermitInput,
-  PermitsInput,
-} from './dto/permit.input'
+import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
@@ -40,7 +34,7 @@ import {
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
 } from './mappers/medicineMapper'
-import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
+import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
@@ -53,7 +47,10 @@ import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import { Countries } from './models/permits/country.model'
-import { Permit, PermitReturn, Permits } from './models/permits/permits'
+import { Permit } from './models/permits/permit.model'
+import { PermitHistoryEntry } from './models/permits/permitHistoryEntry.model'
+import { PermitReturn } from './models/permits/permitReturn.model'
+import { Permits } from './models/permits/permits.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
@@ -284,7 +281,8 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.product.id,
+          id: item.prescriptionId,
+          productId: item.product.id,
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
@@ -293,6 +291,7 @@ export class HealthDirectorateService {
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
           medCardDrugId: item.medCard?.id,
+          medCardDrugCategory: item.medCard?.category,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -332,23 +331,7 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    const parsedInput = this.castRenewalInputToNumber(input)
-
-    if (!parsedInput) return null
-
-    // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
-    await this.healthApi
-      .postRenewalPrescription(auth, input.id, {
-        medCardDrugId: input.medCardDrugId ?? input.id,
-        medCardDrugCategory: parsedInput.medCardDrugCategory,
-        prescribedItemId: parsedInput.prescribedItemId,
-      })
-      .catch((e) => {
-        return e
-      })
-      .then(() => {
-        return
-      })
+    await this.healthApi.postRenewalPrescription(auth, input.id)
 
     return null
   }
@@ -508,38 +491,22 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - Permits */
-  async getPermits(
-    auth: Auth,
-    locale: Locale,
-    input: PermitsInput,
-  ): Promise<Permits | null> {
-    const permits = await this.healthApi.getPermits(
-      auth,
-      locale,
-      input.status.map((status) => mapCountryPermitStatus(status)),
+  async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
+    const response = await this.healthApi.getPermits(auth, locale)
+
+    if (!response) {
+      return null
+    }
+
+    const consent: Permit | null = response.consent
+      ? mapPermit(response.consent, locale)
+      : null
+
+    const history: PermitHistoryEntry[] = (response.history ?? []).map(
+      mapPermitHistoryEntry,
     )
 
-    if (!permits) {
-      return null
-    }
-
-    const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
-    return { data: sortBy(data, 'status') }
-  }
-
-  /* Patient data - Permit Detail */
-  async getPermit(
-    auth: Auth,
-    locale: Locale,
-    id: string,
-  ): Promise<Permit | null> {
-    const permit = await this.healthApi.getPermit(auth, locale, id)
-
-    if (!permit) {
-      return null
-    }
-
-    return mapPermit(permit, locale)
+    return { consent, history }
   }
 
   /* Patient data - Permit countries */
@@ -574,32 +541,9 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - invalidate permit */
-  async invalidatePermit(
-    auth: Auth,
-    input: InvalidatePermitInput,
-  ): Promise<PermitReturn | null> {
-    const data = await this.healthApi.deactivatePermit(auth, input.id)
-    return data ? { status: true } : null
-  }
-
-  private castRenewalInputToNumber = (
-    input: HealthDirectorateRenewalInput,
-  ): PrescriptionRenewalRequestDto | null => {
-    // Trim whitespace from the string
-    const trimmedCategory = input.medCardDrugCategory.trim()
-    const trimmedId = input.prescribedItemId.trim()
-
-    // Try to convert the string to a number
-    const parsedCategory = Number(trimmedCategory)
-    const parsedId = Number(trimmedId)
-
-    if (isNumber(parsedCategory) && isNumber(parsedId)) {
-      return {
-        prescribedItemId: parsedId,
-        medCardDrugCategory: parsedCategory,
-        medCardDrugId: input.medCardDrugId,
-      }
-    } else return null
+  async invalidatePermit(auth: Auth): Promise<PermitReturn | null> {
+    const data = await this.healthApi.deactivatePermit(auth)
+    return data != null ? { status: true } : null
   }
 
   /* Appointments */

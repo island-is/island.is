@@ -1,6 +1,6 @@
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -152,41 +152,64 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   return true
 }
 
-const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
-  // Check case type access
-  if (!isRequestCase(theCase.type)) {
-    return false
-  }
-
-  // Check case state access
-  if (
-    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
-      theCase.state,
-    )
-  ) {
-    return false
-  }
-
+const canAppealsCourtUserAccessAppealedCase = (theCase: Case): boolean => {
   // Check appeal state access
   if (
-    !theCase.appealState ||
+    !theCase.appealCase?.appealState ||
     ![
-      CaseAppealState.RECEIVED,
-      CaseAppealState.COMPLETED,
-      CaseAppealState.WITHDRAWN,
-    ].includes(theCase.appealState)
+      AppealCaseState.RECEIVED,
+      AppealCaseState.COMPLETED,
+      AppealCaseState.WITHDRAWN,
+    ].includes(theCase.appealCase.appealState)
   ) {
     return false
   }
 
   if (
-    theCase.appealState === CaseAppealState.WITHDRAWN &&
-    !theCase.appealReceivedByCourtDate
+    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+    !theCase.appealCase?.appealReceivedByCourtDate
   ) {
     return false
   }
 
   return true
+}
+
+const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
+  // Request cases
+  if (isRequestCase(theCase.type)) {
+    // Check case state access
+    if (
+      ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
+        theCase.state,
+      )
+    ) {
+      return false
+    }
+
+    return canAppealsCourtUserAccessAppealedCase(theCase)
+  }
+
+  // Indictment cases — only dismissed cases can be appealed
+  if (isIndictmentCase(theCase.type)) {
+    if (
+      theCase.state !== CaseState.COMPLETED &&
+      theCase.state !== CaseState.CORRECTING
+    ) {
+      return false
+    }
+
+    if (
+      theCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.DISMISSAL
+    ) {
+      return false
+    }
+
+    return canAppealsCourtUserAccessAppealedCase(theCase)
+  }
+
+  return false
 }
 
 const canPrisonStaffUserAccessCase = (

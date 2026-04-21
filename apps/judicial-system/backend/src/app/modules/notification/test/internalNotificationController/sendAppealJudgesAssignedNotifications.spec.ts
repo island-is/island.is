@@ -52,31 +52,33 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
           caseId,
           {
             id: caseId,
-            appealCaseNumber,
-            appealReceivedByCourtDate: receivedDate,
-            appealAssistant: {
-              name: assistant.name,
-              email: assistant.email,
-              role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-            },
-            appealJudge1: {
-              name: judge1.name,
-              email: judge1.email,
-              id: judge1.id,
-              role: UserRole.COURT_OF_APPEALS_JUDGE,
-            },
-            appealJudge1Id: judge1.id,
-            appealJudge2: {
-              name: judge2.name,
-              email: judge2.email,
-              id: judge2.id,
-              role: UserRole.COURT_OF_APPEALS_JUDGE,
-            },
-            appealJudge3: {
-              name: judge3.name,
-              email: judge3.email,
-              id: judge3.id,
-              role: UserRole.COURT_OF_APPEALS_JUDGE,
+            appealCase: {
+              appealCaseNumber,
+              appealReceivedByCourtDate: receivedDate,
+              appealAssistant: {
+                name: assistant.name,
+                email: assistant.email,
+                role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+              },
+              appealJudge1: {
+                name: judge1.name,
+                email: judge1.email,
+                id: judge1.id,
+                role: UserRole.COURT_OF_APPEALS_JUDGE,
+              },
+              appealJudge1Id: judge1.id,
+              appealJudge2: {
+                name: judge2.name,
+                email: judge2.email,
+                id: judge2.id,
+                role: UserRole.COURT_OF_APPEALS_JUDGE,
+              },
+              appealJudge3: {
+                name: judge3.name,
+                email: judge3.email,
+                id: judge3.id,
+                role: UserRole.COURT_OF_APPEALS_JUDGE,
+              },
             },
           } as Case,
           {

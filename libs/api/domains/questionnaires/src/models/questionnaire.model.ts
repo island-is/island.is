@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { Question, VisibilityCondition } from './question.model'
 import { QuestionnairesBaseItem } from './questionnaires.model'
 
@@ -28,13 +28,13 @@ export class QuestionnaireSubmissionDetail {
   @Field()
   id!: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
   @Field(() => Boolean, { nullable: true })
   isDraft?: boolean
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastUpdated?: Date
 }
 
@@ -59,12 +59,15 @@ export class QuestionnaireSection {
   dependsOn?: string[]
 }
 
-@ObjectType('Questionnaire')
+@ObjectType('QuestionnaireDetail')
 export class Questionnaire {
   @Field(() => QuestionnairesBaseItem)
   baseInformation!: QuestionnairesBaseItem
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
+  sender?: string
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expirationDate?: Date
 
   @Field(() => Boolean, { nullable: true })

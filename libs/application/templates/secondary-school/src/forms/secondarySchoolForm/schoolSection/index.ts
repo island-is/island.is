@@ -13,14 +13,19 @@ import {
   getAlertMessageConditionAddThirdSelection,
   getAlertMessageConditionSpecialNeedsProgram,
   getAlertMessageSpecialNeedsProgram,
+  getFallbackThirdLanguageOptions,
+  getConditionFallbackThirdLanguage,
   getConditionNordicLanguage,
+  getConditionProgramApplicationMessage,
   getConditionRequestDormitory,
   getConditionSecondProgram,
   getConditionThirdLanguage,
   getFormTitle,
   getIsClearableSecondProgram,
   getNordicLanguageOptions,
+  getProgramApplicationMessage,
   getRequestDormitoryOptions,
+  getRequireFallbackThirdLanguage,
   getRequireSecondProgram,
   getRequireThirdLanguage,
   getRowsLimitCount,
@@ -29,6 +34,7 @@ import {
   getUpdateOnSelectFirstProgram,
   getUpdateOnSelectSecondProgram,
   loadProgramOptions,
+  setOnChangeFallbackThirdLanguage,
   setOnChangeFirstProgram,
   setOnChangeNordicLanguage,
   setOnChangeSchool,
@@ -69,7 +75,7 @@ export const schoolSection = buildSection({
               options: (application) => getSchoolOptions(application),
               filterOptions: (options, answers, index) =>
                 filterSchoolOptions(options, answers, index),
-              clearOnChange: (index) => clearOnChangeSchool(index),
+              clearOnChange: (_) => clearOnChangeSchool(),
               setOnChange: async (option, application, index) =>
                 setOnChangeSchool(option, application, index),
             },
@@ -100,6 +106,24 @@ export const schoolSection = buildSection({
                   activeField,
                 ),
             },
+            firstProgramAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message: (application, _activeField, index, locale) =>
+                getProgramApplicationMessage(
+                  'firstProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+              condition: (application, _activeField, index, locale) =>
+                getConditionProgramApplicationMessage(
+                  'firstProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+            },
             'secondProgram.id': {
               component: 'selectAsync',
               label: school.selection.secondProgramLabel,
@@ -127,6 +151,24 @@ export const schoolSection = buildSection({
               setOnChange: async (option, _, index, activeField) =>
                 setOnChangeSecondProgram(option, index, activeField),
             },
+            secondProgramAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message: (application, _, index, locale) =>
+                getProgramApplicationMessage(
+                  'secondProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+              condition: (application, _, index, locale) =>
+                getConditionProgramApplicationMessage(
+                  'secondProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+            },
             'thirdLanguage.code': {
               component: 'select',
               label: school.selection.thirdLanguageLabel,
@@ -139,6 +181,24 @@ export const schoolSection = buildSection({
                 getThirdLanguageOptions(application, activeField),
               setOnChange: async (option, application, index, activeField) =>
                 setOnChangeThirdLanguage(
+                  option,
+                  application,
+                  index,
+                  activeField,
+                ),
+            },
+            'fallbackThirdLanguage.code': {
+              component: 'select',
+              label: school.selection.fallbackThirdLanguageLabel,
+              required: (_, activeField) =>
+                getRequireFallbackThirdLanguage(activeField),
+              isClearable: true,
+              condition: (application, activeField) =>
+                getConditionFallbackThirdLanguage(application, activeField),
+              options: (application, activeField) =>
+                getFallbackThirdLanguageOptions(application, activeField),
+              setOnChange: async (option, application, index, activeField) =>
+                setOnChangeFallbackThirdLanguage(
                   option,
                   application,
                   index,

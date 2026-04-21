@@ -20,8 +20,9 @@ export const handleServerError = (
       const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
       const message = `${formatMessage(title)}: ${formatMessage(summary)}`
       toast.error(message)
+      return
     }
-    return
+    // Fall through to show generic error message below
   }
 
   toast.error(

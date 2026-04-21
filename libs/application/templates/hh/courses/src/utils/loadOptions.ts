@@ -6,6 +6,7 @@ import type {
   QueryGetCourseByIdArgs,
   QueryGetCourseSelectOptionsArgs,
 } from '@island.is/api/schema'
+import { storageFactory } from '@island.is/shared/utils'
 import {
   InstitutionContentfulIds,
   type AsyncSelectContext,
@@ -15,10 +16,28 @@ import {
   GET_COURSE_SELECT_OPTIONS_QUERY,
 } from '../graphql'
 
-const instanceChargeItemCodeCache: Record<string, boolean> = {}
+const cache = storageFactory(() => localStorage)
 
-export const getInstanceHasChargeItemCode = (instanceId: string): boolean =>
-  instanceChargeItemCodeCache[instanceId] ?? false
+const creatChargeItemCodeCacheKey = (instanceId: string): string =>
+  `hhCourseInstanceChargeItemCode:${instanceId}`
+
+const createCourseListPageIdCacheKey = (courseId: string): string =>
+  `hhCourseListPageId:${courseId}`
+
+/**
+ * Checks if the course instance has a charge item code.
+ * @param instanceId - The id of the course instance.
+ * @returns true if the course instance has a charge item code or if we're unsure, false otherwise.
+ */
+export const doesCourseInstanceHaveChargeItemCode = (
+  instanceId: string | undefined | null,
+): boolean => {
+  if (!instanceId) return true
+  const cachedValue = cache.getItem(creatChargeItemCodeCacheKey(instanceId))
+  if (cachedValue === 'true') return true
+  if (cachedValue === 'false') return false
+  return true
+}
 
 export const loadCourseSelectOptions = async ({
   apolloClient,
@@ -42,6 +61,13 @@ export const loadCourseSelectOptions = async ({
   }))
 }
 
+export const getCachedCourseListPageId = (
+  courseId: string | undefined | null,
+): string | null => {
+  if (!courseId) return null
+  return cache.getItem(createCourseListPageIdCacheKey(courseId)) ?? null
+}
+
 export const loadDateSelectOptions = async ({
   apolloClient,
   selectedValues,
@@ -60,8 +86,18 @@ export const loadDateSelectOptions = async ({
   })
   if (!data?.getCourseById?.course) return []
 
+  if (data.getCourseById.course.courseListPageId) {
+    cache.setItem(
+      createCourseListPageIdCacheKey(courseId),
+      data.getCourseById.course.courseListPageId,
+    )
+  }
+
   for (const instance of data.getCourseById.course.instances)
-    instanceChargeItemCodeCache[instance.id] = Boolean(instance.chargeItemCode)
+    cache.setItem(
+      creatChargeItemCodeCacheKey(instance.id),
+      String(Boolean(instance.chargeItemCode)),
+    )
 
   return data.getCourseById.course.instances.map((instance) => {
     const formattedDate = format(parseISO(instance.startDate), 'd. MMMM yyyy', {
@@ -78,7 +114,9 @@ export const loadDateSelectOptions = async ({
 
     return {
       value: instance.id,
-      label: `${formattedDate} ${startDateTimeDuration}`,
+      label: `${formattedDate} ${startDateTimeDuration} ${
+        instance.displayedTitle ? `- ${instance.displayedTitle}` : ''
+      }`,
     }
   })
 }

@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl'
 import { Outlet } from 'react-router-dom'
 import { ControlContext } from '../../context/ControlContext'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
+import { NavbarSelectStatus } from '../../lib/utils/interfaces'
 
 type FormTabType = {
   id: 'settings' | 'step'
@@ -30,11 +31,14 @@ const FORM_TABS: FormTabType[] = [
 
 export const FormHeader = () => {
   const { formatMessage } = useIntl()
-  const { control, controlDispatch, setInSettings, inSettings } =
+  const { control, controlDispatch, setInSettings, inSettings, selectStatus } =
     useContext(ControlContext)
   const { sections } = control.form
 
+  const tabsLocked = selectStatus !== NavbarSelectStatus.OFF
+
   const onTabChange = (tabId: string) => {
+    if (tabsLocked) return
     if (tabId === 'settings') {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -62,7 +66,6 @@ export const FormHeader = () => {
       setInSettings(false)
     }
   }
-
   return (
     <Box>
       <Row>
@@ -78,6 +81,7 @@ export const FormHeader = () => {
               label="formTabs"
               tabs={FORM_TABS.map((tab) => ({
                 id: tab.id,
+                disabled: tabsLocked,
                 label: formatMessage(m[tab.id as keyof typeof m]),
                 content: <Outlet />,
               }))}

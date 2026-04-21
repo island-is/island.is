@@ -2,6 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
   CaseType,
+  isIndictmentCase,
   isPrisonAdminUser,
   User,
   UserRole,
@@ -57,10 +58,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'penalties',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
-  'indictmentReviewerId',
-  'publicProsecutorIsRegisteredInPoliceSystem',
-]
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
@@ -101,7 +99,6 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'rulingModifiedHistory',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
-  'indictmentReturnedExplanation',
   'postponedIndefinitelyExplanation',
   'indictmentRulingDecision',
   'indictmentDecision',
@@ -109,6 +106,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'mergeCaseId',
   'mergeCaseNumber',
   'isCompletedWithoutRuling',
+  'defendantEventLogDecisions',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -201,12 +199,7 @@ export const defenderUpdateRule: RolesRule = {
 export const prisonSystemAdminUpdateRule: RolesRule = {
   role: UserRole.PRISON_SYSTEM_STAFF,
   type: RulesType.FIELD,
-  dtoFields: [
-    'isRegisteredInPrisonSystem',
-    'caseModifiedExplanation',
-    'isolationToDate',
-    'validToDate',
-  ],
+  dtoFields: ['caseModifiedExplanation', 'isolationToDate', 'validToDate'],
   canActivate(request) {
     const user: User = request.user?.currentUser
     // Deny if something is missing or if the user is not a prison admin
@@ -283,19 +276,28 @@ export const defenderTransitionRule: RolesRule = {
   dtoFieldValues: [CaseTransition.APPEAL, CaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => {
     const dto: TransitionCaseDto = request.body
+    const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     // Deny if something is missing - should never happen
-    if (!dto || !theCase) {
+    if (!dto || !user || !theCase) {
       return false
     }
 
     // Deny withdrawal if defender did not appeal the case
-    if (
-      dto.transition === CaseTransition.WITHDRAW_APPEAL &&
-      !theCase.accusedPostponedAppealDate
-    ) {
-      return false
+    if (dto.transition === CaseTransition.WITHDRAW_APPEAL) {
+      if (!theCase.accusedPostponedAppealDate) {
+        return false
+      }
+
+      // For indictment cases, only the specific defender who appealed can withdraw
+      if (
+        isIndictmentCase(theCase.type) &&
+        (!theCase.appealCase?.appealedByNationalId ||
+          theCase.appealCase?.appealedByNationalId !== user.nationalId)
+      ) {
+        return false
+      }
     }
 
     return true
@@ -309,7 +311,6 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.RECEIVE,
-    CaseTransition.RETURN_INDICTMENT,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
     CaseTransition.DISMISS,

@@ -1,81 +1,17 @@
-import { InferAttributes } from 'sequelize'
-
-import { Logger } from '@island.is/logging'
-
 import {
   CardPaymentSuccessResponse,
   PaymentTrackingData,
-  RefundSuccessResponse,
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentMethod } from '../../types/payment'
-import {
-  ContextWithStepResults,
-  Orchestrator,
-  SagaDefinition,
-} from '../../utils/orchestrator'
-import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { SagaDefinition } from '../../utils/orchestrator'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import {
-  ApplePayChargeInput,
-  ChargeCardInput,
-  RefundCardPaymentInput,
-} from './dtos'
+import { PaymentContext } from '../refund/refund.orchestrator'
+import { ApplePayChargeInput, ChargeCardInput } from './dtos'
 
-// Generic context that all card payment contexts must extend
-export interface PaymentContext<TStepResults extends object>
-  extends ContextWithStepResults<TStepResults> {
-  paymentFlowId: string
-  paymentMethod: PaymentMethod
-}
-
-// Generic Payment Orchestrator that can be used for card payments
-export class PaymentOrchestrator<
-  TContext extends PaymentContext<TStepResults>,
-  TStepResults extends object = Record<string, unknown>,
-> {
-  private orchestrator: Orchestrator<TContext, TStepResults>
-  private paymentFlowService: PaymentFlowService
-
-  constructor(logger: Logger, paymentFlowService: PaymentFlowService) {
-    this.paymentFlowService = paymentFlowService
-    this.orchestrator = new Orchestrator({
-      logger,
-      stepTimeoutMs: 60_000, // 60 seconds
-      onRollbackFailure: async (step, error, context, executionHistory) => {
-        // Log critical rollback failure to payment flow service
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId: context.paymentFlowId,
-          type: 'error',
-          occurredAt: new Date(),
-          paymentMethod: context.paymentMethod,
-          reason: 'other',
-          message: `CRITICAL: Failed to rollback step ${step.name}: ${error.message}`,
-          metadata: {
-            failedStep: step.name,
-            rollbackError: error.message,
-            originalError: context.error?.message,
-            executionHistory: executionHistory.map((e) => ({
-              type: e.type,
-              step: e.step,
-              timestamp: e.timestamp,
-            })),
-          },
-        })
-      },
-    })
-  }
-
-  async execute(
-    saga: SagaDefinition<TContext, TStepResults>,
-    context: TContext,
-    startStep?: string,
-  ) {
-    return this.orchestrator.execute(saga, context, startStep)
-  }
-}
+export {
+  PaymentOrchestrator,
+  PaymentContext,
+} from '../refund/refund.orchestrator'
 
 // Card payment types
 export type CardPaymentSagaDefinition = SagaDefinition<
@@ -125,34 +61,4 @@ export interface ApplePayPaymentContext
   extends PaymentContext<ApplePayPaymentStepResults> {
   input: ApplePayChargeInput
   trackingData: PaymentTrackingData
-}
-
-// Refund types
-export type RefundSagaDefinition = SagaDefinition<
-  RefundContext,
-  RefundStepResults
->
-
-export interface RefundStepResults {
-  VALIDATE_REFUND: {
-    paymentFulfillment: {
-      id: string
-      paymentFlowId: string
-      confirmationRefId: string
-      fjsChargeId?: string | null
-    }
-    cardPaymentConfirmation: InferAttributes<CardPaymentDetails>
-    hasFjsCharge: boolean
-  }
-  DELETE_FJS_CHARGE: { action: 'deleted_fjs' }
-  REFUND_PAYMENT: { action: 'refunded'; refundResult: RefundSuccessResponse }
-  DELETE_CARD_PAYMENT_CONFIRMATION: {
-    deletedPaymentConfirmation: InferAttributes<CardPaymentDetails> | null
-    deletedPaymentFulfillment: InferAttributes<PaymentFulfillment> | null
-  }
-  LOG_REFUND_SUCCESS: void
-}
-
-export interface RefundContext extends PaymentContext<RefundStepResults> {
-  input: RefundCardPaymentInput
 }

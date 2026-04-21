@@ -9,6 +9,7 @@ import {
   Icon,
   SkeletonLoader,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -37,6 +38,8 @@ import Greeting from '../../components/Greeting/Greeting'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import * as styles from './Dashboard.css'
+
+import { m as coreMessages } from '@island.is/portals/core'
 
 export const Dashboard = () => {
   const userInfo = useUserInfo()
@@ -69,11 +72,32 @@ export const Dashboard = () => {
     a && a.dispatchEvent(new Event('click'))
   }
 
+  const getDisabledReasonText = (reason: string, moduleName: string) => {
+    switch (reason) {
+      case 'default':
+        return formatMessage(coreMessages.disabledReasonDefault, {
+          moduleName,
+        })
+      case 'notAvailableForActors':
+        return formatMessage(coreMessages.disabledReasonNotAvailableForActors, {
+          moduleName,
+        })
+      case 'notMinor':
+        return formatMessage(coreMessages.disabledReasonNotMinor, {
+          moduleName,
+        })
+      default:
+        return formatMessage(coreMessages.disabledReasonDefault, {
+          moduleName,
+        })
+    }
+  }
+
   const displayCards = () => {
     // eslint-disable-next-line no-lone-blocks
     {
       return navigation?.children
-        ?.filter((item) => !item.navHide)
+        ?.filter((item) => !item.navHide || item.customShortcut)
         .map(
           (navRoot, index) =>
             navRoot.path !== ServicePortalPaths.Root &&
@@ -97,13 +121,22 @@ export const Dashboard = () => {
                   {navRoot.path && (
                     <>
                       {navRoot.enabled === false && (
-                        <Icon
-                          color="blue600"
-                          type="outline"
-                          icon="lockClosed"
-                          size="small"
-                          className={styles.lock}
-                        />
+                        <Tooltip
+                          placement="top"
+                          text={getDisabledReasonText(
+                            navRoot.disabledReason ?? 'default',
+                            formatMessage(navRoot.name),
+                          )}
+                        >
+                          <span className={styles.lock}>
+                            <Icon
+                              color="blue600"
+                              type="outline"
+                              icon="lockClosed"
+                              size="small"
+                            />
+                          </span>
+                        </Tooltip>
                       )}
 
                       {navRoot.subscribesTo === 'documents' && (
@@ -138,9 +171,13 @@ export const Dashboard = () => {
                             ) : undefined)
                           )
                         }
-                        heading={formatMessage(navRoot.name)}
+                        heading={formatMessage(
+                          navRoot.customShortcut?.name ?? navRoot.name,
+                        )}
                         text={
-                          navRoot.description
+                          navRoot.customShortcut?.description
+                            ? formatMessage(navRoot.customShortcut.description)
+                            : navRoot.description
                             ? formatMessage(navRoot.description)
                             : formatMessage(navRoot.name)
                         }

@@ -26,7 +26,7 @@ export const requestRightsValidationSection = (
   if (
     requestRightsObj.isRequestingRights === YES &&
     hasMultipleBirths === YES &&
-    multipleBirthsRequestDays * 1 !==
+    multipleBirthsRequestDays * 1 >
       getMaxMultipleBirthsDays(application.answers) &&
     selectedChild?.parentalRelation === ParentalRelations.primary
   ) {

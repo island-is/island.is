@@ -25,8 +25,10 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCaseNumber,
-    appealReceivedByCourtDate,
+    appealCase: {
+      appealCaseNumber,
+      appealReceivedByCourtDate,
+    },
   } as Case
 
   let mockCourtService: CourtService

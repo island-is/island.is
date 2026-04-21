@@ -143,4 +143,9 @@ export interface SendSmsOptions {
    * @default 'Island.is'
    */
   from?: string
+  /**
+   * SMS payer identifier — selects payer-specific Nova credentials from
+   * `payerCredentials` config and is automatically tagged on delivery metrics.
+   */
+  payer?: string
 }

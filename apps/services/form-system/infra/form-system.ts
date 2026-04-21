@@ -1,14 +1,24 @@
 import {
   CodeOwners,
+  json,
+  ref,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { Base, Client } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  ChargeFjsV2,
+  Client,
+  NationalRegistryB2C,
+  Payment,
+} from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
 const workerName = `${serviceName}-worker`
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+export const serviceSetup = (services: {
+  paymentsApi: ServiceBuilder<'services-payments'>
+}): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
@@ -35,6 +45,37 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'island-is-staging-form-system-presign-bucket',
         prod: 'island-is-prod-form-system-presign-bucket',
       },
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      CLIENT_LOCATION_ORIGIN: {
+        dev: 'https://beta.dev01.devland.is/form',
+        staging: 'https://beta.staging01.devland.is/form',
+        prod: 'https://island.is/form',
+        local: 'http://localhost:4200/form',
+      },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${serviceName}.${
+            ctx.featureDeploymentName
+              ? `${ctx.featureDeploymentName}`
+              : serviceName
+          }.svc.cluster.local`,
+      ),
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -48,12 +89,14 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client)
+    .xroad(Base, Client, NationalRegistryB2C, ChargeFjsV2, Payment)
     .ingress({
       primary: {
         host: {
@@ -67,7 +110,11 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('islandis', 'nginx-ingress-external')
+    .grantNamespaces(
+      'islandis',
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+    )
 
 export const workerSetup = (): ServiceBuilder<typeof workerName> =>
   service(workerName)

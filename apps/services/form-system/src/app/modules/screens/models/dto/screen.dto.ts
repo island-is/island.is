@@ -44,7 +44,11 @@ export class ScreenDto {
 
   @ApiProperty()
   @IsNumber()
-  multiset!: number
+  multiMax!: number
+
+  @ApiProperty()
+  @IsBoolean()
+  isMulti!: boolean
 
   @ApiProperty()
   @IsBoolean()

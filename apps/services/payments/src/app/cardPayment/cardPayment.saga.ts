@@ -51,10 +51,11 @@ export const createCardPaymentSaga = (
     name: 'CHARGE_CARD',
     description: 'Charge the card',
     execute: async (ctx) => {
-      logger.info(
-        `[${ctx.paymentFlowId}][CARD_PAYMENT] Starting payment with correlation id ${ctx.trackingData.correlationId}`,
-      )
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
+
+      logger.info(
+        `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging card`,
+      )
 
       const paymentResult = await cardPaymentService.charge({
         chargeCardInput: ctx.input,
@@ -69,7 +70,7 @@ export const createCardPaymentSaga = (
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
 
       logger.info(
-        `[${ctx.paymentFlowId}][CARD_PAYMENT] Attempting to refund payment with correlation id ${ctx.trackingData.correlationId}`,
+        `[${ctx.paymentFlowId}] Refunding payment (correlationId: ${ctx.trackingData.correlationId})`,
       )
 
       try {

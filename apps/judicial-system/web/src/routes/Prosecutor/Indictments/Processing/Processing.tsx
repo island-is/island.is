@@ -225,12 +225,12 @@ const Processing: FC = () => {
           <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.defendantPlea, {
-                defendantCount: workingCase.defendants.length,
+                defendantCount: workingCase.defendants?.length ?? 0,
               })}
               heading="h2"
               tooltip="Hægt er að velja afstöðu sakbornings til að flýta fyrir úthlutun máls"
             />
-            {workingCase.defendants.map((defendant) => (
+            {workingCase.defendants?.map((defendant) => (
               <Box marginBottom={2} key={defendant.id}>
                 <BlueBox>
                   <SectionHeading

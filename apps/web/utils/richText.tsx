@@ -58,6 +58,7 @@ import {
   TeamListSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
+  VerAnnouncementCalculator,
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
@@ -91,11 +92,13 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
+import { ComplaintsCommitteeRulings } from '../components/connected/ComplaintsCommitteeRulings'
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
@@ -248,6 +251,15 @@ export const webRenderConnectedComponent = (
       break
     case 'LatestVerdicts':
       connectedComponent = <LatestVerdicts slice={slice} />
+      break
+    case 'Landsrettur/AfryjudMal':
+      connectedComponent = <LandsretturCourtOfAppealAppeals slice={slice} />
+      break
+    case 'KVTH/Rulings':
+      connectedComponent = <ComplaintsCommitteeRulings slice={slice} />
+      break
+    case 'VERAnnouncementCalculator':
+      connectedComponent = <VerAnnouncementCalculator />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

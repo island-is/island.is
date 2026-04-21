@@ -78,4 +78,31 @@ export class FieldSettingsInput {
 
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isPhoneRequired?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isEmailRequired?: boolean
+
+  @Field(() => String, { nullable: true })
+  chargeItemCode?: string
+
+  @Field(() => String, { nullable: true })
+  chargeItemName?: string
+
+  @Field(() => String, { nullable: true })
+  chargeType?: string
+
+  @Field(() => String, { nullable: true })
+  performingOrgID?: string
+
+  @Field(() => Int, { nullable: true })
+  priceAmount?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isDropdown?: boolean
+
+  @Field(() => String, { nullable: true })
+  paymentQuantityId?: string
 }

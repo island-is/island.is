@@ -3,7 +3,7 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { Municipality, User } from '@island.is/financial-aid/shared/lib'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
@@ -23,7 +23,7 @@ interface PageProps {
 export const AdminContext = createContext<AdminProvider>({ municipality: [] })
 
 const AdminProvider = ({ children }: PageProps) => {
-  const [session] = useSession()
+  const { data: session } = useSession()
   const logOut = useLogOut()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(

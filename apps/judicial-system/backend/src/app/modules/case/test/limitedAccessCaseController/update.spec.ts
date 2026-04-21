@@ -52,7 +52,7 @@ describe('LimitedAccessCaseController - Update', () => {
   const updateDto = { defendantStatementDate: new Date() }
   const updatedCase = {
     ...theCase,
-    defendantStatementDate: date,
+    appealCase: { defendantStatementDate: date },
     caseFiles,
   } as Case
 

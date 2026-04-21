@@ -1,4 +1,4 @@
-import { Provider } from 'next-auth/client'
+import { SessionProvider } from 'next-auth/react'
 import App from 'next/app'
 import React from 'react'
 
@@ -8,12 +8,13 @@ class AuthAdminWebApp extends App {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <Provider
+      <SessionProvider
         session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: `/admin/api/auth` }}
+        basePath="/admin/api/auth"
+        refetchInterval={120}
       >
         <Component {...pageProps} />
-      </Provider>
+      </SessionProvider>
     )
   }
 }

@@ -1,14 +1,13 @@
 import { FormSystemFieldSettings } from '@island.is/api/schema'
 import {
   Box,
+  Checkbox,
   GridColumn,
   GridRow,
-  Text,
-  Checkbox,
   Input,
 } from '@island.is/island-ui/core'
-import { ControlContext } from '../../../../../../context/ControlContext'
 import { useContext } from 'react'
+import { ControlContext } from '../../../../../../context/ControlContext'
 
 interface Props {
   fieldSettings: FormSystemFieldSettings
@@ -17,6 +16,7 @@ interface Props {
 export const ZendeskSettings = ({ fieldSettings }: Props) => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
+  const { isReadOnly } = control
 
   return (
     <Box marginTop={2}>
@@ -25,6 +25,7 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
           <Checkbox
             checked={fieldSettings?.zendeskIsCustomField ?? false}
             label="Zendesk reitur"
+            disabled={isReadOnly}
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_ZENDESK_FIELD_SETTINGS',
@@ -51,6 +52,7 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
               <Input
                 name="custom-field-id"
                 placeholder="Zendesk field id"
+                readOnly={isReadOnly}
                 value={fieldSettings?.zendeskCustomFieldId ?? ''}
                 onChange={(e) =>
                   controlDispatch({

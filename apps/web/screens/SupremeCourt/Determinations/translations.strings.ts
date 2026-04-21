@@ -9,6 +9,11 @@ export const m = {
     },
   }),
   detailsPage: defineMessages({
+    resolutionLink: {
+      id: 'web.supremeCourt.determinations:detailsPage.resolutionLink',
+      defaultMessage: 'Úrlausn Landsréttar / Héraðsdóms',
+      description: 'Texti á "Úrlausn Landsréttar / Héraðsdóms" hnapp',
+    },
     caseNumberPrefix: {
       id: 'web.supremeCourt.determinations:detailsPage.caseNumberPrefix',
       defaultMessage: 'Mál nr.',

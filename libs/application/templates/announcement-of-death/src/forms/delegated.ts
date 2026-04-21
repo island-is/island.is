@@ -6,7 +6,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
-import AOD from '../assets/AOD'
+import { GhostOnABench } from '@island.is/application/assets/graphics'
 
 export const delegated: Form = buildForm({
   id: 'delegated',
@@ -22,7 +22,7 @@ export const delegated: Form = buildForm({
       children: [
         buildImageField({
           id: 'completeStepImage',
-          image: AOD,
+          image: GhostOnABench,
           imagePosition: 'center',
         }),
       ],

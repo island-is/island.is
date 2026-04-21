@@ -26,8 +26,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -37,7 +37,7 @@ import useCase from '../useCase'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
-  // The id of the case that's about to be opened
+  // The case and row (defendant ids) that's about to be opened - used for loading state only
   const [clickedCase, setClickedCase] = useState<{
     id: string | null
     defendantIds?: string[] | null
@@ -50,11 +50,7 @@ const useCaseList = () => {
   const router = useRouter()
 
   const openCase = useCallback(
-    (
-      caseToOpen: Case,
-      openCaseInNewTab?: boolean,
-      defendantIds?: string[] | null,
-    ) => {
+    (caseToOpen: Case, openCaseInNewTab?: boolean) => {
       let routeTo = null
 
       if (isDefenceUser(user)) {
@@ -68,7 +64,7 @@ const useCaseList = () => {
         routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
         // Court of appeals users can only see appealed request cases
-        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+        if (caseToOpen.appealCase?.appealState === AppealCaseState.COMPLETED) {
           routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
           routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
@@ -143,17 +139,7 @@ const useCaseList = () => {
         }
       }
 
-      const path = `${routeTo}/${caseToOpen.id}`
-      const isPrisonClosedIndictment =
-        routeTo === constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      const singleDefendantId =
-        isPrisonClosedIndictment && defendantIds?.length === 1
-          ? defendantIds[0]
-          : undefined
-      const url =
-        singleDefendantId != null
-          ? `${path}?defendantId=${encodeURIComponent(singleDefendantId)}`
-          : path
+      const url = `${routeTo}/${caseToOpen.id}`
 
       if (!routeTo) {
         return
@@ -198,7 +184,7 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => openCase(caseData, openInNewTab, defendantIds),
+          (caseData) => openCase(caseData, openInNewTab),
           () => {
             setClickedCase((prev) => {
               if (

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common'
 import { DraftImpact } from '@island.is/regulations/admin'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -37,7 +37,7 @@ import { DraftImpactModel } from './models/draftImpacts.model'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(AdminPortalScope.regulationAdmin)
+@Scopes(AdminPortalScope.regulationAdmin, ApiScope.ojoiAdverts)
 @Controller('api')
 @ApiTags('draft_regulations')
 @Audit({ namespace })

@@ -1,7 +1,7 @@
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
 import { FieldTypesEnum } from './enums'
 
-type FieldTypeMapping = {
+export type FieldTypeMapping = {
   [FieldTypesEnum.TEXTBOX]: {
     text?: FormSystemValue['text']
   }
@@ -47,7 +47,6 @@ type FieldTypeMapping = {
   }
   [FieldTypesEnum.FILE]: {
     s3Key?: FormSystemValue['s3Key']
-    s3Url?: FormSystemValue['s3Url']
   }
   [FieldTypesEnum.NUMBERBOX]: {
     number?: FormSystemValue['number']
@@ -66,9 +65,12 @@ type FieldTypeMapping = {
     name?: FormSystemValue['name']
     nationalId?: FormSystemValue['nationalId']
   }
+  [FieldTypesEnum.PAYMENT_QUANTITY]: {
+    number?: FormSystemValue['number']
+  }
 }
 
-const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
+export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
   fieldType: T,
 ): FieldTypeMapping[T] => {
   switch (fieldType) {
@@ -87,7 +89,7 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
     case FieldTypesEnum.DATE_PICKER:
       return { date: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.CHECKBOX:
-      return { checkboxValue: undefined } as FieldTypeMapping[T]
+      return { checkboxValue: null } as FieldTypeMapping[T]
     case FieldTypesEnum.RADIO_BUTTONS:
       return { listValue: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.DROPDOWN_LIST:
@@ -104,7 +106,7 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
         postalCode: undefined,
       } as FieldTypeMapping[T]
     case FieldTypesEnum.FILE:
-      return { s3Key: undefined, s3Url: undefined } as FieldTypeMapping[T]
+      return { s3Key: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.NUMBERBOX:
       return { number: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.PAYER:
@@ -115,6 +117,8 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
       return { iskNumber: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.APPLICANT:
       return { name: undefined, nationalId: undefined } as FieldTypeMapping[T]
+    case FieldTypesEnum.PAYMENT_QUANTITY:
+      return { number: undefined } as FieldTypeMapping[T]
     default:
       throw new Error(`Field type ${fieldType} not supported`)
   }
@@ -134,9 +138,20 @@ export const initializeField = (field: FormSystemField): FormSystemField => {
   const defaultJson = getInitialJsonForField(
     field.fieldType as keyof FieldTypeMapping,
   )
-  const existingValue = (field.values && field.values[0]) || {}
-  const cleanedJson = removeNullProperties(existingValue.json || {})
-  const mergedJson = { ...defaultJson, ...cleanedJson }
-  const updatedValue = { ...existingValue, json: mergedJson }
-  return { ...field, values: [updatedValue] }
+
+  const existingValues = (field.values ?? []).filter(
+    (v): v is NonNullable<typeof v> => v != null,
+  )
+
+  const baseValues = existingValues.length ? existingValues : [{}]
+
+  const updatedValues = baseValues.map((value) => {
+    const cleanedJson = removeNullProperties(value.json || {})
+    return {
+      ...value,
+      json: { ...defaultJson, ...cleanedJson },
+    }
+  })
+
+  return { ...field, values: updatedValues }
 }

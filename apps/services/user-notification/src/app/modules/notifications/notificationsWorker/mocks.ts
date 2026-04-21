@@ -10,6 +10,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { DECEASED_STATUS } from './helpers'
 
 import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
@@ -138,6 +139,19 @@ export const companyUser: MockUserProfileDto = {
   smsNotifications: true,
 }
 
+export const deceasedUser: MockUserProfileDto = {
+  name: 'deceasedUser',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'deceased@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+}
+
 export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
@@ -148,6 +162,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl = 'https://island.is/minarsidur/postholf',
   args = ['arg1', 'arg2'],
   scope = '@island.is/documents',
+  smsPayer = 'Landlæknir',
+  smsDelivery = 'OPT_IN',
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -156,6 +172,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl,
   args,
   scope,
+  smsPayer,
+  smsDelivery,
 })
 
 export const userProfiles = [
@@ -168,6 +186,7 @@ export const userProfiles = [
   userWithSendToDelegationsFeatureFlagDisabled,
   userWithNoEmail,
   companyUser,
+  deceasedUser,
 ]
 
 // Delegations keyed by nationalId and scope
@@ -239,12 +258,30 @@ export class MockDelegationsService {
       for (const scope of scopeArray) {
         const scopeKey = `${xQueryNationalId}:${scope}`
         if (delegationsByScope[scopeKey]) {
-          return { data: delegationsByScope[scopeKey] }
+          return {
+            data: delegationsByScope[scopeKey],
+            totalCount: delegationsByScope[scopeKey].length,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }
         }
       }
     }
     // Fallback to delegations without scope filtering
-    return { data: delegationsByScope[xQueryNationalId] ?? [] }
+    return {
+      data: delegationsByScope[xQueryNationalId] ?? [],
+      totalCount: delegationsByScope[xQueryNationalId]?.length ?? 0,
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: '',
+        endCursor: '',
+      },
+    }
   }
 }
 
@@ -279,6 +316,13 @@ export class MockNationalRegistryV3ClientService {
       fulltNafn: user?.name ?? mockFullName,
       birtNafn: user?.name ?? mockBirtNafn,
     }
+  }
+
+  getAllDataIndividual(nationalId: string) {
+    if (nationalId === deceasedUser.nationalId) {
+      return Promise.resolve({ afdrif: DECEASED_STATUS })
+    }
+    return Promise.resolve(null)
   }
 }
 

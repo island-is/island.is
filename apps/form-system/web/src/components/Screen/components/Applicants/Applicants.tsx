@@ -5,14 +5,10 @@ import {
   ApplicantTypesEnum,
   getValue,
   IndividualApplicant,
-  m,
-  NationalIdField,
+  LegalEntity,
 } from '@island.is/form-system/ui'
-import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
@@ -27,53 +23,13 @@ const individuals: ApplicantTypesEnum[] = [
   ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
 ]
 
-// This needs to be reworked!!!!
-const getNationalId = (
-  userNationalId: string,
-  actor: string | undefined,
-  applicantType: ApplicantTypesEnum,
-) => {
-  if (applicantType === ApplicantTypesEnum.INDIVIDUAL) {
-    return actor ? actor : userNationalId
-  }
-  if (applicantType === ApplicantTypesEnum.LEGAL_ENTITY) {
-    return userNationalId
-  }
-  if (
-    applicantType ===
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL
-  ) {
-    return actor ?? ''
-  }
-  if (
-    applicantType ===
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
-  ) {
-    return actor ?? ''
-  }
-  if (applicantType === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION) {
-    return actor ?? ''
-  }
-  if (applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER) {
-    return userNationalId
-  }
-
-  return actor ?? userNationalId
-}
-
 export const Applicants = ({ applicantField }: Props) => {
   const { dispatch } = useApplicationContext()
-  const { formatMessage, lang } = useLocale()
-  const userInfo = useUserInfo()
   const { applicantType } = applicantField.fieldSettings ?? {}
   const isLegalEntity =
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY ||
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
-  const nationalId = getNationalId(
-    userInfo?.profile?.nationalId,
-    userInfo?.profile?.actor?.nationalId,
-    applicantType as ApplicantTypesEnum,
-  )
+  const nationalId = applicantField.values?.[0]?.json?.nationalId ?? ''
 
   const hasEmail =
     getValue(applicantField, 'email') &&
@@ -82,25 +38,70 @@ export const Applicants = ({ applicantField }: Props) => {
     getValue(applicantField, 'phoneNumber') &&
     getValue(applicantField, 'phoneNumber') !== ''
 
-  useQuery(USER_PROFILE, {
-    fetchPolicy: 'cache-first',
-    skip: hasEmail && hasPhoneNumber,
-    onCompleted: (data) => {
-      const { mobilePhoneNumber, email } = data.getUserProfile
-      if (mobilePhoneNumber && !hasPhoneNumber) {
-        dispatch({
-          type: 'SET_PHONE_NUMBER',
-          payload: { id: applicantField.id, value: mobilePhoneNumber },
-        })
-      }
-      if (email && !hasEmail) {
-        dispatch({
-          type: 'SET_EMAIL',
-          payload: { id: applicantField.id, value: email },
-        })
-      }
+  // Ensures we only hydrate from USER_PROFILE once (so clearing the field later won't re-populate)
+  const [didHydrateFromProfile, setDidHydrateFromProfile] = useState(false)
+
+  // Reset when switching to a different applicant field
+  useEffect(() => {
+    setDidHydrateFromProfile(false)
+  }, [applicantField.id])
+
+  // If both values already exist, permanently disable hydration for this applicant
+  useEffect(() => {
+    if (!didHydrateFromProfile && hasEmail && hasPhoneNumber) {
+      setDidHydrateFromProfile(true)
+    }
+  }, [didHydrateFromProfile, hasEmail, hasPhoneNumber])
+
+  const { data: userProfileData, error: userProfileError } = useQuery(
+    USER_PROFILE,
+    {
+      fetchPolicy: 'cache-first',
+      skip: didHydrateFromProfile || (hasEmail && hasPhoneNumber),
     },
-  })
+  )
+
+  useEffect(() => {
+    if (didHydrateFromProfile) return
+
+    if (userProfileError) {
+      setDidHydrateFromProfile(true)
+      return
+    }
+
+    const profile = userProfileData?.getUserProfile
+    if (!profile) return
+
+    const currentHasEmail =
+      getValue(applicantField, 'email') &&
+      getValue(applicantField, 'email') !== ''
+    const currentHasPhoneNumber =
+      getValue(applicantField, 'phoneNumber') &&
+      getValue(applicantField, 'phoneNumber') !== ''
+
+    const { mobilePhoneNumber, email } = profile
+
+    if (mobilePhoneNumber && !currentHasPhoneNumber) {
+      dispatch({
+        type: 'SET_PHONE_NUMBER',
+        payload: { id: applicantField.id, value: mobilePhoneNumber },
+      })
+    }
+    if (email && !currentHasEmail) {
+      dispatch({
+        type: 'SET_EMAIL',
+        payload: { id: applicantField.id, value: email },
+      })
+    }
+
+    setDidHydrateFromProfile(true)
+  }, [
+    didHydrateFromProfile,
+    userProfileData,
+    userProfileError,
+    applicantField,
+    dispatch,
+  ])
 
   useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId } },
@@ -147,33 +148,7 @@ export const Applicants = ({ applicantField }: Props) => {
         />
       )}
       {isLegalEntity && (
-        <Box marginTop={4}>
-          <Text variant="h2" as="h2" marginBottom={3}>
-            {applicantField?.name?.[lang]}
-          </Text>
-          <Stack space={2}>
-            <NationalIdField
-              disabled={false}
-              legalEntity
-              nationalId={nationalId}
-              name={getValue(applicantField, 'name')}
-            />
-            <Input
-              label={formatMessage(m.address)}
-              name="address"
-              placeholder={formatMessage(m.address)}
-              backgroundColor="white"
-              value={getValue(applicantField, 'address') || ''}
-            />
-            <Input
-              label={formatMessage(m.postalCode)}
-              name="postalCode"
-              placeholder={formatMessage(m.postalCode)}
-              backgroundColor="white"
-              value={getValue(applicantField, 'postalCode') || ''}
-            />
-          </Stack>
-        </Box>
+        <LegalEntity applicant={applicantField} nationalId={nationalId} />
       )}
     </>
   )

@@ -31,14 +31,14 @@ import {
   defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
-import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { CurrentDefendant, SplitDefendantExistsGuard } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 
-@Controller([
+@Controller(
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
-])
+)
 @ApiTags('limited access subpoenas')
 @UseGuards(
   JwtAuthUserGuard,
@@ -46,7 +46,7 @@ import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
   RolesGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
-  DefendantExistsGuard,
+  SplitDefendantExistsGuard,
   SubpoenaExistsGuard,
 )
 export class LimitedAccessSubpoenaController {

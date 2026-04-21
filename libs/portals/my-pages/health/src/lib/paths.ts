@@ -69,12 +69,12 @@ export enum HealthPaths {
   HealthQuestionnaires = '/heilsa/spurningalistar',
   HealthQuestionnairesDetail = '/heilsa/spurningalistar/:org/:id',
   HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:org/:id/svara',
-  HealthQuestionnairesAnswered = '/heilsa/spurningalistar/:org/:id/skoda-svor/:submissionId?',
+  HealthQuestionnairesAnswered = '/heilsa/spurningalistar/:org/:id/skoda-svor/:submissionId',
 
   HealthPatientData = '/heilsa/sjukraskra',
   HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',
   HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
-  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/:id',
+  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/heimild',
   HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
 
   HealthAppointments = '/heilsa/timabokanir',

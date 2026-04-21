@@ -46,14 +46,22 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, courtService, internalCaseController } =
-      await createTestingCaseModule()
+    const {
+      awsS3Service,
+      policeDigitalCaseFileRepositoryService,
+      courtService,
+      internalCaseController,
+    } = await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
+
+    const mockFindAll =
+      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
 
     const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
     mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
@@ -101,6 +109,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
         theCase,
         policeCaseNumber,
         [],
+        expect.any(Array),
         expect.any(Function),
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(

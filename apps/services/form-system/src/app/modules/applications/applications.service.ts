@@ -1,56 +1,67 @@
+import { User } from '@island.is/auth-nest-tools'
+import {
+  ApplicantTypesEnum,
+  ApplicationEvents,
+  ApplicationStatus,
+  FieldTypesEnum,
+  FormStatus,
+  NotificationCommands,
+  SectionTypes,
+} from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Locale } from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import * as kennitala from 'kennitala'
+import { Op, QueryTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
-import { Application } from './models/application.model'
-import { ApplicationDto } from './models/dto/application.dto'
-import { Form } from '../forms/models/form.model'
-import { Section } from '../sections/models/section.model'
-import { ListItem } from '../listItems/models/listItem.model'
-import { Field } from '../fields/models/field.model'
-import { Screen } from '../screens/models/screen.model'
-import { ApplicationMapper } from './models/application.mapper'
-import { Value } from './models/value.model'
+import { calculatePruneAt } from '../../../utils/calculatePruneAt'
+import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
+import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import {
-  ApplicationStatus,
-  ApplicationEvents,
-  FieldTypesEnum,
-  ApplicantTypesEnum,
-  NotificationCommands,
-} from '@island.is/form-system/shared'
-import { Organization } from '../organizations/models/organization.model'
-import { ServiceManager } from '../services/service.manager'
-import { ApplicationEvent } from './models/applicationEvent.model'
-import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { User } from '@island.is/auth-nest-tools'
+import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
-import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { Form } from '../forms/models/form.model'
+import { ListItem } from '../listItems/models/listItem.model'
+import { Organization } from '../organizations/models/organization.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { Option } from '../../dataTypes/option.model'
-import { FormStatus } from '@island.is/form-system/shared'
-import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import { SectionTypes } from '@island.is/form-system/shared'
-import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
-import { AuthDelegationType } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
-import type { Locale } from '@island.is/shared/types'
-import { calculatePruneAt } from '../../../utils/calculatePruneAt'
+import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
-import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
-import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { Section } from '../sections/models/section.model'
 import { NotifyService } from '../services/notify.service'
+import { ServiceManager } from '../services/service.manager'
+import { ApplicationMapper } from './models/application.mapper'
+import { Application } from './models/application.model'
+import { ApplicationEvent } from './models/applicationEvent.model'
+import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
+import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
+import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
+import { InstitutionDto } from './models/dto/admin/institution.dto'
+import { ApplicationDto } from './models/dto/application.dto'
+import { ApplicationResponseDto } from './models/dto/application.response.dto'
+import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
+import { Value } from './models/value.model'
+import { escapeLike } from './utils/escapeLike'
+import {
+  ApplicationXroadFieldDto,
+  ApplicationXroadValueDto,
+  ValidationScreenDto,
+} from './models/dto/application.xroad.dto'
+import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -104,7 +115,7 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune),
+          pruneAt: calculatePruneAt(form.draftDaysToLive),
         } as Application,
         { transaction },
       )
@@ -188,11 +199,21 @@ export class ApplicationsService {
   async update(
     id: string,
     updateApplicationDto: UpdateApplicationDto,
+    user: User,
   ): Promise<void> {
-    const application = await this.applicationModel.findByPk(id)
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to update application '${id}'`,
+      )
     }
 
     if (updateApplicationDto.completed) {
@@ -234,13 +255,44 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async submit(id: string): Promise<SubmitApplicationResponseDto> {
-    const application = await this.applicationModel.findByPk(id)
-    const form = await this.formModel.findByPk(application?.formId || '')
+  async getSlugFromId(applicationId: string): Promise<string> {
+    const application = await this.applicationModel.findByPk(applicationId)
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(application.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+    if (!form.slug) {
+      throw new NotFoundException(
+        `Slug for form with id '${form.id}' not found`,
+      )
+    }
+    return form.slug
+  }
+
+  async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to submit application '${id}'`,
+      )
+    }
+
+    const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
       throw new NotFoundException(
@@ -276,7 +328,7 @@ export class ApplicationsService {
       try {
         application.status = applicationDto.status
         application.submittedAt = applicationDto.submittedAt
-        application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+        application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
         await application.save()
       } catch (error) {
         await applicationEvent.destroy()
@@ -401,10 +453,8 @@ export class ApplicationsService {
     )
 
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
-
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
-
       if (
         !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
@@ -506,7 +556,7 @@ export class ApplicationsService {
         form?.organizationNationalId ?? '',
       )
 
-      app.orgSlug = organizationInfo?.type
+      app.orgSlug = organizationInfo?.slug
       app.orgContentfulId = organizationInfo?.contentfulId
     }
 
@@ -824,8 +874,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to save screen for application '${applicationId}'`,
+      throw new ForbiddenException(
+        `User does not have permission to save screen for application '${applicationId}'`,
       )
     }
 
@@ -912,59 +962,62 @@ export class ApplicationsService {
         )
 
         const filteredScreenDto = { ...currentScreen, fields: filteredFields }
-        await Promise.all(
-          (filteredScreenDto.fields ?? []).map(async (field) => {
-            if (field.isPartOfMultiset) {
-              await this.valueModel.destroy({
-                where: {
-                  fieldId: field.id,
-                  applicationId,
-                },
-                transaction,
-              })
 
-              await Promise.all(
-                (field.values ?? []).map((value, index) =>
-                  this.valueModel.create(
-                    {
-                      fieldId: field.id,
-                      fieldType: field.fieldType,
-                      applicationId,
-                      order: index,
-                      json: value.json,
-                    } as Value,
-                    { transaction },
-                  ),
-                ),
-              )
-            } else {
-              await Promise.all(
-                (field.values ?? [])
-                  .filter((v) => v?.json !== undefined)
-                  .map((value) =>
-                    this.valueModel.update(
+        await Promise.all(
+          (filteredScreenDto.fields ?? [])
+            .filter((field) => field.fieldType !== FieldTypesEnum.FILE)
+            .map(async (field) => {
+              if (field.isPartOfMultiset) {
+                await this.valueModel.destroy({
+                  where: {
+                    fieldId: field.id,
+                    applicationId,
+                  },
+                  transaction,
+                })
+
+                await Promise.all(
+                  (field.values ?? []).map((value, index) =>
+                    this.valueModel.create(
                       {
-                        // Merge existing jsonb with the new payload as jsonb
-                        // COALESCE guards against "json" being NULL
-                        json: this.sequelize.literal(
-                          `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
-                            JSON.stringify(value.json),
-                          )}::jsonb`,
-                        ),
-                      },
-                      {
-                        where: {
-                          id: value.id,
-                          applicationId,
-                          fieldId: field.id,
-                        },
-                        transaction,
-                      },
+                        fieldId: field.id,
+                        fieldType: field.fieldType,
+                        applicationId,
+                        order: index,
+                        json: value.json,
+                      } as Value,
+                      { transaction },
                     ),
                   ),
-              )
-            }
-          }),
+                )
+              } else {
+                await Promise.all(
+                  (field.values ?? [])
+                    .filter((v) => v?.json !== undefined)
+                    .map((value) =>
+                      this.valueModel.update(
+                        {
+                          // Merge existing jsonb with the new payload as jsonb
+                          // COALESCE guards against "json" being NULL
+                          json: this.sequelize.literal(
+                            `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
+                              JSON.stringify(value.json),
+                            )}::jsonb`,
+                          ),
+                        },
+                        {
+                          where: {
+                            id: value.id,
+                            applicationId,
+                            fieldId: field.id,
+                          },
+                          transaction,
+                        },
+                      ),
+                    ),
+                )
+              }
+            }),
         )
       }
     })
@@ -981,8 +1034,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to delete application '${id}'`,
+      throw new ForbiddenException(
+        `User does not have permission to delete application '${id}'`,
       )
     }
 
@@ -1018,8 +1071,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to notify for application '${notificationDto.applicationId}'`,
+      throw new ForbiddenException(
+        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
       )
     }
 
@@ -1048,44 +1101,106 @@ export class ApplicationsService {
       )
     }
 
+    const screen = notificationDto.screen
+
+    if (
+      notificationDto.command === NotificationCommands.VALIDATE &&
+      notificationDto.screen
+    ) {
+      notificationDto.validationScreen = this.mapScreenToValidationScreenDto(
+        notificationDto.screen,
+      )
+      notificationDto.screen = undefined
+    }
+
     const response = await this.notifyService.sendNotification(
       notificationDto,
       submissionUrl,
     )
 
+    response.screen = screen
+
+    response.screen.screenError = {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
+    }
+
     if (!response.operationSuccessful) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'Please try again later or send an email to island@island.is',
-          },
-        }
+        response.screen.screenError = this.getDefaultScreenErrorValidate()
       } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-            en: 'Please try to refresh the page or send an email to island@island.is',
-          },
-        }
+        response.screen.screenError = this.getDefaultScreenErrorPopulate()
       }
-      response.screen = notificationDto.screen
+    } else if (response.screenError?.hasError) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorValidate()
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorPopulate()
+      }
+    }
+
+    if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
       )
     }
 
     return response
+  }
+
+  private getDefaultScreenErrorValidate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að tengjast ytri þjónustu',
+        en: 'Could not connect to external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+        en: 'Please try again later or send an email to island@island.is',
+      },
+    }
+  }
+
+  private getDefaultScreenErrorPopulate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að sækja gögn frá ytri þjónustu',
+        en: 'Could not fetch data from external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
+        en: 'Please try to refresh the page or send an email to island@island.is',
+      },
+    }
+  }
+
+  private mapScreenToValidationScreenDto(
+    screen: ScreenDto,
+  ): ValidationScreenDto {
+    return {
+      screenIdentifier: screen.identifier,
+      fields: (screen.fields ?? []).map(
+        (field): ApplicationXroadFieldDto => ({
+          identifier: field.identifier,
+          fieldType: field.fieldType,
+          values: (field.values ?? []).map(
+            (value): ApplicationXroadValueDto => ({
+              order: value.order,
+              json: (value.json ?? {}) as unknown as Record<string, unknown>,
+            }),
+          ),
+        }),
+      ),
+    }
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
@@ -1257,5 +1372,195 @@ export class ApplicationsService {
     }
 
     return loginTypes
+  }
+
+  async findAllApplicationsByAdminFilters(
+    page: number,
+    limit: number,
+    institutionNationalId?: string,
+    formId?: string,
+    applicantNationalId?: string,
+    searchStr?: string,
+    from?: string,
+    to?: string,
+    locale?: Locale,
+  ): Promise<ApplicationAdminResponseDto> {
+    const fromDate = from
+      ? new Date(new Date(from).setHours(0, 0, 0, 0))
+      : undefined
+    const toDate = to
+      ? new Date(new Date(to).setHours(23, 59, 59, 999))
+      : undefined
+
+    const offset = (page - 1) * limit
+
+    const { count, rows } = await this.applicationModel.findAndCountAll({
+      distinct: true,
+      col: 'id',
+      where: {
+        [Op.and]: [
+          formId ? { formId } : {},
+          applicantNationalId ? { nationalId: applicantNationalId } : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+        ],
+      },
+      include: [
+        {
+          model: this.formModel,
+          attributes: ['id', 'name', 'slug', 'status', 'organizationId'],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: this.organizationModel,
+              attributes: ['nationalId'],
+              required: true,
+              where: institutionNationalId
+                ? { nationalId: institutionNationalId }
+                : {},
+            },
+          ],
+        },
+        ...(searchStr
+          ? [
+              {
+                model: Value,
+                as: 'values',
+                attributes: [],
+                required: true,
+                where: Sequelize.where(
+                  Sequelize.cast(Sequelize.col('values.json'), 'text'),
+                  { [Op.iLike]: `%${escapeLike(searchStr)}%` },
+                ),
+              },
+            ]
+          : []),
+      ],
+      limit,
+      offset,
+      order: [['modified', 'DESC']],
+    })
+
+    const mappedRows = rows.map((application) =>
+      this.applicationMapper.mapApplicationToApplicationAdminDto(
+        application,
+        locale,
+      ),
+    )
+
+    return {
+      rows: mappedRows,
+      count,
+    }
+  }
+
+  async getAllApplicationTypes(
+    institutionNationalId?: string,
+    locale?: Locale,
+  ): Promise<ApplicationTypeDto[]> {
+    const forms = await this.formModel.findAll({
+      attributes: ['id', 'name'],
+      where: { status: FormStatus.PUBLISHED },
+      include: [
+        {
+          model: Application,
+          attributes: [],
+          required: true, // ensures at least one application exists
+          include: institutionNationalId
+            ? [
+                {
+                  model: this.organizationModel,
+                  attributes: [],
+                  required: true,
+                  where: { nationalId: institutionNationalId },
+                },
+              ]
+            : [],
+        },
+      ],
+      group: ['Form.id'],
+    })
+
+    return forms.map((form) => ({
+      id: form.id,
+      name: locale === 'is' ? form.name?.is : form.name?.en ?? '',
+    }))
+  }
+
+  async getAllInstitutionsSuperAdmin(): Promise<InstitutionDto[]> {
+    const organizations = await this.organizationModel.findAll({
+      attributes: ['id', 'nationalId'],
+      include: [
+        {
+          model: Form,
+          attributes: [],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: Application,
+              attributes: [], // ensures at least one application exists
+              required: true,
+            },
+          ],
+        },
+      ],
+      group: ['Organization.id', 'Organization.national_id'],
+    })
+
+    return organizations.map((org) => ({
+      nationalId: org.nationalId,
+    }))
+  }
+
+  async getApplicationCountByTypeIdAndStatus(
+    startDate: string,
+    endDate: string,
+    locale?: Locale,
+    institutionNationalId?: string,
+  ): Promise<ApplicationStatisticsDto[]> {
+    if (!locale || !['is', 'en'].includes(locale)) {
+      throw new Error(`Unsupported locale: ${locale}`)
+    }
+    const localeColumn = locale === 'is' ? `f.name ->> 'is'` : `f.name ->> 'en'`
+
+    let institutionFilter = ''
+    if (institutionNationalId) {
+      institutionFilter = `
+      AND o.national_id = :institutionNationalId
+    `
+    }
+
+    const fromDate = new Date(new Date(startDate).setHours(0, 0, 0, 0))
+    const toDate = new Date(new Date(endDate).setHours(23, 59, 59, 999))
+
+    const query = `
+    SELECT
+      a.form_id AS "formId",
+      ${localeColumn} AS "formName",
+      o.national_id AS "institutionNationalId",
+      COUNT(*)::integer AS "totalCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}')::integer AS "inProgressCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}')::integer AS "completedCount"
+    FROM public.application a
+    JOIN public.form f ON f.id = a.form_id
+    JOIN public.organization o ON o.id = f.organization_id
+    WHERE a.modified >= :startDate AND a.modified <= :endDate
+      AND f.status = '${FormStatus.PUBLISHED}'
+    ${institutionFilter}
+    GROUP BY a.form_id, ${localeColumn}, o.national_id;
+  `
+
+    const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
+      replacements: {
+        startDate: fromDate,
+        endDate: toDate,
+        ...(institutionNationalId ? { institutionNationalId } : {}),
+      },
+      type: QueryTypes.SELECT,
+    })
+
+    return stats
   }
 }

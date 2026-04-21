@@ -14,9 +14,11 @@ import { DelegationState } from '../../utils/types'
 import SecondStep from './components/ChooseDate'
 import FirstStep from './components/ChoosePerson'
 import { usePostMedicineDelegationMutation } from './MedicineDelegation.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const NewMedicineDelegation = () => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
   const [step, setStep] = useState<number>(1)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [formState, setFormState] = useState<DelegationState>()

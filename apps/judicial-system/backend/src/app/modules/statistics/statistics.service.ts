@@ -3,7 +3,6 @@ import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
-import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -29,6 +28,7 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import {
+  AppealCase,
   Case,
   CaseRepositoryService,
   DateLog,
@@ -127,84 +127,6 @@ export class StatisticsService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getIndictmentCaseStatistics(
-    sentToCourt?: DateFilter,
-    institutionId?: string,
-  ): Promise<IndictmentCaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-      type: [CaseType.INDICTMENT],
-    }
-
-    // fetch only the earliest indictment with the base filter
-    const earliestCase = await this.caseRepositoryService.findOne({
-      where,
-      order: [['created', 'ASC']],
-      attributes: ['created'],
-    })
-
-    // apply dto filters
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
-    })
-
-    const filterOnSentToCourt = () => {
-      if (sentToCourt) {
-        if (!cases.length) {
-          return undefined
-        }
-
-        const start = sentToCourt.fromDate ?? cases[0]?.created
-        const end = sentToCourt.toDate ?? new Date()
-
-        return cases.filter(({ eventLogs }) =>
-          eventLogs?.some(
-            ({ created, eventType }) =>
-              eventType === EventType.INDICTMENT_CONFIRMED &&
-              isWithinInterval(new Date(created), {
-                start: new Date(start),
-                end: new Date(end),
-              }),
-          ),
-        )
-      }
-    }
-    const filteredCases = filterOnSentToCourt() ?? cases
-    const indictmentCaseStatistics = this.getIndictmentStatistics(filteredCases)
-    return {
-      ...indictmentCaseStatistics,
-      minDate: earliestCase?.created ?? new Date(),
-    }
-  }
-
   async getSubpoenaStatistics(
     from?: Date,
     to?: Date,
@@ -293,99 +215,6 @@ export class StatisticsService {
     }
 
     return stats
-  }
-
-  async getRequestCasesStatistics(
-    created?: DateFilter,
-    sentToCourt?: DateFilter,
-    institutionId?: string,
-  ): Promise<RequestCaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-      type: {
-        [Op.not]: [CaseType.INDICTMENT],
-      },
-    }
-
-    // fetch only the earliest case with the base filter
-    const earliestCase = await this.caseRepositoryService.findOne({
-      where,
-      order: [['created', 'ASC']],
-      attributes: ['created'],
-    })
-
-    // apply dto filters
-    if (created?.fromDate || created?.toDate) {
-      const { fromDate, toDate } = created
-      where.created = {}
-      if (fromDate) {
-        where.created[Op.gte] = fromDate
-      }
-      if (toDate) {
-        where.created[Op.lte] = toDate
-      }
-    }
-
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.CASE_SENT_TO_COURT,
-          },
-        },
-      ],
-    })
-
-    const filterOnSentToCourt = () => {
-      if (sentToCourt) {
-        if (!cases.length) {
-          return undefined
-        }
-
-        const start = sentToCourt.fromDate ?? cases[0]?.created
-        const end = sentToCourt.toDate ?? new Date()
-
-        return cases.filter(({ eventLogs }) =>
-          eventLogs?.some(
-            ({ created, eventType }) =>
-              eventType === EventType.CASE_SENT_TO_COURT &&
-              isWithinInterval(new Date(created), {
-                start: new Date(start),
-                end: new Date(end),
-              }),
-          ),
-        )
-      }
-    }
-    const filteredCases = filterOnSentToCourt() ?? cases
-    const requestCaseStatistics = this.getRequestCaseStatistics(filteredCases)
-
-    return {
-      ...requestCaseStatistics,
-      minDate: earliestCase?.created ?? new Date(),
-    }
   }
 
   async getCaseStatistics(
@@ -548,6 +377,11 @@ export class StatisticsService {
           where: { type: CaseNotificationType.APPEAL_COMPLETED },
           order: [['created', 'DESC']],
           separate: true,
+        },
+        {
+          model: AppealCase,
+          as: 'appealCase',
+          required: false,
         },
       ],
     })
@@ -737,6 +571,7 @@ export class StatisticsService {
             { key: 'caseTypeDescriptor', header: 'Tegund máls' },
             { key: 'subtypeDescriptor', header: 'Sakarefni' },
             { key: 'origin', header: 'Stofnað í' },
+            { key: 'prosecutorId', header: 'Ákærandi' },
             { key: 'defendantId', header: 'Varnaraðili' },
             { key: 'serviceStatusDescriptor', header: 'Birting' },
             { key: 'rulingDecisionDescriptor', header: 'Lyktir' },

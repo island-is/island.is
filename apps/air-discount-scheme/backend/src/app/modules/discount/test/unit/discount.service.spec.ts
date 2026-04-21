@@ -105,6 +105,60 @@ describe('DiscountService', () => {
       expect(cacheManagerSpy).toHaveBeenCalledTimes(3)
       expect(result.discountCode).toHaveLength(DISCOUNT_CODE_LENGTH)
     })
+
+    it('should generate normal discount codes ending with digit 0-4', async () => {
+      const nationalId = '1234567890'
+
+      // Run multiple times to increase confidence
+      for (let i = 0; i < 20; i++) {
+        const result = await discountService.createDiscountCode(
+          createTestUser(),
+          nationalId,
+          [],
+        )
+        const lastChar = result.discountCode.charAt(
+          result.discountCode.length - 1,
+        )
+        const lastDigit = parseInt(lastChar, 10)
+        expect(lastDigit).toBeGreaterThanOrEqual(0)
+        expect(lastDigit).toBeLessThanOrEqual(4)
+      }
+    })
+
+    it('should generate connecting discount codes ending with digit 5-9', async () => {
+      const nationalId = '1234567890'
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 7)
+
+      const connectableFlight = {
+        id: 'flight-1',
+        connectable: true,
+        flightLegs: [
+          {
+            origin: 'REK',
+            destination: 'AEY',
+            date: futureDate,
+          },
+        ],
+      }
+
+      jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve(null))
+
+      const result = await discountService.createDiscountCode(
+        createTestUser(),
+        nationalId,
+        [connectableFlight] as any,
+      )
+
+      expect(result.connectionDiscountCodes).toHaveLength(1)
+      const connectionCode = result.connectionDiscountCodes[0].code
+      const lastChar = connectionCode.charAt(connectionCode.length - 1)
+      const lastDigit = parseInt(lastChar, 10)
+      expect(lastDigit).toBeGreaterThanOrEqual(5)
+      expect(lastDigit).toBeLessThanOrEqual(9)
+    })
   })
 
   describe('getDiscountByNationalId', () => {

@@ -21,6 +21,7 @@ export const Premises = () => {
     controlDispatch,
     certificationTypes: certTypes,
   } = useContext(ControlContext)
+  const { isReadOnly } = control
   const { certificationTypes } = control.form
   const [formCertificationTypes, setFormCertificationTypes] = useState<
     FormSystemFormCertificationTypeDto[]
@@ -119,6 +120,7 @@ export const Premises = () => {
               name={d?.name?.is ?? ''}
               subLabel={d?.description?.[lang]}
               rightContent={d?.description?.is}
+              disabled={isReadOnly}
               value={d?.id ?? ''}
               large
               checked={isChecked(d?.id)}

@@ -13,9 +13,10 @@ import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
 import {
   shouldShowAlternativeSpecialEducationDepartment,
-  shouldShowReasonForApplicationAndNewSchoolPages,
+  shouldShowNewSchoolPage,
 } from '../../../utils/conditionUtils'
 import {
+  ApplicationType,
   NU_UNIT_ID,
   OrganizationSubType,
   RVK_MUNICIPALITY_ID,
@@ -24,6 +25,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getCurrentAndNextGrade,
+  getNewSchoolTitle,
   getSelectedSchoolSubType,
   getSelectedSchoolUnitId,
   getSpecialEducationDepartmentsInMunicipality,
@@ -31,14 +33,25 @@ import {
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
-  title: primarySchoolMessages.newSchool.subSectionTitle,
+  title: (application) => getNewSchoolTitle(application),
   condition: (answers, externalData) =>
-    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
+    shouldShowNewSchoolPage(answers, externalData),
   children: [
     buildMultiField({
       id: 'newSchool',
-      title: primarySchoolMessages.newSchool.subSectionTitle,
-      description: primarySchoolMessages.newSchool.subSectionMessage,
+      title: (application) => getNewSchoolTitle(application),
+      description: (application) => {
+        const { applicationType } = getApplicationAnswers(application.answers)
+        const { preferredSchool } = getApplicationExternalData(
+          application.externalData,
+        )
+
+        return applicationType ===
+          ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          preferredSchool === null
+          ? primarySchoolMessages.newSchool.noPreferredSchoolDescription
+          : primarySchoolMessages.newSchool.subSectionMessage
+      },
       children: [
         buildAsyncSelectField({
           id: 'newSchool.municipality',
@@ -50,6 +63,10 @@ export const newSchoolSubSection = buildSubSection({
             {
               key: 'newSchool.alternativeSpecialEducationDepartment',
               value: [],
+            },
+            {
+              key: 'newSchool.school',
+              value: undefined,
             },
           ],
           defaultValue: (application: Application) => {

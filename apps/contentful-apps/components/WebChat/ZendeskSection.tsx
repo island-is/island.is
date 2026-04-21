@@ -55,6 +55,27 @@ export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
                   />
                 </Flex>
                 <Flex flexDirection="column">
+                  <FormControl.Label>Zendesk URL Ticket ID</FormControl.Label>
+                  <TextInput
+                    value={
+                      value?.[locale]?.[WebChatType.Zendesk]
+                        ?.urlTrackingTicketId ?? ''
+                    }
+                    onChange={(event) => {
+                      updateValue((previousValue) => ({
+                        ...previousValue,
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.Zendesk]: {
+                            ...previousValue?.[locale]?.[WebChatType.Zendesk],
+                            urlTrackingTicketId: event.target.value,
+                          },
+                        },
+                      }))
+                    }}
+                  />
+                </Flex>
+                <Flex flexDirection="column">
                   <FormControl.Label>
                     Zendesk Chat Bubble Variant (default: Blue circle)
                   </FormControl.Label>

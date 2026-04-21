@@ -18,16 +18,15 @@ type GetApplicationCaseResponse = {
 }
 
 export const useApplicationCase = ({ applicationId }: Params) => {
-  const { data, loading, error } = useQuery<GetApplicationCaseResponse>(
-    GET_APPLICATION_CASE_QUERY,
-    {
+  const { data, loading, error, refetch } =
+    useQuery<GetApplicationCaseResponse>(GET_APPLICATION_CASE_QUERY, {
       variables: { input: { id: applicationId } },
-    },
-  )
+    })
 
   return {
     caseData: data?.OJOIAGetApplicationCase,
     loading,
     error,
+    refetch,
   }
 }

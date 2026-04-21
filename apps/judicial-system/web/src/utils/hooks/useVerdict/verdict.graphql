@@ -14,5 +14,7 @@ query Verdict($input: VerdictQueryInput!) {
     deliveredToDefenderNationalId
     servedBy
     isDefaultJudgement
+    isAcquittedByPublicProsecutionOffice
+    defendantHasRequestedAppeal
   }
 }

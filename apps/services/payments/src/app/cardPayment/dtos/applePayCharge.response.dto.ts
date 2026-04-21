@@ -1,30 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
-class CardInformation {
-  @ApiProperty({
-    description: 'Card scheme (for example Visa or MasterCard)',
-    type: String,
-  })
-  @IsString()
-  cardScheme!: string
-
-  @ApiProperty({ description: 'Issuing country of the card', type: String })
-  @IsString()
-  issuingCountry!: string
-
-  @ApiProperty({ description: 'Card usage description', type: String })
-  @IsString()
-  cardUsage!: string
-
-  @ApiProperty({ description: 'Card category', type: String })
-  @IsString()
-  cardCategory!: string
-
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: Boolean })
-  @IsBoolean()
-  outOfScaScope!: boolean
-}
+import { CardInformation } from './CardInformation.dto'
 
 export class ApplePayChargeResponse {
   @ApiProperty({ description: 'Acquirer reference number', type: String })

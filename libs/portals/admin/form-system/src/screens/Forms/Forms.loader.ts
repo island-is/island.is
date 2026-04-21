@@ -1,7 +1,5 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import {
-  FormSystemApplication,
-  FormSystemApplicationResponse,
   FormSystemForm,
   FormSystemFormResponse,
   FormSystemOption,
@@ -9,7 +7,6 @@ import {
   FormSystemPermissionType,
 } from '@island.is/api/schema'
 import {
-  GET_APPLICATIONS,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
   GET_ORGANIZATION_TITLE,
@@ -20,9 +17,7 @@ import { removeTypename } from '../../lib/utils/removeTypename'
 export interface FormsLoaderQueryResponse {
   formSystemForms: FormSystemFormResponse
 }
-export interface ApplicationsLoaderQueryResponse {
-  formSystemApplications?: FormSystemApplicationResponse
-}
+
 export interface AdminLoaderQueryResponse {
   formSystemOrganizationAdmin: FormSystemOrganizationAdmin
 }
@@ -44,25 +39,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     }
     if (!dataForms) {
       throw new Error('No forms were found')
-    }
-    const { data: dataApplications, error: errorApplications } =
-      await client.query<ApplicationsLoaderQueryResponse>({
-        query: GET_APPLICATIONS,
-        variables: {
-          input: {
-            organizationNationalId: userInfo?.profile.nationalId,
-            page: 1,
-            limit: 20,
-            isTest: true,
-          },
-        },
-        fetchPolicy: 'no-cache',
-      })
-    if (errorApplications) {
-      throw errorApplications
-    }
-    if (!dataApplications) {
-      throw new Error('No applications were found')
     }
     const { data, error } = await client.query<AdminLoaderQueryResponse>({
       query: GET_ORGANIZATION_ADMIN,
@@ -118,12 +94,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       )
     }
 
-    const applications = dataApplications.formSystemApplications?.applications
-      ?.filter((application) => application !== null)
-      .map((application) =>
-        removeTypename(application),
-      ) as FormSystemApplication[]
-
     const isAdmin = userInfo?.scopes.includes(
       '@admin.island.is/form-system:admin',
     )
@@ -144,7 +114,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       organizations: organizations,
       isAdmin,
       organizationNationalId: organizationNationalId,
-      applications,
       organizationId: admin?.organizationId as string,
       selectedCertificationTypes: admin?.selectedCertificationTypes?.map(
         (cert) => cert,

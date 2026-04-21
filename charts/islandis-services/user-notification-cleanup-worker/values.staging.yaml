@@ -18,7 +18,6 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'user-notification-cleanup-worker'
 args:
-  - '--no-experimental-fetch'
   - 'main.cjs'
   - '--job=cleanup'
 command:
@@ -38,6 +37,7 @@ grantNamespaces:
   - 'islandis'
   - 'identity-server-delegation'
   - 'application-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -83,7 +83,7 @@ initContainer:
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
 namespace: 'user-notification'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

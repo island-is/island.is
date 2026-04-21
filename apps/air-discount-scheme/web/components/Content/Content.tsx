@@ -196,7 +196,7 @@ const options = (type) => ({
 type Props = {
   document: string
   type?: string
-  wrapper?: ReactNode
+  wrapper?: (children: ReactNode) => ReactNode
 }
 
 export const Content: React.FC<React.PropsWithChildren<Props>> = ({
@@ -219,7 +219,13 @@ export const Content: React.FC<React.PropsWithChildren<Props>> = ({
   )
 }
 
-const ConditionalWrapper = ({ cmp: Cmp, children }) => {
+const ConditionalWrapper = ({
+  cmp: Cmp,
+  children,
+}: {
+  cmp?: (children: ReactNode) => ReactNode
+  children: ReactNode
+}) => {
   if (Cmp) {
     return Cmp(children)
   }

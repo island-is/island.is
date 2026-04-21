@@ -21,14 +21,14 @@ export const occupationalLicensesModule: PortalModule = {
       name: m.myOccupationalLicenses,
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.internal),
-
+      notAvailableForActors: true,
       element: <OccupationalLicensesOverviewScreen />,
     },
     {
       name: om.singleLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
-
+      notAvailableForActors: true,
       element: <OccupationalLicensesDetailScreen />,
     },
   ],

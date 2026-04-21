@@ -22,13 +22,13 @@ import {
 
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
-import { CourtDocumentService } from '../../court-session'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
 import {
   CaseRepositoryService,
+  CourtDocumentRepositoryService,
   Defendant,
   SubpoenaRepositoryService,
 } from '../../repository'
@@ -45,10 +45,10 @@ jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
-jest.mock('../../court-session/courtDocument.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
+jest.mock('../../repository/services/courtDocumentRepository.service')
 jest.mock('../../repository/services/subpoenaRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 
@@ -75,7 +75,6 @@ export const createTestingSubpoenaModule = async () => {
       PoliceService,
       EventService,
       DefendantService,
-      CourtDocumentService,
       CourtService,
       InternalCaseService,
       {
@@ -87,6 +86,7 @@ export const createTestingSubpoenaModule = async () => {
           error: jest.fn(),
         },
       },
+      CourtDocumentRepositoryService,
       SubpoenaRepositoryService,
       CaseRepositoryService,
       {
@@ -130,8 +130,10 @@ export const createTestingSubpoenaModule = async () => {
     CaseRepositoryService,
   )
 
-  const courtDocumentService =
-    subpoenaModule.get<CourtDocumentService>(CourtDocumentService)
+  const courtDocumentRepositoryService =
+    subpoenaModule.get<CourtDocumentRepositoryService>(
+      CourtDocumentRepositoryService,
+    )
 
   const subpoenaController =
     subpoenaModule.get<SubpoenaController>(SubpoenaController)
@@ -165,7 +167,7 @@ export const createTestingSubpoenaModule = async () => {
     internalCaseService,
     subpoenaRepositoryService,
     caseRepositoryService,
-    courtDocumentService,
+    courtDocumentRepositoryService,
     subpoenaService,
     subpoenaController,
     internalSubpoenaController,

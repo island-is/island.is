@@ -11,14 +11,13 @@ interface Props {
 }
 
 export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
-  const { id, actionCard } = application
+  const { id, actionCard, typeId } = application
   const { formatMessage } = useLocale()
   const { deleteApplication } = useDeleteApplication(onDelete)
 
   if (!actionCard || !actionCard?.deleteButton) {
     return null
   }
-
   return (
     <DialogPrompt
       baseId="delete_dialog"
@@ -42,7 +41,7 @@ export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
           </Box>
         </Tag>
       }
-      onConfirm={() => deleteApplication(id)}
+      onConfirm={() => deleteApplication(id, typeId)}
       buttonTextConfirm={formatMessage(
         coreMessages.deleteApplicationDialogConfirmLabel,
       )}

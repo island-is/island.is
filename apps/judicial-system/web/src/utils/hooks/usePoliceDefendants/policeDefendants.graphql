@@ -1,0 +1,10 @@
+query PoliceDefendants($input: PoliceDefendantsQueryInput!) {
+  policeDefendants(input: $input) {
+    nationalId
+    name
+    gender
+    address
+    dateOfBirth
+    citizenship
+  }
+}

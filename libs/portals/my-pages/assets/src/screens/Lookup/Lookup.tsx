@@ -20,6 +20,7 @@ const Lookup = () => {
       intro={messages.searchIntro}
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      childrenWidthFull
     >
       <Tabs
         contentBackground="white"

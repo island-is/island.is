@@ -13,6 +13,7 @@ import { messages } from '../../lib/messages'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 interface Filter {
   statuses: HealthDirectorateAppointmentStatus[]
@@ -23,6 +24,8 @@ interface Filter {
 
 const AppointmentsOverview = () => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
+
   const [filter, setFilter] = useState<Filter>({
     statuses: [],
     dates: {},

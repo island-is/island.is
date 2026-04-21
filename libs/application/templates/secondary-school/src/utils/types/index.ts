@@ -22,6 +22,7 @@ export type SecondarySchool = {
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
   requireThirdLanguage: boolean
+  requireFallbackThirdLanguage: boolean
   isOpenForAdmissionGeneral: boolean
   isOpenForAdmissionFreshman: boolean
 }
@@ -32,4 +33,6 @@ export type Program = {
   nameEn: string
   registrationEndDate: Date
   isSpecialNeedsProgram: boolean
+  programApplicationMessageIs?: string
+  programApplicationMessageEn?: string
 }

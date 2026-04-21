@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-import { signOut, useSession } from 'next-auth/client'
+import { signOut, useSession } from 'next-auth/react'
 
 import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
 import { AuthSession } from '@island.is/next-ids-auth'
@@ -27,7 +27,7 @@ export const SkilavottordUserQuery = gql`
 export const Header: FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
-  const [session] = useSession() as [AuthSession, boolean]
+  const { data: session } = useSession() as { data: AuthSession | null }
   const [baseUrl, setBaseUrl] = useState<string>('island.is')
   const {
     activeLocale,

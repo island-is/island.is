@@ -33,6 +33,7 @@ export const GET_SUPREME_COURT_DETERMINATION_BY_ID_QUERY = gql`
         keywords
         richText
         presentings
+        resolutionLink
       }
     }
   }

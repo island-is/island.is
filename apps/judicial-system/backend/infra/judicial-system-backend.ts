@@ -45,8 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,POLICE_CASE',
-        prod: '',
+        staging: 'COURT,POLICE_CASE, POLICE_DIGITAL_CASE_FILES',
+        prod: 'POLICE_DIGITAL_CASE_FILES',
       },
       USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT: {
         dev: 'false',
@@ -93,8 +93,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         '/k8s/judicial-system/POLICE_INSTITUTIONS_EMAILS',
       PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL',
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
-      PRISON_ADMIN_INDICTMENT_EMAILS:
-        '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS',
       PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL:
         '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',

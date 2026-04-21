@@ -20,6 +20,7 @@ import { Case } from '../models/case.model'
 import { CourtSession } from '../models/courtSession.model'
 import { CourtSessionString } from '../models/courtSessionString.model'
 import { EventLog } from '../models/eventLog.model'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 import { CourtDocumentRepositoryService } from './courtDocumentRepository.service'
 
 interface CreateCourtSessionOptions {
@@ -61,6 +62,7 @@ export class CourtSessionRepositoryService {
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -90,6 +92,13 @@ export class CourtSessionRepositoryService {
         order: [['created', 'ASC']],
         transaction,
       })
+
+      if (mergedCases.length > 0) {
+        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+          mergedCases,
+          { transaction },
+        )
+      }
 
       for (const mergedCase of mergedCases) {
         await this.addMergedCaseToCourtSession(
@@ -200,6 +209,11 @@ export class CourtSessionRepositoryService {
           `Could not find case ${mergedCaseId} when adding it as a merged case to the latest court session of case ${caseId}`,
         )
       }
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [mergedCase],
+        { transaction },
+      )
 
       await this.addMergedCaseToCourtSession(
         caseId,
@@ -348,5 +362,14 @@ export class CourtSessionRepositoryService {
         `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court session ${courtSessionId} of case ${caseId}`,
       )
     }
+  }
+
+  async findById(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<CourtSession | null> {
+    return this.courtSessionModel.findOne({
+      where: { id: courtSessionId, caseId },
+    })
   }
 }

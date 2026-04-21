@@ -75,6 +75,8 @@ export class SecondarySchoolClient {
         })) || [],
       allowRequestDormitory: school.availableDormitory || false,
       requireThirdLanguage: school.requireThirdLanguage || false,
+      requireFallbackThirdLanguage:
+        school.requireFallbackThirdLanguage || false,
       isOpenForAdmissionGeneral: school.anyOpenForAdmissionGeneral || false,
       isOpenForAdmissionFreshman: school.anyOpenForAdmissionFreshman || false,
     }))
@@ -100,6 +102,9 @@ export class SecondarySchoolClient {
       }`,
       registrationEndDate: program.registryEndDate || new Date(),
       isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
+      programApplicationMessageIs: program.programmeApplicationMessage || '',
+      programApplicationMessageEn:
+        program.programmeApplicationMessageEnglish || '',
     }))
   }
 
@@ -164,6 +169,7 @@ export class SecondarySchoolClient {
           programmeId: program.programId,
         })),
         thirdLanguage: school.thirdLanguageCode,
+        fallbackThirdLanguage: school.fallbackThirdLanguageCode,
         northernLanguage: school.nordicLanguageCode,
         requestDormitory: school.requestDormitory,
       })),

@@ -17,6 +17,10 @@ export const popoverContainer = style({
   overflowY: 'auto',
 })
 
+export const filterInput = style({
+  maxWidth: 420,
+})
+
 export const filterCountButton = style({})
 export const filterCount = style({
   outlineWidth: 8,

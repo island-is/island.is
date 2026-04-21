@@ -225,12 +225,6 @@ export const decrement = (
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
   const [updateDependencies] = updateDependenciesMutation
-  const errors = state.errors ?? []
-  const isValid = state.isValid ?? true
-
-  if (errors.length > 0 || !isValid) {
-    return { ...state, errors }
-  }
 
   state.currentScreen = setCurrentScreen(
     state,

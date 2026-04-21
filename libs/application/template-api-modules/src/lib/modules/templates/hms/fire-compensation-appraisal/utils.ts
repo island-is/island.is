@@ -5,9 +5,13 @@ import {
   ApplicationFilesContentDto,
 } from '@island.is/clients/hms-application-system'
 import { Fasteign } from '@island.is/clients/assets'
-import { AttachmentData } from '../../../shared/services/attachment-s3.service'
+import {
+  AnswerFile,
+  AttachmentData,
+} from '../../../shared/services/attachment-s3.service'
 import crypto from 'crypto'
 import * as kennitala from 'kennitala'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 // The payment structure is as follows:
 // 1. If the current appraisal is less than 25 million, the payment is 6.000kr
@@ -59,9 +63,26 @@ export const mapAnswersToApplicationFilesContentDto = (
   )
 }
 
+export const mapAnswersToSingleApplicationFilesContentDto = (
+  application: Application,
+  file: AttachmentData,
+): ApplicationFilesContentDto => {
+  if (!file.fileContent) {
+    throw new TemplateApiError(
+      'Failed to submit application, missing file content',
+      500,
+    )
+  }
+  return {
+    fileID: hashToLength20(file.key.split('_')[0]),
+    applicationID: application.id,
+    content: file.fileContent,
+    applicationType: APPLICATION_TYPE,
+  }
+}
+
 export const mapAnswersToApplicationDto = (
   application: Application,
-  files: Array<AttachmentData>,
 ): ApplicationDto => {
   const { answers, externalData } = application
   const applicant = getApplicant(answers)
@@ -80,7 +101,11 @@ export const mapAnswersToApplicationDto = (
   const selectedRealEstate = realEstates?.find(
     (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
   )
-  const parsedFiles = files?.map((file) => {
+  const fileAnswers = getValueViaPath<Array<AnswerFile>>(
+    application.answers,
+    'photos',
+  )
+  const parsedFiles = fileAnswers?.map((file) => {
     const parts = file.key.split('.')
     const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
     const heiti = parts.join('.').replace(/^[^_]*_/, '')

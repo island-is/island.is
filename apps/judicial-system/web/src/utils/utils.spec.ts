@@ -8,11 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as formatters from './formatters'
-import {
-  getDefaultDefendantGender,
-  getShortGender,
-  hasSentNotification,
-} from './utils'
+import { getDefaultDefendantGender, hasSentNotification } from './utils'
 
 describe('Utils', () => {
   describe('removeTabs', () => {
@@ -93,36 +89,6 @@ describe('Utils', () => {
 
       // Assert
       expect(res).toEqual('020-0202-2929')
-    })
-  })
-
-  describe('getShortGender', () => {
-    test('should return short genders given a valid gender', () => {
-      // Arrange
-      const male = Gender.MALE
-      const female = Gender.FEMALE
-      const other = Gender.OTHER
-
-      // Act
-      const resultM = getShortGender(male)
-      const resultF = getShortGender(female)
-      const resultO = getShortGender(other)
-
-      // Assert
-      expect(resultM).toEqual('kk')
-      expect(resultF).toEqual('kvk')
-      expect(resultO).toEqual('annað')
-    })
-
-    test('should return an empty string when not given a gender', () => {
-      // Arrange
-      const str = undefined
-
-      // Act
-      const res = getShortGender(str)
-
-      // Assert
-      expect(res).toEqual('')
     })
   })
 

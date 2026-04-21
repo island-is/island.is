@@ -22,6 +22,7 @@ export const updateFormFn = async (
       | undefined,
   ) => Promise<any>,
   updatedForm?: FormSystemForm,
+  userName?: string,
 ): Promise<UpdateFormResponse> => {
   const newForm = updatedForm ? updatedForm : control.form
   try {
@@ -42,7 +43,8 @@ export const updateFormFn = async (
                 ? undefined
                 : newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
-            daysUntilApplicationPrune: newForm.daysUntilApplicationPrune,
+            draftDaysToLive: newForm.draftDaysToLive,
+            submissionDaysToLive: newForm.submissionDaysToLive,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,
@@ -70,6 +72,7 @@ export const updateFormFn = async (
                 })) ?? [],
             },
             dependencies: newForm.dependencies ?? [],
+            lastModifiedBy: userName,
           },
         },
       },

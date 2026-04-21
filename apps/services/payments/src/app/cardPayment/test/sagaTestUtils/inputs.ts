@@ -1,5 +1,4 @@
 import type { ApplePayChargeInput, ChargeCardInput } from '../../dtos'
-import type { RefundCardPaymentInput } from '../../dtos'
 import { PAYMENT_FLOW_ID } from './mocks'
 
 export const getChargeCardInput = (): ChargeCardInput => ({
@@ -24,9 +23,4 @@ export const getApplePayChargeInput = (): ApplePayChargeInput => ({
   },
   paymentMethod: { displayName: 'Visa 1234', network: 'Visa' },
   transactionIdentifier: 'tx-identifier',
-})
-
-export const getRefundInput = (): RefundCardPaymentInput => ({
-  paymentFlowId: PAYMENT_FLOW_ID,
-  reasonForRefund: 'fulfillment_failure',
 })

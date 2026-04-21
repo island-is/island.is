@@ -71,6 +71,7 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.signatureCollectionMunicipalLists,
           path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+          icon: { icon: 'document' },
           children: [
             {
               name: m.viewSignatureList,

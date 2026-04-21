@@ -8,6 +8,8 @@ import { ConfigFactory } from './configFactory'
 import {
   Api,
   ApplicationWriteApi,
+  BankInformationWriteApi,
+  PersonalTaxCreditWriteApi,
   MedicalDocumentApiForDisabilityPension,
   QuestionnairesApiForDisabilityPension,
   Scope,
@@ -15,14 +17,17 @@ import {
 import {
   ApplicationApi,
   ApplicantApi,
+  BankInformationApi,
   GeneralApi,
   DocumentsApi,
   IncomePlanApi,
   PaymentPlanApi,
+  PaymentTypesOverviewApi,
   PensionCalculatorApi,
   DeathBenefitsApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
+  PersonalTaxCreditApi,
   Configuration,
 } from '../../gen/fetch/v1'
 import {
@@ -41,7 +46,7 @@ const apiCollection: Array<{
 }> = [
   {
     api: ApplicationWriteApi,
-    scopes: ['@tr.is/umsoknir:write'],
+    scopes: ['@tr.is/umsoknir:write', '@tr.is/fylgiskjol:write'],
     autoAuth: true,
   },
   {
@@ -57,6 +62,16 @@ const apiCollection: Array<{
   {
     api: GeneralApi,
     scopes: ['@tr.is/almennt:read'],
+    autoAuth: true,
+  },
+  {
+    api: BankInformationApi,
+    scopes: ['@tr.is/bankaupplysingar:read'],
+    autoAuth: true,
+  },
+  {
+    api: BankInformationWriteApi,
+    scopes: ['@tr.is/bankaupplysingar:write'],
     autoAuth: true,
   },
   {
@@ -102,6 +117,21 @@ const apiCollection: Array<{
   {
     api: QuestionnairesApiForDisabilityPension,
     scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
+    autoAuth: true,
+  },
+  {
+    api: PersonalTaxCreditApi,
+    scopes: ['@tr.is/personuafslattur:read'],
+    autoAuth: true,
+  },
+  {
+    api: PersonalTaxCreditWriteApi,
+    scopes: ['@tr.is/personuafslattur:write'],
+    autoAuth: true,
+  },
+  {
+    api: PaymentTypesOverviewApi,
+    scopes: ['@tr.is/yfirlitgreidslutegunda:read'],
     autoAuth: true,
   },
 ]

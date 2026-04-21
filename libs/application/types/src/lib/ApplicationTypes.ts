@@ -49,7 +49,6 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
-  ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   OLD_AGE_PENSION = 'OldAgePension',
   DISABILITY_PENSION = 'DisabilityPension',
@@ -302,10 +301,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
     slug: 'okunam-okukennari',
     translation: 'dlbui.application',
-  },
-  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    slug: 'endugreidsla-afengisutgjalda',
-    translation: 'atr.application',
   },
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',

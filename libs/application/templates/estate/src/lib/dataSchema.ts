@@ -37,7 +37,7 @@ const asset = z
   )
   .refine(
     ({ share }) => {
-      return share ? share > 0 && share <= 100 : true
+      return share ? share >= 0.01 && share <= 100 : true
     },
     {
       path: ['share'],
@@ -139,8 +139,8 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z.string(),
-        email: z.string(),
+        phone: z.string().optional().default(''),
+        email: z.string().optional().default(''),
         // Málsvari
         advocate: z
           .object({
@@ -153,10 +153,10 @@ export const estateSchema = z.object({
         // Málsvari 2
         advocate2: z
           .object({
-            name: z.string(),
-            nationalId: z.string(),
-            phone: z.string(),
-            email: z.string(),
+            name: z.string().optional().default(''),
+            nationalId: z.string().optional().default(''),
+            phone: z.string().optional().default(''),
+            email: z.string().optional().default(''),
           })
           .optional(),
       })
@@ -673,6 +673,7 @@ export const estateSchema = z.object({
       nationalId: z.string().optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
+      electronicID: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
@@ -713,6 +714,17 @@ export const estateSchema = z.object({
       },
       {
         path: ['name'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email, electronicID }) => {
+        return !!name || !!nationalId || !!phone || !!email
+          ? electronicID !== ''
+          : true
+      },
+      {
+        params: m.phoneElectronicIdError,
+        path: ['phone'],
       },
     )
     .optional(),

@@ -299,12 +299,9 @@ export class AdminController {
     )
   }
 
-  @Scopes(
-    AdminPortalScope.applicationSystemInstitution,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
-  @Get('admin/applications/application-types/:nationalId/')
+  @Get('admin/applications/application-types/institution')
   @UseInterceptors(ApplicationTypeAdminSerializer)
   @Documentation({
     description: 'Get application types for a specific institution',
@@ -312,22 +309,9 @@ export class AdminController {
       status: 200,
       type: [ApplicationTypeAdmin],
     },
-    request: {
-      params: {
-        nationalId: {
-          type: 'string',
-          required: true,
-          description: `To get the application types for a specific institution's national id.`,
-        },
-      },
-    },
   })
-  async getApplicationTypesInstitutionAdmin(
-    @Param('nationalId') nationalId: string,
-  ) {
-    return this.applicationService.getAllApplicationTypesInstitutionAdmin(
-      nationalId,
-    )
+  async getApplicationTypesInstitutionAdmin(@CurrentUser() user: User) {
+    return this.applicationService.getAllApplicationTypes(user.nationalId)
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
@@ -340,9 +324,20 @@ export class AdminController {
       status: 200,
       type: [ApplicationTypeAdmin],
     },
+    request: {
+      query: {
+        nationalId: {
+          type: 'string',
+          required: false,
+          description: `To get the application types for a specific institution's national id.`,
+        },
+      },
+    },
   })
-  async getApplicationTypesSuperAdmin() {
-    return this.applicationService.getAllApplicationTypesSuperAdmin()
+  async getApplicationTypesSuperAdmin(
+    @Query('nationalId') nationalId?: string,
+  ) {
+    return this.applicationService.getAllApplicationTypes(nationalId)
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)

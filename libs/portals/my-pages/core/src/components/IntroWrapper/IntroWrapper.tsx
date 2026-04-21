@@ -52,6 +52,9 @@ interface WithIntroProps extends BaseProps {
 
 export type IntroWrapperProps = WithIntroComponentProps | WithIntroProps
 
+/**
+ * @deprecated Use `IntroWrapperV2` instead.
+ */
 export const IntroWrapper = (props: IntroWrapperProps) => {
   const { marginBottom, childrenWidthFull = false } = props
   const { formatMessage } = useLocale()

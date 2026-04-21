@@ -13,6 +13,12 @@ export const policeModuleConfig = defineConfig({
     policeCaseApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
       .split(',')
       .includes('POLICE_CASE'),
+    policeDigitalCaseFilesApiAvailable: !(
+      env.optional('BLOCKED_API_INTEGRATION') ?? ''
+    )
+      .split(',')
+      .map((integration) => integration.trim())
+      .includes('POLICE_DIGITAL_CASE_FILES'),
     policeApiKey: env.required('XROAD_POLICE_API_KEY', ''),
   }),
 })

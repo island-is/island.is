@@ -17,6 +17,7 @@ import {
   useGetMedicineDispensationForAtcLazyQuery,
   useGetMedicineHistoryQuery,
 } from './MedicineHistory.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const MAX_DISPENSATIONS = 3
 interface ActiveDispensation {
@@ -27,6 +28,7 @@ interface ActiveDispensation {
 
 const MedicinePrescriptionHistory = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const [activeDispensation, setActiveDispensation] = useState<
     ActiveDispensation | undefined
   >(undefined)

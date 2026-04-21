@@ -21,7 +21,13 @@ import {
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
 import { SectionDto } from './models/dto/section.dto'
 import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -38,8 +44,11 @@ export class SectionsController {
   })
   @ApiBody({ type: CreateSectionDto })
   @Post()
-  create(@Body() createSectionDto: CreateSectionDto): Promise<SectionDto> {
-    return this.sectionsService.create(createSectionDto)
+  create(
+    @CurrentUser() user: User,
+    @Body() createSectionDto: CreateSectionDto,
+  ): Promise<SectionDto> {
+    return this.sectionsService.create(user, createSectionDto)
   }
 
   @ApiOperation({ summary: 'Updates a section' })
@@ -50,10 +59,11 @@ export class SectionsController {
   @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async update(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateSectionDto: UpdateSectionDto,
   ): Promise<void> {
-    return await this.sectionsService.update(id, updateSectionDto)
+    return await this.sectionsService.update(user, id, updateSectionDto)
   }
 
   @ApiOperation({ summary: 'Update display order of sections' })
@@ -63,9 +73,11 @@ export class SectionsController {
   @ApiBody({ type: UpdateSectionsDisplayOrderDto })
   @Put()
   async updateDisplayOrder(
+    @CurrentUser() user: User,
     @Body() updateSectionsDisplayOrderDto: UpdateSectionsDisplayOrderDto,
   ): Promise<void> {
     return this.sectionsService.updateDisplayOrder(
+      user,
       updateSectionsDisplayOrderDto,
     )
   }
@@ -76,7 +88,10 @@ export class SectionsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.sectionsService.delete(id)
+  async delete(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.sectionsService.delete(user, id)
   }
 }

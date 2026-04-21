@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
 import format from 'date-fns/format'
+import icelandicLocale from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
 import {
   ApplicationTypes,
   type ApplicationWithAttachments,
@@ -8,43 +10,25 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { type Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
-
-const GET_COURSE_BY_ID_QUERY = `
-  query GetCourseById($input: GetCourseByIdInput!) {
-    getCourseById(input: $input) {
-      course {
-        id
-        title
-        courseListPageId
-        instances {
-          id
-          startDate
-          startDateTimeDuration {
-            startTime
-            endTime
-          }
-          chargeItemCode
-          location
-        }
-      }
-    }
-  }
-`
-
-const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
-  '6pkONOn80xzGTGij6qtjai': 'namskeid-fyrir-almenning',
-  '147YftiWFQsBcbUFFe2rj1': 'namskeid-fyrir-fagfolk',
-}
+import {
+  COURSE_LIST_PAGE_SLUG_MAP,
+  GET_COURSE_BY_ID_QUERY,
+  ZENDESK_TICKET_IDS,
+} from './constants'
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
+    private readonly zendeskService: ZendeskService,
+    private readonly applicationApiService: ApplicationApiService,
     @Inject(HHCoursesConfig.KEY)
     private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -100,14 +84,21 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { name, email, phone, healthcenter, nationalId } =
-        await this.extractApplicantInfo(application)
+      const {
+        name,
+        email,
+        phone,
+        healthcenter,
+        nationalId,
+        workplace,
+        jobTitle,
+      } = await this.extractApplicantInfo(application)
 
       if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
           {
-            title: 'No contact information found',
-            summary: 'No contact information found',
+            title: 'Vantar tengiliðaupplýsingar',
+            summary: 'Vantar tengiliðaupplýsingar',
           },
           400,
         )
@@ -125,23 +116,45 @@ export class CoursesService extends BaseTemplateApiService {
         email,
         phone,
         healthcenter,
+        workplace,
+        jobTitle,
       )
 
-      await this.sharedTemplateApiService.sendEmail(
-        (_props) => ({
-          to: this.coursesConfig.applicationRecipientEmail,
-          from: {
-            name: this.coursesConfig.applicationSenderName,
-            address: this.coursesConfig.applicationSenderEmail,
+      const success = await this.zendeskService.submitTicket({
+        message,
+        subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
+        requester: {
+          name,
+          email,
+        },
+        brandId: ZENDESK_TICKET_IDS.brandId,
+        ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
+        tags: [this.coursesConfig.zendeskEnvTag, courseInstance.id],
+        customFields: [
+          {
+            id: ZENDESK_TICKET_IDS.customFields.courseTitle,
+            value: course.title,
           },
-          subject: this.coursesConfig.applicationEmailSubject,
-          text: message,
-          replyTo: email,
-        }),
-        application,
-      )
+          {
+            id: ZENDESK_TICKET_IDS.customFields.applicantName,
+            value: name,
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.startDate,
+            value: this.formatCourseInstanceDate(courseInstance),
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.location,
+            value: courseInstance.location ?? '',
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.courseUrl,
+            value: courseUrl ?? '',
+          },
+        ],
+      })
 
-      return { success: true }
+      return { success }
     } catch (error) {
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
@@ -154,8 +167,173 @@ export class CoursesService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Failed to submit application',
-          summary: error.message || 'An unexpected error occurred',
+          title: 'Villa kom upp við að senda umsókn',
+          summary: 'Villa kom upp við að senda umsókn',
+        },
+        500,
+      )
+    }
+  }
+
+  async checkParticipantAvailability({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    slotsAvailable?: number
+    hasAvailability: boolean
+  }> {
+    const courseId = getValueViaPath<string>(
+      application.answers,
+      'courseSelect',
+    )
+    const courseInstanceId = getValueViaPath<string>(
+      application.answers,
+      'dateSelect',
+    )
+
+    const participantList =
+      getValueViaPath<ApplicationAnswers['participantList']>(
+        application.answers,
+        'participantList',
+      ) ?? []
+
+    if (!courseId || !courseInstanceId || !participantList.length) {
+      throw new TemplateApiError(
+        {
+          title: 'Skráningarupplýsingar vantar',
+          summary: 'Skráningarupplýsingar vantar',
+        },
+        400,
+      )
+    }
+
+    const { courseInstance } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      auth.authorization,
+    )
+
+    const maxRegistrations = courseInstance.maxRegistrations ?? 0
+
+    if (maxRegistrations <= 0) {
+      return { hasAvailability: true }
+    }
+
+    const [zendeskNationalIds, paymentNationalIds] = await Promise.all([
+      this.getZendeskParticipantNationalIds(courseInstance.id),
+      this.getPaymentStateParticipantNationalIds(
+        courseInstance.id,
+        application.id,
+      ),
+    ])
+
+    const currentApplicationParticipantNationalIds = new Set(
+      participantList.map((p) => p.nationalIdWithName.nationalId),
+    )
+
+    const nationalIdsTakenByOtherApplications = new Set([
+      ...zendeskNationalIds,
+      ...paymentNationalIds,
+    ])
+    const allNationalIds = new Set([
+      ...currentApplicationParticipantNationalIds,
+      ...nationalIdsTakenByOtherApplications,
+    ])
+
+    const hasAvailability = maxRegistrations >= allNationalIds.size
+
+    const slotsAvailable = Math.max(
+      0,
+      maxRegistrations - nationalIdsTakenByOtherApplications.size,
+    )
+
+    return {
+      slotsAvailable,
+      hasAvailability,
+    }
+  }
+
+  private async getZendeskParticipantNationalIds(
+    courseInstanceId: string,
+  ): Promise<Set<string>> {
+    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
+    const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
+    const newQuery = `type:ticket tags:"${this.coursesConfig.zendeskEnvTag} ${courseInstanceId}"`
+    const tickets: Ticket[] = []
+    try {
+      const [backwardsCompatibleTickets, newTickets] = await Promise.all([
+        this.zendeskService.searchTickets(backwardsCompatibleQuery),
+        this.zendeskService.searchTickets(newQuery),
+      ])
+
+      const ticketMap = new Map<string, Ticket>()
+      for (const ticket of backwardsCompatibleTickets)
+        ticketMap.set(ticket.id, ticket)
+      for (const ticket of newTickets) ticketMap.set(ticket.id, ticket)
+      for (const ticket of ticketMap.values()) tickets.push(ticket)
+    } catch (error) {
+      this.logger.warn(
+        'Failed to search Zendesk tickets for participant availability check',
+        { error: error.message },
+      )
+      throw new TemplateApiError(
+        {
+          title: 'Villa kom upp við að fletta upp skráningarfjölda',
+          summary: 'Ekki tókst að fletta upp skráningarfjölda',
+        },
+        500,
+      )
+    }
+
+    const nationalIds = new Set<string>()
+    for (const ticket of tickets) {
+      if (!ticket.description) continue
+      const matches = ticket.description.matchAll(
+        /Kennitala þátttakanda \d+: (\d{10})/g,
+      )
+      for (const match of matches) nationalIds.add(match[1])
+    }
+
+    return nationalIds
+  }
+
+  private async getPaymentStateParticipantNationalIds(
+    courseInstanceId: string,
+    excludeApplicationId: string,
+  ): Promise<Set<string>> {
+    try {
+      const findQuery = this.applicationApiService.customTemplateFindQuery(
+        ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
+      )
+      const applications = await findQuery({
+        state: 'payment',
+        'answers.dateSelect': courseInstanceId,
+      })
+
+      const nationalIds = new Set<string>()
+      for (const app of applications) {
+        if (app.id === excludeApplicationId) continue
+        const participantList = (app.answers as Record<string, unknown>)
+          ?.participantList
+        if (!Array.isArray(participantList)) continue
+        for (const p of participantList) {
+          const nid = p?.nationalIdWithName?.nationalId
+          if (typeof nid === 'string' && nid) {
+            nationalIds.add(nid)
+          }
+        }
+      }
+
+      return nationalIds
+    } catch (error) {
+      this.logger.warn(
+        'Failed to query payment-state applications for participant availability check',
+        { error: error.message },
+      )
+      throw new TemplateApiError(
+        {
+          title: 'Villa kom upp við að fletta upp skráningarfjölda',
+          summary: 'Ekki tókst að fletta upp skráningarfjölda',
         },
         500,
       )
@@ -170,16 +348,16 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseId)
       throw new TemplateApiError(
         {
-          title: 'Course id not provided',
-          summary: 'Course id not provided',
+          title: 'Vantar upplýsingar um námskeið',
+          summary: 'Vantar upplýsingar um námskeið',
         },
         400,
       )
     if (!courseInstanceId)
       throw new TemplateApiError(
         {
-          title: 'Course instance id not provided',
-          summary: 'Course instance id not provided',
+          title: 'Vantar upplýsingar um námskeiðsdagsetningu',
+          summary: 'Vantar upplýsingar um námskeiðsdagsetningu',
         },
         400,
       )
@@ -198,7 +376,9 @@ export class CoursesService extends BaseTemplateApiService {
                 startTime?: string
                 endTime?: string
               }
+              maxRegistrations?: number
               chargeItemCode?: string | null
+              location?: string | null
             }[]
           }
         }
@@ -217,16 +397,16 @@ export class CoursesService extends BaseTemplateApiService {
     if (!course)
       throw new TemplateApiError(
         {
-          title: 'Course not found',
-          summary: 'Course not found',
+          title: 'Námskeið fannst ekki',
+          summary: 'Námskeið fannst ekki',
         },
         404,
       )
     if (!courseInstance)
       throw new TemplateApiError(
         {
-          title: 'Course instance not found',
-          summary: 'Course instance not found',
+          title: 'Námskeiðsdagsetning fannst ekki',
+          summary: 'Námskeiðsdagsetning fannst ekki',
         },
         404,
       )
@@ -256,6 +436,8 @@ export class CoursesService extends BaseTemplateApiService {
       application.answers,
       'userInformation.healthcenter',
     )
+    const workplace = getValueViaPath<string>(application.answers, 'workplace')
+    const jobTitle = getValueViaPath<string>(application.answers, 'jobTitle')
 
     return {
       nationalId,
@@ -263,6 +445,8 @@ export class CoursesService extends BaseTemplateApiService {
       email,
       phone,
       healthcenter,
+      workplace,
+      jobTitle,
     }
   }
 
@@ -291,18 +475,17 @@ export class CoursesService extends BaseTemplateApiService {
         endTime?: string
       }
       location?: string | null
+      chargeItemCode?: string | null
     },
     nationalId: string,
     name: string,
     email: string,
     phone: string,
     healthcenter?: string,
+    workplace?: string,
+    jobTitle?: string,
   ): Promise<string> {
-    const courseHasChargeItemCode = getValueViaPath<boolean>(
-      application.answers,
-      'courseHasChargeItemCode',
-      false,
-    )
+    const courseHasChargeItemCode = Boolean(courseInstance.chargeItemCode)
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
       'payment.userIsPayingAsIndividual',
@@ -337,6 +520,8 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
     message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
+    if (workplace) message += `Vinnustaður umsækjanda: ${workplace}\n`
+    if (jobTitle) message += `Starfsheiti umsækjanda: ${jobTitle}\n`
 
     if (courseHasChargeItemCode) {
       const payer =
@@ -357,8 +542,47 @@ export class CoursesService extends BaseTemplateApiService {
       message += `Kennitala þátttakanda ${index + 1}: ${p.nationalId}\n`
       message += `Netfang þátttakanda ${index + 1}: ${p.email}\n`
       message += `Símanúmer þátttakanda ${index + 1}: ${p.phone}\n`
+      if (participant.workplace)
+        message += `Vinnustaður þátttakanda ${index + 1}: ${
+          participant.workplace
+        }\n`
+      if (participant.jobTitle)
+        message += `Starfsheiti þátttakanda ${index + 1}: ${
+          participant.jobTitle
+        }\n`
     })
 
     return message
+  }
+
+  private formatCourseInstanceDate(courseInstance: {
+    startDate: string
+    displayedTitle?: string | null
+    startDateTimeDuration?: {
+      startTime?: string
+      endTime?: string
+    }
+  }): string {
+    const ymd = courseInstance.startDate.split('T')[0] ?? ''
+    const dateOnly = parseISO(ymd)
+    const formattedDate = format(dateOnly, 'd. MMMM yyyy', {
+      locale: icelandicLocale,
+    })
+
+    let timeRange = ''
+    if (courseInstance.startDateTimeDuration?.startTime) {
+      timeRange = courseInstance.startDateTimeDuration.startTime
+      if (courseInstance.startDateTimeDuration.endTime) {
+        timeRange += ` - ${courseInstance.startDateTimeDuration.endTime}`
+      }
+    }
+
+    const titleSuffix = courseInstance.displayedTitle?.trim()
+      ? courseInstance.displayedTitle.trim()
+      : ''
+
+    return [formattedDate, timeRange, titleSuffix]
+      .filter((part) => part.length > 0)
+      .join(' ')
   }
 }

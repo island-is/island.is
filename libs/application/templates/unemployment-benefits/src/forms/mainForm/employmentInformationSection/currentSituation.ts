@@ -144,17 +144,9 @@ export const currentSituationSubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
-              max: 99,
+              allowNegative: false,
+              max: 100,
               condition: (application) => hasEmployer(application.answers),
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.currentSituation.labels.partTimeJobStartDate,
-              width: 'half',
-              required: true,
-              condition: (application) =>
-                isEmployedPartTime(application.answers),
             },
             predictedEndDate: {
               component: 'date',

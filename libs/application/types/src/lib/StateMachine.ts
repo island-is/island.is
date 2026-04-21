@@ -134,6 +134,11 @@ export interface ApplicationStateMeta<
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
     historyButton?: StaticText
+    /**
+     * Whether to display the prune date countdown on the application card
+     * in Mínar síður. Defaults to false.
+     */
+    displayPruneAt?: boolean
   }
 
   progress?: number

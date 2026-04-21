@@ -17,19 +17,23 @@ import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPla
 import { SocialInsuranceService } from '../socialInsurance.service'
 import type { Locale } from '@island.is/shared/types'
 import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
+import { SocialInsuranceAdministrationMedicalDocumentsService } from '@island.is/clients/social-insurance-administration'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 @Scopes(ApiScope.internal)
 export class MedicalDocumentsResolver {
-  constructor(private readonly service: SocialInsuranceService) {}
+  constructor(
+    private readonly service: SocialInsuranceService,
+    private readonly medicalDocumentsService: SocialInsuranceAdministrationMedicalDocumentsService,
+  ) {}
 
   @Query(() => RehabilitationPlan, {
     name: 'socialInsuranceRehabilitationPlan',
   })
   async siaGetRehabilitationPlan(@CurrentUser() user: User) {
-    return this.service.getRehabilitationPlan(user)
+    return this.medicalDocumentsService.getRehabilitationPlan(user)
   }
 
   @Query(() => CertificateForSicknessAndRehabilitation, {
@@ -38,7 +42,9 @@ export class MedicalDocumentsResolver {
   async siaGetCertificateForSicknessAndRehabilitation(
     @CurrentUser() user: User,
   ) {
-    return this.service.getCertificateForSicknessAndRehabilitation(user)
+    return this.medicalDocumentsService.getCertificateForSicknessAndRehabilitation(
+      user,
+    )
   }
 
   @Query(() => DisabilityPensionCertificate, {
@@ -56,20 +62,20 @@ export class MedicalDocumentsResolver {
     name: 'socialInsuranceConfirmedTreatment',
   })
   async siaGetConfirmedTreatment(@CurrentUser() user: User) {
-    return this.service.getConfirmedTreatment(user)
+    return this.medicalDocumentsService.getConfirmedTreatment(user)
   }
 
   @Query(() => ConfirmationOfPendingResolution, {
     name: 'socialInsuranceConfirmationOfPendingResolution',
   })
   async siaGetConfirmationOfPendingResolution(@CurrentUser() user: User) {
-    return this.service.getConfirmationOfPendingResolution(user)
+    return this.medicalDocumentsService.getConfirmationOfPendingResolution(user)
   }
 
   @Query(() => ConfirmationOfIllHealth, {
     name: 'socialInsuranceConfirmationOfIllHealth',
   })
   async siaGetConfirmationOfIllHealth(@CurrentUser() user: User) {
-    return this.service.getConfirmationOfIllHealth(user)
+    return this.medicalDocumentsService.getConfirmationOfIllHealth(user)
   }
 }

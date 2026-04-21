@@ -330,16 +330,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PrescriptionRenewalRequestDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
@@ -1435,7 +1425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/SubmitQuestionnaireResponseDto"
                 }
               }
             }
@@ -1818,7 +1808,7 @@
     },
     "/v1/me/consents/eu": {
       "get": {
-        "description": "Get user's EU patient consents",
+        "description": "Get user's most recent EU patient consent with change history. Returns consent null and empty history if none has ever been created.",
         "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
         "parameters": [
           {
@@ -1829,40 +1819,6 @@
             "schema": {
               "$ref": "#/components/schemas/Locale"
             }
-          },
-          {
-            "name": "validFrom",
-            "required": false,
-            "in": "query",
-            "description": "The valid from date to filter the consents (ISO 8601 format, supports both date and date-time)",
-            "schema": {
-              "format": "date-time",
-              "example": "2024-01-15T00:00:00.000Z",
-              "type": "string"
-            }
-          },
-          {
-            "name": "validTo",
-            "required": false,
-            "in": "query",
-            "description": "The valid to date to filter the consents (ISO 8601 format, supports both date and date-time)",
-            "schema": {
-              "format": "date-time",
-              "example": "2024-12-31T23:59:59.999Z",
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "description": "The statuses to filter the consents (comma-separated)",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/EuPatientConsentStatus"
-              }
-            }
           }
         ],
         "responses": {
@@ -1871,10 +1827,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EuPatientConsentDto"
-                  }
+                  "$ref": "#/components/schemas/EuPatientConsentResponseDto"
                 }
               }
             }
@@ -1938,7 +1891,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EuPatientConsentResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "",
@@ -1994,110 +1954,11 @@
         "tags": ["Patient consent"]
       }
     },
-    "/v1/me/consents/eu/{id}": {
-      "get": {
-        "description": "Get a EU patient consent for a patient",
-        "operationId": "MePatientConcentEuController_getEuPatientConsent_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "The id of the EU patient consent to get",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": {
-              "$ref": "#/components/schemas/Locale"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EuPatientConsentDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Patient consent"]
-      }
-    },
-    "/v1/me/consents/eu/{id}/deactivate": {
+    "/v1/me/consents/eu/deactivate": {
       "put": {
-        "description": "Deactivate a EU patient consent for a patient",
+        "description": "Deactivate the active EU patient consent for the current user",
         "operationId": "MePatientConcentEuController_deactivateEuPatientConsentForPatient_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "The id of the EU patient consent to deactivate",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -2123,16 +1984,6 @@
             }
           },
           "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "404": {
             "description": "",
             "content": {
               "application/json": {
@@ -2398,9 +2249,9 @@
           "specialistOnlyPrescription"
         ]
       },
-      "PrescriptionRenewalStatus": {
-        "type": "number",
-        "enum": [0, 1, 2, 3]
+      "PrescriptionRenewalStatusDisplay": {
+        "type": "string",
+        "enum": ["pending", "approved", "rejected", "dismissed"]
       },
       "RenewalDto": {
         "type": "object",
@@ -2418,7 +2269,7 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+                "$ref": "#/components/schemas/PrescriptionRenewalStatusDisplay"
               }
             ]
           },
@@ -2490,21 +2341,15 @@
       "PrescribedItemDto": {
         "type": "object",
         "properties": {
-          "prescribedItemId": {
-            "type": "number"
-          },
           "prescriptionId": {
-            "type": "number"
+            "type": "string",
+            "description": "The prescription gateway ID (idByGateway). For users without a medcard, falls back to the stringified internal DB id."
           },
           "issueDate": {
             "format": "date-time",
             "type": "string"
           },
           "expiryDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "nextDispensationDate": {
             "format": "date-time",
             "type": "string"
           },
@@ -2551,6 +2396,10 @@
           "isRegiment": {
             "type": "boolean"
           },
+          "isSpecialistOnlyPrescription": {
+            "type": "boolean",
+            "description": "Indicates whether this prescription requires specialist-only care (z-marked)"
+          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2571,7 +2420,6 @@
           }
         },
         "required": [
-          "prescribedItemId",
           "prescriptionId",
           "issueDate",
           "expiryDate",
@@ -2596,21 +2444,6 @@
           }
         },
         "required": ["typeId", "path", "name"]
-      },
-      "PrescriptionRenewalRequestDto": {
-        "type": "object",
-        "properties": {
-          "prescribedItemId": {
-            "type": "number"
-          },
-          "medCardDrugId": {
-            "type": "string"
-          },
-          "medCardDrugCategory": {
-            "type": "number"
-          }
-        },
-        "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
       },
       "DispensationHistoryProductDto": {
         "type": "object",
@@ -2901,6 +2734,10 @@
             "type": "string",
             "nullable": true
           },
+          "sender": {
+            "type": "string",
+            "description": "Name of the sender of the questionnaire"
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -2912,8 +2749,8 @@
           },
           "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1,
-            "description": "Number of submissions allowed for the questionnaire"
+            "description": "Number of submissions allowed for the questionnaire, null if unlimited",
+            "nullable": true
           },
           "numSubmitted": {
             "type": "number",
@@ -2933,12 +2770,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "questionnaireId",
-          "numSubmissionsAllowed",
-          "numSubmitted",
-          "hasDraft"
-        ]
+        "required": ["questionnaireId", "sender", "numSubmitted", "hasDraft"]
       },
       "QuestionType": {
         "type": "string",
@@ -3770,6 +3602,10 @@
             "type": "string",
             "nullable": true
           },
+          "sender": {
+            "type": "string",
+            "description": "Name of the sender of the questionnaire"
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -3781,8 +3617,8 @@
           },
           "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1,
-            "description": "Number of submissions allowed for the questionnaire"
+            "description": "Number of submissions allowed for the questionnaire, null if unlimited",
+            "nullable": true
           },
           "numSubmitted": {
             "type": "number",
@@ -3877,7 +3713,7 @@
         },
         "required": [
           "questionnaireId",
-          "numSubmissionsAllowed",
+          "sender",
           "numSubmitted",
           "hasDraft",
           "daysBetweenReplies",
@@ -4093,6 +3929,16 @@
           }
         },
         "required": ["replies", "isDraft"]
+      },
+      "SubmitQuestionnaireResponseDto": {
+        "type": "object",
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "description": "Id of the questionnaire submission (draft or final)"
+          }
+        },
+        "required": ["submissionId"]
       },
       "InvalidSubmissionDto": {
         "type": "object",
@@ -4411,6 +4257,64 @@
           }
         },
         "required": ["status", "codes", "countries"]
+      },
+      "ConsentHistoryEntryDto": {
+        "type": "object",
+        "properties": {
+          "countries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentCountryDto"
+            }
+          },
+          "consentTypes": {
+            "description": "Data type codes e.g. PATIENT_SUMMARY",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When this version was superseded (deactivatedAt)"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": ["countries", "consentTypes", "validFrom", "createdAt"]
+      },
+      "EuPatientConsentResponseDto": {
+        "type": "object",
+        "properties": {
+          "consent": {
+            "nullable": true,
+            "description": "The most recent consent, or null if none has ever been created",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EuPatientConsentDto"
+              }
+            ]
+          },
+          "history": {
+            "description": "Change history for this patient",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentHistoryEntryDto"
+            }
+          }
+        },
+        "required": ["consent", "history"]
       },
       "CreateEuPatientConsentDto": {
         "type": "object",

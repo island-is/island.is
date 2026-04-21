@@ -1,6 +1,7 @@
 import { FormStatus } from '@island.is/form-system/shared'
 import { CreationOptional } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -13,6 +14,7 @@ import {
 import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
+import { Application } from '../../applications/models/application.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Section } from '../../sections/models/section.model'
@@ -127,7 +129,13 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 30,
+  })
+  submissionDaysToLive!: number
 
   @Column({
     type: DataType.UUID,
@@ -195,4 +203,17 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  @BelongsTo(() => Organization, 'organizationId')
+  organization?: Organization
+
+  @HasMany(() => Application)
+  applications?: Application[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'last_modified_by',
+  })
+  lastModifiedBy?: string
 }

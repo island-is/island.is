@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
+  CaseIndictmentRulingDecision,
   DefendantPlea,
   DefenderChoice,
   Gender,
@@ -20,6 +21,15 @@ registerEnumType(PunishmentType, { name: 'PunishmentType' })
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
+
+@ObjectType()
+export class IndictmentCancelledOrDismissedState {
+  @Field(() => CaseIndictmentRulingDecision)
+  readonly type!: CaseIndictmentRulingDecision
+
+  @Field(() => String)
+  readonly time!: string
+}
 
 @ObjectType()
 export class Defendant {
@@ -106,6 +116,9 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
+
   @Field(() => String, { nullable: true })
   readonly sentToPrisonAdminDate?: string
 
@@ -126,4 +139,10 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly isDrivingLicenseSuspended?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Field(() => IndictmentCancelledOrDismissedState, { nullable: true })
+  readonly indictmentCancelledOrDismissedState?: IndictmentCancelledOrDismissedState
 }

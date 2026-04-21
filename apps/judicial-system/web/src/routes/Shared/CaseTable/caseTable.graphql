@@ -21,12 +21,16 @@ query CaseTable($input: CaseTableQueryInput!) {
             color
             text
           }
-          ... on TagPairValue {
+          ... on TagGroupValue {
             firstTag {
               text
               color
             }
             secondTag {
+              text
+              color
+            }
+            thirdTag {
               text
               color
             }

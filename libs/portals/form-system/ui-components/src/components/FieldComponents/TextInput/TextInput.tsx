@@ -9,10 +9,11 @@ import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
+  valueIndex?: number
   dispatch?: Dispatch<Action>
 }
 
-export const TextInput = ({ item, dispatch }: Props) => {
+export const TextInput = ({ item, valueIndex = 0, dispatch }: Props) => {
   const { fieldSettings } = item
   const { control } = useFormContext()
   const { lang, formatMessage } = useLocale()
@@ -23,15 +24,15 @@ export const TextInput = ({ item, dispatch }: Props) => {
       {isLarge && maxLength && maxLength > 0 && (
         <Box display="flex" justifyContent={'flexEnd'}>
           <Text variant="eyebrow">{`${
-            getValue(item, 'text')?.length ?? 0
+            getValue(item, 'text', valueIndex)?.length ?? 0
           }/${maxLength}`}</Text>
         </Box>
       )}
       <Controller
-        key={item.id}
-        name={item.id}
+        key={`${item.id}-${valueIndex}`}
+        name={`${item.id}.${valueIndex}`}
         control={control}
-        defaultValue={getValue(item, 'text') ?? ''}
+        defaultValue={getValue(item, 'text', valueIndex) ?? ''}
         rules={{
           required: {
             value: item.isRequired ?? false,
@@ -49,7 +50,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
               hasDescription ? item?.description?.[lang] ?? '' : undefined
             }
             backgroundColor="blue"
-            value={getValue(item, 'text') ?? ''}
+            value={getValue(item, 'text', valueIndex) ?? ''}
             onChange={(e) => {
               field.onChange(e)
               if (dispatch) {
@@ -58,6 +59,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
                   payload: {
                     id: item.id,
                     value: e.target.value,
+                    valueIndex,
                   },
                 })
               }

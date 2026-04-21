@@ -1,5 +1,5 @@
 export * from './enums'
-export { initializeField } from './fieldTypes'
+export * from './fieldTypes'
 export * from './fileTypes'
 export * from './getValue'
 export * from './messages'

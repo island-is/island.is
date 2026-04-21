@@ -106,12 +106,7 @@ describe('WorkerService', () => {
       await service.run()
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 0,
-          failed: 0,
-          manualInterventionNeeded: 0,
-        },
+        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 0',
       )
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
       expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
@@ -139,12 +134,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 1,
-          failed: 0,
-          manualInterventionNeeded: 0,
-        },
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0',
       )
     })
 
@@ -168,16 +158,11 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 0,
-          failed: 1,
-          manualInterventionNeeded: 0,
-        },
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
       )
     })
 
-    it('should not record event when createFjsCharge throws FJS_NETWORK_ERROR', async () => {
+    it('should not record event but still count failure when createFjsCharge throws FJS_NETWORK_ERROR', async () => {
       const flow = createMockFlow({ id: 'flow-network' })
       paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
         flow,
@@ -193,16 +178,11 @@ describe('WorkerService', () => {
         '[flow-network] FJS request failed (network/transient), will retry',
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 0,
-          failed: 0,
-          manualInterventionNeeded: 0,
-        },
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
       )
     })
 
-    it('should not record event when createFjsCharge throws AlreadyCreatedCharge', async () => {
+    it('should record failure event when createFjsCharge throws AlreadyCreatedCharge', async () => {
       const flow = createMockFlow({ id: 'flow-already' })
       paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
         flow,
@@ -213,17 +193,20 @@ describe('WorkerService', () => {
 
       await service.run()
 
-      expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentFlowId: 'flow-already',
+          taskType: WorkerTaskType.CreateFjsCharge,
+          status: 'failure',
+          errorCode: FjsErrorCode.AlreadyCreatedCharge,
+          message: FjsErrorCode.AlreadyCreatedCharge,
+        }),
+      )
       expect(mockLogger.warn).toHaveBeenCalledWith(
         '[flow-already] FJS charge already exists, flow/fulfillment not updated — manual reconciliation required',
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 0,
-          failed: 0,
-          manualInterventionNeeded: 0,
-        },
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
       )
     })
 
@@ -247,12 +230,7 @@ describe('WorkerService', () => {
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
       expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 0,
-          failed: 0,
-          manualInterventionNeeded: 1,
-        },
+        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 1',
       )
     })
 
@@ -279,12 +257,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 1,
-          failed: 0,
-          manualInterventionNeeded: 0,
-        },
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0',
       )
     })
 
@@ -309,12 +282,7 @@ describe('WorkerService', () => {
       expect(paymentWorkerEventModel.create).toHaveBeenCalledTimes(1)
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete',
-        {
-          created: 1,
-          failed: 0,
-          manualInterventionNeeded: 1,
-        },
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 1',
       )
     })
   })
