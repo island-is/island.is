@@ -19,7 +19,10 @@ export const apiScopeUsersLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ request }): Promise<ApiScopeUsersLoaderData> => {
     const url = new URL(request.url)
     const parsedPage = Number(url.searchParams.get('page'))
-    const page = Number.isFinite(parsedPage) && parsedPage >= 1 ? Math.floor(parsedPage) : 1
+    const page =
+      Number.isFinite(parsedPage) && parsedPage >= 1
+        ? Math.floor(parsedPage)
+        : 1
     const search = url.searchParams.get('search') ?? ''
 
     const [usersResult, scopesResult, envsResult] = await Promise.all([
@@ -49,7 +52,10 @@ export const apiScopeUsersLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     if (scopesResult.error) {
-      console.error('Failed to fetch access-controlled scopes', scopesResult.error)
+      console.error(
+        'Failed to fetch access-controlled scopes',
+        scopesResult.error,
+      )
     }
 
     if (envsResult.error) {
