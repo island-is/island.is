@@ -556,50 +556,46 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateAppointmentsInput,
   ): Promise<Appointments | null> {
-    try {
-      const data = await this.healthApi.getAppointments(
-        auth,
-        input.from,
-        input.status
-          ?.map((status) => mapAppointmentStatus(status))
-          .filter(
-            (status): status is UserVisibleAppointmentStatuses =>
-              status !== null,
-          ),
-      )
-      if (!data) {
-        return null
-      }
-
-      // Sort data by startTime before mapping
-      const sortedData = [...data].sort((a, b) => {
-        if (!a.startTime || !b.startTime) return 0
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-      })
-
-      const appointments: Array<Appointment> = sortedData.map((item) => ({
-        id: item.id,
-        date: item.startTime,
-        title: item.description,
-        status: toAppointmentStatusEnum(item.status),
-        duration: item.duration,
-        location: item.location
-          ? {
-              name: item.location.name,
-              organization: item.location.organization,
-              address: item.location.address,
-              city: item.location.city,
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }
-          : undefined,
-        instruction: item.patientInstruction,
-        practitioners: item.practitioners ?? [],
-      }))
-      return { data: appointments }
-    } catch (error) {
+    const data = await this.healthApi.getAppointments(
+      auth,
+      input.from,
+      input.status
+        ?.map((status) => mapAppointmentStatus(status))
+        .filter(
+          (status): status is UserVisibleAppointmentStatuses =>
+            status !== null,
+        ),
+    )
+    if (!data) {
       return null
     }
+
+    // Sort data by startTime before mapping
+    const sortedData = [...data].sort((a, b) => {
+      if (!a.startTime || !b.startTime) return 0
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+    })
+
+    const appointments: Array<Appointment> = sortedData.map((item) => ({
+      id: item.id,
+      date: item.startTime,
+      title: item.description,
+      status: toAppointmentStatusEnum(item.status),
+      duration: item.duration,
+      location: item.location
+        ? {
+            name: item.location.name,
+            organization: item.location.organization,
+            address: item.location.address,
+            city: item.location.city,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }
+        : undefined,
+      instruction: item.patientInstruction,
+      practitioners: item.practitioners ?? [],
+    }))
+    return { data: appointments }
   }
 
   public async getAppointmentById(
@@ -607,39 +603,35 @@ export class HealthDirectorateService {
     input: HealthDirectorateAppointmentInput,
   ): Promise<AppointmentDetail | null> {
     const { id } = input
-    try {
-      const item = await this.healthApi.getAppointmentById(auth, id)
-      if (!item) {
-        return null
-      }
-
-      return {
-        id: item.id,
-        date: item.startTime,
-        title: item.description,
-        status: toAppointmentStatusEnum(item.status),
-        instruction: item.patientInstruction,
-        duration: item.duration,
-        location: item.location
-          ? {
-              name: item.location.name,
-              organization: item.location.organization,
-              address: item.location.address,
-              directions: item.location.directions,
-              link: item.location.link,
-              city: item.location.city,
-              postalCode: item.location.postalCode,
-              country: item.location.country,
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-              phoneNumber: item.location.phoneNumber,
-              openingHoursText: item.location.openingHours?.text,
-            }
-          : undefined,
-        practitioners: item.practitioners ?? [],
-      }
-    } catch (error) {
+    const item = await this.healthApi.getAppointmentById(auth, id)
+    if (!item) {
       return null
+    }
+
+    return {
+      id: item.id,
+      date: item.startTime,
+      title: item.description,
+      status: toAppointmentStatusEnum(item.status),
+      instruction: item.patientInstruction,
+      duration: item.duration,
+      location: item.location
+        ? {
+            name: item.location.name,
+            organization: item.location.organization,
+            address: item.location.address,
+            directions: item.location.directions,
+            link: item.location.link,
+            city: item.location.city,
+            postalCode: item.location.postalCode,
+            country: item.location.country,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+            phoneNumber: item.location.phoneNumber,
+            openingHoursText: item.location.openingHours?.text,
+          }
+        : undefined,
+      practitioners: item.practitioners ?? [],
     }
   }
 }
