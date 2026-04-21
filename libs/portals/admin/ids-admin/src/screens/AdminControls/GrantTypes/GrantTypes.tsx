@@ -66,6 +66,7 @@ const GrantTypes = () => {
         configuredEnvironments={configuredEnvironments}
         onEdit={modal.openEditModal}
         onDelete={modal.handleDelete}
+        onRestore={modal.handleRestore}
         onPageChange={handlePageChange}
       />
 

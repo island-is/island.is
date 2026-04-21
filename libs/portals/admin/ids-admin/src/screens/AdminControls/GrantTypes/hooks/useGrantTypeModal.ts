@@ -91,6 +91,9 @@ export const useGrantTypeModal = ({
         case GrantTypeIntent.delete:
           toast.success(formatMessage(m.grantTypesDeleteSuccess))
           break
+        case GrantTypeIntent.restore:
+          toast.success(formatMessage(m.grantTypesRestoreSuccess))
+          break
       }
       resetModalState()
     } else {
@@ -236,6 +239,18 @@ export const useGrantTypeModal = ({
     fetcher.submit(submitData, { method: 'post' })
   }
 
+  const handleRestore = (
+    name: string,
+    environments: AuthAdminEnvironment[],
+  ) => {
+    const submitData = new FormData()
+    submitData.set('intent', GrantTypeIntent.restore)
+    submitData.set('name', name)
+    submitData.set('environments', JSON.stringify(environments))
+
+    fetcher.submit(submitData, { method: 'post' })
+  }
+
   const environmentOptions = useMemo(
     () =>
       authAdminEnvironments
@@ -276,6 +291,7 @@ export const useGrantTypeModal = ({
     resetModalState,
     handleSubmit,
     handleDelete,
+    handleRestore,
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,

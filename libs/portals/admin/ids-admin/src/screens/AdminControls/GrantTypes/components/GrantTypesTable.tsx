@@ -27,6 +27,7 @@ interface GrantTypesTableProps {
   configuredEnvironments: AuthAdminEnvironment[]
   onEdit: (grantType: GrantTypeRow) => void
   onDelete: (name: string, environments: AuthAdminEnvironment[]) => void
+  onRestore: (name: string, environments: AuthAdminEnvironment[]) => void
   onPageChange: (page: number) => void
 }
 
@@ -37,6 +38,7 @@ export const GrantTypesTable = ({
   configuredEnvironments,
   onEdit,
   onDelete,
+  onRestore,
   onPageChange,
 }: GrantTypesTableProps) => {
   const { formatMessage } = useLocale()
@@ -47,6 +49,15 @@ export const GrantTypesTable = ({
     AuthAdminEnvironment[]
   >([])
   const [deleteError, setDeleteError] = useState<string | undefined>(undefined)
+
+  const [restoreModalVisible, setRestoreModalVisible] = useState(false)
+  const [restoreTarget, setRestoreTarget] = useState<GrantTypeRow | null>(null)
+  const [restoreEnvironments, setRestoreEnvironments] = useState<
+    AuthAdminEnvironment[]
+  >([])
+  const [restoreError, setRestoreError] = useState<string | undefined>(
+    undefined,
+  )
 
   const openDeleteModal = (grantType: GrantTypeRow) => {
     setDeleteTarget(grantType)
@@ -79,6 +90,42 @@ export const GrantTypesTable = ({
     if (deleteTarget) {
       onDelete(deleteTarget.name, deleteEnvironments)
       closeDeleteModal()
+    }
+  }
+
+  const openRestoreModal = (grantType: GrantTypeRow) => {
+    setRestoreTarget(grantType)
+    setRestoreEnvironments(grantType.availableEnvironments ?? [])
+    setRestoreError(undefined)
+    setRestoreModalVisible(true)
+  }
+
+  const closeRestoreModal = () => {
+    setRestoreModalVisible(false)
+    setRestoreTarget(null)
+    setRestoreEnvironments([])
+    setRestoreError(undefined)
+  }
+
+  const handleRestoreEnvironmentChange = (env: AuthAdminEnvironment) => {
+    setRestoreEnvironments((prev) =>
+      prev.includes(env) ? prev.filter((e) => e !== env) : [...prev, env],
+    )
+    if (restoreError) {
+      setRestoreError(undefined)
+    }
+  }
+
+  const handleRestoreConfirm = () => {
+    if (restoreEnvironments.length === 0) {
+      setRestoreError(
+        formatMessage(m.grantTypesRestoreEnvironmentRequired),
+      )
+      return
+    }
+    if (restoreTarget) {
+      onRestore(restoreTarget.name, restoreEnvironments)
+      closeRestoreModal()
     }
   }
 
@@ -133,19 +180,28 @@ export const GrantTypesTable = ({
                     rowGap={1}
                     style={isArchived ? { opacity: 0.6 } : undefined}
                   >
-                    {grantType.availableEnvironments?.map((env) => (
-                      <Tag key={env} variant="blue" outlined disabled>
-                        {env}
+                    {isArchived ? (
+                      <Tag variant="red" outlined disabled>
+                        {formatMessage(m.grantTypesArchived)}
                       </Tag>
-                    ))}
+                    ) : (
+                      grantType.availableEnvironments?.map((env) => (
+                        <Tag key={env} variant="blue" outlined disabled>
+                          {env}
+                        </Tag>
+                      ))
+                    )}
                   </Box>
                 </T.Data>
                 <T.Data>
                   {isArchived ? (
-                    <Box display="flex" justifyContent="center">
-                      <Tag variant="red" outlined disabled>
-                        {formatMessage(m.grantTypesArchived)}
-                      </Tag>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        variant="ghost"
+                        size="small"
+                        icon="reload"
+                        onClick={() => openRestoreModal(grantType)}
+                      />
                     </Box>
                   ) : (
                     <Box display="flex" columnGap={2} justifyContent="flexEnd">
@@ -254,6 +310,81 @@ export const GrantTypesTable = ({
               </Button>
               <Button colorScheme="destructive" onClick={handleDeleteConfirm}>
                 {formatMessage(m.grantTypesDeleteButton)}
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      )}
+
+      {restoreModalVisible && restoreTarget && (
+        <Modal
+          id={`restore-${restoreTarget.name}`}
+          isVisible={restoreModalVisible}
+          label={formatMessage(m.grantTypesRestoreConfirmTitle)}
+          onClose={closeRestoreModal}
+          closeButtonLabel={formatMessage(m.grantTypesCancelButton)}
+          scrollType="outside"
+        >
+          <Box paddingX={4}>
+            <Text variant="h2" as="h2" marginBottom={2}>
+              {formatMessage(m.grantTypesRestoreConfirmTitle)}
+            </Text>
+            <Text marginBottom={3}>
+              {formatMessage(m.grantTypesRestoreConfirmMessage)}
+            </Text>
+
+            <Box marginBottom={3}>
+              <Text variant="h4" marginBottom={2}>
+                {formatMessage(m.grantTypesRestoreSelectEnvironments)}
+              </Text>
+              <Box
+                display="flex"
+                flexDirection={['column', 'row']}
+                columnGap={3}
+                rowGap={2}
+              >
+                {authAdminEnvironments.map((env) => {
+                  const isGrantTypeEnv =
+                    restoreTarget.availableEnvironments?.includes(env) ?? false
+                  return (
+                    <Box width="full" key={env}>
+                      <Checkbox
+                        label={env}
+                        name="restoreEnvironments"
+                        id={`restoreEnvironments.${env}`}
+                        value={env}
+                        checked={restoreEnvironments.includes(env)}
+                        onChange={() => handleRestoreEnvironmentChange(env)}
+                        disabled={
+                          !isGrantTypeEnv ||
+                          !configuredEnvironments.includes(env)
+                        }
+                        large
+                      />
+                    </Box>
+                  )
+                })}
+              </Box>
+              {restoreError && (
+                <InputError
+                  id="restore-environments-error"
+                  errorMessage={restoreError}
+                />
+              )}
+            </Box>
+
+            <Box
+              paddingTop={2}
+              paddingBottom={4}
+              display="flex"
+              justifyContent="spaceBetween"
+              columnGap={2}
+            >
+              <Button variant="ghost" onClick={closeRestoreModal}>
+                {formatMessage(m.grantTypesCancelButton)}
+              </Button>
+              <Button onClick={handleRestoreConfirm}>
+                {formatMessage(m.grantTypesRestoreButton)}
               </Button>
             </Box>
           </Box>

@@ -55,6 +55,10 @@ interface GrantTypesApi {
   meGrantTypesControllerDeleteRaw(params: {
     name: string
   }): Promise<ApiResponse<void>>
+
+  meGrantTypesControllerRestoreRaw(params: {
+    name: string
+  }): Promise<ApiResponse<void>>
 }
 
 const mapGrantType = (
@@ -104,8 +108,9 @@ export class GrantTypeService extends MultiEnvironmentService {
       }),
     )
 
-    // Build a map of grant type name -> environments it exists in
+    // Build maps of grant type name -> environments and archived environments
     const envMap = new Map<string, Environment[]>()
+    const archivedEnvMap = new Map<string, Environment[]>()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
@@ -113,6 +118,12 @@ export class GrantTypeService extends MultiEnvironmentService {
           const existing = envMap.get(row.name) ?? []
           existing.push(environment)
           envMap.set(row.name, existing)
+
+          if (row.archived && row.archived.getTime() > 0) {
+            const archivedExisting = archivedEnvMap.get(row.name) ?? []
+            archivedExisting.push(environment)
+            archivedEnvMap.set(row.name, archivedExisting)
+          }
         }
       }
     }
@@ -122,15 +133,25 @@ export class GrantTypeService extends MultiEnvironmentService {
       if (result.status === 'fulfilled' && result.value) {
         const { data } = result.value
         return {
-          rows: data.rows.map((row: GrantTypeResponse) => ({
-            name: row.name,
-            availableEnvironments: envMap.get(row.name),
-            description: row.description,
-            archived:
-              row.archived && row.archived.getTime() > 0
-                ? row.archived
+          rows: data.rows.map((row: GrantTypeResponse) => {
+            const allEnvs = envMap.get(row.name) ?? []
+            const archivedEnvs = archivedEnvMap.get(row.name) ?? []
+            const isFullyArchived =
+              archivedEnvs.length > 0 && archivedEnvs.length === allEnvs.length
+            const nonArchivedEnvs = allEnvs.filter(
+              (e) => !archivedEnvs.includes(e),
+            )
+            return {
+              name: row.name,
+              availableEnvironments: isFullyArchived
+                ? allEnvs
+                : nonArchivedEnvs,
+              description: row.description,
+              archived: isFullyArchived
+                ? new Date(row.archived ?? '')
                 : undefined,
-          })),
+            }
+          }),
           totalCount: data.count,
         }
       }
@@ -310,5 +331,46 @@ export class GrantTypeService extends MultiEnvironmentService {
     }
 
     throw lastError ?? new Error('Failed to delete grant type')
+  }
+
+  async restoreGrantType(
+    user: User,
+    name: string,
+    targetEnvironments?: Environment[],
+  ): Promise<boolean> {
+    const envsToRestore =
+      targetEnvironments && targetEnvironments.length > 0
+        ? targetEnvironments
+        : environments
+
+    let anyRequestMade = false
+    let lastError: unknown = null
+
+    for (const environment of envsToRestore) {
+      let requestMade = false
+
+      try {
+        await this.typedRequest(user, environment, (api) => {
+          requestMade = true
+          return api.meGrantTypesControllerRestoreRaw({ name })
+        })
+
+        if (requestMade) {
+          anyRequestMade = true
+        }
+      } catch (error) {
+        lastError = error
+        this.logger.error(
+          `Failed to restore grant type in ${environment}`,
+          error as Error,
+        )
+      }
+    }
+
+    if (anyRequestMade) {
+      return true
+    }
+
+    throw lastError ?? new Error('Failed to restore grant type')
   }
 }

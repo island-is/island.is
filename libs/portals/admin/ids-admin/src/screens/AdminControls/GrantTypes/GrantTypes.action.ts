@@ -11,12 +11,16 @@ import {
   DeleteGrantTypeDocument,
   DeleteGrantTypeMutation,
   DeleteGrantTypeMutationVariables,
+  RestoreGrantTypeDocument,
+  RestoreGrantTypeMutation,
+  RestoreGrantTypeMutationVariables,
 } from './GrantTypes.generated'
 
 export enum GrantTypeIntent {
   create = 'create',
   update = 'update',
   delete = 'delete',
+  restore = 'restore',
 }
 
 export type GrantTypesActionResult = {
@@ -104,6 +108,27 @@ export const grantTypesAction: WrappedActionFn =
           }
 
           return { intent, data: response.data?.deleteAuthAdminGrantType }
+        }
+
+        case GrantTypeIntent.restore: {
+          const response = await client.mutate<
+            RestoreGrantTypeMutation,
+            RestoreGrantTypeMutationVariables
+          >({
+            mutation: RestoreGrantTypeDocument,
+            variables: {
+              input: {
+                name: formData.get('name') as string,
+                environments: parseEnvironments(formData),
+              },
+            },
+          })
+
+          if (response.errors?.length) {
+            return { intent, globalError: true }
+          }
+
+          return { intent, data: response.data?.restoreAuthAdminGrantType }
         }
 
         default:

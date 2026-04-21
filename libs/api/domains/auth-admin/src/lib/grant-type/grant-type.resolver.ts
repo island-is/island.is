@@ -17,6 +17,7 @@ import { GrantTypesInput } from './dto/grant-types.input'
 import { CreateGrantTypeInput } from './dto/create-grant-type.input'
 import { UpdateGrantTypeInput } from './dto/update-grant-type.input'
 import { DeleteGrantTypeInput } from './dto/delete-grant-type.input'
+import { RestoreGrantTypeInput } from './dto/restore-grant-type.input'
 import { GrantTypeService } from './grant-type.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -76,6 +77,19 @@ export class GrantTypeResolver {
     input: DeleteGrantTypeInput,
   ): Promise<boolean> {
     return this.grantTypeService.deleteGrantType(
+      user,
+      input.name,
+      input.environments,
+    )
+  }
+
+  @Mutation(() => Boolean, { name: 'restoreAuthAdminGrantType' })
+  restoreGrantType(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => RestoreGrantTypeInput })
+    input: RestoreGrantTypeInput,
+  ): Promise<boolean> {
+    return this.grantTypeService.restoreGrantType(
       user,
       input.name,
       input.environments,

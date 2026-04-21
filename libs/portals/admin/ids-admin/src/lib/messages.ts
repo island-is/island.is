@@ -1236,6 +1236,30 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-environments',
     defaultMessage: 'Environments',
   },
+  grantTypesRestoreButton: {
+    id: 'ap.ids-admin:grant-types-restore-button',
+    defaultMessage: 'Restore',
+  },
+  grantTypesRestoreConfirmTitle: {
+    id: 'ap.ids-admin:grant-types-restore-confirm-title',
+    defaultMessage: 'Restore Grant Type',
+  },
+  grantTypesRestoreConfirmMessage: {
+    id: 'ap.ids-admin:grant-types-restore-confirm-message',
+    defaultMessage: 'Are you sure you want to restore this grant type?',
+  },
+  grantTypesRestoreSuccess: {
+    id: 'ap.ids-admin:grant-types-restore-success',
+    defaultMessage: 'Grant type restored successfully',
+  },
+  grantTypesRestoreSelectEnvironments: {
+    id: 'ap.ids-admin:grant-types-restore-select-environments',
+    defaultMessage: 'Select environments to restore to',
+  },
+  grantTypesRestoreEnvironmentRequired: {
+    id: 'ap.ids-admin:grant-types-restore-environment-required',
+    defaultMessage: 'Select at least one environment to restore to',
+  },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
     defaultMessage: 'IDP Providers',

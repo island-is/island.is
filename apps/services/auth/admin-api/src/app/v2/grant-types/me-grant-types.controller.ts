@@ -155,4 +155,25 @@ export class MeGrantTypesController {
       this.grantTypeService.delete(name),
     )
   }
+
+  @Patch(':name/restore')
+  @Documentation({
+    description: 'Restore a soft-deleted grant type.',
+    response: { status: 200 },
+  })
+  async restore(
+    @CurrentUser() user: User,
+    @Param('name') name: string,
+  ): Promise<void> {
+    await this.auditService.auditPromise(
+      {
+        namespace,
+        auth: user,
+        action: 'restore',
+        resources: name,
+        alsoLog: true,
+      },
+      this.grantTypeService.restore(name),
+    )
+  }
 }

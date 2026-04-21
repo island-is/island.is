@@ -146,4 +146,22 @@ export class GrantTypeService {
 
     return result[0]
   }
+
+  /** Restore a soft-deleted grant type by name */
+  async restore(name: string): Promise<number> {
+    this.logger.debug('Restoring a grant type with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('name must be provided')
+    }
+
+    const result = await this.grantTypeModel.update(
+      { archived: null },
+      {
+        where: { name: name },
+      },
+    )
+
+    return result[0]
+  }
 }

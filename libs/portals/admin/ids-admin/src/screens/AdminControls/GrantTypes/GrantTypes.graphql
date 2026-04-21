@@ -56,3 +56,7 @@ mutation UpdateGrantType($input: UpdateAuthAdminGrantTypeInput!) {
 mutation DeleteGrantType($input: DeleteAuthAdminGrantTypeInput!) {
   deleteAuthAdminGrantType(input: $input)
 }
+
+mutation RestoreGrantType($input: RestoreAuthAdminGrantTypeInput!) {
+  restoreAuthAdminGrantType(input: $input)
+}
