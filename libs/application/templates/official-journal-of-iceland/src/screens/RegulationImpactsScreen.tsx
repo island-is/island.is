@@ -134,8 +134,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
 
   // Gate the "Next" button: amending regulations must have at least one
   // impact before the user can advance. Base regulations pass through.
-  const nextDisabledReason =
-    isAmending && impactsLoaded && impacts.length === 0
+  const nextDisabledReason = isAmending && impactsLoaded && impacts.length === 0
   useEffect(() => {
     if (!setSubmitButtonDisabled) return
     setSubmitButtonDisabled(
