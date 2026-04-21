@@ -65,7 +65,12 @@ export interface ScreenIntrospection {
   title: string | null
   description: string | null
   width: string | null
+  /** `MULTI_FIELD` only: vertical gap between child fields (matches `FormMultiField`). */
   space: number | null
+  marginTop?: unknown
+  marginBottom?: unknown
+  /** Maps `field.space` (e.g. description/radio top padding) to `Box` `paddingTop`. */
+  paddingTop?: unknown
   messageDescriptors: MessageDescriptorInfo[]
   children?: ScreenIntrospection[]
 }
@@ -160,6 +165,9 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
   let description: string | null = null
   let width: string | null = null
   let space: number | null = null
+  let marginTop: unknown = null
+  let marginBottom: unknown = null
+  let paddingTop: unknown = null
 
   descriptors.push(...extractMessageDescriptorsFromFormText(leaf.title))
 
@@ -208,6 +216,11 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     if (typeof field.width === 'string') {
       width = field.width
     }
+    marginTop = field.marginTop ?? null
+    marginBottom = field.marginBottom ?? null
+    if ('space' in field && field.space !== undefined) {
+      paddingTop = field.space
+    }
   }
 
   return {
@@ -217,6 +230,9 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     description,
     width,
     space,
+    marginTop,
+    marginBottom,
+    paddingTop,
     messageDescriptors: descriptors,
     children: children.length > 0 ? children : undefined,
   }

@@ -93,6 +93,15 @@ export class ScreenIntrospectionGql {
   @Field(() => Int, { nullable: true })
   space?: number | null
 
+  @Field(() => graphqlTypeJson, { nullable: true })
+  marginTop?: unknown
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  marginBottom?: unknown
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  paddingTop?: unknown
+
   @Field(() => [MessageDescriptorGql])
   messageDescriptors!: MessageDescriptorGql[]
 

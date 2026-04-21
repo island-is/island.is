@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ApolloError, gql, useLazyQuery } from '@apollo/client'
 import { findProblemInApolloError } from '@island.is/shared/problem'
@@ -25,7 +25,9 @@ import {
   FormStepperV2,
   Section,
 } from '@island.is/island-ui/core'
+import type { BoxProps } from '@island.is/island-ui/core/types'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import { m } from '../../lib/messages'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import {
@@ -48,6 +50,9 @@ interface ScreenIntrospection {
   description?: string | null
   width?: string | null
   space?: number | null
+  marginTop?: unknown
+  marginBottom?: unknown
+  paddingTop?: unknown
   messageDescriptors: MessageDescriptor[]
   children?: ScreenIntrospection[] | null
 }
@@ -241,10 +246,131 @@ const noop = () => {
 
 const HALF_WIDTH_IGNORED_TYPES = new Set(['RADIO', 'CHECKBOX'])
 
+/** Matches `*FormField` wrappers that pass `marginTop` / `marginBottom` / `space` → `paddingTop`. */
+const fieldPreviewLayoutProps = (
+  screen: ScreenIntrospection,
+): Pick<BoxProps, 'marginTop' | 'marginBottom' | 'paddingTop'> => {
+  const props: Pick<BoxProps, 'marginTop' | 'marginBottom' | 'paddingTop'> = {}
+  if (screen.marginTop != null) {
+    props.marginTop = screen.marginTop as BoxProps['marginTop']
+  }
+  if (screen.marginBottom != null) {
+    props.marginBottom = screen.marginBottom as BoxProps['marginBottom']
+  }
+  if (screen.paddingTop != null) {
+    props.paddingTop = screen.paddingTop as BoxProps['paddingTop']
+  }
+  return props
+}
+
+type ResolvePreviewString = (
+  messageKey: string,
+  defaultMessage?: string | null,
+) => string
+
+/**
+ * Introspection copies default language strings into `title` / `description` while
+ * `messageDescriptors` holds the real message ids. Match on defaultMessage so labels
+ * and headings use the same strings as the translation editor (including live edits).
+ */
+const resolveTranslatableStaticText = (
+  staticText: string | null | undefined,
+  descriptors: MessageDescriptor[],
+  resolvePreviewString: ResolvePreviewString,
+): string => {
+  if (staticText == null || staticText === '') {
+    return ''
+  }
+  const match = descriptors.find((d) => d.defaultMessage === staticText)
+  if (match) {
+    return resolvePreviewString(match.id, match.defaultMessage)
+  }
+  return staticText
+}
+
+const resolvePreviewLabel = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+): string => {
+  if (screen.title != null && screen.title !== '') {
+    return resolveTranslatableStaticText(
+      screen.title,
+      screen.messageDescriptors,
+      resolvePreviewString,
+    )
+  }
+  if (screen.description != null && screen.description !== '') {
+    return resolveTranslatableStaticText(
+      screen.description,
+      screen.messageDescriptors,
+      resolvePreviewString,
+    )
+  }
+  return screen.id
+}
+
+const MARKDOWN_MESSAGE_ID_SUFFIX = '#markdown'
+
+const isMarkdownMessageId = (messageId: string) =>
+  messageId.endsWith(MARKDOWN_MESSAGE_ID_SUFFIX)
+
+/**
+ * Preview copy for static/read-only field types. Uses the same message keys as
+ * the translation editor so description-only fields (no title) don't fall back
+ * to the field id, and pending/persisted strings show in the preview.
+ * Message ids ending with `#markdown` render like production description fields.
+ */
+const renderTextDisplayPreviewNodes = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+): ReactNode => {
+  if (screen.messageDescriptors.length > 0) {
+    const resolvedParts = screen.messageDescriptors
+      .map((d) => ({
+        id: d.id,
+        text: resolvePreviewString(d.id, d.defaultMessage).trim(),
+      }))
+      .filter((p) => p.text.length > 0)
+
+    if (resolvedParts.length > 0) {
+      return (
+        <Box>
+          {resolvedParts.map((p, i) =>
+            isMarkdownMessageId(p.id) ? (
+              <Box key={p.id} marginTop={i > 0 ? 2 : 0}>
+                <Markdown>{p.text}</Markdown>
+              </Box>
+            ) : (
+              <Text
+                key={p.id}
+                as="div"
+                whiteSpace="preLine"
+                marginTop={i > 0 ? 2 : 0}
+              >
+                {p.text}
+              </Text>
+            ),
+          )}
+        </Box>
+      )
+    }
+  }
+  const fallback = screen.title ?? screen.description ?? screen.id
+  return (
+    <Text as="div" whiteSpace="preLine">
+      {fallback}
+    </Text>
+  )
+}
+
 /** Renders a single leaf field as an island-ui preview component. */
-const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
-  const label = screen.title ?? screen.id
+const renderLeafFieldPreview = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+): JSX.Element => {
+  const label = resolvePreviewLabel(screen, resolvePreviewString)
   const key = screen.id
+  const layout = fieldPreviewLayoutProps(screen)
 
   if (screen.type === 'EXTERNAL_DATA_PROVIDER') {
     return (
@@ -255,6 +381,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
         border="standard"
         borderRadius="large"
         background="white"
+        {...layout}
       >
         <Text variant="small" color="dark300">
           External data provider
@@ -266,7 +393,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
 
   if (INPUT_FIELD_TYPES.has(screen.type)) {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <Input label={label} name={key} placeholder={label} disabled />
       </Box>
     )
@@ -274,7 +401,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
 
   if (screen.type === 'CHECKBOX') {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <Checkbox label={label} name={key} onChange={noop} />
       </Box>
     )
@@ -282,7 +409,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
 
   if (screen.type === 'DATE') {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <DatePicker
           label={label}
           placeholderText="dd.mm.yyyy"
@@ -298,7 +425,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
     screen.type === 'VEHICLE_RADIO'
   ) {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <Select label={label} name={key} options={[]} isDisabled />
       </Box>
     )
@@ -306,7 +433,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
 
   if (screen.type === 'RADIO') {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <Text variant="small" fontWeight="semiBold" marginBottom={1}>
           {label}
         </Text>
@@ -327,6 +454,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
         borderRadius="large"
         background="white"
         style={{ borderStyle: 'dashed' }}
+        {...layout}
       >
         <Text variant="small" color="dark300">
           {label}
@@ -340,15 +468,15 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
 
   if (TEXT_DISPLAY_TYPES.has(screen.type)) {
     return (
-      <Box key={key}>
-        <Text>{label}</Text>
+      <Box key={key} {...layout}>
+        {renderTextDisplayPreviewNodes(screen, resolvePreviewString)}
       </Box>
     )
   }
 
   if (screen.type === 'DIVIDER') {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <Divider />
       </Box>
     )
@@ -356,7 +484,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
 
   if (screen.type === 'SUBMIT') {
     return (
-      <Box key={key}>
+      <Box key={key} {...layout}>
         <Button size="small">{label}</Button>
       </Box>
     )
@@ -370,6 +498,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
         border="standard"
         borderRadius="standard"
         background="white"
+        {...layout}
       >
         <Text variant="eyebrow" color="dark300">
           {screen.type}
@@ -386,6 +515,7 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
       border="standard"
       borderRadius="standard"
       background="white"
+      {...layout}
     >
       <Text variant="eyebrow" color="dark300">
         {screen.type}
@@ -399,14 +529,23 @@ const renderLeafFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
  * Renders a screen matching the real application form layout.
  * MULTI_FIELD screens use GridRow/GridColumn with width-based spans.
  */
-const renderFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
+const renderFieldPreview = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+): JSX.Element => {
   if (screen.type === 'MULTI_FIELD') {
     const space = (screen.space ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
     return (
       <Box key={screen.id}>
         {screen.description && (
           <Box marginBottom={3}>
-            <Text color="dark400">{screen.description}</Text>
+            <Text color="dark400">
+              {resolveTranslatableStaticText(
+                screen.description,
+                screen.messageDescriptors,
+                resolvePreviewString,
+              )}
+            </Text>
           </Box>
         )}
         <Box width="full" marginTop={screen.description ? 3 : 4} />
@@ -423,7 +562,9 @@ const renderFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
                 span={['1/1', '1/1', '1/1', span]}
                 paddingBottom={isLast ? 0 : space}
               >
-                <Box>{renderLeafFieldPreview(child)}</Box>
+                <Box>
+                  {renderLeafFieldPreview(child, resolvePreviewString)}
+                </Box>
               </GridColumn>
             )
           })}
@@ -432,7 +573,7 @@ const renderFieldPreview = (screen: ScreenIntrospection): JSX.Element => {
     )
   }
 
-  return renderLeafFieldPreview(screen)
+  return renderLeafFieldPreview(screen, resolvePreviewString)
 }
 
 const TranslationWorkspace = () => {
@@ -484,6 +625,20 @@ const TranslationWorkspace = () => {
       return activeLocale === 'en' ? row.valueEn ?? '' : row.valueIs
     },
     [persistedByKey, activeLocale],
+  )
+
+  const resolvePreviewString = useCallback(
+    (messageKey: string, defaultMessage?: string | null) => {
+      if (editedValues[messageKey] !== undefined) {
+        return editedValues[messageKey]
+      }
+      const persisted = getPersistedForLocale(messageKey)
+      if (persisted !== '') {
+        return persisted
+      }
+      return defaultMessage ?? ''
+    },
+    [editedValues, getPersistedForLocale],
   )
 
   /** Drop pending edits when switching locale so EN/IS drafts do not mix in one field. */
@@ -1067,10 +1222,19 @@ const TranslationWorkspace = () => {
                       offset={['0', '0', '1/12', '1/9']}
                     >
                       <Text variant="h2" as="h2" marginBottom={1}>
-                        {previewScreens[0]?.title ?? ''}
+                        {previewScreens[0]
+                          ? resolveTranslatableStaticText(
+                              previewScreens[0].title,
+                              previewScreens[0].messageDescriptors,
+                              resolvePreviewString,
+                            )
+                          : ''}
                       </Text>
                       {previewScreens.map((screen) =>
-                        renderFieldPreview(screen as ScreenIntrospection),
+                        renderFieldPreview(
+                          screen as ScreenIntrospection,
+                          resolvePreviewString,
+                        ),
                       )}
                     </GridColumn>
 

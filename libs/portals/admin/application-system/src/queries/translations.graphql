@@ -73,6 +73,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                 description
                 width
                 space
+                marginTop
+                marginBottom
+                paddingTop
                 messageDescriptors {
                   id
                   defaultMessage
@@ -85,6 +88,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                   description
                   width
                   space
+                  marginTop
+                  marginBottom
+                  paddingTop
                   messageDescriptors {
                     id
                     defaultMessage
@@ -100,6 +106,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
               description
               width
               space
+              marginTop
+              marginBottom
+              paddingTop
               messageDescriptors {
                 id
                 defaultMessage
@@ -112,6 +121,9 @@ query getApplicationTemplateIntrospection($typeId: String!) {
                 description
                 width
                 space
+                marginTop
+                marginBottom
+                paddingTop
                 messageDescriptors {
                   id
                   defaultMessage
