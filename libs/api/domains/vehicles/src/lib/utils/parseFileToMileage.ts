@@ -11,7 +11,7 @@ export interface MileageRecord {
 }
 
 export interface MileageError {
-  code: 1 | 2
+  code: 1 | 2 | 3 | 4
   message: string
 }
 
@@ -32,6 +32,8 @@ const mileageIndexTitle = [
 export const errorMap: Record<number, MessageDescriptor> = {
   1: m.invalidVehicleColumnHeader,
   2: m.invalidMileageColumnHeader,
+  3: m.mileageTooLow,
+  4: m.missingPermno,
 }
 
 export const parseBufferToMileageRecord = async (
@@ -95,6 +97,14 @@ export const parseBufferToMileageRecord = async (
       }
     })
     .filter(isDefined)
+
+  if (uploadedOdometerStatuses.some((r) => r.mileage <= 0)) {
+    return { code: 3, message: formatMessage(errorMap[3]) }
+  }
+
+  if (uploadedOdometerStatuses.some((r) => !r.permno?.trim())) {
+    return { code: 4, message: formatMessage(errorMap[4]) }
+  }
 
   return uploadedOdometerStatuses
 }
