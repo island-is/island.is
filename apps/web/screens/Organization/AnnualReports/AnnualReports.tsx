@@ -65,7 +65,7 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
 
   const [selectedId, setSelectedId] = useState<string>('')
 
-  const pageTitle = 'Ársskýrslur'
+  const pageTitle = activeLocale === 'is' ? 'Ársskýrslur' : 'Annual Reports'
 
   const dropdownOptions = useMemo(() => {
     return annualReports.map((report) => ({
@@ -151,7 +151,11 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                       span={['12/12', '12/12', '6/12', '6/12', '5/12']}
                     >
                       <Select
-                        label="Veldu ársskýrslu"
+                        label={
+                          activeLocale === 'is'
+                            ? 'Veldu ársskýrslu'
+                            : 'Select annual report'
+                        }
                         name="select-annual-report"
                         size="sm"
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -213,6 +217,7 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                                     selectedReport.slug,
                                     chapter.slug,
                                   ],
+                                  activeLocale,
                                 ).href
 
                                 return (

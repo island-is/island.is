@@ -20,9 +20,8 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
-  AnnualReport,
-  AnnualReportChapter as AnnualReportChapterSchema,
   ContentLanguage,
+  GetAnnualReportQuery,
   OrganizationPage,
   Query,
   QueryGetAnnualReportArgs,
@@ -43,10 +42,18 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../../queries'
 
+export type AnnualReportChapterType = NonNullable<
+  GetAnnualReportQuery['getAnnualReport']
+>['chapters'][number]
+
+export type AnnualReportType = NonNullable<
+  GetAnnualReportQuery['getAnnualReport']
+>
+
 export interface AnnualReportChapterProps {
   organizationPage: OrganizationPage
-  annualReport: AnnualReport
-  annualReportChapter: AnnualReportChapterSchema
+  annualReport: AnnualReportType
+  annualReportChapter: AnnualReportChapterType
 }
 
 type AnnualReportChapterScreenContext = ScreenContext & {
@@ -94,20 +101,23 @@ const AnnualReportChapter: Screen<
                   items={[
                     {
                       title: 'Ísland.is',
-                      href: linkResolver('homepage').href,
+                      href: linkResolver('homepage', [], activeLocale).href,
                     },
                     {
                       title: organizationPage?.title ?? '',
-                      href: linkResolver('organizationpage', [
-                        organizationPage?.slug ?? '',
-                      ]).href,
+                      href: linkResolver(
+                        'organizationpage',
+                        [organizationPage?.slug ?? ''],
+                        activeLocale,
+                      ).href,
                     },
                     {
-                      title: 'Ársskýrslur',
-                      href: linkResolver('annualreport', [
-                        organizationPage?.slug ?? '',
-                        annualReport.slug,
-                      ]).href,
+                      title: annualReport?.title ?? '',
+                      href: linkResolver(
+                        'annualreport',
+                        [organizationPage?.slug ?? '', annualReport.slug],
+                        activeLocale,
+                      ).href,
                     },
                   ]}
                 />
@@ -150,7 +160,7 @@ const AnnualReportChapter: Screen<
                       paddingBottom={2}
                     >
                       <AnchorNavigation
-                        title={'Á þessari síðu'}
+                        title={activeLocale === 'is' ? 'Á þessari síðu' : 'On this page'}
                         navigation={navigation}
                         position="right"
                       />
@@ -180,7 +190,7 @@ const AnnualReportChapter: Screen<
                     >
                       <Sticky>
                         <AnchorNavigation
-                          title={'Á þessari síðu'}
+                        title={activeLocale === 'is' ? 'Á þessari síðu' : 'On this page'}
                           navigation={navigation}
                           position="right"
                         />
@@ -242,7 +252,7 @@ AnnualReportChapter.getProps = async ({
           },
         })
       : { data: { getOrganizationPage: organizationPage } },
-    apolloClient.query<Query, QueryGetAnnualReportArgs>({
+    apolloClient.query<GetAnnualReportQuery, QueryGetAnnualReportArgs>({
       query: GET_ANNUAL_REPORT_QUERY,
       variables: {
         input: {
