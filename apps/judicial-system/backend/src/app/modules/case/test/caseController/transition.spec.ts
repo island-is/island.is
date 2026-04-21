@@ -59,12 +59,8 @@ describe('CaseController - Transition', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      queuedMessages,
-      sequelize,
-      caseRepositoryService,
-      caseController,
-    } = await createTestingCaseModule()
+    const { queuedMessages, sequelize, caseRepositoryService, caseController } =
+      await createTestingCaseModule()
 
     mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
@@ -544,5 +540,4 @@ describe('CaseController - Transition', () => {
       })
     })
   })
-
 })
