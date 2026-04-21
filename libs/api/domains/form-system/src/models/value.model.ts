@@ -1,6 +1,16 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { ApplicationEventDto } from './applications.model'
 import { Month } from './month.model'
+import { LanguageType } from './languageType.model'
+
+@ObjectType('FormSystemListValue')
+export class ListValue {
+  @Field(() => LanguageType, { nullable: true })
+  label?: LanguageType
+
+  @Field(() => String, { nullable: true })
+  value?: string
+}
 
 @ObjectType('FormSystemValue')
 export class Value {
@@ -13,8 +23,8 @@ export class Value {
   @Field(() => Date, { nullable: true })
   date?: Date | null
 
-  @Field(() => String, { nullable: true })
-  listValue?: string
+  @Field(() => ListValue, { nullable: true })
+  listValue?: ListValue
 
   @Field(() => String, { nullable: true })
   nationalId?: string

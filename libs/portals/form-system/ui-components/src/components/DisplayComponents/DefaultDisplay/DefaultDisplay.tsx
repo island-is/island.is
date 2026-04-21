@@ -35,12 +35,17 @@ export const DefaultDisplay = ({ item, valueIndex }: Props) => {
   const json = value?.json as Record<string, unknown> | null | undefined
   const extracted = valueKey ? json?.[valueKey] : json
 
-  const displayValue =
-    extracted == null
-      ? ''
-      : typeof extracted === 'object'
-      ? JSON.stringify(extracted)
-      : String(extracted)
+  let displayValue = ''
+  if (valueKey === 'listValue') {
+    displayValue = value?.json?.listValue?.label?.[lang] ?? ''
+  } else {
+    displayValue =
+      extracted == null
+        ? ''
+        : typeof extracted === 'object'
+        ? JSON.stringify(extracted)
+        : String(extracted)
+  }
 
   return (
     <Box

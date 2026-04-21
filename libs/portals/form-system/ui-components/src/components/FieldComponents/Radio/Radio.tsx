@@ -36,8 +36,12 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
     [item?.list],
   )
 
+  const listValue = getValue(item, 'listValue', valueIndex)
+
   const defaultSelectedValue =
-    getValue(item, 'listValue', valueIndex) ?? selected?.label?.is ?? ''
+    (typeof listValue === 'string' ? listValue : listValue?.label?.is) ??
+    selected?.label?.is ??
+    ''
 
   const fieldName = `${item.id}.${valueIndex}`
 
@@ -48,12 +52,13 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
     const existing = getValue(item, 'listValue', valueIndex)
     if (existing) return
 
-    const seededValue = selected.label?.is ?? ''
-    if (!seededValue) return
-
     dispatch({
       type: 'SET_LIST_VALUE',
-      payload: { id: item.id, value: seededValue, valueIndex },
+      payload: {
+        id: item.id,
+        value: { label: selected.label, value: selected.value },
+        valueIndex,
+      },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -104,7 +109,11 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
                     if (!dispatch) return
                     dispatch({
                       type: 'SET_LIST_VALUE',
-                      payload: { id: item.id, value: rbValue, valueIndex },
+                      payload: {
+                        id: item.id,
+                        value: { label: rb.label, value: rb.value },
+                        valueIndex,
+                      },
                     })
                   }}
                   key={rb.id ?? `${item.id}-${valueIndex}-${index}`}
@@ -126,7 +135,11 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
                       if (!dispatch) return
                       dispatch({
                         type: 'SET_LIST_VALUE',
-                        payload: { id: item.id, value: rbValue, valueIndex },
+                        payload: {
+                          id: item.id,
+                          value: { label: rb.label, value: rb.value },
+                          valueIndex,
+                        },
                       })
                     }}
                   />

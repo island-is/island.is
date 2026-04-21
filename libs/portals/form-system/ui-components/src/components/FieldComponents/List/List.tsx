@@ -16,7 +16,7 @@ interface Props {
 
 type ListItem = {
   label: string
-  value: string | number
+  value: object
 }
 
 const listTypePlaceholder = {
@@ -34,7 +34,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
       ?.filter((item): item is FormSystemListItem => item !== null)
       .map((item) => ({
         label: item.label?.[lang] ?? '',
-        value: item.label?.[lang] ?? '',
+        value: { label: item.label, value: item.value },
       })) ?? []
 
   const value = () => {
@@ -42,8 +42,8 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
     const hasValue = listVal !== undefined && listVal !== null
     if (hasValue) {
       return {
-        label: listVal,
-        value: listVal,
+        label: listVal.label[lang],
+        value: { label: listVal.label, value: listVal.value },
       }
     }
     return undefined
@@ -58,7 +58,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
           type: 'SET_LIST_VALUE',
           payload: {
             id: item.id,
-            value: selected.label?.[lang] ?? '',
+            value: { label: selected.label, value: selected.value },
             valueIndex,
           },
         })
@@ -89,7 +89,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
             selected
               ? {
                   label: selected.label?.[lang] ?? '',
-                  value: selected.label?.[lang] ?? '',
+                  value: { label: selected.label, value: selected.value },
                 }
               : undefined
           }

@@ -189,7 +189,7 @@ const applyVisibilityToSections = (
                   ...v.json,
                   listValue: undefined,
                 }
-              : { listValue: undefined as unknown as string },
+              : { listValue: undefined },
           }))
         }
 
