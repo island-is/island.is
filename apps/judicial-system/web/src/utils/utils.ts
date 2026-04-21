@@ -205,9 +205,12 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * that the current defence user represents. Used to associate uploaded
  * appeal files with the correct party.
  *
+ * Only confirmed defenders / spokespersons are resolved — an unconfirmed
+ * pick has no authority to act on behalf of the party.
+ *
  * Resolution order:
- * 1. First matching defendant (by defenderNationalId)
- * 2. First matching civil claimant (by spokespersonNationalId)
+ * 1. First matching confirmed defendant (by defenderNationalId)
+ * 2. First matching confirmed civil claimant (by spokespersonNationalId)
  * 3. Empty object (prosecutor or no match)
  */
 export const getDefenceUserPartyIds = (
@@ -221,7 +224,10 @@ export const getDefenceUserPartyIds = (
   const normalizedId = normalizeAndFormatNationalId(user.nationalId)
 
   const defendant = workingCase.defendants?.find(
-    (d) => d.defenderNationalId && normalizedId.includes(d.defenderNationalId),
+    (d) =>
+      d.isDefenderChoiceConfirmed &&
+      d.defenderNationalId &&
+      normalizedId.includes(d.defenderNationalId),
   )
 
   if (defendant) {
@@ -230,6 +236,7 @@ export const getDefenceUserPartyIds = (
 
   const civilClaimant = workingCase.civilClaimants?.find(
     (cc) =>
+      cc.isSpokespersonConfirmed &&
       cc.spokespersonNationalId &&
       normalizedId.includes(cc.spokespersonNationalId),
   )

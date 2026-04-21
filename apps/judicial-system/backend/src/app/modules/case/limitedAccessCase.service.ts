@@ -20,6 +20,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealEventType,
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
@@ -46,6 +47,7 @@ import {
 import {
   AppealCase,
   AppealEventLog,
+  AppealEventLogRepositoryService,
   Case,
   CaseFile,
   CaseRepositoryService,
@@ -525,8 +527,44 @@ export class LimitedAccessCaseService {
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private resolveDefencePartyIds(
+    theCase: Case,
+    user: TUser,
+  ): { defendantId?: string; civilClaimantId?: string } {
+    if (!isIndictmentCase(theCase.type)) {
+      return {}
+    }
+
+    const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+    // Only confirmed defenders / spokespersons can act on behalf of a party —
+    // unconfirmed picks shouldn't be tied to appeal events.
+    const defendant = theCase.defendants?.find(
+      (d) =>
+        d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId &&
+        normalizedId.includes(d.defenderNationalId),
+    )
+    if (defendant) {
+      return { defendantId: defendant.id }
+    }
+
+    const civilClaimant = theCase.civilClaimants?.find(
+      (c) =>
+        c.isSpokespersonConfirmed &&
+        c.spokespersonNationalId &&
+        normalizedId.includes(c.spokespersonNationalId),
+    )
+    if (civilClaimant) {
+      return { civilClaimantId: civilClaimant.id }
+    }
+
+    return {}
+  }
 
   async findById(
     caseId: string,
@@ -557,6 +595,21 @@ export class LimitedAccessCaseService {
     transaction: Transaction,
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
+
+    // Dual-write appeal statement events — legacy date column remains the
+    // source of truth during Phase 2; this row powers the per-party read path.
+    if (update.defendantStatementDate && theCase.appealCase?.id) {
+      await this.appealEventLogRepositoryService.create(
+        {
+          caseId: theCase.id,
+          appealCaseId: theCase.appealCase.id,
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          userRole: user.role,
+          ...this.resolveDefencePartyIds(theCase, user),
+        },
+        { transaction },
+      )
+    }
 
     if (update.appealState === AppealCaseState.APPEALED) {
       for (const caseFile of theCase.caseFiles ?? []) {

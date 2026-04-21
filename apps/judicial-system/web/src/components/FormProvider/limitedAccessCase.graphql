@@ -98,6 +98,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isAlternativeService
       alternativeServiceDescription
       indictmentReviewDecision
+      appealStatementDate
       subpoenas {
         id
         created
@@ -462,6 +463,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
+      appealStatementDate
     }
     victims {
       id

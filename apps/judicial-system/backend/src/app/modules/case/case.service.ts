@@ -35,6 +35,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -78,6 +79,7 @@ import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
+  AppealEventLogRepositoryService,
   Case,
   caseInclude,
   CaseRepositoryService,
@@ -232,6 +234,7 @@ export class CaseService {
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -2056,6 +2059,20 @@ export class CaseService {
       await this.caseRepositoryService.update(theCase.id, caseUpdate, {
         transaction,
       })
+    }
+
+    // Dual-write appeal statement events — legacy date columns remain the
+    // source of truth during Phase 2; this row powers the per-party read path.
+    if (caseUpdate.prosecutorStatementDate && theCase.appealCase?.id) {
+      await this.appealEventLogRepositoryService.create(
+        {
+          caseId: theCase.id,
+          appealCaseId: theCase.appealCase.id,
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          userRole: user.role,
+        },
+        { transaction },
+      )
     }
 
     // Update police case numbers of case files if necessary
