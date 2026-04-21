@@ -26,6 +26,7 @@ import {
   Button,
   Icon,
   Input,
+  InputError,
   Select,
   RadioButton,
   Checkbox,
@@ -36,6 +37,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import type { InputBackgroundColor } from '@island.is/island-ui/core/types'
 import NumberFormat from 'react-number-format'
 
@@ -123,6 +125,12 @@ interface FormRendererProps {
   answers: Record<string, unknown>
   onAnswerChange: (fieldId: string, value: unknown) => void
   dispatch?: SdfFormDispatch
+  /**
+   * Optional live-computed values for `SdfDisplayField` components. The backend
+   * recomputes these from the VALIDATE action in response to form input; the
+   * overlay is applied without mutating persisted answers.
+   */
+  displayValues?: Record<string, string>
 }
 
 export const FormRenderer = ({
@@ -131,6 +139,7 @@ export const FormRenderer = ({
   answers,
   onAnswerChange,
   dispatch,
+  displayValues,
 }: FormRendererProps) => {
   const errorMap = useMemo(() => {
     const map: Record<string, string> = {}
@@ -155,6 +164,7 @@ export const FormRenderer = ({
               answers={answers}
               onAnswerChange={onAnswerChange}
               dispatch={dispatch}
+              displayValues={displayValues}
             />
           )
         }
@@ -173,6 +183,7 @@ export const FormRenderer = ({
                   answers={answers}
                   onAnswerChange={onAnswerChange}
                   dispatch={dispatch}
+                  displayValues={displayValues}
                 />
               </GridColumn>
             ))}
@@ -189,6 +200,7 @@ interface ComponentSwitchProps {
   answers: Record<string, unknown>
   onAnswerChange: (fieldId: string, value: unknown) => void
   dispatch?: SdfFormDispatch
+  displayValues?: Record<string, string>
 }
 
 const ComponentSwitch = ({
@@ -197,6 +209,7 @@ const ComponentSwitch = ({
   answers,
   onAnswerChange,
   dispatch,
+  displayValues,
 }: ComponentSwitchProps) => {
   const handleChange = useCallback(
     (value: unknown) => {
@@ -449,53 +462,82 @@ const ComponentSwitch = ({
       )
     }
 
-    case 'SdfCheckboxField':
+    case 'SdfCheckboxField': {
+      const split: '1/1' | '1/2' =
+        component.width === 'HALF' ? '1/2' : '1/1'
+      const spacing: 0 | 1 | 2 =
+        component.spacing === 0 || component.spacing === 1
+          ? component.spacing
+          : 2
+      const checkboxBg =
+        component.checkboxBackgroundColor === 'white'
+          ? 'white'
+          : component.checkboxBackgroundColor === 'blue'
+          ? 'blue'
+          : undefined
+      const currentArray = Array.isArray(currentValue)
+        ? (currentValue as string[])
+        : []
       return (
         <Box marginBottom={3}>
-          <Text variant="h5" marginBottom={2}>
-            {component.label}
-            {component.required && (
-              <Text as="span" color="red600">
-                {' '}
-                *
-              </Text>
-            )}
-          </Text>
-          {component.options?.map((opt) => {
-            const checked =
-              Array.isArray(currentValue) &&
-              (currentValue as string[]).includes(opt.value)
-            return (
-              <Box key={opt.value} marginBottom={1}>
-                <Checkbox
-                  id={`${component.id}-${opt.value}`}
-                  name={component.id ?? ''}
-                  label={opt.label}
-                  value={opt.value}
-                  checked={checked}
-                  disabled={component.disabled}
-                  onChange={(e) => {
-                    const current = Array.isArray(currentValue)
-                      ? (currentValue as string[])
-                      : []
-                    if (e.target.checked) {
-                      handleChange([...current, opt.value])
-                    } else {
-                      handleChange(current.filter((v) => v !== opt.value))
-                    }
-                  }}
-                  hasError={!!error}
-                />
-              </Box>
-            )
-          })}
-          {error && (
-            <Text variant="small" color="red600" marginTop={1}>
-              {error}
+          {component.label && (
+            <Text variant="h4">
+              {component.label}
+              {component.required && component.label && (
+                <Text as="span" color="red600">
+                  {' '}
+                  *
+                </Text>
+              )}
             </Text>
           )}
+          {component.description && (
+            <FieldDescription description={component.description} />
+          )}
+          <Box paddingTop={2}>
+            <GridRow>
+              {component.options?.map((opt, index) => {
+                const checked = currentArray.includes(opt.value)
+                return (
+                  <GridColumn
+                    key={`option-${opt.value}-${index}`}
+                    span={['1/1', split]}
+                    paddingBottom={spacing}
+                  >
+                    <Checkbox
+                      id={`${component.id}[${index}]`}
+                      name={component.id ?? ''}
+                      label={opt.label}
+                      value={opt.value}
+                      checked={checked}
+                      disabled={component.disabled}
+                      large={component.large}
+                      strong={component.strong}
+                      backgroundColor={checkboxBg}
+                      hasError={!!error}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          handleChange([...currentArray, opt.value])
+                        } else {
+                          handleChange(
+                            currentArray.filter((v) => v !== opt.value),
+                          )
+                        }
+                      }}
+                    />
+                  </GridColumn>
+                )
+              })}
+              {error && (
+                <GridColumn span={['1/1', split]} paddingBottom={2}>
+                  <InputError errorMessage={error} />
+                </GridColumn>
+              )}
+            </GridRow>
+          </Box>
         </Box>
       )
+    }
 
     case 'SdfDateField':
       return (
@@ -651,25 +693,97 @@ const ComponentSwitch = ({
         </Box>
       )
 
-    case 'SdfDisplayField':
+    case 'SdfDisplayField': {
+      const allowedTitleVariants = new Set([
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'default',
+        'small',
+        'medium',
+        'intro',
+        'eyebrow',
+      ])
+      const titleVariant = allowedTitleVariants.has(
+        component.titleVariant ?? '',
+      )
+        ? (component.titleVariant as
+            | 'h1'
+            | 'h2'
+            | 'h3'
+            | 'h4'
+            | 'h5'
+            | 'default'
+            | 'small'
+            | 'medium'
+            | 'intro'
+            | 'eyebrow')
+        : 'h4'
+      const overlayValue =
+        component.id && displayValues
+          ? displayValues[component.id]
+          : undefined
+      const rawValue =
+        overlayValue ??
+        (currentValue as string | undefined) ??
+        component.value ??
+        ''
+      const isCurrency = component.inputVariant === 'currency'
+      const isNumber = component.inputVariant === 'number'
+      const useNumericFormat = isCurrency || isNumber
+      const suffix =
+        component.textSuffix != null && component.textSuffix !== ''
+          ? component.textSuffix
+          : isCurrency
+          ? ' kr.'
+          : undefined
+      const commonInputProps = {
+        id: component.id ?? '',
+        name: component.id ?? '',
+        label: component.displayInputLabel ?? '',
+        readOnly: true,
+        backgroundColor: 'blue' as const,
+        size: 'md' as const,
+        rightAlign: component.rightAlign === true,
+      }
+      const input = useNumericFormat ? (
+        <NumberFormat
+          customInput={Input}
+          {...commonInputProps}
+          value={String(rawValue)}
+          suffix={suffix}
+          thousandSeparator={isCurrency ? '.' : undefined}
+          decimalSeparator={isCurrency ? ',' : undefined}
+          type={isCurrency ? ('text' as const) : undefined}
+        />
+      ) : (
+        <Input {...commonInputProps} value={String(rawValue)} />
+      )
       return (
-        <Box paddingY={3}>
-          {component.label && (
-            <Text variant="h4" paddingBottom={1}>
-              {component.label}
-            </Text>
-          )}
-          <Input
-            id={component.id ?? ''}
-            name={component.id ?? ''}
-            label={component.description ?? ''}
-            value={String(currentValue ?? component.value ?? '')}
-            readOnly
-            backgroundColor="blue"
-            size="md"
-          />
+        <Box
+          paddingY={3}
+          display="flex"
+          flexDirection="column"
+          alignItems={
+            component.halfWidthOwnline ? 'flexEnd' : undefined
+          }
+        >
+          <Box
+            width={component.halfWidthOwnline ? 'half' : 'full'}
+            paddingLeft={component.halfWidthOwnline ? 'p2' : undefined}
+          >
+            {component.label && (
+              <Text variant={titleVariant} paddingBottom={1}>
+                {component.label}
+              </Text>
+            )}
+            {input}
+          </Box>
         </Box>
       )
+    }
 
     case 'SdfSliderField':
       return (

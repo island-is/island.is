@@ -119,6 +119,13 @@ export interface SdfComponentData {
   defaultValue?: string
   width?: string
   options?: { label: string; value: string }[]
+  strong?: boolean
+  large?: boolean
+  spacing?: number
+  checkboxBackgroundColor?: string
+  displayInputLabel?: string
+  titleVariant?: string
+  halfWidthOwnline?: boolean
   clientCondition?: ClientCondition | null
   componentName?: string
   props?: string
@@ -273,10 +280,15 @@ export const GET_SCREEN_QUERY = `
           ... on SdfCheckboxField {
             id
             label
+            description
             required
             disabled
             options { label value }
             width
+            strong
+            large
+            spacing
+            checkboxBackgroundColor
             clientCondition {
               ... on SdfSingleClientCondition { questionId comparator value }
               ... on SdfMultiClientCondition { on checks { questionId comparator value } }
@@ -388,6 +400,13 @@ export const GET_SCREEN_QUERY = `
             id
             label
             displayValue: value
+            displayInputLabel
+            inputVariant
+            textSuffix
+            rightAlign
+            titleVariant
+            halfWidthOwnline
+            width
             clientCondition {
               ... on SdfSingleClientCondition { questionId comparator value }
               ... on SdfMultiClientCondition { on checks { questionId comparator value } }
@@ -593,7 +612,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSelectField { id label placeholder required disabled options { label value } width onSelectRefetchTemplateApis clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfRadioField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfCheckboxField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfFileUploadField { id label required disabled maxSize accept clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfPhoneField { id label placeholder required disabled width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
@@ -604,7 +623,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfKeyValueField { id label value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfAlertMessageField { id alertType title message clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfLinkField { id label url clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDisplayField { id label displayValue: value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfDisplayField { id label displayValue: value displayInputLabel inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSliderField { id label min max step clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } }
           ... on SdfTitleField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
@@ -796,6 +815,69 @@ export const fetchScreen = async (
       components: normalizeAliasedComponentValues(screen.page.components),
     },
   }
+}
+
+export interface SdfValidateResult {
+  errors: SdfValidationError[]
+  displayValues?: Record<string, string> | null
+}
+
+export const VALIDATE_MUTATION = `
+  mutation ApplicationSdfValidate($input: SdfExecuteActionInput!, $locale: String) {
+    applicationSdfValidate(input: $input, locale: $locale) {
+      errors { componentId message }
+      displayValues
+    }
+  }
+`
+
+/**
+ * Lightweight alternative to `executeAction('VALIDATE', ...)`. Calls the
+ * dedicated `applicationSdfValidate` mutation which returns only `errors` and
+ * `displayValues` — used by `useDisplayRecompute` to drive reactive display
+ * fields without a full screen re-render.
+ */
+export const validateAction = async (
+  applicationId: string,
+  answers?: Record<string, unknown>,
+  fieldIds?: string[],
+  locale = 'is',
+): Promise<SdfValidateResult> => {
+  const res = await fetch(getGraphqlEndpoint('ApplicationSdfValidate'), {
+    method: 'POST',
+    headers: buildGraphqlHeaders(),
+    body: JSON.stringify({
+      query: VALIDATE_MUTATION,
+      variables: {
+        input: {
+          applicationId,
+          actionType: 'VALIDATE',
+          answers: answers ? JSON.stringify(answers) : undefined,
+          fieldIds,
+        },
+        locale,
+      },
+    }),
+    cache: 'no-store',
+  })
+
+  const json = await res.json()
+  throwIfHttpError(res, json)
+  if (json.errors) {
+    throw new Error(json.errors[0]?.message ?? 'GraphQL error')
+  }
+  const result = extractOperationResult<SdfValidateResult>(
+    json,
+    'applicationSdfValidate',
+  )
+  if (!result) {
+    throw new Error(
+      `Malformed GraphQL response: missing applicationSdfValidate. Payload keys: ${Object.keys(
+        json ?? {},
+      ).join(', ')}`,
+    )
+  }
+  return result
 }
 
 export const executeAction = async (

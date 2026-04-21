@@ -14,6 +14,7 @@ import {
   ApplicationWithAttachments,
   DefaultEvents,
   ExternalData,
+  FieldTypes,
   FormItemTypes,
   FormValue,
   RoleInState,
@@ -389,10 +390,10 @@ export class AstAdapterService {
     }
 
     const errors: ValidationErrorDto[] = []
+    const mergedAnswers = { ...application.answers, ...answers }
 
-    if (template.dataSchema) {
+    if (template.dataSchema && fieldIds.length > 0) {
       try {
-        const mergedAnswers = { ...application.answers, ...answers }
         const result = template.dataSchema.safeParse(mergedAnswers)
         if (!result.success) {
           for (const issue of result.error.issues) {
@@ -418,19 +419,118 @@ export class AstAdapterService {
       application as Application,
       locale,
     )
-    const validatorErrors = await helper.applyAnswerValidators(
-      answers as FormValue,
-      (descriptor, values) => formatResolver.resolve(descriptor as any),
-    )
-    if (validatorErrors) {
-      for (const [path, message] of Object.entries(validatorErrors)) {
-        if (fieldIds.includes(path)) {
-          errors.push({ componentId: path, message })
+
+    if (fieldIds.length > 0) {
+      const validatorErrors = await helper.applyAnswerValidators(
+        answers as FormValue,
+        (descriptor, values) => formatResolver.resolve(descriptor as any),
+      )
+      if (validatorErrors) {
+        for (const [path, message] of Object.entries(validatorErrors)) {
+          if (fieldIds.includes(path)) {
+            errors.push({ componentId: path, message })
+          }
         }
       }
     }
 
-    return { errors }
+    const displayValues = await this.computeDisplayValues(
+      application,
+      template,
+      mergedAnswers,
+      locale,
+      user,
+      formatResolver,
+    )
+
+    return {
+      errors,
+      displayValues:
+        displayValues && Object.keys(displayValues).length > 0
+          ? displayValues
+          : undefined,
+    }
+  }
+
+  /**
+   * Walks the current page's fields and, for every `FieldTypes.DISPLAY`,
+   * invokes the template-defined `value(answers, externalData)` closure
+   * against the supplied merged answers. The resulting string is run through
+   * the i18n resolver.
+   *
+   * Side-effect free (plan §2d, Constraint 1): no DB writes, no template APIs.
+   * Failures in individual closures are swallowed so a single broken display
+   * field cannot bring down the whole VALIDATE action.
+   */
+  private async computeDisplayValues(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    mergedAnswers: Record<string, unknown>,
+    locale: Locale,
+    user: User,
+    resolver: FormTextResolver,
+  ): Promise<Record<string, string>> {
+    const results: Record<string, string> = {}
+
+    const pageIndex: number = (application as any).pageIndex ?? 0
+    let currentScreen: FormScreen | undefined
+    try {
+      currentScreen = await this.getCurrentScreen(
+        application,
+        template,
+        pageIndex,
+        locale,
+        user,
+      )
+    } catch (e) {
+      this.logger.debug('computeDisplayValues: failed to resolve current screen', e)
+      return results
+    }
+
+    if (!currentScreen) return results
+
+    const displayFields: Array<Record<string, unknown>> = []
+    const maybeScreen = currentScreen as unknown as Record<string, unknown>
+    if ('type' in maybeScreen && maybeScreen.type === FormItemTypes.MULTI_FIELD) {
+      const children = (maybeScreen.children ?? []) as Array<
+        Record<string, unknown>
+      >
+      for (const child of children) {
+        if (child.type === FieldTypes.DISPLAY) displayFields.push(child)
+      }
+    } else if (
+      'type' in maybeScreen &&
+      maybeScreen.type === FieldTypes.DISPLAY
+    ) {
+      displayFields.push(maybeScreen)
+    }
+
+    if (displayFields.length === 0) return results
+
+    const externalData = application.externalData ?? {}
+    for (const field of displayFields) {
+      const id = field.id as string | undefined
+      if (!id) continue
+      const valueFn = field.value
+      if (typeof valueFn !== 'function') continue
+      try {
+        const computed = (valueFn as (
+          answers: unknown,
+          externalData: unknown,
+        ) => unknown)(mergedAnswers, externalData)
+        const resolved = resolver.resolve(computed as any)
+        if (resolved != null) {
+          results[id] = String(resolved)
+        }
+      } catch (e) {
+        this.logger.debug(
+          `computeDisplayValues: closure threw for field ${id}`,
+          e,
+        )
+      }
+    }
+
+    return results
   }
 
   async persistAnswersAndAdvance(

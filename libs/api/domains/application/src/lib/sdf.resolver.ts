@@ -11,6 +11,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { SdfService } from './sdf.service'
 import {
   SdfScreen,
+  SdfValidateResult,
+  SdfValidateResponseShape,
   SdfGetScreenInput,
   SdfExecuteActionInput,
 } from './sdf.model'
@@ -110,5 +112,41 @@ export class SdfResolver {
       input.refetchTemplateApiActions,
     )
     return mapRestScreenToGql(dto)
+  }
+
+  /**
+   * Lightweight mutation that validates a subset of fields and/or recomputes
+   * display-field values for the current page without producing a fresh screen
+   * snapshot. Intended for reactive updates (debounced keystrokes) where a
+   * full screen re-render is wasteful. See AstAdapterService.validateFields.
+   */
+  @Mutation(() => SdfValidateResult, { name: 'applicationSdfValidate' })
+  async validate(
+    @Args('input') input: SdfExecuteActionInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<SdfValidateResult> {
+    const answers: Record<string, unknown> | undefined = input.answers
+      ? JSON.parse(input.answers)
+      : undefined
+
+    const result = await this.sdfService.validate(
+      input.applicationId,
+      answers,
+      input.fieldIds ?? undefined,
+      locale,
+      user,
+    )
+
+    return {
+      errors: (result.errors ?? []).map(
+        (e: NonNullable<SdfValidateResponseShape['errors']>[number]) => ({
+          componentId: e.componentId,
+          message: e.message,
+        }),
+      ),
+      displayValues: result.displayValues ?? undefined,
+    }
   }
 }

@@ -161,7 +161,9 @@ const mapFieldToComponent = (
 
   if (raw.placeholder) {
     component.placeholder = resolver.resolve(raw.placeholder)
-  } else if (raw.description) {
+  } else if (raw.description && raw.type !== FieldTypes.CHECKBOX) {
+    // CHECKBOX uses `description` as a FieldDescription below the title, not as
+    // a placeholder. All other fields keep the legacy placeholder fallback.
     component.placeholder = resolver.resolve(raw.description)
   }
 
@@ -174,6 +176,23 @@ const mapFieldToComponent = (
     const apis = raw.inlineRefetchTemplateApis as string[] | undefined
     if (Array.isArray(apis) && apis.length > 0) {
       component.onSelectRefetchTemplateApis = apis
+    }
+  }
+
+  if (raw.type === FieldTypes.CHECKBOX) {
+    if (raw.strong === true) component.strong = true
+    if (raw.large === true) component.large = true
+    if (raw.spacing === 0 || raw.spacing === 1 || raw.spacing === 2) {
+      component.spacing = raw.spacing
+    }
+    const bg = raw.backgroundColor as unknown
+    if (bg === 'blue' || bg === 'white') {
+      component.checkboxBackgroundColor = bg
+    }
+    if (raw.description) {
+      component.description = resolver.resolve(
+        asResolvableFormText(raw.description),
+      )
     }
   }
 
@@ -354,11 +373,34 @@ const mapFieldToComponent = (
         typeof raw.image === 'string' ? raw.image : undefined
       break
 
-    case FieldTypes.DISPLAY:
+    case FieldTypes.DISPLAY: {
       component.value = resolver.resolve(
         resolveFieldProp(raw.value, application?.answers, application?.externalData),
       )
+      if (typeof raw.variant === 'string' && raw.variant.length > 0) {
+        component.inputVariant = raw.variant
+      }
+      if (raw.rightAlign === true) {
+        component.rightAlign = true
+      }
+      if (raw.suffix) {
+        component.textSuffix = resolver.resolve(
+          asResolvableFormText(raw.suffix),
+        )
+      }
+      if (typeof raw.titleVariant === 'string' && raw.titleVariant.length > 0) {
+        component.titleVariant = raw.titleVariant
+      }
+      if (raw.halfWidthOwnline === true) {
+        component.halfWidthOwnline = true
+      }
+      if (raw.label !== undefined) {
+        component.displayInputLabel = resolver.resolve(
+          asResolvableFormText(raw.label),
+        )
+      }
       break
+    }
 
     case FieldTypes.INFORMATION_CARD: {
       const items = resolveFieldProp(raw.items, application, raw) as

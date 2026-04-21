@@ -225,6 +225,9 @@ export class SdfCheckboxField {
   @Field()
   label!: string
 
+  @Field({ nullable: true })
+  description?: string
+
   @Field()
   required!: boolean
 
@@ -236,6 +239,22 @@ export class SdfCheckboxField {
 
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
+
+  /** Render each option with bold label styling. */
+  @Field({ nullable: true })
+  strong?: boolean
+
+  /** Render each option using the tall/large checkbox variant. */
+  @Field({ nullable: true })
+  large?: boolean
+
+  /** `GridColumn paddingBottom` between options (0 | 1 | 2). */
+  @Field(() => Int, { nullable: true })
+  spacing?: number
+
+  /** Background color of each checkbox option (`blue` | `white`). */
+  @Field({ nullable: true })
+  checkboxBackgroundColor?: string
 
   @Field(() => SdfClientCondition, { nullable: true })
   clientCondition?: typeof SdfClientCondition
@@ -639,11 +658,40 @@ export class SdfDisplayField {
   @Field()
   id!: string
 
+  /** h4/h5 title rendered above the read-only Input. */
   @Field()
   label!: string
 
+  /** Resolved display value (string representation of the computed result). */
   @Field({ nullable: true })
   value?: string
+
+  /** Inline label rendered inside the read-only Input. */
+  @Field({ nullable: true })
+  displayInputLabel?: string
+
+  /** Same semantics as `SdfTextField.inputVariant` (e.g. `currency`, `number`). */
+  @Field({ nullable: true })
+  inputVariant?: string
+
+  /** Optional suffix appended to numeric values (mirrors `TextField.suffix`). */
+  @Field({ nullable: true })
+  textSuffix?: string
+
+  /** Right-align the rendered value inside the Input. */
+  @Field({ nullable: true })
+  rightAlign?: boolean
+
+  /** `Text` variant for the title (e.g. `h4`, `h5`). */
+  @Field({ nullable: true })
+  titleVariant?: string
+
+  /** Align the half-width input to the right half of the row. */
+  @Field({ nullable: true })
+  halfWidthOwnline?: boolean
+
+  @Field(() => SdfComponentWidth, { nullable: true })
+  width?: SdfComponentWidth
 
   @Field(() => SdfClientCondition, { nullable: true })
   clientCondition?: typeof SdfClientCondition
@@ -1069,6 +1117,16 @@ export const SdfComponent = createUnionType({
 // Validation / Page / Stepper / Footer / Header / Screen
 // ---------------------------------------------------------------------------
 
+/**
+ * REST VALIDATE payload from application-system-api (OpenAPI `ValidateResponseDto`).
+ * Defined here so `build-graphql-schema` compiles when `gen/fetch` lags behind
+ * backend OpenAPI changes.
+ */
+export type SdfValidateResponseShape = {
+  errors: Array<{ componentId: string; message: string }>
+  displayValues?: Record<string, string>
+}
+
 @ObjectType('SdfValidationError')
 export class SdfValidationError {
   @Field()
@@ -1076,6 +1134,24 @@ export class SdfValidationError {
 
   @Field()
   message!: string
+}
+
+/**
+ * Response for the VALIDATE action. Unlike other actions, VALIDATE does not
+ * return a fresh screen — only validation errors and live-computed display
+ * values for `SdfDisplayField` components on the current page.
+ */
+@ObjectType('SdfValidateResult')
+export class SdfValidateResult {
+  @Field(() => [SdfValidationError])
+  errors!: SdfValidationError[]
+
+  /**
+   * Map of display-field id → live-computed value (JSON object of `string`
+   * values). Undefined when no display fields exist on the current page.
+   */
+  @Field(() => graphqlTypeJson, { nullable: true })
+  displayValues?: Record<string, string>
 }
 
 @ObjectType('SdfPage')

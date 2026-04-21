@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import { useFormActions } from '../hooks/useFormActions'
+import { useDisplayRecompute } from '../hooks/useDisplayRecompute'
 import { FormRenderer } from './FormRenderer'
 import { useHeaderInfo } from './HeaderInfoProvider'
 import type { SdfScreen } from '../lib/graphql'
@@ -41,6 +42,13 @@ export const ApplicationShell = ({
   } = useFormActions(applicationId, initialScreen)
 
   const { setInfo } = useHeaderInfo()
+
+  const displayValues = useDisplayRecompute(
+    applicationId,
+    screen.page.components,
+    answers.current,
+    screen.locale ?? 'is',
+  )
 
   React.useEffect(() => {
     if (screen.header.applicationName || screen.header.title) {
@@ -96,6 +104,7 @@ export const ApplicationShell = ({
                         answers={answers.current}
                         onAnswerChange={onAnswerChange}
                         dispatch={dispatch}
+                        displayValues={displayValues}
                       />
                     </Box>
                   </GridColumn>

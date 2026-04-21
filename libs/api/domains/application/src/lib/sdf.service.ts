@@ -9,6 +9,8 @@ import {
 } from '../../gen/fetch'
 import type { ScreenDto } from '../../gen/fetch'
 
+import type { SdfValidateResponseShape } from './sdf.model'
+
 @Injectable()
 export class SdfService {
   constructor(private readonly sdfApi: SdfApi) {}
@@ -53,5 +55,29 @@ export class SdfService {
         refetchTemplateApiActions,
       },
     })
+  }
+
+  /**
+   * Wraps the shared `/sdf/:id/action` endpoint in VALIDATE mode. Returns only
+   * validation errors and live-computed display values for the current page —
+   * no fresh screen snapshot is produced.
+   */
+  async validate(
+    applicationId: string,
+    answers: Record<string, unknown> | undefined,
+    fieldIds: string[] | undefined,
+    locale: Locale,
+    auth: Auth,
+  ): Promise<SdfValidateResponseShape> {
+    const result = await this.sdfApiWithAuth(auth).sdfControllerExecuteAction({
+      applicationId,
+      executeActionDto: {
+        actionType: 'VALIDATE' as ExecuteActionDtoActionTypeEnum,
+        answers,
+        locale,
+        fieldIds,
+      },
+    })
+    return result as unknown as SdfValidateResponseShape
   }
 }

@@ -30,6 +30,8 @@ export class ValidationErrorDto {
   message!: string
 }
 
+//TODO:Define a base plus one DTO per component kind, e.g. TextComponentDto,
+// SliderComponentDto, … with a shared type (or kind) discriminator.
 export class ComponentDto {
   @ApiProperty()
   id!: string
@@ -150,6 +152,25 @@ export class ComponentDto {
   @ApiPropertyOptional()
   rightAlign?: boolean
 
+  /** Checkbox field: render `<Checkbox strong>` label styling. */
+  @ApiPropertyOptional()
+  strong?: boolean
+
+  /** Checkbox field: render `<Checkbox large>`. */
+  @ApiPropertyOptional()
+  large?: boolean
+
+  /** Checkbox field: `GridColumn paddingBottom` between options. */
+  @ApiPropertyOptional({ enum: [0, 1, 2] })
+  spacing?: 0 | 1 | 2
+
+  /**
+   * Checkbox field: background color of each option. Distinct from
+   * `inputBackgroundColor` (text-field specific) to avoid JSON collisions.
+   */
+  @ApiPropertyOptional({ enum: ['blue', 'white'] })
+  checkboxBackgroundColor?: 'blue' | 'white'
+
   /** String `TextField.format` only (functions are not serializable). */
   @ApiPropertyOptional()
   textFormat?: string
@@ -196,7 +217,9 @@ export class ComponentDto {
   @ApiPropertyOptional({ type: [Object] })
   items?: Array<{ label: string; content: string }>
 
-  @ApiPropertyOptional({ description: 'Serialized props for custom components.' })
+  @ApiPropertyOptional({
+    description: 'Serialized props for custom components.',
+  })
   props?: string
 
   @ApiPropertyOptional({ description: 'Component name for custom components.' })
@@ -256,6 +279,18 @@ export class ComponentDto {
 
   @ApiPropertyOptional()
   copyButtonTitle?: string
+
+  /** Display field: `Text variant` used for the h4/h5 title (e.g. `h4`, `h5`). */
+  @ApiPropertyOptional()
+  titleVariant?: string
+
+  /** Display field: when true, render the read-only input aligned to the right half of the row. */
+  @ApiPropertyOptional()
+  halfWidthOwnline?: boolean
+
+  /** Display field: inline label rendered inside the read-only Input (distinct from the h4 title which uses `label`). */
+  @ApiPropertyOptional()
+  displayInputLabel?: string
 }
 
 export class PageDto {
@@ -366,11 +401,25 @@ export class ScreenDto {
   @ApiProperty()
   locale!: string
 
-  @ApiPropertyOptional({ description: 'Persisted answers for the current page fields' })
+  @ApiPropertyOptional({
+    description: 'Persisted answers for the current page fields',
+  })
   answers?: Record<string, unknown>
 }
 
 export class ValidateResponseDto {
   @ApiProperty({ type: [ValidationErrorDto] })
   errors!: ValidationErrorDto[]
+
+  /**
+   * Live-computed display values for `FieldTypes.DISPLAY` fields on the current
+   * page, keyed by field id. Computed from the merged answers sent by the
+   * client — never persisted. Side-effect free (Constraint 1).
+   */
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'Map of display-field id → computed display value (string). Undefined when no display fields on the page.',
+  })
+  displayValues?: Record<string, string>
 }
