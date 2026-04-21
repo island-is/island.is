@@ -1113,79 +1113,13 @@ export class ApplicationsService {
       notificationDto.screenDto = undefined
     }
 
-    console.log(
-      'Notifying external service with payload:',
-      JSON.stringify(notificationDto),
-    )
-
     const response = await this.notifyService.sendNotification(
       notificationDto,
       submissionUrl,
     )
 
-    // console.log(
-    //   'Received response from external service:',
-    //   JSON.stringify(response),
-    // )
-
-    const mockResponse = {
-      fields: [
-        {
-          identifier: '3edb7634-6a54-43b3-b800-e881e824a036',
-          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
-          fieldType: 'PHONE_NUMBER',
-          values: [{ order: 0, json: { phoneNumber: '+3545812345' } }],
-        },
-        {
-          identifier: 'e1914418-dbdb-40f0-9149-9d06ac654a9a',
-          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
-          fieldType: 'EMAIL',
-          values: [{ order: 0, json: {} }],
-        },
-        {
-          identifier: '8cf77f28-89f4-49f4-9ec6-7e8a4ef7c879',
-          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
-          fieldType: 'DROPDOWN_LIST',
-          values: [{ order: 0, json: {} }],
-        },
-        {
-          identifier: 'ca05c156-31b9-48c1-9d51-3fe51a10cb35',
-          screenIdentifier: '4993ebd2-d79f-440a-bd9f-9f291b1402ff',
-          fieldType: 'DROPDOWN_LIST',
-          list: [
-            {
-              label: { is: 'Galdrakarlinn í Oz 4', en: 'The Wizard of Oz 4' },
-              description: { is: '', en: '' },
-              value: '',
-              displayOrder: 3,
-              isSelected: false,
-            },
-            {
-              label: { is: 'Galdrakarlinn í Oz 5', en: 'The Wizard of Oz 5' },
-              description: { is: '', en: '' },
-              value: '',
-              displayOrder: 4,
-              isSelected: false,
-            },
-          ],
-          values: [{ order: 0, json: { listValue: 'Galdrakarlinn í Oz 2' } }],
-        },
-      ],
-      screenError: {
-        hasError: false,
-        title: { is: '', en: '' },
-        message: { is: '', en: '' },
-      },
-    }
-
-    // const mergedFields = this.mergeMissing(mockResponse.fields, screen.fields)
-    // console.log('mergedFields:', JSON.stringify(mergedFields)),
-
-    screen.fields = this.mergeMissing(mockResponse.fields, screen.fields)
-
+    screen.fields = this.mergeMissing(response.fields, screen.fields)
     response.screen = screen
-
-    // response.screen.fields = mergedFields
 
     response.screen.screenError = {
       hasError: false,
@@ -1219,17 +1153,13 @@ export class ApplicationsService {
       )
     }
 
-    // console.log(
-    //   'Final response after merging and error handling:',
-    //   JSON.stringify(response),
-    // )
     return response
   }
 
   private mergeMissing(
-    responseFields: any[] | undefined,
-    screenFields: any[] | undefined,
-  ): any[] | undefined {
+    responseFields: ApplicationXroadFieldDto[] | undefined,
+    screenFields: FieldDto[] | undefined,
+  ): FieldDto[] | undefined {
     if (!screenFields?.length) return screenFields
     if (!responseFields?.length) return screenFields
 
@@ -1255,7 +1185,7 @@ export class ApplicationsService {
         }))
       }
 
-      // id is required for list items
+      // id is required for list items but is not used for populated lists
       if (Array.isArray(override.list)) {
         merged.list = override.list.map((li: any) => ({
           ...li,

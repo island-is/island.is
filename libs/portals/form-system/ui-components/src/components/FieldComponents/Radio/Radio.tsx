@@ -46,8 +46,7 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
   const fieldName = `${item.id}.${valueIndex}`
 
   useEffect(() => {
-    if (!dispatch) return
-    if (!selected) return
+    if (!dispatch || !selected) return
 
     const existing = getValue(item, 'listValue', valueIndex)
     if (existing) return
