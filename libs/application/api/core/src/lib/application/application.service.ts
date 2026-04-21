@@ -17,6 +17,10 @@ import {
   getInstitutionsWithApplicationTypesIds,
   getTypeIdsForInstitution,
 } from '@island.is/application/utils'
+import {
+  ScheduledNotification,
+  NotificationStatus,
+} from '../scheduledNotification/scheduledNotifications.model'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -52,6 +56,8 @@ export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
+    @InjectModel(ScheduledNotification)
+    private scheduledNotificationModel: typeof ScheduledNotification,
     private sequelize: Sequelize,
   ) {}
 
@@ -396,6 +402,33 @@ export class ApplicationService {
     })
   }
 
+  async findCurrentScheduledNotifications(): Promise<ScheduledNotification[]> {
+    return this.scheduledNotificationModel.findAll({
+      attributes: [
+        'id',
+        'application_id',
+        'template',
+        'application_state',
+        'schedule_time',
+        'schedule_status',
+        'args',
+      ],
+      where: {
+        [Op.and]: {
+          schedule_time: {
+            [Op.and]: {
+              [Op.not]: null,
+              [Op.lt]: new Date(),
+            },
+          },
+          schedule_status: {
+            [Op.eq]: NotificationStatus.PENDING,
+          },
+        },
+      },
+    })
+  }
+
   async findAllDueToBePostPruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
       attributes: ['id'],
@@ -517,6 +550,69 @@ export class ApplicationService {
         { where: { id: application.id }, returning: true },
       )
     return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async cancelScheduledNotifications(applicationId: string) {
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.CANCELED },
+      {
+        where: {
+          application_id: applicationId,
+          schedule_status: NotificationStatus.PENDING,
+        },
+      },
+    )
+  }
+
+  async markScheduledNotificationsSent(ids: string[]) {
+    if (!ids.length) return [0]
+
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.SENT },
+      {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+          schedule_status: NotificationStatus.PENDING,
+        },
+      },
+    )
+  }
+
+  async markScheduledNotificationsFailed(ids: string[]) {
+    if (!ids.length) return [0]
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.FAILED },
+      {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+          schedule_status: NotificationStatus.PENDING,
+        },
+      },
+    )
+  }
+
+  async createScheduledNotifications(
+    applicationId: string,
+    state: string,
+    notifications: {
+      template: string
+      schedule_time: Date
+      args?: Record<string, unknown>
+    }[],
+  ) {
+    if (!notifications.length) return
+    const records = notifications.map((n) => ({
+      application_id: applicationId,
+      template: n.template,
+      application_state: state,
+      schedule_time: n.schedule_time,
+      args: n.args,
+    }))
+    return this.scheduledNotificationModel.bulkCreate(records)
   }
 
   async updateApplicationState(
