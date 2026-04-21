@@ -1,9 +1,9 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -303,7 +303,7 @@ const indictmentCaseStateMachine: Map<
           return {
             ...update,
             appealState: AppealCaseState.WITHDRAWN,
-            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+            appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
           }
         }
 
@@ -585,9 +585,9 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
 
             if (
               currentAppealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED ||
+                AppealCaseRulingDecision.CHANGED ||
               currentAppealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+                AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY
             ) {
               // The court of appeals has modified the ruling of a restriction case
               newUpdate.validToDate =
@@ -600,7 +600,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
                 update.appealIsolationToDate ??
                 theCase.appealCase?.appealIsolationToDate
             } else if (
-              currentAppealRulingDecision === CaseAppealRulingDecision.REPEAL
+              currentAppealRulingDecision === AppealCaseRulingDecision.REPEAL
             ) {
               // The court of appeals has repealed the ruling of a restriction case
               newUpdate.validToDate = nowFactory()
@@ -651,7 +651,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             return {
               ...update,
               appealState: AppealCaseState.WITHDRAWN,
-              appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+              appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
             }
           }
 

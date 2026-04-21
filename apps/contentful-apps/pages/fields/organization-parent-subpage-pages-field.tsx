@@ -74,11 +74,32 @@ const OrganizationParentSubpagePagesField = () => {
             })
             entries = Array.isArray(entries) ? entries : [entries]
             entries = entries.filter((entry) => entry?.sys?.id) // Make sure the entries are non-empty
-            if (entries[0]?.fields?.organizationParentSubpage) {
-              sdk.notifier.warning(
-                'Subpage could not be linked since it is already linked to a parent page',
-              )
-            } else if (entries.length > 0) {
+
+            const parentId =
+              entries[0]?.fields?.organizationParentSubpage?.[DEFAULT_LOCALE]
+                ?.sys?.id
+
+            if (parentId) {
+              const parentExists = await cma.entry
+                .get({
+                  entryId: parentId,
+                })
+                .catch((error) => {
+                  if (!error?.message?.includes('not be found')) {
+                    sdk.notifier.warning(error.message)
+                    throw error
+                  }
+                })
+
+              if (parentExists) {
+                sdk.notifier.warning(
+                  'Subpage could not be linked since it is already linked to a parent page',
+                )
+                return
+              }
+            }
+
+            if (entries.length > 0) {
               const selectedEntry = entries[0]
               const entry = await cma.entry.get({
                 entryId: selectedEntry.sys.id,
