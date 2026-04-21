@@ -160,7 +160,11 @@ const AnnualReportChapter: Screen<
                       paddingBottom={2}
                     >
                       <AnchorNavigation
-                        title={activeLocale === 'is' ? 'Á þessari síðu' : 'On this page'}
+                        title={
+                          activeLocale === 'is'
+                            ? 'Á þessari síðu'
+                            : 'On this page'
+                        }
                         navigation={navigation}
                         position="right"
                       />
@@ -190,7 +194,11 @@ const AnnualReportChapter: Screen<
                     >
                       <Sticky>
                         <AnchorNavigation
-                        title={activeLocale === 'is' ? 'Á þessari síðu' : 'On this page'}
+                          title={
+                            activeLocale === 'is'
+                              ? 'Á þessari síðu'
+                              : 'On this page'
+                          }
                           navigation={navigation}
                           position="right"
                         />
