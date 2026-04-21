@@ -1180,6 +1180,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         name="verdict-search-input"
                         icon={{ name: 'search', type: 'outline' }}
                         backgroundColor="blue"
+                        tooltip={formatMessage(m.listPage.searchInputTooltip)}
+                        label={formatMessage(m.listPage.searchInputLabel)}
                         placeholder={formatMessage(
                           m.listPage.searchInputPlaceholder,
                         )}
