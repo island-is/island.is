@@ -34,6 +34,7 @@ import {
 import { nowFactory } from '../../factories'
 import {
   AppealCase,
+  AppealCaseRepositoryService,
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
@@ -46,7 +47,6 @@ import {
   transitionAppealCase,
 } from './state/appealCase.state'
 import { appealCaseModuleConfig } from './appealCase.config'
-import { AppealCaseRepositoryService } from './appealCaseRepository.service'
 
 @Injectable()
 export class AppealCaseService {

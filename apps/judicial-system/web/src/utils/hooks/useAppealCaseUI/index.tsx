@@ -28,7 +28,7 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  CaseTransition,
+  AppealCaseTransition,
   InstitutionType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -38,7 +38,7 @@ import {
   getDefenceUserPartyIds,
   hasSentNotification,
 } from '../../utils'
-import useCase from '../useCase'
+import useAppealCase from '../useAppealCase'
 import * as styles from './useAppealCase.css'
 
 const renderLinkButton = (text: string, href: string) => {
@@ -85,7 +85,7 @@ const useAppealCaseUI = () => {
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
     useContext(FormContext)
-  const { transitionCase } = useCase()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const [appealModalVisible, setAppealModalVisible] = useState<
     | 'ConfirmAppealAfterDeadline'
@@ -95,12 +95,13 @@ const useAppealCaseUI = () => {
   >()
 
   const handleReceivedTransition = () => {
-    transitionCase(
+    transitionAppealCase(
       workingCase.id,
-      CaseTransition.RECEIVE_APPEAL,
+      workingCase.appealCase?.id ?? '',
+      AppealCaseTransition.RECEIVE_APPEAL,
       setWorkingCase,
-    ).then((updatedCase) => {
-      if (updatedCase) {
+    ).then((success) => {
+      if (success) {
         setAppealModalVisible('AppealReceived')
       }
     })
@@ -265,6 +266,7 @@ const useAppealCaseUI = () => {
             variant="text"
             size="small"
             onClick={handleReceivedTransition}
+            loading={isTransitioningAppealCase}
           >
             {'Senda tilkynningu um kæru til Landsréttar'}
           </Button>

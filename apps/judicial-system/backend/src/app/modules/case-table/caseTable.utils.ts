@@ -57,7 +57,7 @@ export const getAttributes = (
 
 const getAvailableActionsIncludes = (user: User): CaseIncludes => {
   if (isProsecutionUser(user)) {
-    return { appealCase: { attributes: ['appealState'] } }
+    return { appealCase: { attributes: ['id', 'appealState'] } }
   }
 
   return {}
