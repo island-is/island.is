@@ -6,6 +6,16 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknarsmiður',
     description: 'Form builder',
   },
+  showSidebar: {
+    id: 'form.system:show-sidebar',
+    defaultMessage: 'Sýna valmynd',
+    description: 'Show sidebar',
+  },
+  hideSidebar: {
+    id: 'form.system:hide-sidebar',
+    defaultMessage: 'Fela valmynd',
+    description: 'Hide sidebar',
+  },
   form: {
     id: 'form.system:form',
     defaultMessage: 'Form',

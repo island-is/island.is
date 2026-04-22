@@ -114,7 +114,7 @@ export const MainContentColumn = () => {
       <Box
         width="full"
         style={{
-          minHeight: '500px',
+          minHeight: 'clamp(300px, 50vh, 500px)',
         }}
       >
         <MainContent />
