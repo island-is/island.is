@@ -331,7 +331,7 @@ export const setFieldValue = (
 
   const selectedItem =
     isListField && currentField?.list
-      ? currentField.list.find((item) => item?.label?.is === value.is)
+      ? currentField.list.find((item) => item?.label?.is === value?.is)
       : undefined
 
   const selectedItemId = (selectedItem?.id as string) ?? undefined

@@ -10,8 +10,8 @@ export const fieldReducer = (
     case 'SET_LIST_VALUE': {
       const { id, value, valueIndex } = action.payload
       const values = {
-        label: value.label,
-        value: value.value,
+        label: value?.label,
+        value: value?.value,
       }
       return setMultipleFieldValues(state, id, values, valueIndex)
     }
