@@ -123,19 +123,65 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       expect(caseA.policeCaseNumbers).toEqual(['007-1', '007-2'])
     })
 
-    it('does not overwrite when junction has no rows for the case', async () => {
+    it('sets policeCaseNumbers to [] when junction has no rows for the case', async () => {
       mockModel.findAll.mockResolvedValue([])
 
+      let numbers = ['stale-in-memory']
       const caseA = {
         id: 'case-a',
-        policeCaseNumbers: ['keep-me'],
-        setDataValue: jest.fn(),
+        get policeCaseNumbers() {
+          return numbers
+        },
+        setDataValue(key: string, val: unknown) {
+          if (key === 'policeCaseNumbers') {
+            numbers = val as string[]
+          }
+        },
       } as unknown as Case
 
       await service.resolvePoliceCaseNumbersForCases([caseA], { transaction })
 
-      expect(caseA.policeCaseNumbers).toEqual(['keep-me'])
-      expect(caseA.setDataValue).not.toHaveBeenCalled()
+      expect(caseA.policeCaseNumbers).toEqual([])
+    })
+  })
+
+  describe('findUnassignedPoliceCaseNumbersForSplit', () => {
+    it('returns unassigned numbers excluding any also linked to the split defendant', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { defendantId: null, policeCaseNumber: '007-2024-a' },
+        { defendantId: 'def-split', policeCaseNumber: '007-2024-b' },
+        { defendantId: null, policeCaseNumber: '007-2024-b' },
+        { defendantId: 'def-other', policeCaseNumber: '007-2024-c' },
+      ])
+
+      const res = await service.findUnassignedPoliceCaseNumbersForSplit(
+        'case-1',
+        'def-split',
+        { transaction },
+      )
+
+      expect(mockModel.findAll).toHaveBeenCalledWith({
+        where: { caseId: 'case-1' },
+        attributes: ['defendantId', 'policeCaseNumber'],
+        transaction,
+      })
+      expect(res).toEqual(['007-2024-a'])
+    })
+
+    it('returns sorted distinct unassigned numbers when there is no overlap', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { defendantId: null, policeCaseNumber: '007-2' },
+        { defendantId: null, policeCaseNumber: '007-1' },
+        { defendantId: null, policeCaseNumber: '007-1' },
+      ])
+
+      const res = await service.findUnassignedPoliceCaseNumbersForSplit(
+        'case-1',
+        'def-split',
+        { transaction },
+      )
+
+      expect(res).toEqual(['007-1', '007-2'])
     })
   })
 
