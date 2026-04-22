@@ -918,11 +918,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       // Edit Flow States
       [States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS]: {
         entry: [
+          'setVMSTPeriods',
+          'clearValidatedPeriods',
           'createTempPeriods',
           'removeNullPeriod',
           'setNavId',
           'createTempEmployers',
-          'setVMSTPeriods',
         ],
         exit: [
           'removeAddedEmployers',
@@ -1487,6 +1488,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
 
         set(answers, 'tempPeriods', answers.periods)
+
+        return context
+      }),
+      /**
+       * The user is entering the edit flow.
+       * Drop stale client-side validation output so the edit session starts
+       * from the VMST-backed source of truth.
+       */
+      clearValidatedPeriods: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        unset(context.application.answers, 'validatedPeriods')
 
         return context
       }),
