@@ -10,7 +10,7 @@ export const conclusion = defineMessages({
   completedFormDescriptionFieldTitle: {
     id: 'vmst.cjs.conclusion:completedFormDescriptionFieldTitle',
     defaultMessage: 'Er eitthvað óljóst?',
-    description: 'completed form alert title',
+    description: 'completed form alert description',
   },
   expandableHeader: {
     id: 'vmst.cjs.conclusion:expandableHeader',
@@ -31,8 +31,8 @@ export const conclusion = defineMessages({
     description:
       'Description field text with a link to the Directorate of Labour info page',
   },
-  buttomButtonMessage: {
-    id: 'vmst.cjs.conclusion:buttomButtonMessage',
+  bottomButtonMessage: {
+    id: 'vmst.cjs.conclusion:bottomButtonMessage',
     defaultMessage:
       'Á mínum síðum og í appi getur þú nú nálgast margvíslegar upplýsingar um stöðu þína varðandi atvinnuleysisbæturnar.',
     description: 'Bottom info message',

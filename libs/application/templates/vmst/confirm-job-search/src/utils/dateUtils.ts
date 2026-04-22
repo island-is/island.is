@@ -25,24 +25,19 @@ const icelandicMonths = [
 export const getNextConfirmationPeriod = (now: Date = new Date()): string => {
   const day = now.getDate()
   const month = now.getMonth()
-  const year = now.getFullYear()
 
   let targetMonth: number
-  let targetYear: number
 
   if (day >= 20) {
     // Between 20th and end of month → next month's window
     if (month === 11) {
       targetMonth = 0
-      targetYear = year + 1
     } else {
       targetMonth = month + 1
-      targetYear = year
     }
   } else {
     // Day 1–19 (including the grace period 1–4) → current month's window
     targetMonth = month
-    targetYear = year
   }
 
   return `20. - 25. ${icelandicMonths[targetMonth]}`

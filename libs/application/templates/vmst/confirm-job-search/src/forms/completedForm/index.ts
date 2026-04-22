@@ -22,7 +22,7 @@ export const completedForm = buildForm({
       expandableDescription: '',
       descriptionFieldTitle: cm.completedFormDescriptionFieldTitle,
       descriptionFieldDescription: cm.descriptionFieldDescription,
-      bottomButtonMessage: cm.buttomButtonMessage,
+      bottomButtonMessage: cm.bottomButtonMessage,
     }),
   ],
 })

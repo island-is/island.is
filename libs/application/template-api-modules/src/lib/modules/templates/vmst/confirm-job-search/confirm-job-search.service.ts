@@ -49,7 +49,7 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
       this.logger.error(
         '[VMST-Job-search-confirmation] - Error submitting job search confirmation',
       )
-      throw new Error(e)
+      throw e
     }
   }
 
