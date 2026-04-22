@@ -415,11 +415,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                       caseId,
                     )}
                     pdfType="subpoena"
-                    elementId={[
-                      defendant.id,
-                      subpoena.id,
-                      subpoenaFileName,
-                    ]}
+                    elementId={[defendant.id, subpoena.id, subpoenaFileName]}
                     renderAs="row"
                   />
                   {!limitedAccess &&
