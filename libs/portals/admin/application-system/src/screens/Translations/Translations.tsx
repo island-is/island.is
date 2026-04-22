@@ -115,9 +115,7 @@ const Translations = () => {
                   variant="text"
                   size="small"
                   onClick={() =>
-                    navigate(
-                      `/stjornbord/umsoknakerfi/thydingar/${template.typeId}`,
-                    )
+                    navigate(`/umsoknakerfi/thydingar/${template.typeId}`)
                   }
                 >
                   {formatMessage(m.translationOpen)}

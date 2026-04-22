@@ -38,6 +38,10 @@ interface DrawerProps {
   backdropWhite?: ModalBaseProps['backdropWhite']
   backdropDark?: ModalBaseProps['backdropDark']
   backdropTransparent?: ModalBaseProps['backdropTransparent']
+  /**
+   * Extra classes for the modal panel (e.g. responsive width overrides).
+   */
+  panelClassName?: string
 }
 
 export const Drawer = ({
@@ -53,6 +57,7 @@ export const Drawer = ({
   backdropWhite,
   backdropDark,
   backdropTransparent,
+  panelClassName,
   children,
 }: PropsWithChildren<DrawerProps>) => {
   return (
@@ -68,7 +73,11 @@ export const Drawer = ({
       backdropWhite={backdropWhite}
       backdropDark={backdropDark}
       backdropTransparent={backdropTransparent}
-      className={cn(styles.drawer, styles.position[position])}
+      className={cn(
+        styles.drawer,
+        styles.position[position],
+        panelClassName,
+      )}
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (

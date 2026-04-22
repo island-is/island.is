@@ -33,6 +33,7 @@ import { coreMessages } from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
 import { m } from '../../lib/messages'
 import { ApplicationSystemPaths } from '../../lib/paths'
+import * as translationWorkspaceDrawer from './TranslationWorkspace.stringsDrawer.css'
 import {
   useGetApplicationTemplateIntrospectionQuery,
   useGetApplicationTranslationsQuery,
@@ -754,6 +755,7 @@ const TranslationWorkspace = () => {
     useState<SidebarNavLocation | null>(null)
   const [editedValues, setEditedValues] = useState<EditedTranslations>({})
   const [stringsDrawerOpen, setStringsDrawerOpen] = useState(true)
+  const [statesNavOpen, setStatesNavOpen] = useState(true)
 
   const getPersistedForLocale = useCallback(
     (messageKey: string) => {
@@ -1204,17 +1206,38 @@ const TranslationWorkspace = () => {
       </Box>
 
       <GridRow>
-        <GridColumn span="3/12">
+        <GridColumn span={statesNavOpen ? '3/12' : '1/12'}>
           <Box
             background="white"
             borderRadius="large"
-            padding={2}
+            padding={statesNavOpen ? 2 : 1}
             style={{ maxHeight: '75vh', overflow: 'auto' }}
           >
-            <Box marginTop={2}>
-              <Text variant="h3" marginBottom={2}>
-                States
-              </Text>
+            <Box
+              display="flex"
+              justifyContent={statesNavOpen ? 'spaceBetween' : 'center'}
+              alignItems="center"
+              marginTop={2}
+              marginBottom={statesNavOpen ? 2 : 1}
+            >
+              {statesNavOpen && (
+                <Text variant="h3" marginBottom={0}>
+                  States
+                </Text>
+              )}
+              <Button
+                variant="ghost"
+                size="small"
+                icon={statesNavOpen ? 'chevronBack' : 'chevronForward'}
+                aria-label={
+                  statesNavOpen
+                    ? formatMessage(m.translationStatesNavHide)
+                    : formatMessage(m.translationStatesNavShow)
+                }
+                onClick={() => setStatesNavOpen((open) => !open)}
+              />
+            </Box>
+            {statesNavOpen && (
               <Accordion singleExpand={false}>
                 {introspection.states.map((state) => (
                   <AccordionItem
@@ -1351,11 +1374,11 @@ const TranslationWorkspace = () => {
                   </AccordionItem>
                 ))}
               </Accordion>
-            </Box>
+            )}
           </Box>
         </GridColumn>
 
-        <GridColumn span="9/12">
+        <GridColumn span={statesNavOpen ? '9/12' : '11/12'}>
           {previewScreens.length > 0 ? (
             <GridRow>
               <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
@@ -1553,6 +1576,18 @@ const TranslationWorkspace = () => {
         </GridColumn>
       </GridRow>
 
+      {selectedScreen && !stringsDrawerOpen && (
+        <Box position="fixed" right={0} zIndex={90} style={{ top: '32%' }}>
+          <Button
+            variant="ghost"
+            size="small"
+            icon="chevronBack"
+            aria-label={formatMessage(m.translationStringsDrawerShow)}
+            onClick={() => setStringsDrawerOpen(true)}
+          />
+        </Box>
+      )}
+
       {selectedScreen && (
         <Drawer
           ariaLabel={formatMessage(m.translationStringsDrawerAriaLabel)}
@@ -1563,6 +1598,7 @@ const TranslationWorkspace = () => {
           backdropTransparent
           hideOnClickOutside={false}
           preventBodyScroll={false}
+          panelClassName={translationWorkspaceDrawer.stringsDrawerPanel}
         >
           <Box marginTop={5}>
             <Box
@@ -1570,13 +1606,32 @@ const TranslationWorkspace = () => {
               justifyContent="spaceBetween"
               alignItems="center"
               marginBottom={3}
+              columnGap={2}
             >
-              <Text variant="h4">
-                {selectedScreen.title ?? selectedScreen.id}
-              </Text>
-              <Text variant="small" color="dark300">
-                {currentDescriptors.length} strings
-              </Text>
+              <Box flex={1} minWidth={0}>
+                <Text variant="h4" truncate>
+                  {selectedScreen.title ?? selectedScreen.id}
+                </Text>
+              </Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                flexShrink={0}
+                columnGap={2}
+              >
+                <Text variant="small" color="dark300">
+                  {currentDescriptors.length} strings
+                </Text>
+                <Button
+                  variant="ghost"
+                  size="small"
+                  icon="chevronForward"
+                  aria-label={formatMessage(
+                    m.translationStringsDrawerCollapse,
+                  )}
+                  onClick={() => setStringsDrawerOpen(false)}
+                />
+              </Box>
             </Box>
 
             <Divider />
