@@ -119,9 +119,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
 
   return (
     <header
-      className={`${styles.header} ${
-        isNavOpen ? styles.headerWithShadow : ''
-      }`}
+      className={`${styles.header} ${isNavOpen ? styles.headerWithShadow : ''}`}
     >
       <Hidden print={true}>
         <FixedNav organizationSearchFilter={organizationSearchFilter} />
@@ -151,9 +149,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                   <Column width="content">
                     <Hidden below="lg">
                       <Box marginLeft={3}>
-                        <DesktopNav
-                          onOpenChange={handleDesktopNavOpenChange}
-                        />
+                        <DesktopNav onOpenChange={handleDesktopNavOpenChange} />
                       </Box>
                     </Hidden>
                   </Column>
