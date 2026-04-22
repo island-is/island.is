@@ -31,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  TUploadFile,
   useAppealCase,
   useFileList,
   useS3Upload,
@@ -39,7 +40,7 @@ import {
 import {
   getAppealActorText,
   getDefenceUserPartyIds,
-  isUserCaseFile,
+  isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const Statement = () => {
@@ -143,10 +144,11 @@ const Statement = () => {
     })
   }
 
-  const appealStatementFiles = uploadFiles.filter(
-    (file) =>
-      file.category === appealStatementType &&
-      (isProsecutionUser(user) || isUserCaseFile(workingCase, file, user)),
+  const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
+    return isMatchingAppealCaseFile(workingCase, [category], file, user)
+  }
+  const appealStatementFiles = uploadFiles.filter((file) =>
+    filter(file, appealStatementType),
   )
 
   return (
@@ -206,11 +208,8 @@ const Statement = () => {
               </Text>
               <InputFileUpload
                 name="appealCaseFiles"
-                files={uploadFiles.filter(
-                  (file) =>
-                    file.category === appealCaseFilesType &&
-                    (isProsecutionUser(user) ||
-                      isUserCaseFile(workingCase, file, user)),
+                files={uploadFiles.filter((file) =>
+                  filter(file, appealCaseFilesType),
                 )}
                 accept={'application/pdf'}
                 title={formatMessage(core.uploadBoxTitle)}

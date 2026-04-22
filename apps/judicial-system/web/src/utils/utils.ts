@@ -4,15 +4,17 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseFile,
+  CaseFileCategory,
   Defendant,
   DefendantPlea,
   Gender,
@@ -336,11 +338,40 @@ export const getAppealingPartyInfo = (
   return undefined
 }
 
-export const isUserCaseFile = (
+export const isMatchingAppealCaseFile = (
   workingCase: Case,
-  file: { defendantId?: string | null; civilClaimantId?: string | null },
+  categories: CaseFileCategory[],
+  file: {
+    category?: CaseFileCategory | null
+    defendantId?: string | null
+    civilClaimantId?: string | null
+  },
   user: User | undefined,
 ): boolean => {
+  if (!file.category) {
+    return false
+  }
+
+  if (!categories.includes(file.category)) {
+    return false
+  }
+
+  if (isProsecutionUser(user)) {
+    return true
+  }
+
+  if (!isDefenceUser(user)) {
+    return false
+  }
+
+  if (isRequestCase(workingCase.type)) {
+    return true
+  }
+
+  if (!isIndictmentCase(workingCase.type)) {
+    return false
+  }
+
   if (!user?.nationalId) {
     return false
   }
