@@ -54,6 +54,13 @@ export class PoliceDigitalCaseFileService {
       policeCaseNumbers,
     )
 
+    // Only mark files as new if there were already files in the DB before this sync.
+    // If the DB was empty, this is the first sync — don't tag anything as new.
+    const newPoliceDigitalFileIds =
+      currentPoliceDigitalCaseFiles.length > 0
+        ? new Set(filesToCreate.map((f) => f.id))
+        : new Set<string>()
+
     if (filesToCreate.length > 0) {
       await this.sequelize.transaction(async (transaction) => {
         await Promise.all(
@@ -94,6 +101,7 @@ export class PoliceDigitalCaseFileService {
         displayDate: f.displayDate,
         orderWithinChapter: f.orderWithinChapter,
         isDeletable: !policeSystemDigitalCaseFileIds.has(f.policeDigitalFileId),
+        isNew: newPoliceDigitalFileIds.has(f.policeDigitalFileId),
       }))
   }
 
