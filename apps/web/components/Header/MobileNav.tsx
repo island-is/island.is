@@ -17,11 +17,9 @@ import { useI18n } from '@island.is/web/i18n'
 import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
-  HEADER_NAV_MOCK_DATA,
   type HeaderNavData,
   type HeaderNavKey,
 } from './headerNavData'
-import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
 import * as styles from './MobileNav.css'
 
 const TABBABLE_SELECTOR = [
@@ -55,9 +53,8 @@ export interface MobileNavPanelHandle {
 }
 
 interface MobileNavPanelProps {
-  // Contentful-driven nav data. Falls back to HEADER_NAV_MOCK_DATA when
-  // omitted so local dev and the initial render (before the query
-  // resolves) still show a populated panel.
+  // Contentful-driven nav data. When missing the panel renders nothing —
+  // we'd rather surface the failure than serve stale hardcoded links.
   data?: HeaderNavData
   organizationSearchFilter?: string
   searchPlaceholder?: string
@@ -85,7 +82,6 @@ export const MobileNavPanel = forwardRef<
     },
     ref,
   ) => {
-    const navData = data ?? HEADER_NAV_MOCK_DATA
     const { activeLocale, t } = useI18n()
     const router = useRouter()
     const panelRef = useRef<HTMLDivElement>(null)
@@ -98,12 +94,6 @@ export const MobileNavPanel = forwardRef<
     const [isOpen, setIsOpen] = useState(false)
     const [drilldownKey, setDrilldownKey] = useState<HeaderNavKey | null>(null)
     const [isPanelScrolled, setIsPanelScrolled] = useState(false)
-    // Tracks whether the panel is currently in its opacity fade window. The
-    // top-mask div is only visible during this time so it can cover the
-    // header shadow that would otherwise bleed through the translucent panel
-    // top. Mirrors the pattern used by DesktopNav for its dropdown.
-    const [isTransitioning, setIsTransitioning] = useState(false)
-    const prevIsOpenRef = useRef(isOpen)
     const reactId = useId()
     const panelId = `mobile-nav-panel-${reactId}`
 
@@ -115,19 +105,6 @@ export const MobileNavPanel = forwardRef<
     useIsomorphicLayoutEffect(() => {
       onOpenChange?.(isOpen)
     }, [isOpen, onOpenChange])
-
-    // Same reasoning: `isTransitioning` drives the top-mask visibility, and
-    // we want it to turn on in the same paint as the panel's fade starts.
-    useIsomorphicLayoutEffect(() => {
-      if (prevIsOpenRef.current === isOpen) return
-      prevIsOpenRef.current = isOpen
-      setIsTransitioning(true)
-      const timer = setTimeout(
-        () => setIsTransitioning(false),
-        NAV_TRANSITION_DURATION_MS,
-      )
-      return () => clearTimeout(timer)
-    }, [isOpen])
 
     useEffect(() => {
       if (!isOpen) return
@@ -217,19 +194,17 @@ export const MobileNavPanel = forwardRef<
       }
     }, [router.events, close])
 
-    const drilldownSection = drilldownKey ? navData[drilldownKey] : null
-
     const menuLabel = activeLocale === 'is' ? 'Valmynd' : 'Menu'
     const backLabel = activeLocale === 'is' ? 'Til baka' : 'Back'
 
+    // No Contentful-driven nav data yet: render nothing rather than fall back
+    // to stale hardcoded links. Hooks above still run so hook order is stable.
+    if (!data) return null
+    const navData = data
+    const drilldownSection = drilldownKey ? navData[drilldownKey] : null
+
     return (
       <>
-        {/* <div
-          aria-hidden="true"
-          className={`${styles.topMask} ${
-            isTransitioning ? styles.topMaskVisible : ''
-          }`}
-        /> */}
         <div
           ref={panelRef}
           id={panelId}

@@ -8,7 +8,6 @@ import { useI18n } from '@island.is/web/i18n'
 import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
-  HEADER_NAV_MOCK_DATA,
   type HeaderNavData,
   type HeaderNavKey,
 } from './headerNavData'
@@ -16,9 +15,8 @@ import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
 import * as styles from './DesktopNav.css'
 
 interface DesktopNavProps {
-  // Contentful-driven nav data. Falls back to HEADER_NAV_MOCK_DATA when
-  // omitted — keeps local dev and the initial render (before the query
-  // resolves) populated.
+  // Contentful-driven nav data. When missing the nav renders nothing —
+  // we'd rather surface the failure than serve stale hardcoded links.
   data?: HeaderNavData
   onOpenChange?: (isOpen: boolean) => void
 }
@@ -76,7 +74,6 @@ const focusNextTabbableAfter = (container: HTMLElement) => {
 export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
   const router = useRouter()
-  const navData = data ?? HEADER_NAV_MOCK_DATA
   const [openKey, setOpenKey] = useState<DropdownKey | null>(null)
   const containerRef = useRef<HTMLElement>(null)
   // One panel per section, all rendered on mount so every link is in the
@@ -288,6 +285,11 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
 
   const panelIdFor = (key: DropdownKey) => `desktop-nav-panel-${reactId}-${key}`
   const buttonIdFor = (key: DropdownKey) => `desktop-nav-tab-${reactId}-${key}`
+
+  // No Contentful-driven nav data yet: render nothing rather than fall back
+  // to stale hardcoded links. Hooks above still run so hook order is stable.
+  if (!data) return null
+  const navData = data
 
   return (
     <nav

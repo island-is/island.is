@@ -2,7 +2,7 @@ import type { Locale } from '@island.is/shared/types'
 
 import type {
   GetGroupedMenuQuery,
-  GetOrganizationsQuery,
+  GetOrganizationLogosQuery,
   Menu,
 } from '../../graphql/schema'
 import { linkResolver, LinkType } from '../../hooks/useLinkResolver'
@@ -15,32 +15,28 @@ import type {
 import { HEADER_NAV_KEYS, HEADER_NAV_MAX_ITEMS } from './headerNavData'
 
 type Organization = NonNullable<
-  NonNullable<GetOrganizationsQuery['getOrganizations']>['items']
+  NonNullable<GetOrganizationLogosQuery['getOrganizations']>['items']
 >[number]
 
-// Per-section metadata that doesn't live in Contentful: the dropdown title
-// suffix, the "see all" link href and the "see all" link label. Keyed by
-// HEADER_NAV_KEYS position (menus[0]=organizations, [1]=categories,
-// [2]=lifeEvents) — the content team must keep that order when editing
-// the grouped menu in Contentful.
+// Contentful IDs for each child menu inside the grouped menu. Matching by ID
+// (not position) means editors can reorder menus inside the grouped menu
+// without breaking the header.
+const SECTION_MENU_IDS: Record<HeaderNavKey, string> = {
+  organizations: '667soOAm18qMsyKWawUQgx',
+  categories: '62QvK3jzHzWnuIAp0jYgvq',
+  lifeEvents: '4nXPzCHn5X8UDEKaDZqCgb',
+}
+
+// Per-section metadata that doesn't live in Contentful: the "see all" link
+// href and the "see all" link label.
 const SECTION_CONFIG: Record<
   HeaderNavKey,
   {
-    titleSuffix: Record<Locale, string>
     seeAllLabel: Record<Locale, string>
     seeAllHref: Record<Locale, string>
   }
 > = {
-  organizations: {
-    titleSuffix: { is: 'á Ísland.is', en: 'on Ísland.is' },
-    seeAllLabel: {
-      is: 'Skoða allar stofnanir',
-      en: 'View all organizations',
-    },
-    seeAllHref: { is: '/s', en: '/en/organizations' },
-  },
   categories: {
-    titleSuffix: { is: 'á Ísland.is', en: 'on Ísland.is' },
     seeAllLabel: {
       is: 'Skoða alla þjónustuflokka',
       en: 'View all categories',
@@ -48,12 +44,18 @@ const SECTION_CONFIG: Record<
     seeAllHref: { is: '/flokkur', en: '/en/category' },
   },
   lifeEvents: {
-    titleSuffix: { is: 'á Ísland.is', en: 'on Ísland.is' },
     seeAllLabel: {
       is: 'Skoða alla lífsviðburði',
       en: 'View all life events',
     },
     seeAllHref: { is: '/lifsvidburdir', en: '/en/life-events' },
+  },
+  organizations: {
+    seeAllLabel: {
+      is: 'Skoða allar stofnanir',
+      en: 'View all organizations',
+    },
+    seeAllHref: { is: '/s', en: '/en/organizations' },
   },
 }
 
@@ -100,7 +102,7 @@ const mapMenuToSection = (
 
   return {
     label,
-    title: label ? `${label} ${config.titleSuffix[locale]}` : '',
+    title: label,
     items,
     seeAllHref: config.seeAllHref[locale],
     seeAllLabel: config.seeAllLabel[locale],
@@ -122,10 +124,12 @@ export const buildHeaderNavData = (
   if (menus.length === 0) return null
 
   const orgLogoBySlug = buildOrgLogoLookup(organizations ?? [])
+  const menusById = new Map(menus.filter((m) => m?.id).map((m) => [m.id, m]))
   const data: Partial<HeaderNavData> = {}
 
-  HEADER_NAV_KEYS.forEach((key, idx) => {
-    const section = mapMenuToSection(menus[idx], key, locale, orgLogoBySlug)
+  HEADER_NAV_KEYS.forEach((key) => {
+    const menu = menusById.get(SECTION_MENU_IDS[key])
+    const section = mapMenuToSection(menu, key, locale, orgLogoBySlug)
     if (section) data[key] = section
   })
 

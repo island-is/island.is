@@ -31,15 +31,6 @@ export const trackSearchQuery = (query: string, source: string) => {
   plausibleCustomEvent(event)
 }
 
-export const webMenuButtonClicked = () => {
-  const event: BaseEvent = {
-    eventName: 'Menu button',
-    featureName: 'web',
-    params: {},
-  }
-  plausibleCustomEvent(event)
-}
-
 export const haskolanamFilterClicked = (category: string, value: string) => {
   const event: BaseEvent = {
     eventName: `haskolanam.filter`,

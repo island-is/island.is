@@ -196,8 +196,6 @@ export const topMask = style({
   // Header box-shadow offset (4px) + blur (30px) ≈ 34px visible extent.
   height: 34,
   background: theme.color.white,
-  // DEBUG: remove once positioning is verified.
-  // border: '2px solid red',
   pointerEvents: 'none',
   visibility: 'hidden',
   // Above the header's shadow, below the dropdown so the dropdown's content

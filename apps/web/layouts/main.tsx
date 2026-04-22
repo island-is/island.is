@@ -39,6 +39,7 @@ import {
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
   GetNamespaceQuery,
+  GetOrganizationLogosQuery,
   GetOrganizationPageQuery,
   GetSingleArticleQuery,
   Menu,
@@ -60,7 +61,7 @@ import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_ORGANIZATIONS_QUERY } from '../screens/queries/Organization'
+import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
 import { extractOrganizationSlugFromPathname } from '../utils/organization'
 import {
@@ -615,10 +616,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     // Organizations — joined client-side to attach a logo URL to each
     // organizationPage link in the header nav. `MenuLink.link` resolves
     // to `ReferenceLink { slug, type }`, not to the page union, so the
-    // logo can't be fetched inline via the grouped-menu query.
+    // logo can't be fetched inline via the grouped-menu query. Uses the
+    // slim logos-only query so the result stays small in every page's
+    // getProps payload.
     apolloClient
-      .query<Query, QueryGetOrganizationsArgs>({
-        query: GET_ORGANIZATIONS_QUERY,
+      .query<GetOrganizationLogosQuery, QueryGetOrganizationsArgs>({
+        query: GET_ORGANIZATION_LOGOS_QUERY,
         variables: {
           input: { lang: locale as ContentLanguage },
         },
