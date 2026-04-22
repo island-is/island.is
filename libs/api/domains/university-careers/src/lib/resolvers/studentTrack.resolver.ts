@@ -17,7 +17,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.input'
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
-import { mapEnumToType } from '../mapper'
 import { isDefined } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -82,22 +81,21 @@ export class StudentTrackResolver {
       return []
     }
 
-    const { institution, trackNumber } = track.transcript
+    const { institution } = track.transcript
 
     return track.files
       .map((f) => {
-        const type = mapEnumToType(f.type)
-        if (!type) {
-          this.logger.warn(`Invalid file type while downloading student file`)
+        if (!f.url) {
+          this.logger.warn(`Student file has no URL, skipping`)
           return null
         }
         return {
           ...f,
           downloadServiceURL: `${
             this.downloadServiceConfig.baseUrl
-          }/download/v1/education/graduation/${track.locale ?? 'is'}/${
+          }/download/v1/education/graduation/${
             institution.shortId
-          }/${trackNumber}/${type}`,
+          }/file?url=${encodeURIComponent(f.url)}`,
         }
       })
       .filter(isDefined)

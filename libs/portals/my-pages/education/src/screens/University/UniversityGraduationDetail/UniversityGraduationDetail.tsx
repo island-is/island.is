@@ -111,7 +111,7 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
                     }
                     return {
                       onClick: () => formSubmit(`${item.downloadServiceURL}`),
-                      title: item.displayName,
+                      title: item.fileName,
                     }
                   })
                   .filter(isDefined)}
@@ -126,14 +126,14 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
                   }
                   return (
                     <Button
-                      key={`download-${item.displayName}`}
+                      key={`download-${item.fileName}`}
                       variant="utility"
                       size="small"
                       icon="document"
                       iconType="outline"
                       onClick={() => formSubmit(`${item.downloadServiceURL}`)}
                     >
-                      {item.displayName}
+                      {item.fileName}
                     </Button>
                   )
                 })}

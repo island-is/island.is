@@ -1,5 +1,5 @@
 import { isDefined } from '@island.is/shared/utils'
-import type { NemandiFerillGetResponse } from '../../../gen/fetch'
+import type { GetNemandiFerillByFerillResponse } from '../../../gen/fetch'
 import { UniversityId } from '../universityCareers.types'
 import { StudentFileDto, mapToStudentFileDto } from './studentFile.dto'
 import { StudentTrackDto, mapToStudentTrackDto } from './studentTrack.dto'
@@ -12,7 +12,7 @@ export interface StudentTrackOverviewDto {
 }
 
 export const mapToStudentTrackOverviewDto = (
-  overview: NemandiFerillGetResponse,
+  overview: GetNemandiFerillByFerillResponse,
   institutionId: UniversityId,
 ): StudentTrackOverviewDto | null => {
   if (!overview.transcript) {

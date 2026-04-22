@@ -12,7 +12,7 @@ import {
   mapToStudentTrackOverviewDto,
 } from './dto'
 import { StudyType, UniversityId } from './universityCareers.types'
-import { nemandiGet, nemandiFerillGet } from '../../gen/fetch'
+import { getNemandi, getNemandiFerillByFerill } from '../../gen/fetch'
 
 export type UniversityClientMap = Map<UniversityId, Client>
 
@@ -42,7 +42,7 @@ export class UniversityCareersClientService {
 
     const data = await withAuthContext(user, () =>
       dataOr404Null(
-        nemandiGet({
+        getNemandi({
           client: apiClient,
           query: {
             locale: locale === 'en' ? 'en' : 'is',
@@ -77,7 +77,7 @@ export class UniversityCareersClientService {
 
     const data = await withAuthContext(user, () =>
       dataOr404Null(
-        nemandiFerillGet({
+        getNemandiFerillByFerill({
           client: apiClient,
           path: { ferill: trackNumber },
           query: { locale: locale === 'en' ? 'en' : 'is' },

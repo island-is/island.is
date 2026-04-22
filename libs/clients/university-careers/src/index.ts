@@ -5,7 +5,6 @@ export {
   UniversityIdShort,
   UniversityIdMap,
   UniversityShortIdMap,
-  StudentFileType,
   StudyType,
 } from './lib/universityCareers.types'
 export {

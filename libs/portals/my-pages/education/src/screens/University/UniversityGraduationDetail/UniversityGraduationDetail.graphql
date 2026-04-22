@@ -16,7 +16,6 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
       trackNumber
     }
     files {
-      type
       displayName
       fileName
       downloadServiceURL
