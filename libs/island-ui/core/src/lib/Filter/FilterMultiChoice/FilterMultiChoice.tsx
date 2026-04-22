@@ -27,6 +27,8 @@ type FilterCategory = {
   inline?: boolean
   /** Allow only one option at a time */
   singleOption?: boolean
+  /** Start the category expanded when the filter opens */
+  startExpanded?: boolean
 }
 
 type FilterItem = {
@@ -155,6 +157,7 @@ export const FilterMultiChoice: FC<
               category.selected.length > 0 ? 'blue400' : 'currentColor'
             }
             iconVariant="small"
+            startExpanded={category.startExpanded}
           >
             <Stack space={2}>
               <CheckboxWrapper inline={category.inline}>

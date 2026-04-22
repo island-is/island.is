@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { pseudolocalizeString } from '../utils/forms'
 
@@ -11,12 +11,17 @@ import { pseudolocalizeString } from '../utils/forms'
  * @param searchPaths Uses the lodash get syntax to search through nested objects.
  * @param keyPath Uses the lodash get syntax to search through nested objects.
  */
-export function useLooseSearch<T>(
+export const useLooseSearch = <T,>(
   fullList: T[],
   searchPaths: string[],
   keyPath: string,
-): [T[], (searchValue: string) => void] {
+): [T[], (searchValue: string) => void] => {
   const [filteredList, setFilteredList] = useState(fullList)
+
+  // Reset filtered list when source data changes (e.g. after revalidation)
+  useEffect(() => {
+    setFilteredList(fullList)
+  }, [fullList])
 
   // Populate the search map with the full list.
   const searchMap = useMemo(() => {

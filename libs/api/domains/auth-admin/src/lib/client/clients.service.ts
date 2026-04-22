@@ -23,6 +23,7 @@ import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { environments } from '../shared/constants/environments'
 import { DeleteClientInput } from './dto/delete-client.input'
+import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientsPayload } from './dto/clients.payload'
 import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 
@@ -62,6 +63,7 @@ export class ClientsService extends MultiEnvironmentService {
         clientType: clients[0].clientType,
         sso: clients[0].sso,
         modified: clients[0].modified,
+        archived: !!clients[0].archived,
         environments: clients,
       }))
       .sort((a, b) => a.clientId.localeCompare(b.clientId))
@@ -111,6 +113,7 @@ export class ClientsService extends MultiEnvironmentService {
       clientType: clientEnvs[0].clientType,
       sso: clientEnvs[0].sso,
       modified: clientEnvs[0].modified,
+      archived: !!clientEnvs[0].archived,
       environments: clientEnvs,
     }
   }
@@ -342,22 +345,41 @@ export class ClientsService extends MultiEnvironmentService {
 
     await Promise.all(
       targets.map(async (target) => {
-        const response = await this.makeRequest(
-          user,
-          target.environment,
-          (api) =>
-            api.meClientsControllerDeleteRaw({
-              tenantId: input.tenantId,
-              clientId: input.clientId,
-            }),
+        await this.makeRequest(user, target.environment, (api) =>
+          api.meClientsControllerDeleteRaw({
+            tenantId: input.tenantId,
+            clientId: input.clientId,
+          }),
         ).catch((error) => {
           target.success = false
           this.handleError(error, target.environment)
         })
+      }),
+    )
 
-        if (!response) {
+    return targets.some((target) => target.success)
+  }
+
+  async restoreClient(
+    user: User,
+    input: RestoreClientInput,
+  ): Promise<boolean> {
+    const targets = environments.map((env) => ({
+      environment: env,
+      success: true,
+    }))
+
+    await Promise.all(
+      targets.map(async (target) => {
+        await this.makeRequest(user, target.environment, (api) =>
+          api.meClientsControllerRestoreRaw({
+            tenantId: input.tenantId,
+            clientId: input.clientId,
+          }),
+        ).catch((error) => {
           target.success = false
-        }
+          this.handleError(error, target.environment)
+        })
       }),
     )
 
