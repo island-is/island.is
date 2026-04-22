@@ -51,7 +51,7 @@ export interface AutoAuthOptions {
   scope: string[]
 
   /**
-   * The header name to use for the authorization token.
+   * The header name to use for the autoAuth authorization token. Defaults to authorization.
    */
   headerName?: string
 
