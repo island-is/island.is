@@ -37,7 +37,6 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
-import { useRouter } from 'next/router'
 import { FormContext } from '../FormProvider/FormProvider'
 
 export interface RouteSection {
