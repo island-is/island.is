@@ -1806,4 +1806,8 @@ export const shipsMessages = defineMessages({
     id: 'sp.ships:in-inspection-window-tag',
     defaultMessage: 'Í skoðunarglugga',
   },
+  noShipsFound: {
+    id: 'sp.ships:no-ships-found',
+    defaultMessage: 'Engin skip fundust',
+  },
 })

@@ -3,7 +3,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionCard, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
-  EmptyState,
   IntroWrapperV2,
   SAMGONGUSTOFA_SLUG,
   m as coreMessages,
@@ -34,7 +33,15 @@ export const ShipsOverview = () => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && ships.length === 0 && <EmptyState />}
+      {!loading && !error && ships.length === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(shipsMessages.noShipsFound)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       {!loading && !error && ships.length > 0 && (
         <Stack space={2}>
           {ships.map((ship) => (
