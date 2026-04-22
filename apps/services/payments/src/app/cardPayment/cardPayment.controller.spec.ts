@@ -959,7 +959,8 @@ describe('CardPaymentController', () => {
         const mockSession = 'eyJlcG9jaFRpbWVzdGFtcCI6MTY3ODg5...'
 
         process.env.APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.test'
-        process.env.APPLE_PAY_MERCHANT_IDENTITY_CERT = '-----BEGIN CERTIFICATE-----\ntest\n-----END CERTIFICATE-----'
+        process.env.APPLE_PAY_MERCHANT_IDENTITY_CERT =
+          '-----BEGIN CERTIFICATE-----\ntest\n-----END CERTIFICATE-----'
         process.env.APPLE_PAY_MERCHANT_IDENTITY_KEY =
           '-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----'
 

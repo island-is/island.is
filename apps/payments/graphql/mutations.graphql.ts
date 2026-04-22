@@ -49,7 +49,9 @@ export const CreateInvoiceMutation = gql`
 `
 
 export const ValidateApplePayMerchantMutation = gql`
-  mutation validateApplePayMerchant($input: PaymentsValidateApplePayMerchantInput!) {
+  mutation validateApplePayMerchant(
+    $input: PaymentsValidateApplePayMerchantInput!
+  ) {
     paymentsValidateApplePayMerchant(input: $input) {
       session
     }

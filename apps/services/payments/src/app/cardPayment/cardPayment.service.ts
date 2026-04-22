@@ -306,9 +306,7 @@ export class CardPaymentService {
       !applePayMerchantIdentityCert ||
       !applePayMerchantIdentityKey
     ) {
-      throw new BadRequestException(
-        CardErrorCode.ApplePayNotConfigured,
-      )
+      throw new BadRequestException(CardErrorCode.ApplePayNotConfigured)
     }
 
     return {
@@ -324,9 +322,7 @@ export class CardPaymentService {
     const { applePayPaymentProcessingKey } = this.config.paymentGateway
 
     if (!applePayPaymentProcessingKey) {
-      throw new BadRequestException(
-        CardErrorCode.ApplePayNotConfigured,
-      )
+      throw new BadRequestException(CardErrorCode.ApplePayNotConfigured)
     }
 
     return { applePayPaymentProcessingKey }
@@ -484,10 +480,13 @@ export class CardPaymentService {
     const { applePayPaymentProcessingKey } =
       this.requirePaymentProcessingConfig()
 
-    this.logger.info(`${logPrefix} Apple Pay Payment Processing config present`, {
-      paymentFlowId,
-      hasKey: !!applePayPaymentProcessingKey,
-    })
+    this.logger.info(
+      `${logPrefix} Apple Pay Payment Processing config present`,
+      {
+        paymentFlowId,
+        hasKey: !!applePayPaymentProcessingKey,
+      },
+    )
 
     this.logger.info(`${logPrefix} Apple Pay token pre-decrypt`, {
       paymentFlowId,
