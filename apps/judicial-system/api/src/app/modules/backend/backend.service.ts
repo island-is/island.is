@@ -342,10 +342,9 @@ export class BackendService extends DataSource<{ req: Request }> {
     appealCaseId: string,
     eventType: string,
   ): Promise<AppealCase> {
-    return this.post(
-      `case/${caseId}/appealCase/${appealCaseId}/eventLog`,
-      { eventType },
-    )
+    return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
+      eventType,
+    })
   }
 
   requestCourtRecordSignature(
