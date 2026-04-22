@@ -85,20 +85,6 @@ export class AppealCase extends Model {
   appealReceivedByCourtDate?: Date
 
   /**********
-   * The date and time when the prosecutor appeal statement was sent
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  prosecutorStatementDate?: Date
-
-  /**********
-   * The date and time when the defendant appeal statement was sent
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  defendantStatementDate?: Date
-
-  /**********
    * The surrogate key of the assistant assigned to the appeal case
    **********/
   @ForeignKey(() => User)
