@@ -29,7 +29,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealEventType,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useAppealCase,
@@ -46,7 +49,7 @@ import {
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
+  const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
@@ -106,23 +109,20 @@ const Statement = () => {
       return
     }
 
-    const updated = await updateAppealCase(
+    const sent = await createAppealEventLog(
       workingCase.id,
       workingCase.appealCase.id,
-      isDefenceUser(user)
-        ? { defendantStatementDate: new Date().toISOString() }
-        : { prosecutorStatementDate: new Date().toISOString() },
+      AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
-    if (updated) {
+    if (sent) {
       setVisibleModal('STATEMENT_SENT')
     }
   }, [
     handleUpload,
-    updateAppealCase,
+    createAppealEventLog,
     updateUploadFile,
     uploadFiles,
-    user,
     workingCase.appealCase?.id,
     workingCase.id,
   ])
@@ -238,9 +238,9 @@ const Statement = () => {
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
           nextIsDisabled={
-            appealStatementFiles.length === 0 || isUpdatingAppealCase
+            appealStatementFiles.length === 0 || isCreatingAppealEventLog
           }
-          nextIsLoading={!allFilesDoneOrError || isUpdatingAppealCase}
+          nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />

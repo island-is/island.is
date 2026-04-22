@@ -337,6 +337,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createAppealEventLog(
+    caseId: string,
+    appealCaseId: string,
+    eventType: string,
+  ): Promise<AppealCase> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/eventLog`,
+      { eventType },
+    )
+  }
+
   requestCourtRecordSignature(
     caseId: string,
     method: 'audkenni' | 'mobile' = 'mobile',
@@ -817,17 +828,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/limitedAccess/appealCase`)
   }
 
-  limitedAccessUpdateAppealCase(
-    caseId: string,
-    appealCaseId: string,
-    updateAppealCase: unknown,
-  ): Promise<AppealCase> {
-    return this.patch(
-      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}`,
-      updateAppealCase,
-    )
-  }
-
   limitedAccessTransitionAppealCase(
     caseId: string,
     appealCaseId: string,
@@ -836,6 +836,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/state`,
       transitionAppealCase,
+    )
+  }
+
+  limitedAccessCreateAppealEventLog(
+    caseId: string,
+    appealCaseId: string,
+    eventType: string,
+  ): Promise<AppealCase> {
+    return this.post(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
+      { eventType },
     )
   }
 

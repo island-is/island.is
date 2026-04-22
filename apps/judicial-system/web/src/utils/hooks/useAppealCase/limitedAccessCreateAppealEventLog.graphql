@@ -1,0 +1,7 @@
+mutation LimitedAccessCreateAppealEventLog(
+  $input: CreateAppealEventLogInput!
+) {
+  limitedAccessCreateAppealEventLog(input: $input) {
+    id
+  }
+}
