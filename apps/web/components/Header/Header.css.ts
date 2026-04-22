@@ -13,6 +13,11 @@ export const header = style({
   // Transition lives on the base class so the shadow fades in AND out
   // symmetrically as `.headerWithShadow` is toggled.
   transition: `box-shadow ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
 })
 
 export const headerWithShadow = style({

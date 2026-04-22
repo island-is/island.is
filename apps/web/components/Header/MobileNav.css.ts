@@ -31,6 +31,14 @@ export const iconButton = style({
   ':hover': {
     borderColor: theme.color.blue300,
   },
+  // Matches island-ui `FocusableBox` — 3px mint400 ring offset 3px outside.
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
+  },
 })
 
 export const valmyndButton = style({
@@ -52,6 +60,13 @@ export const valmyndButton = style({
 
   ':hover': {
     borderColor: theme.color.blue300,
+  },
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
   },
 })
 
@@ -99,12 +114,22 @@ export const panel = style({
   // border-box). The visual top gap lives on the first content element.
   padding: '0 24px 24px 24px',
   zIndex: 20,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
 })
 
 export const panelOpen = style({
   opacity: 1,
   visibility: 'visible',
   transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear 0ms`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
 })
 
 // Sticky gradient overlay at the top of the panel that fades in when the
@@ -127,6 +152,11 @@ export const scrollShadow = style({
   opacity: 0,
   transition: 'opacity 200ms ease-out',
   pointerEvents: 'none',
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
 })
 
 export const scrollShadowVisible = style({
@@ -152,6 +182,13 @@ export const backButton = style({
   padding: 0,
   color: theme.color.dark400,
   cursor: 'pointer',
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
+  },
 })
 
 export const panelTitle = style({
@@ -191,6 +228,13 @@ export const drillRow = style({
   ':hover': {
     color: theme.color.blue400,
   },
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
+  },
 })
 
 export const drillRowLabel = style({
@@ -209,6 +253,13 @@ export const drillLink = style({
 
   ':hover': {
     textDecoration: 'underline',
+  },
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
   },
 })
 

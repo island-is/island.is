@@ -5,5 +5,8 @@
 export const NAV_SHADOW_COLOR = 'rgba(0, 97, 255, 0.16)'
 export const NAV_SHADOW = `0 4px 30px 0 ${NAV_SHADOW_COLOR}`
 
-export const NAV_TRANSITION_DURATION = '800ms'
+// Numeric form so React-side timers (e.g. the dropdown top-mask window)
+// can stay in sync with the CSS duration automatically.
+export const NAV_TRANSITION_DURATION_MS = 200
+export const NAV_TRANSITION_DURATION = `${NAV_TRANSITION_DURATION_MS}ms`
 export const NAV_TRANSITION_EASING = 'ease'

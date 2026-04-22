@@ -32,6 +32,26 @@ interface MobileNavProps {
   onOpenChange?: (isOpen: boolean) => void
 }
 
+const TABBABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'textarea:not([disabled])',
+  'select:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ')
+
+const focusPreviousTabbableIn = (
+  container: HTMLElement,
+  current: HTMLElement,
+) => {
+  const tabbable = Array.from(
+    container.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR),
+  )
+  const idx = tabbable.indexOf(current)
+  if (idx > 0) tabbable[idx - 1].focus()
+}
+
 export const MobileNav = ({
   organizationSearchFilter,
   searchPlaceholder,
@@ -42,6 +62,11 @@ export const MobileNav = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  // Captures the "see all" Button DOM node so we can forward keyboard focus
+  // from the wrapping Link to the Button — the Button has a much nicer
+  // focus-visible state (mint fill + underline) that only triggers when the
+  // Button itself is focused.
+  const seeAllButtonRef = useRef<HTMLElement | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [drilldownKey, setDrilldownKey] = useState<HeaderNavKey | null>(null)
   const [isPanelScrolled, setIsPanelScrolled] = useState(false)
@@ -247,7 +272,26 @@ export const MobileNav = ({
                     </li>
                   ))}
               </ul>
-              <Box className={styles.seeAllRow}>
+              <div
+                className={styles.seeAllRow}
+                onFocus={(event) => {
+                  if (!(event.target instanceof HTMLAnchorElement)) return
+                  if (!seeAllButtonRef.current) return
+                  // Shift+Tab from the Button lands focus back on the Link;
+                  // forwarding to Button again would trap focus, so jump to
+                  // the previous tabbable element inside the nav instead.
+                  if (
+                    event.relatedTarget === seeAllButtonRef.current &&
+                    containerRef.current
+                  ) {
+                    focusPreviousTabbableIn(containerRef.current, event.target)
+                    return
+                  }
+                  // Otherwise this is a forward tab onto the Link — forward
+                  // focus to the Button so its mint `:focus` style shows.
+                  seeAllButtonRef.current.focus()
+                }}
+              >
                 <Link
                   href={
                     activeLocale === 'en' &&
@@ -257,6 +301,10 @@ export const MobileNav = ({
                   }
                 >
                   <Button
+                    ref={(node) => {
+                      seeAllButtonRef.current = node
+                      if (node) node.tabIndex = -1
+                    }}
                     icon="arrowForward"
                     iconType="filled"
                     variant="text"
@@ -266,7 +314,7 @@ export const MobileNav = ({
                     {drilldownSection.seeAllLabel}
                   </Button>
                 </Link>
-              </Box>
+              </div>
             </>
           ) : (
             <ul className={styles.panelList}>

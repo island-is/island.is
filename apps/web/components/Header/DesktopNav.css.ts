@@ -41,6 +41,14 @@ export const tabButton = style({
   ':hover': {
     color: theme.color.blue400,
   },
+  // Matches island-ui `FocusableBox` — 3px mint400 ring offset 3px outside.
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
+  },
 })
 
 export const tabButtonActive = style({
@@ -99,6 +107,9 @@ export const dropdown = style({
       // shadow below.
       clipPath: 'inset(0 0 -40px 0)',
     },
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
   },
 })
 
@@ -106,6 +117,11 @@ export const dropdownOpen = style({
   opacity: 1,
   visibility: 'visible',
   transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear 0ms`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
 })
 
 export const dropdownTitle = style({
@@ -138,8 +154,43 @@ export const dropdownLink = style({
   ':hover': {
     textDecoration: 'underline',
   },
+  ':focus': {
+    outline: 'none',
+  },
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 3,
+  },
 })
 
 export const seeAllRow = style({
   marginTop: 24,
+})
+
+// Sibling of the dropdown (not inside it — opacity cascades to descendants).
+// Sits at the dropdown's top edge and covers the ~34px strip of header shadow
+// that would otherwise bleed through the translucent dropdown mid-transition.
+// Matches the dropdown's horizontal extent so it looks like part of the
+// dropdown when visible. Controlled by React: visible only during the
+// transition window, hidden at rest.
+export const topMask = style({
+  position: 'absolute',
+  top: '100%',
+  left: -48,
+  width: 864,
+  maxWidth: 'calc(100vw - 96px)',
+  // Header box-shadow offset (4px) + blur (30px) ≈ 34px visible extent.
+  height: 34,
+  background: theme.color.white,
+  // DEBUG: remove once positioning is verified.
+  // border: '2px solid red',
+  pointerEvents: 'none',
+  visibility: 'hidden',
+  // Above the header's shadow, below the dropdown so the dropdown's content
+  // still paints over the mask when fully open.
+  zIndex: 5,
+})
+
+export const topMaskVisible = style({
+  visibility: 'visible',
 })
