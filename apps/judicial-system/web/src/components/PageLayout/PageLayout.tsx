@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren, ReactNode, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 
 import {
   AlertBanner,
@@ -33,11 +34,11 @@ import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/fo
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
+import { FormContext } from '../FormProvider/FormProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
-import { FormContext } from '../FormProvider/FormProvider'
 
 export interface RouteSection {
   name: string
