@@ -12,6 +12,7 @@ import {
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/shared/components'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, isComingFromRedirect } from './util'
 import { useSearchParams } from 'react-router-dom'
@@ -131,13 +132,12 @@ export const PaymentPending: FC<
     <Box height="full">
       {isInvoice ? (
         <Box marginBottom={4}>
-          <Text variant="h3" marginBottom={2}>
+          <Text variant="h3">
             {msg(coreMessages.paymentPendingInvoiceTitle)}
           </Text>
-          <Text marginBottom={2}>
+          <Markdown>
             {msg(coreMessages.paymentPendingInvoiceDescription)}
-          </Text>
-          <Text>{msg(coreMessages.paymentPendingInvoiceTimeLimit)}</Text>
+          </Markdown>
         </Box>
       ) : (
         <Text variant="h3">{msg(coreMessages.paymentPollingIndicator)}</Text>

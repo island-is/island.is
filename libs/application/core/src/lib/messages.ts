@@ -72,7 +72,7 @@ export const coreMessages = defineMessages({
     description: 'Button label when application is approved',
   },
   cardButtonNotStarted: {
-    id: 'application:card.button.notStarted',
+    id: 'application.system:card.button.notStarted',
     defaultMessage: 'Hefja umsókn',
     description: 'Button label when application is not started',
   },
@@ -316,20 +316,14 @@ export const coreMessages = defineMessages({
   },
   paymentPendingInvoiceTitle: {
     id: 'application.system:core.payment.pendingInvoiceTitle',
-    defaultMessage: 'Krafa bíður greiðslu',
+    defaultMessage: 'Krafa stofnuð',
     description: 'Title for payment pending invoice',
   },
   paymentPendingInvoiceDescription: {
-    id: 'application.system:core.payment.pendingInvoiceDescription',
+    id: 'application.system:core.payment.pendingInvoiceDescription#markdown',
     defaultMessage:
-      'Til að klára umsókn þarf að greiða kröfu sem send hefur verið í netbanka og koma svo aftur á þessa síðu til að ljúka umsókninni.',
+      '* Krafa hefur verið stofnuð og verði send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan 48 klst mun umsóknin verða felld niður.',
     description: 'Description for payment pending invoice',
-  },
-  paymentPendingInvoiceTimeLimit: {
-    id: 'application.system:core.payment.pendingInvoiceTimeLimit',
-    defaultMessage:
-      'Athugaðu að þú hefur 48 klukkustundir til að greiða kröfuna frá þeim tíma sem hún var stofnuð. Þessi síða mun uppfærast þegar krafa hefur verið greidd.',
-    description: 'Time limit for payment pending invoice',
   },
 })
 
