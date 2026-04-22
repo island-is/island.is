@@ -205,152 +205,152 @@ export const MobileNavPanel = forwardRef<
 
     return (
       <div
-          ref={panelRef}
-          id={panelId}
-          role="region"
-          aria-label={menuLabel}
-          aria-hidden={!isOpen}
-          className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
-          onScroll={(event) =>
-            setIsPanelScrolled(event.currentTarget.scrollTop > 10)
-          }
-        >
-          <div
-            aria-hidden="true"
-            className={`${styles.scrollShadow} ${
-              isPanelScrolled ? styles.scrollShadowVisible : ''
-            }`}
+        ref={panelRef}
+        id={panelId}
+        role="region"
+        aria-label={menuLabel}
+        aria-hidden={!isOpen}
+        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
+        onScroll={(event) =>
+          setIsPanelScrolled(event.currentTarget.scrollTop > 10)
+        }
+      >
+        <div
+          aria-hidden="true"
+          className={`${styles.scrollShadow} ${
+            isPanelScrolled ? styles.scrollShadowVisible : ''
+          }`}
+        />
+        <Box className={styles.searchWrapper}>
+          <SearchInput
+            ref={searchInputRef}
+            id="mobile-nav-search"
+            size="medium"
+            activeLocale={activeLocale}
+            placeholder={searchPlaceholder ?? t.searchPlaceholder}
+            autocomplete={true}
+            autosuggest={true}
+            organization={organizationSearchFilter}
           />
-          <Box className={styles.searchWrapper}>
-            <SearchInput
-              ref={searchInputRef}
-              id="mobile-nav-search"
-              size="medium"
-              activeLocale={activeLocale}
-              placeholder={searchPlaceholder ?? t.searchPlaceholder}
-              autocomplete={true}
-              autosuggest={true}
-              organization={organizationSearchFilter}
-            />
-          </Box>
+        </Box>
 
-          {drilldownSection ? (
-            <>
-              <Box className={styles.panelHeader}>
-                <button
-                  type="button"
-                  className={styles.backButton}
-                  aria-label={backLabel}
-                  onClick={() => setDrilldownKey(null)}
-                >
-                  <Icon
-                    icon="arrowBack"
-                    type="outline"
-                    size="small"
-                    color="dark400"
-                  />
-                </button>
-                <h2 className={styles.panelTitle}>{drilldownSection.label}</h2>
-              </Box>
-              <ul className={styles.panelList}>
-                {drilldownSection.items
-                  .slice(0, HEADER_NAV_MAX_ITEMS)
-                  .map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={
-                          activeLocale === 'en' && !item.href.startsWith('/en')
-                            ? `/en${item.href}`
-                            : item.href
-                        }
-                        className={styles.drillLink}
-                      >
-                        {item.logoUrl && (
-                          <img
-                            aria-hidden="true"
-                            alt=""
-                            src={item.logoUrl}
-                            width={20}
-                            height={20}
-                            className={styles.drillLinkLogo}
-                          />
-                        )}
-                        {item.title}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-              <div
-                className={styles.seeAllRow}
-                onFocus={(event) => {
-                  if (!(event.target instanceof HTMLAnchorElement)) return
-                  if (!seeAllButtonRef.current) return
-                  // Shift+Tab from the Button lands focus back on the Link;
-                  // forwarding to Button again would trap focus, so jump to
-                  // the previous tabbable element inside the panel instead.
-                  if (
-                    event.relatedTarget === seeAllButtonRef.current &&
-                    panelRef.current
-                  ) {
-                    focusPreviousTabbableIn(panelRef.current, event.target)
-                    return
-                  }
-                  // Otherwise this is a forward tab onto the Link — forward
-                  // focus to the Button so its mint `:focus` style shows.
-                  seeAllButtonRef.current.focus()
-                }}
+        {drilldownSection ? (
+          <>
+            <Box className={styles.panelHeader}>
+              <button
+                type="button"
+                className={styles.backButton}
+                aria-label={backLabel}
+                onClick={() => setDrilldownKey(null)}
               >
-                <Link
-                  href={
-                    activeLocale === 'en' &&
-                    !drilldownSection.seeAllHref.startsWith('/en')
-                      ? `/en${drilldownSection.seeAllHref}`
-                      : drilldownSection.seeAllHref
-                  }
-                >
-                  <Button
-                    ref={(node) => {
-                      seeAllButtonRef.current = node
-                      if (node) node.tabIndex = -1
-                    }}
-                    icon="arrowForward"
-                    iconType="filled"
-                    variant="text"
-                    size="small"
-                    as="span"
-                  >
-                    {drilldownSection.seeAllLabel}
-                  </Button>
-                </Link>
-              </div>
-            </>
-          ) : (
+                <Icon
+                  icon="arrowBack"
+                  type="outline"
+                  size="small"
+                  color="dark400"
+                />
+              </button>
+              <h2 className={styles.panelTitle}>{drilldownSection.label}</h2>
+            </Box>
             <ul className={styles.panelList}>
-              {HEADER_NAV_KEYS.map((key) => {
-                const section = navData[key]
-                return (
-                  <li key={key}>
-                    <button
-                      type="button"
-                      className={styles.drillRow}
-                      onClick={() => setDrilldownKey(key)}
+              {drilldownSection.items
+                .slice(0, HEADER_NAV_MAX_ITEMS)
+                .map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={
+                        activeLocale === 'en' && !item.href.startsWith('/en')
+                          ? `/en${item.href}`
+                          : item.href
+                      }
+                      className={styles.drillLink}
                     >
-                      <span className={styles.drillRowLabel}>
-                        {section.label}
-                      </span>
-                      <Icon
-                        icon="chevronForward"
-                        type="outline"
-                        size="small"
-                        color="dark400"
-                      />
-                    </button>
+                      {item.logoUrl && (
+                        <img
+                          aria-hidden="true"
+                          alt=""
+                          src={item.logoUrl}
+                          width={20}
+                          height={20}
+                          className={styles.drillLinkLogo}
+                        />
+                      )}
+                      {item.title}
+                    </Link>
                   </li>
-                )
-              })}
+                ))}
             </ul>
-          )}
-        </div>
+            <div
+              className={styles.seeAllRow}
+              onFocus={(event) => {
+                if (!(event.target instanceof HTMLAnchorElement)) return
+                if (!seeAllButtonRef.current) return
+                // Shift+Tab from the Button lands focus back on the Link;
+                // forwarding to Button again would trap focus, so jump to
+                // the previous tabbable element inside the panel instead.
+                if (
+                  event.relatedTarget === seeAllButtonRef.current &&
+                  panelRef.current
+                ) {
+                  focusPreviousTabbableIn(panelRef.current, event.target)
+                  return
+                }
+                // Otherwise this is a forward tab onto the Link — forward
+                // focus to the Button so its mint `:focus` style shows.
+                seeAllButtonRef.current.focus()
+              }}
+            >
+              <Link
+                href={
+                  activeLocale === 'en' &&
+                  !drilldownSection.seeAllHref.startsWith('/en')
+                    ? `/en${drilldownSection.seeAllHref}`
+                    : drilldownSection.seeAllHref
+                }
+              >
+                <Button
+                  ref={(node) => {
+                    seeAllButtonRef.current = node
+                    if (node) node.tabIndex = -1
+                  }}
+                  icon="arrowForward"
+                  iconType="filled"
+                  variant="text"
+                  size="small"
+                  as="span"
+                >
+                  {drilldownSection.seeAllLabel}
+                </Button>
+              </Link>
+            </div>
+          </>
+        ) : (
+          <ul className={styles.panelList}>
+            {HEADER_NAV_KEYS.map((key) => {
+              const section = navData[key]
+              return (
+                <li key={key}>
+                  <button
+                    type="button"
+                    className={styles.drillRow}
+                    onClick={() => setDrilldownKey(key)}
+                  >
+                    <span className={styles.drillRowLabel}>
+                      {section.label}
+                    </span>
+                    <Icon
+                      icon="chevronForward"
+                      type="outline"
+                      size="small"
+                      color="dark400"
+                    />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </div>
     )
   },
 )
