@@ -17,6 +17,7 @@ export const GET_COURT_AGENDAS_QUERY = gql`
           name
         }
         court
+        hearingTime
       }
       total
       input {

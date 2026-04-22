@@ -48,7 +48,6 @@ import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
@@ -125,7 +124,6 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         RegulationsAdminClientConfig,
         LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,

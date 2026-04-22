@@ -18,7 +18,6 @@ import {
   Firearm,
   FishingLicense,
   Frigg,
-  HealthDirectorateOrganDonation,
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
@@ -493,6 +492,8 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
       VERDICTS_SUPREME_COURT_BEARER_TOKEN:
         '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
+      VERDICTS_LANDSRETTUR_APPEALS_URL:
+        '/k8s/api/VERDICTS_LANDSRETTUR_APPEALS_URL',
       FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
       FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
@@ -559,7 +560,6 @@ export const serviceSetup = (services: {
       OfficialJournalOfIcelandApplication,
       LegalGazette,
       Frigg,
-      HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
       HealthDirectorateHealthService,
       WorkAccidents,

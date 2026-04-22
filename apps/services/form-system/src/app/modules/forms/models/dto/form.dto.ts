@@ -97,4 +97,7 @@ export class FormDto {
 
   @ApiPropertyOptional({ type: [FieldDto] })
   fields?: FieldDto[]
+
+  @ApiPropertyOptional()
+  lastModifiedBy?: string
 }
