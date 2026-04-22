@@ -13,16 +13,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
-  CaseNotificationType,
   CaseState,
   completedIndictmentCaseStates,
   dateTypes,
@@ -119,16 +113,13 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export interface LimitedAccessUpdateCase
-  extends Pick<Case, 'accusedPostponedAppealDate' | 'openedByDefender'>,
-    Partial<
-      Pick<
-        AppealCase,
-        | 'appealState'
-        | 'defendantStatementDate'
-        | 'appealRulingDecision'
-        | 'appealedByNationalId'
-      >
-    > {}
+  extends Pick<
+    Case,
+    | 'caseModifiedExplanation'
+    | 'isolationToDate'
+    | 'validToDate'
+    | 'openedByDefender'
+  > {}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -549,59 +540,8 @@ export class LimitedAccessCaseService {
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
-    if (update.appealState === AppealCaseState.APPEALED) {
-      for (const caseFile of theCase.caseFiles ?? []) {
-        if (
-          caseFile.state === CaseFileState.STORED_IN_RVG &&
-          caseFile.isKeyAccessible &&
-          caseFile.category &&
-          [
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          ].includes(caseFile.category)
-        ) {
-          addMessagesToQueue({
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId: theCase.id,
-            elementId: caseFile.id,
-          })
-        }
-      }
-
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
-      })
-    }
-
-    if (update.appealState === AppealCaseState.WITHDRAWN) {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
-      })
-    }
-
     // Return limited access case (read within transaction so we see the updated row)
-    const updatedCase = await this.findById(theCase.id, { transaction })
-
-    if (
-      updatedCase.appealCase?.defendantStatementDate?.getTime() !==
-      theCase.appealCase?.defendantStatementDate?.getTime()
-    ) {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_STATEMENT },
-      })
-    }
-
-    return updatedCase
+    return this.findById(theCase.id, { transaction })
   }
 
   private constructDefender(

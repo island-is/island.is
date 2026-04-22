@@ -1,21 +1,11 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { Message, MessageType } from '@island.is/judicial-system/message'
-import {
-  CaseFileCategory,
-  CaseFileState,
-  CaseNotificationType,
-  User,
-} from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { nowFactory } from '../../../../factories'
-import { randomDate } from '../../../../test'
 import { Case, CaseRepositoryService } from '../../../repository'
-
-jest.mock('../../../../factories')
 
 interface Then {
   result: Case
@@ -25,51 +15,26 @@ interface Then {
 type GivenWhenThen = () => Promise<Then>
 
 describe('LimitedAccessCaseController - Update', () => {
-  const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
-  const statementId = uuid()
-  const fileId = uuid()
-  const caseFiles = [
-    {
-      id: statementId,
-      key: uuid(),
-      state: CaseFileState.STORED_IN_RVG,
-      category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-    },
-    {
-      id: fileId,
-      key: uuid(),
-      state: CaseFileState.STORED_IN_RVG,
-      category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-    },
-  ]
   const caseId = uuid()
   const theCase = {
     id: caseId,
-    caseFiles,
   } as Case
-  const updateDto = { defendantStatementDate: new Date() }
+  const updateDto = { validToDate: new Date() }
   const updatedCase = {
     ...theCase,
-    appealCase: { defendantStatementDate: date },
-    caseFiles,
+    validToDate: updateDto.validToDate,
   } as Case
 
-  let mockQueuedMessages: Message[]
   let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      queuedMessages,
-      sequelize,
-      caseRepositoryService,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const { sequelize, caseRepositoryService, limitedAccessCaseController } =
+      await createTestingCaseModule()
 
-    mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -78,8 +43,6 @@ describe('LimitedAccessCaseController - Update', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    const mockToday = nowFactory as jest.Mock
-    mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue(updatedCase)
     const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
@@ -103,7 +66,7 @@ describe('LimitedAccessCaseController - Update', () => {
     }
   })
 
-  describe('defendant statement date updated', () => {
+  describe('case updated', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -113,20 +76,9 @@ describe('LimitedAccessCaseController - Update', () => {
     it('should update the case', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
         caseId,
-        { defendantStatementDate: date },
+        updateDto,
         { transaction },
       )
-    })
-
-    it('should queue messages', () => {
-      expect(mockQueuedMessages).toEqual([
-        {
-          type: MessageType.NOTIFICATION,
-          user,
-          caseId,
-          body: { type: CaseNotificationType.APPEAL_STATEMENT },
-        },
-      ])
     })
 
     it('should return the updated case', () => {

@@ -26,13 +26,14 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  type AppealCase,
   AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseState,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   formatDateForServer,
   useAppealCase,
@@ -314,14 +315,25 @@ const CourtOfAppealRuling = () => {
                 value={workingCase.appealCase?.appealConclusion || ''}
                 placeholder={formatMessage(strings.conclusionPlaceholder)}
                 onChange={(event) => {
-                  removeTabsValidateAndSet(
-                    'appealConclusion',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    appealConclusionErrorMessage,
-                    setAppealConclusionErrorMessage,
-                  )
+                  const value = replaceTabs(event.target.value)
+
+                  setWorkingCase((prevWorkingCase) => ({
+                    ...prevWorkingCase,
+                    appealCase: {
+                      ...prevWorkingCase.appealCase,
+                      appealConclusion: value,
+                    } as AppealCase,
+                  }))
+
+                  const { isValid, errorMessage } = validate([
+                    [value, ['empty']],
+                  ])
+
+                  if (isValid) {
+                    setAppealConclusionErrorMessage('')
+                  } else if (appealConclusionErrorMessage) {
+                    setAppealConclusionErrorMessage(errorMessage)
+                  }
                 }}
                 onBlur={(event) => {
                   const value = event.target.value
