@@ -3,6 +3,8 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 import {
+  NAV_OVERLAY_MASK_Z_INDEX,
+  NAV_OVERLAY_Z_INDEX,
   NAV_SHADOW,
   NAV_SHADOW_COLOR,
   NAV_TRANSITION_DURATION,
@@ -39,7 +41,7 @@ export const panel = style({
   // absolute top edge (sticky top:0 anchors to the padding-box, not the
   // border-box). The visual top gap lives on the first content element.
   padding: '0 24px 24px 24px',
-  zIndex: 20,
+  zIndex: NAV_OVERLAY_Z_INDEX,
   '@media': {
     '(prefers-reduced-motion: reduce)': {
       transition: 'none',
@@ -208,4 +210,27 @@ export const searchWrapper = style({
 
 export const seeAllRow = style({
   marginTop: 24,
+})
+
+// Dormant — the JSX consumer is commented out in MobileNav.tsx. Kept here so
+// we can re-enable the mask later (covers the ~34px of header shadow that
+// would otherwise bleed through the translucent panel during open/close).
+// It looked right on the frontpage but flashed over content sitting flush
+// under the header on other pages, so we're shelving it for now.
+export const topMask = style({
+  position: 'fixed',
+  top: 80,
+  right: 0,
+  width: 305,
+  maxWidth: 'calc(100vw - 24px)',
+  // Header box-shadow offset (4px) + blur (30px) ≈ 34px visible extent.
+  height: 34,
+  background: theme.color.white,
+  pointerEvents: 'none',
+  visibility: 'hidden',
+  zIndex: NAV_OVERLAY_MASK_Z_INDEX,
+})
+
+export const topMaskVisible = style({
+  visibility: 'visible',
 })

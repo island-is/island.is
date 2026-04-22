@@ -3,6 +3,8 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 import {
+  NAV_OVERLAY_MASK_Z_INDEX,
+  NAV_OVERLAY_Z_INDEX,
   NAV_SHADOW,
   NAV_TRANSITION_DURATION,
   NAV_TRANSITION_EASING,
@@ -93,7 +95,7 @@ export const dropdown = style({
   // other three sides allows the shadow to render freely there.
   clipPath: 'inset(0 -40px -40px -40px)',
   padding: '24px 48px 40px 48px',
-  zIndex: 10,
+  zIndex: NAV_OVERLAY_Z_INDEX,
 
   // Below 1100px the dropdown spans the full viewport width (DesktopNav
   // measures offsetParent and sets left/right/width inline). Only the
@@ -200,7 +202,7 @@ export const topMask = style({
   visibility: 'hidden',
   // Above the header's shadow, below the dropdown so the dropdown's content
   // still paints over the mask when fully open.
-  zIndex: 5,
+  zIndex: NAV_OVERLAY_MASK_Z_INDEX,
 })
 
 export const topMaskVisible = style({

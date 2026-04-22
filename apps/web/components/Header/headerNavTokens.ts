@@ -10,3 +10,10 @@ export const NAV_SHADOW = `0 4px 30px 0 ${NAV_SHADOW_COLOR}`
 export const NAV_TRANSITION_DURATION_MS = 200
 export const NAV_TRANSITION_DURATION = `${NAV_TRANSITION_DURATION_MS}ms`
 export const NAV_TRANSITION_EASING = 'ease'
+
+// Stacking for header overlays. Set above common page-content values
+// (OrganizationWrapper's sidebar uses z:20, theme-specific wrappers use
+// z:1000 in localized contexts) so nav panels always paint over page
+// content. Still below FixedNav (1000) and chat widgets (9999+).
+export const NAV_OVERLAY_Z_INDEX = 100
+export const NAV_OVERLAY_MASK_Z_INDEX = NAV_OVERLAY_Z_INDEX - 1

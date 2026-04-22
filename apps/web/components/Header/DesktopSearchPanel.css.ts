@@ -3,6 +3,7 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 import {
+  NAV_OVERLAY_Z_INDEX,
   NAV_TRANSITION_DURATION,
   NAV_TRANSITION_EASING,
 } from './headerNavTokens'
@@ -82,7 +83,7 @@ export const inputOverlay = style({
   opacity: 0,
   visibility: 'hidden',
   transition: `opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear ${NAV_TRANSITION_DURATION}`,
-  zIndex: 20,
+  zIndex: NAV_OVERLAY_Z_INDEX,
   '::before': {
     content: '""',
     position: 'absolute',
