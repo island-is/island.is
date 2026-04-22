@@ -16,6 +16,7 @@ import {
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
+  meAppointmentControllerGetPatientAppointmentByIdV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -38,7 +39,8 @@ import {
 } from './gen/fetch'
 
 import {
-  AppointmentDto,
+  AppointmentBaseDto,
+  AppointmentDetailDto,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -500,7 +502,7 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     from?: Date,
     statuses?: UserVisibleAppointmentStatuses[],
-  ): Promise<AppointmentDto[] | null> {
+  ): Promise<AppointmentBaseDto[] | null> {
     const defaultFrom = new Date()
 
     const appointments = await withAuthContext(auth, () =>
@@ -515,5 +517,20 @@ export class HealthDirectorateHealthService {
     )
 
     return appointments ?? null
+  }
+
+  public async getAppointmentById(
+    auth: Auth,
+    id: string,
+  ): Promise<AppointmentDetailDto | null> {
+    const appointment = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return appointment ?? null
   }
 }
