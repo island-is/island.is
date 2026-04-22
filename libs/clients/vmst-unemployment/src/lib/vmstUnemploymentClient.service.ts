@@ -17,13 +17,15 @@ import {
   ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
-  ApplicantInfoUpdateApplicantRequest,
   ApplicantApi,
   GaldurDomainModelsBaseViewModel,
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurXRoadAPIModelsResolveApplicantResponse,
+  GaldurExternalDomainRequestsWithdrawOverviewResponse,
+  ApplicantUpdateApplicantRequest,
+  ApplicantGetApplicantInfoRequest,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -193,15 +195,17 @@ export class VmstUnemploymentClientService {
   }
 
   async canUserWithdrawUnemploymentApplication(
-    auth: User,
-  ): Promise<GaldurDomainModelsBaseViewModel> {
+    applicantId: string,
+  ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
       'Activation Grant API auth failed',
     )
 
-    return await api.applicantCanWithdrawApplication({ ssn: auth.nationalId })
+    return await api.applicantGetUnemploymentApplicationsWithdrawOverview({
+      id: applicantId,
+    })
   }
 
   async withdrawApplicationSupportData(): Promise<
@@ -274,33 +278,33 @@ export class VmstUnemploymentClientService {
   }
 
   async getCurrentApplicationForActions(
-    auth: User,
+    requestParameters: ApplicantGetApplicantInfoRequest,
   ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
     const api = await this.createApiClient(
-      ApplicantInfoApi,
+      ApplicantApi,
       'clients-vmst-unemployment',
       'Unemployment API auth failed',
     )
-    return await api.applicantInfoGetApplicantInfo({ ssn: auth.nationalId })
+    return await api.applicantGetApplicantInfo(requestParameters)
   }
 
   async getCurrentApplicationSupportDataForActions(): Promise<GaldurXRoadAPIModelsApplicantInfoSupportDataResponse> {
     const api = await this.createApiClient(
-      ApplicantInfoApi,
+      ApplicantApi,
       'clients-vmst-unemployment',
       'Unemployment API auth failed',
     )
-    return await api.applicantInfoGetApplicantInfoSupportData()
+    return await api.applicantGetApplicantInfoSupportData()
   }
 
   async updateCurrentApplicationForActions(
-    requestParameters: ApplicantInfoUpdateApplicantRequest,
+    requestParameters: ApplicantUpdateApplicantRequest,
   ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
     const api = await this.createApiClient(
-      ApplicantInfoApi,
+      ApplicantApi,
       'clients-vmst-unemployment',
       'Unemployment API auth failed',
     )
-    return await api.applicantInfoUpdateApplicant(requestParameters)
+    return await api.applicantUpdateApplicant(requestParameters)
   }
 }

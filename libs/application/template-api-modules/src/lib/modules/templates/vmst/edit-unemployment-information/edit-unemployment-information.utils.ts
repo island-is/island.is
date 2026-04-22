@@ -52,6 +52,11 @@ export const generateAnswers = (
   const euresAgreement = getValueViaPath<YesOrNoEnum>(answers, 'euresAgreement')
 
   return {
+    currentAddressDifferent:
+      otherAddress?.currentAddressIsNotDifferent &&
+      otherAddress?.currentAddressIsNotDifferent?.[0] === YES
+        ? false
+        : true,
     currentAddress: otherAddress?.otherAddress,
     currentPostCodeId: otherAddress?.otherPostcode,
     passCode: password,

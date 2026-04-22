@@ -47,8 +47,10 @@ import {
   getDefaultJobWishes,
   getDefaultEducation,
   getDefaultDrivingLicenses,
+  getDefaultHeavyMachineryLicenses,
   getDefaultLanguages,
   getDefaultEures,
+  getCurrentAddressIsNotDifferentDefault,
 } from '../../utils/defaultValues'
 import {
   getPostcodeOptions,
@@ -142,6 +144,11 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
     () => getOtherAddressDefault(externalData),
     [externalData],
   )
+
+  const currentAddressIsNotDifferentDefault = useMemo(
+    () => getCurrentAddressIsNotDifferentDefault(externalData),
+    [externalData],
+  )
   const otherPostcodeDefault = useMemo(
     () => getOtherPostcodeDefault(externalData),
     [externalData],
@@ -166,6 +173,17 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
     () => getDefaultDrivingLicenses(externalData),
     [externalData],
   )
+  const defaultHeavyMachineryLicenses = useMemo(
+    () => getDefaultHeavyMachineryLicenses(externalData),
+    [externalData],
+  )
+
+  const defaultHasDrivingLicenses =
+    defaultDrivingLicenses.length > 0 ? [YES] : []
+
+  const defaultHasHeavyMachineryLicenses =
+    defaultHeavyMachineryLicenses.length > 0 ? [YES] : []
+
   const defaultLanguages = useMemo(
     () => getDefaultLanguages(externalData),
     [externalData],
@@ -237,6 +255,8 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const hasDrivingLicense: string[] = watch('licenses.hasDrivingLicense') ?? []
   const hasHeavyMachineryLicense: string[] =
     watch('licenses.hasHeavyMachineryLicense') ?? []
+  const hasSameAddress: string[] =
+    watch('otherAddress.currentAddressIsNotDifferent') ?? []
 
   const editableEducationCount = educationRows.filter((r) => !r.readOnly).length
   const editableLanguageCount = languageRows.filter((r) => !r.readOnly).length
@@ -265,25 +285,42 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             {formatMessage(applicationMessages.addressDescription)}
           </Text>
           <GridRow>
-            <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                id="otherAddress.otherAddress"
-                name="otherAddress.otherAddress"
-                label={formatMessage(applicationMessages.addressLabel)}
-                backgroundColor="blue"
-                defaultValue={otherAddressDefault}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
-              <SelectController
-                id="otherAddress.otherPostcode"
-                name="otherAddress.otherPostcode"
-                label={formatMessage(applicationMessages.postCodeLabel)}
-                options={postcodeOptions}
-                backgroundColor="blue"
-                defaultValue={otherPostcodeDefault}
-              />
-            </GridColumn>
+            <CheckboxController
+              id="otherAddress.currentAddressIsNotDifferent"
+              name="otherAddress.currentAddressIsNotDifferent"
+              defaultValue={currentAddressIsNotDifferentDefault}
+              options={[
+                {
+                  value: YES,
+                  label: formatMessage(
+                    applicationMessages.addressIsSameAsNationalRegistry,
+                  ),
+                },
+              ]}
+            />
+            {!hasSameAddress.includes(YES) && (
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id="otherAddress.otherAddress"
+                  name="otherAddress.otherAddress"
+                  label={formatMessage(applicationMessages.addressLabel)}
+                  backgroundColor="blue"
+                  defaultValue={otherAddressDefault}
+                />
+              </GridColumn>
+            )}
+            {!hasSameAddress.includes(YES) && (
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
+                <SelectController
+                  id="otherAddress.otherPostcode"
+                  name="otherAddress.otherPostcode"
+                  label={formatMessage(applicationMessages.postCodeLabel)}
+                  options={postcodeOptions}
+                  backgroundColor="blue"
+                  defaultValue={otherPostcodeDefault}
+                />
+              </GridColumn>
+            )}
           </GridRow>
         </AccordionItem>
 
@@ -339,7 +376,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             name="jobWishes"
             label={formatMessage(applicationMessages.jobWishesLabel)}
             options={jobCodeOptions}
-            defaultValue={defaultJobWishes as unknown as string}
+            defaultValue={defaultJobWishes}
             isMulti
             backgroundColor="blue"
           />
@@ -521,6 +558,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             <CheckboxController
               id="licenses.hasDrivingLicense"
               name="licenses.hasDrivingLicense"
+              defaultValue={defaultHasDrivingLicenses}
               options={[
                 {
                   value: YES,
@@ -552,6 +590,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             <CheckboxController
               id="licenses.hasHeavyMachineryLicense"
               name="licenses.hasHeavyMachineryLicense"
+              defaultValue={defaultHasHeavyMachineryLicenses}
               options={[
                 {
                   value: YES,
@@ -569,6 +608,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
               options={heavyMachineryOptions}
               isMulti
               backgroundColor="blue"
+              defaultValue={defaultHeavyMachineryLicenses}
             />
           )}
         </AccordionItem>

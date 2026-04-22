@@ -68,7 +68,7 @@ export const getDrivingLicenseOptions = (externalData: ExternalData) => {
       ? licenseComponents[type.name]
       : undefined
     return {
-      value: type.id?.toLowerCase() || '',
+      value: type.id || '',
       label: type.name || '',
       rightContent: LicenseIconComponent
         ? React.createElement(LicenseIconComponent)
@@ -86,7 +86,7 @@ export const getHeavyMachineryOptions = (
       Array<GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO>
     >(externalData, `${SUPPORT_PATH}.workMachineRights`) || []
   return rights.map((right) => ({
-    value: right.id?.toLowerCase() || '',
+    value: right.id || '',
     label: locale === 'is' && right.name ? right.name : right.english ?? '',
   }))
 }

@@ -26,6 +26,11 @@ export const application = defineMessages({
     defaultMessage: 'Breyta upplýsingum um atvinnuleysisbætur',
     description: `Application's name`,
   },
+  addressIsSameAsNationalRegistry: {
+    id: 'vmst.eui.application:addressIsSameAsNationalRegistry',
+    defaultMessage: 'Dvalarstaður er sá sami og lögheimili',
+    description: `Address is same as national registry checkbox label`,
+  },
   addressTitle: {
     id: 'vmst.eui.application:addressTitle',
     defaultMessage: 'Dvalarstaður',
@@ -312,5 +317,25 @@ export const application = defineMessages({
     defaultMessage:
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar',
     description: 'Description for description field when form is completed',
+  },
+})
+
+export const errorMessages = defineMessages({
+  cannotApplyErrorTitle: {
+    id: 'vmst.eui.application:errorMessages.cannotApplyErrorTitle',
+    defaultMessage: 'Vinsamlegast athugið',
+    description: `Error title when user can not apply`,
+  },
+  cannotApplyErrorSummary: {
+    id: 'vmst.eui.application:errorMessages.cannotApplyErrorSummary',
+    defaultMessage:
+      'Samkvæmt sóttum gögnum getur viðkomandi ekki breytt upplýsingum um atvinnuleysisbætur, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
+    description: `Error summary when user can not apply`,
+  },
+  submitError: {
+    id: 'vmst.eui.application:errorMessages.submitError',
+    defaultMessage:
+      'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
+    description: 'Error message when submit fails',
   },
 })

@@ -68,26 +68,34 @@ export const bankAccountSchema = z.object({
 export const otherAddressSchema = z
   .object({
     otherAddress: z.string().optional(),
-    otherPostcode: z.string().optional(),
-    currentAddressIsDifferent: z.string().optional(),
+    otherPostcode: z.string().nullish(),
+    currentAddressIsNotDifferent: z.array(z.string()).optional(),
   })
   .refine(
-    ({ currentAddressIsDifferent, otherPostcode }) => {
-      if (currentAddressIsDifferent === YES) {
-        return !!otherPostcode
+    ({ currentAddressIsNotDifferent, otherPostcode }) => {
+      if (
+        currentAddressIsNotDifferent &&
+        currentAddressIsNotDifferent.length > 0 &&
+        currentAddressIsNotDifferent[0] === YES
+      ) {
+        return true
       }
-      return true
+      return !!otherPostcode
     },
     {
       path: ['otherPostcode'],
     },
   )
   .refine(
-    ({ currentAddressIsDifferent, otherAddress }) => {
-      if (currentAddressIsDifferent === YES) {
-        return !!otherAddress
+    ({ currentAddressIsNotDifferent, otherAddress }) => {
+      if (
+        currentAddressIsNotDifferent &&
+        currentAddressIsNotDifferent.length > 0 &&
+        currentAddressIsNotDifferent[0] === YES
+      ) {
+        return true
       }
-      return true
+      return !!otherAddress
     },
     {
       path: ['otherAddress'],

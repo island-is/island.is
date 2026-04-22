@@ -13,6 +13,18 @@ const APP_PATH = 'currentApplicationInformation.data.currentApplication'
 export const getOtherAddressDefault = (externalData: ExternalData) =>
   getValueViaPath<string>(externalData, `${APP_PATH}.currentAddress`) ?? ''
 
+export const getCurrentAddressIsNotDifferentDefault = (
+  externalData: ExternalData,
+) => {
+  const isDifferent =
+    getValueViaPath<boolean>(
+      externalData,
+      `${APP_PATH}.currentAddressDifferent`,
+    ) ?? false
+
+  return isDifferent ? [] : [YES]
+}
+
 export const getOtherPostcodeDefault = (externalData: ExternalData) =>
   getValueViaPath<string>(externalData, `${APP_PATH}.currentPostCodeId`) ?? ''
 
@@ -62,6 +74,9 @@ export const getDefaultEducation = (externalData: ExternalData) => {
 
 export const getDefaultDrivingLicenses = (externalData: ExternalData) =>
   getValueViaPath<string[]>(externalData, `${APP_PATH}.drivingLicenses`) ?? []
+
+export const getDefaultHeavyMachineryLicenses = (externalData: ExternalData) =>
+  getValueViaPath<string[]>(externalData, `${APP_PATH}.workMachineRights`) ?? []
 
 export const getDefaultLanguages = (externalData: ExternalData) => {
   const currentLanguages =

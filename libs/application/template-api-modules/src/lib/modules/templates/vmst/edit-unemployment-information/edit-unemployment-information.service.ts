@@ -9,6 +9,8 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { generateAnswers } from './edit-unemployment-information.utils'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { errorMsgs } from '@island.is/application/templates/vmst/edit-unemployment-information'
 
 interface ApplicationInformationWithSupportData {
   currentApplication: GaldurXRoadAPIModelsApplicantInfoResponse
@@ -26,8 +28,21 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
   async getEmptyApplication({
     auth,
   }: TemplateApiModuleActionProps): Promise<ApplicationInformationWithSupportData> {
+    const resolvedApplicantId =
+      await this.vmstUnemploymentClientService.resolveApplicant(auth)
+    if (!resolvedApplicantId.applicantId) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.cannotApplyErrorTitle,
+          summary: errorMsgs.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
     const [currentApplication, supportData] = await Promise.all([
-      this.vmstUnemploymentClientService.getCurrentApplicationForActions(auth),
+      this.vmstUnemploymentClientService.getCurrentApplicationForActions({
+        id: resolvedApplicantId.applicantId,
+      }),
       this.vmstUnemploymentClientService.getCurrentApplicationSupportDataForActions(),
     ])
 
@@ -41,6 +56,17 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    const resolvedApplicantId =
+      await this.vmstUnemploymentClientService.resolveApplicant(auth)
+    if (!resolvedApplicantId.applicantId) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.cannotApplyErrorTitle,
+          summary: errorMsgs.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
     const { answers, externalData } = application
     const answerObject = generateAnswers(answers, externalData)
     const reqObject: GaldurExternalDomainRequestsUpdateApplicantRequest =
@@ -48,7 +74,7 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
 
     await this.vmstUnemploymentClientService.updateCurrentApplicationForActions(
       {
-        ssn: auth.nationalId,
+        applicantId: resolvedApplicantId.applicantId,
         galdurExternalDomainRequestsUpdateApplicantRequest: reqObject,
       },
     )
