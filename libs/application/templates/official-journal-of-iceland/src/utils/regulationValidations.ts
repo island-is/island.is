@@ -163,7 +163,7 @@ export const collectRegulationWarnings = (answers: {
 
   // Signature validation
   const signatureType = answers.misc?.signatureType ?? 'regular'
-  const signatureRoute = Routes.SIGNATURE
+  const signatureRoute = Routes.REGULATION_CONTENT
   const signatureLabel = 'Undirritun'
   const records =
     signatureType === 'committee'
