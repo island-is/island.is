@@ -349,109 +349,105 @@ const IndictmentCaseFilesList: FC<Props> = ({
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
-            <FileSection
-              title={formatMessage(caseFiles.otherDocumentsSection)}
-              files={filteredFiles.others}
-              onOpenFile={onOpen}
-            />
           </>
         )}
         {displayGeneratedPDFs && (
-          <>
-            <Box>
-              <SectionHeading
-                title={formatMessage(strings.caseFileTitle)}
-                marginBottom={1}
-                heading="h4"
-                variant="h4"
-              />
-              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
-                const caseFilesRecordFileName = formatMessage(
-                  strings.caseFileButtonText,
-                  {
-                    policeCaseNumber,
-                  },
-                )
-                return (
-                  <Box key={`${policeCaseNumber}-${index}`}>
-                    <PdfButton
-                      caseId={workingCase.id}
-                      connectedCaseParentId={connectedCaseParentId}
-                      title={prefixGeneratedDocumentNameWithDocumentOrder(
-                        `caseFilesRecord/${policeCaseNumber}`,
-                        caseFilesRecordFileName,
-                        workingCase.id,
-                      )}
-                      pdfType="caseFilesRecord"
-                      elementId={[policeCaseNumber, caseFilesRecordFileName]}
-                      renderAs="row"
-                    />
-                  </Box>
-                )
-              })}
-            </Box>
-            {showSubpoenaPdf && (
-              <Box>
-                <SectionHeading
-                  title={formatMessage(strings.subpoenaTitle)}
-                  marginBottom={1}
-                  heading="h4"
-                  variant="h4"
-                />
-                {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
-                  const subpoenaFileName = formatMessage(
-                    strings.subpoenaButtonText,
-                    {
-                      name: defendant.name,
-                      date: formatDate(subpoena.created),
-                    },
-                  )
-                  const serviceCertificateFileName = formatMessage(
-                    strings.serviceCertificateButtonText,
-                    { name: defendant.name },
-                  )
+          <Box>
+            <SectionHeading
+              title={formatMessage(strings.caseFileTitle)}
+              marginBottom={1}
+              heading="h4"
+              variant="h4"
+            />
+            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+              const caseFilesRecordFileName = formatMessage(
+                strings.caseFileButtonText,
+                {
+                  policeCaseNumber,
+                },
+              )
+              return (
+                <Box key={`${policeCaseNumber}-${index}`}>
+                  <PdfButton
+                    caseId={workingCase.id}
+                    connectedCaseParentId={connectedCaseParentId}
+                    title={prefixGeneratedDocumentNameWithDocumentOrder(
+                      `caseFilesRecord/${policeCaseNumber}`,
+                      caseFilesRecordFileName,
+                      workingCase.id,
+                    )}
+                    pdfType="caseFilesRecord"
+                    elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                    renderAs="row"
+                  />
+                </Box>
+              )
+            })}
+          </Box>
+        )}
+        {showFiles && (
+          <FileSection
+            title={formatMessage(caseFiles.otherDocumentsSection)}
+            files={filteredFiles.others}
+            onOpenFile={onOpen}
+          />
+        )}
+        {displayGeneratedPDFs && showSubpoenaPdf && (
+          <Box>
+            <SectionHeading
+              title={formatMessage(strings.subpoenaTitle)}
+              marginBottom={1}
+              heading="h4"
+              variant="h4"
+            />
+            {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
+              const subpoenaFileName = formatMessage(
+                strings.subpoenaButtonText,
+                {
+                  name: defendant.name,
+                  date: formatDate(subpoena.created),
+                },
+              )
+              const serviceCertificateFileName = formatMessage(
+                strings.serviceCertificateButtonText,
+                { name: defendant.name },
+              )
 
-                  return (
-                    <Box key={`subpoena-${subpoena.id}`}>
+              return (
+                <Box key={`subpoena-${subpoena.id}`}>
+                  <PdfButton
+                    caseId={caseId}
+                    title={prefixGeneratedDocumentNameWithDocumentOrder(
+                      `subpoena/${defendant.id}/${subpoena.id}`,
+                      subpoenaFileName,
+                      caseId,
+                    )}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id, subpoenaFileName]}
+                    renderAs="row"
+                  />
+                  {!limitedAccess &&
+                    isSuccessfulServiceStatus(subpoena.serviceStatus) && (
                       <PdfButton
                         caseId={caseId}
                         title={prefixGeneratedDocumentNameWithDocumentOrder(
-                          `subpoena/${defendant.id}/${subpoena.id}`,
-                          subpoenaFileName,
+                          `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+                          serviceCertificateFileName,
                           caseId,
                         )}
-                        pdfType="subpoena"
+                        pdfType="subpoenaServiceCertificate"
                         elementId={[
                           defendant.id,
                           subpoena.id,
-                          subpoenaFileName,
+                          serviceCertificateFileName,
                         ]}
                         renderAs="row"
                       />
-                      {!limitedAccess &&
-                        isSuccessfulServiceStatus(subpoena.serviceStatus) && (
-                          <PdfButton
-                            caseId={caseId}
-                            title={prefixGeneratedDocumentNameWithDocumentOrder(
-                              `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
-                              serviceCertificateFileName,
-                              caseId,
-                            )}
-                            pdfType="subpoenaServiceCertificate"
-                            elementId={[
-                              defendant.id,
-                              subpoena.id,
-                              serviceCertificateFileName,
-                            ]}
-                            renderAs="row"
-                          />
-                        )}
-                    </Box>
-                  )
-                })}
-              </Box>
-            )}
-          </>
+                    )}
+                </Box>
+              )
+            })}
+          </Box>
         )}
         {(showFiles ||
           hasGeneratedCourtRecord ||
