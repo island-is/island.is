@@ -122,7 +122,7 @@ const UserContractsOverview = () => {
                   <ActionCard
                     key={id}
                     heading={address}
-                    headingVariant="h3"
+                    headingVariant="h4"
                     cta={{
                       label: formatMessage(cm.seeInfo),
                       onClick: () =>
