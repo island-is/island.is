@@ -70,10 +70,11 @@ const AnnualReportChapter: Screen<
   const { activeLocale } = useI18n()
 
   const navigation = useMemo(() => {
-    if (annualReportChapter) {
-      const { content, title } = annualReportChapter
-      return createNavigation(content, { title })
-    }
+    const { content, title } = annualReportChapter
+
+    if (!content?.length) return []
+
+    return createNavigation(content, { title })
   }, [annualReportChapter])
 
   const showNavigation = (navigation?.length ?? 0) > 2
@@ -170,16 +171,13 @@ const AnnualReportChapter: Screen<
                       />
                     </Box>
                   )}
-                  {annualReportChapter.content &&
-                    annualReportChapter.content.length > 0 && (
-                      <Box paddingY={4}>
-                        {webRichText(
-                          annualReportChapter.content as SliceType[],
-                          undefined,
-                          activeLocale,
-                        )}
-                      </Box>
+                  <Box paddingY={4}>
+                    {webRichText(
+                      annualReportChapter.content as SliceType[],
+                      undefined,
+                      activeLocale,
                     )}
+                  </Box>
                 </GridColumn>
                 {showNavigation && navigation && (
                   <GridColumn
