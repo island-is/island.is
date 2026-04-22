@@ -142,7 +142,8 @@ export const buildPaymentState = <
       },
       scheduledNotifications: [
         {
-          template: NotificationConfig[NotificationType.System].templateId,
+          template:
+            NotificationConfig[NotificationType.PaymentReminder].templateId,
           delayInMs: 10000,
           args: {
             applicationLink: '1234567890',
