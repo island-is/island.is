@@ -3,15 +3,6 @@ import { ApplicationEventDto } from './applications.model'
 import { Month } from './month.model'
 import { LanguageType } from './languageType.model'
 
-@ObjectType('FormSystemListValue')
-export class ListValue {
-  @Field(() => LanguageType, { nullable: true })
-  label?: LanguageType
-
-  @Field(() => String, { nullable: true })
-  value?: string
-}
-
 @ObjectType('FormSystemValue')
 export class Value {
   @Field(() => String, { nullable: true })
@@ -23,8 +14,11 @@ export class Value {
   @Field(() => Date, { nullable: true })
   date?: Date | null
 
-  @Field(() => ListValue, { nullable: true })
-  listValue?: ListValue
+  @Field(() => LanguageType, { nullable: true })
+  label?: LanguageType
+
+  @Field(() => String, { nullable: true })
+  value?: string
 
   @Field(() => String, { nullable: true })
   nationalId?: string

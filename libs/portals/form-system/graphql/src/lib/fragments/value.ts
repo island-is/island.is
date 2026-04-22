@@ -24,12 +24,10 @@ export const ValueFragment = gql`
       amount
       days
     }
-    listValue {
-      value
-      label {
-        is
-        en
-      }
+    value
+    label {
+      is
+      en
     }
     email
     iskNumber

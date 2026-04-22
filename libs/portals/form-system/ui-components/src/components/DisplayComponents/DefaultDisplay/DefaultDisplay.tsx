@@ -12,8 +12,8 @@ const TEXTBOX_COMPONENT_MAP = {
   NUMBERBOX: 'number',
   TIME_INPUT: 'time',
   DATE_PICKER: 'date',
-  DROPDOWN_LIST: 'listValue',
-  RADIO_BUTTONS: 'listValue',
+  DROPDOWN_LIST: 'label',
+  RADIO_BUTTONS: 'label',
   APPLICANT: '',
   PAYMENT_QUANTITY: 'number',
 } as const
@@ -36,8 +36,11 @@ export const DefaultDisplay = ({ item, valueIndex }: Props) => {
   const extracted = valueKey ? json?.[valueKey] : json
 
   let displayValue = ''
-  if (valueKey === 'listValue') {
-    displayValue = value?.json?.listValue?.label?.[lang] ?? ''
+  if (
+    item.fieldType === 'DROPDOWN_LIST' ||
+    item.fieldType === 'RADIO_BUTTONS'
+  ) {
+    displayValue = value?.json?.label?.[lang] ?? ''
   } else {
     displayValue =
       extracted == null

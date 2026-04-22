@@ -25,19 +25,6 @@ class Month {
   days?: number[]
 }
 
-class ListValue {
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => LanguageType)
-  @ApiPropertyOptional({ type: LanguageType })
-  label?: LanguageType
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  value?: string
-}
-
 export class ValueType {
   @IsOptional()
   @IsString()
@@ -73,9 +60,14 @@ export class ValueType {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ListValue)
-  @ApiPropertyOptional({ type: ListValue })
-  listValue?: ListValue
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  label?: LanguageType
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  value?: string
 
   @IsOptional()
   @IsString()

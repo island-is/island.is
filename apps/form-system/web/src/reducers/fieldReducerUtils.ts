@@ -187,9 +187,10 @@ const applyVisibilityToSections = (
             json: v?.json
               ? {
                   ...v.json,
-                  listValue: undefined,
+                  label: undefined,
+                  value: undefined,
                 }
-              : { listValue: undefined },
+              : { label: undefined, value: undefined },
           }))
         }
 
@@ -231,11 +232,11 @@ const isControllerField = (
   ) {
     const listItemIds =
       field.list?.map((item) => item?.id).filter(Boolean) ?? []
+
     return dependencies.some((dependency) =>
       listItemIds.includes(dependency.parentProp ?? ''),
     )
   }
-
   return false
 }
 
@@ -324,12 +325,13 @@ export const setFieldValue = (
   }
 
   const isListField =
-    currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-    currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST
+    fieldProperty === 'label' &&
+    (currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST)
 
   const selectedItem =
     isListField && currentField?.list
-      ? currentField.list.find((item) => item?.label?.is === String(value))
+      ? currentField.list.find((item) => item?.label?.is === value.is)
       : undefined
 
   const selectedItemId = (selectedItem?.id as string) ?? undefined

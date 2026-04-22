@@ -38,22 +38,27 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
       })) ?? []
 
   const value = () => {
-    const listVal = getValue(item, 'listValue', valueIndex)
-    const hasValue = listVal !== undefined && listVal !== null
-    if (hasValue) {
-      return {
-        label: listVal.label[lang],
-        value: { label: listVal.label, value: listVal.value },
-      }
+    const storedLabel = getValue(item, 'label', valueIndex)
+    const storedValue = getValue(item, 'value', valueIndex)
+    const hasValue =
+      storedLabel !== undefined &&
+      storedLabel !== null &&
+      storedValue !== undefined &&
+      storedValue !== null
+
+    if (!hasValue) return undefined
+
+    return {
+      label: storedLabel?.[lang] ?? '',
+      value: { label: storedLabel, value: storedValue },
     }
-    return undefined
   }
 
   const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
 
   useEffect(() => {
     if (selected && dispatch) {
-      if (!getValue(item, 'listValue', valueIndex)) {
+      if (!getValue(item, 'label', valueIndex)) {
         dispatch({
           type: 'SET_LIST_VALUE',
           payload: {
@@ -72,7 +77,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
       key={item.id}
       name={item.id}
       control={control}
-      defaultValue={getValue(item, 'listValue', valueIndex) ?? ''}
+      defaultValue={getValue(item, 'label', valueIndex)?.[lang] ?? ''}
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -105,7 +110,11 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
             if (!dispatch) return
             dispatch({
               type: 'SET_LIST_VALUE',
-              payload: { id: item.id, value: e?.value, valueIndex },
+              payload: {
+                id: item.id,
+                value: e?.value,
+                valueIndex,
+              },
             })
           }}
           value={value()}

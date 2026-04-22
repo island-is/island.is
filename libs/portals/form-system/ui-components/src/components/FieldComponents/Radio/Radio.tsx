@@ -29,28 +29,14 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
     [item.list],
   )
 
-  // The reducer/dependency logic elsewhere compares against label.is,
-  // so keep the stored value consistent with that.
-  const selected = useMemo(
-    () => item?.list?.find((listItem) => listItem?.isSelected === true),
-    [item?.list],
-  )
-
-  const listValue = getValue(item, 'listValue', valueIndex)
-
-  const defaultSelectedValue =
-    (typeof listValue === 'string'
-      ? listValue || undefined
-      : listValue?.label?.is) ??
-    selected?.label?.is ??
-    ''
+  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
 
   const fieldName = `${item.id}.${valueIndex}`
 
   useEffect(() => {
     if (!dispatch || !selected) return
 
-    const existing = getValue(item, 'listValue', valueIndex)
+    const existing = getValue(item, 'label', valueIndex)
     if (existing) return
 
     dispatch({
@@ -64,12 +50,16 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const selectedLabel = selected?.label?.[lang] ?? ''
+
   return (
     <Controller
       key={`${item.id}-${valueIndex}`}
       name={fieldName}
       control={control}
-      defaultValue={defaultSelectedValue}
+      defaultValue={
+        getValue(item, 'label', valueIndex)?.[lang] ?? selectedLabel
+      }
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -97,7 +87,7 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
 
           <Box display="flex" flexDirection="row" flexWrap="wrap">
             {radioButtons.map((rb, index) => {
-              const rbValue = rb.label?.is ?? ''
+              const rbValue = rb.label?.[lang] ?? ''
 
               return (
                 <Box
