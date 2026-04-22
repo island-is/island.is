@@ -6,7 +6,6 @@ import type {
   Menu,
 } from '../../graphql/schema'
 import { linkResolver, LinkType } from '../../hooks/useLinkResolver'
-
 import type {
   HeaderNavData,
   HeaderNavItem,
