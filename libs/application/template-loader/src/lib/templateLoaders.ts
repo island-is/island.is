@@ -280,7 +280,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
     import('@island.is/application/templates/hh/courses'),
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: () =>
-    import('@island.is/application/templates/vmst-actions/confirm-job-search'),
+    import('@island.is/application/templates/vmst/confirm-job-search'),
 }
 
 export default templates

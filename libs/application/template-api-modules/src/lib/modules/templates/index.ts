@@ -1,6 +1,5 @@
-
-import { ConfirmJobSearchModule } from './vmst-actions/confirm-job-search/confirm-job-search.module'
-import { ConfirmJobSearchService } from './vmst-actions/confirm-job-search/confirm-job-search.service'
+import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
+import { ConfirmJobSearchService } from './vmst/confirm-job-search/confirm-job-search.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
 import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
@@ -280,7 +279,7 @@ export const modules = [
   MileCarModule,
   CoursesModule,
   ConfirmJobSearchModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -375,4 +374,4 @@ export const services = [
   MileCarService,
   CoursesService,
   ConfirmJobSearchService,
-            ]
+]

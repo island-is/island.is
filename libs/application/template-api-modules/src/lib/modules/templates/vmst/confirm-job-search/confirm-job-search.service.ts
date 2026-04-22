@@ -9,7 +9,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { prereq } from '@island.is/application/templates/vmst-actions/confirm-job-search'
+import { prereq } from '@island.is/application/templates/vmst/confirm-job-search'
 
 type Tablerow = {
   isUnsaved: boolean

@@ -1,7 +1,7 @@
 {
   "name": "confirm-job-search",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/application/templates/vmst-actions/confirm-job-search/src",
+  "sourceRoot": "libs/application/templates/vmst/confirm-job-search/src",
   "projectType": "library",
   "tags": [
     "scope:application-system",
@@ -17,13 +17,13 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/confirm-job-search/jest.config.ts"
+        "jestConfig": "libs/application/templates/vmst/confirm-job-search/jest.config.ts"
       }
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/confirm-job-search/src/lib/messages/*.ts'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/vmst/confirm-job-search/src/lib/messages/*.ts'"
       }
     }
   }
