@@ -321,18 +321,15 @@ export class CardPaymentService {
   }
 
   private requirePaymentProcessingConfig() {
-    const {
-      applePayPaymentProcessingCert,
-      applePayPaymentProcessingKey,
-    } = this.config.paymentGateway
+    const { applePayPaymentProcessingKey } = this.config.paymentGateway
 
-    if (!applePayPaymentProcessingCert || !applePayPaymentProcessingKey) {
+    if (!applePayPaymentProcessingKey) {
       throw new BadRequestException(
         CardErrorCode.ApplePayNotConfigured,
       )
     }
 
-    return { applePayPaymentProcessingCert, applePayPaymentProcessingKey }
+    return { applePayPaymentProcessingKey }
   }
 
   async validateApplePayMerchant(
@@ -484,12 +481,11 @@ export class CardPaymentService {
       correlationId: paymentTrackingData.correlationId,
     })
 
-    const { applePayPaymentProcessingCert, applePayPaymentProcessingKey } =
+    const { applePayPaymentProcessingKey } =
       this.requirePaymentProcessingConfig()
 
     this.logger.info(`${logPrefix} Apple Pay Payment Processing config present`, {
       paymentFlowId,
-      hasCert: !!applePayPaymentProcessingCert,
       hasKey: !!applePayPaymentProcessingKey,
     })
 
@@ -505,7 +501,6 @@ export class CardPaymentService {
 
     const decryptedData = decryptApplePayPaymentToken({
       paymentData: input.paymentData,
-      paymentProcessingCert: applePayPaymentProcessingCert,
       paymentProcessingKey: applePayPaymentProcessingKey,
     })
 

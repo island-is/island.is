@@ -21,7 +21,6 @@ const schema = z.object({
     applePayMerchantIdentifier: z.string().optional(),
     applePayMerchantIdentityCert: z.string().optional(),
     applePayMerchantIdentityKey: z.string().optional(),
-    applePayPaymentProcessingCert: z.string().optional(),
     applePayPaymentProcessingKey: z.string().optional(),
   }),
   tokenExpiryMinutes: z.number().int(),
@@ -64,9 +63,6 @@ export const CardPaymentModuleConfig = defineConfig({
       ),
       applePayMerchantIdentityKey: env.optional(
         'APPLE_PAY_MERCHANT_IDENTITY_KEY',
-      ),
-      applePayPaymentProcessingCert: env.optional(
-        'APPLE_PAY_PAYMENT_PROCESSING_CERT',
       ),
       applePayPaymentProcessingKey: env.optional(
         'APPLE_PAY_PAYMENT_PROCESSING_KEY',

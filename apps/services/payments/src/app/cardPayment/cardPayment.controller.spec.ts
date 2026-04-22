@@ -99,7 +99,6 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = TOKEN_SIGNING_ALGORITHM
     process.env.PAYMENTS_APPLE_PAY_DOMAIN = 'island.is'
     process.env.PAYMENTS_APPLE_PAY_DISPLAY_NAME = 'island.is'
-    process.env.APPLE_PAY_PAYMENT_PROCESSING_CERT = 'test-processing-cert'
     process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY = 'test-processing-key'
 
     app = await testServer({
@@ -179,7 +178,6 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_GATEWAY_API_URL = previousPaymentGatewayApiUrl
     process.env.PAYMENTS_TOKEN_SIGNING_SECRET = previousTokenSigningSecret
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = previousTokenSigningAlgorithm
-    delete process.env.APPLE_PAY_PAYMENT_PROCESSING_CERT
     delete process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY
 
     jest.clearAllMocks()

@@ -288,7 +288,6 @@ export const validateAndParseApplePayValidationUrl = (
 /** Decrypt Apple Pay payment token to get card data for Valitor DecryptedPaymentTokenData flow */
 export const decryptApplePayPaymentToken = ({
   paymentData,
-  paymentProcessingCert,
   paymentProcessingKey,
 }: {
   paymentData: {
@@ -301,7 +300,6 @@ export const decryptApplePayPaymentToken = ({
       transactionId: string
     }
   }
-  paymentProcessingCert: string
   paymentProcessingKey: string
 }): {
   cardNumber: string
@@ -315,30 +313,37 @@ export const decryptApplePayPaymentToken = ({
     )
   }
 
-  const ephemeralPublicKey = Buffer.from(
-    paymentData.header.ephemeralPublicKey,
-    'base64',
-  )
   const encryptedData = Buffer.from(paymentData.data, 'base64')
 
   const ecdh = crypto.createECDH('prime256v1')
-  ecdh.setPrivateKey(paymentProcessingKey, 'utf8')
+  const privateKeyBytes = Uint8Array.from(
+    Buffer.from(paymentProcessingKey, 'utf8'),
+  )
+  ecdh.setPrivateKey(privateKeyBytes)
 
+  const ephemeralPublicKey = Uint8Array.from(
+    Buffer.from(paymentData.header.ephemeralPublicKey, 'base64'),
+  )
   const sharedSecret = ecdh.computeSecret(ephemeralPublicKey)
+  const sharedSecretBytes = Uint8Array.from(sharedSecret)
 
-  const aesKey = crypto.createHash('sha256').update(sharedSecret).digest()
+  const aesKey = Uint8Array.from(
+    crypto.createHash('sha256').update(sharedSecretBytes).digest(),
+  )
 
-  const iv = Buffer.alloc(16, 0)
-  const authTag = encryptedData.subarray(-16)
-  const ciphertext = encryptedData.subarray(0, -16)
+  const iv = Uint8Array.from(Buffer.alloc(16, 0))
+  const authTag = Uint8Array.from(encryptedData.subarray(-16))
+  const ciphertext = Uint8Array.from(encryptedData.subarray(0, -16))
 
   const decipher = crypto.createDecipheriv('aes-256-gcm', aesKey, iv)
   decipher.setAuthTag(authTag)
 
-  const decrypted = Buffer.concat([
-    decipher.update(ciphertext),
-    decipher.final(),
-  ]).toString('utf8')
+  const plainPart1 = new Uint8Array(decipher.update(ciphertext))
+  const plainPart2 = new Uint8Array(decipher.final())
+  const plain = new Uint8Array(plainPart1.length + plainPart2.length)
+  plain.set(plainPart1, 0)
+  plain.set(plainPart2, plainPart1.length)
+  const decrypted = new TextDecoder('utf-8').decode(plain)
 
   const parsed = JSON.parse(decrypted) as {
     applicationPrimaryAccountNumber: string
