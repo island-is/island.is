@@ -763,26 +763,42 @@ export class CaseRepositoryService {
 
       const { policeCaseNumbers, ...caseFields } = data
 
-      const [numberOfAffectedRows, cases] = await this.caseModel.update(
-        caseFields,
-        { ...updateOptions, returning: true },
-      )
+      let updatedCase: Case
 
-      if (numberOfAffectedRows < 1) {
-        throw new InternalServerErrorException(
-          `Could not update case ${caseId}`,
+      if (Object.keys(caseFields).length > 0) {
+        const [numberOfAffectedRows, cases] = await this.caseModel.update(
+          caseFields,
+          { ...updateOptions, returning: true },
         )
-      }
 
-      if (numberOfAffectedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
-          { data: Object.keys(data) },
-        )
-      }
+        if (numberOfAffectedRows < 1) {
+          throw new InternalServerErrorException(
+            `Could not update case ${caseId}`,
+          )
+        }
 
-      const updatedCase = cases[0]
+        if (numberOfAffectedRows > 1) {
+          // Tolerate failure, but log error
+          this.logger.error(
+            `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
+            { data: Object.keys(data) },
+          )
+        }
+
+        updatedCase = cases[0]
+      } else {
+        const theCase = await this.caseModel.findByPk(caseId, {
+          transaction: options.transaction,
+        })
+
+        if (!theCase) {
+          throw new InternalServerErrorException(
+            `Could not update case ${caseId}`,
+          )
+        }
+
+        updatedCase = theCase
+      }
 
       this.logger.debug(`Updated case ${caseId}`)
 
