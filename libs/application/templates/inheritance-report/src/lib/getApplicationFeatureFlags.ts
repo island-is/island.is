@@ -3,6 +3,7 @@ import { FeatureFlagClient } from '@island.is/feature-flags'
 export enum InheritanceReportFeatureFlags {
   AllowEstateApplication = 'isInheritanceReportApplicationEnabled',
   AllowPrepaidApplication = 'isInheritanceReportPrepaidApplicationEnabled',
+  AllowReviewState = 'isInheritanceReportReviewEnabled',
 }
 
 export const getApplicationFeatureFlags = async (
@@ -11,6 +12,7 @@ export const getApplicationFeatureFlags = async (
   const featureFlags: InheritanceReportFeatureFlags[] = [
     InheritanceReportFeatureFlags.AllowEstateApplication,
     InheritanceReportFeatureFlags.AllowPrepaidApplication,
+    InheritanceReportFeatureFlags.AllowReviewState,
   ]
 
   return (
