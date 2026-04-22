@@ -509,6 +509,10 @@ export const m = defineMessages({
     id: 'service.portal:open-documents',
     defaultMessage: 'Opna pósthólf',
   },
+  moreCategories: {
+    id: 'service.portal:more-categories',
+    defaultMessage: 'Fleiri flokkar',
+  },
   documentsDescription: {
     id: 'service.portal:documents-description',
     defaultMessage: 'Erindi til þín frá opinberum aðilum',

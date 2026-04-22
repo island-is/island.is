@@ -1,7 +1,8 @@
+import { Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
-import { DashboardV1 } from './DashboardV1'
-import { DashboardV2 } from './DashboardV2'
+import { DashboardV1 } from './DashboardV1/DashboardV1'
+import { DashboardV2 } from './DashboardV2/DashboardV2'
 
 export const Dashboard = () => {
   const featureFlagClient = useFeatureFlagClient()
@@ -9,7 +10,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     featureFlagClient
-      .getValue('isServicePortalDashboardV2PageEnabled', false)
+      .getValue(Features.servicePortalDashboardV2PageEnabled, false)
       .then((value) => setUseNewDashboard(Boolean(value)))
   }, [featureFlagClient])
 

@@ -20,23 +20,22 @@ export const orderRoutes = (
   orderInput?: string | string[],
 ): PortalNavigationItem => {
   try {
-    let orderedArray: string[]
+    if (!nav.children) return nav
+
+    let orderedArray: string[] = []
 
     if (Array.isArray(orderInput)) {
       orderedArray = orderInput
     } else if (typeof orderInput === 'string') {
       const menuObject = JSON.parse(orderInput)
       const menu = menuConfigSchema.safeParse(menuObject)
-      if (!menu.success) return nav
-      orderedArray = menu.data.menu
-    } else {
-      return nav
+      if (menu.success) {
+        orderedArray = menu.data.menu
+      }
     }
 
-    if (!nav.children) return nav
-    if (orderedArray.length === 0) return nav
-
     const byOrder = (a: PortalNavigationItem, b: PortalNavigationItem) => {
+      if (orderedArray.length === 0) return 0
       const ia = orderedArray.indexOf(a.path ?? '')
       const ib = orderedArray.indexOf(b.path ?? '')
       const sa = ia === -1 ? Number.MAX_SAFE_INTEGER : ia

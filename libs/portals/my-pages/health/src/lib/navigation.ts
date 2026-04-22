@@ -12,6 +12,8 @@ export const healthNavigation: PortalNavigationItem = {
   icon: {
     icon: 'heart',
   },
+  featured: true,
+  featuredOrder: 1,
   children: [
     {
       name: m.health,

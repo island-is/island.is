@@ -51,7 +51,19 @@ export interface PortalNavigationItem {
   customShortcut?: {
     name: MessageDescriptor
     description: MessageDescriptor
+    /** Promotes this item to the featured sidebar on the V2 dashboard. */
+    featured?: boolean
   }
+
+  /**
+   * Promotes a top-level module to the featured sidebar on the V2 dashboard.
+   */
+  featured?: boolean
+
+  /**
+   * Controls display order in the V2 dashboard featured sidebar. Lower = higher up.
+   */
+  featuredOrder?: number
 
   /**
    * Indicates if the user has access to the navigation item

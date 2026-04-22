@@ -19,6 +19,8 @@ export const informationNavigation: PortalNavigationItem = {
   icon: {
     icon: 'person',
   },
+  featured: true,
+  featuredOrder: 2,
   children: [
     {
       name: m.myInfo,

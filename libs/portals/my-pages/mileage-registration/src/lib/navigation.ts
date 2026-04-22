@@ -9,4 +9,6 @@ export const vehicleMileageNavigation: PortalNavigationItem = {
   icon: {
     icon: 'car',
   },
+  featured: true,
+  featuredOrder: 3,
 }

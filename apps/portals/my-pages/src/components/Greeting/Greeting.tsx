@@ -68,7 +68,7 @@ const Greeting = ({ compact = false }: GreetingProps) => {
                 {formatMessage(m.greetingIntro)}
               </Text>
             )}
-            {(compact || showSearch) && (
+            {showSearch && (
               <Box marginY={3}>
                 <SearchInput
                   colorScheme="blue"
