@@ -1,7 +1,6 @@
 import { FC, PropsWithChildren, ReactNode, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
 
 import {
   AlertBanner,
