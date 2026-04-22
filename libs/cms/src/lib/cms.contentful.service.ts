@@ -916,7 +916,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IAnnualReportFields>(lang, params)
+      .getLocalizedEntries<types.IAnnualReportFields>(lang, params, 5)
       .catch(errorHandler('getAnnualReports'))
 
     return (result.items as types.IAnnualReport[]).map(mapAnnualReport) ?? []

@@ -294,11 +294,17 @@ Component.getProps = async (context) => {
         }
       }
       if (slugs[1] === 'annual-reports') {
-        return {
-          page: {
-            type: PageType.ANNUAL_REPORTS,
-            props: await AnnualReports.getProps(modifiedContext),
-          },
+        try {
+          return {
+            page: {
+              type: PageType.ANNUAL_REPORTS,
+              props: await AnnualReports.getProps(modifiedContext),
+            },
+          }
+        } catch (error) {
+          if (!(error instanceof CustomNextError)) {
+            throw error
+          }
         }
       }
     } else {
@@ -327,11 +333,17 @@ Component.getProps = async (context) => {
         }
       }
       if (slugs[1] === 'arsskyrslur') {
-        return {
-          page: {
-            type: PageType.ANNUAL_REPORTS,
-            props: await AnnualReports.getProps(modifiedContext),
-          },
+        try {
+          return {
+            page: {
+              type: PageType.ANNUAL_REPORTS,
+              props: await AnnualReports.getProps(modifiedContext),
+            },
+          }
+        } catch (error) {
+          if (!(error instanceof CustomNextError)) {
+            throw error
+          }
         }
       }
     }

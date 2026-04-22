@@ -235,7 +235,7 @@ AnnualReportChapter.getProps = async ({
   const querySlugs = (query.slugs ?? []) as string[]
   const [
     organizationPageSlug,
-    _annualReportsPath,
+    annualReportsPath,
     annualReportSlug,
     annualReportChapterSlug,
   ] = querySlugs
@@ -255,7 +255,7 @@ AnnualReportChapter.getProps = async ({
             input: {
               slug: organizationPageSlug,
               lang: locale as ContentLanguage,
-              subpageSlugs: querySlugs.slice(1),
+              subpageSlugs: [annualReportsPath],
             },
           },
         })
