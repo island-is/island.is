@@ -1,5 +1,5 @@
 import { oldAgePensionFormMessage } from '../../../lib/messages'
-import { Box, Icon, Table as T } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { Employer } from '../../../utils/types'
@@ -24,50 +24,74 @@ export const EmployersTable = ({
   )
 
   return (
-    <T.Table>
-      <T.Head>
-        <T.Row>
-          {editable && <T.HeadData></T.HeadData>}
-          <T.HeadData>
-            {formatMessage(oldAgePensionFormMessage.employer.emailHeader)}
-          </T.HeadData>
-          <T.HeadData>
-            {formatMessage(oldAgePensionFormMessage.employer.phoneNumberHeader)}
-          </T.HeadData>
-          <T.HeadData>
-            {formatMessage(oldAgePensionFormMessage.employer.ratioHeader)}
-          </T.HeadData>
-        </T.Row>
-      </T.Head>
-      <T.Body>
-        {newEmployers?.map((e, i) => {
-          const ratioYearly =
-            e.ratioType === RatioType.YEARLY
-              ? e.ratioYearly ?? 0
-              : e.ratioMonthlyAvg ?? 0
-          return (
-            <T.Row key={`${e.email}${i}`}>
-              {editable && (
-                <T.Data>
-                  <Box onClick={() => onDeleteEmployer(e.email)}>
-                    <Icon
-                      color="dark200"
-                      icon="removeCircle"
-                      size="medium"
-                      type="outline"
-                    />
+    <Box display="flex" flexDirection="column" rowGap={2}>
+      {newEmployers?.map((e, i) => {
+        const ratioYearly =
+          e.ratioType === RatioType.YEARLY
+            ? e.ratioYearly ?? 0
+            : e.ratioMonthlyAvg ?? 0
+
+        return (
+          <Box
+            key={`${e.email}${i}`}
+            border="standard"
+            borderColor="blue200"
+            borderRadius="large"
+            padding={3}
+            background="blue100"
+          >
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="flexStart"
+              columnGap={2}
+            >
+              <Box flexGrow={1}>
+                <Box
+                  display="flex"
+                  flexDirection={['column', 'row']}
+                  columnGap={6}
+                  rowGap={3}
+                >
+                  <Box>
+                    <Text variant="eyebrow" color="blue400">
+                      {formatMessage(oldAgePensionFormMessage.employer.emailHeader)}
+                    </Text>
+                    <Text variant="small">{e.email}</Text>
                   </Box>
-                </T.Data>
+                  <Box>
+                    <Text variant="eyebrow" color="blue400">
+                      {formatMessage(
+                        oldAgePensionFormMessage.employer.phoneNumberHeader,
+                      )}
+                    </Text>
+                    <Text variant="small">
+                      {e.phoneNumber ? formatPhoneNumber(e.phoneNumber) : '-'}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text variant="eyebrow" color="blue400">
+                      {formatMessage(oldAgePensionFormMessage.employer.ratioHeader)}
+                    </Text>
+                    <Text variant="small">{ratioYearly}%</Text>
+                  </Box>
+                </Box>
+              </Box>
+              {editable && (
+                <Button
+                  type="button"
+                  variant="utility"
+                  icon="removeCircle"
+                  onClick={() => onDeleteEmployer(e.email)}
+                  title={formatMessage(
+                    oldAgePensionFormMessage.employer.removeEmployer,
+                  )}
+                />
               )}
-              <T.Data>{e.email}</T.Data>
-              <T.Data>
-                {e.phoneNumber && formatPhoneNumber(e.phoneNumber)}
-              </T.Data>
-              <T.Data>{ratioYearly}%</T.Data>
-            </T.Row>
-          )
-        })}
-      </T.Body>
-    </T.Table>
+            </Box>
+          </Box>
+        )
+      })}
+    </Box>
   )
 }

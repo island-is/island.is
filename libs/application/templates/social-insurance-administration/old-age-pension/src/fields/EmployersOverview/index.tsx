@@ -16,15 +16,18 @@ import { EmployersTable } from '../components/EmployersTable'
 import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
 import { Employer } from '../../utils/types'
 import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  markEmployersOverviewAutoExpanded,
+  shouldAutoExpandEmployersOverview,
+} from './utils'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
   application,
   expandRepeater,
   setRepeaterItems,
-  setBeforeSubmitCallback,
 }) => {
-  const { employers } = getApplicationAnswers(application.answers)
+  const { employers, rawEmployers } = getApplicationAnswers(application.answers)
 
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -42,18 +45,21 @@ const EmployersOverview: FC<RepeaterProps> = ({
   }
 
   useEffect(() => {
-    if (employers.length === 0) {
+    if (
+      shouldAutoExpandEmployersOverview(
+        application.id,
+        rawEmployers,
+        employers,
+      )
+    ) {
+      markEmployersOverviewAutoExpanded(application.id)
       expandRepeater()
     }
   }, [
-    application,
+    application.id,
     expandRepeater,
-    formatMessage,
-    locale,
     employers,
-    setBeforeSubmitCallback,
-    setRepeaterItems,
-    updateApplication,
+    rawEmployers,
   ])
 
   const onDeleteEmployer = async (email: string) => {
