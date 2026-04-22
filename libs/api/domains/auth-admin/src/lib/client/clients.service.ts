@@ -360,10 +360,7 @@ export class ClientsService extends MultiEnvironmentService {
     return targets.some((target) => target.success)
   }
 
-  async restoreClient(
-    user: User,
-    input: RestoreClientInput,
-  ): Promise<boolean> {
+  async restoreClient(user: User, input: RestoreClientInput): Promise<boolean> {
     const targets = environments.map((env) => ({
       environment: env,
       success: true,

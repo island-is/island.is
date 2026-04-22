@@ -232,7 +232,8 @@ export const m = defineMessages({
   },
   restoreClientDescription: {
     id: 'ap.ids-admin:restore-client-description',
-    defaultMessage: 'Restore this archived application across all environments.',
+    defaultMessage:
+      'Restore this archived application across all environments.',
   },
   restoreClientAlertMessage: {
     id: 'ap.ids-admin:restore-client-alert-message',
