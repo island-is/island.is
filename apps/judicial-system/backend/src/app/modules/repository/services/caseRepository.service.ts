@@ -403,13 +403,15 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
-      const result = await this.caseModel.create(data, options)
+      const { policeCaseNumbers, ...caseFields } = data
+
+      const result = await this.caseModel.create(caseFields, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         result.id,
-        result.policeCaseNumbers ?? [],
+        policeCaseNumbers ?? [],
         { transaction: options.transaction },
       )
 
@@ -444,7 +446,6 @@ export class CaseRepositoryService {
         'type',
         'indictmentSubtypes',
         'description',
-        'policeCaseNumbers',
         'courtId',
         'demands',
         'comments',
@@ -497,9 +498,16 @@ export class CaseRepositoryService {
 
       const { id: splitCaseId } = result
 
+      const unassignedPoliceCaseNumbersForSplit =
+        await this.caseDefendantPoliceCaseNumberRepositoryService.findUnassignedPoliceCaseNumbersForSplit(
+          caseId,
+          defendantId,
+          { transaction },
+        )
+
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         splitCaseId,
-        result.policeCaseNumbers ?? [],
+        unassignedPoliceCaseNumbersForSplit,
         { transaction },
       )
 
@@ -753,10 +761,12 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
-        ...updateOptions,
-        returning: true,
-      })
+      const { policeCaseNumbers, ...caseFields } = data
+
+      const [numberOfAffectedRows, cases] = await this.caseModel.update(
+        caseFields,
+        { ...updateOptions, returning: true },
+      )
 
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
@@ -776,10 +786,10 @@ export class CaseRepositoryService {
 
       this.logger.debug(`Updated case ${caseId}`)
 
-      if ('policeCaseNumbers' in data) {
+      if (policeCaseNumbers) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
           caseId,
-          updatedCase.policeCaseNumbers ?? [],
+          policeCaseNumbers ?? [],
           { transaction: options.transaction },
         )
       }
