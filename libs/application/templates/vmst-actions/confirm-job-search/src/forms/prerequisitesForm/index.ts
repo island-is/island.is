@@ -35,8 +35,6 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: JobSearchEligibilityApi,
-              title: pm.title,
-              subTitle: pm.subtitle,
             }),
           ],
           submitField: buildSubmitField({

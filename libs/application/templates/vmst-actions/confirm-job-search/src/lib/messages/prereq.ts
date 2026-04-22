@@ -16,4 +16,10 @@ export const prereq = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
     description: 'Prerequisite checkbox text',
   },
+  eligibilityErrorTitle: {
+    id: 'vmst.cjs.prereq:eligibilityErrorTitle',
+    defaultMessage: 'Villa kom upp',
+    description:
+      'Title shown when user is not eligible for job search confirmation',
+  },
 })

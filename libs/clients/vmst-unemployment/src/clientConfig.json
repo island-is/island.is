@@ -628,7 +628,9 @@
             "JWT": []
           }
         ]
-      },
+      }
+    },
+    "/api/applicants/{applicantId}/profile": {
       "patch": {
         "tags": [
           "Applicant"
@@ -638,21 +640,13 @@
         "parameters": [
           {
             "name": "applicantId",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "guid"
             },
             "x-position": 1
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 3
           }
         ],
         "requestBody": {
@@ -2124,10 +2118,9 @@
           "200": {
             "description": "BaseViewModel",
             "content": {
-              "application/octet-stream": {
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "binary"
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }

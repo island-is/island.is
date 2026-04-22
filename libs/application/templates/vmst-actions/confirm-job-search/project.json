@@ -1,16 +1,21 @@
 {
   "name": "confirm-job-search",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/application/templates/confirm-job-search/src",
+  "sourceRoot": "libs/application/templates/vmst-actions/confirm-job-search/src",
   "projectType": "library",
-  "tags": ["scope:application-system", "lib:application-system"],
+  "tags": [
+    "scope:application-system",
+    "lib:application-system"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/application/templates/confirm-job-search/jest.config.ts"
       }

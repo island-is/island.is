@@ -7,7 +7,9 @@ import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemploym
 import { TemplateApiModuleActionProps } from '../../../../../lib/types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { prereq } from '@island.is/application/templates/vmst-actions/confirm-job-search'
 
 type Tablerow = {
   isUnsaved: boolean
@@ -51,11 +53,37 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
     }
   }
 
-  async checkEligibility({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<unknown> {
-    return await this.vmstUnemploymentClientService.checkJobSearchConfirmationEligibility(
-      auth,
-    )
+  async checkEligibility({ auth }: TemplateApiModuleActionProps) {
+    let result
+    try {
+      result =
+        await this.vmstUnemploymentClientService.checkJobSearchConfirmationEligibility(
+          auth,
+        )
+    } catch (e) {
+      this.logger.error(
+        '[VMST-Job-search-confirmation] - Error checking eligibility',
+        e,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.failedDataProvider,
+        },
+        500,
+      )
+    }
+
+    if (!result.isEligible) {
+      throw new TemplateApiError(
+        {
+          title: prereq.eligibilityErrorTitle,
+          summary: result.reason ?? '',
+        },
+        400,
+      )
+    }
+
+    return result
   }
 }
