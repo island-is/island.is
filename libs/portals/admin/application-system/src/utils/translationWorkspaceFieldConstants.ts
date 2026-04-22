@@ -2,7 +2,6 @@ export const INPUT_FIELD_TYPES = new Set([
   'TEXT',
   'PHONE',
   'EMAIL',
-  'NATIONAL_ID_WITH_NAME',
   'BANK_ACCOUNT',
   'COMPANY_SEARCH',
   'ASYNC_SELECT',
@@ -27,9 +26,6 @@ export const TEXT_DISPLAY_TYPES = new Set([
 
 export const PLACEHOLDER_TYPES = new Set([
   'KEY_VALUE',
-  'STATIC_TABLE',
-  'TABLE_REPEATER',
-  'FIELDS_REPEATER',
   'PAGINATED_SEARCHABLE_TABLE',
   'ACTION_CARD_LIST',
   'SLIDER',

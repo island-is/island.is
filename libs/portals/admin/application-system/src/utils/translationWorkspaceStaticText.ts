@@ -60,7 +60,8 @@ export const resolvePreviewLabel = (
       resolvePreviewString,
     )
   }
-  return screen.id
+  /** No duplicate field id in preview — parent MULTI_FIELD / screen title already carries headings. */
+  return ''
 }
 
 export const MARKDOWN_MESSAGE_ID_SUFFIX = '#markdown'

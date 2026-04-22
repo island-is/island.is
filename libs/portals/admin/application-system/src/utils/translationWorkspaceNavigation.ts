@@ -13,6 +13,32 @@ export const mergeScreensMessageDescriptors = (
         out.push(d)
       }
     }
+    for (const d of screen.tableRepeaterColumnHeaders ?? []) {
+      if (!seen.has(d.id)) {
+        seen.add(d.id)
+        out.push(d)
+      }
+    }
+    for (const d of screen.staticTableHeaderDescriptors ?? []) {
+      if (!seen.has(d.id)) {
+        seen.add(d.id)
+        out.push(d)
+      }
+    }
+    for (const d of screen.staticTableRowCellDescriptors ?? []) {
+      if (!seen.has(d.id)) {
+        seen.add(d.id)
+        out.push(d)
+      }
+    }
+    for (const row of screen.staticTableSummary ?? []) {
+      for (const d of [row.label, row.value]) {
+        if (!seen.has(d.id)) {
+          seen.add(d.id)
+          out.push(d)
+        }
+      }
+    }
   }
   return out
 }

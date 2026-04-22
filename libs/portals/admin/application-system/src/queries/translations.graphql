@@ -1,3 +1,88 @@
+# Full node selection without `children` (nested via fragment spreads) so `MULTI_FIELD` →
+# `TABLE_REPEATER` / `FIELDS_REPEATER` / `EXTERNAL_DATA_PROVIDER` can resolve deeper than one level.
+fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
+  id
+  type
+  title
+  description
+  pageTitle
+  subTitle
+  subDescription
+  checkboxLabel
+  width
+  space
+  marginTop
+  marginBottom
+  paddingTop
+  titleVariant
+  messageDescriptors {
+    id
+    defaultMessage
+    description
+  }
+  radioOptions {
+    value
+    labelMessageId
+    labelDefaultMessage
+  }
+  radioLargeButtons
+  radioBackgroundColor
+  checkboxOptions {
+    value
+    labelMessageId
+    labelDefaultMessage
+  }
+  checkboxLarge
+  checkboxStrong
+  checkboxBackgroundColor
+  checkboxSpacing
+  tableRepeaterColumnHeaders {
+    id
+    defaultMessage
+    description
+  }
+  tableRepeaterFormTitle
+  tableRepeaterAddItemButtonText
+  tableRepeaterCancelButtonText
+  tableRepeaterSaveItemButtonText
+  fieldsRepeaterFormTitle
+  fieldsRepeaterAddItemButtonText
+  fieldsRepeaterRemoveItemButtonText
+  nationalIdWithNameCustomNationalIdLabelText
+  nationalIdWithNameCustomNameLabelText
+  nationalIdWithNameShowPhoneField
+  nationalIdWithNameShowEmailField
+  nationalIdWithNamePhoneLabelText
+  nationalIdWithNameEmailLabelText
+  staticTableHeaderDescriptors {
+    id
+    defaultMessage
+    description
+  }
+  staticTableRowCellDescriptors {
+    id
+    defaultMessage
+    description
+  }
+  staticTableColumnCount
+  staticTableRowCount
+  staticTableHeaderFromFunction
+  staticTableRowsFromFunction
+  staticTableTitleVariant
+  staticTableSummary {
+    label {
+      id
+      defaultMessage
+      description
+    }
+    value {
+      id
+      defaultMessage
+      description
+    }
+  }
+}
+
 query getApplicationTemplateList {
   applicationTemplateList {
     typeId
@@ -67,83 +152,27 @@ query getApplicationTemplateIntrospection($typeId: String!) {
               id
               title
               screens {
-                id
-                type
-                title
-                description
-                pageTitle
-                subTitle
-                subDescription
-                checkboxLabel
-                width
-                space
-                marginTop
-                marginBottom
-                paddingTop
-                messageDescriptors {
-                  id
-                  defaultMessage
-                  description
-                }
+                ...ScreenIntrospectionNodeFields
                 children {
-                  id
-                  type
-                  title
-                  description
-                  pageTitle
-                  subTitle
-                  subDescription
-                  checkboxLabel
-                  width
-                  space
-                  marginTop
-                  marginBottom
-                  paddingTop
-                  messageDescriptors {
-                    id
-                    defaultMessage
-                    description
+                  ...ScreenIntrospectionNodeFields
+                  children {
+                    ...ScreenIntrospectionNodeFields
+                    children {
+                      ...ScreenIntrospectionNodeFields
+                    }
                   }
                 }
               }
             }
             screens {
-              id
-              type
-              title
-              description
-              pageTitle
-              subTitle
-              subDescription
-              checkboxLabel
-              width
-              space
-              marginTop
-              marginBottom
-              paddingTop
-              messageDescriptors {
-                id
-                defaultMessage
-                description
-              }
+              ...ScreenIntrospectionNodeFields
               children {
-                id
-                type
-                title
-                description
-                pageTitle
-                subTitle
-                subDescription
-                checkboxLabel
-                width
-                space
-                marginTop
-                marginBottom
-                paddingTop
-                messageDescriptors {
-                  id
-                  defaultMessage
-                  description
+                ...ScreenIntrospectionNodeFields
+                children {
+                  ...ScreenIntrospectionNodeFields
+                  children {
+                    ...ScreenIntrospectionNodeFields
+                  }
                 }
               }
             }

@@ -74,6 +74,27 @@ export class MessageDescriptorGql {
 }
 
 @ObjectType()
+export class RadioOptionIntrospectionGql {
+  @Field()
+  value!: string
+
+  @Field(() => String, { nullable: true })
+  labelMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  labelDefaultMessage?: string | null
+}
+
+@ObjectType()
+export class StaticTableSummaryRowGql {
+  @Field(() => MessageDescriptorGql)
+  label!: MessageDescriptorGql
+
+  @Field(() => MessageDescriptorGql)
+  value!: MessageDescriptorGql
+}
+
+@ObjectType()
 export class ScreenIntrospectionGql {
   @Field()
   id!: string
@@ -114,8 +135,101 @@ export class ScreenIntrospectionGql {
   @Field(() => graphqlTypeJson, { nullable: true })
   paddingTop?: unknown
 
+  @Field(() => String, { nullable: true })
+  titleVariant?: string | null
+
   @Field(() => [MessageDescriptorGql])
   messageDescriptors!: MessageDescriptorGql[]
+
+  @Field(() => [RadioOptionIntrospectionGql], { nullable: true })
+  radioOptions?: RadioOptionIntrospectionGql[] | null
+
+  @Field(() => Boolean, { nullable: true })
+  radioLargeButtons?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  radioBackgroundColor?: string | null
+
+  @Field(() => [RadioOptionIntrospectionGql], { nullable: true })
+  checkboxOptions?: RadioOptionIntrospectionGql[] | null
+
+  @Field(() => Boolean, { nullable: true })
+  checkboxLarge?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  checkboxStrong?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  checkboxBackgroundColor?: string | null
+
+  @Field(() => Int, { nullable: true })
+  checkboxSpacing?: number | null
+
+  @Field(() => [MessageDescriptorGql], { nullable: true })
+  tableRepeaterColumnHeaders?: MessageDescriptorGql[] | null
+
+  @Field(() => String, { nullable: true })
+  tableRepeaterFormTitle?: string | null
+
+  @Field(() => String, { nullable: true })
+  tableRepeaterAddItemButtonText?: string | null
+
+  @Field(() => String, { nullable: true })
+  tableRepeaterCancelButtonText?: string | null
+
+  @Field(() => String, { nullable: true })
+  tableRepeaterSaveItemButtonText?: string | null
+
+  @Field(() => String, { nullable: true })
+  fieldsRepeaterFormTitle?: string | null
+
+  @Field(() => String, { nullable: true })
+  fieldsRepeaterAddItemButtonText?: string | null
+
+  @Field(() => String, { nullable: true })
+  fieldsRepeaterRemoveItemButtonText?: string | null
+
+  @Field(() => String, { nullable: true })
+  nationalIdWithNameCustomNationalIdLabelText?: string | null
+
+  @Field(() => String, { nullable: true })
+  nationalIdWithNameCustomNameLabelText?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  nationalIdWithNameShowPhoneField?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  nationalIdWithNameShowEmailField?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  nationalIdWithNamePhoneLabelText?: string | null
+
+  @Field(() => String, { nullable: true })
+  nationalIdWithNameEmailLabelText?: string | null
+
+  @Field(() => [MessageDescriptorGql], { nullable: true })
+  staticTableHeaderDescriptors?: MessageDescriptorGql[] | null
+
+  @Field(() => [MessageDescriptorGql], { nullable: true })
+  staticTableRowCellDescriptors?: MessageDescriptorGql[] | null
+
+  @Field(() => Int, { nullable: true })
+  staticTableColumnCount?: number | null
+
+  @Field(() => Int, { nullable: true })
+  staticTableRowCount?: number | null
+
+  @Field(() => Boolean, { nullable: true })
+  staticTableHeaderFromFunction?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  staticTableRowsFromFunction?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  staticTableTitleVariant?: string | null
+
+  @Field(() => [StaticTableSummaryRowGql], { nullable: true })
+  staticTableSummary?: StaticTableSummaryRowGql[] | null
 
   @Field(() => [ScreenIntrospectionGql], { nullable: true })
   children?: ScreenIntrospectionGql[]
