@@ -30,6 +30,7 @@ export const PaymentPending: FC<
     application.id,
   )
   const [searchParams, setSearchParams] = useSearchParams()
+  const isInvoice = getRedirectStatus() === 'invoice'
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 
@@ -128,7 +129,19 @@ export const PaymentPending: FC<
 
   return (
     <Box height="full">
-      <Text variant="h3">{msg(coreMessages.paymentPollingIndicator)}</Text>
+      {isInvoice ? (
+        <Box marginBottom={4}>
+          <Text variant="h3" marginBottom={2}>
+            {msg(coreMessages.paymentPendingInvoiceTitle)}
+          </Text>
+          <Text marginBottom={2}>
+            {msg(coreMessages.paymentPendingInvoiceDescription)}
+          </Text>
+          <Text>{msg(coreMessages.paymentPendingInvoiceTimeLimit)}</Text>
+        </Box>
+      ) : (
+        <Text variant="h3">{msg(coreMessages.paymentPollingIndicator)}</Text>
+      )}
       <Box
         marginTop={4}
         display="flex"

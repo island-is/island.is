@@ -314,6 +314,23 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Afrita tengil',
     description: 'Copy link button title',
   },
+  paymentPendingInvoiceTitle: {
+    id: 'application.system:core.payment.pendingInvoiceTitle',
+    defaultMessage: 'Krafa bíður greiðslu',
+    description: 'Title for payment pending invoice',
+  },
+  paymentPendingInvoiceDescription: {
+    id: 'application.system:core.payment.pendingInvoiceDescription',
+    defaultMessage:
+      'Til að klára umsókn þarf að greiða kröfu sem send hefur verið í netbanka og koma svo aftur á þessa síðu til að ljúka umsókninni.',
+    description: 'Description for payment pending invoice',
+  },
+  paymentPendingInvoiceTimeLimit: {
+    id: 'application.system:core.payment.pendingInvoiceTimeLimit',
+    defaultMessage:
+      'Athugaðu að þú hefur 48 klukkustundir til að greiða kröfuna frá þeim tíma sem hún var stofnuð. Þessi síða mun uppfærast þegar krafa hefur verið greidd.',
+    description: 'Time limit for payment pending invoice',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
