@@ -259,6 +259,7 @@ export const AirDiscountOverview = () => {
                   <ActionCard
                     key={`loftbru-item-connection-code-${codeIndex}`}
                     heading={item.user.name}
+                    headingVariant="h4"
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
                     subText={code.code}
                     tag={{
