@@ -16,4 +16,10 @@ export {
   UniversityOfAkureyriCareerClientConfig,
   IcelandUniversityOfTheArtsCareerClientConfig,
 } from './lib/clients'
-export * from './lib/dto'
+export type {
+  StudentFileDto,
+  StudentTrackDto,
+  StudentTrackInstitutionDto,
+  StudentTrackOverviewBodyDto,
+  StudentTrackOverviewDto,
+} from './lib/dto'

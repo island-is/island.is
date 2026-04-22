@@ -1,4 +1,5 @@
 import {
+  LocaleEnum,
   UniversityCareersStudyType,
   UniversityCareersUniversityId,
 } from '@island.is/api/schema'
@@ -50,7 +51,7 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
     variables: {
       input: {
         trackNumber: parseInt(id),
-        locale: lang,
+        locale: lang === 'is' ? LocaleEnum.Is : LocaleEnum.En,
         universityId:
           mapSlugToUniversity(uni) ??
           UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND,
@@ -81,7 +82,7 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
   return (
     <IntroWrapperV2
       title={
-        studyType === UniversityCareersStudyType.ORNAM
+        studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
           ? m.educationMicroCredentials
           : m.educationGraduation
       }
@@ -180,7 +181,7 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
             {studentInfo?.degree && (
               <InfoLine
                 label={formatMessage(
-                  studyType === UniversityCareersStudyType.ORNAM
+                  studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
                     ? uniMessages.studyLevel
                     : uniMessages.degree,
                 )}

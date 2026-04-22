@@ -6,6 +6,6 @@ export enum LocaleEnum {
 }
 
 registerEnumType(LocaleEnum, {
-  name: 'Locale',
+  name: 'LocaleEnum',
   description: 'Available locales',
 })

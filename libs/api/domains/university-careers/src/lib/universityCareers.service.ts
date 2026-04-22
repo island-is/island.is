@@ -18,6 +18,7 @@ import { StudentTrackHistory } from './models/studentTrackHistory.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { StudentTrackTranscriptError } from './models/studentTrackTranscriptError.model'
 import { StudyType } from './universityCareers.types'
+import { LocaleEnum } from '@island.is/nest/graphql'
 
 const mapStudyType = (studyType?: StudyType): ClientStudyType | undefined => {
   switch (studyType) {
@@ -49,7 +50,7 @@ export class UniversityCareersService {
 
   async getStudentTrackHistory(
     user: User,
-    locale: Locale,
+    locale: LocaleEnum,
     studyType?: StudyType,
   ): Promise<StudentTrackHistory | null> {
     const promises = Object.values(UniversityId).map(async (uni) => {
@@ -139,21 +140,21 @@ export class UniversityCareersService {
 
   async getStudentTrack(
     user: User,
-    university: UniversityId,
     trackNumber: number,
-    locale: Locale,
+    universityId: UniversityId,
+    locale: LocaleEnum,
   ): Promise<StudentTrack | null> {
     const data = await this.universityCareers.getStudentTrack(
       user,
       trackNumber,
-      university,
+      universityId,
       locale,
     )
 
     if (!data?.transcript) {
       this.logger.info('No transcript data found', {
         category: LOG_CATEGORY,
-        university,
+        university: universityId,
       })
       return null
     }
@@ -162,8 +163,8 @@ export class UniversityCareersService {
       mapToStudentTrackModel(
         data,
         {
-          id: university,
-          shortId: UniversityIdMap[university],
+          id: universityId,
+          shortId: UniversityIdMap[universityId],
         },
         locale,
       ) ?? null

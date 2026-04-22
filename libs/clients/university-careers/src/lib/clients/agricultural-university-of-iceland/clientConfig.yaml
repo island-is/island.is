@@ -10,6 +10,7 @@ servers:
 paths:
   /nemandi:
     get:
+      operationId: nemandiGet
       summary: 'Listi yfir ferla sem nemandi hefur brauskrást af'
       tags:
         - 'studentTranscript'
@@ -37,6 +38,7 @@ paths:
           description: 'Unexpected error.'
   /nemandi/ferill/{ferill}:
     get:
+      operationId: nemandiFerillGet
       summary:
         "Ferill nemanda með brautskráningu, ásamt listi af fælum tengt brauskrá\
         ningaryfirliti"
@@ -88,6 +90,7 @@ paths:
           description: 'Unexpected error.'
   /nemandi/ferill/{ferill}/file/{type}:
     get:
+      operationId: nemandiFerillFileGet
       summary: 'Sækir skjal tengt brautskráningu nemanda'
       tags:
         - 'studentTranscript'

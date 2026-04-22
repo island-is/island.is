@@ -2,8 +2,6 @@ import { UniversityId } from '@island.is/clients/university-careers'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsEnum, IsNumber, IsOptional } from 'class-validator'
 import { LocaleEnum } from '@island.is/nest/graphql'
-import { IsLocale } from '@island.is/nest/core'
-import { Locale } from '@island.is/shared/types'
 
 @InputType('UniversityCareersStudentInfoByUniversityInput')
 export class StudentInfoByUniversityInput {
@@ -17,6 +15,6 @@ export class StudentInfoByUniversityInput {
 
   @Field(() => LocaleEnum, { nullable: true, defaultValue: LocaleEnum.Is })
   @IsOptional()
-  @IsLocale()
-  locale?: Locale
+  @IsEnum(LocaleEnum)
+  locale: LocaleEnum = LocaleEnum.Is
 }

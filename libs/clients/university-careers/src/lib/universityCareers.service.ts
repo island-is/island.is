@@ -1,153 +1,35 @@
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  BifrostApi,
-  BifrostFerillLocale,
-  BifrostFileType,
-  BifrostLocale,
-  BifrostStudyType,
-  BifrostTranscriptLocale,
-  HIApi,
-  HIFerillLocale,
-  HIFileType,
-  HILocale,
-  HIStudyType,
-  HITranscriptLocale,
-  HolarApi,
-  HolarFerillLocale,
-  HolarFileType,
-  HolarLocale,
-  HolarStudyType,
-  HolarTranscriptLocale,
-  LHIApi,
-  LHIFerillLocale,
-  LHIFileType,
-  LHILocale,
-  LHIStudyType,
-  LHITranscriptLocale,
-  LbhiApi,
-  LbhiFerillLocale,
-  LbhiFileType,
-  LbhiLocale,
-  LbhiStudyType,
-  LbhiTranscriptLocale,
-  UnakApi,
-  UnakFerillLocale,
-  UnakFileType,
-  UnakLocale,
-  UnakStudyType,
-  UnakTranscriptLocale,
-} from './clients'
+import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
-import {
-  StudentFileType,
-  StudyType,
-  UniversityId,
-} from './universityCareers.types'
-import { handle404 } from '@island.is/clients/middlewares'
+import { dataOr404Null } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import type { Client } from '../../gen/fetch/client'
 import {
   StudentTrackDto,
   mapToStudentTrackDto,
   StudentTrackOverviewDto,
   mapToStudentTrackOverviewDto,
-  UniversityDto,
 } from './dto'
+import { StudyType, UniversityId } from './universityCareers.types'
+import { nemandiGet, nemandiFerillGet } from '../../gen/fetch'
+
+export type UniversityClientMap = Map<UniversityId, Client>
 
 @Injectable()
 export class UniversityCareersClientService {
   constructor(
-    private readonly lbhiApi: LbhiApi,
-    private readonly unakApi: UnakApi,
-    private readonly holarApi: HolarApi,
-    private readonly bifrostApi: BifrostApi,
-    private readonly hiApi: HIApi,
-    private readonly lhiApi: LHIApi,
+    @Inject('test')
+    private readonly clients: UniversityClientMap,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private getApi = (type: UniversityId, user: User): UniversityDto => {
-    switch (type) {
-      case UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND:
-        return {
-          api: this.lbhiApi.withMiddleware(new AuthMiddleware(user as Auth)),
-          fileTypeEnum: LbhiFileType,
-          studyTypeEnum: LbhiStudyType,
-          locales: {
-            studentLocale: LbhiLocale,
-            studentTranscriptLocale: LbhiTranscriptLocale,
-            studentTrackLocale: LbhiFerillLocale,
-          },
-        }
-      case UniversityId.BIFROST_UNIVERSITY:
-        return {
-          api: this.bifrostApi.withMiddleware(new AuthMiddleware(user as Auth)),
-          fileTypeEnum: BifrostFileType,
-          studyTypeEnum: BifrostStudyType,
-          locales: {
-            studentLocale: BifrostLocale,
-            studentTranscriptLocale: BifrostTranscriptLocale,
-            studentTrackLocale: BifrostFerillLocale,
-          },
-        }
-      case UniversityId.HOLAR_UNIVERSITY:
-        return {
-          api: this.holarApi.withMiddleware(new AuthMiddleware(user as Auth)),
-          fileTypeEnum: HolarFileType,
-          studyTypeEnum: HolarStudyType,
-          locales: {
-            studentLocale: HolarLocale,
-            studentTranscriptLocale: HolarTranscriptLocale,
-            studentTrackLocale: HolarFerillLocale,
-          },
-        }
-      case UniversityId.UNIVERSITY_OF_AKUREYRI:
-        return {
-          api: this.unakApi.withMiddleware(new AuthMiddleware(user as Auth)),
-          fileTypeEnum: UnakFileType,
-          studyTypeEnum: UnakStudyType,
-          locales: {
-            studentLocale: UnakLocale,
-            studentTranscriptLocale: UnakTranscriptLocale,
-            studentTrackLocale: UnakFerillLocale,
-          },
-        }
-      case UniversityId.UNIVERSITY_OF_ICELAND:
-        return {
-          api: this.hiApi.withMiddleware(new AuthMiddleware(user as Auth)),
-          fileTypeEnum: HIFileType,
-          studyTypeEnum: HIStudyType,
-          locales: {
-            studentLocale: HILocale,
-            studentTranscriptLocale: HITranscriptLocale,
-            studentTrackLocale: HIFerillLocale,
-          },
-        }
-      case UniversityId.ICELAND_UNIVERSITY_OF_THE_ARTS:
-        return {
-          api: this.lhiApi.withMiddleware(new AuthMiddleware(user as Auth)),
-          fileTypeEnum: LHIFileType,
-          studyTypeEnum: LHIStudyType,
-          locales: {
-            studentLocale: LHILocale,
-            studentTranscriptLocale: LHITranscriptLocale,
-            studentTrackLocale: LHIFerillLocale,
-          },
-        }
+  private getClient = (university: UniversityId): Client => {
+    const apiClient = this.clients.get(university)
+    if (!apiClient) {
+      throw new Error(`No client configured for university: ${university}`)
     }
-  }
-
-  private mapStudyType = (
-    studyType: StudyType,
-    studyTypeEnum: UniversityDto['studyTypeEnum'],
-  ) => {
-    switch (studyType) {
-      case 'haskolanam':
-        return studyTypeEnum.Haskolanam
-      case 'ornam':
-        return studyTypeEnum.Ornam
-    }
+    return apiClient
   }
 
   getStudentTrackHistory = async (
@@ -156,16 +38,19 @@ export class UniversityCareersClientService {
     locale?: Locale,
     studyType?: StudyType,
   ): Promise<Array<StudentTrackDto> | null> => {
-    const { api, locales, studyTypeEnum } = this.getApi(university, user)
-    const data = await api
-      .nemandiGet({
-        locale:
-          locale === 'en' ? locales.studentLocale.En : locales.studentLocale.Is,
-        ...(studyType !== undefined && {
-          tegundNams: this.mapStudyType(studyType, studyTypeEnum),
+    const apiClient = this.getClient(university)
+
+    const data = await withAuthContext(user, () =>
+      dataOr404Null(
+        nemandiGet({
+          client: apiClient,
+          query: {
+            locale: locale === 'en' ? 'en' : 'is',
+            ...(studyType !== undefined && { tegund_nams: studyType }),
+          },
         }),
-      })
-      .catch(handle404)
+      ),
+    )
 
     if (!data) {
       return null
@@ -177,9 +62,7 @@ export class UniversityCareersClientService {
         .filter(isDefined) ?? []
 
     if (!transcripts.length) {
-      this.logger.info('No transcripts found for user', {
-        university,
-      })
+      this.logger.info('No transcripts found for user', { university })
     }
     return transcripts
   }
@@ -190,16 +73,17 @@ export class UniversityCareersClientService {
     university: UniversityId,
     locale?: Locale,
   ): Promise<StudentTrackOverviewDto | null> => {
-    const { api, locales } = this.getApi(university, user)
-    const data = await api
-      .nemandiFerillFerillGet({
-        ferill: trackNumber,
-        locale:
-          locale === 'en'
-            ? locales.studentTrackLocale.En
-            : locales.studentTrackLocale.Is,
-      })
-      .catch(handle404)
+    const apiClient = this.getClient(university)
+
+    const data = await withAuthContext(user, () =>
+      dataOr404Null(
+        nemandiFerillGet({
+          client: apiClient,
+          path: { ferill: trackNumber },
+          query: { locale: locale === 'en' ? 'en' : 'is' },
+        }),
+      ),
+    )
 
     if (!data) {
       return null
@@ -208,39 +92,16 @@ export class UniversityCareersClientService {
     return mapToStudentTrackOverviewDto(data, university)
   }
 
-  getStudentTrackPdf = async (
+  downloadFile = async (
     user: User,
-    trackNumber: number,
-    fileType: StudentFileType,
+    fileUrl: string,
     university: UniversityId,
-    locale?: Locale,
   ): Promise<Blob | null> => {
-    const { api, locales, fileTypeEnum } = this.getApi(university, user)
-
-    if (fileType === 'unknown') {
-      return null
-    }
-
-    return api
-      .nemandiFerillFerillFileTypeGet({
-        ferill: trackNumber,
-        type:
-          fileType === 'transcript'
-            ? fileTypeEnum.Transcript
-            : fileType === 'diploma_supplement'
-            ? fileTypeEnum.DiplomaSupplement
-            : fileType === 'diploma'
-            ? fileTypeEnum.Diploma
-            : fileType === 'micro_credentials_supplement'
-            ? fileTypeEnum.MicroCredentialsSupplement
-            : fileType === 'micro_credentials_transcript'
-            ? fileTypeEnum.MicroCredentialsTranscript
-            : fileTypeEnum.CourseDescriptions,
-        locale:
-          locale === 'en'
-            ? locales.studentTranscriptLocale.En
-            : locales.studentTranscriptLocale.Is,
-      })
-      .catch(handle404)
+    const result = await withAuthContext(user, () =>
+      dataOr404Null(
+        this.getClient(university).get({ url: fileUrl, parseAs: 'blob' }),
+      ),
+    )
+    return result instanceof Blob ? result : null
   }
 }

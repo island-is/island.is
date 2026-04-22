@@ -1,11 +1,4 @@
-import {
-  LbhiStudentFile,
-  BifrostStudentFile,
-  UnakStudentFile,
-  HIStudentFile,
-  HolarStudentFile,
-  LHIStudentFile,
-} from '../clients'
+import type { StudentFile } from '../../../gen/fetch'
 import { StudentFileType } from '../universityCareers.types'
 
 export interface StudentFileDto {
@@ -25,23 +18,17 @@ const FILE_TYPE_MAP: Record<string, StudentFileType> = {
 }
 
 export const mapToStudentFileDto = (
-  transcript:
-    | HolarStudentFile
-    | LbhiStudentFile
-    | BifrostStudentFile
-    | UnakStudentFile
-    | HIStudentFile
-    | LHIStudentFile,
+  file: StudentFile,
 ): StudentFileDto | null => {
-  const type = transcript.type ? FILE_TYPE_MAP[transcript.type] ?? null : null
+  const type = file.type ? FILE_TYPE_MAP[file.type] ?? null : null
   if (!type) {
     return null
   }
 
   return {
     type,
-    url: transcript.url,
-    displayName: transcript.displayName,
-    fileName: transcript.fileName,
+    url: file.url,
+    displayName: file.displayName,
+    fileName: file.fileName,
   }
 }

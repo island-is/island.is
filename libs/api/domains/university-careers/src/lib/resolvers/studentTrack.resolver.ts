@@ -15,7 +15,6 @@ import { StudentTrack } from '../models/studentTrack.model'
 import { UniversityCareersService } from '../universityCareers.service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.input'
-import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
 import { mapEnumToType } from '../mapper'
@@ -50,9 +49,9 @@ export class StudentTrackResolver {
     }
     const student = await this.service.getStudentTrack(
       user,
-      input.universityId,
       input.trackNumber,
-      input.locale ?? 'is',
+      input.universityId,
+      input.locale,
     )
 
     if (!student) {

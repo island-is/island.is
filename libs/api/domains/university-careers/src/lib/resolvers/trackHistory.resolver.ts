@@ -31,7 +31,7 @@ export class TrackHistoryResolver {
   ): Promise<StudentTrackHistory | null> {
     return this.service.getStudentTrackHistory(
       user,
-      input.locale ?? 'is',
+      input.locale,
       input.studyType,
     )
   }

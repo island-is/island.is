@@ -13,7 +13,7 @@ import { useStudentInfoQuery } from './UniversityGraduation.generated'
 import { useMemo } from 'react'
 import { mapUniversityToSlug } from '../../../utils/mapUniversitySlug'
 import { uniMessages } from '../../../lib/messages'
-import { UniversityCareersStudyType } from '@island.is/api/schema'
+import { LocaleEnum, UniversityCareersStudyType } from '@island.is/api/schema'
 
 type Props = {
   studyType?: UniversityCareersStudyType
@@ -26,7 +26,7 @@ export const UniversityGraduation = ({ studyType }: Props) => {
   const { loading, error, data } = useStudentInfoQuery({
     variables: {
       input: {
-        locale: lang,
+        locale: lang === 'is' ? LocaleEnum.Is : LocaleEnum.En,
         studyType,
       },
     },
@@ -47,12 +47,12 @@ export const UniversityGraduation = ({ studyType }: Props) => {
   return (
     <IntroWrapperV2
       title={
-        studyType === UniversityCareersStudyType.ORNAM
+        studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
           ? coreMessages.educationMicroCredentials
           : coreMessages.educationGraduation
       }
       intro={
-        studyType === UniversityCareersStudyType.ORNAM
+        studyType === UniversityCareersStudyType.UNIVERSITY_STUDIES
           ? uniMessages.microCredentialsIntro
           : uniMessages.graduationIntro
       }
@@ -107,7 +107,8 @@ export const UniversityGraduation = ({ studyType }: Props) => {
                   variant: 'text',
                   url:
                     item?.trackNumber && item?.institution?.id
-                      ? (studyType === UniversityCareersStudyType.ORNAM
+                      ? (studyType ===
+                        UniversityCareersStudyType.MICRO_CREDENTIALS
                           ? EducationPaths.EducationHaskoliMicroCredentialsDetail
                           : EducationPaths.EducationHaskoliGraduationDetail
                         )
