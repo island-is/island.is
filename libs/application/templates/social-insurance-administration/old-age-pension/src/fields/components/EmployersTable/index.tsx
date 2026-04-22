@@ -55,7 +55,9 @@ export const EmployersTable = ({
                 >
                   <Box>
                     <Text variant="eyebrow" color="blue400">
-                      {formatMessage(oldAgePensionFormMessage.employer.emailHeader)}
+                      {formatMessage(
+                        oldAgePensionFormMessage.employer.emailHeader,
+                      )}
                     </Text>
                     <Text variant="small">{e.email}</Text>
                   </Box>
@@ -71,7 +73,9 @@ export const EmployersTable = ({
                   </Box>
                   <Box>
                     <Text variant="eyebrow" color="blue400">
-                      {formatMessage(oldAgePensionFormMessage.employer.ratioHeader)}
+                      {formatMessage(
+                        oldAgePensionFormMessage.employer.ratioHeader,
+                      )}
                     </Text>
                     <Text variant="small">{ratioYearly}%</Text>
                   </Box>

@@ -13,9 +13,7 @@ describe('shouldAutoExpandEmployersOverview', () => {
   })
 
   it('returns true on the initial visit when there are no employers', () => {
-    expect(
-      shouldAutoExpandEmployersOverview(applicationId, [], []),
-    ).toBe(true)
+    expect(shouldAutoExpandEmployersOverview(applicationId, [], [])).toBe(true)
   })
 
   it('returns false when an unfinished repeater item already exists', () => {
@@ -37,8 +35,6 @@ describe('shouldAutoExpandEmployersOverview', () => {
   it('returns false after the empty repeater has already auto-opened once', () => {
     markEmployersOverviewAutoExpanded(applicationId)
 
-    expect(
-      shouldAutoExpandEmployersOverview(applicationId, [], []),
-    ).toBe(false)
+    expect(shouldAutoExpandEmployersOverview(applicationId, [], [])).toBe(false)
   })
 })
