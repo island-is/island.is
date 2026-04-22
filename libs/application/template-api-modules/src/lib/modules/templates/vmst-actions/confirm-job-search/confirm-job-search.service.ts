@@ -30,16 +30,6 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
-      const { applicantId } =
-        await this.vmstUnemploymentClientService.resolveApplicant(auth)
-
-      if (!applicantId) {
-        this.logger.error(
-          '[VMST-Job-search-confirmation] - Faile or missing resolve of applicantId',
-        )
-        throw new Error()
-      }
-
       const appliedCompanies = (
         getValueViaPath<Tablerow>(application.answers, 'jobSearchItems', []) ||
         []
@@ -47,18 +37,25 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
         .filter((item) => !item.isUnsaved)
         .map((item) => item.companyName)
 
-      const res =
-        await this.vmstUnemploymentClientService.submitJobSearchConfirmation({
-          galdurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest:
-            { applicantId: applicantId, appliedCompanies },
-        })
+      await this.vmstUnemploymentClientService.submitJobSearchConfirmation(
+        auth,
+        { appliedCompanies },
+      )
 
       return true
     } catch (e) {
       this.logger.error(
-        '[VMST-Job-search-confirmation] - Error submitting or fetching applicantId',
+        '[VMST-Job-search-confirmation] - Error submitting job search confirmation',
       )
       throw new Error(e)
     }
+  }
+
+  async checkEligibility({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<unknown> {
+    return await this.vmstUnemploymentClientService.checkJobSearchConfirmationEligibility(
+      auth,
+    )
   }
 }

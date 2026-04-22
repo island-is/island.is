@@ -9,6 +9,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
 import { prereq as pm, application as am } from '../../lib/messages'
+import { JobSearchEligibilityApi } from '../../dataProviders'
 
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
@@ -29,6 +30,11 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
+              title: pm.title,
+              subTitle: pm.subtitle,
+            }),
+            buildDataProviderItem({
+              provider: JobSearchEligibilityApi,
               title: pm.title,
               subTitle: pm.subtitle,
             }),

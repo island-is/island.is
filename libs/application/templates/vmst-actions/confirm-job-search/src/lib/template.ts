@@ -21,6 +21,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { application as am } from './messages'
+import { JobSearchEligibilityApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -55,7 +56,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, JobSearchEligibilityApi],
               delete: true,
             },
           ],
