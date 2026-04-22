@@ -52,19 +52,6 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
         (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
         contracts.length === 0
       ) {
-        const contracts = await this.homeApiWithAuth(auth)
-          .contractKtKtGet({
-            kt: auth.nationalId,
-          })
-          .then((res) => {
-            return res
-              .map((contract) => {
-                if (contract.contractStatus === ContractStatus.STATUSVALID) {
-                  return contract
-                }
-              })
-              .filter((contract) => contract !== undefined)
-          })
         this.logger.debug('Mocking rental agreements')
         return mockGetRentalAgreements()
       }
