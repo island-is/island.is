@@ -59,6 +59,8 @@ export const Forms = () => {
     direction: 'asc',
   })
 
+  const [isCreatingForm, setIsCreatingForm] = useState(false)
+
   const defaultDirection: Record<SortColumn, SortDirection> = {
     name: 'asc',
     lastModified: 'desc',
@@ -111,6 +113,7 @@ export const Forms = () => {
   })
 
   const createForm = async () => {
+    setIsCreatingForm(true)
     try {
       const { data } = await formSystemCreateFormMutation({
         variables: {
@@ -126,6 +129,7 @@ export const Forms = () => {
         ),
       )
     } catch (error) {
+      setIsCreatingForm(false)
       throw new Error(
         `Error creating form: ${
           error instanceof Error ? error.message : 'Unknown error'
@@ -190,7 +194,7 @@ export const Forms = () => {
         alignItems="baseline"
       >
         <Box display={['none', 'none', 'flex']}>
-          <Button size="default" onClick={createForm}>
+          <Button size="default" onClick={createForm} disabled={isCreatingForm}>
             {formatMessage(m.newForm)}
           </Button>
         </Box>

@@ -16,6 +16,7 @@ import {
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
+  meAppointmentControllerGetPatientAppointmentByIdV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -38,7 +39,8 @@ import {
 } from './gen/fetch'
 
 import {
-  AppointmentDto,
+  AppointmentBaseDto,
+  AppointmentDetailDto,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -213,13 +215,13 @@ export class HealthDirectorateHealthService {
 
   public async getOrganDonation(
     auth: Auth,
-    input: Locale,
+    locale: string,
   ): Promise<OrganDonorDto | null> {
     const organDonation = await withAuthContext(auth, () =>
       data(
         meDonorStatusControllerGetOrganDonorStatusV1({
           query: {
-            locale: this.mapLocale(input),
+            locale: this.mapLocale(locale),
           },
         }),
       ),
@@ -236,14 +238,14 @@ export class HealthDirectorateHealthService {
   public async updateOrganDonation(
     auth: Auth,
     input: UpdateOrganDonorDto,
-    locale: Locale,
+    locale: string,
   ): Promise<void> {
     await withAuthContext(auth, () =>
       data(
         meDonorStatusControllerUpdateOrganDonorStatusV1({
           body: input,
           query: {
-            locale: locale,
+            locale: this.mapLocale(locale),
           },
         }),
       ),
@@ -252,13 +254,13 @@ export class HealthDirectorateHealthService {
 
   public async getDonationExceptions(
     auth: Auth,
-    input: Locale,
+    locale: string,
   ): Promise<Array<OrganDto> | null> {
     const donationExceptions = await withAuthContext(auth, () =>
       data(
         donationExceptionControllerGetOrgansV1({
           query: {
-            locale: this.mapLocale(input),
+            locale: this.mapLocale(locale),
           },
         }),
       ),
@@ -500,7 +502,7 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     from?: Date,
     statuses?: UserVisibleAppointmentStatuses[],
-  ): Promise<AppointmentDto[] | null> {
+  ): Promise<AppointmentBaseDto[] | null> {
     const defaultFrom = new Date()
 
     const appointments = await withAuthContext(auth, () =>
@@ -515,5 +517,20 @@ export class HealthDirectorateHealthService {
     )
 
     return appointments ?? null
+  }
+
+  public async getAppointmentById(
+    auth: Auth,
+    id: string,
+  ): Promise<AppointmentDetailDto | null> {
+    const appointment = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return appointment ?? null
   }
 }

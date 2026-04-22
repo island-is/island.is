@@ -29,19 +29,17 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
+  TUploadFile,
+  useAppealCase,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   getDefenceUserPartyIds,
-  isUserCaseFile,
+  isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
@@ -71,7 +69,7 @@ const AppealToCourtOfAppeals = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { createAppealCase, isCreatingAppealCase } = useAppealCase()
 
   const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
@@ -99,17 +97,14 @@ const AppealToCourtOfAppeals = () => {
       return
     }
 
-    const caseTransitioned = await transitionCase(
-      workingCase.id,
-      CaseTransition.APPEAL,
-    )
+    const appealCase = await createAppealCase(workingCase.id)
 
-    if (caseTransitioned) {
+    if (appealCase) {
       setVisibleModal('APPEAL_SENT')
     }
   }, [
     handleUpload,
-    transitionCase,
+    createAppealCase,
     updateUploadFile,
     uploadFiles,
     workingCase.id,
@@ -132,14 +127,19 @@ const AppealToCourtOfAppeals = () => {
     })
   }
 
-  const appealBriefFiles = uploadFiles.filter(
-    (file) =>
-      file.category === appealBriefType &&
-      (isProsecutionUser(user) || isUserCaseFile(workingCase, file, user)),
+  const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
+    return isMatchingAppealCaseFile(workingCase, [category], file, user)
+  }
+  const appealBriefFiles = uploadFiles.filter((file) =>
+    filter(file, appealBriefType),
   )
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={isCreatingAppealCase}
+      notFound={false}
+    >
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
         <PageTitle previousUrl={previousUrl}>Kæra til Landsréttar</PageTitle>
@@ -186,11 +186,8 @@ const AppealToCourtOfAppeals = () => {
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
-            files={uploadFiles.filter(
-              (file) =>
-                file.category === appealCaseFilesType &&
-                (isProsecutionUser(user) ||
-                  isUserCaseFile(workingCase, file, user)),
+            files={uploadFiles.filter((file) =>
+              filter(file, appealCaseFilesType),
             )}
             accept={'application/pdf'}
             title={formatMessage(core.uploadBoxTitle)}
@@ -216,8 +213,8 @@ const AppealToCourtOfAppeals = () => {
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda kæru'}
-          nextIsDisabled={appealBriefFiles.length === 0 || isTransitioningCase}
-          nextIsLoading={!allFilesDoneOrError || isTransitioningCase}
+          nextIsDisabled={appealBriefFiles.length === 0 || isCreatingAppealCase}
+          nextIsLoading={!allFilesDoneOrError || isCreatingAppealCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />

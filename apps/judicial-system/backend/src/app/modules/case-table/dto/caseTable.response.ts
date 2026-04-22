@@ -76,6 +76,12 @@ class CaseTableRow {
 
   @ApiPropertyOptional({
     type: String,
+    description: 'The row appeal case id',
+  })
+  readonly appealCaseId?: string
+
+  @ApiPropertyOptional({
+    type: String,
     isArray: true,
     description: 'The row defendant ids',
   })

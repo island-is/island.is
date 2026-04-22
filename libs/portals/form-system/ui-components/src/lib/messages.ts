@@ -1252,7 +1252,7 @@ export const m = defineMessages({
   translationNeededError: {
     id: 'form.system:translation-needed-error',
     defaultMessage:
-      'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
+      'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
   },
