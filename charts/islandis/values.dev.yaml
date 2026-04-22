@@ -419,7 +419,6 @@ api:
     XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
     XROAD_FJS_BANKINFO_PATH: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1'
     XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
-    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
     XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
@@ -785,7 +784,6 @@ application-system-api:
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
     XROAD_FJS_BANKINFO_PATH: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1'
     XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
-    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
     XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
@@ -3448,6 +3446,7 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
+    - 'services-payments'
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
@@ -3578,6 +3577,7 @@ services-form-system-api-worker:
     S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'services-payments'
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
