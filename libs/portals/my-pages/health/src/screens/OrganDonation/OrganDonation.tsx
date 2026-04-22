@@ -86,6 +86,7 @@ const OrganDonation = () => {
             </Text>
             <ActionCard
               heading={texts.heading}
+              headingVariant="h4"
               text={texts.cardText}
               cta={{
                 onClick: () =>
