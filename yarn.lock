@@ -22325,17 +22325,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apple-pay-decrypt@npm:1.0.8":
-  version: 1.0.8
-  resolution: "apple-pay-decrypt@npm:1.0.8"
-  dependencies:
-    ec-key: "npm:0.0.2"
-    node-forge: "npm:^0.8.0"
-    x509: "npm:^0.3.4"
-  checksum: 10/75219d347da7f0ba7cba7551382aeb15fe724bfce46d5c1491dd1acaad7ae5105ff85cd835ba096d2b58fdf8daa6faa6f7bd06a017e24a26b991ed02b65d544f
-  languageName: node
-  linkType: hard
-
 "aproba@npm:^1.0.3 || ^2.0.0":
   version: 2.0.0
   resolution: "aproba@npm:2.0.0"
@@ -22690,20 +22679,6 @@ __metadata:
   version: 2.0.6
   resolution: "asap@npm:2.0.6"
   checksum: 10/b244c0458c571945e4b3be0b14eb001bea5596f9868cc50cc711dc03d58a7e953517d3f0dad81ccde3ff37d1f074701fa76a6f07d41aaa992d7204a37b915dda
-  languageName: node
-  linkType: hard
-
-"asn1.js@npm:^1.0.4":
-  version: 1.0.6
-  resolution: "asn1.js@npm:1.0.6"
-  dependencies:
-    bn.js: "npm:^2.0.0"
-    inherits: "npm:^2.0.1"
-    minimalistic-assert: "npm:^1.0.0"
-  dependenciesMeta:
-    bn.js:
-      optional: true
-  checksum: 10/aa026904487a770928f5ddf209bc50d70adfb3c012fc785dfb667e1d2d3861eb7a5bee25ad153a7edaab1dbbc4ba942fc0da0937d925e0d01cd0caddd686ee52
   languageName: node
   linkType: hard
 
@@ -23857,13 +23832,6 @@ __metadata:
   version: 3.4.7
   resolution: "bluebird@npm:3.4.7"
   checksum: 10/340e4d11d4b6a26d90371180effb4e500197c2943e5426472d6b6bffca0032a534226ad10255fc0e39c025bea197341c6b2a4258f8c0f18217c7b3a254c76c14
-  languageName: node
-  linkType: hard
-
-"bn.js@npm:^2.0.0":
-  version: 2.2.0
-  resolution: "bn.js@npm:2.2.0"
-  checksum: 10/805792c4a8584132eb2660c7ef75406c5366ff5e71666b2b73f699e4f7b8bbcd262623dac0e273fe47edf305cd0047ba4b7041a430ab4172761e0b4c3ba38a05
   languageName: node
   linkType: hard
 
@@ -28746,15 +28714,6 @@ __metadata:
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
   checksum: 10/9b1d3e1baefeaf7d70799db8774149cef33b97183a6addceeba0cf6b85ba23ee2686f302f14482006df32df75d32b17c509c143a3689627929e4a8efaf483952
-  languageName: node
-  linkType: hard
-
-"ec-key@npm:0.0.2":
-  version: 0.0.2
-  resolution: "ec-key@npm:0.0.2"
-  dependencies:
-    asn1.js: "npm:^1.0.4"
-  checksum: 10/e7842f3b6822be6cb060854b93134e5488e251a93582fe830eb5e836bae665f9597ec0d703158e36958513b8481a8c00f0e61fa1f809ec45bc870f76ed0ce7db
   languageName: node
   linkType: hard
 
@@ -36100,7 +36059,6 @@ __metadata:
     apollo-datasource-rest: "npm:0.9.2"
     apollo-server-express: "npm:3.10.2"
     apollo-server-plugin-response-cache: "npm:3.8.2"
-    apple-pay-decrypt: "npm:1.0.8"
     archiver: "npm:6.0.1"
     assert: "npm:2.1.0"
     aws-elasticsearch-connector: "npm:9.0.0"
@@ -41737,15 +41695,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:2.12.0":
-  version: 2.12.0
-  resolution: "nan@npm:2.12.0"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10/0c6bd1e0a377e54a1de281d63c3b8036380567e0b11167fa510c841de8788583d0f796128805bef0daa21732a790a365d6712e81b43568d57300aef7356a1db7
-  languageName: node
-  linkType: hard
-
 "nan@npm:^2.16.0, nan@npm:^2.17.0, nan@npm:^2.19.0, nan@npm:^2.20.0":
   version: 2.22.2
   resolution: "nan@npm:2.22.2"
@@ -42147,14 +42096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-forge@npm:^0.8.0":
-  version: 0.8.5
-  resolution: "node-forge@npm:0.8.5"
-  checksum: 10/0f24ea2f2e7ad5a2968f119baccba67b542cdc4dbc3e76067b382ab9eba7e8a1ed2122e020c76f8955b3464bd674f365138b99518df5725bc5a4c40e4c384a08
-  languageName: node
-  linkType: hard
-
-"node-forge@npm:^1, node-forge@npm:^1.2.1, node-forge@npm:^1.3.1":
+"node-forge@npm:^1, node-forge@npm:^1.3.1":
   version: 1.3.1
   resolution: "node-forge@npm:1.3.1"
   checksum: 10/05bab6868633bf9ad4c3b1dd50ec501c22ffd69f556cdf169a00998ca1d03e8107a6032ba013852f202035372021b845603aeccd7dfcb58cdb7430013b3daa8d
@@ -54201,16 +54143,6 @@ __metadata:
   dependencies:
     is-wsl: "npm:^3.1.0"
   checksum: 10/de4c92187e04c3c27b4478f410a02e81c351dc85efa3447bf1666f34fc80baacd890a6698ec91995631714086992036013286aea3d77e6974020d40a08e00aec
-  languageName: node
-  linkType: hard
-
-"x509@npm:^0.3.4":
-  version: 0.3.4
-  resolution: "x509@npm:0.3.4"
-  dependencies:
-    nan: "npm:2.12.0"
-    node-gyp: "npm:latest"
-  checksum: 10/764cbe13fa991efe971f2b7a643f8da3859d6081dd34314c4dc50b66a63f9364f45fb17f77d4bad6623735f0231bad56a22245b4d3601f1d2c464fbc7aac5475
   languageName: node
   linkType: hard
 

@@ -157,7 +157,6 @@
     "apollo-datasource-rest": "0.9.2",
     "apollo-server-express": "3.10.2",
     "apollo-server-plugin-response-cache": "3.8.2",
-    "apple-pay-decrypt": "1.0.8",
     "archiver": "6.0.1",
     "aws-elasticsearch-connector": "9.0.0",
     "aws-sdk": "2.814.0",
