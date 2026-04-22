@@ -217,9 +217,7 @@ export const MobileNavPanel = forwardRef<
       }
     }, [router.events, close])
 
-    const drilldownSection = drilldownKey
-      ? navData[drilldownKey]
-      : null
+    const drilldownSection = drilldownKey ? navData[drilldownKey] : null
 
     const menuLabel = activeLocale === 'is' ? 'Valmynd' : 'Menu'
     const backLabel = activeLocale === 'is' ? 'Til baka' : 'Back'

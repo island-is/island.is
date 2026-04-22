@@ -73,10 +73,7 @@ const focusNextTabbableAfter = (container: HTMLElement) => {
   }
 }
 
-export const DesktopNav = ({
-  data,
-  onOpenChange,
-}: DesktopNavProps = {}) => {
+export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
   const router = useRouter()
   const navData = data ?? HEADER_NAV_MOCK_DATA
