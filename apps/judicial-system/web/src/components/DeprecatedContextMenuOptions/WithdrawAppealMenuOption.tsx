@@ -5,7 +5,7 @@ import { IconMapIcon } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseListEntry,
   CaseTransition,
 } from '../../graphql/schema'
@@ -39,8 +39,8 @@ export const useWithdrawAppealMenuOption = () => {
     userNationalId?: string | null,
   ) => {
     const withdrawableCaseStates = [
-      CaseAppealState.APPEALED,
-      CaseAppealState.RECEIVED,
+      AppealCaseState.APPEALED,
+      AppealCaseState.RECEIVED,
     ]
 
     if (
@@ -88,7 +88,7 @@ const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
     if (transitionResult === true) {
       const transitionedCase = cases.find((tc) => caseId === tc.id)
       if (transitionedCase) {
-        transitionedCase.appealState = CaseAppealState.WITHDRAWN
+        transitionedCase.appealState = AppealCaseState.WITHDRAWN
       }
       onClose()
     }

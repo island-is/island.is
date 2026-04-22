@@ -191,15 +191,6 @@ const Overview: FC = () => {
             />
           </Box>
         )}
-        {workingCase.indictmentReturnedExplanation && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              title={formatMessage(strings.indictmentReturnedExplanationTitle)}
-              message={workingCase.indictmentReturnedExplanation}
-              type="warning"
-            />
-          </Box>
-        )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />

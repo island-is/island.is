@@ -39,6 +39,9 @@ export enum Features {
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
   RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
+  estateReviewEnabled = 'isEstateReviewEnabled',
+  inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
+  isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -173,6 +176,8 @@ export enum Features {
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
+  // Primary school (guardian-facing)
+  isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
 }

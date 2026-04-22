@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
 import { prereq as pm, application as am } from '../../lib/messages'
 import { JobSearchEligibilityApi } from '../../dataProviders'
 
@@ -29,12 +29,9 @@ export const Prerequisites = buildForm({
           checkboxLabel: pm.checkbox,
           dataProviders: [
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: JobSearchEligibilityApi,
               title: pm.title,
               subTitle: pm.subtitle,
-            }),
-            buildDataProviderItem({
-              provider: JobSearchEligibilityApi,
             }),
           ],
           submitField: buildSubmitField({

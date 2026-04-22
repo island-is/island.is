@@ -22,6 +22,7 @@ export const updateFormFn = async (
       | undefined,
   ) => Promise<any>,
   updatedForm?: FormSystemForm,
+  userName?: string,
 ): Promise<UpdateFormResponse> => {
   const newForm = updatedForm ? updatedForm : control.form
   try {
@@ -71,6 +72,7 @@ export const updateFormFn = async (
                 })) ?? [],
             },
             dependencies: newForm.dependencies ?? [],
+            lastModifiedBy: userName,
           },
         },
       },

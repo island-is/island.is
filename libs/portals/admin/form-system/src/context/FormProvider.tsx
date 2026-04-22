@@ -16,7 +16,9 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { GoogleTranslation } from '@island.is/form-system/shared'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ControlState, controlReducer } from '../hooks/controlReducer'
 import { defaultStep } from '../lib/utils/defaultStep'
 import { baseSettingsStep } from '../lib/utils/getBaseSettingsSection'
@@ -47,6 +49,8 @@ export const FormProvider: React.FC<{
     sections: [],
     screens: [],
   })
+  const location = useLocation()
+  const isReadOnly = location.state?.readOnly ?? false
 
   const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
     formBuilder
@@ -62,7 +66,7 @@ export const FormProvider: React.FC<{
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
     organizationNationalId: form?.organizationNationalId ?? '',
-    isPublished: form?.status === 'PUBLISHED',
+    isReadOnly: isReadOnly,
   }
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
 
@@ -130,12 +134,23 @@ export const FormProvider: React.FC<{
     ],
   )
 
+  const user = useUserInfo()
+  const userName = user?.profile?.actor
+    ? user?.profile.actor.name
+    : user?.profile.name
+
   const formUpdate = useCallback(
     (updatedForm?: FormSystemForm) => {
-      return updateFormFn(control, updateForm, updatedForm)
+      return updateFormFn(control, updateForm, updatedForm, userName)
     },
-    [control, updateForm],
+    [control, updateForm, userName],
   )
+
+  useEffect(() => {
+    if (!isReadOnly) {
+      formUpdate()
+    }
+  }, [])
 
   const context: IControlContext = useMemo(
     () => ({

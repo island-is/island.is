@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { CaseAppealState, InstitutionType } from '../../graphql/schema'
+import { AppealCaseState, InstitutionType } from '../../graphql/schema'
 import { CaseNumbers } from '../../routes/CourtOfAppeal/components'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
 import { getAppealActorText } from '../../utils/utils'
@@ -51,7 +51,7 @@ const CaseTitleInfoAndTags: FC = () => {
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
               workingCase.appealCase?.appealState ===
-                CaseAppealState.COMPLETED) ||
+                AppealCaseState.COMPLETED) ||
               user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
               workingCase.appealCase?.appealReceivedByCourtDate && (
                 <Box marginTop={1}>

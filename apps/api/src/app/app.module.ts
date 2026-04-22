@@ -115,7 +115,6 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
@@ -230,12 +229,16 @@ import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-heal
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { GradeClientConfig } from '@island.is/clients/mms/grade'
+import { PrimarySchoolClientConfig } from '@island.is/clients/mms/primary-school'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
-import { VerdictsModule } from '@island.is/api/domains/verdicts'
+import {
+  VerdictsApiModuleConfig,
+  VerdictsModule,
+} from '@island.is/api/domains/verdicts'
 import {
   SecondarySchoolClientConfig,
   SecondarySchoolPublicClientConfig,
@@ -472,7 +475,6 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
@@ -506,6 +508,7 @@ const environment = getConfig
         JudicialSystemSPClientConfig,
         FriggClientConfig,
         GradeClientConfig,
+        PrimarySchoolClientConfig,
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
@@ -514,6 +517,7 @@ const environment = getConfig
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,
+        VerdictsApiModuleConfig,
         SecondarySchoolClientConfig,
         SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,

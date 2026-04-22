@@ -4,15 +4,17 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   Case,
   CaseAppealDecision,
-  CaseAppealState,
   CaseCustodyRestrictions,
-  CivilClaimant,
+  CaseFileCategory,
   Defendant,
   DefendantPlea,
   Gender,
@@ -105,11 +107,11 @@ export const hasSentNotification = (
 }
 
 export const isReopenedCOACase = (
-  appealState?: CaseAppealState | null,
+  appealState?: AppealCaseState | null,
   notifications?: Notification[] | null,
 ): boolean => {
   return (
-    appealState !== CaseAppealState.COMPLETED &&
+    appealState !== AppealCaseState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
       .hasSent
   )
@@ -133,7 +135,7 @@ export const getDefendantPleaText = (
 
 export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
   return (
-    theCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
     (!theCase.appealCase?.appealAssistant ||
       !theCase.appealCase?.appealCaseNumber ||
       !theCase.appealCase?.appealJudge1 ||
@@ -211,10 +213,10 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * 3. Empty object (prosecutor or no match)
  */
 export const getDefenceUserPartyIds = (
-  user?: User,
-  workingCase?: Case,
+  workingCase: Case,
+  user: User | undefined,
 ): { defendantId?: string; civilClaimantId?: string } => {
-  if (!user || !workingCase || !isIndictmentCase(workingCase.type)) {
+  if (!user || !isIndictmentCase(workingCase.type)) {
     return {}
   }
 
@@ -268,8 +270,8 @@ export const getAppealActorText = (workingCase: Case): string => {
   }
 
   const party = getAppealingPartyInfo(
-    workingCase.appealCase?.appealedByNationalId,
     workingCase,
+    workingCase.appealCase?.appealedByNationalId,
   )
 
   return party
@@ -287,10 +289,10 @@ export const getAppealActorText = (workingCase: Case): string => {
  * Returns the role label and name, or undefined if not found.
  */
 export const getAppealingPartyInfo = (
+  workingCase: Case,
   appealedByNationalId?: string | null,
-  workingCase?: Case,
 ): { role: string; name: string } | undefined => {
-  if (!appealedByNationalId || !workingCase) {
+  if (!appealedByNationalId) {
     return undefined
   }
 
@@ -327,6 +329,72 @@ export const getAppealingPartyInfo = (
   }
 
   return undefined
+}
+
+export const isMatchingAppealCaseFile = (
+  workingCase: Case,
+  categories: CaseFileCategory[],
+  file: {
+    category?: CaseFileCategory | null
+    defendantId?: string | null
+    civilClaimantId?: string | null
+  },
+  user: User | undefined,
+): boolean => {
+  if (!file.category) {
+    return false
+  }
+
+  if (!categories.includes(file.category)) {
+    return false
+  }
+
+  if (isProsecutionUser(user)) {
+    return true
+  }
+
+  if (!isDefenceUser(user)) {
+    return false
+  }
+
+  if (isRequestCase(workingCase.type)) {
+    return true
+  }
+
+  if (!isIndictmentCase(workingCase.type)) {
+    return false
+  }
+
+  if (!user?.nationalId) {
+    return false
+  }
+
+  if (file.defendantId && workingCase.defendants) {
+    return workingCase.defendants.some(
+      (defendant) =>
+        defendant.id === file.defendantId &&
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(user.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
+  if (file.civilClaimantId && workingCase.civilClaimants) {
+    return workingCase.civilClaimants.some(
+      (cc) =>
+        cc.id === file.civilClaimantId &&
+        cc.hasSpokesperson &&
+        cc.isSpokespersonConfirmed &&
+        cc.spokespersonNationalId &&
+        normalizeAndFormatNationalId(user.nationalId).includes(
+          cc.spokespersonNationalId,
+        ),
+    )
+  }
+
+  return false
 }
 
 // Use the gender of the single defendant if there is only one,

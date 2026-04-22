@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -29,12 +29,12 @@ const courtOfAppealsRequestCasesAccessWhereOptions = {
   [Op.or]: [
     {
       '$appealCase.appeal_state$': [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
       ],
     },
     {
-      '$appealCase.appeal_state$': CaseAppealState.WITHDRAWN,
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
       '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
   ],
@@ -47,12 +47,12 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
   [Op.or]: [
     {
       '$appealCase.appeal_state$': [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
       ],
     },
     {
-      '$appealCase.appeal_state$': CaseAppealState.WITHDRAWN,
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
       '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
   ],
