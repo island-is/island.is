@@ -79,6 +79,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       PASSKEY_CORE_ALLOWED_ORIGINS: json([
         // Origin for iOS app.
         'https://island.is',
+        // Origin for Android debug app
+        'android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0',
         // Origin for Android test app
         'android:apk-key-hash:wrkMxD98Ii5lxgJdq7heBq_xTq38_s9GKLLgESObnMQ',
         // Origin for Android prod app
