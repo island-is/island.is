@@ -186,6 +186,30 @@ function extractMessageDescriptorsFromField(
       f.tooltip as FormText | undefined,
     ),
   )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(
+      f.message as FormText | FormTextWithLocale | undefined,
+    ),
+  )
+
+  const links = f.links
+  if (Array.isArray(links)) {
+    for (const link of links) {
+      if (link && typeof link === 'object') {
+        const linkRecord = link as Record<string, unknown>
+        descriptors.push(
+          ...extractMessageDescriptorsFromFormText(
+            linkRecord.title as FormText | undefined,
+          ),
+        )
+        descriptors.push(
+          ...extractMessageDescriptorsFromFormText(
+            linkRecord.url as FormText | undefined,
+          ),
+        )
+      }
+    }
+  }
 
   const options = f.options
   if (Array.isArray(options)) {
