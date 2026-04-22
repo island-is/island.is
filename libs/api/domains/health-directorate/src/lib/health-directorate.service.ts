@@ -2,19 +2,21 @@ import { Auth } from '@island.is/auth-nest-tools'
 import {
   CreateEuPatientConsentDto,
   HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   UserVisibleAppointmentStatuses,
   VaccinationDto,
-  organLocale,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
-import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
+import {
+  HealthDirectorateAppointmentInput,
+  HealthDirectorateAppointmentsInput,
+} from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -23,6 +25,7 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  toAppointmentStatusEnum,
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
@@ -36,6 +39,7 @@ import {
 } from './mappers/medicineMapper'
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
+import { AppointmentDetail } from './models/appointmentDetail.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -66,15 +70,15 @@ export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly healthApi: HealthDirectorateHealthService,
-    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
-    const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data: OrganDonorDto | null =
-      await this.organDonationApi.getOrganDonation(auth, lang)
+    const data: OrganDonorDto | null = await this.healthApi.getOrganDonation(
+      auth,
+      locale,
+    )
     if (data === null) {
       return null
     }
@@ -101,8 +105,7 @@ export class HealthDirectorateService {
     auth: Auth,
     locale: Locale,
   ): Promise<Array<Organ>> {
-    const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+    const data = await this.healthApi.getDonationExceptions(auth, locale)
 
     const limitations: Array<Organ> =
       data?.map((item) => {
@@ -123,14 +126,14 @@ export class HealthDirectorateService {
     const filteredList =
       input.organLimitations?.filter((item) => item !== 'other') ?? []
 
-    return await this.organDonationApi.updateOrganDonation(
+    return await this.healthApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,
         exceptions: filteredList,
         exceptionComment: input.comment,
       },
-      locale === 'is' ? organLocale.Is : organLocale.En,
+      locale,
     )
   }
 
@@ -551,60 +554,79 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateAppointmentsInput,
   ): Promise<Appointments | null> {
-    try {
-      const data = await this.healthApi.getAppointments(
-        auth,
-        input.from,
-        input.status
-          ?.map((status) => mapAppointmentStatus(status))
-          .filter(
-            (status): status is UserVisibleAppointmentStatuses =>
-              status !== null,
-          ),
-      )
-      if (!data) {
-        return null
-      }
-
-      // Sort data by startTime before mapping
-      const sortedData = [...data].sort((a, b) => {
-        if (!a.startTime || !b.startTime) return 0
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-      })
-
-      const appointments: Array<Appointment> =
-        sortedData.map((item) => {
-          const data: Appointment = {
-            id: item.id,
-            date: item.startTime?.toISOString(),
-            title: item.description,
-            status: item.status,
-            instruction: item.patientInstruction,
-            duration: item.duration,
-            location: item.location
-              ? {
-                  name: item.location.name,
-                  organization: item.location.organization || '',
-                  address: item.location.address,
-                  directions: item.location.directions || '',
-                  city: item.location.city || '',
-                  postalCode: item.location.postalCode || '',
-                  country: item.location.country || '',
-                  latitude: item.location.latitude || undefined,
-                  longitude: item.location.longitude || undefined,
-                }
-              : undefined,
-            practitioners: item.practitioners || [],
-          }
-          return data
-        }) ?? []
-      return { data: appointments }
-    } catch (error) {
-      this.logger.warn(
-        'Error fetching appointments from Health Directorate API',
-        error,
-      )
+    const data = await this.healthApi.getAppointments(
+      auth,
+      input.from,
+      input.status
+        ?.map((status) => mapAppointmentStatus(status))
+        .filter(isDefined),
+    )
+    if (!data) {
       return null
+    }
+
+    // Sort data by startTime before mapping
+    const sortedData = [...data].sort((a, b) => {
+      if (!a.startTime || !b.startTime) return 0
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+    })
+
+    const appointments: Array<Appointment> = sortedData.map((item) => ({
+      id: item.id,
+      date: item.startTime,
+      title: item.description,
+      status: toAppointmentStatusEnum(item.status),
+      duration: item.duration,
+      location: item.location
+        ? {
+            name: item.location.name,
+            organization: item.location.organization,
+            address: item.location.address,
+            city: item.location.city,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }
+        : undefined,
+      instruction: item.patientInstruction,
+      practitioners: item.practitioners ?? [],
+    }))
+    return { data: appointments }
+  }
+
+  public async getAppointmentById(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<AppointmentDetail | null> {
+    const { id } = input
+    const item = await this.healthApi.getAppointmentById(auth, id)
+    if (!item) {
+      return null
+    }
+
+    return {
+      id: item.id,
+      date: item.startTime,
+      title: item.description,
+      status: toAppointmentStatusEnum(item.status),
+      instruction: item.patientInstruction,
+      duration: item.duration,
+      location: item.location
+        ? {
+            name: item.location.name,
+            organization: item.location.organization,
+            address: item.location.address,
+            directions: item.location.directions,
+            link: item.location.link,
+            city: item.location.city,
+            postalCode: item.location.postalCode,
+            country: item.location.country,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+            phoneNumber: item.location.phoneNumber,
+            openingHoursText: item.location.openingHours?.text,
+          }
+        : undefined,
+      practitioners: item.practitioners ?? [],
     }
   }
 }

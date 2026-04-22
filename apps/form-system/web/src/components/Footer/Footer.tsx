@@ -125,9 +125,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
     if (shouldShowPay) {
       const chargeItems: {
-        code: string
+        performingOrgID: string
+        chargeType: string
+        chargeItemCode: string
+        chargeItemName: string
+        priceAmount: number
         quantity?: number
-        amount?: number
       }[] = []
       const paymentQuantityFields: FormSystemField[] = []
       state.sections?.forEach((section) => {
@@ -165,7 +168,15 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                     quantity = getValue(quantityField, 'number')
                   }
                 }
-                chargeItems.push({ code, quantity, amount })
+                chargeItems.push({
+                  performingOrgID: '6509142520',
+                  chargeType: field.fieldSettings.chargeType || 'default',
+                  chargeItemCode: code,
+                  chargeItemName:
+                    field.fieldSettings.chargeItemName || 'Default Name',
+                  priceAmount: amount || 0,
+                  quantity,
+                })
               }
             })
         })
@@ -206,7 +217,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
-              screen: state.currentScreen.data,
+              screenDto: state.currentScreen.data,
             },
           },
         })
@@ -215,13 +226,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           data?.notifyFormSystemExternalSystem?.screen,
         )
 
+        dispatch({
+          type: 'EXTERNAL_SERVICE_NOTIFICATION',
+          payload: {
+            screen: updatedScreen,
+          },
+        })
         if (updatedScreen?.screenError?.hasError) {
-          dispatch({
-            type: 'EXTERNAL_SERVICE_NOTIFICATION',
-            payload: {
-              screen: updatedScreen,
-            },
-          })
           return
         }
       } catch (error) {

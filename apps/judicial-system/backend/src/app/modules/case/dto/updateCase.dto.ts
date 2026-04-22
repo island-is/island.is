@@ -22,7 +22,6 @@ import type {
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -33,7 +32,6 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
@@ -424,82 +422,6 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly requestDriversLicenseSuspension?: boolean
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly prosecutorStatementDate?: Date
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly defendantStatementDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly appealCaseNumber?: string
-
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly appealAssistantId?: string
-
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge1Id?: string
-
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge2Id?: string
-
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge3Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealConclusion?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealRulingModifiedHistory?: string
-
-  @IsOptional()
-  @IsEnum(CaseAppealRulingDecision)
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly appealValidToDate?: Date
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isAppealCustodyIsolation?: boolean
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly appealIsolationToDate?: Date
-
-  @IsOptional()
-  @IsArray()
-  @IsEnum(UserRole, { each: true })
-  @ApiPropertyOptional({ enum: UserRole, isArray: true })
-  readonly requestAppealRulingNotToBePublished?: UserRole[]
 
   @IsOptional()
   @IsString()

@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 
 interface ReplaceUnassignedOptions {
@@ -63,6 +64,170 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error replacing unassigned police case number rows for case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * Police case numbers that are not assigned to any defendant on the case need to move to the new case.
+   */
+  async findUnassignedPoliceCaseNumbersForSplit(
+    caseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<string[]> {
+    const rows = await this.model.findAll({
+      where: { caseId },
+      attributes: ['defendantId', 'policeCaseNumber'],
+      transaction: options.transaction,
+    })
+
+    const normalize = (policeCaseNumber: string) => policeCaseNumber.trim()
+
+    const defendantNumbers = new Set(
+      rows
+        .filter((row) => row.defendantId === defendantId)
+        .map((row) => normalize(row.policeCaseNumber))
+        .filter((policeCaseNumber) => policeCaseNumber.length > 0),
+    )
+
+    const unassigned = rows
+      .filter((row) => row.defendantId == null)
+      .map((row) => normalize(row.policeCaseNumber))
+      .filter(
+        (policeCaseNumber) =>
+          policeCaseNumber.length > 0 &&
+          !defendantNumbers.has(policeCaseNumber),
+      )
+
+    return unassigned
+      .sort((a, b) => a.localeCompare(b))
+      .filter((n, i) => i === 0 || n !== unassigned[i - 1])
+  }
+
+  async findDistinctPoliceCaseNumbersByCaseIds(
+    caseIds: string[],
+    options?: { transaction?: Transaction },
+  ): Promise<Map<string, string[]>> {
+    const result = new Map<string, string[]>()
+    for (const id of caseIds) {
+      result.set(id, [])
+    }
+
+    if (caseIds.length === 0) {
+      return result
+    }
+
+    const rows = await this.model.findAll({
+      where: { caseId: caseIds },
+      attributes: ['caseId', 'policeCaseNumber'],
+      transaction: options?.transaction,
+    })
+
+    const byCase = new Map<string, Set<string>>()
+    for (const id of caseIds) {
+      byCase.set(id, new Set())
+    }
+
+    for (const row of rows) {
+      byCase.get(row.caseId)?.add(row.policeCaseNumber)
+    }
+
+    for (const [caseId, set] of byCase) {
+      result.set(
+        caseId,
+        [...set].sort((a, b) => a.localeCompare(b)),
+      )
+    }
+
+    return result
+  }
+
+  async resolvePoliceCaseNumbersForCases(
+    cases: Case[],
+    options?: { transaction?: Transaction },
+  ): Promise<void> {
+    if (cases.length === 0) {
+      return
+    }
+
+    try {
+      this.logger.debug(
+        `Resolving police case numbers from junction for ${cases.length} case(s)`,
+      )
+
+      const map = await this.findDistinctPoliceCaseNumbersByCaseIds(
+        cases.map((c) => c.id),
+        options,
+      )
+
+      for (const c of cases) {
+        const fromJunction = map.get(c.id) ?? []
+        c.setDataValue('policeCaseNumbers', fromJunction)
+      }
+    } catch (error) {
+      this.logger.error(
+        'Error resolving police case numbers from junction for cases',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * Assigns police case numbers to defendants by inserting
+   * (case_id, defendant_id, police_case_number) rows, skipping duplicates
+   * via the partial unique index, then removes redundant unassigned rows
+   * for the same police case numbers on this case.
+   */
+  async assignDefendantPoliceCaseNumbers(
+    caseId: string,
+    links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
+  ): Promise<void> {
+    if (links.length === 0) {
+      return
+    }
+
+    const sequelize = this.model.sequelize
+    if (!sequelize) {
+      throw new Error('Sequelize instance unavailable')
+    }
+
+    try {
+      await sequelize.transaction(async (transaction) => {
+        await this.model.bulkCreate(
+          links.map(({ defendantId, policeCaseNumber }) => ({
+            caseId,
+            defendantId,
+            policeCaseNumber,
+          })),
+          { transaction, ignoreDuplicates: true },
+        )
+
+        const policeCaseNumbers = [
+          ...new Set(links.map((l) => l.policeCaseNumber)),
+        ]
+
+        await this.model.destroy({
+          where: {
+            caseId,
+            defendantId: { [Op.is]: null },
+            policeCaseNumber: { [Op.in]: policeCaseNumbers },
+          },
+          transaction,
+        })
+      })
+
+      this.logger.debug(
+        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error assigning defendant-linked police case number rows for case ${caseId}`,
         { error },
       )
 

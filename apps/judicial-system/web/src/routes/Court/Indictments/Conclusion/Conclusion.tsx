@@ -1,5 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import isValid from 'date-fns/isValid'
+import parse from 'date-fns/parse'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
@@ -233,13 +235,11 @@ const Conclusion: FC = () => {
           }
           break
         case IndictmentDecision.COMPLETING_FOR_SOME: {
-          const parsedConclusionDate = conclusionDate
-            ? new Date(
-                Number(conclusionDate.split('.')[2]),
-                Number(conclusionDate.split('.')[1]) - 1,
-                Number(conclusionDate.split('.')[0]),
-              )
-            : undefined
+          const parsed = conclusionDate
+            ? parse(conclusionDate, 'dd.MM.yyyy', new Date())
+            : null
+          const parsedConclusionDate =
+            parsed && isValid(parsed) ? parsed : undefined
 
           const remainingDefendants =
             workingCase.defendants?.filter(
@@ -589,6 +589,7 @@ const Conclusion: FC = () => {
             <BlueBox className={grid({ gap: 2 })}>
               {radioButtons.map(({ id, value, label }) => (
                 <RadioButton
+                  key={id}
                   id={id}
                   name={id}
                   checked={selectedAction === value}
@@ -955,7 +956,6 @@ const Conclusion: FC = () => {
                             setWorkingCase,
                           )
                         }
-                        disabled={workingCase.state === CaseState.CORRECTING}
                         backgroundColor="white"
                         large
                         filled
@@ -975,7 +975,6 @@ const Conclusion: FC = () => {
                           setWorkingCase,
                         )
                       }
-                      disabled={workingCase.state === CaseState.CORRECTING}
                       backgroundColor="white"
                       large
                       filled
@@ -1006,11 +1005,12 @@ const Conclusion: FC = () => {
               selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
               selectedAction === IndictmentDecision.SPLITTING
             ) {
-              setModalVisible(
-                selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
-                  ? 'COMPLETING_FOR_SOME'
-                  : 'SPLIT',
-              )
+              if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
+                setConclusionDate(formatDate(new Date()))
+                setModalVisible('COMPLETING_FOR_SOME')
+              } else {
+                setModalVisible('SPLIT')
+              }
               return
             }
 
@@ -1148,7 +1148,7 @@ const Conclusion: FC = () => {
               <InputDate
                 onChange={(date) => setConclusionDate(date)}
                 onBlur={(date) => setConclusionDate(date)}
-                defaultValue={formatDate(new Date())}
+                value={conclusionDate}
               />
             </Box>
           </Modal>
@@ -1178,7 +1178,7 @@ const Conclusion: FC = () => {
                     completingForSomeSelections[defendant.id] !== undefined,
                 )
                 .map((defendant) => (
-                  <Text variant="h4" as="h4">
+                  <Text key={defendant.id} variant="h4" as="h4">
                     {`${defendant.name}: `}
                     <Text as="span">
                       {

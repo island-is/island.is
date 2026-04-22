@@ -186,36 +186,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealedByRole
     appealedDate
     appealDeadline
-    appealCase {
-      appealState
-      appealCaseNumber
-      appealReceivedByCourtDate
-      prosecutorStatementDate
-      defendantStatementDate
-      appealAssistant {
-        id
-        name
-      }
-      appealJudge1 {
-        id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
-      }
-      appealRulingDecision
-      appealConclusion
-      appealRulingModifiedHistory
-      requestAppealRulingNotToBePublished
-      appealValidToDate
-      isAppealCustodyIsolation
-      appealIsolationToDate
-    }
     prosecutorsOffice {
       id
       name
