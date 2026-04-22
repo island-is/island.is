@@ -83,30 +83,50 @@ export const CivilClaimantFields = ({
     updateCivilClaimant({ name, civilClaimantId, caseId })
   }
 
-  const handleCivilClaimantNationalIdBlur = (
-    nationalId: string,
-    noNationalId?: boolean | null,
-    civilClaimantId?: string | null,
+  const applyNationalIdLookupFromInput = (
+    value: string,
+    civilClaimantId: string,
   ) => {
+    const cleanNationalId = value ? value.replace('-', '') : ''
+    setLookupNationalId(cleanNationalId || null)
+
+    if (cleanNationalId.length === 10) {
+      setCivilClaimantNationalIdUpdate({
+        nationalId: cleanNationalId || null,
+        civilClaimantId,
+      })
+    }
+  }
+
+  const handleInputNationalIdChange = (value: string) => {
+    const civilClaimantId = civilClaimant.id
     if (!civilClaimantId) {
       return
     }
 
-    if (noNationalId) {
-      handleSetAndSendCivilClaimantToServer({
+    if (civilClaimant.noNationalId) {
+      handleUpdateCivilClaimantState({
         civilClaimantId,
-        nationalId: nationalId || null,
+        nationalId: value || null,
       })
     } else {
-      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
-      setLookupNationalId(cleanNationalId || null)
+      applyNationalIdLookupFromInput(value, civilClaimantId)
+    }
+  }
 
-      if (cleanNationalId.length === 10) {
-        setCivilClaimantNationalIdUpdate({
-          nationalId: cleanNationalId || null,
-          civilClaimantId,
-        })
-      }
+  const handleInputNationalIdBlur = (value: string) => {
+    const civilClaimantId = civilClaimant.id
+    if (!civilClaimantId) {
+      return
+    }
+
+    if (civilClaimant.noNationalId) {
+      handleSetAndSendCivilClaimantToServer({
+        civilClaimantId,
+        nationalId: value || null,
+      })
+    } else {
+      applyNationalIdLookupFromInput(value, civilClaimantId)
     }
   }
 
@@ -178,20 +198,8 @@ export const CivilClaimantFields = ({
           isDateOfBirth={Boolean(civilClaimant.noNationalId)}
           value={civilClaimant.nationalId ?? undefined}
           required={Boolean(!civilClaimant.noNationalId)}
-          onChange={(val) => {
-            handleCivilClaimantNationalIdBlur(
-              val,
-              civilClaimant.noNationalId,
-              civilClaimant.id,
-            )
-          }}
-          onBlur={(val) =>
-            handleCivilClaimantNationalIdBlur(
-              val,
-              civilClaimant.noNationalId,
-              civilClaimant.id,
-            )
-          }
+          onChange={handleInputNationalIdChange}
+          onBlur={handleInputNationalIdBlur}
         />
         {notFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
