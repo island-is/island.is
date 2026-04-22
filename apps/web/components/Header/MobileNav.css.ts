@@ -197,3 +197,29 @@ export const searchWrapper = style({
 export const seeAllRow = style({
   marginTop: 24,
 })
+
+// Sibling of the panel (not inside it — the panel's opacity fade would
+// take the mask along with it). Fixed to the top-right strip where the
+// panel sits and covers the ~34px of header shadow that would otherwise
+// bleed through the translucent panel during open/close. z-index lands
+// between the header shadow (below) and the panel (above) so the panel
+// fully covers the mask when opaque.
+export const topMask = style({
+  position: 'fixed',
+  top: 80,
+  right: 0,
+  width: 305,
+  maxWidth: 'calc(100vw - 24px)',
+  // Header box-shadow offset (4px) + blur (30px) ≈ 34px visible extent.
+  height: 34,
+  background: theme.color.white,
+  // DEBUG: remove once positioning is verified.
+  border: '2px solid red',
+  pointerEvents: 'none',
+  visibility: 'hidden',
+  zIndex: 19,
+})
+
+export const topMaskVisible = style({
+  visibility: 'visible',
+})

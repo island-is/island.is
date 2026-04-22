@@ -5,7 +5,6 @@ import { Button, Icon, Link } from '@island.is/island-ui/core'
 import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
 import { useI18n } from '@island.is/web/i18n'
 
-import * as styles from './DesktopNav.css'
 import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
@@ -13,6 +12,7 @@ import {
   type HeaderNavKey,
 } from './headerNavData'
 import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
+import * as styles from './DesktopNav.css'
 
 interface DesktopNavProps {
   onOpenChange?: (isOpen: boolean) => void
@@ -54,10 +54,10 @@ const focusNextTabbableAfter = (container: HTMLElement) => {
     if (container.contains(el)) continue
     if (
       !(
-        container.compareDocumentPosition(el) &
-        Node.DOCUMENT_POSITION_FOLLOWING
+        container.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING
       )
-    ) continue
+    )
+      continue
     // offsetParent is null for display:none elements (or inside one). Those
     // match the selector but can't actually receive focus, so skip them.
     if (el.offsetParent === null) continue
@@ -132,7 +132,11 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
     }
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node | null
-      if (target && containerRef.current && !containerRef.current.contains(target)) {
+      if (
+        target &&
+        containerRef.current &&
+        !containerRef.current.contains(target)
+      ) {
         close()
       }
     }
@@ -228,9 +232,7 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
     const openTrigger = tabButtonRefs.current.get(openKey)
     const openIdx = HEADER_NAV_KEYS.indexOf(openKey)
     const nextKey = HEADER_NAV_KEYS[openIdx + 1]
-    const nextTrigger = nextKey
-      ? tabButtonRefs.current.get(nextKey)
-      : undefined
+    const nextTrigger = nextKey ? tabButtonRefs.current.get(nextKey) : undefined
     const target = event.target as HTMLElement
 
     // Forward Tab on the open trigger routes INTO the panel's first link.
@@ -300,7 +302,9 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
               if (node) tabButtonRefs.current.set(key, node)
               else tabButtonRefs.current.delete(key)
             }}
-            className={`${styles.tabButton} ${isOpen ? styles.tabButtonActive : ''}`}
+            className={`${styles.tabButton} ${
+              isOpen ? styles.tabButtonActive : ''
+            }`}
             // Disclosure pattern: aria-expanded conveys the open state and
             // aria-controls points to the (always-mounted) panel for this
             // specific section. We do NOT use aria-haspopup because the
@@ -314,7 +318,9 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
             {data.label}
             <span
               aria-hidden="true"
-              className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
+              className={`${styles.chevron} ${
+                isOpen ? styles.chevronOpen : ''
+              }`}
             >
               <Icon icon="chevronDown" size="small" />
             </span>
@@ -353,7 +359,9 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
             role="region"
             aria-labelledby={buttonIdFor(key)}
             aria-hidden={!isOpen}
-            className={`${styles.dropdown} ${isOpen ? styles.dropdownOpen : ''}`}
+            className={`${styles.dropdown} ${
+              isOpen ? styles.dropdownOpen : ''
+            }`}
             style={{
               ...(fullWidthOffsets
                 ? {
