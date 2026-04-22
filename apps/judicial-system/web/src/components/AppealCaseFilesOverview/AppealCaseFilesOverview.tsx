@@ -194,8 +194,8 @@ const AppealCaseFilesOverview = () => {
               >
                 <Box
                   display="flex"
-                  alignItems={['flexEnd', 'flexEnd', 'center']}
-                  justifyContent={['spaceBetween', 'spaceBetween', 'center']}
+                  alignItems="center"
+                  justifyContent="flexEnd"
                 >
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
