@@ -1,3 +1,5 @@
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
 import {
   Injectable,
@@ -15,6 +17,7 @@ import {
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { Form } from '../forms/models/form.model'
+import { ListItem } from '../listItems/models/listItem.model'
 import { Screen } from '../screens/models/screen.model'
 import { Section } from '../sections/models/section.model'
 import { CreateFieldDto } from './models/dto/createField.dto'
@@ -22,8 +25,6 @@ import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
 import { Field } from './models/field.model'
-import { User } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class FieldsService {
@@ -36,6 +37,8 @@ export class FieldsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(ListItem)
+    private readonly listItemModel: typeof ListItem,
   ) {}
 
   async findById(id: string): Promise<Field> {
@@ -113,6 +116,7 @@ export class FieldsService {
 
     const field = await this.findById(id)
     const currentFieldType = field.fieldType
+    const newFieldType = updateFieldDto.fieldType
 
     if (
       currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
@@ -153,6 +157,16 @@ export class FieldsService {
       ) {
         listItemIds = field.list?.map((item) => item.id) || []
         // TODO: listItems should be deleted from the database as well
+        if (
+          newFieldType !== FieldTypesEnum.DROPDOWN_LIST &&
+          newFieldType !== FieldTypesEnum.RADIO_BUTTONS
+        ) {
+          await this.listItemModel.destroy({
+            where: {
+              fieldId: field.id,
+            },
+          })
+        }
       }
 
       const { dependencies } = form

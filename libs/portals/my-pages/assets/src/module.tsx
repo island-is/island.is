@@ -92,6 +92,7 @@ export const assetsModule: PortalModule = {
           ApiScope.assets,
           ApiScope.workMachines,
           ApiScope.vehicles,
+          ApiScope.ships,
           ApiScope.internal,
           ApiScope.internalProcuring,
         ].some((scope) => userInfo.scopes.includes(scope)),
@@ -113,7 +114,7 @@ export const assetsModule: PortalModule = {
         name: m.myShips,
         path: AssetsPaths.AssetsShips,
         key: USER_SHIPS_FLAG,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
+        enabled: userInfo.scopes.includes(ApiScope.ships),
         element: <ShipsOverview />,
       },
       {

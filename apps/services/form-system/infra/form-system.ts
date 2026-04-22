@@ -111,6 +111,7 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces(
+      'services-payments',
       'islandis',
       'nginx-ingress-external',
       'nginx-ingress-internal',
