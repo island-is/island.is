@@ -84,9 +84,8 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
     }
 
     setSelectedId(
-      hashString
-        ? dropdownOptions.find((x) => x.slug === hashString)?.value ?? ''
-        : dropdownOptions[0].value,
+      dropdownOptions.find((x) => x.slug === hashString)?.value ??
+        dropdownOptions[0].value,
     )
   }, [router, dropdownOptions])
 
@@ -116,13 +115,15 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                     items={[
                       {
                         title: 'Ísland.is',
-                        href: linkResolver('homepage').href,
+                        href: linkResolver('homepage', [], activeLocale).href,
                       },
                       {
                         title: organizationPage?.title ?? '',
-                        href: linkResolver('organizationpage', [
-                          organizationPage?.slug ?? '',
-                        ]).href,
+                        href: linkResolver(
+                          'organizationpage',
+                          [organizationPage?.slug ?? ''],
+                          activeLocale,
+                        ).href,
                       },
                     ]}
                   />
@@ -308,7 +309,7 @@ AnnualReports.getProps = async ({
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  if (!getAnnualReports) {
+  if (!getAnnualReports?.length) {
     throw new CustomNextError(404, 'Annual Reports not found')
   }
 
