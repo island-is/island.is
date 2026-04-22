@@ -19,5 +19,5 @@ export class NotificationInput {
   command!: string
 
   @Field(() => ScreenInput, { nullable: true })
-  screen?: ScreenInput
+  screenDto?: ScreenInput
 }
