@@ -18,6 +18,7 @@ import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
   HEADER_NAV_MOCK_DATA,
+  type HeaderNavData,
   type HeaderNavKey,
 } from './headerNavData'
 import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
@@ -54,6 +55,10 @@ export interface MobileNavPanelHandle {
 }
 
 interface MobileNavPanelProps {
+  // Contentful-driven nav data. Falls back to HEADER_NAV_MOCK_DATA when
+  // omitted so local dev and the initial render (before the query
+  // resolves) still show a populated panel.
+  data?: HeaderNavData
   organizationSearchFilter?: string
   searchPlaceholder?: string
   // Fires whenever the panel's open state changes — used by Header to
@@ -71,9 +76,16 @@ export const MobileNavPanel = forwardRef<
   MobileNavPanelProps
 >(
   (
-    { organizationSearchFilter, searchPlaceholder, onOpenChange, triggerRefs },
+    {
+      data,
+      organizationSearchFilter,
+      searchPlaceholder,
+      onOpenChange,
+      triggerRefs,
+    },
     ref,
   ) => {
+    const navData = data ?? HEADER_NAV_MOCK_DATA
     const { activeLocale, t } = useI18n()
     const router = useRouter()
     const panelRef = useRef<HTMLDivElement>(null)
@@ -206,7 +218,7 @@ export const MobileNavPanel = forwardRef<
     }, [router.events, close])
 
     const drilldownSection = drilldownKey
-      ? HEADER_NAV_MOCK_DATA[drilldownKey]
+      ? navData[drilldownKey]
       : null
 
     const menuLabel = activeLocale === 'is' ? 'Valmynd' : 'Menu'
@@ -281,6 +293,16 @@ export const MobileNavPanel = forwardRef<
                         }
                         className={styles.drillLink}
                       >
+                        {item.logoUrl && (
+                          <img
+                            aria-hidden="true"
+                            alt=""
+                            src={item.logoUrl}
+                            width={20}
+                            height={20}
+                            className={styles.drillLinkLogo}
+                          />
+                        )}
                         {item.title}
                       </Link>
                     </li>
@@ -333,7 +355,7 @@ export const MobileNavPanel = forwardRef<
           ) : (
             <ul className={styles.panelList}>
               {HEADER_NAV_KEYS.map((key) => {
-                const section = HEADER_NAV_MOCK_DATA[key]
+                const section = navData[key]
                 return (
                   <li key={key}>
                     <button

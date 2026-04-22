@@ -168,8 +168,20 @@ export const drillRowLabel = style({
   minWidth: 0,
 })
 
+// Org logo shown next to a drilldown link for organizationPage items.
+// Mirrors DesktopNav's dropdownLinkLogo: fixed 20x20 with contain scaling
+// and no shrinking when names wrap.
+export const drillLinkLogo = style({
+  width: 20,
+  height: 20,
+  objectFit: 'contain',
+  flexShrink: 0,
+})
+
 export const drillLink = style({
-  display: 'block',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 8,
   fontFamily: theme.typography.fontFamily,
   fontSize: 18,
   fontWeight: theme.typography.light,

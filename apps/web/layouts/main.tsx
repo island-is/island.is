@@ -40,10 +40,12 @@ import {
   GetOrganizationPageQuery,
   GetSingleArticleQuery,
   Menu,
+  Query,
   QueryGetAlertBannerArgs,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationsArgs,
 } from '../graphql/schema'
 import { useNamespace } from '../hooks'
 import {
@@ -53,9 +55,12 @@ import {
   useLinkResolver,
 } from '../hooks/useLinkResolver'
 import { getLocaleFromPath, useI18n } from '../i18n'
+import { buildHeaderNavData } from '../components/Header/buildHeaderNavData'
+import type { HeaderNavData } from '../components/Header/headerNavData'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_ORGANIZATIONS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
 import { extractOrganizationSlugFromPathname } from '../utils/organization'
 import {
@@ -119,6 +124,7 @@ export interface LayoutProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
   megaMenuData
+  headerNavData?: HeaderNavData | null
   customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
   children?: React.ReactNode
 }
@@ -158,6 +164,7 @@ const Layout: Screen<LayoutProps> = ({
   respOrigin,
   children,
   megaMenuData,
+  headerNavData,
   customTopLoginButtonItem,
   languageToggleHrefOverride,
 }) => {
@@ -406,6 +413,7 @@ const Layout: Screen<LayoutProps> = ({
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
+                headerNavData={headerNavData}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
                 searchPlaceholder={
@@ -534,8 +542,15 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
-  const [categories, alertBanner, namespace, megaMenuData, footerMenuData] =
-    await Promise.all([
+  const [
+    categories,
+    alertBanner,
+    namespace,
+    megaMenuData,
+    footerMenuData,
+    headerNavMenuData,
+    headerNavOrganizations,
+  ] = await Promise.all([
       apolloClient
         .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
           query: GET_CATEGORIES_QUERY,
@@ -586,6 +601,29 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
           },
         })
         .then((res) => res.data.getGroupedMenu),
+      // Grouped menu that powers the new DesktopNav / MobileNav sections
+      // (Stofnanir / Þjónustuflokkar / Lífsviðburðir). Editor-managed in
+      // Contentful — the 3 child menus must stay in that order.
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '1SCm5KnfQ3DrWT600MTt82', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+      // Organizations — joined client-side to attach a logo URL to each
+      // organizationPage link in the header nav. `MenuLink.link` resolves
+      // to `ReferenceLink { slug, type }`, not to the page union, so the
+      // logo can't be fetched inline via the grouped-menu query.
+      apolloClient
+        .query<Query, QueryGetOrganizationsArgs>({
+          query: GET_ORGANIZATIONS_QUERY,
+          variables: {
+            input: { lang: locale as ContentLanguage },
+          },
+        })
+        .then((res) => res.data.getOrganizations?.items ?? []),
     ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
@@ -673,6 +711,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     return menus
   }, initialFooterMenu)
 
+  const headerNavData = buildHeaderNavData(
+    headerNavMenuData,
+    headerNavOrganizations,
+    lang as Locale,
+  )
+
   return {
     categories,
     alertBannerContent: {
@@ -685,6 +729,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     ...footerMenu,
     namespace,
     respOrigin,
+    headerNavData,
     megaMenuData: {
       asideTopLinks: formatMegaMenuLinks(
         lang as Locale,

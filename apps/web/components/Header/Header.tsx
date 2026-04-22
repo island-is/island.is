@@ -29,6 +29,7 @@ import { LayoutProps } from '@island.is/web/layouts/main'
 import { LanguageToggler } from '../LanguageToggler'
 import { DesktopNav } from './DesktopNav'
 import { DesktopSearchPanel } from './DesktopSearchPanel'
+import type { HeaderNavData } from './headerNavData'
 import { LoginButton } from './LoginButton'
 import {
   MobileNavMenuButton,
@@ -45,6 +46,7 @@ interface HeaderProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   megaMenuData
+  headerNavData?: HeaderNavData | null
   organizationSearchFilter?: string
   searchPlaceholder?: string
   customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
@@ -61,6 +63,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   // here — the old fullscreen Menu has been replaced by DesktopNav + MobileNav.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   megaMenuData: _megaMenuData,
+  headerNavData,
   languageToggleQueryParams,
   organizationSearchFilter,
   searchPlaceholder,
@@ -149,7 +152,10 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                   <Column width="content">
                     <Hidden below="lg">
                       <Box marginLeft={3}>
-                        <DesktopNav onOpenChange={handleDesktopNavOpenChange} />
+                        <DesktopNav
+                          data={headerNavData ?? undefined}
+                          onOpenChange={handleDesktopNavOpenChange}
+                        />
                       </Box>
                     </Hidden>
                   </Column>
@@ -216,6 +222,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
       <Hidden above="md">
         <MobileNavPanel
           ref={mobileNavRef}
+          data={headerNavData ?? undefined}
           organizationSearchFilter={organizationSearchFilter}
           searchPlaceholder={searchPlaceholder}
           onOpenChange={handleMobileNavOpenChange}

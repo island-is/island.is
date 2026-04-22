@@ -144,6 +144,9 @@ export const dropdownList = style({
 })
 
 export const dropdownLink = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 8,
   fontFamily: theme.typography.fontFamily,
   fontSize: 18,
   fontWeight: theme.typography.light,
@@ -165,6 +168,17 @@ export const dropdownLink = style({
 
 export const seeAllRow = style({
   marginTop: 24,
+})
+
+// Org logo shown next to a dropdown link for organizationPage items.
+// `object-fit: contain` handles logos of varying aspect ratios within the
+// fixed 20x20 box; `flex-shrink: 0` stops the flex row from squeezing it
+// when long org names wrap.
+export const dropdownLinkLogo = style({
+  width: 20,
+  height: 20,
+  objectFit: 'contain',
+  flexShrink: 0,
 })
 
 // Sibling of the dropdown (not inside it — opacity cascades to descendants).

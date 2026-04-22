@@ -6,6 +6,10 @@ export type HeaderNavKey = 'organizations' | 'categories' | 'lifeEvents'
 export interface HeaderNavItem {
   title: string
   href: string
+  // Populated by the Contentful → header-nav mapper for organizationPage
+  // links — surfaces a 60x60 org logo next to the item in the Stofnanir
+  // section. Undefined for non-org links and for the mock data.
+  logoUrl?: string
 }
 
 export interface HeaderNavSection {

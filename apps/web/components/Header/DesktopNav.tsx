@@ -9,12 +9,17 @@ import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
   HEADER_NAV_MOCK_DATA,
+  type HeaderNavData,
   type HeaderNavKey,
 } from './headerNavData'
 import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
 import * as styles from './DesktopNav.css'
 
 interface DesktopNavProps {
+  // Contentful-driven nav data. Falls back to HEADER_NAV_MOCK_DATA when
+  // omitted — keeps local dev and the initial render (before the query
+  // resolves) populated.
+  data?: HeaderNavData
   onOpenChange?: (isOpen: boolean) => void
 }
 
@@ -68,9 +73,13 @@ const focusNextTabbableAfter = (container: HTMLElement) => {
   }
 }
 
-export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
+export const DesktopNav = ({
+  data,
+  onOpenChange,
+}: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
   const router = useRouter()
+  const navData = data ?? HEADER_NAV_MOCK_DATA
   const [openKey, setOpenKey] = useState<DropdownKey | null>(null)
   const containerRef = useRef<HTMLElement>(null)
   // One panel per section, all rendered on mount so every link is in the
@@ -291,7 +300,7 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
       onKeyDown={handleNavKeyDown}
     >
       {HEADER_NAV_KEYS.map((key) => {
-        const data = HEADER_NAV_MOCK_DATA[key]
+        const data = navData[key]
         const isOpen = openKey === key
         return (
           <button
@@ -346,7 +355,7 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
       />
 
       {HEADER_NAV_KEYS.map((key) => {
-        const data = HEADER_NAV_MOCK_DATA[key]
+        const data = navData[key]
         const isOpen = openKey === key
         return (
           <div
@@ -386,6 +395,16 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
                     }
                     className={styles.dropdownLink}
                   >
+                    {item.logoUrl && (
+                      <img
+                        aria-hidden="true"
+                        alt=""
+                        src={item.logoUrl}
+                        width={20}
+                        height={20}
+                        className={styles.dropdownLinkLogo}
+                      />
+                    )}
                     {item.title}
                   </Link>
                 </li>
