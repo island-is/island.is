@@ -89,6 +89,7 @@ const absoluteUrl = (req, setLocalhost) => {
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
+  organizationSearchFilter?: string
   wrapContent?: boolean
   showHeader?: boolean
   headerColorScheme?: ColorSchemes
@@ -135,6 +136,7 @@ if (publicRuntimeConfig.ddLogsClientToken && typeof window !== 'undefined') {
 // @ts-expect-error make web strict
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
+  organizationSearchFilter: organizationSearchFilterOverride,
   wrapContent = true,
   showHeader = true,
   headerColorScheme,
@@ -248,10 +250,9 @@ const Layout: Screen<LayoutProps> = ({
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
-  const organizationSearchFilter = extractOrganizationSlugFromPathname(
-    router.asPath,
-    activeLocale,
-  )
+  const organizationSearchFilter =
+    organizationSearchFilterOverride ??
+    extractOrganizationSlugFromPathname(router.asPath, activeLocale)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>

@@ -31,6 +31,7 @@ const IntellectualPropertiesOverview = () => {
       <ActionCard
         text={`${ipId}${description ? ' - ' + description : ''}`}
         heading={heading ?? ''}
+        headingVariant="h4"
         cta={{
           label: formatMessage(m.view),
           variant: 'text',
