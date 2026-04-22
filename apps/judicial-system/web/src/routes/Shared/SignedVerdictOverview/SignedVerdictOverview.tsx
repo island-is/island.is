@@ -24,6 +24,7 @@ import {
   CaseDates,
   CaseFilesAccordionItem,
   CaseTitleInfoAndTags,
+  ChangeProsecutorModal,
   CommentsAccordionItem,
   Conclusion,
   conclusion,
@@ -152,6 +153,7 @@ type availableModals =
   | 'NoModal'
   | 'SigningConfirmationModal'
   | 'CourtRecordSigningConfirmationModal'
+  | 'ChangeProsecutor'
 
 export const SignedVerdictOverview: FC = () => {
   const {
@@ -473,7 +475,12 @@ export const SignedVerdictOverview: FC = () => {
                     courtCaseNumber,
                     prosecutorsOffice,
                     court,
-                    prosecutor(workingCase.type),
+                    prosecutor(
+                      workingCase.type,
+                      isProsecutionUser(user)
+                        ? () => setModalVisible('ChangeProsecutor')
+                        : undefined,
+                    ),
                     judge,
                     ...(isInvestigationCase(workingCase.type)
                       ? [caseType]
@@ -646,6 +653,12 @@ export const SignedVerdictOverview: FC = () => {
               navigateOnClose={false}
             />
           )}
+        {modalVisible === 'ChangeProsecutor' && (
+          <ChangeProsecutorModal
+            onClose={() => setModalVisible('NoModal')}
+            caseId={workingCase.id}
+          />
+        )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
         )}
