@@ -72,38 +72,39 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
   const router = useRouter()
   const [openKey, setOpenKey] = useState<DropdownKey | null>(null)
-  // Sticks to the last non-null openKey so the dropdown's CONTENT stays
-  // rendered during the fade-out transition. Without this, closing the
-  // dropdown would unmount the title/list instantly while the container
-  // was still fading to opacity 0.
-  const [displayKey, setDisplayKey] = useState<DropdownKey | null>(null)
   const containerRef = useRef<HTMLElement>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  // One panel per section, all rendered on mount so every link is in the
+  // initial DOM for crawlers (SEO) and screen reader navigation. Only the
+  // open panel has opacity:1/visibility:visible; closed panels are
+  // non-interactive (visibility:hidden removes them from tab order too).
+  const panelRefs = useRef<Map<DropdownKey, HTMLDivElement>>(new Map())
   // Keyed map of tab-button nodes so Escape/outside-click handlers can
   // restore focus to the trigger that opened the dropdown, per APG.
   const tabButtonRefs = useRef<Map<DropdownKey, HTMLButtonElement>>(new Map())
+  // See-all Button nodes keyed by panel — each panel has its own Link+Button
+  // pair, and the onFocus handler forwards focus to the Button that belongs
+  // to that panel.
+  const seeAllButtonRefs = useRef<Map<DropdownKey, HTMLElement>>(new Map())
   const reactId = useId()
   const [fullWidthOffsets, setFullWidthOffsets] = useState<{
     left: number
     right: number
   } | null>(null)
-  // Tracks whether the dropdown is currently in its open/close opacity fade.
-  // The top-mask div is only visible during this window so it can cover the
-  // header shadow that would otherwise bleed through the translucent dropdown
-  // top. No-op on open↔open key swaps (e.g. Stofnanir → Þjónustuflokkar)
-  // because the dropdown stays at opacity 1 for those.
+  // Tracks whether any panel is currently in an opacity fade. The top-mask
+  // div is only visible during this window so it can cover the header
+  // shadow that would otherwise bleed through the translucent panel top.
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const prevIsOpenRef = useRef(false)
-  // Captures the "see all" Button DOM node so we can forward keyboard focus
-  // from the wrapping Link to the Button — the Button has a much nicer
-  // focus-visible state (mint fill + underline) that only triggers when the
-  // Button itself is focused.
-  const seeAllButtonRef = useRef<HTMLElement | null>(null)
+  const prevOpenKeyRef = useRef<DropdownKey | null>(null)
+  // When switching from one open panel to another (X→Y), we suppress the
+  // opacity transition so the swap is instant — otherwise both panels sit
+  // at ~0.5 opacity mid-crossfade and ghost through each other as
+  // "flicker". Normal open/close fades are unaffected.
+  const [suppressTransition, setSuppressTransition] = useState(false)
+  const suppressFrameRef = useRef<number | null>(null)
 
   useEffect(() => {
-    const isOpen = openKey !== null
-    if (prevIsOpenRef.current === isOpen) return
-    prevIsOpenRef.current = isOpen
+    if (prevOpenKeyRef.current === openKey) return
+    prevOpenKeyRef.current = openKey
     setIsTransitioning(true)
     const timer = setTimeout(
       () => setIsTransitioning(false),
@@ -115,10 +116,6 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   useEffect(() => {
     onOpenChange?.(openKey !== null)
   }, [openKey, onOpenChange])
-
-  useEffect(() => {
-    if (openKey) setDisplayKey(openKey)
-  }, [openKey])
 
   const close = useCallback(() => setOpenKey(null), [])
 
@@ -156,10 +153,9 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   }, [router.events, close])
 
   // When the viewport is below FULL_WIDTH_BREAKPOINT we want the dropdown
-  // to span from viewport edge to viewport edge. Measure the dropdown's
-  // actual positioning ancestor (offsetParent) — which may be <header>, a
-  // GridContainer descendant, or something else depending on the ambient
-  // CSS — and push left/right out to the viewport edges accordingly.
+  // to span from viewport edge to viewport edge. All panels share the same
+  // positional footprint, so measuring any one of them gives the right
+  // offsets; we read the currently-open panel.
   //
   // useIsomorphicLayoutEffect runs synchronously before paint on the client,
   // so the inline offsets are in place on the first visible frame. Without
@@ -172,12 +168,13 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
     // while closed (visibility: hidden) and get recomputed on next open.
     if (!openKey) return
     const update = () => {
-      if (!dropdownRef.current) return
+      const panel = panelRefs.current.get(openKey)
+      if (!panel) return
       if (window.innerWidth >= FULL_WIDTH_BREAKPOINT) {
         setFullWidthOffsets(null)
         return
       }
-      const parent = dropdownRef.current.offsetParent as HTMLElement | null
+      const parent = panel.offsetParent as HTMLElement | null
       if (!parent) return
       const pRect = parent.getBoundingClientRect()
       setFullWidthOffsets({
@@ -193,12 +190,23 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
   }, [openKey])
 
   const toggle = (key: DropdownKey) => {
+    // X→Y swap: both current and next are non-null AND different. Suppress
+    // the opacity transition just for this render so the new panel snaps
+    // in while the old one snaps out — instead of crossfading and ghosting.
+    const isSwap = openKey !== null && openKey !== key
+    if (isSwap) {
+      if (suppressFrameRef.current !== null) {
+        cancelAnimationFrame(suppressFrameRef.current)
+      }
+      setSuppressTransition(true)
+      suppressFrameRef.current = requestAnimationFrame(() => {
+        suppressFrameRef.current = null
+        setSuppressTransition(false)
+      })
+    }
     setOpenKey((current) => (current === key ? null : key))
   }
 
-  // Render content from displayKey (sticky across fade-out), not openKey.
-  const active = displayKey ? HEADER_NAV_MOCK_DATA[displayKey] : null
-  const panelId = `desktop-nav-panel-${reactId}`
   const navLabel = activeLocale === 'is' ? 'Aðalvalmynd' : 'Main navigation'
 
   const handleNavKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -208,7 +216,7 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
     //   trigger → sibling triggers → panel links.
     if (event.key !== 'Tab') return
     if (!openKey) return
-    const panel = dropdownRef.current
+    const panel = panelRefs.current.get(openKey)
     if (!panel) return
     const panelLinks = Array.from(
       panel.querySelectorAll<HTMLElement>('a[href]'),
@@ -270,6 +278,9 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
     }
   }
 
+  const panelIdFor = (key: DropdownKey) => `desktop-nav-panel-${reactId}-${key}`
+  const buttonIdFor = (key: DropdownKey) => `desktop-nav-tab-${reactId}-${key}`
+
   return (
     <nav
       ref={containerRef}
@@ -280,11 +291,10 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
       {HEADER_NAV_KEYS.map((key) => {
         const data = HEADER_NAV_MOCK_DATA[key]
         const isOpen = openKey === key
-        const buttonId = `desktop-nav-tab-${reactId}-${key}`
         return (
           <button
             key={key}
-            id={buttonId}
+            id={buttonIdFor(key)}
             type="button"
             ref={(node) => {
               if (node) tabButtonRefs.current.set(key, node)
@@ -292,11 +302,12 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
             }}
             className={`${styles.tabButton} ${isOpen ? styles.tabButtonActive : ''}`}
             // Disclosure pattern: aria-expanded conveys the open state and
-            // aria-controls points to the always-mounted panel. We do NOT
-            // use aria-haspopup because the panel contains links, not
-            // menuitems — "haspopup=true" would imply a real ARIA menu.
+            // aria-controls points to the (always-mounted) panel for this
+            // specific section. We do NOT use aria-haspopup because the
+            // panel contains links, not menuitems — "haspopup=true" would
+            // imply a real ARIA menu.
             aria-expanded={isOpen}
-            aria-controls={panelId}
+            aria-controls={panelIdFor(key)}
             data-desktop-nav-open={isOpen ? 'true' : undefined}
             onClick={() => toggle(key)}
           >
@@ -328,31 +339,36 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
         }
       />
 
-      <div
-        ref={dropdownRef}
-        id={panelId}
-        role="region"
-        aria-labelledby={
-          openKey ? `desktop-nav-tab-${reactId}-${openKey}` : undefined
-        }
-        aria-hidden={!openKey}
-        className={`${styles.dropdown} ${openKey ? styles.dropdownOpen : ''}`}
-        style={
-          fullWidthOffsets
-            ? {
-                left: `${fullWidthOffsets.left}px`,
-                right: `${fullWidthOffsets.right}px`,
-                width: 'auto',
-                maxWidth: 'none',
-              }
-            : undefined
-        }
-      >
-        {active && (
-          <>
-            <div className={styles.dropdownTitle}>{active.title}</div>
+      {HEADER_NAV_KEYS.map((key) => {
+        const data = HEADER_NAV_MOCK_DATA[key]
+        const isOpen = openKey === key
+        return (
+          <div
+            key={key}
+            ref={(node) => {
+              if (node) panelRefs.current.set(key, node)
+              else panelRefs.current.delete(key)
+            }}
+            id={panelIdFor(key)}
+            role="region"
+            aria-labelledby={buttonIdFor(key)}
+            aria-hidden={!isOpen}
+            className={`${styles.dropdown} ${isOpen ? styles.dropdownOpen : ''}`}
+            style={{
+              ...(fullWidthOffsets
+                ? {
+                    left: `${fullWidthOffsets.left}px`,
+                    right: `${fullWidthOffsets.right}px`,
+                    width: 'auto',
+                    maxWidth: 'none',
+                  }
+                : {}),
+              ...(suppressTransition ? { transition: 'none' } : {}),
+            }}
+          >
+            <div className={styles.dropdownTitle}>{data.title}</div>
             <ul className={styles.dropdownList}>
-              {active.items.slice(0, HEADER_NAV_MAX_ITEMS).map((item) => (
+              {data.items.slice(0, HEADER_NAV_MAX_ITEMS).map((item) => (
                 <li key={item.href}>
                   <Link
                     href={
@@ -371,12 +387,13 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
               className={styles.seeAllRow}
               onFocus={(event) => {
                 if (!(event.target instanceof HTMLAnchorElement)) return
-                if (!seeAllButtonRef.current) return
+                const seeAllButton = seeAllButtonRefs.current.get(key)
+                if (!seeAllButton) return
                 // Shift+Tab from the Button lands focus back on the Link;
                 // forwarding to Button again would trap focus, so jump to
                 // the previous tabbable element inside the nav instead.
                 if (
-                  event.relatedTarget === seeAllButtonRef.current &&
+                  event.relatedTarget === seeAllButton &&
                   containerRef.current
                 ) {
                   focusPreviousTabbableIn(containerRef.current, event.target)
@@ -384,33 +401,36 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
                 }
                 // Otherwise this is a forward tab onto the Link — forward
                 // focus to the Button so its mint `:focus` style shows.
-                seeAllButtonRef.current.focus()
+                seeAllButton.focus()
               }}
             >
               <Link
                 href={
-                  activeLocale === 'en' && !active.seeAllHref.startsWith('/en')
-                    ? `/en${active.seeAllHref}`
-                    : active.seeAllHref
+                  activeLocale === 'en' && !data.seeAllHref.startsWith('/en')
+                    ? `/en${data.seeAllHref}`
+                    : data.seeAllHref
                 }
               >
                 <Button
                   ref={(node) => {
-                    seeAllButtonRef.current = node
-                    if (!node) return
-                    node.tabIndex = -1
-                    // Because we forward keyboard focus here from the
-                    // wrapping <Link>, the browser's built-in "Enter on a
-                    // focused <a> fires click" behaviour doesn't run (the
-                    // anchor itself isn't focused). Simulate it by clicking
-                    // the closest <a> on Enter / Space. Using .onkeydown
-                    // (not addEventListener) so repeat ref calls overwrite
-                    // rather than accumulate handlers.
-                    node.onkeydown = (event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault()
-                        node.closest('a')?.click()
+                    if (node) {
+                      seeAllButtonRefs.current.set(key, node)
+                      node.tabIndex = -1
+                      // Because we forward keyboard focus here from the
+                      // wrapping <Link>, the browser's built-in "Enter on a
+                      // focused <a> fires click" behaviour doesn't run (the
+                      // anchor itself isn't focused). Simulate it by clicking
+                      // the closest <a> on Enter / Space. Using .onkeydown
+                      // (not addEventListener) so repeat ref calls overwrite
+                      // rather than accumulate handlers.
+                      node.onkeydown = (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault()
+                          node.closest('a')?.click()
+                        }
                       }
+                    } else {
+                      seeAllButtonRefs.current.delete(key)
                     }
                   }}
                   icon="arrowForward"
@@ -419,13 +439,13 @@ export const DesktopNav = ({ onOpenChange }: DesktopNavProps = {}) => {
                   size="small"
                   as="span"
                 >
-                  {active.seeAllLabel}
+                  {data.seeAllLabel}
                 </Button>
               </Link>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+        )
+      })}
     </nav>
   )
 }

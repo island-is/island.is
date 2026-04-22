@@ -1,5 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useCallback, useContext, useState } from 'react'
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
 import {
   Box,
@@ -15,14 +22,20 @@ import {
   Logo,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { FixedNav, SearchInput } from '@island.is/web/components'
+import { FixedNav } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 import { LanguageToggler } from '../LanguageToggler'
 import { DesktopNav } from './DesktopNav'
+import { DesktopSearchPanel } from './DesktopSearchPanel'
 import { LoginButton } from './LoginButton'
-import { MobileNav } from './MobileNav'
+import {
+  MobileNavMenuButton,
+  MobileNavPanel,
+  type MobileNavPanelHandle,
+  MobileNavSearchButton,
+} from './MobileNav'
 import * as styles from './Header.css'
 
 interface HeaderProps {
@@ -56,10 +69,11 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   languageToggleHrefOverride,
   children,
 }) => {
-  const { activeLocale, t } = useI18n()
+  const { activeLocale } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
   const [isDesktopNavOpen, setIsDesktopNavOpen] = useState(false)
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const [isDesktopSearchOpen, setIsDesktopSearchOpen] = useState(false)
   const handleDesktopNavOpenChange = useCallback(
     (isOpen: boolean) => setIsDesktopNavOpen(isOpen),
     [],
@@ -68,11 +82,40 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
     (isOpen: boolean) => setIsMobileNavOpen(isOpen),
     [],
   )
-  const isNavOpen = isDesktopNavOpen || isMobileNavOpen
+  const handleDesktopSearchOpenChange = useCallback(
+    (isOpen: boolean) => setIsDesktopSearchOpen(isOpen),
+    [],
+  )
+  const isNavOpen = isDesktopNavOpen || isMobileNavOpen || isDesktopSearchOpen
 
-  const locale = activeLocale
+  const mobileNavRef = useRef<MobileNavPanelHandle>(null)
+  const mobileSearchBtnRef = useRef<HTMLButtonElement>(null)
+  const mobileMenuBtnRef = useRef<HTMLButtonElement>(null)
+  // Memoize so the panel's outside-click effect doesn't re-subscribe on
+  // every render. The ref objects themselves are stable; only `.current`
+  // changes when the buttons mount/unmount.
+  const mobileTriggerRefs = useMemo(
+    () => [mobileSearchBtnRef, mobileMenuBtnRef],
+    [],
+  )
+
   const english = activeLocale === 'en'
   const isWhite = colorScheme === 'white'
+
+  const languageToggler = (
+    <LanguageToggler
+      buttonColorScheme={buttonColorScheme}
+      queryParams={languageToggleQueryParams}
+      hrefOverride={languageToggleHrefOverride}
+    />
+  )
+  const loginButton = (
+    <LoginButton
+      colorScheme={buttonColorScheme}
+      topItem={customTopLoginButtonItem}
+      type={loginButtonType}
+    />
+  )
 
   return (
     <header
@@ -88,91 +131,100 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
               <div className={styles.headerRow}>
                 <Columns alignY="center" space={2}>
                   <Column width="content">
-                  <FocusableBox
-                    href={english ? '/en' : '/'}
-                    data-testid="link-back-home"
-                  >
-                    <Hidden above="md">
-                      <Logo
-                        id="header-logo-icon"
-                        width={40}
-                        iconOnly
-                        solid={isWhite}
-                      />
-                    </Hidden>
-                    <Hidden below="lg">
-                      <Logo id="header-logo" width={160} solid={isWhite} />
-                    </Hidden>
-                  </FocusableBox>
-                </Column>
-                <Column width="content">
-                  <Hidden below="lg">
-                    <Box marginLeft={3}>
-                      <DesktopNav onOpenChange={handleDesktopNavOpenChange} />
-                    </Box>
-                  </Hidden>
-                </Column>
-                <Column>
-                  <Box
-                    className={styles.compactUtilityButtons}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="flexEnd"
-                    width="full"
-                  >
-                    {showSearchInHeader && (
-                      <Box
-                        role="search"
-                        display={['none', 'none', 'none', 'block']}
-                      >
-                        <SearchInput
-                          id="search_input_header"
-                          size="medium"
-                          activeLocale={locale}
-                          placeholder={searchPlaceholder ?? t.searchPlaceholder}
-                          autocomplete={true}
-                          autosuggest={true}
-                          organization={organizationSearchFilter}
-                        />
-                      </Box>
-                    )}
-
-                    <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <LoginButton
-                          colorScheme={buttonColorScheme}
-                          topItem={customTopLoginButtonItem}
-                          type={loginButtonType}
-                        />
-                      </Box>
-                    </Hidden>
-
-                    <Box
-                      marginLeft={marginLeft}
-                      display={['none', 'none', 'none', 'block']}
+                    <FocusableBox
+                      href={english ? '/en' : '/'}
+                      data-testid="link-back-home"
                     >
-                      <LanguageToggler
-                        buttonColorScheme={buttonColorScheme}
-                        queryParams={languageToggleQueryParams}
-                        hrefOverride={languageToggleHrefOverride}
-                      />
-                    </Box>
-                    <Hidden above="md">
-                      <Box marginLeft={marginLeft}>
-                        <MobileNav
-                          organizationSearchFilter={organizationSearchFilter}
-                          searchPlaceholder={searchPlaceholder}
-                          onOpenChange={handleMobileNavOpenChange}
+                      <Hidden above="md">
+                        <Logo
+                          id="header-logo-icon"
+                          width={40}
+                          iconOnly
+                          solid={isWhite}
+                        />
+                      </Hidden>
+                      <Hidden below="lg">
+                        <Logo id="header-logo" width={160} solid={isWhite} />
+                      </Hidden>
+                    </FocusableBox>
+                  </Column>
+                  <Column width="content">
+                    <Hidden below="lg">
+                      <Box marginLeft={3}>
+                        <DesktopNav
+                          onOpenChange={handleDesktopNavOpenChange}
                         />
                       </Box>
                     </Hidden>
-                  </Box>
-                </Column>
-              </Columns>
+                  </Column>
+                  <Column>
+                    <Box
+                      className={styles.compactUtilityButtons}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      width="full"
+                    >
+                      {/* Desktop: Search → Language → My Pages */}
+                      <Hidden below="lg">
+                        <Box display="flex" alignItems="center">
+                          {showSearchInHeader && (
+                            <DesktopSearchPanel
+                              organizationSearchFilter={
+                                organizationSearchFilter
+                              }
+                              searchPlaceholder={searchPlaceholder}
+                              onOpenChange={handleDesktopSearchOpenChange}
+                            />
+                          )}
+                          <Box marginLeft={marginLeft}>{languageToggler}</Box>
+                          <Box marginLeft={marginLeft}>{loginButton}</Box>
+                        </Box>
+                      </Hidden>
+
+                      {/* Mobile: My Pages → Search → Language → Menu */}
+                      <Hidden above="md">
+                        <Box display="flex" alignItems="center">
+                          {loginButton}
+                          <Box marginLeft={marginLeft}>
+                            <MobileNavSearchButton
+                              ref={mobileSearchBtnRef}
+                              isOpen={isMobileNavOpen}
+                              onClick={() =>
+                                mobileNavRef.current?.openAndFocusSearch()
+                              }
+                            />
+                          </Box>
+                          <Box marginLeft={marginLeft}>{languageToggler}</Box>
+                          <Box marginLeft={marginLeft}>
+                            <MobileNavMenuButton
+                              ref={mobileMenuBtnRef}
+                              isOpen={isMobileNavOpen}
+                              onClick={() => mobileNavRef.current?.toggle()}
+                            />
+                          </Box>
+                        </Box>
+                      </Hidden>
+                    </Box>
+                  </Column>
+                </Columns>
               </div>
             </GridColumn>
           </GridRow>
         </GridContainer>
+      </Hidden>
+      {/* Mobile nav panel — fixed-positioned so DOM placement doesn't
+          matter visually. Kept outside the Hidden wrapper so the
+          imperative handle is always reachable from the Header
+          (including across breakpoint changes). */}
+      <Hidden above="md">
+        <MobileNavPanel
+          ref={mobileNavRef}
+          organizationSearchFilter={organizationSearchFilter}
+          searchPlaceholder={searchPlaceholder}
+          onOpenChange={handleMobileNavOpenChange}
+          triggerRefs={mobileTriggerRefs}
+        />
       </Hidden>
       {children}
     </header>
