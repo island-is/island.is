@@ -204,8 +204,7 @@ export const MobileNavPanel = forwardRef<
     const drilldownSection = drilldownKey ? navData[drilldownKey] : null
 
     return (
-      <>
-        <div
+      <div
           ref={panelRef}
           id={panelId}
           role="region"
@@ -352,7 +351,6 @@ export const MobileNavPanel = forwardRef<
             </ul>
           )}
         </div>
-      </>
     )
   },
 )
