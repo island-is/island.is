@@ -45,10 +45,11 @@ import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { LimitedAccessCreateCaseFileGuard } from './guards/limitedAccessCreateCaseFile.guard'
 import { LimitedAccessCreateCivilClaimantCaseFileGuard } from './guards/limitedAccessCreateCivilClaimantCaseFile.guard'
 import { LimitedAccessCreateDefendantCaseFileGuard } from './guards/limitedAccessCreateDefendantCaseFile.guard'
+import { LimitedAccessDeleteCaseFileGuard } from './guards/limitedAccessDeleteCaseFile.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
-import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -96,7 +97,7 @@ export class LimitedAccessFileController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    LimitedAccessWriteCaseFileGuard,
+    LimitedAccessCreateCaseFileGuard,
   )
   @RolesRules(defenderRule)
   @Post('file')
@@ -209,11 +210,15 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
     CaseFileExistsGuard,
-    LimitedAccessWriteCaseFileGuard,
+    LimitedAccessDeleteCaseFileGuard,
   )
   @RolesRules(defenderRule)
   @Delete('file/:fileId')

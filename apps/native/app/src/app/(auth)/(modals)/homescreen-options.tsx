@@ -8,10 +8,16 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '@/stores/preferences-store'
+import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 
 export default function HomeOptionsScreen() {
   const intl = useIntl()
   const theme = useTheme()
+  const isAppointmentsEnabled = useFeatureFlag(
+    'isAppointmentsEnabled',
+    false,
+    null,
+  )
   const vehiclesWidgetEnabled = usePreferencesStore(
     ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
   )
@@ -57,6 +63,21 @@ export default function HomeOptionsScreen() {
         })
       },
     },
+    ...(isAppointmentsEnabled
+      ? [
+          {
+            enabled: appointmentsWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.appointments',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                appointmentsWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
     {
       enabled: licensesWidgetEnabled,
       label: intl.formatMessage({
@@ -98,17 +119,6 @@ export default function HomeOptionsScreen() {
       onValueChange: (value: boolean) => {
         preferencesStore.setState({
           airDiscountWidgetEnabled: value,
-        })
-      },
-    },
-    {
-      enabled: appointmentsWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.appointments',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          appointmentsWidgetEnabled: value,
         })
       },
     },

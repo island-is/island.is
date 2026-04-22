@@ -1,11 +1,15 @@
 import {
   RenderedNotificationDto,
   ActorNotificationDto,
+  NotificationDeliveryDto,
+  NotificationDeliveryDtoChannelEnum,
 } from '@island.is/clients/user-notification'
 import {
   AdminNotification,
   Notification,
   ActorNotification,
+  NotificationChannel,
+  NotificationDelivery,
 } from '../lib/notifications.model'
 
 const cleanString = (str?: string) => {
@@ -57,6 +61,24 @@ export const adminNotificationMapper = (
   sender: {
     id: notification.senderId,
   },
+})
+
+const channelMap: Record<
+  NotificationDeliveryDtoChannelEnum,
+  NotificationChannel
+> = {
+  [NotificationDeliveryDtoChannelEnum.Email]: NotificationChannel.EMAIL,
+  [NotificationDeliveryDtoChannelEnum.Sms]: NotificationChannel.SMS,
+  [NotificationDeliveryDtoChannelEnum.Push]: NotificationChannel.PUSH,
+}
+
+export const notificationDeliveryMapper = (
+  delivery: NotificationDeliveryDto,
+): NotificationDelivery => ({
+  id: delivery.id,
+  channel: channelMap[delivery.channel],
+  sentTo: delivery.sentTo,
+  created: delivery.created,
 })
 
 export const actorNotificationMapper = (

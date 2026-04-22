@@ -337,7 +337,7 @@ export enum IndictmentDecision {
   COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
 }
 
-export enum CaseAppealRulingDecision {
+export enum AppealCaseRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
   CHANGED = 'CHANGED',

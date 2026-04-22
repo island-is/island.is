@@ -9,8 +9,8 @@ import {
   getInitials,
 } from '@island.is/judicial-system/formatters'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -109,12 +109,12 @@ const generateAppealStateTag = (
 ): CaseTableCell<TagValue> => {
   const getCompletedColor = (): string => {
     switch (c.appealCase?.appealRulingDecision) {
-      case CaseAppealRulingDecision.ACCEPTING:
+      case AppealCaseRulingDecision.ACCEPTING:
         return 'mint'
-      case CaseAppealRulingDecision.CHANGED:
-      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
-      case CaseAppealRulingDecision.REPEAL:
-      case CaseAppealRulingDecision.DISCONTINUED:
+      case AppealCaseRulingDecision.CHANGED:
+      case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
+      case AppealCaseRulingDecision.REPEAL:
+      case AppealCaseRulingDecision.DISCONTINUED:
         return 'rose'
       default:
         return 'blueberry'
@@ -123,19 +123,19 @@ const generateAppealStateTag = (
 
   const getCompletedOrder = (): string => {
     switch (c.appealCase?.appealRulingDecision) {
-      case CaseAppealRulingDecision.ACCEPTING:
+      case AppealCaseRulingDecision.ACCEPTING:
         return 'E'
-      case CaseAppealRulingDecision.REPEAL:
+      case AppealCaseRulingDecision.REPEAL:
         return 'F'
-      case CaseAppealRulingDecision.CHANGED:
-      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+      case AppealCaseRulingDecision.CHANGED:
+      case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
         return 'G'
-      case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
-      case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+      case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+      case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
         return 'H'
-      case CaseAppealRulingDecision.REMAND:
+      case AppealCaseRulingDecision.REMAND:
         return 'I'
-      case CaseAppealRulingDecision.DISCONTINUED:
+      case AppealCaseRulingDecision.DISCONTINUED:
         return 'J'
       default:
         return 'K'

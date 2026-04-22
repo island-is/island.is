@@ -6,7 +6,7 @@ import {
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import HtmlParser from 'react-html-parser'
-import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
+import { useIsMobile } from '@island.is/portals/core'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
 import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
