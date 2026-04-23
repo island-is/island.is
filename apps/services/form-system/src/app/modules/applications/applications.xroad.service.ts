@@ -77,7 +77,7 @@ export class ApplicationsXRoadService {
         applicationDto,
       )
 
-    const fetchEvent = await this.applicationEventModel.create({
+    await this.applicationEventModel.create({
       applicationId: id,
       eventType: ApplicationEvents.APPLICATION_FETCHED,
       eventMessage: {
