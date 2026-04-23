@@ -197,7 +197,7 @@ const applyVisibilityToSections = (
         return {
           ...field,
           isHidden: fieldHidden,
-          values: newValues,
+          // values: newValues, --- IGNORE --- We want to keep the values but just not display them, otherwise we lose data when toggling visibility on and off
         }
       }) as typeof screen.fields
 
