@@ -53,6 +53,10 @@ export interface PortalNavigationItem {
     description: MessageDescriptor
     /** Promotes this item to the featured sidebar on the V2 dashboard. */
     featured?: boolean
+    /** Illustration image URL shown on the right side of the featured card. */
+    image?: string
+    /** Tag label shown on the featured card (e.g. "Kosningar"). */
+    tag?: MessageDescriptor
   }
 
   /**
@@ -64,6 +68,16 @@ export interface PortalNavigationItem {
    * Controls display order in the V2 dashboard featured sidebar. Lower = higher up.
    */
   featuredOrder?: number
+
+  /**
+   * Illustration image URL shown on the right side of the featured card.
+   */
+  featuredImage?: string
+
+  /**
+   * Tag label shown on the featured card (e.g. "Kosningar").
+   */
+  featuredTag?: MessageDescriptor
 
   /**
    * Indicates if the user has access to the navigation item

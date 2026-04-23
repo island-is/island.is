@@ -14,6 +14,7 @@ export const healthNavigation: PortalNavigationItem = {
   },
   featured: true,
   featuredOrder: 1,
+  featuredImage: './assets/images/le-jobs-s6.svg',
   children: [
     {
       name: m.health,

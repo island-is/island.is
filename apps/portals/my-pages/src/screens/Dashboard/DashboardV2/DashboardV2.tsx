@@ -17,7 +17,7 @@ import { useWindowSize } from 'react-use'
 import { MAIN_NAVIGATION } from '../../../lib/masterNavigation'
 import Greeting from '../../../components/Greeting/Greeting'
 import { FeaturedSidebar } from './components/FeaturedSidebar'
-import { ModuleCardsGrid } from './components/ModuleCardsGrid'
+import { CategoryCardsGrid } from './components/CategoryCardsGrid'
 import { NotificationsPreview } from './components/NotificationsPreview'
 
 const useDashboardNav = () => {
@@ -57,7 +57,7 @@ export const DashboardV2 = () => {
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box marginTop={[1, 2, 2, 0]}>
-                <FeaturedSidebar items={featured} />
+                <FeaturedSidebar items={featured} isMobile={isMobile} />
               </Box>
             </GridColumn>
           </GridRow>
@@ -73,7 +73,7 @@ export const DashboardV2 = () => {
               {formatMessage(m.moreCategories)}
             </Text>
           )}
-          <ModuleCardsGrid items={rest} isMobile={isMobile} />
+          <CategoryCardsGrid items={rest} isMobile={isMobile} />
         </Box>
       </GridContainer>
     </Box>

@@ -49,3 +49,14 @@ export const svgOutline = style({})
 globalStyle(`${svgOutline} svg path`, {
   stroke: theme.color.blue400,
 })
+
+export const featuredCardIcon = style({
+  minWidth: 24,
+  width: 32,
+  height: 32,
+  flexShrink: 0,
+})
+
+globalStyle(`${featuredCardIcon} svg`, {
+  height: '100%',
+})

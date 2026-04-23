@@ -7,7 +7,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m as portalMessages, PortalNavigationItem } from '@island.is/portals/core'
+import {
+  m as portalMessages,
+  PortalNavigationItem,
+} from '@island.is/portals/core'
 import { Link } from 'react-router-dom'
 import { iconIdMapper, iconTypeToSVG } from '../../../../utils/Icons/idMapper'
 import * as styles from '../../Dashboard.css'
@@ -17,7 +20,7 @@ interface Props {
   isMobile: boolean
 }
 
-export const ModuleCardsGrid = ({ items, isMobile }: Props) => {
+export const CategoryCardsGrid = ({ items, isMobile }: Props) => {
   const { formatMessage } = useLocale()
 
   const getDisabledReasonText = (reason: string, moduleName: string) => {
@@ -125,4 +128,4 @@ export const ModuleCardsGrid = ({ items, isMobile }: Props) => {
   )
 }
 
-export default ModuleCardsGrid
+export default CategoryCardsGrid
