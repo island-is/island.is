@@ -119,8 +119,8 @@ const Slider = ({
   onChange,
   onChangeEnd,
   labelMultiplier = 1,
-  textColor = theme.color.blue400,
-  progressOverlayColor = theme.color.mint400,
+  textColor = 'blue400',
+  progressOverlayColor = 'mint400',
 }: TrackProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const ref = useRef(null)

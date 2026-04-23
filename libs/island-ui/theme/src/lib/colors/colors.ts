@@ -1,10 +1,11 @@
-import { color } from './primitivesMapper'
+import { figmaColorsTokens } from '../tokens/figmaColors'
+import { figmaPrimitives } from '../tokens/figmaPrimitives'
 
 const {
   primary: { blue, dark, red },
   secondary: { blueberry, purple, rose },
   accent: { mint, yellow },
-} = color
+} = figmaPrimitives.modes.mode1.color
 
 // Primary colors
 export const blue600 = blue[600] ?? '#0044b3'
@@ -68,135 +69,235 @@ export const currentColor = 'currentColor'
 /* ----- Mapping colors to match the design tokens ----- */
 
 // Background Colors
-export const backgroundBrand = blue400
-export const backgroundBrandLighter = blue200
-export const backgroundBrandMinimal = blue100
-export const backgroundBrandSecondary = purple400
-export const backgroundBrandSecondaryLighter = purple200
-export const backgroundBrandSecondaryMinimal = purple100
-export const backgroundInvert = white
+export const backgroundBrand =
+  figmaColorsTokens.modes.lightMode.background.brand
+export const backgroundBrandLighter =
+  figmaColorsTokens.modes.lightMode.background.brandlighter
+export const backgroundBrandMinimal =
+  figmaColorsTokens.modes.lightMode.background.brandminimal
+export const backgroundBrandSecondary =
+  figmaColorsTokens.modes.lightMode.background.brandsecondary
+export const backgroundBrandSecondaryLighter =
+  figmaColorsTokens.modes.lightMode.background.brandsecondarylighter
+export const backgroundBrandSecondaryMinimal =
+  figmaColorsTokens.modes.lightMode.background.brandsecondaryminimal
+export const backgroundInvert =
+  figmaColorsTokens.modes.lightMode.background.invert
 
 // Border Colors
-export const borderInvert = white
-export const borderPrimary = blue200
-export const borderPrimaryContrast = blue400
-export const borderSecondaryActive = purple400
-export const borderSecondaryInactive = purple200
-
+export const borderInvert = figmaColorsTokens.modes.lightMode.border.invert
+export const borderPrimary = figmaColorsTokens.modes.lightMode.border.primary
+export const borderPrimaryContrast =
+  figmaColorsTokens.modes.lightMode.border.primarycontrast
+export const borderSecondaryActive =
+  figmaColorsTokens.modes.lightMode.border.secondaryactive
+export const borderSecondaryInactive =
+  figmaColorsTokens.modes.lightMode.border.secondaryinactive
 // Feedback Colors - Error
-export const feedbackErrorBackground = red100
-export const feedbackErrorBorder = red200
-export const feedbackErrorBorderContrast = red600
-export const feedbackErrorForeground = red400
-export const feedbackErrorForegroundContrast = red600
+export const feedbackErrorBackground =
+  figmaColorsTokens.modes.lightMode.feedback.error.background
+export const feedbackErrorBorder =
+  figmaColorsTokens.modes.lightMode.feedback.error.border
+export const feedbackErrorBorderContrast =
+  figmaColorsTokens.modes.lightMode.feedback.error.bordercontrast
+export const feedbackErrorForeground =
+  figmaColorsTokens.modes.lightMode.feedback.error.foreground
+export const feedbackErrorForegroundContrast =
+  figmaColorsTokens.modes.lightMode.feedback.error.foregroundcontrast
 
 // Feedback Colors - Information
-export const feedbackInfoBackgroundMinimal = blue100
-export const feedbackInfoBorder = blue200
-export const feedbackInfoForeground = blue400
-export const feedbackInfoForegroundContrast = blue600
+export const feedbackInfoBackgroundMinimal =
+  figmaColorsTokens.modes.lightMode.feedback.information.backgroundminimal
+export const feedbackInfoBorder =
+  figmaColorsTokens.modes.lightMode.feedback.information.border
+export const feedbackInfoForeground =
+  figmaColorsTokens.modes.lightMode.feedback.information.foreground
+export const feedbackInfoForegroundContrast =
+  figmaColorsTokens.modes.lightMode.feedback.information.foregroundcontrast
 
 // Feedback Colors - Success
-export const feedbackSuccessBackground = mint100
-export const feedbackSuccessBorder = mint200
-export const feedbackSuccessForeground = mint400
+export const feedbackSuccessBackground =
+  figmaColorsTokens.modes.lightMode.feedback.success.background
+export const feedbackSuccessBorder =
+  figmaColorsTokens.modes.lightMode.feedback.success.border
+export const feedbackSuccessForeground =
+  figmaColorsTokens.modes.lightMode.feedback.success.foreground
 
 // Feedback Colors - Tags
-export const feedbackTagsBlueAccent = blue400
-export const feedbackTagsBlueBackground = blue100
-export const feedbackTagsBlueBorder = blue200
+export const feedbackTagsBlueAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.blueaccent
+export const feedbackTagsBlueBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.bluebackground
+export const feedbackTagsBlueBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.blueborder
 
-export const feedbackTagsBlueberryAccent = blueberry400
-export const feedbackTagsBlueberryBackground = blueberry100
-export const feedbackTagsBlueberryBorder = blueberry200
+export const feedbackTagsBlueberryAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.blueberryaccent
+export const feedbackTagsBlueberryBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.blueberrybackground
+export const feedbackTagsBlueberryBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.blueberryborder
 
-export const feedbackTagsDarkBlueAccent = blue600
-export const feedbackTagsDarkBlueBackground = blue200
-export const feedbackTagsDarkBlueBorder = blue200
+export const feedbackTagsDarkBlueAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.blueaccent
+export const feedbackTagsDarkBlueBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.darkerBluebackground
+export const feedbackTagsDarkBlueBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.darkerBlueborder
 
-export const feedbackTagsMintAccent = mint800
-export const feedbackTagsMintBackground = mint200
-export const feedbackTagsMintBorder = mint200
+export const feedbackTagsMintAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.mintaccent
+export const feedbackTagsMintBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.mintbackground
+export const feedbackTagsMintBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.mintborder
 
-export const feedbackTagsPurpleAccent = purple400
-export const feedbackTagsPurpleBackground = purple100
-export const feedbackTagsPurpleBorder = purple200
+export const feedbackTagsPurpleAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.purpleaccent
+export const feedbackTagsPurpleBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.purplebackground
+export const feedbackTagsPurpleBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.purpleborder
 
-export const feedbackTagsRedAccent = red600
-export const feedbackTagsRedBackground = red100
-export const feedbackTagsRedBorder = red200
+export const feedbackTagsRedAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.redaccent
+export const feedbackTagsRedBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.redbackground
+export const feedbackTagsRedBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.redborder
 
-export const feedbackTagsRoseAccent = roseTinted400
-export const feedbackTagsRoseBackground = roseTinted100
-export const feedbackTagsRoseAccentBorder = roseTinted200
+export const feedbackTagsRoseAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.roseaccent
+export const feedbackTagsRoseBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.rosebackground
+export const feedbackTagsRoseAccentBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.roseaccentborder
 
-export const feedbackTagsYellowAccent = dark400
-export const feedbackTagsYellowBackground = yellow300
-export const feedbackTagsYellowBorder = yellow600
-export const feedbackTagsYellowHover = yellow400
+export const feedbackTagsYellowAccent =
+  figmaColorsTokens.modes.lightMode.feedback.tags.yellowaccent
+export const feedbackTagsYellowBackground =
+  figmaColorsTokens.modes.lightMode.feedback.tags.yellowbackground
+export const feedbackTagsYellowBorder =
+  figmaColorsTokens.modes.lightMode.feedback.tags.yellowborder
+export const feedbackTagsYellowHover =
+  figmaColorsTokens.modes.lightMode.feedback.tags.yellowhover
 
 // Feedback Colors - Warning
-export const feedbackWarningBackground = yellow200
-export const feedbackWarningBorder = yellow400
-export const feedbackWarningForeground = yellow600
+export const feedbackWarningBackground =
+  figmaColorsTokens.modes.lightMode.feedback.warning.background
+export const feedbackWarningBorder =
+  figmaColorsTokens.modes.lightMode.feedback.warning.border
+export const feedbackWarningForeground =
+  figmaColorsTokens.modes.lightMode.feedback.warning.foreground
 
 // Foreground Colors
-export const foregroundBrand = blue400
-export const foregroundBrandContrast = blue600
-export const foregroundBrandSecondary = purple400
-export const foregroundBrandSecondaryContrast = purple600
-export const foregroundInvert = white
-export const foregroundModal = dark400
-export const foregroundPrimary = dark400
-export const foregroundPrimaryMinimal = dark300
+export const foregroundBrand =
+  figmaColorsTokens.modes.lightMode.foreground.brand
+export const foregroundBrandContrast =
+  figmaColorsTokens.modes.lightMode.foreground.brandcontrast
+export const foregroundBrandSecondary =
+  figmaColorsTokens.modes.lightMode.foreground.brandsecondary
+export const foregroundBrandSecondaryContrast =
+  figmaColorsTokens.modes.lightMode.foreground.brandsecondarycontrast
+export const foregroundInvert =
+  figmaColorsTokens.modes.lightMode.foreground.invert
+export const foregroundModal =
+  figmaColorsTokens.modes.lightMode.foreground.modal
+export const foregroundPrimary =
+  figmaColorsTokens.modes.lightMode.foreground.primary
+export const foregroundPrimaryMinimal =
+  figmaColorsTokens.modes.lightMode.foreground.primaryminimal
 
 // Interactive Colors - Background
-export const interactiveBackgroundBrandSecondaryActive = purple200
-export const interactiveBackgroundBrandSecondaryMinimal = purple100
-export const interactiveBackgroundDestructive = red600
-export const interactiveBackgroundDestructiveActive = roseTinted400
-export const interactiveBackgroundDestructiveDisabled = red300
-export const interactiveBackgroundFocus = mint400
-export const interactiveBackgroundInvert = white
-export const interactiveBackgroundNeutral = dark300
-export const interactiveBackgroundNeutralActive = dark350
-export const interactiveBackgroundPrimary = blue400
-export const interactiveBackgroundPrimaryActive = blueberry400
-export const interactiveBackgroundPrimaryDisabled = blue300
-export const interactiveBackgroundPrimaryMinimal = blue100
-export const interactiveBackgroundPrimaryMinimalActive = blue200
-export const interactiveBackgroundTooltip = dark400
+export const interactiveBackgroundBrandSecondaryActive =
+  figmaColorsTokens.modes.lightMode.interactive.background.brandsecondaryactive
+export const interactiveBackgroundBrandSecondaryMinimal =
+  figmaColorsTokens.modes.lightMode.interactive.background.brandsecondaryminimal
+export const interactiveBackgroundDestructive =
+  figmaColorsTokens.modes.lightMode.interactive.background.destructive
+export const interactiveBackgroundDestructiveActive =
+  figmaColorsTokens.modes.lightMode.interactive.background.destructiveactive
+export const interactiveBackgroundDestructiveDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.background.destructivedisabled
+export const interactiveBackgroundFocus =
+  figmaColorsTokens.modes.lightMode.interactive.background.focus
+export const interactiveBackgroundInvert =
+  figmaColorsTokens.modes.lightMode.interactive.background.invert
+export const interactiveBackgroundNeutral =
+  figmaColorsTokens.modes.lightMode.interactive.background.neutral
+export const interactiveBackgroundNeutralActive =
+  figmaColorsTokens.modes.lightMode.interactive.background.neutralactive
+export const interactiveBackgroundPrimary =
+  figmaColorsTokens.modes.lightMode.interactive.background.primary
+export const interactiveBackgroundPrimaryActive =
+  figmaColorsTokens.modes.lightMode.interactive.background.primaryactive
+export const interactiveBackgroundPrimaryDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.background.primarydisabled
+export const interactiveBackgroundPrimaryMinimal =
+  figmaColorsTokens.modes.lightMode.interactive.background.primaryminimal
+export const interactiveBackgroundPrimaryMinimalActive =
+  figmaColorsTokens.modes.lightMode.interactive.background.primaryminimalactive
+export const interactiveBackgroundTooltip =
+  figmaColorsTokens.modes.lightMode.interactive.background.tooltip
 
 // Interactive Colors - Border
-export const interactiveBorderActive = dark400
-export const interactiveBorderDisabled = blue300
-export const interactiveBorderPrimary = blue400
-export const interactiveBorderPrimaryMinimal = blue200
-export const interactiveBorderSecondary = purple400
-export const interactiveBorderSecondaryMinimal = purple200
-export const interactiveBorderDestructiveActive = roseTinted400
-export const interactiveBorderDestructiveDefault = red600
-export const interactiveBorderDestructiveDisabled = red300
-export const interactiveBorderFocus = mint400
-export const interactiveBorderInvert = white
-export const interactiveBorderInvertActive = blueberry100
+export const interactiveBorderActive =
+  figmaColorsTokens.modes.lightMode.interactive.border.active
+export const interactiveBorderDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.border.borderdisabled
+export const interactiveBorderPrimary =
+  figmaColorsTokens.modes.lightMode.interactive.border.borderprimary
+export const interactiveBorderPrimaryMinimal =
+  figmaColorsTokens.modes.lightMode.interactive.border.borderprimaryminimal
+export const interactiveBorderSecondary =
+  figmaColorsTokens.modes.lightMode.interactive.border.bordersecondaryminimal
+export const interactiveBorderSecondaryMinimal =
+  figmaColorsTokens.modes.lightMode.interactive.border.bordersecondaryminimal
+export const interactiveBorderDestructiveActive =
+  figmaColorsTokens.modes.lightMode.interactive.border.destructiveactive
+export const interactiveBorderDestructiveDefault =
+  figmaColorsTokens.modes.lightMode.interactive.border.destructivedefault
+export const interactiveBorderDestructiveDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.border.destructivedisabled
+export const interactiveBorderFocus =
+  figmaColorsTokens.modes.lightMode.interactive.border.focus
+export const interactiveBorderInvert =
+  figmaColorsTokens.modes.lightMode.interactive.border.invert
+export const interactiveBorderInvertActive =
+  figmaColorsTokens.modes.lightMode.interactive.border.invertactive
 
 // Interactive Colors - Foreground
-export const interactiveForegroundBrandSecondary = purple400
-export const interactiveForegroundBrandSecondaryContrast = purple600
-export const interactiveForegroundDefault = dark400
-export const interactiveForegroundDestructive = red600
-export const interactiveForegroundDestructiveActive = roseTinted400
-export const interactiveForegroundDestructiveDisabled = red300
-export const interactiveForegroundDisabled = dark300
-export const interactiveForegroundInvert = white
-export const interactiveForegroundInvertActive = blueberry100
-export const interactiveForegroundPrimary = blue400
-export const interactiveForegroundPrimaryActive = blueberry400
-export const interactiveForegroundPrimaryContrast = blue600
-export const interactiveForegroundPrimaryDisabled = blue300
-export const interactiveForegroundRed = red400
-export const interactiveForegroundRedMinimalActive = red200
+export const interactiveForegroundBrandSecondary =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.brandsecondary
+export const interactiveForegroundBrandSecondaryContrast =
+  figmaColorsTokens.modes.lightMode.interactive.foreground
+    .brandsecondarycontrast
+export const interactiveForegroundDefault =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.default
+export const interactiveForegroundDestructive =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.destructive
+export const interactiveForegroundDestructiveActive =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.destructiveactive
+export const interactiveForegroundDestructiveDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.destructivedisabled
+export const interactiveForegroundDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.disabled
+export const interactiveForegroundInvert =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.invert
+export const interactiveForegroundInvertActive =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.invertactive
+export const interactiveForegroundPrimary =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.primary
+export const interactiveForegroundPrimaryActive =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.primaryactive
+export const interactiveForegroundPrimaryContrast =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.primarycontrast
+export const interactiveForegroundPrimaryDisabled =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.primarydisabled
+export const interactiveForegroundRed =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.red
+export const interactiveForegroundRedMinimalActive =
+  figmaColorsTokens.modes.lightMode.interactive.foreground.redminimalactive
 
 // Overlay Colors
-export const overlayDefault = overlay
+export const overlayDefault = figmaColorsTokens.modes.lightMode.overlay.default

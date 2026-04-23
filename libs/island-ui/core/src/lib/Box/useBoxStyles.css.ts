@@ -38,6 +38,38 @@ const spaceMapToCss = (
   )
 }
 
+const figmaSpaceMapToCss = (
+  t: typeof theme,
+  cssPropertyName: keyof Properties,
+  breakpoint: Breakpoints,
+) => {
+  const spaceWithKeywords = {
+    ...t.figmaSpacing,
+    none: 0,
+    auto: 'auto',
+  }
+
+  return mapToStyleProperty(
+    spaceWithKeywords,
+    cssPropertyName,
+    (value, propertyName) => {
+      const styles = {
+        [propertyName]: value,
+      }
+
+      const minWidth = t.breakpoints[breakpoint]
+
+      return minWidth === 0
+        ? styles
+        : {
+            '@media': {
+              [`screen and (min-width: ${minWidth}px)`]: styles,
+            },
+          }
+    },
+  )
+}
+
 export const relativePosition = {
   top: styleVariants(spaceMapToCss(theme, 'top', 'xs')),
   bottom: styleVariants(spaceMapToCss(theme, 'bottom', 'xs')),
@@ -73,6 +105,41 @@ export const relativePositionXl = {
   right: styleVariants(spaceMapToCss(theme, 'right', 'xl')),
 }
 
+export const figmaRelativePosition = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'top', 'xs')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'bottom', 'xs')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'left', 'xs')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'right', 'xs')),
+}
+
+export const figmaRelativePositionSm = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'top', 'sm')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'bottom', 'sm')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'left', 'sm')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'right', 'sm')),
+}
+
+export const figmaRelativePositionMd = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'top', 'md')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'bottom', 'md')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'left', 'md')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'right', 'md')),
+}
+
+export const figmaRelativePositionLg = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'top', 'lg')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'bottom', 'lg')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'left', 'lg')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'right', 'lg')),
+}
+
+export const figmaRelativePositionXl = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'top', 'xl')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'bottom', 'xl')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'left', 'xl')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'right', 'xl')),
+}
+
 export const margin = {
   top: styleVariants(spaceMapToCss(theme, 'marginTop', 'xs')),
   bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'xs')),
@@ -104,6 +171,37 @@ export const marginXl = {
   right: styleVariants(spaceMapToCss(theme, 'marginRight', 'xl')),
 }
 
+export const figmaMargin = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'marginTop', 'xs')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'marginBottom', 'xs')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'marginLeft', 'xs')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'marginRight', 'xs')),
+}
+export const figmaMarginSm = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'marginTop', 'sm')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'marginBottom', 'sm')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'marginLeft', 'sm')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'marginRight', 'sm')),
+}
+export const figmaMarginMd = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'marginTop', 'md')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'marginBottom', 'md')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'marginLeft', 'md')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'marginRight', 'md')),
+}
+export const figmaMarginLg = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'marginTop', 'lg')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'marginBottom', 'lg')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'marginLeft', 'lg')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'marginRight', 'lg')),
+}
+export const figmaMarginXl = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'marginTop', 'xl')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'marginBottom', 'xl')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'marginLeft', 'xl')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'marginRight', 'xl')),
+}
+
 export const padding = {
   top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'xs')),
   bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'xs')),
@@ -133,6 +231,37 @@ export const paddingXl = {
   bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'xl')),
   left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'xl')),
   right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'xl')),
+}
+
+export const figmaPadding = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'paddingTop', 'xs')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'paddingBottom', 'xs')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'paddingLeft', 'xs')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'paddingRight', 'xs')),
+}
+export const figmaPaddingSm = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'paddingTop', 'sm')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'paddingBottom', 'sm')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'paddingLeft', 'sm')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'paddingRight', 'sm')),
+}
+export const figmaPaddingMd = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'paddingTop', 'md')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'paddingBottom', 'md')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'paddingLeft', 'md')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'paddingRight', 'md')),
+}
+export const figmaPaddingLg = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'paddingTop', 'lg')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'paddingBottom', 'lg')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'paddingLeft', 'lg')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'paddingRight', 'lg')),
+}
+export const figmaPaddingXl = {
+  top: styleVariants(figmaSpaceMapToCss(theme, 'paddingTop', 'xl')),
+  bottom: styleVariants(figmaSpaceMapToCss(theme, 'paddingBottom', 'xl')),
+  left: styleVariants(figmaSpaceMapToCss(theme, 'paddingLeft', 'xl')),
+  right: styleVariants(figmaSpaceMapToCss(theme, 'paddingRight', 'xl')),
 }
 
 export const transform = {
