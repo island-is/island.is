@@ -9,6 +9,7 @@ import { NotificationResponseDto } from '../applications/models/dto/notification
 import { NotificationDto } from '../applications/models/dto/notification.dto'
 import { LoginResponseDto } from './models/login.response.dto'
 import { BodyRequestDto } from './models/body.request.dto'
+import { NotificationCommands } from '@island.is/form-system/shared'
 
 @Injectable()
 export class NotifyService {
@@ -76,10 +77,25 @@ export class NotifyService {
           `Non-OK response for application ${notificationDto.applicationId}`,
         )
       }
+
       const responseData = await response.json()
+      let operationSuccessful = response.ok
+
+      if (notificationDto.command === NotificationCommands.SUBMIT) {
+        if (
+          response.ok &&
+          responseData.success === false &&
+          responseData.error
+        ) {
+          this.logger.error(
+            `Error response from external system for application ${notificationDto.applicationId}: ${responseData.error}`,
+          )
+        }
+        operationSuccessful = response.ok && responseData.success === true
+      }
 
       const externalSystemResponse: NotificationResponseDto = {
-        operationSuccessful: response.ok,
+        operationSuccessful: operationSuccessful,
         screen: responseData.screen,
         screenError: responseData.screenError,
       }
