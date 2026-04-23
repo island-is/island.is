@@ -90,6 +90,24 @@ yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/ex
 
 Currently, in this project, only the `Custom Page` and `Connected Component` content types utilizes the `Translation Namespace` content type for translations
 
+## E2E Testing
+
+### Quick Start
+
+To run the E2E tests for the `web` app:
+
+```bash
+# Install dependencies
+yarn install && yarn codegen
+
+# Start the server
+yarn nx e2e web
+```
+
+### More Resources
+
+For further details, refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md).
+
 ## Further Documentation
 
 [Subpages](./docs/subpages.md) - Information on Layouts and Components used when
