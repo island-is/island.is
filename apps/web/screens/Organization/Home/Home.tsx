@@ -367,15 +367,11 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
     extractNamespaceFromOrganization(getOrganization)
 
   return {
-    organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
-    ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
-    ),
+    ...getThemeConfig('landing_page', getOrganization),
   }
 }
 
