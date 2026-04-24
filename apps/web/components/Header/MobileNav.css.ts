@@ -106,11 +106,20 @@ export const backButton = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+  // Visible chevron is 16x16. 14px of padding all round pushes the hit
+  // target to 44x44 (WCAG 2.1 SC 2.5.5 AAA, Apple HIG). box-sizing
+  // content-box guarantees the arithmetic (16 + 14*2) holds against any
+  // global reset that forces border-box. The matching negative margin
+  // cancels the visual bleed so panelHeader's flex layout is identical
+  // to the pre-expansion version — the icon stays in the same place,
+  // the title doesn't shift right, but the tap target is four-fold.
+  boxSizing: 'content-box',
   width: 16,
   height: 16,
+  padding: 14,
+  margin: -14,
   background: 'transparent',
   border: 'none',
-  padding: 0,
   color: theme.color.dark400,
   cursor: 'pointer',
   ':focus': {
