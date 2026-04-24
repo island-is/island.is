@@ -9,6 +9,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
 import { prereq } from '@island.is/application/templates/vmst/confirm-job-search'
 
 type Tablerow = {
@@ -61,6 +62,19 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
           auth,
         )
     } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        this.logger.warn(
+          '[VMST-Job-search-confirmation] - No active application found (404)',
+        )
+        throw new TemplateApiError(
+          {
+            title: prereq.eligibilityErrorTitle,
+            summary: prereq.noActiveApplicationFound,
+          },
+          404,
+        )
+      }
+
       this.logger.error(
         '[VMST-Job-search-confirmation] - Error checking eligibility',
         e,

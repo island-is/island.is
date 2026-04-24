@@ -22,4 +22,9 @@ export const prereq = defineMessages({
     description:
       'Title shown when user is not eligible for job search confirmation',
   },
+  noActiveApplicationFound: {
+    id: 'vmst.cjs.prereq:noActiveApplicationFound',
+    defaultMessage: 'Engin virk umsókn fannst',
+    description: 'Summary shown when no active application is found (404)',
+  },
 })
