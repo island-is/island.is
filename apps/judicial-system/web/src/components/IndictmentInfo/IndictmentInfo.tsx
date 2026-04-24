@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
@@ -13,8 +12,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { indictmentInfo as strings } from './IndictmentInfo.strings'
-
 interface Props {
   policeCaseNumber: string
   subtypes?: IndictmentSubtypeMap
@@ -22,14 +19,25 @@ interface Props {
   defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers'>[]
 }
 
+/** Bold label + normal value on one line. */
+const LabelLine: FC<{
+  label: string
+  body: string
+}> = ({ label, body }) => (
+  <Text variant="small" as="div">
+    <Text as="span" variant="small" fontWeight="semiBold">
+      {label}
+    </Text>
+    <Text as="span" variant="small">{` ${body}`}</Text>
+  </Text>
+)
+
 const IndictmentInfo: FC<Props> = ({
   policeCaseNumber,
   subtypes,
   crimeScenes,
   defendants,
 }) => {
-  const { formatMessage } = useIntl()
-
   if (!subtypes || !crimeScenes) {
     return null
   }
@@ -39,11 +47,10 @@ const IndictmentInfo: FC<Props> = ({
     .map((d) => d.name)
     .filter((name): name is string => Boolean(name))
 
-  const showDefendants =
-    defendants &&
-    defendants.length > 1 &&
-    defendantNames &&
-    defendantNames.length > 0
+  const showDefendants = defendantNames && defendantNames.length > 0
+
+  const defendantHeading =
+    defendants?.length === 1 ? 'Ákærði:' : 'Ákærðu:'
 
   const readableSubtypes = capitalize(
     readableIndictmentSubtypes([policeCaseNumber], subtypes).join(', '),
@@ -51,35 +58,25 @@ const IndictmentInfo: FC<Props> = ({
   const place = crimeScenes[policeCaseNumber]?.place
   const date = crimeScenes[policeCaseNumber]?.date
 
+  const dateAndPlaceBody =
+    place && date
+      ? `${place} - ${formatDate(date, 'PPP')}`
+      : place
+      ? `${place}`
+      : `${formatDate(date, 'PPP')}`
+
   return (
     <>
       {showDefendants && (
-        <Text variant="small" fontWeight="semiBold">
-          {formatMessage(strings.defendants, {
-            defendants: defendantNames.join(', '),
-          })}
-        </Text>
+        <LabelLine label={defendantHeading} body={defendantNames.join(', ')} />
       )}
       <Box>
         {readableSubtypes && (
-          <Text variant="small">
-            {formatMessage(strings.subtypes, {
-              subtypes: readableSubtypes,
-            })}
-          </Text>
+          <LabelLine label="Sakarefni:" body={readableSubtypes} />
         )}
       </Box>
       {(place || date) && (
-        <Text variant="small">
-          {formatMessage(strings.dateAndPlace, {
-            dateAndPlace:
-              place && date
-                ? `${place} - ${formatDate(date, 'PPP')}`
-                : place
-                ? `${place}`
-                : `${formatDate(date, 'PPP')}`,
-          })}
-        </Text>
+        <LabelLine label="Vettvangur og tími:" body={dateAndPlaceBody} />
       )}
     </>
   )
