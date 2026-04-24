@@ -26,24 +26,26 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  type AppealCase,
   AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseState,
+  UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   formatDateForServer,
-  useCase,
+  useAppealCase,
   useFileList,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isCourtOfAppealRulingStepFieldsValid,
+  validate,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
@@ -69,9 +71,34 @@ const CourtOfAppealRuling = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { updateAppealCase } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
+
+  const setAndSendAppealCaseToServer = useCallback(
+    (update: Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>) => {
+      if (workingCase.appealCase?.id) {
+        const appealCaseId = workingCase.appealCase.id
+
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
+          appealCase: {
+            id: appealCaseId,
+            ...prevWorkingCase.appealCase,
+            ...update,
+          },
+        }))
+
+        updateAppealCase(workingCase.id, appealCaseId, update)
+      }
+    },
+    [
+      setWorkingCase,
+      updateAppealCase,
+      workingCase.appealCase?.id,
+      workingCase.id,
+    ],
+  )
 
   const initialize = useCallback(() => {
     if (
@@ -80,19 +107,21 @@ const CourtOfAppealRuling = () => {
       (workingCase.decision === CaseDecision.ACCEPTING ||
         workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
-      setAndSendCaseToServer(
-        [
-          {
-            appealValidToDate: workingCase.validToDate,
-            isAppealCustodyIsolation: workingCase.isCustodyIsolation,
-            appealIsolationToDate: workingCase.isolationToDate,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      setAndSendAppealCaseToServer({
+        appealValidToDate: workingCase.validToDate,
+        isAppealCustodyIsolation: workingCase.isCustodyIsolation,
+        appealIsolationToDate: workingCase.isolationToDate,
+      })
     }
-  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
+  }, [
+    setAndSendAppealCaseToServer,
+    workingCase.decision,
+    workingCase.isCustodyIsolation,
+    workingCase.isolationToDate,
+    workingCase.state,
+    workingCase.type,
+    workingCase.validToDate,
+  ])
 
   useOnceOn(isCaseUpToDate, initialize)
 
@@ -109,21 +138,6 @@ const CourtOfAppealRuling = () => {
           file.category === CaseFileCategory.APPEAL_RULING &&
           file.status === FileUploadStatus.done,
       ))
-
-  const handleRulingDecisionChange = (
-    appealRulingDecision: AppealCaseRulingDecision,
-  ) => {
-    setAndSendCaseToServer(
-      [
-        {
-          appealRulingDecision,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }
 
   const decisionOptions = [
     {
@@ -209,7 +223,11 @@ const CourtOfAppealRuling = () => {
                     workingCase.appealCase?.appealRulingDecision ===
                     option.decision
                   }
-                  onChange={() => handleRulingDecisionChange(option.decision)}
+                  onChange={() =>
+                    setAndSendAppealCaseToServer({
+                      appealRulingDecision: option.decision,
+                    })
+                  }
                   backgroundColor="white"
                   large
                 />
@@ -260,50 +278,29 @@ const CourtOfAppealRuling = () => {
                   workingCase={workingCase}
                   handleIsolationChange={(
                     event: ChangeEvent<HTMLInputElement>,
-                  ): void => {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          isAppealCustodyIsolation: event.target.checked,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
+                  ) =>
+                    setAndSendAppealCaseToServer({
+                      isAppealCustodyIsolation: event.target.checked,
+                    })
+                  }
                   handleIsolationDateChange={(
                     date: Date | undefined,
                     valid: boolean,
-                  ): void => {
+                  ) => {
                     if (date && valid) {
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            appealIsolationToDate: formatDateForServer(date),
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
+                      setAndSendAppealCaseToServer({
+                        appealIsolationToDate: formatDateForServer(date),
+                      })
                     }
                   }}
                   handleValidToDateChange={(
                     date: Date | undefined,
                     valid: boolean,
-                  ): void => {
+                  ) => {
                     if (date && valid) {
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            appealValidToDate: formatDateForServer(date),
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
+                      setAndSendAppealCaseToServer({
+                        appealValidToDate: formatDateForServer(date),
+                      })
                     }
                   }}
                 />
@@ -318,25 +315,46 @@ const CourtOfAppealRuling = () => {
                 value={workingCase.appealCase?.appealConclusion || ''}
                 placeholder={formatMessage(strings.conclusionPlaceholder)}
                 onChange={(event) => {
-                  removeTabsValidateAndSet(
-                    'appealConclusion',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    appealConclusionErrorMessage,
-                    setAppealConclusionErrorMessage,
-                  )
+                  const value = replaceTabs(event.target.value)
+
+                  setWorkingCase((prevWorkingCase) => ({
+                    ...prevWorkingCase,
+                    appealCase: {
+                      ...prevWorkingCase.appealCase,
+                      appealConclusion: value,
+                    } as AppealCase,
+                  }))
+
+                  const { isValid, errorMessage } = validate([
+                    [value, ['empty']],
+                  ])
+
+                  if (isValid) {
+                    setAppealConclusionErrorMessage('')
+                  } else if (appealConclusionErrorMessage) {
+                    setAppealConclusionErrorMessage(errorMessage)
+                  }
                 }}
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'appealConclusion',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setAppealConclusionErrorMessage,
-                  )
-                }
+                onBlur={(event) => {
+                  const value = event.target.value
+
+                  const validationResult = validate([[value, ['empty']]])
+
+                  if (validationResult.isValid) {
+                    if (workingCase.appealCase?.id) {
+                      setAppealConclusionErrorMessage('')
+                      updateAppealCase(
+                        workingCase.id,
+                        workingCase.appealCase.id,
+                        { appealConclusion: value },
+                      )
+                    }
+                  } else {
+                    setAppealConclusionErrorMessage(
+                      validationResult.errorMessage,
+                    )
+                  }
+                }}
                 textarea
                 rows={7}
                 required

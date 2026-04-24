@@ -127,7 +127,7 @@ const AppealFiles = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>Gögn</PageTitle>
+        <PageTitle>Gögn</PageTitle>
         <Box marginBottom={7}>
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />

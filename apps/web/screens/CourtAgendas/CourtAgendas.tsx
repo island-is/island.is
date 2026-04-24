@@ -1314,6 +1314,13 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         : ''
                     }
                     time={time}
+                    hearingTime={
+                      agenda.hearingTime
+                        ? formatMessage(m.listPage.hearingTime, {
+                            hearingTime: agenda.hearingTime,
+                          })
+                        : undefined
+                    }
                     court={agenda.court}
                     courtRoom={agenda.courtRoom}
                     addToCalendarButton={
@@ -1456,5 +1463,6 @@ export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.CourtAgendas, CourtAgendas),
   {
     footerVersion: 'organization',
+    organizationSearchFilter: 'domstolar',
   },
 )

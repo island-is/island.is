@@ -568,12 +568,16 @@ export const controlReducer = (
     case 'CHANGE_FIELD_TYPE': {
       const { newValue, fieldSettings, update } = action.payload
       const currentData = activeItem.data as FormSystemField
+      const isListType =
+        newValue === FieldTypesEnum.DROPDOWN_LIST ||
+        newValue === FieldTypesEnum.RADIO_BUTTONS
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
           fieldType: newValue,
           fieldSettings: removeTypename(fieldSettings),
+          list: isListType ? currentData.list : [],
         },
       }
       let newFields = fields?.map((field) =>
