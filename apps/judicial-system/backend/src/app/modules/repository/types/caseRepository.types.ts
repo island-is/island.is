@@ -1,11 +1,10 @@
 import { col, Includeable, Op } from 'sequelize'
 
 import {
+  appealEventTypes,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseState,
-  CaseType,
   completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
@@ -15,6 +14,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealEventLog } from '../models/appealEventLog.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -63,6 +63,13 @@ export const caseInclude: Includeable[] = [
         model: User,
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
       },
     ],
   },
