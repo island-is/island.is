@@ -263,7 +263,7 @@ export const webRenderConnectedComponent = (
       connectedComponent = <VerAnnouncementCalculator />
       break
     case 'Lyfjastofnun/Pharmacies':
-      connectedComponent = <PharmaciesAccordion slice={slice} />
+      connectedComponent = <PharmaciesAccordion />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
