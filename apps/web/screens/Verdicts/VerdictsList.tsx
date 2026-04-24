@@ -1345,11 +1345,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             lastOption,
                             prevDistrict.length,
                           )
-                          const nextDistrictCourts = resolved.clearDistrictCourts
-                            ? []
-                            : resolved.courts.includes(DEFAULT_DISTRICT_COURT_TAG)
-                            ? prevDistrict
-                            : []
+                          const nextDistrictCourts =
+                            resolved.clearDistrictCourts
+                              ? []
+                              : resolved.courts.includes(
+                                  DEFAULT_DISTRICT_COURT_TAG,
+                                )
+                              ? prevDistrict
+                              : []
                           if (
                             shouldResetCaseFiltersOnCourtsChange(
                               prevCourts,
@@ -1436,7 +1439,9 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                       : prevDistrict
 
                                   if (!isSelected) {
-                                    if (tag.value === DEFAULT_DISTRICT_COURT_TAG) {
+                                    if (
+                                      tag.value === DEFAULT_DISTRICT_COURT_TAG
+                                    ) {
                                       nextCourts =
                                         stripHigherCourtTags(nextCourts)
                                     } else if (isHigherCourtTag(tag.value)) {

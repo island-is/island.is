@@ -1047,13 +1047,14 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                           updateQueryState(
                             QueryParam.COURT,
                             (previousState) => {
-                              const nextDistrictCourts = resolved.clearDistrictCourts
-                                ? []
-                                : resolved.courts.includes(
-                                    DEFAULT_DISTRICT_COURT_TAG,
-                                  )
-                                ? previousState[QueryParam.DISTRICT_COURTS]
-                                : []
+                              const nextDistrictCourts =
+                                resolved.clearDistrictCourts
+                                  ? []
+                                  : resolved.courts.includes(
+                                      DEFAULT_DISTRICT_COURT_TAG,
+                                    )
+                                  ? previousState[QueryParam.DISTRICT_COURTS]
+                                  : []
                               return {
                                 ...previousState,
                                 [QueryParam.COURT]: resolved.courts,
@@ -1112,7 +1113,9 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                                         : previousDistrictCourts
 
                                     if (!isSelected) {
-                                      if (tag.value === DEFAULT_DISTRICT_COURT_TAG) {
+                                      if (
+                                        tag.value === DEFAULT_DISTRICT_COURT_TAG
+                                      ) {
                                         nextCourts =
                                           stripHigherCourtTags(nextCourts)
                                       } else if (isHigherCourtTag(tag.value)) {
