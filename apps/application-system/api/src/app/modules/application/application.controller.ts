@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   ParseUUIDPipe,
+  ParseBoolPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
@@ -198,15 +199,17 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
-    @Query('scopeCheck') scopeCheck?: boolean,
-    @Query('showPruned') showPruned?: boolean,
+    @Query('scopeCheck', new ParseBoolPipe({ optional: true }))
+    scopeCheck?: boolean,
+    @Query('showPruned', new ParseBoolPipe({ optional: true }))
+    showPruned?: boolean,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
-      showPruned,
+      showPruned ?? false,
     )
     return this.filterApplicationsByAccess(
       applications,
