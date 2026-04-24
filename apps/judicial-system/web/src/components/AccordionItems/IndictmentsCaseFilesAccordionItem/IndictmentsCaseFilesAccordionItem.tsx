@@ -63,7 +63,7 @@ interface Props {
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
   setEditCount: Dispatch<SetStateAction<number>>
-  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers'>[]
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers' | 'gender'>[] | null
 }
 
 interface PoliceDigitalCaseFileItemProps {

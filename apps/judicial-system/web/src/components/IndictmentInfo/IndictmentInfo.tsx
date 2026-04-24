@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
@@ -10,13 +11,18 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { getDefendantLabel } from '../CaseInfo/CaseInfo'
 
 interface Props {
   policeCaseNumber: string
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
-  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers'>[]
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers' | 'gender'>[] | null
 }
 
 /** Bold label + normal value on one line. */
@@ -38,19 +44,32 @@ const IndictmentInfo: FC<Props> = ({
   crimeScenes,
   defendants,
 }) => {
+  const { formatMessage } = useIntl()
+
   if (!subtypes || !crimeScenes) {
     return null
   }
 
-  const defendantNames = defendants
-    ?.filter((d) => d.policeCaseNumbers?.includes(policeCaseNumber))
+  const linkedDefendants =
+    defendants?.filter((d) =>
+      d.policeCaseNumbers?.includes(policeCaseNumber),
+    ) ?? []
+
+  const defendantNames = linkedDefendants
     .map((d) => d.name)
     .filter((name): name is string => Boolean(name))
 
-  const showDefendants = defendantNames && defendantNames.length > 0
+  const showDefendants = defendantNames.length > 0
 
-  const defendantHeading =
-    defendants?.length === 1 ? 'Ákærði:' : 'Ákærðu:'
+  const defendantHeading = showDefendants
+    ? `${capitalize(
+        getDefendantLabel(
+          formatMessage,
+          linkedDefendants as Defendant[],
+          CaseType.INDICTMENT,
+        ),
+      )}:`
+    : ''
 
   const readableSubtypes = capitalize(
     readableIndictmentSubtypes([policeCaseNumber], subtypes).join(', '),

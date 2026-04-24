@@ -52,7 +52,7 @@ interface PoliceUploadListMenuProps {
   caseFiles?: CaseFile[] | null
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
   caseOrigin?: CaseOrigin | null
-  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers'>[]
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers' | 'gender'>[] | null
 }
 
 /* We need to make sure this list is not rerenderd unless the props are changing.
