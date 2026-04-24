@@ -1553,7 +1553,7 @@
       "@island.is/application/templates/vmst/confirm-job-search": [
         "libs/application/templates/vmst/confirm-job-search/src/index.ts"
       ],
-      "@island.is/api/domains/farmers": ["libs/api/domains/farmers/src/index.ts"],
+      "@island.is/api/domains/farmers": ["libs/api/domains/farmers/src/index.ts"]
     },
     "resolveJsonModule": true
   }
