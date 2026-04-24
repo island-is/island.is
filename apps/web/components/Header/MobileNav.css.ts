@@ -229,10 +229,19 @@ export const drillLink = style({
   fontWeight: theme.typography.light,
   lineHeight: '24px',
   color: theme.color.blue600,
+  // Mirrors DesktopNav.dropdownLink — footer-style animated underline via
+  // box-shadow so the line fades in along with the colour shift on hover,
+  // instead of text-decoration's instant on/off. paddingBottom: 4 gives
+  // the underline clearance from glyph descenders.
+  paddingBottom: 4,
   textDecoration: 'none',
+  boxShadow: 'none',
+  transition: 'color .2s, box-shadow .2s',
 
   ':hover': {
-    textDecoration: 'underline',
+    color: theme.color.blueberry600,
+    boxShadow: `inset 0 -2px 0 0 currentColor`,
+    textDecoration: 'none',
   },
   ':focus': {
     outline: 'none',

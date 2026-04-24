@@ -168,10 +168,20 @@ export const dropdownLink = style({
   fontWeight: theme.typography.light,
   lineHeight: '28px',
   color: theme.color.blue600,
+  // Match the site-wide <Link underline="normal"> treatment used in the
+  // footer: the underline is a box-shadow rather than text-decoration so
+  // it can animate in with the colour shift on hover. paddingBottom: 4
+  // mirrors Link's 'normal' variant so the line sits clearly below the
+  // baseline rather than overlapping descenders.
+  paddingBottom: 4,
   textDecoration: 'none',
+  boxShadow: 'none',
+  transition: 'color .2s, box-shadow .2s',
 
   ':hover': {
-    textDecoration: 'underline',
+    color: theme.color.blueberry600,
+    boxShadow: `inset 0 -2px 0 0 currentColor`,
+    textDecoration: 'none',
   },
   ':focus': {
     outline: 'none',
