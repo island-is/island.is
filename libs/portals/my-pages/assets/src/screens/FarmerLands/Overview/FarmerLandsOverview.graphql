@@ -1,0 +1,12 @@
+query FarmerLandsOverview {
+  farmerLands {
+    data {
+      id
+      name
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+    }
+  }
+}

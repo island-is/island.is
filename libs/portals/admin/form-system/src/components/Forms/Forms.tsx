@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom'
 import { FormsContext } from '../../context/FormsContext'
 import { FormSystemPaths } from '../../lib/paths'
 import { OrganizationSelect } from '../OrganizationSelect'
+import * as tableStyles from '../tableHeader.css'
 import {
   SortColumn,
   SortDirection,
@@ -57,6 +58,8 @@ export const Forms = () => {
     column: null,
     direction: 'asc',
   })
+
+  const [isCreatingForm, setIsCreatingForm] = useState(false)
 
   const defaultDirection: Record<SortColumn, SortDirection> = {
     name: 'asc',
@@ -110,6 +113,7 @@ export const Forms = () => {
   })
 
   const createForm = async () => {
+    setIsCreatingForm(true)
     try {
       const { data } = await formSystemCreateFormMutation({
         variables: {
@@ -125,6 +129,7 @@ export const Forms = () => {
         ),
       )
     } catch (error) {
+      setIsCreatingForm(false)
       throw new Error(
         `Error creating form: ${
           error instanceof Error ? error.message : 'Unknown error'
@@ -176,6 +181,11 @@ export const Forms = () => {
           </Box>
         </GridRow>
       )}
+      <Box display={['flex', 'flex', 'none']} marginBottom={2}>
+        <Button size="default" onClick={createForm}>
+          {formatMessage(m.newForm)}
+        </Button>
+      </Box>
       <Box
         display="flex"
         width="full"
@@ -183,9 +193,11 @@ export const Forms = () => {
         justifyContent="flexEnd"
         alignItems="baseline"
       >
-        <Button size="default" onClick={createForm}>
-          {formatMessage(m.newForm)}
-        </Button>
+        <Box display={['none', 'none', 'flex']}>
+          <Button size="default" onClick={createForm} disabled={isCreatingForm}>
+            {formatMessage(m.newForm)}
+          </Button>
+        </Box>
         <Filter
           labelClearAll="Hreinsa allar síur"
           labelClear="Hreinsa síu"
@@ -245,47 +257,49 @@ export const Forms = () => {
           </Box>
         </Filter>
       </Box>
-      <TableHeader
-        sortColumn={sort.column}
-        sortDirection={sort.direction}
-        onSort={handleSort}
-      />
-      {forms &&
-        [...forms]
-          .filter((form) => formFilter(form))
-          .sort((a, b) => {
-            const dir = sort.direction === 'asc' ? 1 : -1
-            if (sort.column === 'name') {
-              return dir * (a.name?.is ?? '').localeCompare(b.name?.is ?? '')
-            }
-            if (sort.column === 'lastModified') {
-              return (
-                dir *
-                (new Date(a.modified ?? 0).getTime() -
-                  new Date(b.modified ?? 0).getTime())
-              )
-            }
-            if (sort.column === 'status') {
-              return dir * (a.status ?? '').localeCompare(b.status ?? '')
-            }
-            return 0
-          })
-          .map((f) => (
-            <TableRow
-              key={f?.id}
-              id={f?.id}
-              name={f?.name?.is ?? ''}
-              isHeader={false}
-              translated={f?.isTranslated ?? false}
-              slug={f?.slug ?? ''}
-              beenPublished={f?.beenPublished ?? false}
-              setFormsState={setForms}
-              status={f?.status}
-              lastModified={f?.modified}
-              url={f?.submissionServiceUrl ?? ''}
-              lastModifiedBy={f?.lastModifiedBy ?? ''}
-            />
-          ))}
+      <Box className={tableStyles.tableWrapper}>
+        <TableHeader
+          sortColumn={sort.column}
+          sortDirection={sort.direction}
+          onSort={handleSort}
+        />
+        {forms &&
+          [...forms]
+            .filter((form) => formFilter(form))
+            .sort((a, b) => {
+              const dir = sort.direction === 'asc' ? 1 : -1
+              if (sort.column === 'name') {
+                return dir * (a.name?.is ?? '').localeCompare(b.name?.is ?? '')
+              }
+              if (sort.column === 'lastModified') {
+                return (
+                  dir *
+                  (new Date(a.modified ?? 0).getTime() -
+                    new Date(b.modified ?? 0).getTime())
+                )
+              }
+              if (sort.column === 'status') {
+                return dir * (a.status ?? '').localeCompare(b.status ?? '')
+              }
+              return 0
+            })
+            .map((f) => (
+              <TableRow
+                key={f?.id}
+                id={f?.id}
+                name={f?.name?.is ?? ''}
+                isHeader={false}
+                translated={f?.isTranslated ?? false}
+                slug={f?.slug ?? ''}
+                beenPublished={f?.beenPublished ?? false}
+                setFormsState={setForms}
+                status={f?.status}
+                lastModified={f?.modified}
+                url={f?.submissionServiceUrl ?? ''}
+                lastModifiedBy={f?.lastModifiedBy ?? ''}
+              />
+            ))}
+      </Box>
     </>
   )
 }
