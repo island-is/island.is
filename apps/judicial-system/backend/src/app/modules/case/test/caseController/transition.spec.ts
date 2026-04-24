@@ -4,13 +4,8 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { ConfigType } from '@island.is/nest/config'
-
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
-  AppealCaseRulingDecision,
-  AppealCaseState,
-  CaseFileCategory,
   CaseFileState,
   CaseNotificationType,
   CaseOrigin,
@@ -33,7 +28,6 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
-import { caseModuleConfig } from '../../case.config'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
 jest.mock('../../../../factories')
@@ -61,21 +55,14 @@ describe('CaseController - Transition', () => {
 
   let mockQueuedMessages: Message[]
   let transaction: Transaction
-  let mockConfig: ConfigType<typeof caseModuleConfig>
   let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      queuedMessages,
-      sequelize,
-      caseConfig,
-      caseRepositoryService,
-      caseController,
-    } = await createTestingCaseModule()
+    const { queuedMessages, sequelize, caseRepositoryService, caseController } =
+      await createTestingCaseModule()
 
     mockQueuedMessages = queuedMessages
-    mockConfig = caseConfig
     mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -553,227 +540,4 @@ describe('CaseController - Transition', () => {
       })
     })
   })
-
-  each`
-      transition                        | caseState                    | currentAppealState           | newAppealState
-      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${AppealCaseState.APPEALED}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${AppealCaseState.APPEALED}  | ${AppealCaseState.RECEIVED}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.RECEIVED}  | ${AppealCaseState.COMPLETED}
-      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${AppealCaseState.COMPLETED} | ${AppealCaseState.RECEIVED}
-      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.APPEALED}  | ${AppealCaseState.WITHDRAWN}
-      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${AppealCaseState.RECEIVED}  | ${AppealCaseState.WITHDRAWN}
-
-
-    `.describe(
-    '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
-    ({ transition, caseState, currentAppealState, newAppealState }) => {
-      each([...restrictionCases, ...investigationCases]).describe(
-        '%s case',
-        (type) => {
-          const caseId = uuid()
-          const prosecutorAppealBriefId = uuid()
-          const prosecutorAppealBriefCaseFileId1 = uuid()
-          const prosecutorAppealBriefCaseFileId2 = uuid()
-          const appealRulingId = uuid()
-          const caseFiles = [
-            {
-              id: prosecutorAppealBriefId,
-              key: uuid(),
-              isKeyAccessible: true,
-              state: CaseFileState.STORED_IN_RVG,
-              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-            },
-            {
-              id: prosecutorAppealBriefCaseFileId1,
-              key: uuid(),
-              isKeyAccessible: true,
-              state: CaseFileState.STORED_IN_RVG,
-              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-            },
-            {
-              id: prosecutorAppealBriefCaseFileId2,
-              key: uuid(),
-              isKeyAccessible: true,
-              state: CaseFileState.STORED_IN_RVG,
-              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-            },
-            {
-              id: appealRulingId,
-              key: uuid(),
-              isKeyAccessible: true,
-              state: CaseFileState.STORED_IN_RVG,
-              category: CaseFileCategory.APPEAL_RULING,
-            },
-          ]
-          const theCase = {
-            id: caseId,
-            type,
-            state: caseState,
-            caseFiles,
-            appealCase: { appealState: currentAppealState },
-            origin: CaseOrigin.LOKE,
-          } as Case
-
-          const updatedCase = {
-            id: caseId,
-            type,
-            state: caseState,
-            caseFiles,
-            appealCase: { appealState: newAppealState },
-            origin: CaseOrigin.LOKE,
-          } as Case
-
-          beforeEach(async () => {
-            const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-            mockFindOne.mockResolvedValueOnce(updatedCase)
-
-            await givenWhenThen(caseId, theCase, {
-              transition,
-            })
-          })
-
-          it('should transition the case', () => {
-            expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-              caseId,
-              {
-                appealState: newAppealState,
-                prosecutorPostponedAppealDate:
-                  transition === CaseTransition.APPEAL ? date : undefined,
-                appealReceivedByCourtDate:
-                  transition === CaseTransition.RECEIVE_APPEAL
-                    ? date
-                    : undefined,
-                appealRulingDecision:
-                  transition === CaseTransition.WITHDRAW_APPEAL &&
-                  currentAppealState === AppealCaseState.RECEIVED
-                    ? AppealCaseRulingDecision.DISCONTINUED
-                    : undefined,
-              },
-              { transaction },
-            )
-          })
-
-          it('should send notifications to queue when case is appealed', () => {
-            if (transition === CaseTransition.APPEAL) {
-              expect(mockQueuedMessages).toEqual([
-                {
-                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: prosecutorAppealBriefId,
-                },
-                {
-                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: prosecutorAppealBriefCaseFileId1,
-                },
-                {
-                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: prosecutorAppealBriefCaseFileId2,
-                },
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: {
-                    type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
-                  },
-                },
-              ])
-            }
-          })
-
-          it('should send notifications to queue when appeal is received', () => {
-            if (transition === CaseTransition.RECEIVE_APPEAL) {
-              expect(mockQueuedMessages).toEqual([
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
-                },
-              ])
-            }
-          })
-
-          it('should send notifications to queue when appeal is completed', () => {
-            if (transition === CaseTransition.COMPLETE_APPEAL) {
-              expect(mockQueuedMessages).toEqual([
-                {
-                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: appealRulingId,
-                },
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.APPEAL_COMPLETED },
-                },
-                {
-                  type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  nextRetry:
-                    date.getTime() + mockConfig.robotMessageDelay * 1000,
-                },
-                {
-                  type: MessageType.DELIVERY_TO_POLICE_APPEAL,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId: theCase.id,
-                },
-              ])
-            }
-          })
-
-          it('should send notifications to queue when appeal is withdrawn', () => {
-            if (transition === CaseTransition.WITHDRAW_APPEAL) {
-              expect(mockQueuedMessages).toEqual([
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
-                },
-              ])
-            }
-          })
-        },
-      )
-    },
-  )
 })

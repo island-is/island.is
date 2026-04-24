@@ -42,6 +42,15 @@ import { appealCase as strings } from './AppealCase.strings'
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }
 
+type Assignees = 'assistant' | 'judge1' | 'judge2' | 'judge3'
+
+const assignees: Record<Assignees, { id: string; assignee: string }> = {
+  assistant: { id: 'appealAssistantId', assignee: 'appealAssistant' },
+  judge1: { id: 'appealJudge1Id', assignee: 'appealJudge1' },
+  judge2: { id: 'appealJudge2Id', assignee: 'appealJudge2' },
+  judge3: { id: 'appealJudge3Id', assignee: 'appealJudge3' },
+}
+
 const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { sendNotification, sendNotificationError, isSendingNotification } =
@@ -78,10 +87,10 @@ const AppealCase: FC = () => {
       return { label: judge.name ?? '', value: judge.id, judge }
     })
 
-  const defaultJudges = [
-    workingCase.appealCase?.appealJudge1,
-    workingCase.appealCase?.appealJudge2,
-    workingCase.appealCase?.appealJudge3,
+  const defaultJudges: { key: Assignees; judge: User | undefined | null }[] = [
+    { key: 'judge1', judge: workingCase.appealCase?.appealJudge1 },
+    { key: 'judge2', judge: workingCase.appealCase?.appealJudge2 },
+    { key: 'judge3', judge: workingCase.appealCase?.appealJudge3 },
   ]
 
   const defaultAssistant = assistants?.find(
@@ -117,41 +126,15 @@ const AppealCase: FC = () => {
     }
   }
 
-  const handleChange = async (coaJudgeId: string, coaJudgeProperty: string) => {
+  const handleChangedAssignee = async (
+    key: 'assistant' | 'judge1' | 'judge2' | 'judge3',
+    assignee: User,
+  ) => {
     if (workingCase?.appealCase?.id) {
       const updatedAppealCase = await updateAppealCase(
         workingCase.id,
         workingCase.appealCase.id,
-        { [coaJudgeProperty]: coaJudgeId },
-      )
-
-      if (!updatedAppealCase) {
-        return
-      }
-
-      const coaJudge =
-        coaJudgeProperty === 'appealJudge1Id'
-          ? { appealJudge1: updatedAppealCase.appealJudge1 }
-          : coaJudgeProperty === 'appealJudge2Id'
-          ? { appealJudge2: updatedAppealCase.appealJudge2 }
-          : { appealJudge3: updatedAppealCase.appealJudge3 }
-
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        appealCase: {
-          ...prevWorkingCase.appealCase,
-          ...coaJudge,
-        } as TAppealCase,
-      }))
-    }
-  }
-
-  const handleAssistantChange = async (appealAssistantId: string) => {
-    if (workingCase?.appealCase?.id) {
-      const updatedAppealCase = await updateAppealCase(
-        workingCase.id,
-        workingCase.appealCase.id,
-        { appealAssistantId },
+        { [assignees[key].id]: assignee.id },
       )
 
       if (!updatedAppealCase) {
@@ -162,7 +145,7 @@ const AppealCase: FC = () => {
         ...prevWorkingCase,
         appealCase: {
           ...prevWorkingCase.appealCase,
-          appealAssistant: updatedAppealCase.appealAssistant,
+          [assignees[key].assignee]: assignee,
         } as TAppealCase,
       }))
     }
@@ -197,8 +180,9 @@ const AppealCase: FC = () => {
               value={defaultAssistant}
               options={assistants}
               onChange={(selectedOption) => {
-                handleAssistantChange(
-                  (selectedOption as AssistantSelectOption).assistant.id,
+                handleChangedAssignee(
+                  'assistant',
+                  (selectedOption as AssistantSelectOption).assistant,
                 )
               }}
               required
@@ -207,7 +191,7 @@ const AppealCase: FC = () => {
           <Box component="section" marginBottom={8}>
             <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
             <BlueBox>
-              {defaultJudges.map((judge, index) => (
+              {defaultJudges.map(({ key, judge }, index) => (
                 <Box marginBottom={2} key={`${index}`}>
                   <Select
                     name="judge"
@@ -228,11 +212,10 @@ const AppealCase: FC = () => {
                     }
                     options={judges}
                     onChange={(selectedOption) => {
-                      const judgeUpdate = (selectedOption as JudgeSelectOption)
-                        .judge.id
-                      const judgeProperty = `appealJudge${index + 1}Id`
-
-                      handleChange(judgeUpdate, judgeProperty)
+                      handleChangedAssignee(
+                        key,
+                        (selectedOption as JudgeSelectOption).judge,
+                      )
                     }}
                     required
                   />
