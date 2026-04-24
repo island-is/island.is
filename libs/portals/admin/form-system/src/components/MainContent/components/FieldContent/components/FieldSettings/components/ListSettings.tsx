@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FieldTypesEnum, ListTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -7,6 +7,7 @@ import {
   GridColumn as Column,
   RadioButton,
   GridRow as Row,
+  Select,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -15,25 +16,21 @@ import { ControlContext } from '../../../../../../../context/ControlContext'
 
 const predeterminedLists = [
   {
-    label: 'Sveitarfélög',
+    label: 'Landalisti',
     value: 0,
   },
-  {
-    label: 'Lönd',
-    value: 1,
-  },
-  {
-    label: 'Póstnúmer',
-    value: 2,
-  },
-  {
-    label: 'Iðngreinarmeistara',
-    value: 3,
-  },
-  {
-    label: 'Skráningarflokkar',
-    value: 4,
-  },
+  // {
+  //   label: 'Sveitarfélög',
+  //   value: 1,
+  // },
+  // {
+  //   label: 'Póstnúmer',
+  //   value: 2,
+  // },
+  // {
+  //   label: 'Gjaldmiðlar',
+  //   value: 3,
+  // }
 ]
 
 export const ListSettings = () => {
@@ -52,21 +49,21 @@ export const ListSettings = () => {
   }
 
   const { formatMessage } = useLocale()
+
   const listTypes = [
-    'sveitarfelog',
-    'lond',
-    'postnumer',
-    'idngreinarMeistara',
-    'skraningarflokkar',
+    ListTypesEnum.COUNTRIES,
+    ListTypesEnum.MUNICIPALITIES,
+    ListTypesEnum.POSTAL_CODES,
   ]
-  const getListType = (index: number) => listTypes[index] || 'customList'
+  const getListType = (index: number) =>
+    listTypes[index] || ListTypesEnum.CUSTOM
 
   const onClickRadioHandler = (index: number) => {
     radioHandler(index)
     controlDispatch({
       type: 'SET_LIST_TYPE',
       payload: {
-        listType: index === 0 ? 'customList' : 'other',
+        listType: index === 0 ? ListTypesEnum.CUSTOM : 'other',
         update: updateActiveItem,
       },
     })
@@ -108,7 +105,7 @@ export const ListSettings = () => {
               </Box>
             </Column>
           </Row>
-          {/* <Row>
+          <Row>
             <Column>
               <Box onClick={() => onClickRadioHandler(1)}>
                 <RadioButton
@@ -120,7 +117,7 @@ export const ListSettings = () => {
                 />
               </Box>
             </Column>
-          </Row> */}
+          </Row>
         </>
       )}
       {radio[0] && (
@@ -128,7 +125,7 @@ export const ListSettings = () => {
           {formatMessage(m.listBuilder)}
         </Button>
       )}
-      {/* {radio[1] && (
+      {radio[1] && (
         <Column span="5/10">
           <Select
             placeholder={formatMessage(m.chooseListType)}
@@ -149,7 +146,7 @@ export const ListSettings = () => {
             }}
           />
         </Column>
-      )} */}
+      )}
     </Stack>
   )
 }
