@@ -6,7 +6,7 @@ export const useApplicationCards = () => {
     APPLICATION_CARDS,
     {
       variables: {
-        input: { scopeCheck: true },
+        input: { scopeCheck: true, showPruned: true },
       },
     },
   )
