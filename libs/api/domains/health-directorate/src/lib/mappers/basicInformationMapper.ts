@@ -34,6 +34,13 @@ export const mapVaccinationStatus = (
   }
 }
 
+export const toAppointmentStatusEnum = (
+  status: string,
+): AppointmentStatusEnum | undefined =>
+  Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
+    ? (status as AppointmentStatusEnum)
+    : undefined
+
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
 ): UserVisibleAppointmentStatuses | null => {

@@ -87,26 +87,6 @@ export const Requirements: Form = buildForm({
       ],
     }),
     buildSection({
-      id: Routes.ADDITIONAL_PARTIES,
-      title: requirements.additionalParties.label,
-      condition: isMinistry,
-      children: [
-        buildMultiField({
-          id: Routes.ADDITIONAL_PARTIES,
-          children: [
-            buildCustomField({
-              id: 'additionalParties',
-              component: 'AdditionalPartiesScreen',
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: '',
-          children: [],
-        }),
-      ],
-    }),
-    buildSection({
       id: Routes.TYPE_SELECTION,
       title: typeSelection.general.section,
       condition: isMinistry,

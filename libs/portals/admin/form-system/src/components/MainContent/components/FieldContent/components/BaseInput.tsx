@@ -63,7 +63,7 @@ export const BaseInput = () => {
   return (
     <Stack space={2}>
       <Row>
-        <Column span="5/10">
+        <Column span={['10/10', '5/10']}>
           <Select
             label={formatMessage(m.type)}
             name="fieldTypeSelect"

@@ -226,6 +226,13 @@ export const regulation = {
         defaultMessage: 'Fella hana brott',
         description: 'Button label for revoking a regulation',
       },
+      requireImpact: {
+        id: 'ojoi.application:regulation.impacts.alerts.requireImpact',
+        defaultMessage:
+          'Til að halda áfram þarf að skrá a.m.k. eina breytingu eða brottfellingu.',
+        description:
+          'Helper shown above the Next button when an amending regulation has no impacts yet',
+      },
     }),
     labels: defineMessages({
       amendment: {
