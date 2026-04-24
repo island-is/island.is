@@ -12,9 +12,7 @@ export const healthNavigation: PortalNavigationItem = {
   icon: {
     icon: 'heart',
   },
-  featured: true,
-  featuredDescription: m.healthDescription,
-  featuredImage: './assets/images/le-jobs-s6.svg',
+  featuredImage: './assets/images/jobs.svg',
   children: [
     {
       name: m.health,

@@ -51,13 +51,13 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
         const title = formatMessage(item.customShortcut?.name ?? item.name)
         const description = item.customShortcut?.description
           ? formatMessage(item.customShortcut.description)
-          : item.featuredDescription
-          ? formatMessage(item.featuredDescription)
+          : item.description
+          ? formatMessage(item.description)
           : undefined
 
         const image = item.customShortcut?.image ?? item.featuredImage
 
-        const icon = item.customShortcut?.icon ?? item.icon
+        const icon = item.icon
         const iconEl = icon ? (
           isMobile ? (
             <Icon

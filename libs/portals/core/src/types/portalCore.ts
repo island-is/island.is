@@ -55,8 +55,6 @@ export interface PortalNavigationItem {
     featured?: boolean
     /** Illustration image URL shown on the right side of the featured card. */
     image?: string
-    /** Icon shown on the featured card. Falls back to the item's own icon if omitted. */
-    icon?: Pick<IconProps, 'icon' | 'type'>
   }
 
   /**
@@ -70,12 +68,6 @@ export interface PortalNavigationItem {
    * Illustration image URL shown on the right side of the featured card.
    */
   featuredImage?: string
-
-  /**
-   * Description shown on the featured card. Use this instead of `description`
-   * to opt in to showing text on the featured sidebar card.
-   */
-  featuredDescription?: MessageDescriptor
 
   /**
    * Indicates if the user has access to the navigation item

@@ -23,11 +23,13 @@ export const parseMenuConfig = (
 
 const collectShortcuts = (
   items: PortalNavigationItem[],
+  parentIcon?: PortalNavigationItem['icon'],
 ): PortalNavigationItem[] =>
   items.flatMap((item) => {
-    const nested = item.children ? collectShortcuts(item.children) : []
+    const icon = item.icon ?? parentIcon
+    const nested = item.children ? collectShortcuts(item.children, icon) : []
     return item.customShortcut
-      ? [{ ...item, navHide: true }, ...nested]
+      ? [{ ...item, icon, navHide: true }, ...nested]
       : nested
   })
 

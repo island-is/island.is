@@ -9,5 +9,4 @@ export const vehicleMileageNavigation: PortalNavigationItem = {
   icon: {
     icon: 'car',
   },
-  featured: true,
 }
