@@ -916,12 +916,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       // Edit Flow States
-      // no-op change to isolate CI flakiness
       [States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS]: {
         entry: [
           'createTempPeriods',
-          'removeNullPeriod',
           'setNavId',
+          'removeNullPeriod',
           'createTempEmployers',
           'setVMSTPeriods',
         ],
