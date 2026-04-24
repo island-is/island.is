@@ -3,15 +3,14 @@ import { style } from '@vanilla-extract/css'
 
 const MOBILE = `screen and (max-width: ${theme.breakpoints.md}px)`
 
-export const mainContent = style({
-  border: `1px solid ${theme.border.color.blue200}`,
-  borderRadius: theme.border.radius.standard,
+export const tabWrapper = style({
+  marginLeft: '33.333%',
+  maxWidth: '1200px',
   width: '100%',
-  height: '100%',
-  marginTop: '50px',
+  position: 'relative',
   '@media': {
     [MOBILE]: {
-      marginTop: '16px',
+      marginLeft: 0,
     },
   },
 })

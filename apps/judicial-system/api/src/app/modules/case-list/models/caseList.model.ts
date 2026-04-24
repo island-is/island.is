@@ -57,6 +57,9 @@ export class CaseListEntry {
   @Field(() => ID, { nullable: true })
   readonly parentCaseId?: string
 
+  @Field(() => ID, { nullable: true })
+  readonly appealCaseId?: string
+
   @Field(() => AppealCaseState, { nullable: true })
   readonly appealState?: AppealCaseState
 

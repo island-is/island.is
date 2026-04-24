@@ -5,7 +5,6 @@ import { AppealCase } from '../repository'
 import { CaseModule, EventModule, RepositoryModule, UserModule } from '..'
 import { AppealCaseController } from './appealCase.controller'
 import { AppealCaseService } from './appealCase.service'
-import { AppealCaseRepositoryService } from './appealCaseRepository.service'
 import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.controller'
 
 @Module({
@@ -17,7 +16,7 @@ import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.con
     forwardRef(() => RepositoryModule),
   ],
   controllers: [AppealCaseController, LimitedAccessAppealCaseController],
-  providers: [AppealCaseService, AppealCaseRepositoryService],
+  providers: [AppealCaseService],
   exports: [AppealCaseService],
 })
 export class AppealCaseModule {}

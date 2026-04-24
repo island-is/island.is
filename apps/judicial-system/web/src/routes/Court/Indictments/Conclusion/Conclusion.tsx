@@ -956,7 +956,6 @@ const Conclusion: FC = () => {
                             setWorkingCase,
                           )
                         }
-                        disabled={workingCase.state === CaseState.CORRECTING}
                         backgroundColor="white"
                         large
                         filled
@@ -976,7 +975,6 @@ const Conclusion: FC = () => {
                           setWorkingCase,
                         )
                       }
-                      disabled={workingCase.state === CaseState.CORRECTING}
                       backgroundColor="white"
                       large
                       filled
