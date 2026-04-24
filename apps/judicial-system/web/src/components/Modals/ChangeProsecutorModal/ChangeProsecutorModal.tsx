@@ -41,7 +41,11 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
       onClose={onClose}
       primaryButton={{
         text: 'Staðfesta',
+        disabled: !selectedProsecutorId,
         onClick: async () => {
+          if (!selectedProsecutorId) {
+            return
+          }
           await updateCase(caseId, {
             prosecutorId: selectedProsecutorId,
           })
