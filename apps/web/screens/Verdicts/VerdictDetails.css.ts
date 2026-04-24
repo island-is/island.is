@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const pdfContainer = style({})
 
@@ -37,10 +37,22 @@ globalStyle(`${richText} h2 + h3`, {
   marginTop: '8px',
 })
 
-/** Verdict source HTML often uses `ul` for numbered items; `decimal` gives “1. …” markers. */
 globalStyle(`${richText} ul, ${richText} ol`, {
   listStyleType: 'decimal',
-  paddingLeft: '1.75em',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      paddingLeft: theme.spacing[3],
+    },
+    sm: {
+      paddingLeft: theme.spacing[5],
+    },
+    md: {
+      paddingLeft: theme.spacing[8],
+    },
+    lg: {
+      paddingLeft: theme.spacing[8],
+    },
+  }),
 })
 
 globalStyle(`${richText} ul li, ${richText} ol li`, {
