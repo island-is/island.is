@@ -9,6 +9,7 @@ import React, {
 import { useRouter } from 'next/router'
 
 import { Button, Icon, Link } from '@island.is/island-ui/core'
+import { webMenuButtonClicked } from '@island.is/plausible'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
@@ -222,6 +223,12 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
         suppressFrameRef.current = null
         setSuppressTransition(false)
       })
+    }
+    // Track only opens — when the same key is clicked again we're closing,
+    // and closing shouldn't count as an engagement event.
+    const willOpen = openKey !== key
+    if (willOpen) {
+      webMenuButtonClicked({ surface: 'desktop', section: key })
     }
     setOpenKey((current) => (current === key ? null : key))
   }

@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, Icon, Link } from '@island.is/island-ui/core'
 import { SearchInput } from '@island.is/web/components'
+import { webMenuButtonClicked } from '@island.is/plausible'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
@@ -457,7 +458,7 @@ interface MobileNavSearchButtonProps {
 export const MobileNavSearchButton = forwardRef<
   HTMLButtonElement,
   MobileNavSearchButtonProps
->(({ onClick }, ref) => {
+>(({ onClick, isOpen }, ref) => {
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
@@ -472,7 +473,14 @@ export const MobileNavSearchButton = forwardRef<
       icon="search"
       iconType="outline"
       title={searchLabel}
-      onClick={onClick}
+      onClick={() => {
+        // When the panel is already open the search trigger just focuses
+        // the input — don't count that as a fresh open.
+        if (!isOpen) {
+          webMenuButtonClicked({ surface: 'mobile', trigger: 'search' })
+        }
+        onClick()
+      }}
     />
   )
 })
@@ -525,7 +533,13 @@ export const MobileNavMenuButton = forwardRef<
       variant="utility"
       icon={isOpen ? 'close' : 'menu'}
       iconType="outline"
-      onClick={onClick}
+      onClick={() => {
+        // Track opens only — toggling closed isn't an engagement event.
+        if (!isOpen) {
+          webMenuButtonClicked({ surface: 'mobile', trigger: 'menu' })
+        }
+        onClick()
+      }}
     >
       {menuLabel}
     </Button>
