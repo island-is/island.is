@@ -40,6 +40,11 @@ export const tabButton = style({
   lineHeight: '16px',
   position: 'relative',
 
+  // Hover matches the active state's underline so the transition from
+  // hover → open has no extra motion; text stays dark400 per Figma.
+  ':hover': {
+    borderBottomColor: theme.color.blue400,
+  },
   // Matches island-ui `FocusableBox` — 3px mint400 ring offset 3px outside.
   ':focus': {
     outline: 'none',
