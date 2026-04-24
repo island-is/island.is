@@ -1,6 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { styleVariants } from '@vanilla-extract/css'
-import { style, globalStyle } from '@vanilla-extract/css'
+import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 
 export const badge = styleVariants({
   active: {
@@ -11,11 +10,6 @@ export const badge = styleVariants({
     width: theme.spacing[1],
     borderRadius: '50%',
     backgroundColor: theme.color.red400,
-    ...themeUtils.responsiveStyle({
-      md: {
-        left: 67,
-      },
-    }),
   },
   inactive: {
     display: 'none',
@@ -83,4 +77,36 @@ export const featuredCardIcon = style({
 
 globalStyle(`${featuredCardIcon} svg`, {
   height: '100%',
+})
+
+export const featuredCardImage = style({
+  height: 110,
+  width: 'auto',
+  display: 'block',
+})
+
+export const accessDeniedImage = style({
+  height: 180,
+})
+
+export const notificationSenderLogoWrapper = style({
+  width: 40,
+  height: 40,
+  flexShrink: 0,
+  borderRadius: '50%',
+  backgroundColor: theme.color.blue100,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const notificationLink = style({
+  display: 'block',
+  textDecoration: 'none',
+})
+
+export const notificationSenderLogoImage = style({
+  width: 24,
+  height: 24,
+  objectFit: 'contain',
 })

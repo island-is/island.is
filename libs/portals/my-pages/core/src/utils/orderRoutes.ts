@@ -2,8 +2,24 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { z } from 'zod'
 
 const menuConfigSchema = z.object({
-  menu: z.array(z.string()),
+  menu: z.array(z.string()).optional(),
+  featured: z.array(z.string()).optional(),
 })
+
+export type MenuConfig = z.infer<typeof menuConfigSchema>
+
+export const parseMenuConfig = (
+  orderInput?: string | string[],
+): MenuConfig => {
+  if (Array.isArray(orderInput)) return { menu: orderInput }
+  if (typeof orderInput !== 'string') return { menu: [] }
+  try {
+    const result = menuConfigSchema.safeParse(JSON.parse(orderInput))
+    return result.success ? result.data : { menu: [] }
+  } catch {
+    return { menu: [] }
+  }
+}
 
 const collectShortcuts = (
   items: PortalNavigationItem[],
@@ -22,17 +38,7 @@ export const orderRoutes = (
   try {
     if (!nav.children) return nav
 
-    let orderedArray: string[] = []
-
-    if (Array.isArray(orderInput)) {
-      orderedArray = orderInput
-    } else if (typeof orderInput === 'string') {
-      const menuObject = JSON.parse(orderInput)
-      const menu = menuConfigSchema.safeParse(menuObject)
-      if (menu.success) {
-        orderedArray = menu.data.menu
-      }
-    }
+    const { menu: orderedArray = [] } = parseMenuConfig(orderInput)
 
     const byOrder = (a: PortalNavigationItem, b: PortalNavigationItem) => {
       if (orderedArray.length === 0) return 0

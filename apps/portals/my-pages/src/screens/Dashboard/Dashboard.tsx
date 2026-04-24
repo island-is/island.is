@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react'
 import { DashboardV1 } from './DashboardV1/DashboardV1'
 import { DashboardV2 } from './DashboardV2/DashboardV2'
 
+// This is temporary until we can remove DashboardV1, then we will rename DashboardV2 to Dashboard
+// and delete DashboardV1 as well as the flag and routing code in this file
 export const Dashboard = () => {
   const featureFlagClient = useFeatureFlagClient()
   const [useNewDashboard, setUseNewDashboard] = useState(false)
 
   useEffect(() => {
     featureFlagClient
-      .getValue(Features.servicePortalDashboardV2PageEnabled, false)
+      .getValue(Features.isServicePortalDashboardV2PageEnabled, false)
       .then((value) => setUseNewDashboard(Boolean(value)))
   }, [featureFlagClient])
 

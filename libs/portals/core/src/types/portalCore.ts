@@ -51,23 +51,20 @@ export interface PortalNavigationItem {
   customShortcut?: {
     name: MessageDescriptor
     description: MessageDescriptor
-    /** Promotes this item to the featured sidebar on the V2 dashboard. */
+    /** Fallback: promotes this item to featured when the Contentful featured list is not set up. */
     featured?: boolean
     /** Illustration image URL shown on the right side of the featured card. */
     image?: string
-    /** Tag label shown on the featured card (e.g. "Kosningar"). */
-    tag?: MessageDescriptor
+    /** Icon shown on the featured card. Falls back to the item's own icon if omitted. */
+    icon?: Pick<IconProps, 'icon' | 'type'>
   }
 
   /**
-   * Promotes a top-level module to the featured sidebar on the V2 dashboard.
+   * Fallback: promotes a top-level module to the featured sidebar when the
+   * Contentful "Mínar síður Ísland.is flokkar og röðun" namespace has no
+   * featured list configured. Once that entry exists, this flag is ignored.
    */
   featured?: boolean
-
-  /**
-   * Controls display order in the V2 dashboard featured sidebar. Lower = higher up.
-   */
-  featuredOrder?: number
 
   /**
    * Illustration image URL shown on the right side of the featured card.
@@ -79,11 +76,6 @@ export interface PortalNavigationItem {
    * to opt in to showing text on the featured sidebar card.
    */
   featuredDescription?: MessageDescriptor
-
-  /**
-   * Tag label shown on the featured card (e.g. "Kosningar").
-   */
-  featuredTag?: MessageDescriptor
 
   /**
    * Indicates if the user has access to the navigation item

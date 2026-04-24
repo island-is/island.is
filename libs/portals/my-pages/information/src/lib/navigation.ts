@@ -20,7 +20,6 @@ export const informationNavigation: PortalNavigationItem = {
     icon: 'person',
   },
   featured: true,
-  featuredOrder: 2,
   featuredDescription: m.userInfoDescription,
   children: [
     {

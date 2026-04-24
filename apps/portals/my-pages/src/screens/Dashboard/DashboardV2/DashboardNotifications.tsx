@@ -1,9 +1,4 @@
-import {
-  Box,
-  Icon,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
 import {
@@ -15,7 +10,6 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
-import cn from 'classnames'
 import { Link } from 'react-router-dom'
 import * as styles from '../Dashboard.css'
 
@@ -50,12 +44,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
     >
       {!loading && !hasDelegationAccess && (
         <span className={styles.lock}>
-          <Icon
-            icon="lockClosed"
-            type="outline"
-            color="blue600"
-            size="small"
-          />
+          <Icon icon="lockClosed" type="outline" color="blue600" size="small" />
         </span>
       )}
 
@@ -74,7 +63,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                 color="blue400"
                 size="medium"
               />
-              <Box className={cn(styles.notificationBadge[badgeActive])} />
+              <Box className={styles.notificationBadge[badgeActive]} />
             </Box>
             <Text variant="h4" as="h2" color="blue400">
               {formatMessage(m.notifications)}
@@ -123,18 +112,25 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
             {formatMessage(m.accessDeniedText)}
           </Text>
           <Box paddingTop={2}>
-            <img src="./assets/images/jobsGrid.svg" alt="" style={{ height: 180 }} />
+            <img
+              src="./assets/images/jobsGrid.svg"
+              alt=""
+              className={styles.accessDeniedImage}
+            />
           </Box>
         </Box>
       )}
 
       {!loading && hasDelegationAccess && error && (
-        <Problem size="small" />
+        <Problem error={error} noBorder />
       )}
 
-      {!loading && hasDelegationAccess && !error && notifications.length === 0 && (
-        <Problem type="no_data" size="small" noBorder />
-      )}
+      {!loading &&
+        hasDelegationAccess &&
+        !error &&
+        notifications.length === 0 && (
+          <Problem type="no_data" size="small" noBorder />
+        )}
 
       {!loading &&
         hasDelegationAccess &&
@@ -152,19 +148,11 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               borderTopWidth="standard"
               borderColor="blue200"
             >
-              <Box
-                flexShrink={0}
-                borderRadius="full"
-                background="blue100"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                style={{ width: 40, height: 40 }}
-              >
+              <Box className={styles.notificationSenderLogoWrapper}>
                 <img
                   src={item.sender?.logoUrl ?? COAT_OF_ARMS}
                   alt=""
-                  style={{ width: 24, height: 24, objectFit: 'contain' }}
+                  className={styles.notificationSenderLogoImage}
                 />
               </Box>
               <Box flexGrow={1} overflow="hidden">
@@ -174,9 +162,19 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                   alignItems="center"
                   columnGap={2}
                 >
-                  <Text variant="medium" truncate>
-                    {item.message.title}
-                  </Text>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap={1}
+                    overflow="hidden"
+                  >
+                    {!item.metadata.read && (
+                      <Box className={styles.unreadDot} />
+                    )}
+                    <Text variant="medium" truncate>
+                      {item.message.title}
+                    </Text>
+                  </Box>
                   {item.metadata.created && (
                     <Box flexShrink={0}>
                       <Text variant="medium" color="dark400">
@@ -204,8 +202,9 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               <a
                 key={item.notificationId}
                 href={href}
+                target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'block', textDecoration: 'none' }}
+                className={styles.notificationLink}
               >
                 {content}
               </a>
@@ -216,7 +215,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
             <Link
               key={item.notificationId}
               to={href}
-              style={{ display: 'block', textDecoration: 'none' }}
+              className={styles.notificationLink}
             >
               {content}
             </Link>

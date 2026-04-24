@@ -24,6 +24,26 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
     el && el.dispatchEvent(new Event('click'))
   }
 
+  const getDisabledTooltip = (
+    disabledReason: string | undefined,
+    name: string,
+  ) => {
+    switch (disabledReason) {
+      case 'notAvailableForActors':
+        return formatMessage(coreMessages.disabledReasonNotAvailableForActors, {
+          moduleName: name,
+        })
+      case 'notMinor':
+        return formatMessage(coreMessages.disabledReasonNotMinor, {
+          moduleName: name,
+        })
+      default:
+        return formatMessage(coreMessages.disabledReasonDefault, {
+          moduleName: name,
+        })
+    }
+  }
+
   return (
     <Box display="flex" flexDirection="column" rowGap={[1, 2]}>
       {items.map((item, i) => {
@@ -36,55 +56,46 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
           : undefined
 
         const image = item.customShortcut?.image ?? item.featuredImage
-        const tagDescriptor = item.customShortcut?.tag ?? item.featuredTag
 
-        const getDisabledTooltip = () => {
-          const name = formatMessage(item.name)
-          switch (item.disabledReason) {
-            case 'notAvailableForActors':
-              return formatMessage(
-                coreMessages.disabledReasonNotAvailableForActors,
-                { moduleName: name },
-              )
-            case 'notMinor':
-              return formatMessage(coreMessages.disabledReasonNotMinor, {
-                moduleName: name,
-              })
-            default:
-              return formatMessage(coreMessages.disabledReasonDefault, {
-                moduleName: name,
-              })
-          }
-        }
-
-        const iconEl = item.icon
-          ? isMobile
-            ? (
+        const icon = item.customShortcut?.icon ?? item.icon
+        const iconEl = icon ? (
+          isMobile ? (
+            <Icon
+              icon={icon.icon}
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
+          ) : (
+            iconTypeToSVG(icon.icon) ?? (
               <Icon
-                icon={item.icon.icon}
+                icon={icon.icon}
                 type="outline"
                 color="blue400"
                 size="medium"
               />
             )
-            : (iconTypeToSVG(item.icon.icon) ?? (
-              <Icon
-                icon={item.icon.icon}
-                type="outline"
-                color="blue400"
-                size="medium"
-              />
-            ))
-          : undefined
+          )
+        ) : undefined
 
         return (
           <Box
-            key={typeof item.name === 'string' ? item.name : String(item.name.id ?? i)}
-            onMouseEnter={() => onHover(item.icon?.icon ?? '')}
+            key={
+              typeof item.name === 'string'
+                ? item.name
+                : String(item.name.id ?? i)
+            }
+            onMouseEnter={() => onHover(icon?.icon ?? '')}
             className={styles.svgOutline}
           >
             {isDisabled && (
-              <Tooltip placement="top" text={getDisabledTooltip()}>
+              <Tooltip
+                placement="top"
+                text={getDisabledTooltip(
+                  item.disabledReason,
+                  formatMessage(item.name),
+                )}
+              >
                 <span className={styles.lock}>
                   <Icon
                     icon="lockClosed"
@@ -96,19 +107,23 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
               </Tooltip>
             )}
             <CategoryCard
-              component={!isDisabled && item.path ? Link : undefined}
-              to={!isDisabled ? item.path : undefined}
+              component={item.path ? Link : undefined}
+              to={item.path}
               heading={title}
               headingVariant="h4"
               headingAs="h2"
               text={description}
               icon={iconEl}
-              customImage={image ? <img src={image} alt="" style={{ height: 110, width: 'auto', display: 'block' }} /> : undefined}
-              tags={
-                tagDescriptor
-                  ? [{ label: formatMessage(tagDescriptor), disabled: true }]
-                  : []
+              customImage={
+                image && !isMobile ? (
+                  <img
+                    src={image}
+                    alt=""
+                    className={styles.featuredCardImage}
+                  />
+                ) : undefined
               }
+              tags={[]}
             />
           </Box>
         )
