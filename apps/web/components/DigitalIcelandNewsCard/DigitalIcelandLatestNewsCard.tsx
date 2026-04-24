@@ -57,7 +57,7 @@ export const DigitalIcelandLatestNewsCard = (item: ItemProps) => {
       <Box paddingLeft={2} paddingRight={2}>
         <Inline space={1}>
           {item.tags.map((tag) => (
-            <Tag key={tag} disabled outlined>
+            <Tag key={tag} disabled>
               {tag}
             </Tag>
           ))}
