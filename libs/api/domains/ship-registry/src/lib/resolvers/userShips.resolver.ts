@@ -20,7 +20,7 @@ import { UserShipsService } from '../services/userShips.service'
 import { UserShipInput } from '../dto/userShip.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.ships)
 @FeatureFlag(Features.isServicePortalUserShipsPageEnabled)
 @Audit({ namespace: '@island.is/api/ship-registry' })
 @Resolver(() => UserShip)
