@@ -47,6 +47,7 @@ const CourtCases = () => {
           <Box marginTop={2}>
             <ActionCard
               heading={x.caseNumberTitle ?? ''}
+              headingVariant="h4"
               text={x.type ?? ''}
               tag={{
                 label: x.state?.label ?? '',

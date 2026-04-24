@@ -33,6 +33,7 @@ import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/fo
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
+import { FormContext } from '../FormProvider/FormProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -208,8 +209,10 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   onNavigationTo,
   isValid,
 }) => {
+  const { isCreating } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const hideBreadcrumbs = isDefenceUser(user) || isCreating
 
   return isLoading ? (
     <Skeleton />
@@ -242,7 +245,7 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         <GridContainer className={styles.container}>
           <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              {!isDefenceUser(user) && (
+              {!hideBreadcrumbs && (
                 <Box marginY={3} marginX={[3, 3, 0, 0]}>
                   <BreadCrumbs />
                 </Box>
@@ -252,7 +255,7 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
                 borderColor="white"
                 paddingTop={[3, 3, 10, 10]}
                 className={styles.processContent}
-                marginTop={isDefenceUser(user) ? 10 : 0}
+                marginTop={hideBreadcrumbs ? 10 : 0}
               >
                 {children}
               </Box>

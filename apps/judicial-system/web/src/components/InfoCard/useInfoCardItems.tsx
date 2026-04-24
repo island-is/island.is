@@ -8,15 +8,21 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isRequestCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+  isRequestCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseIndictmentRulingDecision,
   CaseType,
+  Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -37,7 +43,7 @@ import * as styles from './InfoCard.css'
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
 
   // helper for info card items. If items have no values they will have [{falsy value}]
   const showItem = (item: Item) =>
@@ -56,7 +62,11 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants
+    const defendants = workingCase.defendants?.filter((defendant) =>
+      isDefenceUser(user) && isCompletedCase(workingCase.state)
+        ? true
+        : defendant.indictmentCancelledOrDismissedState === null,
+    )
     const isMultipleDefendants = defendants && defendants.length > 1
 
     return {
@@ -118,6 +128,30 @@ const useInfoCardItems = () => {
             </div>,
           ]
         : [],
+    }
+  }
+
+  const cancelledAndDismissedDefendants = (defendant: Defendant): Item => {
+    return {
+      id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
+      title: (
+        <Text variant="h4" as="h4">
+          {getHumanReadableCaseIndictmentRulingDecision(
+            defendant.indictmentCancelledOrDismissedState?.type,
+          )}
+        </Text>
+      ),
+      values: [
+        <div key="cancelled-and-dismissed-defendants-grid">
+          <Text>{defendant.name}</Text>
+          <Text>
+            {formatDate(
+              defendant.indictmentCancelledOrDismissedState?.time,
+              'P',
+            )}
+          </Text>
+        </div>,
+      ],
     }
   }
 
@@ -476,6 +510,7 @@ const useInfoCardItems = () => {
   return {
     showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     prosecutorsOffice,

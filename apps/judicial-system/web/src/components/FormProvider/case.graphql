@@ -82,6 +82,7 @@ query Case($input: CaseQueryInput!) {
       alternativeServiceDescription
       indictmentReviewDecision
       isDrivingLicenseSuspended
+      appealStatementDate
       subpoenas {
         id
         created
@@ -598,6 +599,7 @@ query Case($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
+      appealStatementDate
     }
     victims {
       id
