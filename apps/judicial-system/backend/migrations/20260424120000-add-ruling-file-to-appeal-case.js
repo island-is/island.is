@@ -39,10 +39,9 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.sequelize
-        .query(
-          'DROP INDEX IF EXISTS appeal_case_case_id_ruling_file_id_uq',
-          { transaction },
-        )
+        .query('DROP INDEX IF EXISTS appeal_case_case_id_ruling_file_id_uq', {
+          transaction,
+        })
         .then(() =>
           queryInterface.removeColumn('appeal_case', 'ruling_file_id', {
             transaction,
