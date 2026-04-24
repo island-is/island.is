@@ -317,7 +317,7 @@ export const MobileNavPanel = forwardRef<
                   onClick={() => setDrilldownKey(null)}
                 >
                   <Icon
-                    icon="arrowBack"
+                    icon="chevronBack"
                     type="outline"
                     size="small"
                     color="dark400"
