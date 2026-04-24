@@ -15,6 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  appealEventTypes,
   CaseFileCategory,
   CaseFileState,
   CaseState,
@@ -38,6 +39,7 @@ import {
 } from '../file'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
   CaseFile,
   CaseRepositoryService,
@@ -173,6 +175,13 @@ export const include: Includeable[] = [
         model: User,
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
       },
     ],
   },
