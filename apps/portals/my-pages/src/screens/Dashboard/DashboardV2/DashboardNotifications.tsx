@@ -2,89 +2,143 @@ import {
   Box,
   Icon,
   SkeletonLoader,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import {
   COAT_OF_ARMS,
   InformationPaths,
   resolveLink,
   useGetUserNotificationsOverviewQuery,
 } from '@island.is/portals/my-pages/information'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { Problem } from '@island.is/react-spa/shared'
+import { hasNotificationScopes } from '@island.is/auth/scopes'
+import cn from 'classnames'
 import { Link } from 'react-router-dom'
+import * as styles from '../Dashboard.css'
 
-export const NotificationsPreview = ({ limit }: { limit: number }) => {
+export const DashboardNotifications = ({ limit }: { limit: number }) => {
   const { formatMessage, lang } = useLocale()
+  const userInfo = useUserInfo()
+  const hasDelegationAccess = hasNotificationScopes(userInfo?.scopes)
 
   const { data, loading, error } = useGetUserNotificationsOverviewQuery({
     variables: {
       input: { limit: limit, before: '', after: '' },
       locale: lang,
     },
+    skip: !hasDelegationAccess,
   })
 
   const notifications = data?.userNotificationsOverview?.data ?? []
+  const unreadCount = data?.userNotificationsOverview?.unreadCount ?? 0
+  const hasUnread = unreadCount > 0
+  const badgeActive: keyof typeof styles.notificationBadge = hasUnread
+    ? 'active'
+    : 'inactive'
 
   return (
     <Box
+      position="relative"
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
       paddingY={3}
       paddingX={4}
     >
+      {!loading && !hasDelegationAccess && (
+        <span className={styles.lock}>
+          <Icon
+            icon="lockClosed"
+            type="outline"
+            color="blue600"
+            size="small"
+          />
+        </span>
+      )}
+
       <Box
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
       >
-        <Box display="flex" alignItems="center" columnGap={1}>
-          <Icon
-            icon="notifications"
-            type="outline"
-            color="blue400"
-            size="medium"
-          />
-          <Text variant="h4" as="h2" color="blue400">
-            {formatMessage(m.notifications)}
-          </Text>
-        </Box>
-        <LinkResolver
-          href={InformationPaths.Notifications}
-          aria-label={formatMessage(m.notificationsViewAll)}
-        >
-          <Icon
-            icon="arrowForward"
-            type="filled"
-            color="blue400"
-            size="small"
-          />
+        <LinkResolver href={InformationPaths.Notifications}>
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Box position="relative" display="flex">
+              <Icon
+                icon="notifications"
+                type="outline"
+                color="blue400"
+                size="medium"
+              />
+              <Box className={cn(styles.notificationBadge[badgeActive])} />
+            </Box>
+            <Text variant="h4" as="h2" color="blue400">
+              {formatMessage(m.notifications)}
+            </Text>
+          </Box>
         </LinkResolver>
+        {hasDelegationAccess && (
+          <LinkResolver
+            href={InformationPaths.Notifications}
+            aria-label={formatMessage(m.notificationsViewAll)}
+          >
+            <Icon
+              icon="arrowForward"
+              type="filled"
+              color="blue400"
+              size="small"
+            />
+          </LinkResolver>
+        )}
       </Box>
 
-      {error && <Problem error={error} noBorder={false} />}
-
       {loading && (
-        <Stack space={2}>
+        <Box marginTop={4}>
           <SkeletonLoader
-            height={56}
-            width="full"
-            display="block"
-            repeat={3}
             space={2}
+            repeat={4}
+            display="block"
+            width="full"
+            height={56}
           />
-        </Stack>
+        </Box>
       )}
 
-      {!loading && notifications.length === 0 && (
-        <Text color="dark300">{formatMessage(m.noDataFound)}</Text>
+      {!loading && !hasDelegationAccess && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          paddingTop={2}
+          rowGap={2}
+        >
+          <Text variant="h4" textAlign="center">
+            {formatMessage(m.accessNeeded)}
+          </Text>
+          <Text textAlign="center" whiteSpace="preLine">
+            {formatMessage(m.accessDeniedText)}
+          </Text>
+          <Box paddingTop={2}>
+            <img src="./assets/images/jobsGrid.svg" alt="" style={{ height: 180 }} />
+          </Box>
+        </Box>
+      )}
+
+      {!loading && hasDelegationAccess && error && (
+        <Problem size="small" />
+      )}
+
+      {!loading && hasDelegationAccess && !error && notifications.length === 0 && (
+        <Problem type="no_data" size="small" noBorder />
       )}
 
       {!loading &&
+        hasDelegationAccess &&
+        !error &&
         notifications.map((item) => {
           const href = resolveLink(item.message.link)
           const isExternal = href.startsWith('http')
@@ -150,6 +204,7 @@ export const NotificationsPreview = ({ limit }: { limit: number }) => {
               <a
                 key={item.notificationId}
                 href={href}
+                rel="noopener noreferrer"
                 style={{ display: 'block', textDecoration: 'none' }}
               >
                 {content}
@@ -171,4 +226,4 @@ export const NotificationsPreview = ({ limit }: { limit: number }) => {
   )
 }
 
-export default NotificationsPreview
+export default DashboardNotifications

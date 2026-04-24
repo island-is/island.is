@@ -31,7 +31,7 @@ export type CategoryCardProps = {
   heading: string
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
-  text: string
+  text?: string
   textVariant?: 'default' | 'medium' | 'small'
   textFontWeight?: 'light' | 'regular'
   tags?: Tag[]
@@ -188,13 +188,15 @@ const Component = forwardRef<
                 </Text>
               )}
             </Box>
-            <Text
-              paddingTop={1}
-              fontWeight={textFontWeight}
-              variant={textVariant}
-            >
-              {text}
-            </Text>
+            {text && (
+              <Text
+                paddingTop={1}
+                fontWeight={textFontWeight}
+                variant={textVariant}
+              >
+                {text}
+              </Text>
+            )}
             {hasTags && (
               <Box paddingTop={3}>
                 <Inline space={['smallGutter', 'smallGutter', 'gutter']}>

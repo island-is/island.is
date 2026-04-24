@@ -75,6 +75,12 @@ export interface PortalNavigationItem {
   featuredImage?: string
 
   /**
+   * Description shown on the featured card. Use this instead of `description`
+   * to opt in to showing text on the featured sidebar card.
+   */
+  featuredDescription?: MessageDescriptor
+
+  /**
    * Tag label shown on the featured card (e.g. "Kosningar").
    */
   featuredTag?: MessageDescriptor

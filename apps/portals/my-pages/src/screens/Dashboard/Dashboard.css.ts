@@ -50,6 +50,30 @@ globalStyle(`${svgOutline} svg path`, {
   stroke: theme.color.blue400,
 })
 
+export const unreadDot = style({
+  width: theme.spacing[1],
+  height: theme.spacing[1],
+  borderRadius: '50%',
+  backgroundColor: theme.color.red400,
+  flexShrink: 0,
+})
+
+export const notificationBadge = styleVariants({
+  active: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: theme.spacing[1],
+    width: theme.spacing[1],
+    borderRadius: '50%',
+    backgroundColor: theme.color.red400,
+    transform: 'translate(-40%, -10%)',
+  },
+  inactive: {
+    display: 'none',
+  },
+})
+
 export const featuredCardIcon = style({
   minWidth: 24,
   width: 32,

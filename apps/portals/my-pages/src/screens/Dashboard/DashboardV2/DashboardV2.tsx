@@ -8,17 +8,22 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
+  PlausiblePageviewDetail,
   ServicePortalPaths,
   m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import { MAIN_NAVIGATION } from '../../../lib/masterNavigation'
 import Greeting from '../../../components/Greeting/Greeting'
-import { FeaturedSidebar } from './components/FeaturedSidebar'
-import { CategoryCardsGrid } from './components/CategoryCardsGrid'
-import { NotificationsPreview } from './components/NotificationsPreview'
+import { DashboardFeatured } from './DashboardFeatured'
+import { DashboardModules } from './DashboardModules'
+import { DashboardNotifications } from './DashboardNotifications'
 
 const useDashboardNav = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
@@ -43,37 +48,43 @@ const useDashboardNav = () => {
 export const DashboardV2 = () => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
+  const location = useLocation()
+  const userInfo = useUserInfo()
   const isMobile = width < theme.breakpoints.md
   const { featured, rest } = useDashboardNav()
+  const IS_COMPANY = isCompany(userInfo)
+
+  useEffect(() => {
+    PlausiblePageviewDetail(
+      ServicePortalPaths.Root,
+      IS_COMPANY ? 'company' : 'person',
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
 
   return (
     <Box>
       <GridContainer>
         <Greeting compact />
-        <Box paddingBottom={[1, 2, 4]}>
+        <Box paddingBottom={1}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <NotificationsPreview limit={isMobile ? 3 : 4} />
+              <DashboardNotifications limit={isMobile ? 3 : 4} />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box marginTop={[1, 2, 2, 0]}>
-                <FeaturedSidebar items={featured} isMobile={isMobile} />
+                <DashboardFeatured items={featured} isMobile={isMobile} />
               </Box>
             </GridColumn>
           </GridRow>
         </Box>
-        <Box paddingBottom={6}>
+        <Box marginTop={2} paddingBottom={6}>
           {!isMobile && (
-            <Text
-              variant="eyebrow"
-              color="purple400"
-              marginBottom={2}
-              marginTop={4}
-            >
+            <Text variant="eyebrow" color="purple400" marginBottom={2}>
               {formatMessage(m.moreCategories)}
             </Text>
           )}
-          <CategoryCardsGrid items={rest} isMobile={isMobile} />
+          <DashboardModules items={rest} isMobile={isMobile} />
         </Box>
       </GridContainer>
     </Box>

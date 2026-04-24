@@ -12,15 +12,15 @@ import {
   PortalNavigationItem,
 } from '@island.is/portals/core'
 import { Link } from 'react-router-dom'
-import { iconIdMapper, iconTypeToSVG } from '../../../../utils/Icons/idMapper'
-import * as styles from '../../Dashboard.css'
+import { iconIdMapper, iconTypeToSVG } from '../../../utils/Icons/idMapper'
+import * as styles from '../Dashboard.css'
 
 interface Props {
   items: PortalNavigationItem[]
   isMobile: boolean
 }
 
-export const CategoryCardsGrid = ({ items, isMobile }: Props) => {
+export const DashboardModules = ({ items, isMobile }: Props) => {
   const { formatMessage } = useLocale()
 
   const getDisabledReasonText = (reason: string, moduleName: string) => {
@@ -54,7 +54,11 @@ export const CategoryCardsGrid = ({ items, isMobile }: Props) => {
           (navRoot, index) =>
             navRoot.path && (
               <GridColumn
-                key={formatMessage(navRoot.name) + '-' + index}
+                key={
+                  typeof navRoot.name === 'string'
+                    ? navRoot.name
+                    : String(navRoot.name.id ?? index)
+                }
                 span={['12/12', '6/12', '4/12']}
                 paddingBottom={[1, 2, 3]}
               >
@@ -128,4 +132,4 @@ export const CategoryCardsGrid = ({ items, isMobile }: Props) => {
   )
 }
 
-export default CategoryCardsGrid
+export default DashboardModules
