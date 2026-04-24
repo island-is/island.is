@@ -352,7 +352,7 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
                 isOpen ? styles.chevronOpen : ''
               }`}
             >
-              <Icon icon="chevronDown" size="small" />
+              <Icon icon="chevronDown" size="small" color="blue400" />
             </span>
           </button>
         )

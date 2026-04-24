@@ -40,9 +40,6 @@ export const tabButton = style({
   lineHeight: '16px',
   position: 'relative',
 
-  ':hover': {
-    color: theme.color.blue400,
-  },
   // Matches island-ui `FocusableBox` — 3px mint400 ring offset 3px outside.
   ':focus': {
     outline: 'none',
@@ -64,6 +61,12 @@ export const chevron = style({
   width: 16,
   height: 16,
   transformOrigin: 'center center',
+  transition: `transform ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
 })
 
 export const chevronOpen = style({
