@@ -1,6 +1,7 @@
 import React, {
   forwardRef,
   useCallback,
+  useContext,
   useEffect,
   useId,
   useImperativeHandle,
@@ -11,12 +12,15 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, Icon, Link } from '@island.is/island-ui/core'
 import { SearchInput } from '@island.is/web/components'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
 import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
 import { useI18n } from '@island.is/web/i18n'
 
 import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
+  HEADER_NAV_SEE_ALL_LABEL_KEYS,
   type HeaderNavData,
   type HeaderNavKey,
 } from './headerNavData'
@@ -84,6 +88,8 @@ export const MobileNavPanel = forwardRef<
     ref,
   ) => {
     const { activeLocale, t } = useI18n()
+    const { globalNamespace } = useContext(GlobalContext)
+    const n = useNamespace(globalNamespace)
     const router = useRouter()
     const panelRef = useRef<HTMLDivElement>(null)
     const searchInputRef = useRef<HTMLInputElement>(null)
@@ -244,8 +250,14 @@ export const MobileNavPanel = forwardRef<
       }
     }, [router.events, close])
 
-    const menuLabel = activeLocale === 'is' ? 'Valmynd' : 'Menu'
-    const backLabel = activeLocale === 'is' ? 'Til baka' : 'Back'
+    const menuLabel = n(
+      'headerNavMenuLabel',
+      activeLocale === 'is' ? 'Valmynd' : 'Menu',
+    )
+    const backLabel = n(
+      'headerNavBackLabel',
+      activeLocale === 'is' ? 'Til baka' : 'Back',
+    )
 
     // No Contentful-driven nav data yet: render nothing rather than fall back
     // to stale hardcoded links. Hooks above still run so hook order is stable.
@@ -294,7 +306,7 @@ export const MobileNavPanel = forwardRef<
             />
           </Box>
 
-          {drilldownSection ? (
+          {drilldownSection && drilldownKey ? (
             <>
               <Box className={styles.panelHeader}>
                 <button
@@ -394,7 +406,10 @@ export const MobileNavPanel = forwardRef<
                     size="small"
                     as="span"
                   >
-                    {drilldownSection.seeAllLabel}
+                    {n(
+                      HEADER_NAV_SEE_ALL_LABEL_KEYS[drilldownKey],
+                      drilldownSection.seeAllLabel,
+                    )}
                   </Button>
                 </Link>
               </div>
@@ -444,7 +459,12 @@ export const MobileNavSearchButton = forwardRef<
   MobileNavSearchButtonProps
 >(({ onClick }, ref) => {
   const { activeLocale } = useI18n()
-  const searchLabel = activeLocale === 'is' ? 'Leit' : 'Search'
+  const { globalNamespace } = useContext(GlobalContext)
+  const n = useNamespace(globalNamespace)
+  const searchLabel = n(
+    'headerNavSearchLabel',
+    activeLocale === 'is' ? 'Leit' : 'Search',
+  )
   return (
     <Button
       ref={ref}
@@ -467,7 +487,12 @@ export const MobileNavMenuButton = forwardRef<
   MobileNavMenuButtonProps
 >(({ onClick, isOpen }, forwardedRef) => {
   const { activeLocale } = useI18n()
-  const menuLabel = activeLocale === 'is' ? 'Valmynd' : 'Menu'
+  const { globalNamespace } = useContext(GlobalContext)
+  const n = useNamespace(globalNamespace)
+  const menuLabel = n(
+    'headerNavMenuLabel',
+    activeLocale === 'is' ? 'Valmynd' : 'Menu',
+  )
   // Island-ui's Button doesn't type `aria-*` in its props, but its impl
   // spreads unknown props onto the underlying element — however relying on
   // that would fail TypeScript. Setting the attributes imperatively via a

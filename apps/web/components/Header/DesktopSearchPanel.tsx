@@ -1,8 +1,17 @@
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react'
 import { useRouter } from 'next/router'
 
 import { Icon } from '@island.is/island-ui/core'
 import { SearchInput } from '@island.is/web/components'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './DesktopSearchPanel.css'
@@ -19,6 +28,8 @@ export const DesktopSearchPanel = ({
   onOpenChange,
 }: DesktopSearchPanelProps) => {
   const { activeLocale, t } = useI18n()
+  const { globalNamespace } = useContext(GlobalContext)
+  const n = useNamespace(globalNamespace)
   const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -94,7 +105,10 @@ export const DesktopSearchPanel = ({
     }
   }, [router.events, close])
 
-  const searchLabel = activeLocale === 'is' ? 'Leit' : 'Search'
+  const searchLabel = n(
+    'headerNavSearchLabel',
+    activeLocale === 'is' ? 'Leit' : 'Search',
+  )
 
   return (
     <div ref={containerRef} className={styles.root}>

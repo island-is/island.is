@@ -31,3 +31,12 @@ export const HEADER_NAV_KEYS: HeaderNavKey[] = [
 ]
 
 export const HEADER_NAV_MAX_ITEMS = 8
+
+// Contentful namespace keys for the per-section "see all" labels. Used by
+// both DesktopNav and MobileNav to override the hardcoded fallbacks in
+// buildHeaderNavData without duplicating the mapping.
+export const HEADER_NAV_SEE_ALL_LABEL_KEYS: Record<HeaderNavKey, string> = {
+  organizations: 'headerNavSeeAllOrganizationsLabel',
+  categories: 'headerNavSeeAllCategoriesLabel',
+  lifeEvents: 'headerNavSeeAllLifeEventsLabel',
+}

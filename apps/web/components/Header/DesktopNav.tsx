@@ -1,13 +1,23 @@
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react'
 import { useRouter } from 'next/router'
 
 import { Button, Icon, Link } from '@island.is/island-ui/core'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
 import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
 import { useI18n } from '@island.is/web/i18n'
 
 import {
   HEADER_NAV_KEYS,
   HEADER_NAV_MAX_ITEMS,
+  HEADER_NAV_SEE_ALL_LABEL_KEYS,
   type HeaderNavData,
   type HeaderNavKey,
 } from './headerNavData'
@@ -73,6 +83,8 @@ const focusNextTabbableAfter = (container: HTMLElement) => {
 
 export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
   const { activeLocale } = useI18n()
+  const { globalNamespace } = useContext(GlobalContext)
+  const n = useNamespace(globalNamespace)
   const router = useRouter()
   const [openKey, setOpenKey] = useState<DropdownKey | null>(null)
   const containerRef = useRef<HTMLElement>(null)
@@ -214,7 +226,10 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
     setOpenKey((current) => (current === key ? null : key))
   }
 
-  const navLabel = activeLocale === 'is' ? 'Aðalvalmynd' : 'Main navigation'
+  const navLabel = n(
+    'headerNavMainNavLabel',
+    activeLocale === 'is' ? 'Aðalvalmynd' : 'Main navigation',
+  )
 
   const handleNavKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     // Keep Tab order logical when a panel is open:
@@ -472,7 +487,7 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
                   size="small"
                   as="span"
                 >
-                  {data.seeAllLabel}
+                  {n(HEADER_NAV_SEE_ALL_LABEL_KEYS[key], data.seeAllLabel)}
                 </Button>
               </Link>
             </div>
