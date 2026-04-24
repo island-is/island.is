@@ -33,6 +33,10 @@ const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
 
+/** Flatten list markup to div/p so verdict body never outputs <ol>/<ul>/<li> after conversion. */
+const flattenVerdictListTags = (html: string) =>
+  html.replace(/<ol(\s[^>]*)?>/gi, '<div$1>').replace(/<\/ol>/gi, '</div>')
+
 type RichTextPayload = {
   __typename: 'Html'
   document: Document
@@ -81,7 +85,8 @@ const convertHtmlToContentfulRichText = async (
   html: string,
   id: string,
 ): Promise<RichTextPayload> => {
-  const sanitizedHtml = sanitizeHtml(html, {
+  const htmlWithFlatLists = flattenVerdictListTags(html)
+  const sanitizedHtml = sanitizeHtml(htmlWithFlatLists, {
     exclusiveFilter(frame) {
       return frame.tag === 'table'
     },
