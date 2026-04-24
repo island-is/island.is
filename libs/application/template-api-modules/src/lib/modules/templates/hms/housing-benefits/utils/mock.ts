@@ -1,5 +1,6 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import type { NationalRegistryIndividual } from '@island.is/application/types'
+import * as kennitala from 'kennitala'
 
 type Answers = Record<string, unknown> | undefined
 
@@ -12,18 +13,28 @@ export const MOCK_ASSIGNEE_NATIONAL_REGISTRY_ADDRESS = {
   streetAddress: 'Funafold 31',
 } as const
 
-const assigneeDevMockNatRegChecked = (answers: Answers): boolean => {
-  if (
-    getValueViaPath<string>(
-      answers ?? {},
-      'assigneeDevMockSettings.useMock',
-    ) !== YES
-  ) {
+/**
+ * Assignee dev mock form fields are stored under
+ * `<nationalId>.assigneeDevMockSettings.*` (see nationalIdPreface in the template),
+ * not at root `assigneeDevMockSettings`.
+ */
+const assigneeDevMockNatRegChecked = (
+  answers: Answers,
+  nationalId: string | undefined,
+): boolean => {
+  if (!nationalId?.trim()) {
+    return false
+  }
+  const normalized = kennitala.isValid(nationalId)
+    ? kennitala.sanitize(nationalId)
+    : nationalId.trim()
+  const prefix = `${normalized}.assigneeDevMockSettings`
+  if (getValueViaPath<string>(answers ?? {}, `${prefix}.useMock`) !== YES) {
     return false
   }
   const natReg = getValueViaPath<string[]>(
     answers ?? {},
-    'assigneeDevMockSettings.mockNationalRegistryAddress',
+    `${prefix}.mockNationalRegistryAddress`,
   )
   return Array.isArray(natReg) && natReg.includes(YES)
 }
@@ -44,9 +55,11 @@ const wrongHomeRefetchNationalRegistryPending = (answers: Answers): boolean => {
 export const shouldOverlayMockAssigneeNationalRegistryAddress = (
   application: { answers?: Record<string, unknown> },
   options: { isDevOrLocal: boolean },
+  /** Current assignee (API caller) — required for the dev mock checkbox to apply. */
+  nationalId?: string,
 ): boolean => {
   const answers = application?.answers
-  if (assigneeDevMockNatRegChecked(answers)) return true
+  if (assigneeDevMockNatRegChecked(answers, nationalId)) return true
   if (
     options.isDevOrLocal &&
     wrongHomeRefetchNationalRegistryPending(answers)

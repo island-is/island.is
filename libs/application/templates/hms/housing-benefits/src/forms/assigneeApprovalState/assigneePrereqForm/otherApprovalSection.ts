@@ -29,7 +29,6 @@ export const otherApprovalSection = buildSection({
               value: YES,
             },
           ],
-          required: true,
         }),
       ],
     }),

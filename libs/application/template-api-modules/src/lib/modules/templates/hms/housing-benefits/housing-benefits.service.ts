@@ -178,6 +178,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
           isDevOrLocal:
             isRunningOnEnvironment('local') || isRunningOnEnvironment('dev'),
         },
+        auth.nationalId,
       )
 
       if (overlayMock) {
