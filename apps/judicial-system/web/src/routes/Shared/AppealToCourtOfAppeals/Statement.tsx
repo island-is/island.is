@@ -155,7 +155,7 @@ const Statement = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>Greinargerð</PageTitle>
+        <PageTitle>Greinargerð</PageTitle>
         <Box marginBottom={7}>
           {workingCase.courtCaseNumber && (
             <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
