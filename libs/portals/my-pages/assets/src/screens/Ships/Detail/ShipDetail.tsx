@@ -49,9 +49,9 @@ export const ShipDetail = () => {
       )}
 
       {(ship || loading) && (
-        <Stack space={3}>
+        <Stack space={2}>
           <Box>
-            <InfoLineStack>
+            <InfoLineStack space={1} marginBottom={0}>
               <InfoLine
                 loading={loading}
                 label={formatMessage(shipsMessages.seaworthinessTitle)}

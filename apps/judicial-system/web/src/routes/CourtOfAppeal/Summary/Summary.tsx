@@ -19,14 +19,14 @@ import {
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  CaseTransition,
+  AppealCaseRulingDecision,
+  AppealCaseState,
+  AppealCaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
-  useCase,
+  useAppealCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   hasSentNotification,
@@ -47,23 +47,24 @@ const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const [visibleModal, setVisibleModal] = useState<ModalType>('none')
 
   const handleComplete = async () => {
     const caseTransitioned =
-      workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED
-        ? await transitionCase(
+      workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED
+        ? await transitionAppealCase(
             workingCase.id,
-            CaseTransition.COMPLETE_APPEAL,
+            workingCase.appealCase?.id ?? '',
+            AppealCaseTransition.COMPLETE_APPEAL,
             setWorkingCase,
           )
         : true
 
     if (caseTransitioned) {
       workingCase.appealCase?.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED
+      AppealCaseRulingDecision.DISCONTINUED
         ? setVisibleModal('AppealDiscontinued')
         : setVisibleModal('AppealCompleted')
     }
@@ -135,7 +136,7 @@ const Summary: FC = () => {
             nextButtonIcon="checkmark"
             nextButtonText={formatMessage(strings.nextButtonFooter)}
             onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isTransitioningCase}
+            nextIsDisabled={isTransitioningAppealCase}
           />
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (

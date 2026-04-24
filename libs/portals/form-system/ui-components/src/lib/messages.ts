@@ -6,6 +6,16 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknarsmiður',
     description: 'Form builder',
   },
+  showSidebar: {
+    id: 'form.system:show-sidebar',
+    defaultMessage: 'Sýna valmynd',
+    description: 'Show sidebar',
+  },
+  hideSidebar: {
+    id: 'form.system:hide-sidebar',
+    defaultMessage: 'Fela valmynd',
+    description: 'Hide sidebar',
+  },
   form: {
     id: 'form.system:form',
     defaultMessage: 'Form',
@@ -1238,5 +1248,12 @@ export const m = defineMessages({
     id: 'form.system:pay',
     defaultMessage: 'Greiða',
     description: 'Pay',
+  },
+  translationNeededError: {
+    id: 'form.system:translation-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
+    description:
+      'The form cannot be published. All name fields with Icelandic text require an English translation.',
   },
 })

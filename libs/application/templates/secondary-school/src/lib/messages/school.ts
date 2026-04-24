@@ -40,6 +40,11 @@ export const school = {
       defaultMessage: 'Þriðja tungumál ef við á',
       description: 'Third language select label',
     },
+    fallbackThirdLanguageLabel: {
+      id: 'ss.application:school.selection.fallbackThirdLanguageLabel',
+      defaultMessage: 'Þriðja tungumál til vara ef við á',
+      description: 'Fallback third language select label',
+    },
     nordicLanguageLabel: {
       id: 'ss.application:school.selection.nordicLanguageLabel',
       defaultMessage:

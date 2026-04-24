@@ -17,6 +17,9 @@ export class ServicePortalPage {
 
   @CacheField(() => FaqList, { nullable: true })
   faqList!: FaqList | null
+
+  @CacheField(() => FaqList, { nullable: true })
+  faqListCompany!: FaqList | null
 }
 
 export const mapServicePortalPage = (
@@ -26,6 +29,9 @@ export const mapServicePortalPage = (
     id: page.sys.id,
     slug: page.fields.slug,
     faqList: page.fields.faqList ? mapFaqList(page.fields.faqList) : null,
+    faqListCompany: page.fields.faqListCompany
+      ? mapFaqList(page.fields.faqListCompany)
+      : null,
     emptyStateMessage: page.fields.emptyStateMessage
       ? mapHtml(page.fields.emptyStateMessage, page.sys.id)
       : null,

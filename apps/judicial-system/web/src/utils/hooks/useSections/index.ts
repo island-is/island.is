@@ -21,8 +21,8 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseState,
   CaseType,
   Gender,
@@ -1248,14 +1248,14 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           !isCourtOfAppealsUser(user) &&
-          appealState === CaseAppealState.APPEALED,
+          appealState === AppealCaseState.APPEALED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          appealState === CaseAppealState.RECEIVED ||
-          appealState === CaseAppealState.WITHDRAWN,
+          appealState === AppealCaseState.RECEIVED ||
+          appealState === AppealCaseState.WITHDRAWN,
         children: isCourtOfAppealsUser(user)
           ? [
               {
@@ -1365,10 +1365,10 @@ const useSections = (
       },
       {
         name:
-          appealState === CaseAppealState.COMPLETED
+          appealState === AppealCaseState.COMPLETED
             ? getAppealResultTextByValue(appealRulingDecision)
             : formatMessage(sections.caseResults.result),
-        isActive: appealState === CaseAppealState.COMPLETED,
+        isActive: appealState === AppealCaseState.COMPLETED,
         children: [],
       },
     ]
@@ -1417,13 +1417,13 @@ const useSections = (
             : workingCase.state,
         ),
         isActive:
-          (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+          (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
           (!workingCase.parentCase &&
             isCompletedCase(workingCase.state) &&
             !workingCase.prosecutorPostponedAppealDate &&
             !workingCase.accusedPostponedAppealDate &&
-            workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED),
+            workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
         children: [],
       },
       ...(workingCase.parentCase
@@ -1445,13 +1445,13 @@ const useSections = (
                 !workingCase.prosecutorPostponedAppealDate &&
                 !workingCase.accusedPostponedAppealDate &&
                 workingCase.appealCase?.appealState !==
-                  CaseAppealState.COMPLETED,
+                  AppealCaseState.COMPLETED,
               children: [],
             },
           ]
         : []),
       ...(!workingCase.appealCase?.appealState ||
-      (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+      (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
         !workingCase.appealCase?.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),

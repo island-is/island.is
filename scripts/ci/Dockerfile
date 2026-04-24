@@ -244,8 +244,14 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-RUN apt-get update && \
-  apt-get install -y zip awscli && \
+RUN success=false; \
+  for i in 1 2 3; do \
+    if apt-get update && apt-get install -y zip awscli; then \
+      success=true; break; \
+    fi; \
+    echo "apt-get failed, attempt $i/3"; sleep 5; \
+  done; \
+  $success && \
   apt-get purge -y && \
   rm -rf /var/lib/apt/lists/*
 

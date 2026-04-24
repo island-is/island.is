@@ -66,6 +66,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 {selection?.[0]?.thirdLanguage?.name}
               </Text>
             )}
+            {!!selection?.[0]?.fallbackThirdLanguage?.code && (
+              <Text>
+                {formatMessage(overview.selection.fallbackThirdLanguageLabel)}:{' '}
+                {selection?.[0]?.fallbackThirdLanguage?.name}
+              </Text>
+            )}{' '}
             {!!selection?.[0]?.nordicLanguage?.code && (
               <Text>
                 {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
@@ -101,6 +107,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 <Text>
                   {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
                   {selection?.[1]?.thirdLanguage?.name}
+                </Text>
+              )}{' '}
+              {!!selection?.[1]?.fallbackThirdLanguage?.code && (
+                <Text>
+                  {formatMessage(overview.selection.fallbackThirdLanguageLabel)}
+                  : {selection?.[1]?.fallbackThirdLanguage?.name}
                 </Text>
               )}{' '}
               {!!selection?.[1]?.nordicLanguage?.code && (
@@ -142,6 +154,14 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                     {selection?.[2]?.thirdLanguage?.name}
                   </Text>
                 )}
+                {!!selection?.[2]?.fallbackThirdLanguage?.code && (
+                  <Text>
+                    {formatMessage(
+                      overview.selection.fallbackThirdLanguageLabel,
+                    )}
+                    : {selection?.[2]?.fallbackThirdLanguage?.name}
+                  </Text>
+                )}{' '}
                 {!!selection?.[2]?.nordicLanguage?.code && (
                   <Text>
                     {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}

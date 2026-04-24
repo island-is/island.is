@@ -666,6 +666,9 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/de-register-unemployment-benefits": [
+        "libs/application/templates/vmst/de-register-unemployment-benefits/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -773,6 +776,7 @@
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
+      "@island.is/clients/farmers": ["libs/clients/farmers/src/index.ts"],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
       "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
@@ -846,6 +850,9 @@
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
       "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
+      "@island.is/clients/mms/primary-school": [
+        "libs/clients/mms/primary-school/src/index.ts"
+      ],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -1329,6 +1336,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
+      "@island.is/api/domains/farmers": ["libs/api/domains/farmers/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true

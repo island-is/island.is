@@ -26,8 +26,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -64,7 +64,7 @@ const useCaseList = () => {
         routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
         // Court of appeals users can only see appealed request cases
-        if (caseToOpen.appealCase?.appealState === CaseAppealState.COMPLETED) {
+        if (caseToOpen.appealCase?.appealState === AppealCaseState.COMPLETED) {
           routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
           routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE

@@ -23,7 +23,7 @@ export const BaseSettings = () => {
     formUpdate,
     getTranslation,
   } = useContext(ControlContext)
-  const { form, isPublished } = control
+  const { form, isReadOnly } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -57,7 +57,7 @@ export const BaseSettings = () => {
             name="organizationDisplayName"
             value={form?.organizationDisplayName?.is ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => {
               if (!form.organizationDisplayName?.is) {
                 controlDispatch({
@@ -89,7 +89,7 @@ export const BaseSettings = () => {
             name="organizationDisplayNameEn"
             value={form?.organizationDisplayName?.en ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => {
               if (!form.organizationDisplayName?.en) {
                 controlDispatch({
@@ -121,7 +121,7 @@ export const BaseSettings = () => {
             name="formName"
             value={form?.name?.is ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => {
@@ -141,7 +141,7 @@ export const BaseSettings = () => {
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={async (e) => {
               if (!form?.name?.en && form?.name?.is !== '') {
                 const translation = await getTranslation(form.name.is ?? '')
@@ -171,7 +171,7 @@ export const BaseSettings = () => {
             value={form?.slug ?? ''}
             backgroundColor="blue"
             errorMessage={errorMsg}
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onFocus={(e) => {
               if (!form.slug) {
                 controlDispatch({
@@ -216,7 +216,7 @@ export const BaseSettings = () => {
             label={formatMessage(m.deadline)}
             placeholderText={formatMessage(m.chooseDate)}
             backgroundColor="blue"
-            disabled={isPublished}
+            disabled={isReadOnly}
             selected={
               form.invalidationDate ? new Date(form.invalidationDate) : null
             }
@@ -256,7 +256,7 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.summaryScreen)}
-            disabled={isPublished}
+            disabled={isReadOnly}
             checked={
               form.hasSummaryScreen !== null &&
               form.hasSummaryScreen !== undefined

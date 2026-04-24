@@ -88,12 +88,6 @@ import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import {
-  courtOfAppealsAssistantTransitionRule,
-  courtOfAppealsAssistantUpdateRule,
-  courtOfAppealsJudgeTransitionRule,
-  courtOfAppealsJudgeUpdateRule,
-  courtOfAppealsRegistrarTransitionRule,
-  courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
   districtCourtJudgeSignRulingRule,
@@ -179,9 +173,6 @@ export class CaseController {
     districtCourtJudgeUpdateRule,
     districtCourtRegistrarUpdateRule,
     districtCourtAssistantUpdateRule,
-    courtOfAppealsJudgeUpdateRule,
-    courtOfAppealsRegistrarUpdateRule,
-    courtOfAppealsAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   )
   @UseInterceptors(CaseInterceptor)
@@ -228,30 +219,6 @@ export class CaseController {
         )
       }
 
-      if (update.appealAssistantId) {
-        await this.validateAssignedUser(update.appealAssistantId, [
-          UserRole.COURT_OF_APPEALS_ASSISTANT,
-        ])
-      }
-
-      if (update.appealJudge1Id) {
-        await this.validateAssignedUser(update.appealJudge1Id, [
-          UserRole.COURT_OF_APPEALS_JUDGE,
-        ])
-      }
-
-      if (update.appealJudge2Id) {
-        await this.validateAssignedUser(update.appealJudge2Id, [
-          UserRole.COURT_OF_APPEALS_JUDGE,
-        ])
-      }
-
-      if (update.appealJudge3Id) {
-        await this.validateAssignedUser(update.appealJudge3Id, [
-          UserRole.COURT_OF_APPEALS_JUDGE,
-        ])
-      }
-
       if (update.rulingModifiedHistory) {
         const history = theCase.rulingModifiedHistory
           ? `${theCase.rulingModifiedHistory}\n\n`
@@ -272,20 +239,6 @@ export class CaseController {
           update.validToDate =
             update.requestedValidToDate ?? theCase.requestedValidToDate
         }
-      }
-
-      if (update.prosecutorStatementDate) {
-        update.prosecutorStatementDate = nowFactory()
-      }
-
-      if (update.appealRulingModifiedHistory) {
-        const history = theCase.appealCase?.appealRulingModifiedHistory
-          ? `${theCase.appealCase.appealRulingModifiedHistory}\n\n`
-          : ''
-        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-        update.appealRulingModifiedHistory = `${history}${today} - ${
-          user.name
-        } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
       }
 
       if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
@@ -345,9 +298,6 @@ export class CaseController {
     districtCourtJudgeTransitionRule,
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
-    courtOfAppealsJudgeTransitionRule,
-    courtOfAppealsRegistrarTransitionRule,
-    courtOfAppealsAssistantTransitionRule,
   )
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/state')
@@ -505,6 +455,9 @@ export class CaseController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get([
     'case/:caseId/caseFilesRecord/:policeCaseNumber',
@@ -703,6 +656,9 @@ export class CaseController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get([
     'case/:caseId/indictment',

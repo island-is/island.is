@@ -1,8 +1,8 @@
 import { Includeable, Order } from 'sequelize'
 
 import {
+  AppealCaseState,
   CaseActionType,
-  CaseAppealState,
   CaseState,
   CaseTableColumnKey,
   ContextMenuCaseActionType,
@@ -57,7 +57,7 @@ export const getAttributes = (
 
 const getAvailableActionsIncludes = (user: User): CaseIncludes => {
   if (isProsecutionUser(user)) {
-    return { appealCase: { attributes: ['appealState'] } }
+    return { appealCase: { attributes: ['id', 'appealState'] } }
   }
 
   return {}
@@ -305,8 +305,8 @@ export const canCancelAppeal = (
   }
 
   if (
-    (theCase.appealCase?.appealState === CaseAppealState.APPEALED ||
-      theCase.appealCase?.appealState === CaseAppealState.RECEIVED) &&
+    (theCase.appealCase?.appealState === AppealCaseState.APPEALED ||
+      theCase.appealCase?.appealState === AppealCaseState.RECEIVED) &&
     theCase.prosecutorPostponedAppealDate
   ) {
     return true

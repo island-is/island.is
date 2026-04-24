@@ -1,7 +1,7 @@
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseActionType,
-  CaseAppealState,
   CaseState,
   CaseType,
   ContextMenuCaseActionType,
@@ -216,7 +216,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: CaseAppealState.APPEALED },
+            appealCase: { appealState: AppealCaseState.APPEALED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
           } as unknown as Case,
           user,
@@ -230,7 +230,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
-            appealCase: { appealState: CaseAppealState.APPEALED },
+            appealCase: { appealState: AppealCaseState.APPEALED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
           } as unknown as Case,
           user,
@@ -244,7 +244,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: CaseAppealState.APPEALED },
+            appealCase: { appealState: AppealCaseState.APPEALED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
           } as unknown as Case,
           user,
@@ -258,7 +258,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: CaseAppealState.RECEIVED },
+            appealCase: { appealState: AppealCaseState.RECEIVED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
           } as unknown as Case,
           user,
@@ -272,7 +272,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: CaseAppealState.APPEALED },
+            appealCase: { appealState: AppealCaseState.APPEALED },
             prosecutorPostponedAppealDate: undefined,
           } as unknown as Case,
           user,
@@ -307,7 +307,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
-        appealCase: { appealState: CaseAppealState.APPEALED },
+        appealCase: { appealState: AppealCaseState.APPEALED },
         prosecutorPostponedAppealDate: new Date('2024-01-01'),
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(
