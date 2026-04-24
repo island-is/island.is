@@ -12,8 +12,6 @@ This application allows unemployed individuals to periodically confirm their act
 Thelma Hrönn ÞÍ Sveinsdóttir - 010455-1469
 Note: Gervimenn must have active unemployment benefits registered in VMST. Applications can only be submitted between the 20th and 25th of each month, with a grace period extending to the 4th of the following month.
 
--
-
 ## State flow
 
 ```
