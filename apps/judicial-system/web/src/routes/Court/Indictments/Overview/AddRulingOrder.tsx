@@ -8,6 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -65,6 +66,9 @@ const AddRulingOrder: FC = () => {
       files,
       {
         status: FileUploadStatus.done,
+        userGeneratedFilename: `${
+          workingCase.courtCaseNumber
+        } Úrskurður ${formatDate(confirmationDate)}`,
         submissionDate: formatDateForServer(confirmationDate),
         category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       },

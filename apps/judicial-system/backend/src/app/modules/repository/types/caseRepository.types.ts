@@ -190,6 +190,11 @@ export const caseInclude: Includeable[] = [
         include: [{ model: Institution, as: 'institution' }],
       },
       {
+        model: CaseFile,
+        as: 'rulingFile',
+        required: false,
+      },
+      {
         model: CourtDocument,
         as: 'filedDocuments',
         required: false,

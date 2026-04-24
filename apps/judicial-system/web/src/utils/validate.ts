@@ -596,6 +596,9 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
     courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.ruling
       : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.rulingFileId
+      : true) &&
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
       : true) &&
