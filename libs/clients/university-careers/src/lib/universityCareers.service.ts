@@ -13,6 +13,10 @@ import {
 } from './dto'
 import { StudyType, UniversityId } from './universityCareers.types'
 import { getNemandi, getNemandiFerillByFerill } from '../../gen/fetch'
+import type {
+  GetNemandiFerillByFerillFileByTypeErrors,
+  GetNemandiFerillByFerillFileByTypeResponses,
+} from '../../gen/fetch'
 
 export type UniversityClientMap = Map<UniversityId, Client>
 
@@ -96,12 +100,16 @@ export class UniversityCareersClientService {
     user: User,
     fileUrl: string,
     university: UniversityId,
-  ): Promise<Blob | null> => {
-    const result = await withAuthContext(user, () =>
+  ): Promise<Blob | File | null> => {
+    return withAuthContext(user, () =>
       dataOr404Null(
-        this.getClient(university).get({ url: fileUrl, parseAs: 'blob' }),
+        this.getClient(university).get<
+          GetNemandiFerillByFerillFileByTypeResponses,
+          GetNemandiFerillByFerillFileByTypeErrors
+        >({
+          url: fileUrl,
+        }),
       ),
     )
-    return result instanceof Blob ? result : null
   }
 }

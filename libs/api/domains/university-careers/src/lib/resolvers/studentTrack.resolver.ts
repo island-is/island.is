@@ -17,7 +17,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.input'
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, maskString } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -63,10 +63,10 @@ export class StudentTrackResolver {
   }
 
   @ResolveField('files', () => [StudentFile])
-  resolveFiles(
+  async resolveFiles(
     @CurrentUser() user: User,
     @Parent() track: StudentTrack,
-  ): Array<StudentFile> {
+  ): Promise<Array<StudentFile>> {
     this.auditService.audit({
       auth: user,
       namespace: AUDIT_NAMESPACE,
@@ -83,21 +83,21 @@ export class StudentTrackResolver {
 
     const { institution } = track.transcript
 
-    return track.files
-      .map((f) => {
+    const files = await Promise.all(
+      track.files.map(async (f) => {
         if (!f.url) {
           this.logger.warn(`Student file has no URL, skipping`)
           return null
         }
+
+        const url = await maskString(f.url, user.nationalId)
         return {
           ...f,
-          downloadServiceURL: `${
-            this.downloadServiceConfig.baseUrl
-          }/download/v1/education/graduation/${
-            institution.shortId
-          }/file?url=${encodeURIComponent(f.url)}`,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${institution.shortId}/${url}`,
         }
-      })
-      .filter(isDefined)
+      }),
+    )
+
+    return files.filter(isDefined)
   }
 }
