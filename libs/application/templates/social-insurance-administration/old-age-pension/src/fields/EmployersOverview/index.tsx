@@ -46,21 +46,12 @@ const EmployersOverview: FC<RepeaterProps> = ({
 
   useEffect(() => {
     if (
-      shouldAutoExpandEmployersOverview(
-        application.id,
-        rawEmployers,
-        employers,
-      )
+      shouldAutoExpandEmployersOverview(application.id, rawEmployers, employers)
     ) {
       markEmployersOverviewAutoExpanded(application.id)
       expandRepeater()
     }
-  }, [
-    application.id,
-    expandRepeater,
-    employers,
-    rawEmployers,
-  ])
+  }, [application.id, expandRepeater, employers, rawEmployers])
 
   const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter((e) => e.email !== email)
