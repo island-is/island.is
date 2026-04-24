@@ -10,7 +10,7 @@ import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './BreadCrumbs.css'
 
 const BreadCrumbs: FC = () => {
-  const { workingCase, isCreating } = useContext(FormContext)
+  const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const caseId = workingCase?.id
 
