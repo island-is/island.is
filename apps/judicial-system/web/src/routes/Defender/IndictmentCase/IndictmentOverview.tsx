@@ -34,7 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
-  AppealCaseState,
+  CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
   Defendant,
@@ -43,7 +43,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseUI } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -105,9 +105,10 @@ const IndictmentOverview: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { appealBanner, appealModals } = useAppealCaseUI()
+  const { appealBanner, appealModals } = useAppealCase()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
   const caseIsClosed = isCompletedCase(workingCase.state)
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
@@ -124,8 +125,8 @@ const IndictmentOverview: FC = () => {
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
       workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
-      workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
+      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
+      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -211,7 +212,8 @@ const IndictmentOverview: FC = () => {
               workingCase.indictmentDecision !==
                 IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
-                IndictmentDecision.REDISTRIBUTING && (
+                IndictmentDecision.REDISTRIBUTING &&
+              caseIsClosed === false && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
                     court={workingCase.court}

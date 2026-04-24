@@ -9,8 +9,8 @@ import {
   getInitials,
 } from '@island.is/judicial-system/formatters'
 import {
-  AppealCaseRulingDecision,
-  AppealCaseState,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -109,12 +109,12 @@ const generateAppealStateTag = (
 ): CaseTableCell<TagValue> => {
   const getCompletedColor = (): string => {
     switch (c.appealCase?.appealRulingDecision) {
-      case AppealCaseRulingDecision.ACCEPTING:
+      case CaseAppealRulingDecision.ACCEPTING:
         return 'mint'
-      case AppealCaseRulingDecision.CHANGED:
-      case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
-      case AppealCaseRulingDecision.REPEAL:
-      case AppealCaseRulingDecision.DISCONTINUED:
+      case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+      case CaseAppealRulingDecision.REPEAL:
+      case CaseAppealRulingDecision.DISCONTINUED:
         return 'rose'
       default:
         return 'blueberry'
@@ -123,19 +123,19 @@ const generateAppealStateTag = (
 
   const getCompletedOrder = (): string => {
     switch (c.appealCase?.appealRulingDecision) {
-      case AppealCaseRulingDecision.ACCEPTING:
+      case CaseAppealRulingDecision.ACCEPTING:
         return 'E'
-      case AppealCaseRulingDecision.REPEAL:
+      case CaseAppealRulingDecision.REPEAL:
         return 'F'
-      case AppealCaseRulingDecision.CHANGED:
-      case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
+      case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
         return 'G'
-      case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
-      case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
+      case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+      case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
         return 'H'
-      case AppealCaseRulingDecision.REMAND:
+      case CaseAppealRulingDecision.REMAND:
         return 'I'
-      case AppealCaseRulingDecision.DISCONTINUED:
+      case CaseAppealRulingDecision.DISCONTINUED:
         return 'J'
       default:
         return 'K'
@@ -143,11 +143,11 @@ const generateAppealStateTag = (
   }
 
   switch (c.appealCase?.appealState) {
-    case AppealCaseState.WITHDRAWN:
+    case CaseAppealState.WITHDRAWN:
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'L')
-    case AppealCaseState.APPEALED:
+    case CaseAppealState.APPEALED:
       return generateCell({ color: 'red', text: 'Kært' }, 'A')
-    case AppealCaseState.RECEIVED:
+    case CaseAppealState.RECEIVED:
       if (isCourtOfAppealsUser(user)) {
         if (!c.appealCase?.appealCaseNumber) {
           return generateCell({ color: 'purple', text: 'Nýtt' }, 'B')
@@ -164,7 +164,7 @@ const generateAppealStateTag = (
       }
 
       return generateCell({ color: 'darkerBlue', text: 'Móttekið' }, 'C')
-    case AppealCaseState.COMPLETED:
+    case CaseAppealState.COMPLETED:
       return generateCell(
         {
           color: getCompletedColor(),
@@ -333,7 +333,7 @@ const generateIndictmentCaseStateTag = (
     case CaseState.WAITING_FOR_CANCELLATION:
       return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
-      return generateCell({ color: 'white', text: 'Óþekkt' }, 'N')
+      return generateCell({ color: 'white', text: 'Óþekkt' }, 'N') // Should not happen
   }
 }
 
@@ -508,6 +508,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       // TODO: find a better place for id - it is not used in this cell generator
       // and there is no guarantee that this column will be included in all tables
       attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+      includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
@@ -515,15 +516,30 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       return generateCell()
     }
 
+    const activeDefendants = c.defendants.filter(
+      (defendant) =>
+        !DefendantEventLog.getEventLogByEventType(
+          [
+            DefendantEventType.INDICTMENT_CANCELLED,
+            DefendantEventType.INDICTMENT_DISMISSED,
+          ],
+          defendant.eventLogs,
+        ),
+    )
+
+    if (activeDefendants.length === 0) {
+      return generateCell()
+    }
+
     const strList = [
-      c.defendants[0].name ?? '',
-      c.defendants.length === 1
-        ? c.defendants[0].noNationalId
-          ? c.defendants[0].nationalId
-            ? `fd. ${c.defendants[0].nationalId}`
+      activeDefendants[0].name ?? '',
+      activeDefendants.length === 1
+        ? activeDefendants[0].noNationalId
+          ? activeDefendants[0].nationalId
+            ? `fd. ${activeDefendants[0].nationalId}`
             : ''
-          : `kt. ${formatNationalId(c.defendants[0].nationalId)}`
-        : `+ ${c.defendants.length - 1}`,
+          : `kt. ${formatNationalId(activeDefendants[0].nationalId)}`
+        : `+ ${activeDefendants.length - 1}`,
     ]
 
     return generateCell({ strList }, strList.join(''))
