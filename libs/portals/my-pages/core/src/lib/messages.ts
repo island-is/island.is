@@ -558,7 +558,7 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknir í vinnslu',
   },
   olderApplications: {
-    id: 'service.portal:olderApplications',
+    id: 'service.portal:older-applications',
     defaultMessage: 'Eldri umsóknir',
   },
   applicationsIntroOlder: {
