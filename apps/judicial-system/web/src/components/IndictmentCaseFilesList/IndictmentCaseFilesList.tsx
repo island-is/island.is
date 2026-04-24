@@ -1,8 +1,14 @@
 import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Icon,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -36,6 +42,7 @@ import {
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -286,14 +293,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
       sentToPrisonAdminDate,
     )
 
-  const hasNoFiles = !showFiles && !displayGeneratedPDFs
-
-  const { digitalCaseFiles, openDigitalCaseFileUrl, tokenUrlLoading } =
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
-  const showPoliceDigitalCaseFiles =
-    (digitalCaseFiles?.length ?? 0) > 0 &&
-    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user))
+  const showDigitalCaseFilesSection =
+    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
+    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+
+  const hasNoFiles =
+    !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection
 
   return (
     <>
@@ -341,113 +349,109 @@ const IndictmentCaseFilesList: FC<Props> = ({
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
-            <FileSection
-              title={formatMessage(caseFiles.otherDocumentsSection)}
-              files={filteredFiles.others}
-              onOpenFile={onOpen}
-            />
           </>
         )}
         {displayGeneratedPDFs && (
-          <>
-            <Box>
-              <SectionHeading
-                title={formatMessage(strings.caseFileTitle)}
-                marginBottom={1}
-                heading="h4"
-                variant="h4"
-              />
-              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
-                const caseFilesRecordFileName = formatMessage(
-                  strings.caseFileButtonText,
-                  {
-                    policeCaseNumber,
-                  },
-                )
-                return (
-                  <Box key={`${policeCaseNumber}-${index}`}>
-                    <PdfButton
-                      caseId={workingCase.id}
-                      connectedCaseParentId={connectedCaseParentId}
-                      title={prefixGeneratedDocumentNameWithDocumentOrder(
-                        `caseFilesRecord/${policeCaseNumber}`,
-                        caseFilesRecordFileName,
-                        workingCase.id,
-                      )}
-                      pdfType="caseFilesRecord"
-                      elementId={[policeCaseNumber, caseFilesRecordFileName]}
-                      renderAs="row"
-                    />
-                  </Box>
-                )
-              })}
-            </Box>
-            {showSubpoenaPdf && (
-              <Box>
-                <SectionHeading
-                  title={formatMessage(strings.subpoenaTitle)}
-                  marginBottom={1}
-                  heading="h4"
-                  variant="h4"
-                />
-                {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
-                  const subpoenaFileName = formatMessage(
-                    strings.subpoenaButtonText,
-                    {
-                      name: defendant.name,
-                      date: formatDate(subpoena.created),
-                    },
-                  )
-                  const serviceCertificateFileName = formatMessage(
-                    strings.serviceCertificateButtonText,
-                    { name: defendant.name },
-                  )
+          <Box>
+            <SectionHeading
+              title={formatMessage(strings.caseFileTitle)}
+              marginBottom={1}
+              heading="h4"
+              variant="h4"
+            />
+            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+              const caseFilesRecordFileName = formatMessage(
+                strings.caseFileButtonText,
+                {
+                  policeCaseNumber,
+                },
+              )
+              return (
+                <Box key={`${policeCaseNumber}-${index}`}>
+                  <PdfButton
+                    caseId={workingCase.id}
+                    connectedCaseParentId={connectedCaseParentId}
+                    title={prefixGeneratedDocumentNameWithDocumentOrder(
+                      `caseFilesRecord/${policeCaseNumber}`,
+                      caseFilesRecordFileName,
+                      workingCase.id,
+                    )}
+                    pdfType="caseFilesRecord"
+                    elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                    renderAs="row"
+                  />
+                </Box>
+              )
+            })}
+          </Box>
+        )}
+        {showFiles && (
+          <FileSection
+            title={formatMessage(caseFiles.otherDocumentsSection)}
+            files={filteredFiles.others}
+            onOpenFile={onOpen}
+          />
+        )}
+        {displayGeneratedPDFs && showSubpoenaPdf && (
+          <Box>
+            <SectionHeading
+              title={formatMessage(strings.subpoenaTitle)}
+              marginBottom={1}
+              heading="h4"
+              variant="h4"
+            />
+            {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
+              const subpoenaFileName = formatMessage(
+                strings.subpoenaButtonText,
+                {
+                  name: defendant.name,
+                  date: formatDate(subpoena.created),
+                },
+              )
+              const serviceCertificateFileName = formatMessage(
+                strings.serviceCertificateButtonText,
+                { name: defendant.name },
+              )
 
-                  return (
-                    <Box key={`subpoena-${subpoena.id}`}>
+              return (
+                <Box key={`subpoena-${subpoena.id}`}>
+                  <PdfButton
+                    caseId={caseId}
+                    title={prefixGeneratedDocumentNameWithDocumentOrder(
+                      `subpoena/${defendant.id}/${subpoena.id}`,
+                      subpoenaFileName,
+                      caseId,
+                    )}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id, subpoenaFileName]}
+                    renderAs="row"
+                  />
+                  {!limitedAccess &&
+                    isSuccessfulServiceStatus(subpoena.serviceStatus) && (
                       <PdfButton
                         caseId={caseId}
                         title={prefixGeneratedDocumentNameWithDocumentOrder(
-                          `subpoena/${defendant.id}/${subpoena.id}`,
-                          subpoenaFileName,
+                          `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+                          serviceCertificateFileName,
                           caseId,
                         )}
-                        pdfType="subpoena"
+                        pdfType="subpoenaServiceCertificate"
                         elementId={[
                           defendant.id,
                           subpoena.id,
-                          subpoenaFileName,
+                          serviceCertificateFileName,
                         ]}
                         renderAs="row"
                       />
-                      {!limitedAccess &&
-                        isSuccessfulServiceStatus(subpoena.serviceStatus) && (
-                          <PdfButton
-                            caseId={caseId}
-                            title={prefixGeneratedDocumentNameWithDocumentOrder(
-                              `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
-                              serviceCertificateFileName,
-                              caseId,
-                            )}
-                            pdfType="subpoenaServiceCertificate"
-                            elementId={[
-                              defendant.id,
-                              subpoena.id,
-                              serviceCertificateFileName,
-                            ]}
-                            renderAs="row"
-                          />
-                        )}
-                    </Box>
-                  )
-                })}
-              </Box>
-            )}
-          </>
+                    )}
+                </Box>
+              )
+            })}
+          </Box>
         )}
         {(showFiles ||
           hasGeneratedCourtRecord ||
-          showPoliceDigitalCaseFiles) && (
+          showDigitalCaseFilesSection) && (
           <>
             <FileSection
               title={formatMessage(strings.civilClaimsTitle)}
@@ -455,7 +459,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
-            {showPoliceDigitalCaseFiles && (
+            {showDigitalCaseFilesSection && (
               <Box marginBottom={3}>
                 <SectionHeading
                   title="Rafræn gögn"
@@ -463,41 +467,65 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                <Text marginBottom={2}>
-                  Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
-                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
-                </Text>
-                {digitalCaseFiles?.map((file, index) => (
-                  <Box
-                    key={index}
-                    component="button"
-                    type="button"
-                    className={styles.electronicFileRow}
-                    onClick={() =>
-                      openDigitalCaseFileUrl(file.policeDigitalFileId)
-                    }
-                    disabled={tokenUrlLoading}
-                    cursor="pointer"
-                    background="transparent"
-                    width="full"
-                    textAlign="left"
-                  >
-                    <Text
-                      as="span"
-                      color="blue400"
-                      variant="h4"
-                      className={styles.electronicFileLinkContainer}
+                <AnimatePresence mode="wait" initial={false}>
+                  {digitalCaseFilesLoading ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      {file.name}
-                    </Text>
-                    <Icon
-                      icon="open"
-                      type="outline"
-                      size="small"
-                      color="blue400"
-                    />
-                  </Box>
-                ))}
+                      <Box display="flex" justifyContent="center">
+                        <LoadingDots />
+                      </Box>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="files"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Text marginBottom={2}>
+                        Tenglarnir færa þig yfir á öruggt gagnasvæði
+                        lögreglunnar. Allar heimsóknir á þann vef eru skráðar og
+                        rekjanlegar.
+                      </Text>
+                      {digitalCaseFiles?.map((file, index) => (
+                        <Box
+                          key={index}
+                          component="button"
+                          type="button"
+                          className={styles.electronicFileRow}
+                          onClick={() =>
+                            openDigitalCaseFileUrl(file.policeDigitalFileId)
+                          }
+                          cursor="pointer"
+                          background="transparent"
+                          width="full"
+                          textAlign="left"
+                        >
+                          <Text
+                            as="span"
+                            color="blue400"
+                            variant="h4"
+                            className={styles.electronicFileLinkContainer}
+                          >
+                            {file.name}
+                          </Text>
+                          <Icon
+                            icon="open"
+                            type="outline"
+                            size="small"
+                            color="blue400"
+                          />
+                        </Box>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </Box>
             )}
             {(filteredFiles.courtRecords.length > 0 ||
