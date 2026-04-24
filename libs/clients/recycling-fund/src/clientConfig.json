@@ -151,15 +151,7 @@
       "post": {
         "operationId": "XRoadController_createVehicleOwner",
         "summary": "Create or find a vehicle owner",
-        "parameters": [
-          {
-            "name": "X-Road-Client",
-            "in": "header",
-            "description": "X-Road client subsystem identifier",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -173,9 +165,7 @@
         "responses": {
           "200": { "description": "Vehicle owner created or already exists" },
           "400": { "description": "Validation error" },
-          "403": {
-            "description": "Missing or unauthorized X-Road-Client header"
-          }
+          "403": { "description": "Caller not authorized" }
         },
         "tags": ["X-Road"]
       }
@@ -184,15 +174,7 @@
       "post": {
         "operationId": "XRoadController_createVehicle",
         "summary": "Create or update a vehicle record",
-        "parameters": [
-          {
-            "name": "X-Road-Client",
-            "in": "header",
-            "description": "X-Road client subsystem identifier",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -204,9 +186,7 @@
         "responses": {
           "200": { "description": "Vehicle created or updated" },
           "400": { "description": "Validation error" },
-          "403": {
-            "description": "Missing or unauthorized X-Road-Client header"
-          }
+          "403": { "description": "Caller not authorized" }
         },
         "tags": ["X-Road"]
       }
@@ -215,15 +195,7 @@
       "post": {
         "operationId": "XRoadController_createRecyclingRequest",
         "summary": "Create a recycling request (pendingRecycle or cancelled)",
-        "parameters": [
-          {
-            "name": "X-Road-Client",
-            "in": "header",
-            "description": "X-Road client subsystem identifier",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -239,9 +211,7 @@
           "400": {
             "description": "Validation error or business rule violation"
           },
-          "403": {
-            "description": "Missing or unauthorized X-Road-Client header"
-          }
+          "403": { "description": "Caller not authorized" }
         },
         "tags": ["X-Road"]
       }

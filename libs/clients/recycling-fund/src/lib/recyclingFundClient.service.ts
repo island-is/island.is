@@ -24,7 +24,6 @@ export class RecyclingFundClientService {
 
   async createOwner(user: User, applicantName: string): Promise<void> {
     const request: XRoadControllerCreateVehicleOwnerRequest = {
-      xRoadClient: 'IS-DEV/GOV/10000/island-is-client',
       createXRoadVehicleOwnerDto: {
         nationalId: user.nationalId,
         name: applicantName,
@@ -49,7 +48,6 @@ export class RecyclingFundClientService {
     color: string,
   ): Promise<void> {
     const request: XRoadControllerCreateVehicleRequest = {
-      xRoadClient: 'IS-DEV/GOV/10000/island-is-client',
       createXRoadVehicleDto: {
         nationalId: user.nationalId,
         permno,
@@ -76,7 +74,6 @@ export class RecyclingFundClientService {
     requestType: CreateXRoadRecyclingRequestDtoRequestTypeEnum,
   ) {
     const request: XRoadControllerCreateRecyclingRequestRequest = {
-      xRoadClient: 'IS-DEV/GOV/10000/island-is-client',
       createXRoadRecyclingRequestDto: {
         nationalId: user.nationalId,
         permno,
