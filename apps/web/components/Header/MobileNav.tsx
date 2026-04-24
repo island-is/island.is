@@ -11,8 +11,8 @@ import React, {
 import { useRouter } from 'next/router'
 
 import { Box, Button, Icon, Link } from '@island.is/island-ui/core'
-import { SearchInput } from '@island.is/web/components'
 import { webMenuButtonClicked } from '@island.is/plausible'
+import { SearchInput } from '@island.is/web/components'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 import { useIsomorphicLayoutEffect } from '@island.is/web/hooks/useScrollPosition/useIsomorphicLayoutEffect'
