@@ -144,6 +144,62 @@ const mapCourtsToTopLevelCourt = (
   return 'all'
 }
 
+const HIGHER_COURT_TAGS: readonly string[] = [
+  'landsrettur',
+  'Hæstiréttur',
+  RETRIAL_COURT_TAG,
+]
+
+const isHigherCourtTag = (value: string): boolean =>
+  HIGHER_COURT_TAGS.includes(value)
+
+const stripHigherCourtTags = (courts: string[]): string[] =>
+  courts.filter((c) => !isHigherCourtTag(c))
+
+const stripDistrictCourtTag = (courts: string[]): string[] =>
+  courts.filter((c) => c !== DEFAULT_DISTRICT_COURT_TAG)
+
+const resolveExclusiveMainCourtSelection = (
+  nextCourts: string[],
+  lastSelected: { value: string } | undefined,
+  previousDistrictCourtCount: number,
+): { courts: string[]; clearDistrictCourts: boolean } => {
+  const hasDistrictBranch =
+    nextCourts.includes(DEFAULT_DISTRICT_COURT_TAG) ||
+    previousDistrictCourtCount > 0
+  const hasHigherCourt = nextCourts.some(isHigherCourtTag)
+
+  if (!hasDistrictBranch || !hasHigherCourt) {
+    return {
+      courts: nextCourts,
+      clearDistrictCourts: false,
+    }
+  }
+
+  if (!lastSelected) {
+    return {
+      courts: stripHigherCourtTags(nextCourts),
+      clearDistrictCourts: false,
+    }
+  }
+
+  if (lastSelected.value === DEFAULT_DISTRICT_COURT_TAG) {
+    return {
+      courts: stripHigherCourtTags(nextCourts),
+      clearDistrictCourts: false,
+    }
+  }
+
+  if (isHigherCourtTag(lastSelected.value)) {
+    return {
+      courts: stripDistrictCourtTag(nextCourts),
+      clearDistrictCourts: true,
+    }
+  }
+
+  return { courts: nextCourts, clearDistrictCourts: false }
+}
+
 const shouldResetCaseFiltersOnCourtsChange = (
   previousCourts: string[],
   previousDistrictCourts: string[],
@@ -1284,16 +1340,21 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           const nextValues = options
                             .map((option) => option.value)
                             .filter((value) => value !== ALL_COURTS_TAG)
-                          const nextDistrictCourts = nextValues.includes(
-                            DEFAULT_DISTRICT_COURT_TAG,
+                          const resolved = resolveExclusiveMainCourtSelection(
+                            nextValues,
+                            lastOption,
+                            prevDistrict.length,
                           )
+                          const nextDistrictCourts = resolved.clearDistrictCourts
+                            ? []
+                            : resolved.courts.includes(DEFAULT_DISTRICT_COURT_TAG)
                             ? prevDistrict
                             : []
                           if (
                             shouldResetCaseFiltersOnCourtsChange(
                               prevCourts,
                               prevDistrict,
-                              nextValues,
+                              resolved.courts,
                               nextDistrictCourts,
                             )
                           ) {
@@ -1305,12 +1366,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             QueryParam.COURT,
                             (previousState) => ({
                               ...previousState,
-                              [QueryParam.COURT]: nextValues,
-                              [QueryParam.DISTRICT_COURTS]: nextValues.includes(
-                                DEFAULT_DISTRICT_COURT_TAG,
-                              )
-                                ? previousState[QueryParam.DISTRICT_COURTS]
-                                : [],
+                              [QueryParam.COURT]: resolved.courts,
+                              [QueryParam.DISTRICT_COURTS]: nextDistrictCourts,
                             }),
                           )
                         }}
@@ -1367,20 +1424,31 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                   const isSelected = prevCourts.includes(
                                     tag.value,
                                   )
-                                  const nextCourts = isSelected
+                                  let nextCourts = isSelected
                                     ? prevCourts.filter(
                                         (court) => court !== tag.value,
                                       )
                                     : [...prevCourts, tag.value]
-                                  const shouldResetDistrictCourts =
+                                  let nextDistrictCourts =
                                     isSelected &&
                                     tag.value === DEFAULT_DISTRICT_COURT_TAG
+                                      ? []
+                                      : prevDistrict
+
+                                  if (!isSelected) {
+                                    if (tag.value === DEFAULT_DISTRICT_COURT_TAG) {
+                                      nextCourts =
+                                        stripHigherCourtTags(nextCourts)
+                                    } else if (isHigherCourtTag(tag.value)) {
+                                      nextCourts =
+                                        stripDistrictCourtTag(nextCourts)
+                                      nextDistrictCourts = []
+                                    }
+                                  }
+
                                   return {
                                     nextCourts,
-                                    nextDistrictCourts:
-                                      shouldResetDistrictCourts
-                                        ? []
-                                        : prevDistrict,
+                                    nextDistrictCourts,
                                   }
                                 })()
                                 if (
@@ -1448,7 +1516,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                   (previousState) => {
                                     const previousCourts =
                                       previousState[QueryParam.COURT]
-                                    const nextCourts = previousCourts.includes(
+                                    const baseCourts = previousCourts.includes(
                                       DEFAULT_DISTRICT_COURT_TAG,
                                     )
                                       ? previousCourts
@@ -1456,6 +1524,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                           ...previousCourts,
                                           DEFAULT_DISTRICT_COURT_TAG,
                                         ]
+                                    const nextCourts =
+                                      stripHigherCourtTags(baseCourts)
                                     return {
                                       ...previousState,
                                       [QueryParam.COURT]: nextCourts,
@@ -1485,7 +1555,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                           ]
                                         const previousCourts =
                                           previousState[QueryParam.COURT]
-                                        const nextCourts =
+                                        const withDistrictTag =
                                           previousCourts.includes(
                                             DEFAULT_DISTRICT_COURT_TAG,
                                           )
@@ -1494,6 +1564,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                                 ...previousCourts,
                                                 DEFAULT_DISTRICT_COURT_TAG,
                                               ]
+                                        const nextCourts =
+                                          stripHigherCourtTags(withDistrictTag)
 
                                         if (
                                           previousDistrictCourts.includes(
@@ -1593,7 +1665,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                   (previousState) => {
                                     const previousCourts =
                                       previousState[QueryParam.COURT]
-                                    const nextCourts = previousCourts.includes(
+                                    const baseCourts = previousCourts.includes(
                                       DEFAULT_DISTRICT_COURT_TAG,
                                     )
                                       ? previousCourts
@@ -1601,6 +1673,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                           ...previousCourts,
                                           DEFAULT_DISTRICT_COURT_TAG,
                                         ]
+                                    const nextCourts =
+                                      stripHigherCourtTags(baseCourts)
                                     return {
                                       ...previousState,
                                       [QueryParam.COURT]: nextCourts,
@@ -1614,14 +1688,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                   (previousState) => {
                                     const previousCourts =
                                       previousState[QueryParam.COURT]
-                                    const nextCourts = previousCourts.includes(
-                                      DEFAULT_DISTRICT_COURT_TAG,
-                                    )
-                                      ? previousCourts
-                                      : [
-                                          ...previousCourts,
-                                          DEFAULT_DISTRICT_COURT_TAG,
-                                        ]
+                                    const withDistrictTag =
+                                      previousCourts.includes(
+                                        DEFAULT_DISTRICT_COURT_TAG,
+                                      )
+                                        ? previousCourts
+                                        : [
+                                            ...previousCourts,
+                                            DEFAULT_DISTRICT_COURT_TAG,
+                                          ]
+                                    const nextCourts =
+                                      stripHigherCourtTags(withDistrictTag)
                                     return {
                                       ...previousState,
                                       [QueryParam.COURT]: nextCourts,
