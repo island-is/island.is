@@ -21,6 +21,7 @@ import {
 } from '@island.is/application/core'
 import { application as am } from './messages'
 import { JobSearchEligibilityApi } from '../dataProviders'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -32,6 +33,7 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   institution: InstitutionTypes.VINNUMALASTOFNUN,
   translationNamespaces: ApplicationConfigurations.ConfirmJobSearch.translation,
+  featureFlag: Features.isConfirmJobSearchEnabled,
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -71,7 +73,7 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(2),
           onExit: defineTemplateApi({
             action: 'completeApplication',
           }),
