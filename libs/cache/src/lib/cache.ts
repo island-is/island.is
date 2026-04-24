@@ -161,7 +161,5 @@ export const createRedisCluster = (options: Options): Cluster => {
 }
 
 export const createRedisCacheManager = (options: Options & Config) => {
-  return caching(() =>
-    redisInsStore(createRedisCluster(options), options),
-  )
+  return caching(() => redisInsStore(createRedisCluster(options), options))
 }
