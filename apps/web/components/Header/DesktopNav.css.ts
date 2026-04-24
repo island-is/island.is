@@ -158,7 +158,10 @@ export const dropdownLink = style({
   // solely by this anchor's box. Inline-flex leaves baseline/descent room
   // for the img inside, making logo rows ~1px taller than text-only rows.
   display: 'flex',
-  alignItems: 'center',
+  // Top-align the logo next to the first line of text — when an org name
+  // wraps to two lines the logo stays beside line 1 instead of drifting
+  // to the middle of the cell.
+  alignItems: 'flex-start',
   gap: 8,
   fontFamily: theme.typography.fontFamily,
   fontSize: 18,

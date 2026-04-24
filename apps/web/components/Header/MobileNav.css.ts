@@ -184,7 +184,9 @@ export const drillLink = style({
   // See note on DesktopNav.dropdownLink: block-level flex so rows with a
   // logo img don't gain a 1px descent from inline-flex line-box math.
   display: 'flex',
-  alignItems: 'center',
+  // Top-align the logo next to the first line of text so wrapped org names
+  // keep the logo beside line 1, mirroring the desktop dropdown.
+  alignItems: 'flex-start',
   gap: 8,
   fontFamily: theme.typography.fontFamily,
   fontSize: 18,
