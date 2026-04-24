@@ -204,13 +204,22 @@ export class PaymentApprovedInput {
 @InputType('ChargeItemFormSystemInput')
 export class ChargeItemInput {
   @Field(() => String)
-  code!: string
+  performingOrgID!: string
+
+  @Field(() => String)
+  chargeType!: string
+
+  @Field(() => String)
+  chargeItemCode!: string
+
+  @Field(() => String)
+  chargeItemName!: string
+
+  @Field(() => Number)
+  priceAmount!: number
 
   @Field(() => Number, { nullable: true })
   quantity?: number
-
-  @Field(() => Number, { nullable: true })
-  amount?: number
 }
 
 @InputType('CreateFormSystemPaymentInput')
