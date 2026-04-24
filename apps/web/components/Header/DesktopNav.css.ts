@@ -189,10 +189,14 @@ export const seeAllRow = style({
 // Org logo shown next to a dropdown link for organizationPage items.
 // `object-fit: contain` handles logos of varying aspect ratios within the
 // fixed 20x20 box; `flex-shrink: 0` stops the flex row from squeezing it
-// when long org names wrap.
+// when long org names wrap. 4px marginTop nudges the icon down into the
+// cap-height of the first text line so it reads as aligned with the
+// glyphs rather than floating above the line-box leading (font-size 18
+// with line-height 28 leaves ~5px of leading above the cap-top).
 export const dropdownLinkLogo = style({
   width: 20,
   height: 20,
+  marginTop: 4,
   objectFit: 'contain',
   flexShrink: 0,
 })
