@@ -5,7 +5,10 @@ import {
   ApplicationTypes,
   InstitutionTypes,
 } from '@island.is/application/types'
-import { sortApplicationsStatus, getFilteredApplicationsByStatus } from './index'
+import {
+  sortApplicationsStatus,
+  getFilteredApplicationsByStatus,
+} from './index'
 import { FilterValues } from '../types'
 
 type AppWithPruned = Application & Partial<Pick<ApplicationCard, 'pruned'>>
@@ -243,7 +246,11 @@ describe('getFilteredApplicationsByStatus', () => {
       createMockAppWithCard({ id: 'other', pruned: true, name: 'Test' }),
     ]
 
-    const result = getFilteredApplicationsByStatus(defaultFilter, apps, 'focused')
+    const result = getFilteredApplicationsByStatus(
+      defaultFilter,
+      apps,
+      'focused',
+    )
 
     expect(result.older).toHaveLength(1)
     expect(result.older[0].id).toBe('other')
