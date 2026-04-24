@@ -40,3 +40,19 @@ export const HEADER_NAV_SEE_ALL_LABEL_KEYS: Record<HeaderNavKey, string> = {
   categories: 'headerNavSeeAllCategoriesLabel',
   lifeEvents: 'headerNavSeeAllLifeEventsLabel',
 }
+
+// Prefix a site-relative href with /en when the active locale is English.
+// Guards against:
+//   - absolute URLs (`https://…`) which must not be mangled into
+//     `/enhttps://…`,
+//   - already-English paths (`/en`, `/en/foo`),
+//   - false positives from naive startsWith checks — e.g. `/energy` or
+//     `/entry` begin with "en" but are NOT already localised and should
+//     still be rewritten to `/en/energy`.
+export const withEnPrefix = (href: string, locale: string): string =>
+  locale === 'en' &&
+  href.startsWith('/') &&
+  href !== '/en' &&
+  !href.startsWith('/en/')
+    ? `/en${href}`
+    : href

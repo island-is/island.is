@@ -21,6 +21,7 @@ import {
   HEADER_NAV_SEE_ALL_LABEL_KEYS,
   type HeaderNavData,
   type HeaderNavKey,
+  withEnPrefix,
 } from './headerNavData'
 import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
 import * as styles from './DesktopNav.css'
@@ -430,13 +431,7 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
               {data.items.slice(0, HEADER_NAV_MAX_ITEMS).map((item) => (
                 <li key={item.href}>
                   <Link
-                    href={
-                      activeLocale === 'en' &&
-                      item.href.startsWith('/') &&
-                      !item.href.startsWith('/en')
-                        ? `/en${item.href}`
-                        : item.href
-                    }
+                    href={withEnPrefix(item.href, activeLocale)}
                     className={styles.dropdownLink}
                   >
                     {item.logoUrl && (
@@ -475,15 +470,7 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
                 seeAllButton.focus()
               }}
             >
-              <Link
-                href={
-                  activeLocale === 'en' &&
-                  data.seeAllHref.startsWith('/') &&
-                  !data.seeAllHref.startsWith('/en')
-                    ? `/en${data.seeAllHref}`
-                    : data.seeAllHref
-                }
-              >
+              <Link href={withEnPrefix(data.seeAllHref, activeLocale)}>
                 <Button
                   ref={(node) => {
                     if (node) {

@@ -24,6 +24,7 @@ import {
   HEADER_NAV_SEE_ALL_LABEL_KEYS,
   type HeaderNavData,
   type HeaderNavKey,
+  withEnPrefix,
 } from './headerNavData'
 import { NAV_TRANSITION_DURATION_MS } from './headerNavTokens'
 import * as styles from './MobileNav.css'
@@ -331,13 +332,7 @@ export const MobileNavPanel = forwardRef<
                   .map((item) => (
                     <li key={item.href}>
                       <Link
-                        href={
-                          activeLocale === 'en' &&
-                          item.href.startsWith('/') &&
-                          !item.href.startsWith('/en')
-                            ? `/en${item.href}`
-                            : item.href
-                        }
+                        href={withEnPrefix(item.href, activeLocale)}
                         className={styles.drillLink}
                       >
                         {item.logoUrl && (
@@ -388,13 +383,7 @@ export const MobileNavPanel = forwardRef<
                 }}
               >
                 <Link
-                  href={
-                    activeLocale === 'en' &&
-                    drilldownSection.seeAllHref.startsWith('/') &&
-                    !drilldownSection.seeAllHref.startsWith('/en')
-                      ? `/en${drilldownSection.seeAllHref}`
-                      : drilldownSection.seeAllHref
-                  }
+                  href={withEnPrefix(drilldownSection.seeAllHref, activeLocale)}
                 >
                   <Button
                     ref={(node) => {
