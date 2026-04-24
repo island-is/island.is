@@ -1,5 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 
+import { theme } from '@island.is/island-ui/theme'
+
 export const pdfContainer = style({})
 
 globalStyle(`${pdfContainer} .react-pdf__Page`, {
@@ -33,6 +35,24 @@ globalStyle(`${richText} p`, {
 
 globalStyle(`${richText} h2 + h3`, {
   marginTop: '8px',
+})
+
+/** Verdict source HTML often uses `ul` for numbered items; `decimal` gives “1. …” markers. */
+globalStyle(`${richText} ul, ${richText} ol`, {
+  listStyleType: 'decimal',
+  paddingLeft: '1.75em',
+})
+
+globalStyle(`${richText} ul li, ${richText} ol li`, {
+  color: theme.color.dark400,
+  fontWeight: theme.typography.regular,
+})
+
+globalStyle(`${richText} ol li::before`, {
+  content: 'counters(section, ".") ". "',
+  color: theme.color.dark400,
+  fontWeight: theme.typography.light,
+  fontSize: theme.typography.baseFontSize,
 })
 
 export const verdictHtmlTitleContainer = style({
