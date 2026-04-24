@@ -25,6 +25,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
@@ -33,6 +34,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
     private carRecyclingService: CarRecyclingClientService,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly recyclingFundService: RecyclingFundClientService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
   }
@@ -49,8 +51,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
       applicantName,
     )
 
-    // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
-    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    // New backend under feature flag to keep it from affecting real users while we test it out
+    if (await this.useNewBackend(auth)) {
       await this.recyclingFundService.createOwner(auth, applicantName)
     }
 
@@ -90,8 +92,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
         vehicle.color || '',
       )
 
-      // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
-      if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      // New backend under feature flag to keep it from affecting real users while we test it out
+      if (await this.useNewBackend(auth)) {
         await this.recyclingFundService.createVehicle(
           auth,
           vehicle.permno,
@@ -121,8 +123,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
       recyclingRequestType,
     )
 
-    // New backend is only used in dev and local for now, to keep it from affecting real users while we test it out
-    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    // New backend under feature flag to keep it from affecting real users while we test it out
+    if (await this.useNewBackend(auth)) {
       await this.recyclingFundService.recycleVehicle(
         auth,
         fullName.trim(),
@@ -254,5 +256,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
         new Error(`Error occurred when recycling vehicle(s)`),
       )
     }
+  }
+
+  async useNewBackend(auth: User): Promise<boolean> {
+    const useNewBackend = await this.featureFlagService.getValue(
+      Features.isNewCarRecyclingBackendEnabled,
+      false,
+      auth,
+    )
+    return useNewBackend
   }
 }
