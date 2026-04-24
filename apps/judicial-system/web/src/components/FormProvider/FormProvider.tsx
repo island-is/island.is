@@ -47,6 +47,7 @@ interface FormProvider {
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
+  isCreating: boolean
   refreshCase: () => void
   getCase: (
     id: string,
@@ -77,6 +78,7 @@ export const FormContext = createContext<FormProvider>({
   isLoadingWorkingCase: true,
   caseNotFound: false,
   isCaseUpToDate: false,
+  isCreating: false,
   refreshCase: () => {
     return
   },
@@ -248,6 +250,7 @@ const FormProvider = ({ children }: Props) => {
         isCaseUpToDate:
           isCreatingCase ||
           (!replacingCase && !replacingPath && state === 'up-to-date'),
+        isCreating: isCreatingCase,
         refreshCase: () => setState('refresh'),
         getCase,
       }}
