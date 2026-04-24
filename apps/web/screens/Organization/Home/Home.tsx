@@ -331,18 +331,58 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
   ])
 
   if (getOrganizationPage) {
-    const organizationNamespace = extractNamespaceFromOrganization(
-      getOrganizationPage.organization,
-    )
+    // Happy path: OrganizationPage entry has its nested organization
+    // reference populated. Use it directly — no second query — so the
+    // getProps payload stays small (saves ~271 kB vs. always fetching
+    // the full standalone Organization alongside).
+    if (getOrganizationPage.organization) {
+      const organizationNamespace = extractNamespaceFromOrganization(
+        getOrganizationPage.organization,
+      )
+
+      return {
+        organizationPage: getOrganizationPage,
+        namespace,
+        showSearchInHeader: false,
+        customTopLoginButtonItem:
+          organizationNamespace?.customTopLoginButtonItem,
+        ...getThemeConfig(
+          getOrganizationPage.theme ?? 'landing_page',
+          getOrganizationPage.organization as Organization | null | undefined,
+        ),
+      }
+    }
+
+    // Edge case: OrganizationPage exists but its nested `organization`
+    // reference is null — the CMS content model allows this (schema has
+    // `organization?: Maybe<Organization>`), so an editor can save a
+    // page without linking an org. Fall back to the slug-based query so
+    // the page still renders with logo/title/theme/namespace, matching
+    // the pre-a78da9a80c behaviour. The payload-size win above is kept
+    // on the happy path; this query only fires for incomplete CMS data.
+    const {
+      data: { getOrganization },
+    } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+      query: GET_ORGANIZATION_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    })
+    const organizationNamespace =
+      extractNamespaceFromOrganization(getOrganization)
 
     return {
       organizationPage: getOrganizationPage,
+      organization: getOrganization,
       namespace,
       showSearchInHeader: false,
       customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
       ...getThemeConfig(
         getOrganizationPage.theme ?? 'landing_page',
-        getOrganizationPage.organization as Organization | null | undefined,
+        getOrganization,
       ),
     }
   }
