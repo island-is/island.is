@@ -332,6 +332,12 @@ export class ZendeskService {
                     key === 'applicantType')
                 ) {
                   continue
+                } else if (
+                  (field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+                    field.fieldType === FieldTypesEnum.RADIO_BUTTONS) &&
+                  key === 'value'
+                ) {
+                  continue
                 }
 
                 const val = this.formatValue(raw, field.fieldType)
@@ -474,6 +480,14 @@ export class ZendeskService {
 
     if (fieldType === FieldTypesEnum.BANK_ACCOUNT && val === '--') {
       return ''
+    }
+
+    if (
+      fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+      fieldType === FieldTypesEnum.RADIO_BUTTONS
+    ) {
+      if (val === null || val === '' || !val.is) return ''
+      return String(val.is)
     }
 
     if (fieldType === FieldTypesEnum.DATE_PICKER) {
