@@ -272,7 +272,9 @@ describe('CourtSessionController - Update', () => {
     beforeEach(async () => {
       existingCourtSession.rulingType = CourtSessionRulingType.NONE
 
-      then = await givenWhenThen(caseId, courtSessionId, { rulingFileId: fileId })
+      then = await givenWhenThen(caseId, courtSessionId, {
+        rulingFileId: fileId,
+      })
     })
 
     it('should reject with BadRequestException', () => {
@@ -289,7 +291,9 @@ describe('CourtSessionController - Update', () => {
       existingCourtSession.rulingType = CourtSessionRulingType.ORDER
       caseFiles = []
 
-      then = await givenWhenThen(caseId, courtSessionId, { rulingFileId: fileId })
+      then = await givenWhenThen(caseId, courtSessionId, {
+        rulingFileId: fileId,
+      })
     })
 
     it('should reject with NotFoundException', () => {
@@ -306,7 +310,9 @@ describe('CourtSessionController - Update', () => {
       existingCourtSession.rulingType = CourtSessionRulingType.ORDER
       caseFiles = [{ id: fileId, category: CaseFileCategory.RULING }]
 
-      then = await givenWhenThen(caseId, courtSessionId, { rulingFileId: fileId })
+      then = await givenWhenThen(caseId, courtSessionId, {
+        rulingFileId: fileId,
+      })
     })
 
     it('should reject with BadRequestException', () => {
