@@ -23,6 +23,7 @@ export const DesktopSearchPanel = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const focusTimerRef = useRef<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const reactId = useId()
   const overlayId = `desktop-search-overlay-${reactId}`
@@ -31,14 +32,31 @@ export const DesktopSearchPanel = ({
     onOpenChange?.(isOpen)
   }, [isOpen, onOpenChange])
 
-  const close = useCallback(() => setIsOpen(false), [])
+  const clearFocusTimer = useCallback(() => {
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current)
+      focusTimerRef.current = null
+    }
+  }, [])
+
+  const close = useCallback(() => {
+    clearFocusTimer()
+    setIsOpen(false)
+  }, [clearFocusTimer])
 
   const open = useCallback(() => {
     setIsOpen(true)
     // Wait for the panel to mount + become visible before focusing the
-    // input; focusing a visibility:hidden element is a no-op.
-    setTimeout(() => searchInputRef.current?.focus(), 50)
-  }, [])
+    // input; focusing a visibility:hidden element is a no-op. Tracked in
+    // a ref so rapid open/close or unmount cancels the pending focus.
+    clearFocusTimer()
+    focusTimerRef.current = window.setTimeout(() => {
+      focusTimerRef.current = null
+      searchInputRef.current?.focus()
+    }, 50)
+  }, [clearFocusTimer])
+
+  useEffect(() => clearFocusTimer, [clearFocusTimer])
 
   // Close on Escape (return focus to trigger per APG), outside click, and
   // route change — same contract as the other header surfaces.

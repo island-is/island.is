@@ -184,27 +184,35 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         </Box>
                       </Hidden>
 
-                      {/* Mobile: My Pages → Search → Language → Menu */}
+                      {/* Mobile: My Pages → Search → Language → Menu.
+                          Search/Menu triggers render only when the panel
+                          they control will actually render — i.e. when
+                          headerNavData is available (MobileNavPanel returns
+                          null otherwise, making the triggers inert). */}
                       <Hidden above="md">
                         <Box display="flex" alignItems="center">
                           {loginButton}
-                          <Box marginLeft={marginLeft}>
-                            <MobileNavSearchButton
-                              ref={mobileSearchBtnRef}
-                              isOpen={isMobileNavOpen}
-                              onClick={() =>
-                                mobileNavRef.current?.openAndFocusSearch()
-                              }
-                            />
-                          </Box>
+                          {headerNavData && showSearchInHeader && (
+                            <Box marginLeft={marginLeft}>
+                              <MobileNavSearchButton
+                                ref={mobileSearchBtnRef}
+                                isOpen={isMobileNavOpen}
+                                onClick={() =>
+                                  mobileNavRef.current?.openAndFocusSearch()
+                                }
+                              />
+                            </Box>
+                          )}
                           <Box marginLeft={marginLeft}>{languageToggler}</Box>
-                          <Box marginLeft={marginLeft}>
-                            <MobileNavMenuButton
-                              ref={mobileMenuBtnRef}
-                              isOpen={isMobileNavOpen}
-                              onClick={() => mobileNavRef.current?.toggle()}
-                            />
-                          </Box>
+                          {headerNavData && (
+                            <Box marginLeft={marginLeft}>
+                              <MobileNavMenuButton
+                                ref={mobileMenuBtnRef}
+                                isOpen={isMobileNavOpen}
+                                onClick={() => mobileNavRef.current?.toggle()}
+                              />
+                            </Box>
+                          )}
                         </Box>
                       </Hidden>
                     </Box>

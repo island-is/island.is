@@ -92,6 +92,9 @@ export const MobileNavPanel = forwardRef<
     // focus-visible state (mint fill + underline) that only triggers when the
     // Button itself is focused.
     const seeAllButtonRef = useRef<HTMLElement | null>(null)
+    // Remembers what had focus when the panel opened so Escape can return
+    // focus to the trigger (APG disclosure pattern).
+    const openerRef = useRef<HTMLElement | null>(null)
     const [isOpen, setIsOpen] = useState(false)
     const [drilldownKey, setDrilldownKey] = useState<HeaderNavKey | null>(null)
     const [isPanelScrolled, setIsPanelScrolled] = useState(false)
@@ -148,6 +151,12 @@ export const MobileNavPanel = forwardRef<
     }, [])
 
     const openPanel = useCallback((focusSearch: boolean) => {
+      // Capture the opener (typically the search or menu button) so Escape
+      // can restore focus there per APG.
+      if (typeof document !== 'undefined') {
+        const active = document.activeElement
+        openerRef.current = active instanceof HTMLElement ? active : null
+      }
       // Scroll the page to the top before locking scroll so the header
       // (where the trigger button lives) is flush with the viewport top
       // and the fixed panel anchors seamlessly against the header bottom.
@@ -184,7 +193,10 @@ export const MobileNavPanel = forwardRef<
     useEffect(() => {
       if (!isOpen) return
       const onKeyDown = (event: KeyboardEvent) => {
-        if (event.key === 'Escape') close()
+        if (event.key === 'Escape') {
+          close()
+          openerRef.current?.focus()
+        }
       }
       const onPointerDown = (event: PointerEvent) => {
         const target = event.target as Node | null
@@ -328,6 +340,18 @@ export const MobileNavPanel = forwardRef<
                   // Otherwise this is a forward tab onto the Link — forward
                   // focus to the Button so its mint `:focus` style shows.
                   seeAllButtonRef.current.focus()
+                }}
+                onKeyDown={(event) => {
+                  // Focus is forwarded to the Button (a <span>), so Enter /
+                  // Space on the forwarded focus wouldn't reach the wrapping
+                  // anchor. Click it explicitly to navigate.
+                  if (event.key !== 'Enter' && event.key !== ' ') return
+                  if (event.target !== seeAllButtonRef.current) return
+                  event.preventDefault()
+                  const anchor = (
+                    event.currentTarget as HTMLElement
+                  ).querySelector('a')
+                  anchor?.click()
                 }}
               >
                 <Link
