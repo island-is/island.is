@@ -20,3 +20,36 @@ export const itemListContainer = style({
     },
   }),
 })
+
+export const itemListContainerMobileScroll = style({
+  display: 'grid',
+  gap: theme.spacing[4],
+  ...themeUtils.responsiveStyle({
+    xs: {
+      gridAutoFlow: 'column',
+      gridAutoColumns: 'minmax(260px, 320px)',
+      overflowX: 'auto',
+      gap: theme.spacing[3],
+      scrollbarWidth: 'none',
+      selectors: {
+        '&::-webkit-scrollbar': {
+          display: 'none',
+        },
+      },
+    },
+    lg: {
+      gridAutoFlow: 'row',
+      gridAutoColumns: 'auto',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      gap: theme.spacing[3],
+      overflowX: 'visible',
+    },
+    xl: {
+      gridAutoFlow: 'row',
+      gridAutoColumns: 'auto',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      gap: theme.spacing[4],
+      overflowX: 'visible',
+    },
+  }),
+})

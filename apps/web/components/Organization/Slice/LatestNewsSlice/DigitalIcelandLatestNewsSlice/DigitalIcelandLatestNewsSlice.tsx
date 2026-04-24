@@ -106,7 +106,13 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
               />
             </Hidden>
           </Box>
-          <Box className={styles.itemListContainer}>
+          <Box
+            className={
+              seeMoreLinkVariant === 'frontpage'
+                ? styles.itemListContainerMobileScroll
+                : styles.itemListContainer
+            }
+          >
             {slice.news.slice(0, 3).map((news) => (
               <DigitalIcelandLatestNewsCard
                 key={news.id}
