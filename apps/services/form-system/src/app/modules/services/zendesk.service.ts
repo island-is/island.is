@@ -486,7 +486,8 @@ export class ZendeskService {
       fieldType === FieldTypesEnum.DROPDOWN_LIST ||
       fieldType === FieldTypesEnum.RADIO_BUTTONS
     ) {
-      if (val === null || val === '' || !val.is) return ''
+      if (val == null || val === '' || typeof val !== 'object' || !val.is)
+        return ''
       return String(val.is)
     }
 

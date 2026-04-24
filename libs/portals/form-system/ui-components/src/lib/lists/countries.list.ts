@@ -180,8 +180,7 @@ Palestína\tPalestínuríki\tPalestine, State of\tPS\tPSE
 Panama\tLýðveldið Panama\tPanama\tPA\tPAN
 Papúa Nýja-Gínea\tSjálfstæða ríkið Papúa Nýja-Gínea\tPapua New Guinea\tPG\tPNG
 Paragvæ\tLýðveldið Paragvæ\tParaguay\tPY\tPRY
-Páfagarður (Vatíkanið)\tVatíkanborgríkið\tVatican City State\tN/A\tN/A
-Páfastóll\tN/A\tHoly See (the)\tVA\tVAT
+Páfagarður (Vatíkanið)\tVatíkanborgríkið\tVatican City State\tVA\tVAT
 Perú\tLýðveldið Perú\tPeru\tPE\tPER
 Portúgal\tPortúgalska lýðveldið\tPortugal\tPT\tPRT
 Pólland\tLýðveldið Pólland\tPoland\tPL\tPOL

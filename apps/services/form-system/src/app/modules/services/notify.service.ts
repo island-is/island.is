@@ -47,7 +47,6 @@ export class NotifyService {
     let audkenni = ''
     try {
       const loginResponse = await this.getAccessToken(url)
-      console.log('Login response:', loginResponse) // Log the login response for debugging
       accessToken = loginResponse.accessToken
       audkenni = loginResponse.audkenni
     } catch (error) {
@@ -85,13 +84,11 @@ export class NotifyService {
       let operationSuccessful = response.ok
 
       if (notificationDto.command === NotificationCommands.SUBMIT) {
-        if (
-          response.ok &&
-          responseData.success === false &&
-          responseData.error
-        ) {
+        if (response.ok && responseData.success !== true) {
           this.logger.error(
-            `Error response from external system for application ${notificationDto.applicationId}: ${responseData.error}`,
+            `SUBMIT rejected by external system for application ${
+              notificationDto.applicationId
+            }: ${responseData.error ?? 'no error detail'}`,
           )
         }
         operationSuccessful = response.ok && responseData.success === true
@@ -132,8 +129,7 @@ export class NotifyService {
       )
     }
 
-    const path = `${this.xroadBase}${env}/NatturuhamfaratryggingIslands-Protected/Tjonakerfi_NTI-v0.1/services/oauth2/token`
-    const loginUrl = `${path}?client_id=${this.NTI_USERNAME}&client_secret=${this.NTI_PASSWORD}&grant_type=client_credentials`
+    const loginUrl = `${this.xroadBase}${env}/NatturuhamfaratryggingIslands-Protected/Tjonakerfi_NTI-v0.1/services/oauth2/token`
 
     try {
       const response = await this.enhancedFetch(loginUrl, {
@@ -142,6 +138,11 @@ export class NotifyService {
           'Content-Type': 'application/json',
           'X-Road-Client': this.xroadClient,
         },
+        body: JSON.stringify({
+          notandi: this.NTI_USERNAME,
+          lykilord: this.NTI_PASSWORD,
+          grant_type: 'client_credentials',
+        }),
       })
 
       if (!response.ok) {
@@ -157,7 +158,7 @@ export class NotifyService {
       }
 
       const loginResponse: LoginResponseDto = {
-        accessToken: data.accessToken,
+        accessToken: data.Access_Token,
         audkenni: '',
       }
 

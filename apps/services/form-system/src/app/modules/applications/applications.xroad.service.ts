@@ -77,14 +77,21 @@ export class ApplicationsXRoadService {
         applicationDto,
       )
 
-    await this.applicationEventModel.create({
-      applicationId: id,
-      eventType: ApplicationEvents.APPLICATION_FETCHED,
-      eventMessage: {
-        is: 'Umsókn sótt',
-        en: 'Application fetched',
-      },
-    } as ApplicationEvent)
+    try {
+      await this.applicationEventModel.create({
+        applicationId: id,
+        eventType: ApplicationEvents.APPLICATION_FETCHED,
+        eventMessage: {
+          is: 'Umsókn sótt',
+          en: 'Application fetched',
+        },
+      } as ApplicationEvent)
+    } catch (err) {
+      this.logger.error(
+        `Failed to persist APPLICATION_FETCHED event for application ${id}`,
+        err,
+      )
+    }
 
     return applicationXroadDto
   }
