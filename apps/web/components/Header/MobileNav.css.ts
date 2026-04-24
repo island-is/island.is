@@ -119,11 +119,12 @@ export const backButton = style({
   },
 })
 
+// Figma "Heading/H4" — 20/30 SemiBold, dark400.
 export const panelTitle = style({
   fontFamily: theme.typography.fontFamily,
-  fontSize: 18,
+  fontSize: 20,
   fontWeight: theme.typography.semiBold,
-  lineHeight: '24px',
+  lineHeight: '30px',
   color: theme.color.dark400,
   margin: 0,
 })
@@ -191,7 +192,8 @@ export const drillLink = style({
   alignItems: 'flex-start',
   gap: 8,
   fontFamily: theme.typography.fontFamily,
-  fontSize: 18,
+  // Figma "Paragraph/Default" — 16/24 Light, blue600.
+  fontSize: 16,
   fontWeight: theme.typography.light,
   lineHeight: '24px',
   color: theme.color.blue600,
