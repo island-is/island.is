@@ -5,6 +5,7 @@ import {
   Button,
   GridContainer,
   Hidden,
+  Icon,
   LinkV2,
   Stack,
   Text,
@@ -21,21 +22,30 @@ const SeeMoreLink = ({
   seeMoreLinkVariant = 'organization',
 }: SliceProps) => {
   const { linkResolver } = useLinkResolver()
+  const href = slice.readMoreLink?.url
+    ? slice.readMoreLink.url
+    : linkResolver(
+        seeMoreLinkVariant === 'organization'
+          ? 'organizationnewsoverview'
+          : seeMoreLinkVariant === 'project'
+          ? 'projectnewsoverview'
+          : 'newsoverview',
+        slug ? [slug] : [],
+      ).href
+
+  if (seeMoreLinkVariant === 'frontpage') {
+    return (
+      <LinkV2 href={href}>
+        <span className={styles.frontpageSeeMoreLink}>
+          {slice.readMoreText}
+          <Icon icon="arrowForward" type="filled" size="small" />
+        </span>
+      </LinkV2>
+    )
+  }
+
   return (
-    <LinkV2
-      href={
-        slice.readMoreLink?.url
-          ? slice.readMoreLink.url
-          : linkResolver(
-              seeMoreLinkVariant === 'organization'
-                ? 'organizationnewsoverview'
-                : seeMoreLinkVariant === 'project'
-                ? 'projectnewsoverview'
-                : 'newsoverview',
-              slug ? [slug] : [],
-            ).href
-      }
-    >
+    <LinkV2 href={href}>
       <Button as="span" unfocusable={true} variant="text" icon="arrowForward">
         {slice.readMoreText}
       </Button>

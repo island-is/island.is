@@ -2,6 +2,21 @@ import { style } from '@vanilla-extract/css'
 
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const frontpageSeeMoreLink = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: theme.spacing[1],
+  color: theme.color.blue400,
+  fontSize: 16,
+  lineHeight: 1.25,
+  fontWeight: theme.typography.semiBold,
+  paddingBottom: 2,
+  boxShadow: 'inset 0 -1px 0 0 currentColor',
+  ':hover': {
+    color: theme.color.blueberry400,
+  },
+})
+
 export const itemListContainer = style({
   display: 'grid',
   gap: theme.spacing[4],
