@@ -172,12 +172,12 @@ export const drillRowLabel = style({
 
 // Org logo shown next to a drilldown link for organizationPage items.
 // Mirrors DesktopNav's dropdownLinkLogo: fixed 20x20 with contain scaling,
-// no shrinking when names wrap, and a 4px top nudge so the logo sits
+// no shrinking when names wrap, and a 3px top nudge so the logo sits
 // level with the first line's cap-height rather than the line-box leading.
 export const drillLinkLogo = style({
   width: 20,
   height: 20,
-  marginTop: 4,
+  marginTop: 3,
   objectFit: 'contain',
   flexShrink: 0,
 })
