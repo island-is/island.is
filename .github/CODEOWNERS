@@ -420,6 +420,7 @@ codemagic.yaml                                                                  
 
 /libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                                        @island-is/origo
 /libs/application/templates/activation-allowance                                                                             @island-is/origo
+/libs/application/templates/vmst/confirm-job-search                                                                          @island-is/origo
 /libs/clients/vmst-unemployment                                                                                              @island-is/origo
 /libs/api/domains/vmst-applications                                                                                          @island-is/origo
 
