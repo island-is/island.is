@@ -28,12 +28,14 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Form } from '../forms/models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { Organization } from '../organizations/models/organization.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
 import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
@@ -48,20 +50,18 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import { NotificationDto } from './models/dto/notification.dto'
-import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
-import { SubmitScreenDto } from './models/dto/submitScreen.dto'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { NotificationResponseDto } from './models/dto/notification.response.dto'
-import { Value } from './models/value.model'
-import { escapeLike } from './utils/escapeLike'
 import {
   ApplicationXroadFieldDto,
   ApplicationXroadValueDto,
 } from './models/dto/application.xroad.dto'
-import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
-import { FieldDto } from '../fields/models/dto/field.dto'
+import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
+import { NotificationDto } from './models/dto/notification.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
+import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
+import { Value } from './models/value.model'
+import { escapeLike } from './utils/escapeLike'
 
 @Injectable()
 export class ApplicationsService {
@@ -253,6 +253,36 @@ export class ApplicationsService {
     }
 
     await application.save()
+  }
+
+  async completePaymentSection(applicationId: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(applicationId, {
+      include: [{ model: Section, as: 'sections' }],
+    })
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(application.formId, {
+      include: [{ model: Section, as: 'sections' }],
+    })
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+    const paymentSection = form.sections.find(
+      (s) => s.sectionType === SectionTypes.PAYMENT,
+    )
+    if (!paymentSection?.id) {
+      return
+    }
+    const completedArray = application.completed ?? []
+    if (!completedArray.includes(paymentSection.id)) {
+      application.completed = [...completedArray, paymentSection.id]
+      await application.save()
+    }
   }
 
   async getSlugFromId(applicationId: string): Promise<string> {

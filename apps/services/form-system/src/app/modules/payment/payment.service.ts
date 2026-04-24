@@ -54,6 +54,7 @@ export class PaymentService {
           },
         },
       )
+      await this.applicationsService.completePaymentSection(applicationId)
     } catch (error) {
       this.logger.error('Error fulfilling payment', error)
       throw error
