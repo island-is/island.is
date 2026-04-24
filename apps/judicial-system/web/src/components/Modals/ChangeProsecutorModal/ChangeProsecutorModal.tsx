@@ -27,6 +27,9 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
   const text = isRestrictionCase(workingCase.type)
     ? 'Nýr sækjandi mun verða skráður sem sækjandi í málinu og fá tilkynningar er það varðar.'
     : 'Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar.'
+  const placeholder = isRestrictionCase(workingCase.type)
+    ? 'Veldu sækjanda til að taka við málinu'
+    : 'Veldu ákæranda til að taka við málinu'
 
   const calculateMargin = (count: number) => {
     if (count === 0) {
@@ -71,7 +74,7 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
         }}
       >
         <ProsecutorSelection
-          placeholder="Veldu sækjanda til að taka við málinu"
+          placeholder={placeholder}
           isRequired={false}
           shouldInitializeSelector={true}
           onMenuOpen={() => setMenuIsOpen(true)}
