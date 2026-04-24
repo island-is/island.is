@@ -55,7 +55,7 @@ const SECTION_CONFIG: Record<
       is: 'Skoða allar stofnanir',
       en: 'View all organizations',
     },
-    seeAllHref: { is: '/s', en: '/en/organizations' },
+    seeAllHref: { is: '/s', en: '/en/o' },
   },
 }
 
