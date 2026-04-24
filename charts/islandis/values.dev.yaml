@@ -3745,6 +3745,7 @@ services-payments:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'application-system'
+    - 'services-form-system-api'
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'envoy-gateway-internal'
@@ -3905,6 +3906,7 @@ services-payments-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'application-system'
+    - 'services-form-system-api'
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'envoy-gateway-internal'
