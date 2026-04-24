@@ -137,6 +137,20 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
     onOpenChange?.(openKey !== null)
   }, [openKey, onOpenChange])
 
+  // Cancel any pending X→Y swap rAF on unmount so its callback doesn't
+  // setSuppressTransition on a dead component. The rAF is only live for
+  // a single frame, so this matters mainly if the nav unmounts mid-swap
+  // (route change, conditional render), but it's cheap insurance.
+  useEffect(
+    () => () => {
+      if (suppressFrameRef.current !== null) {
+        cancelAnimationFrame(suppressFrameRef.current)
+        suppressFrameRef.current = null
+      }
+    },
+    [],
+  )
+
   const close = useCallback(() => setOpenKey(null), [])
 
   useEffect(() => {
