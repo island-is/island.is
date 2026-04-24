@@ -359,10 +359,7 @@ const Overview: FC = () => {
             }}
           />
         ) : modal === 'editProsecutor' ? (
-          <ChangeProsecutorModal
-            onClose={() => setModal('noModal')}
-            caseId={workingCase.id}
-          />
+          <ChangeProsecutorModal onClose={() => setModal('noModal')} />
         ) : null}
       </AnimatePresence>
     </PageLayout>

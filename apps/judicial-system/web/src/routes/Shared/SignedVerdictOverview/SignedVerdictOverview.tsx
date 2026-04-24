@@ -654,10 +654,7 @@ export const SignedVerdictOverview: FC = () => {
             />
           )}
         {modalVisible === 'ChangeProsecutor' && (
-          <ChangeProsecutorModal
-            onClose={() => setModalVisible('NoModal')}
-            caseId={workingCase.id}
-          />
+          <ChangeProsecutorModal onClose={() => setModalVisible('NoModal')} />
         )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />

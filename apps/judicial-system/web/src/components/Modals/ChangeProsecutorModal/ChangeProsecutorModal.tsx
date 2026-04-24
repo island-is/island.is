@@ -10,11 +10,10 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   onClose: () => void
-  caseId: string
 }
 
 const ChangeProsecutorModal: FC<Props> = (props) => {
-  const { onClose, caseId } = props
+  const { onClose } = props
   const { updateCase } = useCase()
   const { refreshCase, workingCase } = useContext(FormContext)
 
@@ -56,7 +55,7 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
           if (!selectedProsecutorId) {
             return
           }
-          await updateCase(caseId, {
+          await updateCase(workingCase.id, {
             prosecutorId: selectedProsecutorId,
           })
           refreshCase()
