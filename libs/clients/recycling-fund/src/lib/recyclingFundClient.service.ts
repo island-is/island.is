@@ -18,10 +18,6 @@ export class RecyclingFundClientService {
   private recyclingFundApiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async healthCheck(user: User): Promise<void> {
-    return await this.recyclingFundApiWithAuth(user).xRoadControllerHealth()
-  }
-
   async createOwner(user: User, applicantName: string): Promise<void> {
     const request: XRoadControllerCreateVehicleOwnerRequest = {
       createXRoadVehicleOwnerDto: {

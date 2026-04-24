@@ -14,7 +14,6 @@ import {
 } from '@island.is/clients/recycling-fund'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   VehicleDto,
@@ -53,7 +52,16 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
     // New backend under feature flag to keep it from affecting real users while we test it out
     if (await this.useNewBackend(auth)) {
-      await this.recyclingFundService.createOwner(auth, applicantName)
+      try {
+        await this.recyclingFundService.createOwner(auth, applicantName)
+      } catch (error) {
+        this.logger.error(
+          `car-recycling: Error creating owner in new backend`,
+          {
+            error,
+          },
+        )
+      }
     }
 
     return oldResponse
@@ -94,15 +102,24 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       // New backend under feature flag to keep it from affecting real users while we test it out
       if (await this.useNewBackend(auth)) {
-        await this.recyclingFundService.createVehicle(
-          auth,
-          vehicle.permno,
-          mileage,
-          vehicle.vin || '',
-          vehicle.make || '',
-          modelYear,
-          vehicle.color || '',
-        )
+        try {
+          await this.recyclingFundService.createVehicle(
+            auth,
+            vehicle.permno,
+            mileage,
+            vehicle.vin || '',
+            vehicle.make || '',
+            modelYear,
+            vehicle.color || '',
+          )
+        } catch (error) {
+          this.logger.error(
+            `car-recycling: Error creating vehicle in new backend`,
+            {
+              error,
+            },
+          )
+        }
       }
 
       return oldResponse
@@ -125,14 +142,23 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
     // New backend under feature flag to keep it from affecting real users while we test it out
     if (await this.useNewBackend(auth)) {
-      await this.recyclingFundService.recycleVehicle(
-        auth,
-        fullName.trim(),
-        vehicle.permno || '',
-        recyclingRequestType === RecyclingRequestTypes.pendingRecycle
-          ? CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle
-          : CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
-      )
+      try {
+        await this.recyclingFundService.recycleVehicle(
+          auth,
+          fullName.trim(),
+          vehicle.permno || '',
+          recyclingRequestType === RecyclingRequestTypes.pendingRecycle
+            ? CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle
+            : CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
+        )
+      } catch (error) {
+        this.logger.error(
+          `car-recycling: Error recycling vehicle in new backend`,
+          {
+            error,
+          },
+        )
+      }
     }
     return oldResponse
   }
