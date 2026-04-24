@@ -32,7 +32,7 @@ import {
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
-  useCase,
+  useAppealCase,
   useFileList,
   useS3Upload,
   useUploadFiles,
@@ -46,7 +46,7 @@ import {
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { isUpdatingCase, updateCase } = useCase()
+  const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
@@ -102,10 +102,15 @@ const Statement = () => {
       return
     }
 
-    const updated = await updateCase(
+    if (!workingCase.appealCase?.id) {
+      return
+    }
+
+    const updated = await updateAppealCase(
       workingCase.id,
+      workingCase.appealCase.id,
       isDefenceUser(user)
-        ? { defendantStatementDate: new Date().toISOString() } // TODO: Let the server override this date. It is already overriding prosecutorStatementDate.
+        ? { defendantStatementDate: new Date().toISOString() }
         : { prosecutorStatementDate: new Date().toISOString() },
     )
 
@@ -114,10 +119,11 @@ const Statement = () => {
     }
   }, [
     handleUpload,
-    updateCase,
+    updateAppealCase,
     updateUploadFile,
     uploadFiles,
     user,
+    workingCase.appealCase?.id,
     workingCase.id,
   ])
 
@@ -231,8 +237,10 @@ const Statement = () => {
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
-          nextIsDisabled={appealStatementFiles.length === 0 || isUpdatingCase}
-          nextIsLoading={!allFilesDoneOrError || isUpdatingCase}
+          nextIsDisabled={
+            appealStatementFiles.length === 0 || isUpdatingAppealCase
+          }
+          nextIsLoading={!allFilesDoneOrError || isUpdatingAppealCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />

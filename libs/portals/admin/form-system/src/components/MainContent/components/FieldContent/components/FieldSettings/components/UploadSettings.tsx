@@ -97,7 +97,7 @@ export const FileUploadSettings = () => {
       </Row>
       <Row>
         {Object.entries(FILE_TYPE_MAP).map(([key, value], i) => (
-          <Box padding={2} key={i} style={{ width: '15%' }}>
+          <Box padding={2} key={i} style={{ width: 'clamp(80px, 15%, 120px)' }}>
             {key !== 'default' && (
               <Checkbox
                 label={key}

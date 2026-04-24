@@ -45,7 +45,7 @@ import { Routes } from '../lib/constants'
 
 export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { application } = props
+  const { application, setSubmitButtonDisabled } = props
   const applicationType = application.answers?.applicationType
   const isAmending = applicationType === 'amending_regulation'
 
@@ -131,6 +131,24 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const [chooseType, setChooseType] = useState<
     'cancel' | 'change' | undefined
   >()
+
+  // Gate the "Next" button: amending regulations must have at least one
+  // impact before the user can advance. Base regulations pass through.
+  const nextDisabledReason = isAmending && impactsLoaded && impacts.length === 0
+  useEffect(() => {
+    if (!setSubmitButtonDisabled) return
+    setSubmitButtonDisabled(
+      isAmending && (!impactsLoaded || impacts.length === 0),
+    )
+  }, [setSubmitButtonDisabled, isAmending, impactsLoaded, impacts.length])
+
+  // Reset on unmount so the next screen starts with Next enabled.
+  useEffect(() => {
+    return () => {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Escape key handler
   const escClick = useCallback((e: KeyboardEvent) => {
@@ -511,6 +529,12 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
             onSaveImpact={handleSaveExistingImpact}
             onDeleteImpact={handleDeleteImpact}
           />
+        )}
+
+        {nextDisabledReason && (
+          <Text variant="small" color="red600">
+            {f(regulation.impacts.alerts.requireImpact)}
+          </Text>
         )}
       </Stack>
     </FormScreen>

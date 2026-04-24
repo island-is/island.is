@@ -1,17 +1,13 @@
 import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
-import {
-  Box,
-  GridColumn as Column,
-  GridRow as Row,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Box, Tabs } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { Outlet } from 'react-router-dom'
 import { ControlContext } from '../../context/ControlContext'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
+import * as styles from './FormHeader.css'
 
 type FormTabType = {
   id: 'settings' | 'step'
@@ -68,30 +64,20 @@ export const FormHeader = () => {
   }
   return (
     <Box>
-      <Row>
-        <Column offset="4/12" span="8/12">
-          <Box
-            style={{
-              maxWidth: '1200px',
-              width: '100%',
-              position: 'relative',
-            }}
-          >
-            <Tabs
-              label="formTabs"
-              tabs={FORM_TABS.map((tab) => ({
-                id: tab.id,
-                disabled: tabsLocked,
-                label: formatMessage(m[tab.id as keyof typeof m]),
-                content: <Outlet />,
-              }))}
-              onChange={onTabChange}
-              variant="default"
-              selected={inSettings ? 'settings' : 'step'}
-            />
-          </Box>
-        </Column>
-      </Row>
+      <Box className={styles.tabWrapper}>
+        <Tabs
+          label="formTabs"
+          tabs={FORM_TABS.map((tab) => ({
+            id: tab.id,
+            disabled: tabsLocked,
+            label: formatMessage(m[tab.id as keyof typeof m]),
+            content: <Outlet />,
+          }))}
+          onChange={onTabChange}
+          variant="default"
+          selected={inSettings ? 'settings' : 'step'}
+        />
+      </Box>
     </Box>
   )
 }

@@ -18,8 +18,14 @@ import {
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  AppealCaseTransition,
+  CaseTransition,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useAppealCase,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   onClose: () => void
@@ -30,14 +36,16 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const handlePrimaryButtonClick = async () => {
-    const caseTransitioned = await transitionCase(
-      workingCase.id,
-      isCourtOfAppealsUser(user)
-        ? CaseTransition.REOPEN_APPEAL
-        : CaseTransition.REOPEN,
-    )
+    const caseTransitioned = isCourtOfAppealsUser(user)
+      ? await transitionAppealCase(
+          workingCase.id,
+          workingCase.appealCase?.id ?? '',
+          AppealCaseTransition.REOPEN_APPEAL,
+        )
+      : await transitionCase(workingCase.id, CaseTransition.REOPEN)
 
     if (caseTransitioned) {
       router.push(
@@ -71,7 +79,7 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
       primaryButton={{
         text: 'Halda áfram',
         onClick: handlePrimaryButtonClick,
-        isLoading: isTransitioningCase,
+        isLoading: isTransitioningCase || isTransitioningAppealCase,
       }}
       secondaryButton={{
         text: 'Hætta við',

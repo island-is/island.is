@@ -22,6 +22,7 @@ import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
+import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
@@ -61,6 +62,7 @@ import { repositoryModuleConfig } from './repository.config'
     ConfigModule.forFeature(repositoryModuleConfig),
   ],
   providers: [
+    AppealCaseRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
@@ -74,6 +76,7 @@ import { repositoryModuleConfig } from './repository.config'
     VerdictRepositoryService,
   ],
   exports: [
+    AppealCaseRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
