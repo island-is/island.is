@@ -325,7 +325,7 @@ export const MobileNavPanel = forwardRef<
                 </button>
                 <h2 className={styles.panelTitle}>{drilldownSection.label}</h2>
               </Box>
-              <ul className={styles.panelList}>
+              <ul className={styles.drilldownList}>
                 {drilldownSection.items
                   .slice(0, HEADER_NAV_MAX_ITEMS)
                   .map((item) => (
@@ -433,7 +433,7 @@ export const MobileNavPanel = forwardRef<
                         icon="chevronForward"
                         type="outline"
                         size="small"
-                        color="dark400"
+                        color="blue400"
                       />
                     </button>
                   </li>

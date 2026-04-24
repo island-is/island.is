@@ -40,7 +40,7 @@ export const panel = style({
   // No top padding so the sticky scroll-shadow anchors to the panel's
   // absolute top edge (sticky top:0 anchors to the padding-box, not the
   // border-box). The visual top gap lives on the first content element.
-  padding: '0 24px 24px 24px',
+  padding: '0 24px 40px 24px',
   zIndex: NAV_OVERLAY_Z_INDEX,
   '@media': {
     '(prefers-reduced-motion: reduce)': {
@@ -96,7 +96,10 @@ export const panelHeader = style({
   alignItems: 'center',
   gap: 16,
   minHeight: 24,
-  marginBottom: 24,
+  // Figma spacing/40 between search and back-title row.
+  marginTop: 40,
+  // Figma spacing/32 between back-title and drilldown list.
+  marginBottom: 32,
 })
 
 export const backButton = style({
@@ -129,15 +132,34 @@ export const panelTitle = style({
   margin: 0,
 })
 
+// Top-level list — three section buttons (Þjónustuflokkar, Lífsviðburðir,
+// Opinberir aðilar). Figma spacing/48 between items, and spacing/48 from
+// the search bar above.
 export const panelList = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: 24,
+  gap: 48,
+  marginTop: 48,
+  marginBottom: 0,
+  padding: 0,
+  listStyle: 'none',
+})
+
+// Drilldown list — org / category / life-event links. Figma spacing/28
+// between items. Top margin is 0 because panelHeader above already owns
+// the 32px gap before this list.
+export const drilldownList = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 28,
   margin: 0,
   padding: 0,
   listStyle: 'none',
 })
 
+// Figma "Heading/H4" — 20/30 SemiBold, dark400. No hover color change:
+// Figma's hover variant keeps the label in dark400 and signals
+// interactivity via the chevron (blue) rather than a text colour shift.
 export const drillRow = style({
   display: 'flex',
   alignItems: 'center',
@@ -148,15 +170,12 @@ export const drillRow = style({
   border: 'none',
   color: theme.color.dark400,
   fontFamily: theme.typography.fontFamily,
-  fontSize: 18,
+  fontSize: 20,
   fontWeight: theme.typography.semiBold,
-  lineHeight: '24px',
+  lineHeight: '30px',
   cursor: 'pointer',
   textAlign: 'left',
 
-  ':hover': {
-    color: theme.color.blue400,
-  },
   ':focus': {
     outline: 'none',
   },
@@ -212,12 +231,18 @@ export const drillLink = style({
 })
 
 export const searchWrapper = style({
+  // Figma panel padding-top is 24 in the drilldown view and 40 in the
+  // top-level view; we use 24 for a consistent chrome feel and let the
+  // next sibling (panelList in top-level, panelHeader in drilldown) own
+  // the rest of the vertical rhythm.
   marginTop: 24,
-  marginBottom: 24,
+  marginBottom: 0,
 })
 
+// "Skoða allar …" row lives inside the drilldown view, just below the
+// list. Figma groups it into the same column as the list at spacing/28.
 export const seeAllRow = style({
-  marginTop: 24,
+  marginTop: 28,
 })
 
 // Dormant — the JSX consumer is commented out in MobileNav.tsx. Kept here so
