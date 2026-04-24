@@ -87,12 +87,12 @@ export const CivilClaimantFields = ({
     value: string,
     civilClaimantId: string,
   ) => {
-    const cleanNationalId = value ? value.replace('-', '') : ''
+    const cleanNationalId = value.replace('-', '')
     setLookupNationalId(cleanNationalId || null)
 
     if (cleanNationalId.length === 10) {
       setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId || null,
+        nationalId: cleanNationalId,
         civilClaimantId,
       })
     }
@@ -107,7 +107,7 @@ export const CivilClaimantFields = ({
     if (civilClaimant.noNationalId) {
       handleUpdateCivilClaimantState({
         civilClaimantId,
-        nationalId: value || null,
+        nationalId: value,
       })
     } else {
       applyNationalIdLookupFromInput(value, civilClaimantId)
@@ -123,7 +123,7 @@ export const CivilClaimantFields = ({
     if (civilClaimant.noNationalId) {
       handleSetAndSendCivilClaimantToServer({
         civilClaimantId,
-        nationalId: value || null,
+        nationalId: value,
       })
     } else {
       applyNationalIdLookupFromInput(value, civilClaimantId)
