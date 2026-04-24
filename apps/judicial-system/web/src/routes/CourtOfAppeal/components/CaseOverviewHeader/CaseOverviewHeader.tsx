@@ -99,15 +99,6 @@ const CaseOverviewHeader: FC<Props> = (props) => {
 
   return (
     <div className={grid({ gap: 5 })}>
-      <Box>
-        <Button
-          variant="text"
-          preTextIcon="arrowBack"
-          onClick={() => router.push(getStandardUserDashboardRoute(user))}
-        >
-          {formatMessage(core.back)}
-        </Button>
-      </Box>
       <Box className={grid({ gap: 2 })}>
         {!workingCase.appealCase?.appealRulingDecision &&
           wasAppealedAfterDeadline && (
