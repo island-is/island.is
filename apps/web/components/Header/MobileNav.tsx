@@ -377,6 +377,7 @@ export const MobileNavPanel = forwardRef<
                 <Link
                   href={
                     activeLocale === 'en' &&
+                    drilldownSection.seeAllHref.startsWith('/') &&
                     !drilldownSection.seeAllHref.startsWith('/en')
                       ? `/en${drilldownSection.seeAllHref}`
                       : drilldownSection.seeAllHref

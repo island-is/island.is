@@ -437,7 +437,9 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
             >
               <Link
                 href={
-                  activeLocale === 'en' && !data.seeAllHref.startsWith('/en')
+                  activeLocale === 'en' &&
+                  data.seeAllHref.startsWith('/') &&
+                  !data.seeAllHref.startsWith('/en')
                     ? `/en${data.seeAllHref}`
                     : data.seeAllHref
                 }
