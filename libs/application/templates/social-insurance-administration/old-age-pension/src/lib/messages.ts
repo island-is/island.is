@@ -412,11 +412,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Bæta við vinnuveitanda',
       description: 'Add an employer',
     },
-    removeEmployer: {
-      id: 'oap.application:employer.remove',
-      defaultMessage: 'Eyða vinnuveitanda',
-      description: 'Remove an employer',
-    },
     month: {
       id: 'oap.application:employer.month',
       defaultMessage: 'Mánuður',
