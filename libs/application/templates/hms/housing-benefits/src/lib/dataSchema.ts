@@ -64,7 +64,6 @@ const householdMemberRowSchema = z
 const devMockTaxVariants = ['withSampleData', 'emptySuccess'] as const
 
 const baseSchema = z.object({
-  /** @deprecated Nota devMockSettings — geymt fyrir eldri prófunarumskóknir */
   mockData: z.array(z.string()).optional(),
   devMockSettings: z
     .object({
@@ -83,8 +82,7 @@ const baseSchema = z.object({
     })
     .optional(),
   confirmRead: confirmReadSchema.optional(),
-  confirmMunicipality: z.array(z.literal(YES)).length(1).optional(),
-  approveExternalData: z.boolean().optional(),
+  approveExternalData: z.literal(true).optional(),
   applicant: applicantSchema.optional(),
   rentalAgreement: z
     .object({
@@ -404,23 +402,17 @@ export const dataSchema = baseSchema
       {
         checked: !!data.incomeContractorCheckbox?.includes(YES),
         text: data.incomeContractorDescription?.trim() ?? '',
-        files: data.incomeContractorFiles,
         descPath: ['incomeContractorDescription'] as const,
-        filesPath: ['incomeContractorFiles'] as const,
       },
       {
         checked: !!data.incomeForeignCheckbox?.includes(YES),
         text: data.incomeForeignDescription?.trim() ?? '',
-        files: data.incomeForeignFiles,
         descPath: ['incomeForeignDescription'] as const,
-        filesPath: ['incomeForeignFiles'] as const,
       },
       {
         checked: !!data.incomeOtherCheckbox?.includes(YES),
         text: data.incomeOtherDescription?.trim() ?? '',
-        files: data.incomeOtherFiles,
         descPath: ['incomeOtherDescription'] as const,
-        filesPath: ['incomeOtherFiles'] as const,
       },
     ]
 
@@ -432,13 +424,6 @@ export const dataSchema = baseSchema
           path: [...c.descPath],
           params:
             m.draftMessages.incomeSection.validationCategoryDescriptionRequired,
-        })
-      }
-      if (!Array.isArray(c.files) || c.files.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [...c.filesPath],
-          params: m.draftMessages.incomeSection.validationCategoryFilesRequired,
         })
       }
     }

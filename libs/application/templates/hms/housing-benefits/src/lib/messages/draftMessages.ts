@@ -351,11 +351,6 @@ export const draftMessages = {
       defaultMessage: 'Skýring er nauðsynleg þegar þessi tegund tekna er valin',
       description: 'Validation: description required when income type checked',
     },
-    validationCategoryFilesRequired: {
-      id: 'hb.application:draft.incomeSection.validationCategoryFilesRequired',
-      defaultMessage: 'Að minnsta kosti eitt viðhengi er nauðsynlegt',
-      description: 'Validation: files required when income type checked',
-    },
     description: {
       id: 'hb.application:draft.incomeSection.description',
       defaultMessage:
