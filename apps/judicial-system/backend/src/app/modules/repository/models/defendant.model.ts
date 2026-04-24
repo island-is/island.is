@@ -195,6 +195,19 @@ export class Defendant extends Model {
   })
   caseDefendantPoliceCaseNumbers?: CaseDefendantPoliceCaseNumber[]
 
+  // Derived from eagerly loaded caseDefendantPoliceCaseNumbers junction rows.
+  @Column({ type: DataType.VIRTUAL })
+  @ApiProperty({ type: String, isArray: true })
+  get policeCaseNumbers(): string[] {
+    const rows = this.getDataValue('caseDefendantPoliceCaseNumbers') as
+      | CaseDefendantPoliceCaseNumber[]
+      | undefined
+
+    return [...new Set((rows ?? []).map((r) => r.policeCaseNumber))].sort(
+      (a, b) => a.localeCompare(b),
+    )
+  }
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
