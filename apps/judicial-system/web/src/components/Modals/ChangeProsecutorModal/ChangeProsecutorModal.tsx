@@ -1,12 +1,12 @@
 import React, { FC, useContext, useState } from 'react'
 
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
   ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isRestrictionCase } from '@island.is/judicial-system/types'
 
 interface Props {
   onClose: () => void
