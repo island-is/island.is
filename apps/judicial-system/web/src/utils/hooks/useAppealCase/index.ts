@@ -36,6 +36,8 @@ import {
   useUpdateAppealCaseMutation,
 } from './updateAppealCase.generated'
 
+type UpdateAppealCase = Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>
+
 const useAppealCase = () => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -172,7 +174,7 @@ const useAppealCase = () => {
       async (
         caseId: string,
         appealCaseId: string,
-        update: Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>,
+        update: UpdateAppealCase,
       ): Promise<AppealCase | undefined> => {
         const mutation = limitedAccess
           ? limitedAccessUpdateAppealCaseMutation

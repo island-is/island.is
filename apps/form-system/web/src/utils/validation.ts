@@ -46,10 +46,10 @@ const hasError = (field: FormSystemField): boolean => {
       return !validatePropertyNumber(value)
     }
     case FieldTypesEnum.RADIO_BUTTONS: {
-      return !value?.listValue
+      return !value?.label?.is
     }
     case FieldTypesEnum.DROPDOWN_LIST: {
-      return !value?.listValue
+      return !value?.label?.is
     }
     case FieldTypesEnum.DATE_PICKER: {
       return !value?.date
