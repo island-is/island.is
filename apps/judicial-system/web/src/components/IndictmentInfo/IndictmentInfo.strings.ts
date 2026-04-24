@@ -11,4 +11,9 @@ export const indictmentInfo = defineMessages({
     defaultMessage: 'Vettvangur og tími: {dateAndPlace}',
     description: 'Notaður sem texti fyrir vettvang og tíma ákæru.',
   },
+  defendants: {
+    id: 'judicial.system.core:indictment_info.defendants',
+    defaultMessage: 'Ákærðu: {defendants}',
+    description: 'Notaður sem texti fyrir ákærðu á ákærulið.',
+  },
 })

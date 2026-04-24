@@ -25,6 +25,7 @@ import {
 import {
   CaseFile,
   CaseOrigin,
+  Defendant,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -51,6 +52,7 @@ interface PoliceUploadListMenuProps {
   caseFiles?: CaseFile[] | null
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
   caseOrigin?: CaseOrigin | null
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers'>[]
 }
 
 /* We need to make sure this list is not rerenderd unless the props are changing.
@@ -66,6 +68,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     caseFiles,
     setAllUploaded,
     caseOrigin,
+    defendants,
   }) => {
     const { formatMessage } = useIntl()
 
@@ -193,6 +196,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
                   policeCaseNumber={policeCaseNumber}
                   subtypes={subtypes}
                   crimeScenes={crimeScenes}
+                  defendants={defendants}
                 />
               </Box>
               <UploadFilesToPoliceCase
@@ -300,6 +304,7 @@ const PoliceCaseFilesRoute = () => {
             setAllUploaded={setAllUploadedForPoliceCaseNumber}
             policeCaseNumbers={workingCase.policeCaseNumbers}
             caseOrigin={workingCase.origin}
+            defendants={workingCase.defendants}
           />
         </div>
       </FormContentContainer>

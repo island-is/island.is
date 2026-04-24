@@ -11,6 +11,7 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { indictmentInfo as strings } from './IndictmentInfo.strings'
 
@@ -18,18 +19,31 @@ interface Props {
   policeCaseNumber: string
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers'>[]
 }
 
 const IndictmentInfo: FC<Props> = ({
   policeCaseNumber,
   subtypes,
   crimeScenes,
+  defendants,
 }) => {
   const { formatMessage } = useIntl()
 
   if (!subtypes || !crimeScenes) {
     return null
   }
+
+  const defendantNames = defendants
+    ?.filter((d) => d.policeCaseNumbers?.includes(policeCaseNumber))
+    .map((d) => d.name)
+    .filter((name): name is string => Boolean(name))
+
+  const showDefendants =
+    defendants &&
+    defendants.length > 1 &&
+    defendantNames &&
+    defendantNames.length > 0
 
   const readableSubtypes = capitalize(
     readableIndictmentSubtypes([policeCaseNumber], subtypes).join(', '),
@@ -39,6 +53,13 @@ const IndictmentInfo: FC<Props> = ({
 
   return (
     <>
+      {showDefendants && (
+        <Text variant="small" fontWeight="semiBold">
+          {formatMessage(strings.defendants, {
+            defendants: defendantNames.join(', '),
+          })}
+        </Text>
+      )}
       <Box>
         {readableSubtypes && (
           <Text variant="small">
