@@ -76,6 +76,12 @@ export const Screen = () => {
         f.isPartOfMultiset !== false,
     )
 
+  const displayMultiButtons =
+    numberOfItems > 1 ||
+    (isMulti &&
+      multiMax > 1 &&
+      visibleFields.some((f) => f.isPartOfMultiset !== false))
+
   const currencySumField = shouldMoveCurrencySumBox
     ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
     : undefined
@@ -294,7 +300,7 @@ export const Screen = () => {
           </Box>
         )}
 
-        {isMulti && multiMax > 1 && (
+        {isMulti && multiMax > 1 && displayMultiButtons && (
           <Box display="flex" justifyContent="flexEnd">
             <Box marginRight={2}>
               {numberOfItems > 1 && (
