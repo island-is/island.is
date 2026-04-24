@@ -1524,24 +1524,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   />
                   <RadioButton
                     name="result_verdict"
-                    id={`result_ruling-${courtSession.id}`}
-                    label="Úrskurður undir rekstri máls"
-                    backgroundColor="white"
-                    checked={
-                      courtSession.rulingType === CourtSessionRulingType.ORDER
-                    }
-                    onChange={() =>
-                      patchSession(
-                        courtSession.id,
-                        { rulingType: CourtSessionRulingType.ORDER },
-                        { persist: true },
-                      )
-                    }
-                    disabled={courtSession.isConfirmed || false}
-                    large
-                  />
-                  <RadioButton
-                    name="result_verdict"
                     id={`result_dismissal-ruling-${courtSession.id}`}
                     label="Úrskurður vegna frávísunar"
                     backgroundColor="white"
@@ -1556,6 +1538,24 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           rulingType: CourtSessionRulingType.DISMISSAL_ORDER,
                           rulingFileId: null,
                         },
+                        { persist: true },
+                      )
+                    }
+                    disabled={courtSession.isConfirmed || false}
+                    large
+                  />
+                  <RadioButton
+                    name="result_verdict"
+                    id={`result_ruling-${courtSession.id}`}
+                    label="Úrskurður undir rekstri máls"
+                    backgroundColor="white"
+                    checked={
+                      courtSession.rulingType === CourtSessionRulingType.ORDER
+                    }
+                    onChange={() =>
+                      patchSession(
+                        courtSession.id,
+                        { rulingType: CourtSessionRulingType.ORDER },
                         { persist: true },
                       )
                     }
