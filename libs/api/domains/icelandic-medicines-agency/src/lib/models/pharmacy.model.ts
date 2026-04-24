@@ -5,7 +5,7 @@ import { IcelandicMedicinesAgencyPharmacyContact } from './pharmacyContact.model
 import { IcelandicMedicinesAgencyPharmacyOperator } from './pharmacyOperator.model'
 import { IcelandicMedicinesAgencyPharmacyRegion } from './enums'
 
-@ObjectType()
+@ObjectType({ implements: () => [IcelandicMedicinesAgencyPharmacyContact] })
 export class IcelandicMedicinesAgencyPharmacy extends IcelandicMedicinesAgencyPharmacyContact {
   @Field(() => ID)
   id!: string

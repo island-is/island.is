@@ -5,8 +5,12 @@ import { Lyfjabud, getApiV1EftirlitLyfjabudir } from '../../gen/fetch'
 @Injectable()
 export class LyfjastofnunPharmaciesClientService {
   public getPharmacies = async (): Promise<Lyfjabud[]> => {
-    const response = await getApiV1EftirlitLyfjabudir()
+    const { data, error } = await getApiV1EftirlitLyfjabudir()
 
-    return response.data ?? []
+    if (error) {
+      throw error
+    }
+
+    return data ?? []
   }
 }

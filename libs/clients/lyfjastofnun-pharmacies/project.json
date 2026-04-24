@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -s https://api.serlyfjaskra.is/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl -fsS https://api.serlyfjaskra.is/swagger/v1/swagger.json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

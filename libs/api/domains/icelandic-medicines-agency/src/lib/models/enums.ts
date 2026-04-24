@@ -1,11 +1,11 @@
 import { registerEnumType } from '@nestjs/graphql'
 
 export enum IcelandicMedicinesAgencyPharmacyRegion {
-  HOFUDBORGARSVAEDID = 'HOFUDBORGARSVAEDID',
-  SUDURLAND_OG_REYKJANES = 'SUDURLAND_OG_REYKJANES',
-  VESTURLAND_OG_VESTFIRDIR = 'VESTURLAND_OG_VESTFIRDIR',
-  NORDURLAND = 'NORDURLAND',
-  AUSTURLAND = 'AUSTURLAND',
+  HOFUDBORGARSVAEDID = 'hofudborgarsvaedid',
+  SUDURLAND_OG_REYKJANES = 'sudurlandOgReykjanes',
+  VESTURLAND_OG_VESTFIRDIR = 'vesturlandOgVestfirdir',
+  NORDURLAND = 'nordurland',
+  AUSTURLAND = 'austurland',
 }
 
 registerEnumType(IcelandicMedicinesAgencyPharmacyRegion, {

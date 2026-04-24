@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { IcelandicMedicinesAgencyPharmacyContact } from './pharmacyContact.model'
 
-@ObjectType()
+@ObjectType({ implements: () => [IcelandicMedicinesAgencyPharmacyContact] })
 export class IcelandicMedicinesAgencyPharmacyBranch extends IcelandicMedicinesAgencyPharmacyContact {
   @Field({ nullable: true })
   fax?: string

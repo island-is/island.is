@@ -12,7 +12,6 @@ export class IcelandicMedicinesAgencyResolver {
 
   @Query(() => IcelandicMedicinesAgencyPharmaciesCollection, {
     name: 'icelandicMedicinesAgencyPharmacies',
-    nullable: true,
   })
   async icelandicMedicinesAgencyPharmacies(): Promise<IcelandicMedicinesAgencyPharmaciesCollection> {
     return this.icelandicMedicinesAgencyService.getPharmacies()

@@ -18,17 +18,12 @@ import {
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 import {
-  ConnectedComponent,
   IcelandicMedicinesAgencyPharmacyRegion,
   Query,
 } from '@island.is/web/graphql/schema'
 
 import { GET_PHARMACIES } from './queries'
 import { m } from './translation.strings'
-
-interface Props {
-  slice: ConnectedComponent
-}
 
 const REGION_LABEL_MAP: Record<
   IcelandicMedicinesAgencyPharmacyRegion,
@@ -52,13 +47,9 @@ const regionParser = createParser<IcelandicMedicinesAgencyPharmacyRegion>({
   serialize: (v) => v.toLowerCase(),
 })
 
-const PharmaciesAccordion = ({ slice }: Props) => {
+const PharmaciesAccordion = () => {
   const { formatMessage } = useIntl()
-  const { data, loading, error } = useQuery<Query>(GET_PHARMACIES, {
-    onError(error) {
-      console.error('Error fetching pharmacies:', error)
-    },
-  })
+  const { data, loading, error } = useQuery<Query>(GET_PHARMACIES)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRegion, setSelectedRegion] = useQueryState(
