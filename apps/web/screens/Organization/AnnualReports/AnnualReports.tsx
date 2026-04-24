@@ -12,7 +12,6 @@ import {
   ProfileCard,
   Select,
   Stack,
-  StringOption as Option,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -136,9 +135,6 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                     <Webreader
                       marginTop={0}
                       marginBottom={3}
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore make web strict
-                      readId={null}
                       readClass="rs_read"
                     />
                   </GridColumn>
@@ -159,21 +155,21 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                         }
                         name="select-annual-report"
                         size="sm"
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        onChange={({ value }: Option) => {
-                          const slug = dropdownOptions.find(
-                            (x) => x.value === value,
-                          )?.slug
-                          setSelectedId(String(value))
-                          router.push(
-                            {
-                              pathname: router.asPath.split('#')[0],
-                              hash: slug,
-                            },
-                            undefined,
-                            { shallow: true },
-                          )
+                        onChange={(option) => {
+                          if (option) {
+                            const slug = dropdownOptions.find(
+                              (x) => x.value === option.value,
+                            )?.slug
+                            setSelectedId(String(option.value))
+                            router.push(
+                              {
+                                pathname: router.asPath.split('#')[0],
+                                hash: slug,
+                              },
+                              undefined,
+                              { shallow: true },
+                            )
+                          }
                         }}
                         value={dropdownOptions.find(
                           (x) => x.value === selectedId,
@@ -255,8 +251,6 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
       {organizationPage.organization && (
         <Box className="rs_read" marginTop="auto">
           <OrganizationFooter
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
             organizations={[organizationPage.organization]}
             force={true}
           />

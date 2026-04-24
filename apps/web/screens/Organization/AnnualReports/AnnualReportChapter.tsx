@@ -137,9 +137,6 @@ const AnnualReportChapter: Screen<
                   <Webreader
                     marginTop={0}
                     marginBottom={3}
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    readId={null}
                     readClass="rs_read"
                   />
                   {annualReportChapter.intro && (
@@ -213,8 +210,6 @@ const AnnualReportChapter: Screen<
       {organizationPage.organization && (
         <Box className="rs_read" marginTop="auto">
           <OrganizationFooter
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
             organizations={[organizationPage.organization]}
             force={true}
           />
