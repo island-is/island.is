@@ -219,6 +219,10 @@ export const drillLink = style({
   // See note on DesktopNav.dropdownLink: block-level flex so rows with a
   // logo img don't gain a 1px descent from inline-flex line-box math.
   display: 'flex',
+  // Shrink the anchor to content width so the hover underline tracks the
+  // visible text rather than spanning the full panel. fit-content is
+  // clamped to the panel width, so wrapped names still flow naturally.
+  width: 'fit-content',
   // Top-align the logo next to the first line of text so wrapped org names
   // keep the logo beside line 1, mirroring the desktop dropdown.
   alignItems: 'flex-start',

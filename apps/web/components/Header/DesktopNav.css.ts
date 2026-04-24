@@ -158,6 +158,11 @@ export const dropdownLink = style({
   // solely by this anchor's box. Inline-flex leaves baseline/descent room
   // for the img inside, making logo rows ~1px taller than text-only rows.
   display: 'flex',
+  // Shrink the anchor to its content width so the hover underline tracks
+  // the visible text rather than stretching across the whole grid cell.
+  // fit-content still wraps long org names because it's clamped to the
+  // grid cell width.
+  width: 'fit-content',
   // Top-align the logo next to the first line of text — when an org name
   // wraps to two lines the logo stays beside line 1 instead of drifting
   // to the middle of the cell.
