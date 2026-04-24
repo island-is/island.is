@@ -52,7 +52,7 @@ export const UniversityGraduation = ({ studyType }: Props) => {
           : coreMessages.educationGraduation
       }
       intro={
-        studyType === UniversityCareersStudyType.UNIVERSITY_STUDIES
+        studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
           ? uniMessages.microCredentialsIntro
           : uniMessages.graduationIntro
       }
