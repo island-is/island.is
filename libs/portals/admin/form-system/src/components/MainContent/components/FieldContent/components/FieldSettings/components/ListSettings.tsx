@@ -2,11 +2,9 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum, ListTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
-  Box,
   Button,
   GridColumn as Column,
   RadioButton,
-  GridRow as Row,
   Select,
   Stack,
 } from '@island.is/island-ui/core'
@@ -18,7 +16,6 @@ export const ListSettings = () => {
   const { control, setInListBuilder, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
   const { activeItem, isReadOnly } = control
-  const { dependencies } = control.form
   const currentItem = activeItem.data as FormSystemField
   const [isCustom, setIsCustom] = useState(
     !currentItem.fieldSettings?.listType ||
