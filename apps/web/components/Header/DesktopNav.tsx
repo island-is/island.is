@@ -72,9 +72,13 @@ const focusNextTabbableAfter = (container: HTMLElement) => {
       )
     )
       continue
-    // offsetParent is null for display:none elements (or inside one). Those
-    // match the selector but can't actually receive focus, so skip them.
-    if (el.offsetParent === null) continue
+    // Skip non-rendered candidates. `getClientRects().length === 0`
+    // catches display:none (and descendants) and detached nodes, but —
+    // unlike `offsetParent === null` — it still returns boxes for
+    // position:fixed elements, so we don't accidentally overlook a
+    // fixed focusable (skip link, cookie banner, etc.) that sits after
+    // the nav in DOM order.
+    if (el.getClientRects().length === 0) continue
     el.focus()
     // Some elements (e.g. visibility:hidden) still pass the above checks
     // but refuse focus; if focus didn't land, try the next candidate.
