@@ -96,8 +96,12 @@ export const panelHeader = style({
   alignItems: 'center',
   gap: 16,
   minHeight: 24,
-  // Figma spacing/40 between search and back-title row.
-  marginTop: 40,
+  // Matches panelList.marginTop (48) so the drilldown title lands at the
+  // exact same vertical position as the first section row in the
+  // top-level view — no tiny shift when entering/exiting the drilldown.
+  // Figma's two frames disagree here (top-level uses spacing/48, drilldown
+  // uses spacing/40); we favour visual stability across views.
+  marginTop: 48,
   // Figma spacing/32 between back-title and drilldown list.
   marginBottom: 32,
 })
