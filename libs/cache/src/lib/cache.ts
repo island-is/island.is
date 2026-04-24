@@ -127,7 +127,7 @@ const getRedisClusterOptions = (
       }
       return false
     },
-    retryStrategy: (times) => {
+    clusterRetryStrategy: (times) => {
       logger.info(`Redis Retry: ${times}`)
       if (times >= 3) {
         return undefined
@@ -162,6 +162,6 @@ export const createRedisCluster = (options: Options): Cluster => {
 
 export const createRedisCacheManager = (options: Options & Config) => {
   return caching(() =>
-    redisInsStore(createRedisCluster(options) as any, options),
+    redisInsStore(createRedisCluster(options), options),
   )
 }
