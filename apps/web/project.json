@@ -97,6 +97,10 @@
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
+      "inputs": [
+        "graphql-files",
+        "{projectRoot}/screens/queries/*.{ts,tsx}"
+      ],
       "options": {
         "command": "graphql-codegen --config apps/web/codegen.yml"
       }

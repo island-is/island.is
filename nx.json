@@ -219,9 +219,7 @@
         "runtime": "node scripts/hash-files apps/api/src/api.graphql"
       },
       "{projectRoot}/codegen.yml",
-      "{projectRoot}/**/*.graphql",
-      "{projectRoot}/**/*.graphql.ts",
-      "{projectRoot}/**/queries/**/*.{ts,tsx}"
+      "{projectRoot}/**/*.graphql"
     ],
     "schema-files": [
       "{projectRoot}/**/clientConfig.@(yml|yaml|json)",
