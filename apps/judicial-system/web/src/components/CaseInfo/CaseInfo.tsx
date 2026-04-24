@@ -1,6 +1,8 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
+
+import { AnimatePresence } from 'motion/react'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import {
@@ -21,6 +23,8 @@ import {
 import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './CaseInfo.strings'
+import IconButton from '../IconButton/IconButton'
+import Modal from '../Modals/Modal/Modal'
 
 const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null
@@ -127,37 +131,79 @@ export const ProsecutorAndDefendantsEntries: FC<Props> = ({
 
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
+  const [modalVisible, setModalVisible] = useState<'REOPEN'>()
 
   return (
-    <Box component="section" marginBottom={5}>
-      {workingCase.courtCaseNumber && (
-        <Box marginBottom={1}>
-          <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
-          </Text>
-        </Box>
-      )}
-      {isIndictmentCase(workingCase.type) &&
-      isCompletedCase(workingCase.state) ? (
-        <Box marginTop={1}>
-          <Text as="h5" variant="h5">
-            {formatMessage(strings.rulingDate, {
-              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
-            })}
-          </Text>
-          {workingCase.appealedDate && (
-            <Box marginBottom={1}>
+    <>
+      <Box component="section" marginBottom={5}>
+        {workingCase.courtCaseNumber && (
+          <Box marginBottom={1}>
+            <Text variant="h2" as="h2">
+              {formatMessage(core.caseNumber, {
+                caseNumber: workingCase.courtCaseNumber,
+              })}
+            </Text>
+          </Box>
+        )}
+        {isIndictmentCase(workingCase.type) &&
+        isCompletedCase(workingCase.state) ? (
+          <Box marginTop={1}>
+            <Box display="flex" columnGap={1} alignItems="center">
               <Text as="h5" variant="h5">
-                {getAppealActorText(workingCase)}
+                {formatMessage(strings.rulingDate, {
+                  rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
+                })}
               </Text>
+              <IconButton
+                icon="undo"
+                colorScheme="blue"
+                tooltipText="Enduropna mál"
+                size="small"
+                onClick={() => setModalVisible('REOPEN')}
+              />
             </Box>
-          )}
-        </Box>
-      ) : (
-        <ProsecutorAndDefendantsEntries workingCase={workingCase} />
-      )}
-    </Box>
+            {workingCase.appealedDate && (
+              <Box marginBottom={1}>
+                <Text as="h5" variant="h5">
+                  {getAppealActorText(workingCase)}
+                </Text>
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
+        )}
+      </Box>
+      <AnimatePresence>
+        {modalVisible === 'REOPEN' && (
+          <Modal
+            title="Viltu opna mál aftur?"
+            text={
+              <ul style={{ listStyle: 'outside', paddingLeft: '24px' }}>
+                {[
+                  'Málið verður opnað að nýju, fyrri lyktum verður eytt og ljúka þarf málinu að nýju með nýrri dómsúrlausn.',
+                  'Aðilar máls fá tilkynningu um að málið hafi verið opnað að nýju, eftir atvikum ríkissaksóknari og Fangelsismálastofnun einnig.',
+                  'Ástæða enduropnunar verður sýnileg aðilum máls.',
+                  'Athugið - aðgerðin er óafturkræf',
+                ].map((item, i) => (
+                  <li key={item}>
+                    <Text color={i === 3 ? 'red400' : 'dark400'}>{item}</Text>
+                  </li>
+                ))}
+              </ul>
+            }
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+            primaryButton={{
+              text: 'Halda áfram',
+              colorScheme: 'destructive',
+              onClick: () => setModalVisible(undefined),
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </>
   )
 }
