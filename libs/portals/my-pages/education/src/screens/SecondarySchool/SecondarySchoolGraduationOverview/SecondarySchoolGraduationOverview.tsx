@@ -51,6 +51,7 @@ export const EducationGraduationDetail = () => {
             <Box key={i} marginBottom={3}>
               <ActionCard
                 heading={item.organisation ?? ''}
+                headingVariant="h4"
                 text={item.diplomaName ?? ''}
                 key={item.diplomaId}
                 cta={{
