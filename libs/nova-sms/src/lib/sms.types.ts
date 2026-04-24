@@ -144,7 +144,8 @@ export interface SendSmsOptions {
    */
   from?: string
   /**
-   * Additional tags to include in metrics
+   * SMS payer identifier — selects payer-specific Nova credentials from
+   * `payerCredentials` config and is automatically tagged on delivery metrics.
    */
-  metricTags?: Record<string, string>
+  payer?: string
 }

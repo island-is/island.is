@@ -3,7 +3,7 @@ import { ApiActions } from '../utils/constants'
 
 export {
   UserProfileApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi as NationalRegistryUserApi,
   HealthCenterApi,
 } from '@island.is/application/types'
 

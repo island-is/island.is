@@ -410,6 +410,10 @@ VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
 
   return {
     item,
+    languageToggleHrefOverride: {
+      is: `/domar/${query.id}`,
+      en: customPageData?.configJson?.englishFallbackUrl ?? '',
+    },
   }
 }
 
@@ -417,5 +421,6 @@ export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictDetails),
   {
     footerVersion: 'organization',
+    organizationSearchFilter: 'domstolar',
   },
 )

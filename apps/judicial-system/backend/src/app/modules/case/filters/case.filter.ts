@@ -1,6 +1,6 @@
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -157,16 +157,16 @@ const canAppealsCourtUserAccessAppealedCase = (theCase: Case): boolean => {
   if (
     !theCase.appealCase?.appealState ||
     ![
-      CaseAppealState.RECEIVED,
-      CaseAppealState.COMPLETED,
-      CaseAppealState.WITHDRAWN,
+      AppealCaseState.RECEIVED,
+      AppealCaseState.COMPLETED,
+      AppealCaseState.WITHDRAWN,
     ].includes(theCase.appealCase.appealState)
   ) {
     return false
   }
 
   if (
-    theCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
     !theCase.appealCase?.appealReceivedByCourtDate
   ) {
     return false

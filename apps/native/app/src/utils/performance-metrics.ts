@@ -1,9 +1,10 @@
 import perf, { FirebasePerformanceTypes } from '@react-native-firebase/perf'
+import { app } from '../lib/firebase'
 
 let appLaunchTrace: FirebasePerformanceTypes.Trace
 
 export function performanceMetrics() {
-  perf().setPerformanceCollectionEnabled(true)
+  perf().dataCollectionEnabled = true
 
   appLaunchTrace = perf().newTrace('rnn:app_launch')
   appLaunchTrace.start()

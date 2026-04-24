@@ -114,4 +114,9 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  lastModifiedBy?: string
 }

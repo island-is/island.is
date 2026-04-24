@@ -3,4 +3,5 @@ export { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDig
 export {
   canLimitedAccessUserViewCaseFile,
   getDefenceUserCaseFileCategories,
+  getDefenceUserCutoffDate,
 } from './guards/caseFileCategory'

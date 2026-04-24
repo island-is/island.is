@@ -1,4 +1,3 @@
-import { HealthDirectorateAppointments } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -14,9 +13,10 @@ import { HealthPaths } from '../../../lib/paths'
 import { generateGoogleMapsLink } from '../../../utils/googleMaps'
 import { mapWeekday } from '../../../utils/mappers'
 import { DataState } from '../../../utils/types'
+import { HealthDirectorateAppointments } from '@island.is/api/schema'
 
 interface Props {
-  data?: DataState<HealthDirectorateAppointments | null>
+  data?: DataState<HealthDirectorateAppointments>
   showLinkButton?: boolean
 }
 
@@ -40,11 +40,13 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         loading: false,
         error: data?.error,
         title: appointment.title ?? '',
-        description: formatMessage(messages.appointmentAt, {
-          arg: appointment.practitioners.join(', '),
-        }),
+        description:
+          (appointment.practitioners ?? []).length > 0
+            ? `${formatMessage(messages.appointmentWith, {
+                arg: appointment.practitioners.join(', '),
+              })}`
+            : '',
         to: HealthPaths.HealthAppointmentDetail.replace(':id', appointment.id),
-        href: HealthPaths.HealthAppointments,
         appointment: {
           date: formatDate(appointment.date ?? ''),
           time: getTime(appointment.date ?? ''),
@@ -54,7 +56,11 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
           ),
           location: {
             label: appointment.location?.name ?? '',
-            href: generateGoogleMapsLink(appointment.location?.address ?? ''),
+            href:
+              generateGoogleMapsLink(
+                appointment.location?.latitude,
+                appointment.location?.longitude,
+              ) ?? undefined,
           },
         },
       })) ?? []

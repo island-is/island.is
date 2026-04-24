@@ -13,6 +13,7 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   FieldTypesEnum,
   FormStatus,
@@ -21,6 +22,7 @@ import {
   UpdateFormResponse,
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { randomUUID } from 'crypto'
 import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -34,6 +36,7 @@ import {
   CertificationTypes,
 } from '../../dataTypes/certificationTypes/certificationType.model'
 import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../dataTypes/dependency.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
@@ -45,8 +48,10 @@ import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../applications/models/application.model'
+import { Value } from '../applications/models/value.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
+import { FileService } from '../file/file.service'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { ListItem } from '../listItems/models/listItem.model'
@@ -60,11 +65,6 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { Dependency } from '../../dataTypes/dependency.model'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { Value } from '../applications/models/value.model'
-import { FileService } from '../file/file.service'
 
 @Injectable()
 export class FormsService {
@@ -145,6 +145,7 @@ export class FormsService {
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'completedSectionInfo',
+      'lastModifiedBy',
     ]
 
     const formResponseDto: FormResponseDto = {

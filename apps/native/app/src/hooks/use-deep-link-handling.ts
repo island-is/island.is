@@ -3,13 +3,13 @@ import {
   getInitialNotification,
   onNotificationOpenedApp,
 } from '@react-native-firebase/messaging'
-import { useURL } from 'expo-linking'
+import { useLinkingURL } from 'expo-linking'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMarkUserNotificationAsReadMutation } from '../graphql/types/schema'
 
 import { navigateToUniversalLink } from '../lib/deep-linking'
 import { app } from '../lib/firebase'
-import { useBrowser } from '../lib/use-browser'
+import { useBrowser } from './use-browser'
 import { useAuthStore } from '../stores/auth-store'
 import { isString } from '../utils/is-string'
 
@@ -34,8 +34,9 @@ function useLastNotificationResponse() {
   return lastNotificationResponse
 }
 
+// @todo migration - is this working??
 export function useDeepLinkHandling() {
-  const url = useURL()
+  const url = useLinkingURL()
   const notification = useLastNotificationResponse()
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const lockScreenActivatedAt = useAuthStore(
@@ -43,7 +44,6 @@ export function useDeepLinkHandling() {
   )
 
   const lastUrl = useRef<string | null>(null)
-  const { openBrowser } = useBrowser()
 
   const handleUrl = useCallback(
     (url?: string | null) => {
@@ -57,11 +57,11 @@ export function useDeepLinkHandling() {
         return false
       }
 
-      navigateToUniversalLink({ link: url, openBrowser })
+      navigateToUniversalLink({ link: url })
 
       return true
     },
-    [openBrowser, lastUrl, lockScreenActivatedAt],
+    [lastUrl, lockScreenActivatedAt],
   )
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export function useDeepLinkHandling() {
       // Mark notification as read and seen
       void markUserNotificationAsRead({
         variables: { id: Number(notification.data.notificationId) },
-      })
+      }).catch(() => void 0)
     }
   }, [notification, handleUrl, markUserNotificationAsRead])
 }

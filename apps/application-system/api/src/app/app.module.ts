@@ -48,7 +48,6 @@ import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
@@ -126,7 +125,6 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
         RegulationsAdminClientConfig,
         LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,

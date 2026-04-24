@@ -240,6 +240,16 @@ export const Finance = new XroadConf({
   },
 })
 
+export const Farmers = new XroadConf({
+  env: {
+    XROAD_FARMERS_PATH: {
+      dev: 'IS-DEV/GOV/10094/Afurd-Private/baendur',
+      staging: 'IS-TEST/GOV/7108120120/Afurd-Private/baendur',
+      prod: 'IS/GOV/7108120120/Afurd-Private/baendur',
+    },
+  },
+})
+
 export const FireCompensation = new XroadConf({
   env: {
     XROAD_HMS_APPLICATION_SYSTEM_PATH: {
@@ -1089,6 +1099,16 @@ export const SecondarySchool = new XroadConf({
       dev: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
       staging: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt',
       prod: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt',
+    },
+  },
+})
+
+export const MmsPrimarySchool = new XroadConf({
+  env: {
+    XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      prod: 'IS/GOV/6601241280/MMS-Protected/data-gateway-backend-internal',
     },
   },
 })

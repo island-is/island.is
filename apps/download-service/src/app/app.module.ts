@@ -69,6 +69,10 @@ import {
   HmsRentalAgreementClientConfig,
   HmsRentalAgreementClientModule,
 } from '@island.is/clients/hms-rental-agreement'
+import {
+  PrimarySchoolClientConfig,
+  PrimarySchoolClientModule,
+} from '@island.is/clients/mms/primary-school'
 import { RentalAgreementsController } from './modules/rental-agreements/rental-agreements.controller'
 @Module({
   controllers: [
@@ -98,6 +102,7 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
     RightsPortalClientModule,
     FeatureFlagModule,
     HmsRentalAgreementClientModule,
+    PrimarySchoolClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -120,6 +125,7 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
         DocumentClientConfig,
         FeatureFlagConfig,
         HmsRentalAgreementClientConfig,
+        PrimarySchoolClientConfig,
       ],
     }),
   ],

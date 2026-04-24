@@ -50,4 +50,7 @@ export class AdminScopeDTO extends ApiScopeBaseDTO {
     description: 'CMS tag IDs associated with this scope',
   })
   tagIds?: string[]
+
+  @ApiPropertyOptional()
+  modified?: Date
 }

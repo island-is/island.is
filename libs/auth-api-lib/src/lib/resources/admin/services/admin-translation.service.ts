@@ -34,6 +34,7 @@ export class AdminTranslationService {
         defaultValueIS: apiScope.description,
         translations: translations.get(apiScope.name),
       }),
+      modified: apiScope.modified ?? undefined,
     }
   }
 
