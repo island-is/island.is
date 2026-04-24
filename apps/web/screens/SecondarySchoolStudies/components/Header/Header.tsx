@@ -12,7 +12,6 @@ export const Header = () => {
   return (
     <DefaultHeader
       title={formatMessage(m.home.title)}
-      underTitle={formatMessage(m.home.subtitle)}
       titleColor="white"
       image="/assets/framhaldsskolanamHeaderImage.svg"
       imagePadding="0"
