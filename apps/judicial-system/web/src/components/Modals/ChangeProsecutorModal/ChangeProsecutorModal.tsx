@@ -6,6 +6,7 @@ import {
   ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 
 interface Props {
   onClose: () => void
@@ -15,11 +16,17 @@ interface Props {
 const ChangeProsecutorModal: FC<Props> = (props) => {
   const { onClose, caseId } = props
   const { updateCase } = useCase()
-  const { refreshCase } = useContext(FormContext)
+  const { refreshCase, workingCase } = useContext(FormContext)
 
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
   const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
   const [selectedProsecutorId, setSelectedProsecutorId] = useState<string>()
+  const title = isRestrictionCase(workingCase.type)
+    ? 'Breyta um sækjanda'
+    : 'Breyta um ákæranda'
+  const text = isRestrictionCase(workingCase.type)
+    ? 'Nýr sækjandi mun verða skráður sem sækjandi í málinu og fá tilkynningar er það varðar.'
+    : 'Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar.'
 
   const calculateMargin = (count: number) => {
     if (count === 0) {
@@ -36,12 +43,12 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
 
   return (
     <Modal
-      title="Breyta um sækjanda"
-      text="Nýr sækjandi mun verða skráður sem sækjandi í málinu og fá tilkynningar er það varðar."
+      title={title}
+      text={text}
       onClose={onClose}
       primaryButton={{
         text: 'Staðfesta',
-        disabled: !selectedProsecutorId,
+        isDisabled: !selectedProsecutorId,
         onClick: async () => {
           if (!selectedProsecutorId) {
             return
