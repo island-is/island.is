@@ -32,6 +32,7 @@ import {
   DigitalIcelandMailingListThumbnailCard,
   DrivingInstructorList,
   EmailSignup,
+  FeaturedArticlesSlice,
   Form,
   GenericListWrapper,
   IntroLinkImageSlice,
@@ -67,6 +68,7 @@ import {
   ConnectedComponent,
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
+  FeaturedArticles,
   FeaturedEvents as FeaturedEventsSchema,
   FeaturedGenericListItems,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
@@ -363,6 +365,9 @@ const defaultRenderComponent = {
   ),
   FeaturedGenericListItems: (slice: FeaturedGenericListItems) => (
     <FeaturedGenericListItemsSlice slice={slice} />
+  ),
+  FeaturedArticles: (slice: FeaturedArticles) => (
+    <FeaturedArticlesSlice slice={slice} />
   ),
 }
 
