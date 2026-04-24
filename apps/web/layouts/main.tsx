@@ -612,7 +612,8 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
           input: { id: '1SCm5KnfQ3DrWT600MTt82', lang },
         },
       })
-      .then((res) => res.data.getGroupedMenu),
+      .then((res) => res.data.getGroupedMenu)
+      .catch(() => null),
     // Organizations — joined client-side to attach a logo URL to each
     // organizationPage link in the header nav. `MenuLink.link` resolves
     // to `ReferenceLink { slug, type }`, not to the page union, so the
@@ -626,7 +627,8 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
           input: { lang: locale as ContentLanguage },
         },
       })
-      .then((res) => res.data.getOrganizations?.items ?? []),
+      .then((res) => res.data.getOrganizations?.items ?? [])
+      .catch(() => []),
   ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`

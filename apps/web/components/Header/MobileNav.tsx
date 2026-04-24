@@ -150,6 +150,24 @@ export const MobileNavPanel = forwardRef<
       setIsOpen(false)
     }, [])
 
+    // Close on resize into desktop. Parent wraps the panel in
+    // `Hidden above="md"` which only CSS-hides it at lg+ (992px). Without
+    // this, a mobile→desktop resize leaves the panel invisible but still
+    // "open", scroll-locking the body with no visible way to recover.
+    useEffect(() => {
+      if (!isOpen) return
+      const mq = window.matchMedia('(min-width: 992px)')
+      if (mq.matches) {
+        close()
+        return
+      }
+      const handleChange = (event: MediaQueryListEvent) => {
+        if (event.matches) close()
+      }
+      mq.addEventListener('change', handleChange)
+      return () => mq.removeEventListener('change', handleChange)
+    }, [isOpen, close])
+
     const openPanel = useCallback((focusSearch: boolean) => {
       // Capture the opener (typically the search or menu button) so Escape
       // can restore focus there per APG.
@@ -301,7 +319,9 @@ export const MobileNavPanel = forwardRef<
                     <li key={item.href}>
                       <Link
                         href={
-                          activeLocale === 'en' && !item.href.startsWith('/en')
+                          activeLocale === 'en' &&
+                          item.href.startsWith('/') &&
+                          !item.href.startsWith('/en')
                             ? `/en${item.href}`
                             : item.href
                         }

@@ -336,7 +336,10 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
         )
       })}
 
-      <div
+      {/* Top-mask disabled for now: covers the header-shadow bleed nicely
+          on the frontpage but flashes visibly on pages with content sitting
+          flush under the header (e.g. org pages). Uncomment to re-enable. */}
+      {/* <div
         aria-hidden="true"
         className={`${styles.topMask} ${
           isTransitioning ? styles.topMaskVisible : ''
@@ -351,7 +354,7 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
               }
             : undefined
         }
-      />
+      /> */}
 
       {HEADER_NAV_KEYS.map((key) => {
         const data = navData[key]
@@ -388,7 +391,9 @@ export const DesktopNav = ({ data, onOpenChange }: DesktopNavProps = {}) => {
                 <li key={item.href}>
                   <Link
                     href={
-                      activeLocale === 'en' && !item.href.startsWith('/en')
+                      activeLocale === 'en' &&
+                      item.href.startsWith('/') &&
+                      !item.href.startsWith('/en')
                         ? `/en${item.href}`
                         : item.href
                     }
