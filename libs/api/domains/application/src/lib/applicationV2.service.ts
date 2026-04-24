@@ -47,7 +47,7 @@ export class ApplicationV2Service {
             typeId: input?.typeId?.join(','),
             status: input?.status?.join(','),
             scopeCheck: input?.scopeCheck,
-            showPruned: true,
+            showPruned: input?.showPruned,
           },
         ),
         this.formSystemApplicationApiWithAuth(
