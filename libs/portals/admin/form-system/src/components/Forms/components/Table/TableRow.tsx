@@ -328,7 +328,7 @@ export const TableRow = ({
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
         <Row key={id}>
-          <Column span="7/12">
+          <Column span={['5/12', '5/12', '7/12']}>
             <Inline space={2}>
               <Icon
                 icon={isOpen ? 'remove' : 'add'}
@@ -338,7 +338,7 @@ export const TableRow = ({
               <ColumnText text={name ? name : ''} isOpen={isOpen} />
             </Inline>
           </Column>
-          <Column span="2/12">
+          <Column span="2/12" hiddenBelow="md">
             <Box display="flex" justifyContent="flexEnd">
               <Text variant="medium">
                 {formatDate(lastModified ? lastModified : new Date(), {
@@ -350,13 +350,13 @@ export const TableRow = ({
             </Box>
           </Column>
 
-          <Column span="2/12">
+          <Column span={['3/12', '3/12', '2/12']}>
             <Box display="flex" justifyContent="center">
               <StatusTag status={status ?? ''} />
             </Box>
           </Column>
 
-          <Column span="1/12">
+          <Column span={['4/12', '4/12', '1/12']}>
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
               <Box
                 onClick={(e) => {
