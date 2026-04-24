@@ -102,6 +102,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         type
         time
       }
+      appealStatementDate
       subpoenas {
         id
         created
@@ -466,6 +467,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
+      appealStatementDate
     }
     victims {
       id

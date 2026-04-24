@@ -192,11 +192,7 @@ const AppealCaseFilesOverview = () => {
                 disabled={isDisabled}
                 handleClick={() => onOpen(file.id)}
               >
-                <Box
-                  display="flex"
-                  alignItems={['flexEnd', 'flexEnd', 'center']}
-                  justifyContent={['spaceBetween', 'spaceBetween', 'center']}
-                >
+                <Box className={styles.metadataRow}>
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
                       {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(

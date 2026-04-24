@@ -9,6 +9,7 @@ import {
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
+  AppealEventType,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -21,12 +22,14 @@ import {
   isPrisonSystemUser,
   isProsecutionUser,
   isRequestCase,
+  prosecutionRoles,
   ServiceRequirement,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
+  AppealEventLog,
   Case,
   CaseString,
   CivilClaimant,
@@ -39,10 +42,12 @@ export const transformDefendants = ({
   defendants,
   indictmentRulingDecision,
   rulingDate,
+  appealEventLogs,
 }: {
   defendants?: Defendant[]
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   rulingDate?: Date
+  appealEventLogs?: AppealEventLog[]
 }) => {
   return defendants?.map((defendant) => {
     // Only the latest verdict is relevant
@@ -110,9 +115,31 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      appealStatementDate: AppealEventLog.getDateForDefendant(
+        AppealEventType.APPEAL_STATEMENT_SENT,
+        defendant.id,
+        appealEventLogs,
+      ),
       indictmentCancelledOrDismissedState,
     }
   })
+}
+
+export const transformCivilClaimants = ({
+  civilClaimants,
+  appealEventLogs,
+}: {
+  civilClaimants?: CivilClaimant[]
+  appealEventLogs?: AppealEventLog[]
+}) => {
+  return civilClaimants?.map((civilClaimant) => ({
+    ...civilClaimant.toJSON(),
+    appealStatementDate: AppealEventLog.getDateForCivilClaimant(
+      AppealEventType.APPEAL_STATEMENT_SENT,
+      civilClaimant.id,
+      appealEventLogs,
+    ),
+  }))
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {
@@ -241,13 +268,47 @@ const transformCase = (
         }
       : {}
 
+  // Derive aggregated statement dates from the appeal event log, falling back
+  // to the legacy appeal_case date columns for cases predating Phase 2.
+  const appealEventLogs = theCase.appealCase?.appealEventLogs
+  const derivedProsecutorStatementDate = AppealEventLog.getLatestDateByRole(
+    AppealEventType.APPEAL_STATEMENT_SENT,
+    prosecutionRoles,
+    appealEventLogs,
+  )
+  const derivedDefendantStatementDate = AppealEventLog.getEarliestDateByRole(
+    AppealEventType.APPEAL_STATEMENT_SENT,
+    UserRole.DEFENDER,
+    appealEventLogs,
+  )
+  const appealCaseOverride = theCase.appealCase
+    ? {
+        appealCase: {
+          ...theCase.appealCase.toJSON(),
+          prosecutorStatementDate:
+            derivedProsecutorStatementDate ??
+            theCase.appealCase.prosecutorStatementDate,
+          defendantStatementDate:
+            derivedDefendantStatementDate ??
+            theCase.appealCase.defendantStatementDate,
+          appealEventLogs: undefined,
+        },
+      }
+    : {}
+
   return {
     ...theCase.toJSON(),
     ...stateOverride,
+    ...appealCaseOverride,
     defendants: transformDefendants({
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
+      appealEventLogs,
+    }),
+    civilClaimants: transformCivilClaimants({
+      civilClaimants: theCase.civilClaimants,
+      appealEventLogs,
     }),
     caseFiles: theCase.caseFiles?.filter(
       (file) =>
