@@ -181,7 +181,9 @@ export const drillLinkLogo = style({
 })
 
 export const drillLink = style({
-  display: 'inline-flex',
+  // See note on DesktopNav.dropdownLink: block-level flex so rows with a
+  // logo img don't gain a 1px descent from inline-flex line-box math.
+  display: 'flex',
   alignItems: 'center',
   gap: 8,
   fontFamily: theme.typography.fontFamily,

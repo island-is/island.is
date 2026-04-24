@@ -146,7 +146,10 @@ export const dropdownList = style({
 })
 
 export const dropdownLink = style({
-  display: 'inline-flex',
+  // Block-level flex (not inline-flex) so the <li> row height is driven
+  // solely by this anchor's box. Inline-flex leaves baseline/descent room
+  // for the img inside, making logo rows ~1px taller than text-only rows.
+  display: 'flex',
   alignItems: 'center',
   gap: 8,
   fontFamily: theme.typography.fontFamily,
