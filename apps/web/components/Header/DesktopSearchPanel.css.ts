@@ -15,22 +15,24 @@ import {
 export const root = style({
   position: 'relative',
   display: 'inline-flex',
-  width: 50,
+  width: 48,
   height: 48,
 })
 
-// Compact 50x48 magnifying-glass button sized to match the expanded
+// Compact 48x48 magnifying-glass button sized to match the expanded
 // SearchInput (island-ui's smallest AsyncSearch size is "medium" = 48px,
 // so we match that instead of Figma's 40px to keep the icon→input
-// expansion feeling seamless). Blue-100 fill distinguishes it from the
-// white Mínar síður / EN buttons next to it.
+// expansion feeling seamless). Square 1:1 to match the mobile search
+// trigger which uses island-ui's <Button variant="utility"> (48x48 at
+// md+). Blue-100 fill distinguishes it from the white Mínar síður / EN
+// buttons next to it.
 export const iconButton = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: 50,
+  width: 48,
   height: 48,
-  padding: '12px 16px',
+  padding: 12,
   background: theme.color.blue100,
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,
