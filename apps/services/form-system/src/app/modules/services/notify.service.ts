@@ -139,8 +139,8 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
         },
         body: JSON.stringify({
-          notandi: this.NTI_USERNAME,
-          lykilord: this.NTI_PASSWORD,
+          client_id: this.NTI_USERNAME,
+          client_secret: this.NTI_PASSWORD,
           grant_type: 'client_credentials',
         }),
       })
