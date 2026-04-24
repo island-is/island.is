@@ -43,7 +43,6 @@ import {
   GetOrganizationPageQuery,
   GetSingleArticleQuery,
   Menu,
-  Query,
   QueryGetAlertBannerArgs,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
@@ -64,10 +63,6 @@ import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
 import { extractOrganizationSlugFromPathname } from '../utils/organization'
-import {
-  formatMegaMenuCategoryLinks,
-  formatMegaMenuLinks,
-} from '../utils/processMenuData'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -122,9 +117,6 @@ export interface LayoutProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
   respOrigin
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  megaMenuData
   headerNavData?: HeaderNavData | null
   customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
   children?: React.ReactNode
@@ -151,7 +143,7 @@ const Layout: Screen<LayoutProps> = ({
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
-  footerUpperContact,
+  footerUpperContact: _footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
@@ -164,7 +156,6 @@ const Layout: Screen<LayoutProps> = ({
   footerVersion = 'default',
   respOrigin,
   children,
-  megaMenuData,
   headerNavData,
   customTopLoginButtonItem,
   languageToggleHrefOverride,
@@ -413,7 +404,6 @@ const Layout: Screen<LayoutProps> = ({
               <Header
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
-                megaMenuData={megaMenuData}
                 headerNavData={headerNavData}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
@@ -547,7 +537,6 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     categories,
     alertBanner,
     namespace,
-    megaMenuData,
     footerMenuData,
     headerNavMenuData,
     headerNavOrganizations,
@@ -590,14 +579,6 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
         variables: {
-          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
           input: { id: '578dYm6sr8yihBDIClrQYe', lang },
         },
       })
@@ -632,9 +613,6 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
   ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks
@@ -735,18 +713,6 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     namespace,
     respOrigin,
     headerNavData,
-    megaMenuData: {
-      asideTopLinks: formatMegaMenuLinks(
-        lang as Locale,
-        asideTopLinksData.menuLinks,
-      ),
-      asideBottomTitle: asideBottomLinksData.title,
-      asideBottomLinks: formatMegaMenuLinks(
-        lang as Locale,
-        asideBottomLinksData.menuLinks,
-      ),
-      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
-    },
   }
 }
 

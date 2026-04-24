@@ -43,9 +43,6 @@ interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  megaMenuData
   headerNavData?: HeaderNavData | null
   organizationSearchFilter?: string
   searchPlaceholder?: string
@@ -59,10 +56,6 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
-  // megaMenuData is still passed in from the layout but no longer consumed
-  // here — the old fullscreen Menu has been replaced by DesktopNav + MobileNav.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  megaMenuData: _megaMenuData,
   headerNavData,
   languageToggleQueryParams,
   organizationSearchFilter,
