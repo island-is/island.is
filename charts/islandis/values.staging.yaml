@@ -363,6 +363,7 @@ api:
     LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://services-payment-flow-update-handler.services-payment-flow-update-handler.svc.cluster.local'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
+    LYFJASTOFNUN_PHARMACIES_BASE_URL: 'https://api.serlyfjaskra.is'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default'
@@ -3240,6 +3241,8 @@ services-form-system-api:
     FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
     FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    NTI_PASSWORD: '/k8s/form-system/NTI_PASSWORD'
+    NTI_USERNAME: '/k8s/form-system/NTI_USERNAME'
     SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'
@@ -3444,6 +3447,7 @@ services-payments:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'application-system'
+    - 'services-form-system-api'
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'envoy-gateway-internal'
@@ -3604,6 +3608,7 @@ services-payments-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'application-system'
+    - 'services-form-system-api'
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'envoy-gateway-internal'

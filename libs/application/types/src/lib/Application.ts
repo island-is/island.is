@@ -90,6 +90,7 @@ export interface ApplicationCard {
   nationalId?: string
   actionCard?: ActionCardMetaData
   pruneAt?: Date
+  pruned?: boolean
 }
 export interface ApplicationWithAttachments extends Application {
   attachments: object
