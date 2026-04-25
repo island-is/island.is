@@ -105,6 +105,9 @@ import { GetSingleManualInput } from './dto/getSingleManual.input'
 import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
 import { EntryTitle } from './models/entryTitle.model'
 import { LifeEventPage } from './models/lifeEventPage.model'
+import { AnnualReport } from './models/annualReport.model'
+import { GetAnnualReportInput } from './dto/getAnnualReport.input'
+import { GetAnnualReportsInput } from './dto/getAnnualReports.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
@@ -434,6 +437,22 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return this.cmsContentfulService.getLifeEventsForOverview(input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [AnnualReport])
+  getAnnualReports(
+    @Args('input') input: GetAnnualReportsInput,
+  ): Promise<AnnualReport[]> {
+    return this.cmsContentfulService.getAnnualReports(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => AnnualReport, { nullable: true })
+  getAnnualReport(
+    @Args('input') input: GetAnnualReportInput,
+  ): Promise<AnnualReport | null> {
+    return this.cmsContentfulService.getAnnualReport(input)
   }
 
   @CacheControl(defaultCache)

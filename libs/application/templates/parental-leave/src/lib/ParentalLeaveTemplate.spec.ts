@@ -883,6 +883,201 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.tempPeriods).toEqual(periods)
     })
 
+    it('should sync periods from VMST before snapshotting tempPeriods when entering the Edit flow', () => {
+      const vmstPeriods = [
+        {
+          to: '2026-04-30',
+          days: '30',
+          from: '2026-04-01',
+          paid: false,
+          ratio: '100',
+          approved: true,
+          firstPeriodStart: 'specific_date',
+          rightsCodePeriod: 'FSAL-GR',
+        },
+      ]
+
+      const expectedPeriods = [
+        {
+          ratio: '100',
+          paid: false,
+          rawIndex: 0,
+          approved: true,
+          daysToUse: '30',
+          endDate: '2026-04-30',
+          startDate: '2026-04-01',
+          useLength: NO,
+          rightCodePeriod: 'FSAL-GR',
+          firstPeriodStart: 'specificDate',
+        },
+      ]
+
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods: [
+              {
+                ratio: '100',
+                endDate: '2026-04-15',
+                startDate: '2026-04-01',
+              },
+              {
+                ratio: '100',
+                endDate: '2026-04-30',
+                startDate: '2026-04-16',
+              },
+            ],
+            validatedPeriods: [
+              {
+                ratio: '100',
+                endDate: '2026-04-15',
+                startDate: '2026-04-01',
+              },
+            ],
+          },
+          externalData: {
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2022-10-31',
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date('2021-10-31'),
+              status: 'success',
+            },
+            VMSTPeriods: {
+              data: vmstPeriods,
+              date: new Date('2026-04-20T00:00:00Z'),
+              status: 'success',
+            },
+          },
+          state: ApplicationStates.APPROVED,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
+      expect(newApplication.answers.periods).toEqual(expectedPeriods)
+      expect(newApplication.answers.tempPeriods).toEqual(expectedPeriods)
+      expect(newApplication.answers.validatedPeriods).toBeUndefined()
+    })
+
+    it('should resync broken periods after aborting and re-entering the Edit flow', () => {
+      const vmstPeriods = [
+        {
+          to: '2026-04-30',
+          days: '30',
+          from: '2026-04-01',
+          paid: false,
+          ratio: '100',
+          approved: true,
+          firstPeriodStart: 'specific_date',
+          rightsCodePeriod: 'FSAL-GR',
+        },
+      ]
+
+      const brokenPeriods = [
+        {
+          ratio: '100',
+          endDate: '2026-04-15',
+          startDate: '2026-04-01',
+        },
+        {
+          ratio: '100',
+          endDate: '2026-04-30',
+          startDate: '2026-04-16',
+        },
+      ]
+
+      const expectedPeriods = [
+        {
+          ratio: '100',
+          paid: false,
+          rawIndex: 0,
+          approved: true,
+          daysToUse: '30',
+          endDate: '2026-04-30',
+          startDate: '2026-04-01',
+          useLength: NO,
+          rightCodePeriod: 'FSAL-GR',
+          firstPeriodStart: 'specificDate',
+        },
+      ]
+
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods: brokenPeriods,
+            tempPeriods: brokenPeriods,
+            validatedPeriods: brokenPeriods,
+            previousState: States.APPROVED,
+          },
+          externalData: {
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2022-10-31',
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date('2021-10-31'),
+              status: 'success',
+            },
+            VMSTPeriods: {
+              data: vmstPeriods,
+              date: new Date('2026-04-20T00:00:00Z'),
+              status: 'success',
+            },
+          },
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasAborted, abortedState, abortedApplication] = helper.changeState(
+        {
+          type: DefaultEvents.ABORT,
+        },
+      )
+
+      expect(hasAborted).toBe(true)
+      expect(abortedState).toBe(ApplicationStates.APPROVED)
+
+      const reenteredHelper = new ApplicationTemplateHelper(
+        abortedApplication,
+        ParentalLeaveTemplate,
+      )
+
+      const [hasReentered, reenteredState, reenteredApplication] =
+        reenteredHelper.changeState({
+          type: DefaultEvents.EDIT,
+        })
+
+      expect(hasReentered).toBe(true)
+      expect(reenteredState).toBe(
+        ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+      )
+      expect(reenteredApplication.answers.periods).toEqual(expectedPeriods)
+      expect(reenteredApplication.answers.tempPeriods).toEqual(expectedPeriods)
+      expect(reenteredApplication.answers.validatedPeriods).toBeUndefined()
+    })
+
     it('should remove the temp copy of employers and periods when canceling out of the Edit flow and go to APPROVED state', () => {
       const employers = [
         {
