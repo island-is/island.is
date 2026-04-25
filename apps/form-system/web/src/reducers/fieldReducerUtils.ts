@@ -163,41 +163,9 @@ const applyVisibilityToSections = (
 
         const fieldHidden = isHiddenByDependencies(field.id, dependencies)
 
-        let newValues = field.values
-
-        if (fieldHidden && field.fieldType === FieldTypesEnum.CHECKBOX) {
-          newValues = field.values?.map((v) => ({
-            ...v,
-            json: v?.json
-              ? {
-                  ...v.json,
-                  checkboxValue: undefined,
-                }
-              : { checkboxValue: undefined as unknown as boolean },
-          }))
-        }
-
-        if (
-          fieldHidden &&
-          (field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-            field.fieldType === FieldTypesEnum.DROPDOWN_LIST)
-        ) {
-          newValues = field.values?.map((v) => ({
-            ...v,
-            json: v?.json
-              ? {
-                  ...v.json,
-                  label: undefined,
-                  value: undefined,
-                }
-              : { label: undefined, value: undefined },
-          }))
-        }
-
         return {
           ...field,
           isHidden: fieldHidden,
-          values: newValues,
         }
       }) as typeof screen.fields
 
