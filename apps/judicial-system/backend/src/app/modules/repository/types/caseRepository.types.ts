@@ -546,6 +546,7 @@ export interface UpdateAppealCase
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
     | 'appealedByNationalId'
+    | 'rulingFileId'
   > {
   appealState?: AppealCase['appealState']
 }
