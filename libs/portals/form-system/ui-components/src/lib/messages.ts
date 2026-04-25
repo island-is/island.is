@@ -483,8 +483,8 @@ export const m = defineMessages({
   },
   chooseListType: {
     id: 'form.system:choose-list-type',
-    defaultMessage: 'Veldu lista tegund',
-    description: 'Choose list type',
+    defaultMessage: 'Veldu lista',
+    description: 'Choose list',
   },
   addLink: {
     id: 'form.system:add-link',

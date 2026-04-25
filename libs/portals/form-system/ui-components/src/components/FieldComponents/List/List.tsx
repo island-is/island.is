@@ -6,6 +6,8 @@ import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib/reducerTypes'
 import { Controller, useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
+import { countriesAsListItems } from '../../../lib/lists/countries.list'
+import { ListTypesEnum } from '@island.is/form-system/enums'
 
 interface Props {
   item: FormSystemField
@@ -54,7 +56,20 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
     }
   }
 
-  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+  const listByType = () => {
+    switch (item.fieldSettings?.listType) {
+      case ListTypesEnum.COUNTRIES:
+        return countriesAsListItems()
+      default:
+        return item.list ?? []
+    }
+  }
+
+  const resolvedList = listByType()
+
+  const selected = resolvedList?.find(
+    (listItem) => listItem?.isSelected === true,
+  )
 
   useEffect(() => {
     if (selected && dispatch) {
@@ -88,7 +103,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
         <Select
           name="list"
           label={item.name?.[lang] ?? ''}
-          options={mapToListItems(item?.list ?? [])}
+          options={mapToListItems(resolvedList)}
           required={item.isRequired ?? false}
           defaultValue={
             selected
