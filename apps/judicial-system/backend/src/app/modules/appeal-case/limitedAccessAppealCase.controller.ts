@@ -81,7 +81,12 @@ export class LimitedAccessAppealCaseController {
     this.logger.debug(`Creating limited access appeal case for case ${caseId}`)
 
     const appealCase = await this.sequelize.transaction((transaction) =>
-      this.appealCaseService.create(theCase, user, dto.rulingFileId, transaction),
+      this.appealCaseService.create(
+        theCase,
+        user,
+        dto.rulingFileId,
+        transaction,
+      ),
     )
 
     this.eventService.postEvent('CREATE_APPEAL', theCase)
@@ -147,6 +152,7 @@ export class LimitedAccessAppealCaseController {
     @Param('appealCaseId') appealCaseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() dto: TransitionAppealCaseDto,
   ): Promise<AppealCase> {
     this.logger.debug(
@@ -155,8 +161,8 @@ export class LimitedAccessAppealCaseController {
 
     const result = await this.sequelize.transaction((transaction) =>
       this.appealCaseService.transition(
-        appealCaseId,
         theCase,
+        appealCase,
         dto.transition,
         user,
         transaction,

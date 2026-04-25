@@ -399,11 +399,9 @@ export class AppealCaseService {
       appealCaseData.appealedByNationalId = user.nationalId
     }
 
-    return this.appealCaseRepositoryService.create(
-      theCase.id,
-      appealCaseData,
-      { transaction },
-    )
+    return this.appealCaseRepositoryService.create(theCase.id, appealCaseData, {
+      transaction,
+    })
   }
 
   async update(
@@ -508,20 +506,20 @@ export class AppealCaseService {
   }
 
   async transition(
-    appealCaseId: string,
     theCase: Case,
+    appealCase: AppealCase,
     transition: AppealCaseTransition,
     user: User,
     transaction: Transaction,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
     this.logger.debug(
-      `Transitioning appeal case ${appealCaseId} of case ${theCase.id} with ${transition}`,
+      `Transitioning appeal case ${appealCase.id} of case ${theCase.id} with ${transition}`,
     )
 
-    const result = transitionAppealCase(transition, theCase)
+    const result = transitionAppealCase(transition, theCase, appealCase)
 
     const updatedAppealCase = await this.appealCaseRepositoryService.update(
-      appealCaseId,
+      appealCase.id,
       result.appealCaseUpdate,
       { transaction },
     )
@@ -532,19 +530,23 @@ export class AppealCaseService {
       })
     }
 
-    // Queue messages based on new appeal state
-    const newAppealState = result.appealCaseUpdate.appealState
-    const oldAppealState = theCase.appealCase?.appealState
+    // Queue messages based on new appeal state. Ruling-order appeals don't
+    // send the case-level appeal notifications — open question #8 will
+    // determine which (if any) notifications they emit.
+    if (!appealCase.rulingFileId) {
+      const newAppealState = result.appealCaseUpdate.appealState
+      const oldAppealState = appealCase.appealState
 
-    if (newAppealState === AppealCaseState.RECEIVED) {
-      // Only send received messages when transitioning from APPEALED (not when reopening)
-      if (oldAppealState === AppealCaseState.APPEALED) {
-        this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
+      if (newAppealState === AppealCaseState.RECEIVED) {
+        // Only send received messages when transitioning from APPEALED (not when reopening)
+        if (oldAppealState === AppealCaseState.APPEALED) {
+          this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
+        }
+      } else if (newAppealState === AppealCaseState.COMPLETED) {
+        this.addMessagesForCompletedAppealCaseToQueue(theCase, user)
+      } else if (newAppealState === AppealCaseState.WITHDRAWN) {
+        this.addMessagesForAppealWithdrawnToQueue(theCase, user)
       }
-    } else if (newAppealState === AppealCaseState.COMPLETED) {
-      this.addMessagesForCompletedAppealCaseToQueue(theCase, user)
-    } else if (newAppealState === AppealCaseState.WITHDRAWN) {
-      this.addMessagesForAppealWithdrawnToQueue(theCase, user)
     }
 
     return { ...result, appealCase: updatedAppealCase }
