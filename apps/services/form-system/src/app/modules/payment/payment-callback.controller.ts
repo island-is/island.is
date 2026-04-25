@@ -47,10 +47,6 @@ export class PaymentCallbackController {
    * 1. For successful payments:
    *    - Extracts receptionId from callback
    *    - Fulfills the payment using paymentService
-   * 2. Updates application pruning schedule:
-   *    - Extends pruneAt date to one month from now
-   *    - Default pruning is 24 hours, but paid applications are kept longer
-   *    to handle potential error states
    *
    */
   @Post('form-payment/api-client-payment-callback/')
@@ -66,11 +62,11 @@ export class PaymentCallbackController {
           'No applicationId found in success callback',
         )
       }
-      if (!callback.details?.eventMetadata?.charge?.receptionId) {
-        throw new BadRequestException(
-          'No receptionId found in success callback',
-        )
-      }
+      // if (!callback.details?.eventMetadata?.charge?.receptionId) {
+      //   throw new BadRequestException(
+      //     'No receptionId found in success callback',
+      //   )
+      // }
       await this.paymentService.fulfillPayment(
         callback.paymentFlowMetadata.paymentId,
         callback.details?.eventMetadata?.charge?.receptionId ?? '',
