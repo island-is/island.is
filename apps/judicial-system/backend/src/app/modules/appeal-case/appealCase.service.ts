@@ -1,10 +1,12 @@
 import { Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -26,6 +28,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseOrigin,
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -280,9 +283,19 @@ export class AppealCaseService {
   async create(
     theCase: Case,
     user: User,
+    rulingFileId: string | undefined,
     transaction: Transaction,
   ): Promise<AppealCase> {
     this.logger.debug(`Creating appeal case for case ${theCase.id}`)
+
+    if (rulingFileId) {
+      return this.createRulingOrderAppeal(
+        theCase,
+        user,
+        rulingFileId,
+        transaction,
+      )
+    }
 
     if (
       isIndictmentCase(theCase.type) &&
@@ -337,6 +350,60 @@ export class AppealCaseService {
     this.addMessagesForAppealedCaseToQueue(theCase, user, fileCategories)
 
     return appealCase
+  }
+
+  private async createRulingOrderAppeal(
+    theCase: Case,
+    user: User,
+    rulingFileId: string,
+    transaction: Transaction,
+  ): Promise<AppealCase> {
+    if (!isIndictmentCase(theCase.type)) {
+      throw new ForbiddenException(
+        'Only indictment cases support ruling-order appeals',
+      )
+    }
+
+    if (isCompletedCase(theCase.state)) {
+      throw new ForbiddenException(
+        'Ruling orders cannot be appealed after the case has completed',
+      )
+    }
+
+    const caseFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
+
+    if (!caseFile) {
+      throw new NotFoundException(
+        `Case file ${rulingFileId} of case ${theCase.id} does not exist`,
+      )
+    }
+
+    if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      throw new BadRequestException(
+        'The selected file is not a court indictment ruling order',
+      )
+    }
+
+    if (!isProsecutionUser(user) && !isDefenceUser(user)) {
+      throw new ForbiddenException(
+        `Current user cannot appeal a ruling order on a ${theCase.type} case`,
+      )
+    }
+
+    const appealCaseData: UpdateAppealCase = {
+      appealState: AppealCaseState.APPEALED,
+      rulingFileId,
+    }
+
+    if (isDefenceUser(user)) {
+      appealCaseData.appealedByNationalId = user.nationalId
+    }
+
+    return this.appealCaseRepositoryService.create(
+      theCase.id,
+      appealCaseData,
+      { transaction },
+    )
   }
 
   async update(
