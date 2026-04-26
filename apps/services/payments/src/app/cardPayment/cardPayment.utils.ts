@@ -37,8 +37,6 @@ export const generateMd = ({
   paymentsTokenSigningAlgorithm,
 }: {
   correlationId: string
-  paymentFlowId: string
-  amount: number
   paymentsTokenSigningSecret: string
   paymentsTokenSigningAlgorithm: string
 }) => {
@@ -285,10 +283,67 @@ export const validateAndParseApplePayValidationUrl = (
   return parsed
 }
 
-/** Decrypt Apple Pay payment token to get card data for Valitor DecryptedPaymentTokenData flow */
+/**
+ * NIST SP 800-56A single-step key derivation (Concat KDF) with SHA-256 for EC_v1, as described under
+ * “Restore a symmetric key for ECC” in PassKit (ECDH shared secret + KDF inputs).
+ *
+ * Aligns with Apple’s table: hash **Z** = SHA-256; **Party U Info** = ASCII `"Apple"`;
+ * **Party V Info** = SHA-256 of the merchant ID string literal (same value as `APPLE_PAY_MERCHANT_IDENTIFIER`),
+ * per [Restoring the symmetric key](https://developer.apple.com/documentation/passkit/restoring-the-symmetric-key).
+ *
+ * **FixedInfo** uses the `id-aes256-GCM` algorithm id prefix (length octet + ASCII) before Party U/V, matching
+ * common SP 800-56A Concat deployments for AES-256-GCM (see also Payment Token Format Reference, step 4).
+ *
+ * @see https://developer.apple.com/documentation/passkit/restoring-the-symmetric-key
+ * @see https://developer.apple.com/documentation/passkit/payment-token-format-reference
+ */
+/** Exported for unit tests and callers that need the same KDF as PassKit EC_v1 decryption. */
+export const deriveApplePaySymmetricKey = (
+  sharedSecret: Buffer,
+  merchantIdentifier: string,
+): Buffer => {
+  const counter = new Uint8Array(4)
+  counter[0] = 0
+  counter[1] = 0
+  counter[2] = 0
+  counter[3] = 1
+
+  const algorithmId = Uint8Array.from([
+    0x0d,
+    ...Buffer.from('id-aes256-GCM', 'ascii'),
+  ])
+  const partyUInfo = Uint8Array.from(Buffer.from('Apple', 'ascii'))
+  const partyVInfo = Uint8Array.from(
+    crypto.createHash('sha256').update(merchantIdentifier, 'utf8').digest(),
+  )
+
+  const fixedInfo = new Uint8Array(
+    algorithmId.length + partyUInfo.length + partyVInfo.length,
+  )
+  fixedInfo.set(algorithmId, 0)
+  fixedInfo.set(partyUInfo, algorithmId.length)
+  fixedInfo.set(partyVInfo, algorithmId.length + partyUInfo.length)
+
+  return crypto
+    .createHash('sha256')
+    .update(counter)
+    .update(Uint8Array.from(sharedSecret))
+    .update(fixedInfo)
+    .digest()
+}
+
+/**
+ * Decrypt Apple Pay `EC_v1` payment data for the gateway (e.g. Valitor `DecryptedPaymentTokenData`).
+ *
+ * Implements PassKit flow: ECDH (id-ecDH) with Payment Processing private key + ephemeral public key (SPKI),
+ * then symmetric key restoration and AES-256-GCM decrypt per
+ * [Restoring the symmetric key](https://developer.apple.com/documentation/passkit/restoring-the-symmetric-key)
+ * and [Payment token format reference](https://developer.apple.com/documentation/passkit/payment-token-format-reference).
+ */
 export const decryptApplePayPaymentToken = ({
   paymentData,
   paymentProcessingKey,
+  merchantIdentifier,
 }: {
   paymentData: {
     version: string
@@ -300,7 +355,10 @@ export const decryptApplePayPaymentToken = ({
       transactionId: string
     }
   }
+  /** PEM-encoded EC private key (Apple Payment Processing) */
   paymentProcessingKey: string
+  /** Merchant ID string (e.g. merchant.com.example) — used for KDF Party V Info */
+  merchantIdentifier: string
 }): {
   cardNumber: string
   expirationMonth: number
@@ -309,49 +367,104 @@ export const decryptApplePayPaymentToken = ({
 } => {
   if (paymentData.version !== 'EC_v1') {
     throw new Error(
-      `Unsupported Apple Pay token version: ${paymentData.version}. Only EC_v1 is supported.`,
+      `Apple Pay decrypt [stage=version-check] unsupported token version: ${paymentData.version}. Only EC_v1 is supported.`,
     )
   }
 
   const encryptedData = Buffer.from(paymentData.data, 'base64')
 
-  const ecdh = crypto.createECDH('prime256v1')
-  const privateKeyBytes = Uint8Array.from(
-    Buffer.from(paymentProcessingKey, 'utf8'),
-  )
-  ecdh.setPrivateKey(privateKeyBytes)
+  let privateKey: crypto.KeyObject
+  try {
+    privateKey = crypto.createPrivateKey({
+      key: paymentProcessingKey,
+      format: 'pem',
+    })
+  } catch (e) {
+    throw new Error(
+      `Apple Pay decrypt [stage=load-processing-key] invalid PEM EC key: ${
+        (e as Error).message
+      }`,
+    )
+  }
 
-  const ephemeralPublicKey = Uint8Array.from(
-    Buffer.from(paymentData.header.ephemeralPublicKey, 'base64'),
-  )
-  const sharedSecret = ecdh.computeSecret(ephemeralPublicKey)
-  const sharedSecretBytes = Uint8Array.from(sharedSecret)
+  let ephemeralPublicKey: crypto.KeyObject
+  try {
+    const ephemeralDer = Buffer.from(
+      paymentData.header.ephemeralPublicKey,
+      'base64',
+    )
+    ephemeralPublicKey = crypto.createPublicKey({
+      key: ephemeralDer,
+      format: 'der',
+      type: 'spki',
+    })
+  } catch (e) {
+    throw new Error(
+      `Apple Pay decrypt [stage=load-ephemeral-key] invalid SPKI ephemeral public key: ${
+        (e as Error).message
+      }`,
+    )
+  }
+
+  let sharedSecret: Buffer
+  try {
+    sharedSecret = crypto.diffieHellman({
+      privateKey,
+      publicKey: ephemeralPublicKey,
+    })
+  } catch (e) {
+    throw new Error(
+      `Apple Pay decrypt [stage=ecdh] diffieHellman failed: ${
+        (e as Error).message
+      }`,
+    )
+  }
 
   const aesKey = Uint8Array.from(
-    crypto.createHash('sha256').update(sharedSecretBytes).digest(),
+    deriveApplePaySymmetricKey(sharedSecret, merchantIdentifier),
   )
 
   const iv = Uint8Array.from(Buffer.alloc(16, 0))
   const authTag = Uint8Array.from(encryptedData.subarray(-16))
   const ciphertext = Uint8Array.from(encryptedData.subarray(0, -16))
 
-  const decipher = crypto.createDecipheriv('aes-256-gcm', aesKey, iv)
-  decipher.setAuthTag(authTag)
+  let decrypted: string
+  try {
+    const decipher = crypto.createDecipheriv('aes-256-gcm', aesKey, iv)
+    decipher.setAuthTag(authTag)
+    const plainPart1 = new Uint8Array(decipher.update(ciphertext))
+    const plainPart2 = new Uint8Array(decipher.final())
+    const plain = new Uint8Array(plainPart1.length + plainPart2.length)
+    plain.set(plainPart1, 0)
+    plain.set(plainPart2, plainPart1.length)
+    decrypted = new TextDecoder('utf-8').decode(plain)
+  } catch (e) {
+    // GCM auth-tag mismatch is the most common failure here — almost always
+    // KDF input divergence (wrong merchantIdentifier as Party V) or the
+    // wrong processing key.
+    throw new Error(
+      `Apple Pay decrypt [stage=aes-gcm] decipher failed (likely wrong key or merchantIdentifier): ${
+        (e as Error).message
+      }`,
+    )
+  }
 
-  const plainPart1 = new Uint8Array(decipher.update(ciphertext))
-  const plainPart2 = new Uint8Array(decipher.final())
-  const plain = new Uint8Array(plainPart1.length + plainPart2.length)
-  plain.set(plainPart1, 0)
-  plain.set(plainPart2, plainPart1.length)
-  const decrypted = new TextDecoder('utf-8').decode(plain)
-
-  const parsed = JSON.parse(decrypted) as {
+  let parsed: {
     applicationPrimaryAccountNumber: string
     applicationExpirationDate: string
     paymentData?: {
       onlinePaymentCryptogram: string
       eciIndicator?: string
     }
+  }
+  try {
+    parsed = JSON.parse(decrypted)
+  } catch (e) {
+    throw new Error(
+      `Apple Pay decrypt [stage=parse-plaintext] decrypted payload is not valid JSON: ${
+        (e as Error).message
+      }`,
+    )
   }
 
   const expirationStr = parsed.applicationExpirationDate
@@ -360,7 +473,9 @@ export const decryptApplePayPaymentToken = ({
 
   const paymentCryptogram = parsed.paymentData?.onlinePaymentCryptogram ?? ''
   if (!paymentCryptogram) {
-    throw new Error('Apple Pay decrypted token missing onlinePaymentCryptogram')
+    throw new Error(
+      'Apple Pay decrypt [stage=extract-fields] decrypted token missing onlinePaymentCryptogram',
+    )
   }
 
   return {
@@ -376,15 +491,14 @@ export const generateApplePayValidationRequestOptions = ({
   merchantIdentifier,
   displayName,
   initiativeContext,
-  merchantIdentityCert,
-  merchantIdentityKey,
+  dispatcher,
 }: {
   validationURL: string
   merchantIdentifier: string
   displayName: string
   initiativeContext: string
-  merchantIdentityCert: string
-  merchantIdentityKey: string
+  /** mTLS-configured undici Agent — caller is responsible for memoizing across requests */
+  dispatcher: Agent
 }): RequestInit & { dispatcher?: Agent } => {
   validateAndParseApplePayValidationUrl(validationURL)
 
@@ -393,14 +507,6 @@ export const generateApplePayValidationRequestOptions = ({
     displayName,
     initiative: 'web',
     initiativeContext,
-  })
-
-  // undici Agent enables mTLS (client cert + key) for fetch - required by Apple Pay validation
-  const dispatcher = new Agent({
-    connect: {
-      cert: merchantIdentityCert,
-      key: merchantIdentityKey,
-    },
   })
 
   return {

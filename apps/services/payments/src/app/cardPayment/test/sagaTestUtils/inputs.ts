@@ -21,6 +21,5 @@ export const getApplePayChargeInput = (): ApplePayChargeInput => ({
       transactionId: 'tx-id',
     },
   },
-  paymentMethod: { displayName: 'Visa 1234', network: 'Visa' },
   transactionIdentifier: 'tx-identifier',
 })

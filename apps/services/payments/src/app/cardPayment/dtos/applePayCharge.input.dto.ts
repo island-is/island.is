@@ -36,16 +36,6 @@ class ApplePayPaymentData {
   header!: ApplePayPaymentHeader
 }
 
-class ApplePayPaymentMethod {
-  @IsString()
-  @ApiProperty({ description: 'Display name', type: String })
-  displayName!: string
-
-  @IsString()
-  @ApiProperty({ description: 'Network', type: String })
-  network!: string
-}
-
 export class ApplePayChargeInput {
   @IsString()
   @ApiProperty({ description: 'Payment flow ID', type: String })
@@ -56,12 +46,6 @@ export class ApplePayChargeInput {
   @Type(() => ApplePayPaymentData)
   @ApiProperty({ description: 'Payment data', type: ApplePayPaymentData })
   paymentData!: ApplePayPaymentData
-
-  @IsObject()
-  @ValidateNested()
-  @Type(() => ApplePayPaymentMethod)
-  @ApiProperty({ description: 'Payment method', type: ApplePayPaymentMethod })
-  paymentMethod!: ApplePayPaymentMethod
 
   @IsString()
   @ApiProperty({ description: 'Transaction identifier', type: String })

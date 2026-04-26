@@ -87,6 +87,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
       expect(mockCardPaymentService.chargeApplePay).toHaveBeenCalledWith(
         input,
         context.trackingData,
+        expect.any(Number),
       )
     })
 
