@@ -41,6 +41,7 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
     }
     splitCase {
@@ -272,6 +273,7 @@ query Case($input: CaseQueryInput!) {
       isKeyAccessible
       defendantId
       civilClaimantId
+      rulingFileId
     }
     isAppealDeadlineExpired
     caseModifiedExplanation
@@ -582,6 +584,7 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
       policeCaseNumbers
       indictmentSubtypes

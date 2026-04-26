@@ -48,6 +48,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
     }
     caseFiles {
@@ -67,6 +68,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isKeyAccessible
       defendantId
       civilClaimantId
+      rulingFileId
     }
     defendants {
       id
@@ -436,6 +438,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
       policeCaseNumbers
       indictmentSubtypes
