@@ -1,12 +1,5 @@
-import { ApiClientCallback, Callback } from '@island.is/api/domains/payment'
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from '@nestjs/common'
+import { ApiClientCallback } from '@island.is/api/domains/payment'
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { PaymentService } from './payment.service'
 
@@ -14,22 +7,6 @@ import { PaymentService } from './payment.service'
 @Controller()
 export class PaymentCallbackController {
   constructor(private readonly paymentService: PaymentService) {}
-
-  @Post('application-payment/:applicationId/:id')
-  async paymentApproved(
-    @Body() callback: Callback,
-    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<void> {
-    if (callback.status !== 'paid') {
-      return
-    }
-    await this.paymentService.fulfillPayment(
-      id,
-      callback.receptionID,
-      applicationId,
-    )
-  }
 
   /**
    * Handles payment callback notifications from the API client for successful payments.
@@ -71,6 +48,7 @@ export class PaymentCallbackController {
         callback.paymentFlowMetadata.paymentId,
         callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
+        callback.paymentFlowId,
       )
     }
   }

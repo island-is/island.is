@@ -36,10 +36,20 @@ export class PaymentService {
     })
   }
 
+  async refund(paymentFlowId: string, reason: string): Promise<void> {
+    await this.paymentsApi.refundControllerRefund({
+      refundPaymentInput: {
+        paymentFlowId,
+        reasonForRefund: reason,
+      },
+    })
+  }
+
   async fulfillPayment(
     paymentId: string,
     receptionId: string,
     applicationId: string,
+    paymentFlowId?: string,
   ): Promise<void> {
     try {
       await this.paymentModel.update(
