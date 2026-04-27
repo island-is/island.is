@@ -7,8 +7,8 @@ export class CourtAgendasInput {
   @Field(() => Int, { nullable: true })
   page?: number
 
-  @Field(() => String, { nullable: true })
-  court?: string
+  @CacheField(() => [String], { nullable: true })
+  court?: string[]
 
   @Field(() => String, { nullable: true })
   dateFrom?: string
