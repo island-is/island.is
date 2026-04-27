@@ -1,7 +1,6 @@
 import { FC, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
-
 import { AnimatePresence } from 'motion/react'
 
 import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
@@ -22,9 +21,9 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { strings } from './CaseInfo.strings'
 import IconButton from '../IconButton/IconButton'
 import Modal from '../Modals/Modal/Modal'
+import { strings } from './CaseInfo.strings'
 
 const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null
