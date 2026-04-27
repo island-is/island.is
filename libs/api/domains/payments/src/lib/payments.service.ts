@@ -23,7 +23,7 @@ import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
-import { GetApplePaySessionResponse } from './dto/getApplePaySession.response'
+import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
 
@@ -150,7 +150,7 @@ export class PaymentsService {
 
   async validateApplePayMerchant(
     validationURL: string,
-  ): Promise<GetApplePaySessionResponse> {
+  ): Promise<ValidateApplePayMerchantResponse> {
     return this.paymentsApi.cardPaymentControllerValidateApplePayMerchant({
       validateApplePayMerchantInput: { validationURL },
     })

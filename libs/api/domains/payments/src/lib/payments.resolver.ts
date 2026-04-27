@@ -31,7 +31,7 @@ import { GetJwksResponse } from './dto/getJwks.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { GetApplePaySessionResponse } from './dto/getApplePaySession.response'
+import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
 import { ValidateApplePayMerchantInput } from './dto/validateApplePayMerchant.input'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
@@ -147,13 +147,13 @@ export class PaymentsResolver {
     }
   }
 
-  @Mutation(() => GetApplePaySessionResponse, {
+  @Mutation(() => ValidateApplePayMerchantResponse, {
     name: 'paymentsValidateApplePayMerchant',
   })
   async validateApplePayMerchant(
     @Args('input', { type: () => ValidateApplePayMerchantInput })
     input: ValidateApplePayMerchantInput,
-  ): Promise<GetApplePaySessionResponse> {
+  ): Promise<ValidateApplePayMerchantResponse> {
     try {
       return this.paymentsService.validateApplePayMerchant(input.validationURL)
     } catch (e) {
