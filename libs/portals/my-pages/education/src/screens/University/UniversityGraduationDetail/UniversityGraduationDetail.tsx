@@ -186,32 +186,30 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
                     : uniMessages.degree,
                 )}
                 loading={loading}
-                content={formatNationalId(studentInfo.degree)}
+                content={studentInfo.degree}
               />
             )}
             {studentInfo?.studyProgram && (
               <InfoLine
                 label={formatMessage(uniMessages.program)}
                 loading={loading}
-                content={formatNationalId(studentInfo?.studyProgram ?? '')}
+                content={studentInfo?.studyProgram ?? ''}
               />
             )}
             <InfoLine
               label={formatMessage(uniMessages.faculty)}
               loading={loading}
-              content={formatNationalId(studentInfo?.faculty ?? '')}
+              content={studentInfo?.faculty ?? ''}
             />
             <InfoLine
               label={formatMessage(uniMessages.school)}
               loading={loading}
-              content={formatNationalId(studentInfo?.school ?? '')}
+              content={studentInfo?.school ?? ''}
             />
             <InfoLine
               label={formatMessage(uniMessages.institution)}
               loading={loading}
-              content={formatNationalId(
-                studentInfo?.institution?.displayName ?? '',
-              )}
+              content={studentInfo?.institution?.displayName ?? ''}
             />
           </InfoLineStack>
           <Box marginTop={5}>
