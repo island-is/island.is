@@ -49,3 +49,9 @@ export const featuredCardImage = style({
   width: 'auto',
   display: 'block',
 })
+
+export const featuredCardNoText = style({})
+
+globalStyle(`${featuredCardNoText} p`, {
+  display: 'none',
+})

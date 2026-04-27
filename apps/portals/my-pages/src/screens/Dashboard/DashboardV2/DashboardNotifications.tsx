@@ -1,10 +1,4 @@
-import {
-  Box,
-  Icon,
-  SkeletonLoader,
-  Text,
-  VisuallyHidden,
-} from '@island.is/island-ui/core'
+import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
 import {
@@ -34,11 +28,6 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
   })
 
   const notifications = data?.userNotificationsOverview?.data ?? []
-  const unreadCount = data?.userNotificationsOverview?.unreadCount ?? 0
-  const hasUnread = unreadCount > 0
-  const badgeActive: keyof typeof styles.notificationBadge = hasUnread
-    ? 'active'
-    : 'inactive'
 
   return (
     <Box
@@ -62,24 +51,13 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         marginBottom={2}
       >
         <LinkResolver href={InformationPaths.Notifications}>
-          <Box display="flex" alignItems="center" columnGap={1}>
-            <Box position="relative" display="flex">
-              <Icon
-                icon="notifications"
-                type="outline"
-                color="blue400"
-                size="medium"
-              />
-              <Box
-                className={styles.notificationBadge[badgeActive]}
-                aria-hidden="true"
-              />
-              {hasUnread && (
-                <VisuallyHidden>
-                  {formatMessage(m.notificationsUnread)}
-                </VisuallyHidden>
-              )}
-            </Box>
+          <Box display="flex" alignItems="center" columnGap={2}>
+            <Icon
+              icon="notifications"
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
             <Text variant="h4" as="h2" color="blue400">
               {formatMessage(m.notifications)}
             </Text>
@@ -94,7 +72,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               icon="arrowForward"
               type="filled"
               color="blue400"
-              size="small"
+              size="medium"
             />
           </LinkResolver>
         )}
@@ -137,7 +115,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       )}
 
       {!loading && hasDelegationAccess && error && (
-        <Problem error={error} noBorder />
+        <Problem error={error} size="small" noBorder />
       )}
 
       {!loading &&
@@ -154,14 +132,17 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
           const href = resolveLink(item.message.link)
           const isExternal = href.startsWith('http')
 
+          const unread = !item.metadata.read
           const content = (
             <Box
               display="flex"
               alignItems="center"
               columnGap={2}
               paddingY={2}
+              paddingX={2}
               borderTopWidth="standard"
               borderColor="blue200"
+              className={unread ? styles.unreadRow : undefined}
             >
               <Box className={styles.notificationSenderLogoWrapper}>
                 <img
@@ -177,20 +158,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                   alignItems="center"
                   columnGap={2}
                 >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    columnGap={1}
-                    overflow="hidden"
-                  >
-                    {!item.metadata.read && (
-                      <>
-                        <Box className={styles.unreadDot} aria-hidden="true" />
-                        <VisuallyHidden>
-                          {formatMessage(m.notificationUnread)}
-                        </VisuallyHidden>
-                      </>
-                    )}
+                  <Box overflow="hidden">
                     <Text variant="medium" truncate>
                       {item.message.title}
                     </Text>
@@ -207,7 +175,11 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                   )}
                 </Box>
                 {item.message.displayBody && (
-                  <Text variant="medium" color="blue400" truncate>
+                  <Text
+                    color="blue400"
+                    fontWeight={unread ? 'medium' : 'regular'}
+                    truncate
+                  >
                     {item.message.displayBody}
                   </Text>
                 )}

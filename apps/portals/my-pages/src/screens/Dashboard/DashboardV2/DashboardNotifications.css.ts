@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style, styleVariants } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 
 export const lock = style({
   position: 'absolute',
@@ -8,28 +8,8 @@ export const lock = style({
   right: theme.spacing[3],
 })
 
-export const notificationBadge = styleVariants({
-  active: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    height: theme.spacing[1],
-    width: theme.spacing[1],
-    borderRadius: '50%',
-    backgroundColor: theme.color.red400,
-    transform: 'translate(-40%, -10%)',
-  },
-  inactive: {
-    display: 'none',
-  },
-})
-
-export const unreadDot = style({
-  width: theme.spacing[1],
-  height: theme.spacing[1],
-  borderRadius: '50%',
-  backgroundColor: theme.color.red400,
-  flexShrink: 0,
+export const unreadRow = style({
+  backgroundColor: theme.color.blueberry100,
 })
 
 export const accessDeniedImage = style({

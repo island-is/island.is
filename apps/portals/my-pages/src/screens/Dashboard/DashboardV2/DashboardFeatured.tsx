@@ -4,6 +4,7 @@ import {
   m as coreMessages,
   PortalNavigationItem,
 } from '@island.is/portals/core'
+import cn from 'classnames'
 import { Link } from 'react-router-dom'
 import { iconIdMapper, iconTypeToSVG } from '../../../utils/Icons/idMapper'
 import * as styles from '../Dashboard.css'
@@ -85,8 +86,12 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
                 ? item.name
                 : String(item.name.id ?? i)
             }
+            position="relative"
             onMouseEnter={() => onHover(icon?.icon ?? '')}
-            className={styles.svgOutline}
+            // Remove when category card supports no text
+            className={cn(styles.svgOutline, {
+              [styles.featuredCardNoText]: i >= 2,
+            })}
           >
             {isDisabled && (
               <Tooltip
