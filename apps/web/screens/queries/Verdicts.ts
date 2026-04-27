@@ -20,7 +20,7 @@ export const GET_VERDICTS_QUERY = gql`
       input {
         searchTerm
         page
-        courtLevel
+        court
         keywords
         caseNumber
         caseCategories

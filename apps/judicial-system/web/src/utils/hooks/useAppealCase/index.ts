@@ -36,19 +36,30 @@ import {
   useUpdateAppealCaseMutation,
 } from './updateAppealCase.generated'
 
+type UpdateAppealCase = Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>
+
 const useAppealCase = () => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const [createAppealCaseMutation] = useCreateAppealCaseMutation()
-  const [limitedAccessCreateAppealCaseMutation] =
-    useLimitedAccessCreateAppealCaseMutation()
-  const [transitionAppealCaseMutation] = useTransitionAppealCaseMutation()
-  const [limitedAccessTransitionAppealCaseMutation] =
-    useLimitedAccessTransitionAppealCaseMutation()
-  const [updateAppealCaseMutation] = useUpdateAppealCaseMutation()
-  const [limitedAccessUpdateAppealCaseMutation] =
-    useLimitedAccessUpdateAppealCaseMutation()
+  const [createAppealCaseMutation, { loading: isCreatingAppealCase }] =
+    useCreateAppealCaseMutation()
+  const [
+    limitedAccessCreateAppealCaseMutation,
+    { loading: isLimitedAccessCreatingAppealCase },
+  ] = useLimitedAccessCreateAppealCaseMutation()
+  const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
+    useTransitionAppealCaseMutation()
+  const [
+    limitedAccessTransitionAppealCaseMutation,
+    { loading: isLimitedAccessTransitioningAppealCase },
+  ] = useLimitedAccessTransitionAppealCaseMutation()
+  const [updateAppealCaseMutation, { loading: isUpdatingAppealCase }] =
+    useUpdateAppealCaseMutation()
+  const [
+    limitedAccessUpdateAppealCaseMutation,
+    { loading: isLimitedAccessUpdatingAppealCase },
+  ] = useLimitedAccessUpdateAppealCaseMutation()
 
   const createAppealCase = useMemo(
     () =>
@@ -163,7 +174,7 @@ const useAppealCase = () => {
       async (
         caseId: string,
         appealCaseId: string,
-        update: Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>,
+        update: UpdateAppealCase,
       ): Promise<AppealCase | undefined> => {
         const mutation = limitedAccess
           ? limitedAccessUpdateAppealCaseMutation
@@ -203,8 +214,14 @@ const useAppealCase = () => {
 
   return {
     createAppealCase,
+    isCreatingAppealCase:
+      isCreatingAppealCase || isLimitedAccessCreatingAppealCase,
     transitionAppealCase,
+    isTransitioningAppealCase:
+      isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,
     updateAppealCase,
+    isUpdatingAppealCase:
+      isUpdatingAppealCase || isLimitedAccessUpdatingAppealCase,
   }
 }
 
