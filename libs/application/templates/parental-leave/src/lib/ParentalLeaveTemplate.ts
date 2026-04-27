@@ -782,11 +782,21 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
-            triggerEvent: DefaultEvents.APPROVE,
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.APPROVE,
+              externalDataId: 'navId',
+              throwOnError: false,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.validateApplication,
+              triggerEvent: DefaultEvents.APPROVE,
+              throwOnError: true,
+              order: 1,
+            }),
+          ],
 
           roles: [
             {

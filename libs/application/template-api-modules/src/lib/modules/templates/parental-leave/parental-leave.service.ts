@@ -1095,6 +1095,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setApplicationFundId({ application }: TemplateApiModuleActionProps) {
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    if (applicationFundId) {
+      return applicationFundId
+    }
+
     try {
       const applicationInformation =
         await this.applicationInformationAPI.applicationGetApplicationInformation(
@@ -1110,7 +1118,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
     }
 
-    return null
+    return applicationFundId || null
   }
 
   async setApplicationRights({ application }: TemplateApiModuleActionProps) {

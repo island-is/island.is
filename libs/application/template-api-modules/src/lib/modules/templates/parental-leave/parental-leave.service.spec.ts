@@ -276,6 +276,22 @@ describe('ParentalLeaveService', () => {
 
       expect(res).toBeNull()
     })
+
+    it('should keep existing applicationFundId without calling VMST application information', async () => {
+      const application = createApplication()
+      application.externalData.navId = {
+        data: '2025-03076',
+        date: new Date(),
+        status: 'success',
+      }
+
+      const res = await parentalLeaveService.setApplicationFundId({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(applicationGetApplicationInformation).not.toHaveBeenCalled()
+      expect(res).toBe('2025-03076')
+    })
   })
 
   describe('createPeriodsDTO', () => {
