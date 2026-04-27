@@ -16,9 +16,11 @@ export const layoutRow = style({
 export const navColumn = style({
   width: '33.333%',
   flexShrink: 0,
+  paddingRight: '16px',
   '@media': {
     [MOBILE]: {
       width: '100%',
+      paddingRight: 0,
     },
   },
 })
