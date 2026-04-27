@@ -26,8 +26,6 @@ type GivenWhenThen = (
 type DefenderNullUpdate = {
   defenderNationalId: null
   defenderName?: null
-  defenderEmail?: null
-  defenderPhoneNumber?: null
 }
 
 describe('DefendantService - update', () => {
@@ -66,12 +64,10 @@ describe('DefendantService - update', () => {
     }
   })
 
-  describe('when defenderNationalId is set to null without clearing all defender fields', () => {
+  describe('when defenderName is set and defenderNationalId is set to null without also setting defenderName to null', () => {
     let then: Then
     const update = {
       defenderNationalId: null,
-      defenderName: null,
-      defenderEmail: null,
     } as unknown as UpdateDefendantDto
 
     beforeEach(async () => {
@@ -92,13 +88,13 @@ describe('DefendantService - update', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error).toHaveProperty(
         'message',
-        'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
+        'DefenderNationalId can only be set to null when defenderName is also set to null.',
       )
       expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 
-  describe('when defenderNationalId and all related defender fields are set to null', () => {
+  describe('when defenderName is set and defenderNationalId and defenderName are both set to null', () => {
     const defendant = {
       id: 'defendant-id',
       caseId: theCase.id,
@@ -110,8 +106,6 @@ describe('DefendantService - update', () => {
     const update: DefenderNullUpdate = {
       defenderNationalId: null,
       defenderName: null,
-      defenderEmail: null,
-      defenderPhoneNumber: null,
     }
     const defendantUpdate = update as unknown as UpdateDefendantDto
     const updatedDefendant = { ...defendant, ...update } as unknown as Defendant
@@ -130,6 +124,40 @@ describe('DefendantService - update', () => {
         theCase.id,
         defendant.id,
         defendantUpdate,
+        { transaction },
+      )
+      expect(then.result).toEqual(updatedDefendant)
+    })
+  })
+
+  describe('when defenderName is not set and defenderNationalId is set to null', () => {
+    const defendant = {
+      id: 'defendant-id',
+      caseId: theCase.id,
+      defenderNationalId: '0101302399',
+    } as Defendant
+    const update = {
+      defenderNationalId: null,
+    } as unknown as UpdateDefendantDto
+    const updatedDefendant = {
+      ...defendant,
+      defenderNationalId: null,
+    } as unknown as Defendant
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockDefendantRepositoryService.update as jest.Mock
+      ).mockResolvedValueOnce(updatedDefendant)
+
+      then = await givenWhenThen(defendant, update)
+    })
+
+    it('should update the defendant', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        theCase.id,
+        defendant.id,
+        update,
         { transaction },
       )
       expect(then.result).toEqual(updatedDefendant)

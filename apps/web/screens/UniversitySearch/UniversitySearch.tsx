@@ -628,7 +628,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   return (
     <Box>
       {organizationPage && (
-        <OrganizationHeader organizationPage={organizationPage} />
+        <OrganizationHeader
+          organizationPage={organizationPage}
+          isSubpage={true}
+        />
       )}
       <GridContainer>
         <SidebarLayout

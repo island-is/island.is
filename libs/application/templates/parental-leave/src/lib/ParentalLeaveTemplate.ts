@@ -1475,8 +1475,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       /**
-       * Copy the current periods to temp. If the user cancels the edits,
-       * we will restore the periods to their original state from temp.
+       * Sync periods from VMST, drop stale client-side validation, then copy
+       * the refreshed periods to temp so the edit session starts from the
+       * VMST-backed source of truth and we can restore it if the user cancels.
        */
       createTempPeriods: assign((context, event) => {
         if (event.type !== DefaultEvents.EDIT) {
@@ -1486,7 +1487,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'tempPeriods', answers.periods)
+        const newPeriods = restructureVMSTPeriods(context)
+        if (newPeriods.length > 0) {
+          set(answers, 'periods', newPeriods)
+        }
+
+        unset(answers, 'validatedPeriods')
+
+        set(answers, 'tempPeriods', cloneDeep(answers.periods))
 
         return context
       }),

@@ -7,7 +7,7 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  UpdateCase,
+  useAppealCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -20,10 +20,7 @@ interface Props {
   continueDisabled?: boolean
   description: string
   defaultExplanation: string
-  fieldToModify: keyof Pick<
-    UpdateCase,
-    'rulingModifiedHistory' | 'appealRulingModifiedHistory'
-  >
+  fieldToModify: 'rulingModifiedHistory' | 'appealRulingModifiedHistory'
 }
 
 const RulingModifiedModal: FC<Props> = ({
@@ -37,17 +34,32 @@ const RulingModifiedModal: FC<Props> = ({
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
+  const { updateAppealCase } = useAppealCase()
 
   const [explanation, setExplanation] = useState(defaultExplanation)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   const handleContinue = async () => {
-    const caseUpdate = await updateCase(workingCase.id, {
-      [fieldToModify]: explanation,
-    })
+    if (fieldToModify === 'appealRulingModifiedHistory') {
+      if (workingCase.appealCase?.id) {
+        const result = await updateAppealCase(
+          workingCase.id,
+          workingCase.appealCase.id,
+          { [fieldToModify]: explanation },
+        )
 
-    if (caseUpdate) {
-      onContinue()
+        if (result) {
+          onContinue()
+        }
+      }
+    } else {
+      const caseUpdate = await updateCase(workingCase.id, {
+        [fieldToModify]: explanation,
+      })
+
+      if (caseUpdate) {
+        onContinue()
+      }
     }
   }
 

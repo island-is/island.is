@@ -7,6 +7,8 @@ export const ESTATE_INHERITANCE = 'estateInheritance'
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
+  inReview: 'inReview',
+  signing: 'signing',
   done: 'done',
 }
 
@@ -61,11 +63,16 @@ export type InheritanceReportEvent =
 export enum Roles {
   ESTATE_INHERITANCE_APPLICANT = 'estateInheritanceApplicant',
   PREPAID_INHERITANCE_APPLICANT = 'prepaidInheritanceApplicant',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ApiActions {
-  completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
+  completeApplication = 'completeApplication',
+  submitToSyslumenn = 'submitToSyslumenn',
+  getSignatories = 'getSignatories',
+  approveByAssignee = 'approveByAssignee',
+  checkReviewFlag = 'checkReviewFlag',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

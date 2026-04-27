@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   ParseUUIDPipe,
+  ParseBoolPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
@@ -78,6 +79,7 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import {
   getApplicationLifecycle,
+  handleScheduledNotifications,
   removeObjectWithKeyFromAnswers,
 } from './utils/application'
 import { DecodedAssignmentToken } from './types'
@@ -180,6 +182,13 @@ export class ApplicationController {
     description:
       'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
   })
+  @ApiQuery({
+    name: 'showPruned',
+    required: false,
+    type: 'boolean',
+    description:
+      'To include pruned applications in the response. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -190,13 +199,17 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
-    @Query('scopeCheck') scopeCheck?: boolean,
+    @Query('scopeCheck', new ParseBoolPipe({ optional: true }))
+    scopeCheck?: boolean,
+    @Query('showPruned', new ParseBoolPipe({ optional: true }))
+    showPruned?: boolean,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
+      showPruned ?? false,
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -216,12 +229,14 @@ export class ApplicationController {
     nationalId: string,
     typeId?: string,
     status?: string,
+    showPruned?: boolean,
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
+      showPruned,
     )
   }
 
@@ -459,7 +474,15 @@ export class ApplicationController {
 
       //Programmers responsible for handling failure status
       updatedApplication.externalData = withUpdatedExternalData.externalData
+      actionDto.externalData = withUpdatedExternalData.externalData // Make sure to update the actionDto with the updated external data
     }
+
+    await handleScheduledNotifications(
+      this.applicationService,
+      actionDto,
+      template,
+      updatedApplication.state,
+    )
 
     return updatedApplication
   }
@@ -1051,6 +1074,10 @@ export class ApplicationController {
     await this.applicationChargeService.deleteCharge(existingApplication)
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
+    await this.applicationService.cancelScheduledNotifications(
+      existingApplication.id,
+    )
 
     await this.applicationService.softDelete(existingApplication.id)
 

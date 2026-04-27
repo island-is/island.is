@@ -75,8 +75,9 @@ export const DefenderCasesTable: FC<Props> = ({
         data={cases}
         generateContextMenuItems={(row) => [
           openCaseInNewTab(row.id),
-          ...(shouldDisplayWithdrawAppealOption(row, user?.nationalId)
-            ? [withdrawAppealMenuOption(row.id)]
+          ...(shouldDisplayWithdrawAppealOption(row, user?.nationalId) &&
+          row.appealCaseId
+            ? [withdrawAppealMenuOption(row.id, row.appealCaseId)]
             : []),
         ]}
         columns={[
@@ -142,7 +143,8 @@ export const DefenderCasesTable: FC<Props> = ({
       />
       {caseToWithdraw && (
         <WithdrawAppealContextMenuModal
-          caseId={caseToWithdraw}
+          caseId={caseToWithdraw.caseId}
+          appealCaseId={caseToWithdraw.appealCaseId}
           cases={cases}
           onClose={() => setCaseToWithdraw(undefined)}
         />
