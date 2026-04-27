@@ -14,8 +14,6 @@ import {
   DefaultEvents,
   DeletePaymentApi,
   InstitutionNationalIds,
-  NotificationConfig,
-  NotificationType,
   RoleInState,
   StateLifeCycle,
   TemplateApi,
