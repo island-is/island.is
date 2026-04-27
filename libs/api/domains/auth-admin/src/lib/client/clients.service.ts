@@ -375,10 +375,7 @@ export class ClientsService extends MultiEnvironmentService {
     )
   }
 
-  async restoreClient(
-    user: User,
-    input: RestoreClientInput,
-  ): Promise<boolean> {
+  async restoreClient(user: User, input: RestoreClientInput): Promise<boolean> {
     return this.runOnAllEnvironments(user, (api) =>
       api.meClientsControllerRestoreRaw({
         tenantId: input.tenantId,
