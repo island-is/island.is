@@ -225,6 +225,7 @@ export const ScopesTable = ({
                   checked={allSelected}
                   onChange={onSelectAll}
                   disabled={scopes.length === 0}
+                  ariaLabel={formatMessage(m.selectAll)}
                 />
               )}
             </T.HeadData>
