@@ -8,6 +8,7 @@ import {
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -46,6 +47,7 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     policeCaseNumbers: [uuid(), policeCaseNumber, uuid()],
     caseFiles,
   } as Case
+  const user = { nationalId: '1234567890' } as TUser
   const pdf = Buffer.from(uuid())
   const res = { end: jest.fn() } as unknown as Response
 
@@ -75,6 +77,7 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
         await limitedAccessCaseController.getCaseFilesRecordPdf(
           caseId,
           policeCaseNumber,
+          user,
           theCase,
           res,
         )

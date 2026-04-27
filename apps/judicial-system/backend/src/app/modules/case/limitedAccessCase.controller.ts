@@ -45,6 +45,7 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
+import { getDefenderVisiblePoliceCaseNumbers } from '../file'
 import { Case, User } from '../repository'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -215,6 +216,7 @@ export class LimitedAccessCaseController {
   async getCaseFilesRecordPdf(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -225,6 +227,18 @@ export class LimitedAccessCaseController {
     if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
       throw new BadRequestException(
         `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    const visiblePoliceCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
+      user.nationalId,
+      theCase.defendants,
+      theCase.policeCaseNumbers,
+    )
+
+    if (!visiblePoliceCaseNumbers.includes(policeCaseNumber)) {
+      throw new ForbiddenException(
+        `Defender does not have access to police case number ${policeCaseNumber}`,
       )
     }
 
