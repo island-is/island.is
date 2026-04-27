@@ -35,6 +35,7 @@ import { socialBenefitsNavigation } from '@island.is/portals/my-pages/social-ben
 import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
 import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
 import { vehicleMileageNavigation } from '@island.is/portals/my-pages/mileage-registration'
+import jobsImage from '../assets/images/jobs.svg'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -77,7 +78,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     assetsNavigation,
     financeNavigation,
     licenseNavigation,
-    healthNavigation,
+    { ...healthNavigation, featuredImage: jobsImage },
     occupationalLicensesNavigation,
     airDiscountNavigation,
     educationNavigation,

@@ -81,14 +81,17 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
           </Box>
         </LinkResolver>
         {hasDelegationAccess && (
-          <span aria-hidden="true">
+          <LinkResolver
+            href={InformationPaths.Notifications}
+            aria-label={formatMessage(m.notificationsViewAll)}
+          >
             <Icon
               icon="arrowForward"
               type="filled"
               color="blue400"
               size="small"
             />
-          </span>
+          </LinkResolver>
         )}
       </Box>
 

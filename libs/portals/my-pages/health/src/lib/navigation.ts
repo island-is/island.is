@@ -12,7 +12,6 @@ export const healthNavigation: PortalNavigationItem = {
   icon: {
     icon: 'heart',
   },
-  featuredImage: './assets/images/jobs.svg',
   children: [
     {
       name: m.health,
