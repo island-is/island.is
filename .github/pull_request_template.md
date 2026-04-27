@@ -22,3 +22,6 @@ Attach Screenshots / Gifs to help reviewers understand the scope of the pull req
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] Formatting passes locally with my changes
 - [ ] I have rebased against main before asking for a review
+- [ ] No AI tools were used in preparing this pull request
+- [ ] AI tools were used in preparing this pull request
+  Tools used:
