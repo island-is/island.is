@@ -561,6 +561,15 @@ export const m = defineMessages({
     id: 'service.portal:inProgressApplications',
     defaultMessage: 'Umsóknir í vinnslu',
   },
+  olderApplications: {
+    id: 'service.portal:older-applications',
+    defaultMessage: 'Eldri umsóknir',
+  },
+  applicationsIntroOlder: {
+    id: 'service.portal:applications-intro-older',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir eldri umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
+  },
   myInfo: {
     id: 'service.portal:my-info',
     defaultMessage: 'Mín gögn',

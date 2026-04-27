@@ -28,6 +28,7 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
+import { getDefaultDefendantGender } from '../../utils/utils'
 import { FormContext } from '../FormProvider/FormProvider'
 import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -65,7 +66,7 @@ const useInfoCardItems = () => {
     const defendants = workingCase.defendants?.filter((defendant) =>
       isDefenceUser(user) && isCompletedCase(workingCase.state)
         ? true
-        : defendant.indictmentCancelledOrDismissedState === null,
+        : !defendant.indictmentCancelledOrDismissedState,
     )
     const isMultipleDefendants = defendants && defendants.length > 1
 
@@ -81,7 +82,7 @@ const useInfoCardItems = () => {
               : isMultipleDefendants
               ? formatMessage(core.indictmentDefendants)
               : formatMessage(core.indictmentDefendant, {
-                  gender: defendants?.[0].gender,
+                  gender: getDefaultDefendantGender(defendants),
                 }),
           )}
         </Text>

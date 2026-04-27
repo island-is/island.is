@@ -275,7 +275,7 @@ export class PaymentService {
     }
     // no model existed orpayment url was not set, meaning no flow was created so we need to create a new one
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
-    onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+    onUpdateUrl.pathname = '/form-payment/api-client-payment-callback'
 
     const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
 
