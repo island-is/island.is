@@ -10,6 +10,12 @@ import type { LayoutProps } from '@island.is/web/layouts/main'
 import OrganizationSubPageGenericListItem, {
   OrganizationSubPageGenericListItemProps,
 } from '@island.is/web/screens/GenericList/OrganizationSubPageGenericListItem'
+import AnnualReportChapter, {
+  AnnualReportChapterProps,
+} from '@island.is/web/screens/Organization/AnnualReports/AnnualReportChapter'
+import AnnualReports, {
+  AnnualReportsProps,
+} from '@island.is/web/screens/Organization/AnnualReports/AnnualReports'
 import OrganizationCategory, {
   type OrganizationCategoryProps,
 } from '@island.is/web/screens/Organization/Category/Category'
@@ -69,6 +75,8 @@ enum PageType {
   EVENT_DETAILS = 'event-details',
   GENERIC_LIST_ITEM = 'generic-list-item',
   CATEGORY = 'category',
+  ANNUAL_REPORTS = 'annual-reports',
+  ANNUAL_REPORT_CHAPTER = 'annual-report-chapter',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,6 +105,10 @@ const pageMap: Record<PageType, FC<any>> = {
     <OrganizationSubPageGenericListItem {...props} />
   ),
   [PageType.CATEGORY]: (props) => <OrganizationCategory {...props} />,
+  [PageType.ANNUAL_REPORTS]: (props) => <AnnualReports {...props} />,
+  [PageType.ANNUAL_REPORT_CHAPTER]: (props) => (
+    <AnnualReportChapter {...props} />
+  ),
 }
 
 interface Props {
@@ -184,6 +196,20 @@ interface Props {
           componentProps: OrganizationCategoryProps
         }
       }
+    | {
+        type: PageType.ANNUAL_REPORTS
+        props: {
+          layoutProps: LayoutProps
+          componentProps: AnnualReportsProps
+        }
+      }
+    | {
+        type: PageType.ANNUAL_REPORT_CHAPTER
+        props: {
+          layoutProps: LayoutProps
+          componentProps: AnnualReportChapterProps
+        }
+      }
 }
 
 export const Component: ScreenType<Props> = ({ page }: Props) => {
@@ -267,6 +293,20 @@ Component.getProps = async (context) => {
           },
         }
       }
+      if (slugs[1] === 'annual-reports') {
+        try {
+          return {
+            page: {
+              type: PageType.ANNUAL_REPORTS,
+              props: await AnnualReports.getProps(modifiedContext),
+            },
+          }
+        } catch (error) {
+          if (!(error instanceof CustomNextError)) {
+            throw error
+          }
+        }
+      }
     } else {
       if (slugs[1] === 'frett') {
         return {
@@ -290,6 +330,20 @@ Component.getProps = async (context) => {
             type: PageType.PUBLISHED_MATERIAL,
             props: await PublishedMaterial.getProps(modifiedContext),
           },
+        }
+      }
+      if (slugs[1] === 'arsskyrslur') {
+        try {
+          return {
+            page: {
+              type: PageType.ANNUAL_REPORTS,
+              props: await AnnualReports.getProps(modifiedContext),
+            },
+          }
+        } catch (error) {
+          if (!(error instanceof CustomNextError)) {
+            throw error
+          }
         }
       }
     }
@@ -438,6 +492,26 @@ Component.getProps = async (context) => {
   }
 
   if (slugs.length === 4) {
+    if (locale !== 'is') {
+      if (slugs[1] === 'annual-reports') {
+        return {
+          page: {
+            type: PageType.ANNUAL_REPORT_CHAPTER,
+            props: await AnnualReportChapter.getProps(modifiedContext),
+          },
+        }
+      }
+    } else {
+      if (slugs[1] === 'arsskyrslur') {
+        return {
+          page: {
+            type: PageType.ANNUAL_REPORT_CHAPTER,
+            props: await AnnualReportChapter.getProps(modifiedContext),
+          },
+        }
+      }
+    }
+
     return {
       page: {
         type: PageType.GENERIC_LIST_ITEM,
