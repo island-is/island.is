@@ -1,4 +1,10 @@
-import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  SkeletonLoader,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
 import {
@@ -44,7 +50,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       paddingX={4}
     >
       {!loading && !hasDelegationAccess && (
-        <span className={lock}>
+        <span className={lock} aria-hidden="true">
           <Icon icon="lockClosed" type="outline" color="blue600" size="small" />
         </span>
       )}
@@ -64,7 +70,10 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                 color="blue400"
                 size="medium"
               />
-              <Box className={styles.notificationBadge[badgeActive]} />
+              <Box className={styles.notificationBadge[badgeActive]} aria-hidden="true" />
+              {hasUnread && (
+                <VisuallyHidden>{formatMessage(m.notificationsUnread)}</VisuallyHidden>
+              )}
             </Box>
             <Text variant="h4" as="h2" color="blue400">
               {formatMessage(m.notifications)}
@@ -72,17 +81,14 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
           </Box>
         </LinkResolver>
         {hasDelegationAccess && (
-          <LinkResolver
-            href={InformationPaths.Notifications}
-            aria-label={formatMessage(m.notificationsViewAll)}
-          >
+          <span aria-hidden="true">
             <Icon
               icon="arrowForward"
               type="filled"
               color="blue400"
               size="small"
             />
-          </LinkResolver>
+          </span>
         )}
       </Box>
 
@@ -170,7 +176,12 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                     overflow="hidden"
                   >
                     {!item.metadata.read && (
-                      <Box className={styles.unreadDot} />
+                      <>
+                        <Box className={styles.unreadDot} aria-hidden="true" />
+                        <VisuallyHidden>
+                          {formatMessage(m.notificationUnread)}
+                        </VisuallyHidden>
+                      </>
                     )}
                     <Text variant="medium" truncate>
                       {item.message.title}
@@ -205,6 +216,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${item.message.title} - ${formatMessage(m.notificationOpensInNewTab)}`}
                 className={styles.notificationLink}
               >
                 {content}
