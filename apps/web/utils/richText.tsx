@@ -100,6 +100,7 @@ import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
 import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
+import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -260,6 +261,9 @@ export const webRenderConnectedComponent = (
       break
     case 'VERAnnouncementCalculator':
       connectedComponent = <VerAnnouncementCalculator />
+      break
+    case 'Lyfjastofnun/Pharmacies':
+      connectedComponent = <PharmaciesAccordion />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

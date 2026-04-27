@@ -300,6 +300,37 @@ export class PoliceService {
     return fetch(url, requestInit)
   }
 
+  private reasonToError(reason: unknown): Error {
+    if (reason instanceof Error) {
+      return reason
+    }
+    if (typeof reason === 'string') {
+      return new Error(reason)
+    }
+    try {
+      return new Error(JSON.stringify(reason))
+    } catch {
+      return new Error('Unknown error')
+    }
+  }
+
+  /** Winston error log plus Slack error webhook (same payload shape as before). */
+  private logPoliceFailureAndNotify(
+    slackTitle: string,
+    logMessage: string,
+    info: { [key: string]: string | boolean | Date | undefined },
+    reason: unknown,
+  ): void {
+    const errorForSlack = this.reasonToError(reason)
+    this.logger.error(logMessage, {
+      ...info,
+      error: reason instanceof Error ? reason : undefined,
+      errorSummary:
+        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+    })
+    void this.eventService.postErrorEvent(slackTitle, info, errorForSlack)
+  }
+
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
@@ -341,8 +372,9 @@ export class PoliceService {
           })
         }
 
-        this.eventService.postErrorEvent(
+        this.logPoliceFailureAndNotify(
           'Failed to get police case file',
+          `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
           {
             caseId,
             actor: user.name,
@@ -404,8 +436,9 @@ export class PoliceService {
         })
       }
 
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to get police case files',
+        `Failed to get police case files for case ${caseId}`,
         {
           caseId,
           actor: user.name,
@@ -435,47 +468,52 @@ export class PoliceService {
     }
 
     const startTime = nowFactory()
+    const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
 
     try {
-      const res = await this.fetchPoliceDocumentApi(
-        `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`,
-      )
+      const res = await this.fetchPoliceDocumentApi(url)
 
-      if (res.ok) {
-        const response: z.infer<typeof this.digitalCaseFilesStructure> =
-          await res.json()
-
-        this.digitalCaseFilesStructure.parse(response)
-
-        return response
+      if (!res.ok) {
+        const detail = await res.text()
+        this.logger.error(
+          `Police digital case files request returned error for case ${caseId}`,
+          {
+            caseId,
+            source,
+            status: res.status,
+            detail: detail.slice(0, 2000),
+          },
+        )
+        // The police system does not provide a structured error response.
+        // When a police case does not exist, a stack trace is often returned.
+        throw new NotFoundException({
+          message: `Police digital case files for case ${caseId} do not exist`,
+          detail,
+        })
       }
 
-      return undefined
-      // TODO - fix when RLS has adjusted this endpoint to return an empty array for a case that exists but has no files
-      // const reason = await res.text()
+      const response: z.infer<typeof this.digitalCaseFilesStructure> =
+        await res.json()
 
-      // The police system does not provide a structured error response.
-      // When a police case does not exist, a stack trace is returned.
-      // throw new NotFoundException({
-      //   message: `Police case for case ${caseId} does not exist`,
-      //   detail: reason,
-      // })
+      this.digitalCaseFilesStructure.parse(response)
+
+      return response
     } catch (reason) {
       if (reason instanceof NotFoundException) {
         throw reason
       }
 
       if (reason instanceof ServiceUnavailableException) {
-        // Act as if the case does not exist
         throw new NotFoundException({
           ...reason,
-          message: `Police case for case ${caseId} does not exist`,
+          message: `Police digital case files for case ${caseId} are unavailable`,
           detail: reason.message,
         })
       }
 
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to get police digital case files',
+        `Failed to get police digital case files for case ${caseId}`,
         {
           caseId,
           actor: user.name,
@@ -488,9 +526,10 @@ export class PoliceService {
       )
 
       throw new BadGatewayException({
-        ...reason,
+        ...(reason instanceof Error ? reason : {}),
         message: `Failed to get police digital case files for case ${caseId}`,
-        detail: reason.message,
+        detail:
+          reason instanceof Error ? reason.message : JSON.stringify(reason),
       })
     }
   }
@@ -550,8 +589,9 @@ export class PoliceService {
         })
       }
 
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to get token URL for digital case file',
+        `Failed to get token URL for digital case file ${policeDigitalFileId}`,
         {
           rvgCaseId,
           rafraennGagnId: policeDigitalFileId,
@@ -674,8 +714,9 @@ export class PoliceService {
         })
       }
 
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to get police defendants',
+        `Failed to get police defendants for case ${caseId}`,
         {
           caseId,
           actor: user.name,
@@ -798,8 +839,9 @@ export class PoliceService {
         : 'Unknown error while fetching case units'
     const aggregatedError = new Error(detail)
 
-    this.eventService.postErrorEvent(
+    this.logPoliceFailureAndNotify(
       'Failed to get police case units (GetRVMalseiningar)',
+      `Failed to get police case units (GetRVMalseiningar) for case ${caseId}`,
       {
         caseId,
         actor: user.name,
@@ -898,8 +940,9 @@ export class PoliceService {
           })
         }
 
-        this.eventService.postErrorEvent(
+        this.logPoliceFailureAndNotify(
           'Failed to get subpoena',
+          `Failed to get subpoena ${policeSubpoenaId}`,
           {
             policeSubpoenaId,
             actor: user?.name || 'Digital-mailbox',
@@ -1031,8 +1074,9 @@ export class PoliceService {
 
       return cases
     } catch (reason) {
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to fetch and parse police case info for case',
+        `Failed to fetch and parse police case info for case ${caseId}`,
         {
           caseId,
           actor: user.name,
@@ -1121,18 +1165,15 @@ export class PoliceService {
           return true
         }
 
-        this.logger.error(`Failed to update police case ${caseId}`, {
-          reason,
-        })
-
-        this.eventService.postErrorEvent(
+        this.logPoliceFailureAndNotify(
           'Failed to update police case',
+          `Failed to update police case ${caseId}`,
           {
             caseId,
             actor: user.name,
             institution: user.institution?.name,
-            caseType,
-            caseState,
+            caseType: String(caseType),
+            caseState: String(caseState),
             policeCaseNumber,
             courtCaseNumber,
           },
@@ -1195,15 +1236,9 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logger.error(
-        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
-        {
-          error,
-        },
-      )
-
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to create external police document file',
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           caseId,
           defendantId,
@@ -1279,8 +1314,9 @@ export class PoliceService {
           })
         }
 
-        this.eventService.postErrorEvent(
+        this.logPoliceFailureAndNotify(
           'Failed to get police document status',
+          `Failed to get police document status ${policeDocumentId}`,
           {
             policeDocumentId,
             actor: user?.name || 'Digital-mailbox',
@@ -1366,12 +1402,9 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logger.error(`Failed create subpoena for case ${theCase.id}`, {
-        error,
-      })
-
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to create subpoena',
+        `Failed create subpoena for case ${theCase.id}`,
         {
           caseId: theCase.id,
           defendantId: defendant?.id,
@@ -1411,15 +1444,9 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logger.error(
-        `Failed revoke subpoena with police subpoena id ${policeSubpoenaId} for case ${theCase.id} from police`,
-        {
-          error,
-        },
-      )
-
-      this.eventService.postErrorEvent(
+      this.logPoliceFailureAndNotify(
         'Failed to revoke subpoena from police',
+        `Failed revoke subpoena with police subpoena id ${policeSubpoenaId} for case ${theCase.id} from police`,
         {
           caseId: theCase.id,
           policeSubpoenaId,

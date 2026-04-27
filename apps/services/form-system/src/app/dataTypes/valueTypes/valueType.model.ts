@@ -9,6 +9,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
+import { LanguageType } from '../languageType.model'
 
 class Month {
   @IsOptional()
@@ -58,9 +59,15 @@ export class ValueType {
   date?: Date | null
 
   @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  label?: LanguageType
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  listValue?: string
+  value?: string
 
   @IsOptional()
   @IsString()

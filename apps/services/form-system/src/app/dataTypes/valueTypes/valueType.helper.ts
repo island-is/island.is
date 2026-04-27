@@ -4,7 +4,7 @@ const valueTypeAttributeToLanguageType: Record<string, LanguageType> = {
   text: { is: 'Texti', en: 'Text' },
   number: { is: 'Tala', en: 'Number' },
   date: { is: 'Dagsetning', en: 'Date' },
-  listValue: { is: 'Listagildi', en: 'List value' },
+  label: { is: 'Gildi', en: 'Value' },
   nationalId: { is: 'Kennitala', en: 'National ID' },
   name: { is: 'Nafn', en: 'Name' },
   address: { is: 'Heimilisfang', en: 'Address' },
