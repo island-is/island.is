@@ -4,7 +4,7 @@ import flatMap from 'lodash/flatMap'
 
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   enumerate,
@@ -154,13 +154,13 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                   rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
                 })}
               </Text>
-              <IconButton
+              {/* <IconButton
                 icon="undo"
                 colorScheme="blue"
                 tooltipText="Enduropna mál"
                 size="small"
                 onClick={() => setModalVisible('REOPEN')}
-              />
+              /> */}
             </Box>
             {workingCase.appealedDate && (
               <Box marginBottom={1}>
@@ -169,6 +169,9 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 </Text>
               </Box>
             )}
+            <Button variant="text" colorScheme="destructive" size="small">
+              Enduropna mál
+            </Button>
           </Box>
         ) : (
           <ProsecutorAndDefendantsEntries workingCase={workingCase} />
