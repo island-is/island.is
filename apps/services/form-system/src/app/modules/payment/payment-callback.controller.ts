@@ -5,9 +5,11 @@ import {
   Body,
   Controller,
   Inject,
+  InternalServerErrorException,
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { ApplicationsService } from '../applications/applications.service'
 import { PaymentService } from './payment.service'
 
 @ApiTags('payment-callback')
@@ -15,6 +17,7 @@ import { PaymentService } from './payment.service'
 export class PaymentCallbackController {
   constructor(
     private readonly paymentService: PaymentService,
+    private readonly applicationsService: ApplicationsService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -41,9 +44,8 @@ export class PaymentCallbackController {
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
     if (callback.type === 'success') {
-      //log all the data thats going into fulfillPayment for easier debugging in case of errors
       this.logger.info(
-        `Received successful payment callback with data: paymentId=${callback.paymentFlowMetadata.paymentId}, applicationId=${callback.paymentFlowMetadata.applicationId}, receptionId=${callback.details?.eventMetadata?.charge?.receptionId}, paymentFlowId=${callback.paymentFlowId}`,
+        `Received successful payment callback with data: paymentId=${callback.paymentFlowMetadata.paymentId}, applicationId=${callback.paymentFlowMetadata.applicationId}, receptionId=${callback.details?.eventMetadata?.charge?.receptionId}`,
       )
       if (!callback.paymentFlowMetadata.paymentId) {
         throw new BadRequestException('No paymentId found in success callback')
@@ -58,11 +60,18 @@ export class PaymentCallbackController {
           'No receptionId found in success callback',
         )
       }
+
+      const result = await this.applicationsService.submit(
+        callback.paymentFlowMetadata.applicationId,
+      )
+      if (result.submissionFailed) {
+        throw new InternalServerErrorException('Application submission failed')
+      }
+
       await this.paymentService.fulfillPayment(
         callback.paymentFlowMetadata.paymentId,
         callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
-        callback.paymentFlowId,
       )
     }
   }
