@@ -77,9 +77,8 @@ describe('decryptApplePayPaymentToken', () => {
       applicationPrimaryAccountNumber: '4111111111111111',
       applicationExpirationDate: '251231',
       paymentData: {
-        onlinePaymentCryptogram: Buffer.from('cryptogram-bytes').toString(
-          'base64',
-        ),
+        onlinePaymentCryptogram:
+          Buffer.from('cryptogram-bytes').toString('base64'),
       },
     }
 
@@ -117,7 +116,8 @@ describe('decryptApplePayPaymentToken', () => {
             transactionId: '',
           },
         },
-        paymentProcessingKey: '-----BEGIN PRIVATE KEY-----\nMII\n-----END PRIVATE KEY-----\n',
+        paymentProcessingKey:
+          '-----BEGIN PRIVATE KEY-----\nMII\n-----END PRIVATE KEY-----\n',
         merchantIdentifier: MERCHANT_ID,
       }),
     ).toThrow(/Only EC_v1 is supported/)

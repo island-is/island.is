@@ -422,12 +422,15 @@ export class CardPaymentService {
 
     if (!response.ok) {
       const responseBody = await response.text()
-      this.logger.error('[DEBUG-APPLEPAY] Merchant validation non-OK response', {
-        validationURL,
-        status: response.status,
-        statusText: response.statusText,
-        responseBody,
-      })
+      this.logger.error(
+        '[DEBUG-APPLEPAY] Merchant validation non-OK response',
+        {
+          validationURL,
+          status: response.status,
+          statusText: response.statusText,
+          responseBody,
+        },
+      )
       throw new BadRequestException(
         `Apple Pay validation failed: ${response.status} ${responseBody}`,
       )
@@ -544,13 +547,16 @@ export class CardPaymentService {
       this.requireApplePayDecryptionConfig()
 
     // DEBUG-APPLEPAY: PEM header + length helps diagnose missing newlines / wrong key paste in env vars
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Decryption config resolved`, {
-      paymentFlowId,
-      merchantIdentifier: applePayMerchantIdentifier,
-      processingKeyLength: applePayPaymentProcessingKey.length,
-      processingKeyHeader: applePayPaymentProcessingKey.split('\n')[0],
-      processingKeyAlreadyValidated: this.applePayProcessingKeyValidated,
-    })
+    this.logger.info(
+      `${logPrefix} [DEBUG-APPLEPAY] Decryption config resolved`,
+      {
+        paymentFlowId,
+        merchantIdentifier: applePayMerchantIdentifier,
+        processingKeyLength: applePayPaymentProcessingKey.length,
+        processingKeyHeader: applePayPaymentProcessingKey.split('\n')[0],
+        processingKeyAlreadyValidated: this.applePayProcessingKeyValidated,
+      },
+    )
 
     try {
       this.validateApplePayProcessingKeyOnce(applePayPaymentProcessingKey)
@@ -593,8 +599,7 @@ export class CardPaymentService {
       signatureLength: input.paymentData.signature?.length ?? 0,
       ephemeralPublicKeyLength:
         input.paymentData.header?.ephemeralPublicKey?.length ?? 0,
-      publicKeyHashLength:
-        input.paymentData.header?.publicKeyHash?.length ?? 0,
+      publicKeyHashLength: input.paymentData.header?.publicKeyHash?.length ?? 0,
       hasTransactionId: !!input.paymentData.header?.transactionId,
     })
 
@@ -675,12 +680,15 @@ export class CardPaymentService {
     }
 
     // DEBUG-APPLEPAY: cheap signal for "did Valitor even acknowledge" before we try to parse
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Gateway response received`, {
-      paymentFlowId,
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok,
-    })
+    this.logger.info(
+      `${logPrefix} [DEBUG-APPLEPAY] Gateway response received`,
+      {
+        paymentFlowId,
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+      },
+    )
 
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
       paymentFlowId,
