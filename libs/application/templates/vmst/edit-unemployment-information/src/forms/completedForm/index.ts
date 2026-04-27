@@ -8,6 +8,7 @@ export const completedForm = buildForm({
   id: 'completedForm',
   mode: FormModes.COMPLETED,
   logo: DirectorateOfLabourLogo,
+  title: applicationMessages.completedFormAlertTitle,
   children: [
     buildFormConclusionSection({
       alertTitle: applicationMessages.completedFormAlertTitle,

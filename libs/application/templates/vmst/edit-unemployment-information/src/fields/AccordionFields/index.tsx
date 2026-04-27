@@ -22,7 +22,10 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import { BankAccountFormField } from '@island.is/application/ui-fields'
+import {
+  BankAccountFormField,
+  CheckboxFormField,
+} from '@island.is/application/ui-fields'
 import {
   InputController,
   SelectController,
@@ -285,18 +288,24 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             {formatMessage(applicationMessages.addressDescription)}
           </Text>
           <GridRow>
-            <CheckboxController
-              id="otherAddress.currentAddressIsNotDifferent"
-              name="otherAddress.currentAddressIsNotDifferent"
-              defaultValue={currentAddressIsNotDifferentDefault}
-              options={[
-                {
-                  value: YES,
-                  label: formatMessage(
-                    applicationMessages.addressIsSameAsNationalRegistry,
-                  ),
-                },
-              ]}
+            <CheckboxFormField
+              application={application}
+              field={{
+                id: 'otherAddress.currentAddressIsNotDifferent',
+                type: FieldTypes.CHECKBOX,
+                component: FieldComponents.CHECKBOX,
+                children: undefined,
+                // name:"otherAddress.currentAddressIsNotDifferent",
+                defaultValue: { currentAddressIsNotDifferentDefault },
+                options: [
+                  {
+                    value: YES,
+                    label: formatMessage(
+                      applicationMessages.addressIsSameAsNationalRegistry,
+                    ),
+                  },
+                ],
+              }}
             />
             {!hasSameAddress.includes(YES) && (
               <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
@@ -315,6 +324,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   id="otherAddress.otherPostcode"
                   name="otherAddress.otherPostcode"
                   label={formatMessage(applicationMessages.postCodeLabel)}
+                  isClearable={true}
                   options={postcodeOptions}
                   backgroundColor="blue"
                   defaultValue={otherPostcodeDefault}

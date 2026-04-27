@@ -14,6 +14,7 @@ export const MainForm = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   logo: DirectorateOfLabourLogo,
+  title: applicationMessages.pageTitle,
   children: [
     buildMultiField({
       id: 'mainMultiField',
