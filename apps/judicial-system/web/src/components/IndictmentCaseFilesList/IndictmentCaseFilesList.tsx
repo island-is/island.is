@@ -287,11 +287,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
+  const defendantsForCurrentDefender = isDefenceUser(user)
+    ? workingCase.defendants?.filter(
+        (d) => d.defenderNationalId === user?.nationalId,
+      )
+    : undefined
+
   const hideCourtRecord =
     isDefenceUser(user) &&
     Boolean(
-      workingCase.defendants?.length &&
-        workingCase.defendants.every(
+      defendantsForCurrentDefender?.length &&
+        defendantsForCurrentDefender.every(
           (d) => d.indictmentCancelledOrDismissedState !== null,
         ),
     )
