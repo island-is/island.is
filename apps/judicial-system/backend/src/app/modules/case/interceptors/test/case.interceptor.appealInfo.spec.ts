@@ -255,7 +255,9 @@ describe('getAppealCaseInfo', () => {
 
       const info = getAppealCaseInfo(appealCase, theCase)
 
-      expect(info.statementDeadline).toEqual(new Date('2022-06-18T12:00:00.000Z'))
+      expect(info.statementDeadline).toEqual(
+        new Date('2022-06-18T12:00:00.000Z'),
+      )
       expect(info.isStatementDeadlineExpired).toBe(true)
     })
   })
