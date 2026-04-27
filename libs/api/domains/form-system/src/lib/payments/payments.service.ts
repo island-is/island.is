@@ -2,7 +2,6 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   PaymentCallbackApi,
   PaymentCallbackControllerApiClientPaymentCallbackRequest,
-  PaymentCallbackControllerPaymentApprovedRequest,
   PaymentControllerCreatePaymentRequest,
   PaymentControllerGetPaymentStatusRequest,
   PaymentsApi,
@@ -11,7 +10,6 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   CreatePaymentRequestInput,
-  PaymentApprovedInput,
   PaymentCallbackInput,
   PaymentStatusInput,
 } from '../../dto/payment.input'
@@ -56,17 +54,6 @@ export class PaymentsService {
       auth,
     ).paymentCallbackControllerApiClientPaymentCallback(
       input as PaymentCallbackControllerApiClientPaymentCallbackRequest,
-    )
-  }
-
-  async paymentApprovedCallback(
-    auth: User,
-    input: PaymentApprovedInput,
-  ): Promise<void> {
-    await this.paymentCallbackApiWithAuth(
-      auth,
-    ).paymentCallbackControllerPaymentApproved(
-      input as PaymentCallbackControllerPaymentApprovedRequest,
     )
   }
 
