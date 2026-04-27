@@ -30,7 +30,7 @@ export class RecyclingFundClientService {
       user,
     ).xRoadControllerCreateVehicleOwner(request)
 
-    logger.info('Car-recycling:createOwner', { result: r })
+    logger.info('Car-recycling:createOwner')
     return r
   }
 
@@ -59,7 +59,9 @@ export class RecyclingFundClientService {
       user,
     ).xRoadControllerCreateVehicle(request)
 
-    logger.info('Car-recycling: createVehicle', { result: r })
+    logger.info('Car-recycling: createVehicle', {
+      permno: permno.slice(-3) ?? '',
+    })
     return r
   }
 
@@ -82,7 +84,10 @@ export class RecyclingFundClientService {
       user,
     ).xRoadControllerCreateRecyclingRequest(request)
 
-    logger.info('Car-recycling:recycleVehicle', { result: r })
+    logger.info('Car-recycling:recycleVehicle', {
+      permno: permno.slice(-3) ?? '',
+      requestType,
+    })
     return r
   }
 }
