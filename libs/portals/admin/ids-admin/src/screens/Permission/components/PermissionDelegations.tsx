@@ -45,7 +45,7 @@ export const PermissionDelegations = ({
   isNewPermissionsOptionsEnabled?: boolean
 } = {}) => {
   const { formatMessage, lang } = useLocale()
-  const { selectedPermission, permission } = usePermission()
+  const { selectedPermission, permission, actionData } = usePermission()
   const { isSuperAdmin } = useSuperAdmin()
   const {
     isAccessControlled,
@@ -123,6 +123,14 @@ export const PermissionDelegations = ({
   const [categoriesTagsDirty, setCategoriesTagsDirty] =
     useEnvironmentState(false)
 
+  // Baseline IDs only reset on env change, not after saves — keeps sync diffs accurate
+  const [baselineCategoryIds] = useEnvironmentState<string[]>(
+    selectedPermission.categoryIds ?? [],
+  )
+  const [baselineTagIds] = useEnvironmentState<string[]>(
+    selectedPermission.tagIds ?? [],
+  )
+
   useEffect(() => {
     if (
       !showCategoriesAndTags ||
@@ -140,7 +148,17 @@ export const PermissionDelegations = ({
         .filter((t): t is Option => t !== undefined),
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCategoriesAndTags, tags, categories])
+  }, [showCategoriesAndTags, tags, categories, selectedPermission.environment])
+
+  useEffect(() => {
+    if (
+      actionData?.intent === PermissionFormTypes.DELEGATIONS &&
+      actionData?.data
+    ) {
+      setCategoriesTagsDirty(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData])
 
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
@@ -293,7 +311,7 @@ export const PermissionDelegations = ({
                                     type="hidden"
                                     name="originalCategoryIds"
                                     value={JSON.stringify(
-                                      selectedPermission.categoryIds ?? [],
+                                      baselineCategoryIds,
                                     )}
                                   />
                                   <Select
@@ -354,7 +372,7 @@ export const PermissionDelegations = ({
                                     type="hidden"
                                     name="originalTagIds"
                                     value={JSON.stringify(
-                                      selectedPermission.tagIds ?? [],
+                                      baselineTagIds,
                                     )}
                                   />
                                   <Select
