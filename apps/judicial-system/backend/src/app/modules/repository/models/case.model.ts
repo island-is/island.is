@@ -129,9 +129,11 @@ export class Case extends Model {
   state!: CaseState
 
   /**********
-   * A case number in LÖKE (police information system) connected to the case
+   * Police case numbers resolved from the case_defendant_police_case_number
+   * junction table. Not persisted as a column — set by
+   * CaseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases.
    **********/
-  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: false })
+  @Column({ type: DataType.VIRTUAL })
   @ApiProperty({ type: String, isArray: true })
   policeCaseNumbers!: string[]
 

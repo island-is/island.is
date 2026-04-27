@@ -174,6 +174,119 @@ export const messages = defineMessages({
   },
 })
 
+export const farmerLandsMessages = defineMessages({
+  farmNumber: {
+    id: 'sp.farmer-lands:farm-number',
+    defaultMessage: 'Búsnúmer: {arg}',
+  },
+  // Tab labels
+  selectTab: {
+    id: 'sp.farmer-lands:select-tab',
+    defaultMessage: 'Velja flipa',
+  },
+  tabRightsHolders: {
+    id: 'sp.farmer-lands:tab-rights-holders',
+    defaultMessage: 'Handhafar',
+  },
+  tabLandRegistry: {
+    id: 'sp.farmer-lands:tab-land-registry',
+    defaultMessage: 'Jarðaskrá',
+  },
+  tabSubsidies: {
+    id: 'sp.farmer-lands:tab-subsidies',
+    defaultMessage: 'Stuðningsgreiðslur',
+  },
+  // Rights holders columns
+  rightsHolder: {
+    id: 'sp.farmer-lands:rights-holder',
+    defaultMessage: 'Handhafi',
+  },
+  bankInfo: {
+    id: 'sp.farmer-lands:bank-info',
+    defaultMessage: 'Bankaupplýsingar',
+  },
+  isatNumber: {
+    id: 'sp.farmer-lands:isat-number',
+    defaultMessage: 'Ísat númer',
+  },
+  vatNumber: {
+    id: 'sp.farmer-lands:vat-number',
+    defaultMessage: 'Vsk. númer',
+  },
+  // Payment columns
+  paymentType: {
+    id: 'sp.farmer-lands:payment-type',
+    defaultMessage: 'Greiðslutegund',
+  },
+  share: {
+    id: 'sp.farmer-lands:share',
+    defaultMessage: 'Hlutfall',
+  },
+  pendingPayments: {
+    id: 'sp.farmer-lands:pending-payments',
+    defaultMessage: 'Greiðslur í bið',
+  },
+  operation: {
+    id: 'sp.farmer-lands:operation',
+    defaultMessage: 'Rekstur',
+  },
+  inOperation: {
+    id: 'sp.farmer-lands:in-operation',
+    defaultMessage: 'Í rekstri',
+  },
+  finished: {
+    id: 'sp.farmer-lands:finished',
+    defaultMessage: 'Lokið',
+  },
+  // Land registry columns
+  landRegistryEntry: {
+    id: 'sp.farmer-lands:land-registry-entry',
+    defaultMessage: 'Jarðaskrá',
+  },
+  ownershipType: {
+    id: 'sp.farmer-lands:ownership-type',
+    defaultMessage: 'Tegund eignar',
+  },
+  usage: {
+    id: 'sp.farmer-lands:usage',
+    defaultMessage: 'Notkun matshluta',
+  },
+  // Subsidies pagination
+  subsidyPrevPage: {
+    id: 'sp.farmer-lands:subsidy-prev-page',
+    defaultMessage: 'Fyrri síða',
+  },
+  subsidyNextPage: {
+    id: 'sp.farmer-lands:subsidy-next-page',
+    defaultMessage: 'Næsta síða',
+  },
+  // Subsidies columns
+  subsidyOffset: {
+    id: 'sp.farmer-lands:subsidy-offset',
+    defaultMessage: 'Skuldajöf.',
+  },
+  subsidyNetPaid: {
+    id: 'sp.farmer-lands:subsidy-net-paid',
+    defaultMessage: 'Útborgað',
+  },
+  subsidyUnits: {
+    id: 'sp.farmer-lands:subsidy-units',
+    defaultMessage: 'Eining',
+  },
+  subsidyUnitPrice: {
+    id: 'sp.farmer-lands:subsidy-unit-price',
+    defaultMessage: 'Einingaverð',
+  },
+  noFarmerLandsTitle: {
+    id: 'sp.farmer-lands:no-farmer-lands-title',
+    defaultMessage: 'Engar jarðir skráðar',
+  },
+  noFarmerLandFound: {
+    id: 'sp.farmer-lands:no-farmer-land-found',
+    defaultMessage: 'Jörð finnst ekki',
+  },
+})
+
 export const vehicleMessage = defineMessages({
   foundSingular: {
     id: 'sp.vehicles:found-singular',
