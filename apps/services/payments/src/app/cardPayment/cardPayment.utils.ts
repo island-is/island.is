@@ -515,6 +515,7 @@ export const generateApplePayValidationRequestOptions = ({
       'Content-Type': 'application/json',
       'Content-Length': String(Buffer.byteLength(body)),
     },
+    redirect: 'error',
     body,
     dispatcher,
   }
