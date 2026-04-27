@@ -22,10 +22,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  BankAccountFormField,
-  CheckboxFormField,
-} from '@island.is/application/ui-fields'
+import { BankAccountFormField } from '@island.is/application/ui-fields'
 import {
   InputController,
   SelectController,
@@ -76,11 +73,13 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { getValues, setValue, watch } = useFormContext()
   const { formatMessage, locale } = useLocale()
   const [invalidError, setInvalidError] = useState<boolean>()
-  const [errors, setErrors] = useState<Array<MessageDescriptor | string>>([])
+  const [customErrors, setCustomErrors] = useState<
+    Array<MessageDescriptor | string>
+  >([])
 
   setBeforeSubmitCallback?.(async () => {
     setInvalidError(false)
-    setErrors([])
+    setCustomErrors([])
     const bankOptions =
       getValueViaPath<Array<GaldurDomainModelsSettingsBanksBankDTO>>(
         externalData,
@@ -106,7 +105,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
     )
 
     if (!accountNumberValidity) {
-      setErrors((prev) => [
+      setCustomErrors((prev) => [
         ...prev,
         applicationMessages.accountNumberValidationError,
       ])
@@ -127,10 +126,16 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
       ) || undefined
 
     if (!ledgerSupportData) {
-      setErrors((prev) => [...prev, applicationMessages.ledgerValidationError])
+      setCustomErrors((prev) => [
+        ...prev,
+        applicationMessages.ledgerValidationError,
+      ])
     }
     if (!bankNumberSupportData) {
-      setErrors((prev) => [...prev, applicationMessages.bankValidationError])
+      setCustomErrors((prev) => [
+        ...prev,
+        applicationMessages.bankValidationError,
+      ])
     }
 
     if (!ledgerSupportData || !bankNumberSupportData) {
@@ -288,25 +293,21 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             {formatMessage(applicationMessages.addressDescription)}
           </Text>
           <GridRow>
-            <CheckboxFormField
-              application={application}
-              field={{
-                id: 'otherAddress.currentAddressIsNotDifferent',
-                type: FieldTypes.CHECKBOX,
-                component: FieldComponents.CHECKBOX,
-                children: undefined,
-                // name:"otherAddress.currentAddressIsNotDifferent",
-                defaultValue: { currentAddressIsNotDifferentDefault },
-                options: [
+            <GridColumn span="1/1" paddingBottom={2}>
+              <CheckboxController
+                id="otherAddress.currentAddressIsNotDifferent"
+                name="otherAddress.currentAddressIsNotDifferent"
+                defaultValue={currentAddressIsNotDifferentDefault}
+                options={[
                   {
                     value: YES,
                     label: formatMessage(
                       applicationMessages.addressIsSameAsNationalRegistry,
                     ),
                   },
-                ],
-              }}
-            />
+                ]}
+              />
+            </GridColumn>
             {!hasSameAddress.includes(YES) && (
               <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={2}>
                 <InputController
@@ -315,6 +316,7 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(applicationMessages.addressLabel)}
                   backgroundColor="blue"
                   defaultValue={otherAddressDefault}
+                  required
                 />
               </GridColumn>
             )}
@@ -324,10 +326,10 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   id="otherAddress.otherPostcode"
                   name="otherAddress.otherPostcode"
                   label={formatMessage(applicationMessages.postCodeLabel)}
-                  isClearable={true}
                   options={postcodeOptions}
                   backgroundColor="blue"
                   defaultValue={otherPostcodeDefault}
+                  required
                 />
               </GridColumn>
             )}
@@ -350,6 +352,12 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             defaultValue={passwordDefault}
             maxLength={10}
             backgroundColor="blue"
+            rules={{
+              minLength: {
+                value: 4,
+                message: formatMessage(applicationMessages.requiredError),
+              },
+            }}
           />
         </AccordionItem>
 
@@ -363,11 +371,12 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             application={application}
             field={{
               id: 'bankAccount',
-              title: applicationMessages.accountTitle,
+              title: '',
               defaultValue: () => bankAccountDefault,
               type: FieldTypes.BANK_ACCOUNT,
               component: FieldComponents.BANK_ACCOUNT,
               children: undefined,
+              required: true,
             }}
           />
         </AccordionItem>
@@ -385,10 +394,10 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
             id="jobWishes"
             name="jobWishes"
             label={formatMessage(applicationMessages.jobWishesLabel)}
-            options={jobCodeOptions}
             defaultValue={defaultJobWishes}
-            isMulti
+            options={jobCodeOptions}
             backgroundColor="blue"
+            isMulti
           />
         </AccordionItem>
 
@@ -750,14 +759,14 @@ export const AccordionFields: FC<React.PropsWithChildren<FieldBaseProps>> = (
               applicationMessages.bankAccountValidationErrorTitle,
             )}
             message={formatMessage(
-              applicationMessages.bankAccountValidationErrorTitle,
+              applicationMessages.bankAccountValidationError,
             )}
             type="warning"
           />
         )}
-        {errors &&
-          errors.length > 0 &&
-          errors.map((val, index) => (
+        {customErrors &&
+          customErrors.length > 0 &&
+          customErrors.map((val, index) => (
             <Box key={index} marginBottom={2}>
               <AlertMessage
                 title={formatMessage(

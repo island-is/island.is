@@ -16,6 +16,7 @@ import { editUnemploymentInfoDataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { UnemploymentApi } from '../dataProviders'
 import { ApiActions } from '../utils/constants'
@@ -35,6 +36,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
     ApplicationConfigurations.EditUnemploymentInformation.translation,
   dataSchema: editUnemploymentInfoDataSchema,
   featureFlag: Features.editUnemploymentInformation,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -71,7 +73,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(2),
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),

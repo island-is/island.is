@@ -60,9 +60,9 @@ export const languageSkillsSchema = z.object({
 })
 
 export const bankAccountSchema = z.object({
-  bankNumber: z.string(),
-  ledger: z.string(),
-  accountNumber: z.string(),
+  bankNumber: z.string().min(1),
+  ledger: z.string().min(1),
+  accountNumber: z.string().min(1),
 })
 
 export const otherAddressSchema = z

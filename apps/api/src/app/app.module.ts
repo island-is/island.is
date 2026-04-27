@@ -35,6 +35,7 @@ import {
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
+import { FarmersModule } from '@island.is/api/domains/farmers'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -47,6 +48,7 @@ import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
+import { IcelandicMedicinesAgencyModule } from '@island.is/api/domains/icelandic-medicines-agency'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
   CommunicationsConfig,
@@ -93,6 +95,7 @@ import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { FarmersClientConfig } from '@island.is/clients/farmers'
 import { PoliceCasesClientConfig } from '@island.is/clients/police-cases'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
@@ -115,7 +118,6 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
@@ -247,6 +249,7 @@ import {
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
+import { LyfjastofnunPharmaciesClientConfig } from '@island.is/clients/lyfjastofnun-pharmacies'
 import { HmsConfig } from '@island.is/clients/hms'
 import { NvsPermitsClientConfig } from '@island.is/clients/nvs-permits'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
@@ -344,6 +347,7 @@ const environment = getConfig
     FiskistofaModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
+    IcelandicMedicinesAgencyModule,
     AircraftRegistryModule,
     ShipRegistryModule,
     IntellectualPropertiesModule,
@@ -362,6 +366,7 @@ const environment = getConfig
     }),
     RegulationsModule,
     RegulationsAdminModule,
+    FarmersModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
@@ -419,6 +424,7 @@ const environment = getConfig
         ShipRegistryClientV2Config,
         ShipRegistryClientConfig,
         NationalRegistryV3ClientConfig,
+        FarmersClientConfig,
         PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
@@ -438,6 +444,7 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         LshClientConfig,
+        LyfjastofnunPharmaciesClientConfig,
         FeatureFlagConfig,
         HmsConfig,
         HmsApplicationSystemConfig,
@@ -476,7 +483,6 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,

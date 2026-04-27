@@ -59,9 +59,9 @@ import { escapeLike } from './utils/escapeLike'
 import {
   ApplicationXroadFieldDto,
   ApplicationXroadValueDto,
-  ValidationScreenDto,
 } from './models/dto/application.xroad.dto'
 import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
+import { FieldDto } from '../fields/models/dto/field.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -1095,22 +1095,22 @@ export class ApplicationsService {
 
     notificationDto.nationalId = nationalId
 
-    if (!notificationDto.screen) {
+    if (!notificationDto.screenDto) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }
 
-    const screen = notificationDto.screen
+    const screen = notificationDto.screenDto
 
     if (
-      notificationDto.command === NotificationCommands.VALIDATE &&
-      notificationDto.screen
+      notificationDto.command !== NotificationCommands.SUBMIT &&
+      notificationDto.screenDto
     ) {
-      notificationDto.validationScreen = this.mapScreenToValidationScreenDto(
-        notificationDto.screen,
+      notificationDto.fields = this.mapScreenToNotificationFields(
+        notificationDto.screenDto,
       )
-      notificationDto.screen = undefined
+      notificationDto.screenDto = undefined
     }
 
     const response = await this.notifyService.sendNotification(
@@ -1118,6 +1118,7 @@ export class ApplicationsService {
       submissionUrl,
     )
 
+    screen.fields = this.mergeMissing(response.fields, screen.fields)
     response.screen = screen
 
     response.screen.screenError = {
@@ -1155,6 +1156,47 @@ export class ApplicationsService {
     return response
   }
 
+  private mergeMissing(
+    responseFields: ApplicationXroadFieldDto[] | undefined,
+    screenFields: FieldDto[] | undefined,
+  ): FieldDto[] | undefined {
+    if (!screenFields?.length) return screenFields
+    if (!responseFields?.length) return screenFields
+
+    const byIdentifier = new Map(responseFields.map((f) => [f.identifier, f]))
+
+    return screenFields.map((field) => {
+      const override = byIdentifier.get(field.identifier)
+      if (!override) return field
+
+      const existingValueIdByOrder = new Map(
+        (field.values ?? []).map((v: any) => [v.order, v.id]),
+      )
+
+      const merged: any = { ...field, ...override }
+
+      if (Array.isArray(override.values)) {
+        merged.values = override.values.map((v: any) => ({
+          ...v,
+          id:
+            typeof v.id === 'string' && v.id.length > 0
+              ? v.id
+              : existingValueIdByOrder.get(v.order),
+        }))
+      }
+
+      // id is required for list items but is not used for populated lists
+      if (Array.isArray(override.list)) {
+        merged.list = override.list.map((li: any) => ({
+          ...li,
+          id: '1',
+        }))
+      }
+
+      return merged
+    })
+  }
+
   private getDefaultScreenErrorValidate(): ValidationErrorDto {
     return {
       hasError: true,
@@ -1183,24 +1225,22 @@ export class ApplicationsService {
     }
   }
 
-  private mapScreenToValidationScreenDto(
+  private mapScreenToNotificationFields(
     screen: ScreenDto,
-  ): ValidationScreenDto {
-    return {
-      screenIdentifier: screen.identifier,
-      fields: (screen.fields ?? []).map(
-        (field): ApplicationXroadFieldDto => ({
-          identifier: field.identifier,
-          fieldType: field.fieldType,
-          values: (field.values ?? []).map(
-            (value): ApplicationXroadValueDto => ({
-              order: value.order,
-              json: (value.json ?? {}) as unknown as Record<string, unknown>,
-            }),
-          ),
-        }),
-      ),
-    }
+  ): ApplicationXroadFieldDto[] {
+    return (screen.fields ?? []).map((field) => {
+      const xroadField = new ApplicationXroadFieldDto()
+      xroadField.identifier = field.identifier
+      xroadField.screenIdentifier = screen.identifier
+      xroadField.fieldType = field.fieldType
+      xroadField.values = (field.values ?? []).map((value) => {
+        const xroadValue = new ApplicationXroadValueDto()
+        xroadValue.order = value.order
+        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+        return xroadValue
+      })
+      return xroadField
+    })
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

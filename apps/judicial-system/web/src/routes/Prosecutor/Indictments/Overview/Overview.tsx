@@ -39,6 +39,7 @@ import {
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import { overview as strings } from './Overview.strings'
@@ -224,63 +225,67 @@ const Overview: FC = () => {
               />
             </Box>
           )}
-        <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment
-            displayVerdictViewDate
-            onProsecutorClick={() => {
-              setModal('editProsecutor')
-            }}
-          />
-        </Box>
-        <AllIndictmentCaseFiles />
-        {userCanAddDocuments && (
-          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
-            <Button
-              size="small"
-              icon="add"
-              onClick={() =>
-                router.push(
-                  `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
-                )
-              }
-            >
-              {formatMessage(strings.addDocumentsButtonText)}
-            </Button>
-          </Box>
-        )}
-        {userCanSendIndictmentToCourt && (
-          <Box marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.indictmentConfirmationTitle)}
-              required
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <InfoCardActiveIndictment
+              displayVerdictViewDate
+              onProsecutorClick={() => {
+                setModal('editProsecutor')
+              }}
             />
-            <BlueBox>
-              <div className={styles.gridRowEqual}>
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
-                  id="denyIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.denyIndictment)}
-                  checked={indictmentConfirmationDecision === 'deny'}
-                  onChange={() => setIndictmentConfirmationDecision('deny')}
-                />
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
-                  id="confirmIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.confirmIndictment)}
-                  checked={indictmentConfirmationDecision === 'confirm'}
-                  onChange={() => setIndictmentConfirmationDecision('confirm')}
-                />
-              </div>
-            </BlueBox>
           </Box>
-        )}
-        <Box component="section" marginBottom={10}>
-          <InputPenalties />
-        </Box>
+          <AllIndictmentCaseFiles />
+          {userCanAddDocuments && (
+            <Box display="flex" justifyContent="flexEnd">
+              <Button
+                size="small"
+                icon="add"
+                onClick={() =>
+                  router.push(
+                    `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
+                  )
+                }
+              >
+                {formatMessage(strings.addDocumentsButtonText)}
+              </Button>
+            </Box>
+          )}
+          {userCanSendIndictmentToCourt && (
+            <>
+              <SectionHeading
+                title={formatMessage(strings.indictmentConfirmationTitle)}
+                required
+              />
+              <BlueBox>
+                <div className={styles.gridRowEqual}>
+                  <RadioButton
+                    large
+                    name="indictmentConfirmationRequest"
+                    id="denyIndictment"
+                    backgroundColor="white"
+                    label={formatMessage(strings.denyIndictment)}
+                    checked={indictmentConfirmationDecision === 'deny'}
+                    onChange={() => setIndictmentConfirmationDecision('deny')}
+                  />
+                  <RadioButton
+                    large
+                    name="indictmentConfirmationRequest"
+                    id="confirmIndictment"
+                    backgroundColor="white"
+                    label={formatMessage(strings.confirmIndictment)}
+                    checked={indictmentConfirmationDecision === 'confirm'}
+                    onChange={() =>
+                      setIndictmentConfirmationDecision('confirm')
+                    }
+                  />
+                </div>
+              </BlueBox>
+            </>
+          )}
+          <Box component="section">
+            <InputPenalties />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

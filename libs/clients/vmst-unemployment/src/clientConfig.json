@@ -1111,16 +1111,6 @@
               }
             }
           },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
-                }
-              }
-            }
-          },
           "500": {
             "description": ""
           }
@@ -1162,16 +1152,6 @@
                   "items": {
                     "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -1237,16 +1217,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -6730,39 +6700,6 @@
           "created": {
             "type": "string",
             "format": ""
-          }
-        }
-      },
-      "Microsoft_AspNetCore_Mvc_ProblemDetails": {
-        "type": "object",
-        "additionalProperties": {
-          "nullable": true
-        },
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          },
-          "extensions": {
-            "type": "object",
-            "additionalProperties": {}
           }
         }
       },
