@@ -163,80 +163,89 @@ const PersonalTaxCredit = () => {
           />
 
           <Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              columnGap={1}
-              marginBottom={3}
-            >
-              <Text variant="h4">
-                {formatMessage(m.taxBracketSectionTitle)}
-              </Text>
-              <Tooltip
-                text={formatMessage(m.taxBracketSectionTooltip)}
-                variant="light"
-              />
-            </Box>
             {taxBracketQueryLoading && <CardLoader />}
             {taxBracketQueryError && (
               <Problem error={taxBracketQueryError} noBorder={false} />
             )}
             {!taxBracketQueryLoading && !taxBracketQueryError && (
-              <Stack space={3}>
-                <RadioButton
-                  id="tax-bracket-income-plan"
-                  name="tax-bracket"
-                  label={formatMessage(m.taxBracketIncomePlan)}
-                  value={SocialInsuranceTaxBracketAction.IncomePlan}
-                  checked={
-                    effectiveTaxBracket ===
-                    SocialInsuranceTaxBracketAction.IncomePlan
-                  }
-                  onChange={() =>
-                    setSelectedTaxBracket(
-                      SocialInsuranceTaxBracketAction.IncomePlan,
-                    )
-                  }
-                />
-                <RadioButton
-                  id="tax-bracket-bracket1"
-                  name="tax-bracket"
-                  label={formatMessage(m.taxBracketBracket1)}
-                  value={SocialInsuranceTaxBracketAction.Bracket1}
-                  checked={
-                    effectiveTaxBracket ===
-                    SocialInsuranceTaxBracketAction.Bracket1
-                  }
-                  onChange={() =>
-                    setSelectedTaxBracket(
-                      SocialInsuranceTaxBracketAction.Bracket1,
-                    )
-                  }
-                />
-                <RadioButton
-                  id="tax-bracket-bracket2"
-                  name="tax-bracket"
-                  label={formatMessage(m.taxBracketBracket2)}
-                  value={SocialInsuranceTaxBracketAction.Bracket2}
-                  checked={
-                    effectiveTaxBracket ===
-                    SocialInsuranceTaxBracketAction.Bracket2
-                  }
-                  onChange={() =>
-                    setSelectedTaxBracket(
-                      SocialInsuranceTaxBracketAction.Bracket2,
-                    )
-                  }
-                />
-                <Button
-                  onClick={handleSaveTaxBracket}
-                  loading={taxBracketSaving}
-                  disabled={taxBracketSaving || !taxBracketChanged}
-                  size="small"
+              <>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  columnGap={1}
+                  marginBottom={3}
                 >
-                  {formatMessage(m.taxBracketSave)}
-                </Button>
-              </Stack>
+                  <Text variant="h4">
+                    {formatMessage(m.taxBracketSectionTitle)}
+                  </Text>
+                  <Tooltip
+                    text={formatMessage(m.taxBracketSectionTooltip)}
+                    variant="light"
+                  />
+                </Box>
+                {effectiveTaxBracket === undefined ? (
+                  <AlertMessage
+                    type="info"
+                    message={formatMessage(m.taxBracketNotAvailable)}
+                  />
+                ) : (
+                  <Stack space={3}>
+                    <RadioButton
+                      id="tax-bracket-income-plan"
+                      name="tax-bracket"
+                      label={formatMessage(m.taxBracketIncomePlan)}
+                      value={SocialInsuranceTaxBracketAction.IncomePlan}
+                      checked={
+                        effectiveTaxBracket ===
+                        SocialInsuranceTaxBracketAction.IncomePlan
+                      }
+                      onChange={() =>
+                        setSelectedTaxBracket(
+                          SocialInsuranceTaxBracketAction.IncomePlan,
+                        )
+                      }
+                    />
+                    <RadioButton
+                      id="tax-bracket-bracket1"
+                      name="tax-bracket"
+                      label={formatMessage(m.taxBracketBracket1)}
+                      value={SocialInsuranceTaxBracketAction.Bracket1}
+                      checked={
+                        effectiveTaxBracket ===
+                        SocialInsuranceTaxBracketAction.Bracket1
+                      }
+                      onChange={() =>
+                        setSelectedTaxBracket(
+                          SocialInsuranceTaxBracketAction.Bracket1,
+                        )
+                      }
+                    />
+                    <RadioButton
+                      id="tax-bracket-bracket2"
+                      name="tax-bracket"
+                      label={formatMessage(m.taxBracketBracket2)}
+                      value={SocialInsuranceTaxBracketAction.Bracket2}
+                      checked={
+                        effectiveTaxBracket ===
+                        SocialInsuranceTaxBracketAction.Bracket2
+                      }
+                      onChange={() =>
+                        setSelectedTaxBracket(
+                          SocialInsuranceTaxBracketAction.Bracket2,
+                        )
+                      }
+                    />
+                    <Button
+                      onClick={handleSaveTaxBracket}
+                      loading={taxBracketSaving}
+                      disabled={taxBracketSaving || !taxBracketChanged}
+                      size="small"
+                    >
+                      {formatMessage(coreMessages.save)}
+                    </Button>
+                  </Stack>
+                )}
+              </>
             )}
           </Box>
         </Stack>

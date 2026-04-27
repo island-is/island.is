@@ -330,16 +330,16 @@ export const m = defineMessages({
   taxBracketBracket1: {
     id: 'sp.social-insurance-maintenance:tax-bracket-bracket1',
     defaultMessage:
-      'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,49% af tekjum 0-472.005 kr.).',
+      'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,49% af tekjum 0-498.122 kr.).',
   },
   taxBracketBracket2: {
     id: 'sp.social-insurance-maintenance:tax-bracket-bracket2',
     defaultMessage:
-      'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,99% af tekjum 472.006 - 1.325.127 kr.).',
+      'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,99% af tekjum 498.123 - 1.398.450 kr.).',
   },
-  taxBracketSave: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-save',
-    defaultMessage: 'Vista',
+  taxBracketNotAvailable: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-not-available',
+    defaultMessage: 'Ekki tókst að sækja stillingar fyrir skattþrep.',
   },
   taxBracketSaveSuccess: {
     id: 'sp.social-insurance-maintenance:tax-bracket-save-success',

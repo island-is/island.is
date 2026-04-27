@@ -1,10 +1,10 @@
-import { Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import { Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatNationalId,
   IntroWrapper,
-  LinkResolver,
+  LinkButton,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -38,20 +38,13 @@ const PaymentTypes = () => {
   const childBenefits = childBenefitsData?.socialInsuranceChildBenefits
 
   const buttonGroup = [
-    <LinkResolver
+    <LinkButton
       key="calculate-my-rights"
-      href="https://island.is/s/tryggingastofnun/reiknivel"
-    >
-      <Button
-        as="span"
-        variant="utility"
-        icon="open"
-        iconType="outline"
-        unfocusable
-      >
-        {formatMessage(m.calculateMyRights)}
-      </Button>
-    </LinkResolver>,
+      to="https://island.is/s/tryggingastofnun/reiknivel"
+      text={formatMessage(m.calculateMyRights)}
+      icon="open"
+      variant="utility"
+    />,
   ]
 
   return (
