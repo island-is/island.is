@@ -56,7 +56,9 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
           ? formatMessage(item.description)
           : undefined
 
-        const image = item.featuredImage
+        // TODO: Update to use the featuredImage when it is available
+        const image =
+          item.path === '/heilsa' ? './assets/images/jobs.svg' : undefined
 
         const icon = item.icon
         const iconEl = icon ? (

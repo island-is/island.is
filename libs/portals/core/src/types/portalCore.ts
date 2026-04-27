@@ -54,11 +54,6 @@ export interface PortalNavigationItem {
   }
 
   /**
-   * Illustration image URL shown on the right side of the featured card.
-   */
-  featuredImage?: string
-
-  /**
    * Indicates if the user has access to the navigation item
    */
   enabled?: boolean
