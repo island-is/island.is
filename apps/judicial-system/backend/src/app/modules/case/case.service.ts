@@ -114,7 +114,10 @@ const dateLogTypes: Record<DateLogKeys, DateType> = {
 
 type CaseStringKeys = keyof Pick<
   UpdateCase,
-  'postponedIndefinitelyExplanation' | 'civilDemands' | 'penalties'
+  | 'postponedIndefinitelyExplanation'
+  | 'civilDemands'
+  | 'penalties'
+  | 'reopenReason'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -122,6 +125,7 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
     StringType.POSTPONED_INDEFINITELY_EXPLANATION,
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
+  reopenReason: StringType.REOPEN_REASON,
 }
 
 export const caseListInclude: Includeable[] = [

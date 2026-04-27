@@ -522,6 +522,7 @@ export interface UpdateCase
   civilDemands?: string
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
+  reopenReason?: string
 }
 
 export interface UpdateAppealCase

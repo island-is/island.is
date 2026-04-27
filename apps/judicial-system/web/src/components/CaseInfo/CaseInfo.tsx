@@ -3,7 +3,7 @@ import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input, Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   enumerate,
@@ -19,6 +19,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './CaseInfo.strings'
@@ -129,7 +130,11 @@ export const ProsecutorAndDefendantsEntries: FC<Props> = ({
 
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
+  const { updateCase } = useCase()
   const [modalVisible, setModalVisible] = useState<'REOPEN'>()
+  const [reopenReason, setReopenReason] = useState(
+    workingCase.reopenReason ?? '',
+  )
 
   return (
     <>
@@ -196,9 +201,24 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
             primaryButton={{
               text: 'Halda áfram',
               colorScheme: 'destructive',
-              onClick: () => setModalVisible(undefined),
+              onClick: async () => {
+                await updateCase(workingCase.id, { reopenReason })
+                setModalVisible(undefined)
+              },
             }}
-          />
+          >
+            <Box marginBottom={4}>
+              <Input
+                name="reopenReason"
+                label="Ástæða enduropnunar"
+                placeholder="Skráðu ástæðu enduropnunar hér..."
+                textarea
+                rows={6}
+                value={reopenReason}
+                onChange={(e) => setReopenReason(e.target.value)}
+              />
+            </Box>
+          </Modal>
         )}
       </AnimatePresence>
     </>

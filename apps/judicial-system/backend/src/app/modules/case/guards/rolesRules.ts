@@ -104,6 +104,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'mergeCaseNumber',
   'isCompletedWithoutRuling',
   'defendantEventLogDecisions',
+  'reopenReason',
 ]
 
 // Allows prosecutors to update a specific set of fields
