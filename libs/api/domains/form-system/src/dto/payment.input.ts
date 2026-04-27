@@ -189,18 +189,6 @@ export class PaymentApprovedCallbackInput {
   status!: CallbackStatusEnum
 }
 
-@InputType('PaymentApprovedFormSystemInput')
-export class PaymentApprovedInput {
-  @Field(() => String)
-  applicationId!: string
-
-  @Field(() => String)
-  id!: string
-
-  @Field(() => PaymentApprovedCallbackInput)
-  callback!: PaymentApprovedCallbackInput
-}
-
 @InputType('ChargeItemFormSystemInput')
 export class ChargeItemInput {
   @Field(() => String)
