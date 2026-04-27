@@ -65,7 +65,7 @@ export class ClientsService extends MultiEnvironmentService {
         clientType: clients[0].clientType,
         sso: clients[0].sso,
         modified: clients[0].modified,
-        archived: !!clients[0].archived,
+        archived: clients.every((c) => !!c.archived),
         environments: clients,
       }))
       .sort((a, b) => a.clientId.localeCompare(b.clientId))
@@ -115,7 +115,7 @@ export class ClientsService extends MultiEnvironmentService {
       clientType: clientEnvs[0].clientType,
       sso: clientEnvs[0].sso,
       modified: clientEnvs[0].modified,
-      archived: !!clientEnvs[0].archived,
+      archived: clientEnvs.every((c) => !!c.archived),
       environments: clientEnvs,
     }
   }
@@ -274,8 +274,8 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   /**
-   * Run a void API call across all environments. Returns true if at least
-   * one environment succeeded.
+   * Run a void API call across all environments. Returns true only if
+   * all environments succeeded.
    */
   private async runOnAllEnvironments(
     user: User,
@@ -283,21 +283,22 @@ export class ClientsService extends MultiEnvironmentService {
   ): Promise<boolean> {
     const targets = environments.map((env) => ({
       environment: env,
-      success: true,
+      success: false,
     }))
 
     await Promise.all(
       targets.map(async (target) => {
-        await this.makeRequest(user, target.environment, request).catch(
-          (error) => {
-            target.success = false
+        await this.makeRequest(user, target.environment, request)
+          .then(() => {
+            target.success = true
+          })
+          .catch((error) => {
             this.handleError(error, target.environment)
-          },
-        )
+          })
       }),
     )
 
-    return targets.some((target) => target.success)
+    return targets.every((target) => target.success)
   }
 
   async getAllowedScopes(
