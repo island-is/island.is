@@ -6,8 +6,8 @@ export class VerdictsInput {
   @Field(() => String, { nullable: true })
   searchTerm?: string
 
-  @Field(() => String, { nullable: true })
-  courtLevel?: string
+  @Field(() => [String], { nullable: true })
+  court?: string[]
 
   @Field(() => String, { nullable: true })
   caseNumber?: string
