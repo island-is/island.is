@@ -46,7 +46,7 @@ import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
 import { getDefenderVisiblePoliceCaseNumbers } from '../file'
-import { Case, User } from '../repository'
+import { Case, Defendant, User } from '../repository'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -230,16 +230,23 @@ export class LimitedAccessCaseController {
       )
     }
 
-    const visiblePoliceCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
-      user.nationalId,
-      theCase.defendants,
-      theCase.policeCaseNumbers,
-    )
-
-    if (!visiblePoliceCaseNumbers.includes(policeCaseNumber)) {
-      throw new ForbiddenException(
-        `Defender does not have access to police case number ${policeCaseNumber}`,
+    if (
+      Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
       )
+    ) {
+      const visiblePoliceCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
+        user.nationalId,
+        theCase.defendants,
+        theCase.policeCaseNumbers,
+      )
+
+      if (!visiblePoliceCaseNumbers.includes(policeCaseNumber)) {
+        throw new ForbiddenException(
+          `Defender does not have access to police case number ${policeCaseNumber}`,
+        )
+      }
     }
 
     const pdf = await this.pdfService.getCaseFilesRecordPdf(

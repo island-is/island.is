@@ -838,13 +838,19 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const visiblePoliceCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
-        user.nationalId,
-        theCase.defendants,
-        theCase.policeCaseNumbers,
-      )
+      const policeCaseNumbersForZip =
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants,
+        )
+          ? getDefenderVisiblePoliceCaseNumbers(
+              user.nationalId,
+              theCase.defendants,
+              theCase.policeCaseNumbers,
+            )
+          : theCase.policeCaseNumbers
 
-      visiblePoliceCaseNumbers.forEach((policeCaseNumber) => {
+      policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),

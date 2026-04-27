@@ -18,6 +18,7 @@ import {
   canLimitedAccessUserViewCaseFile,
   getDefenderVisiblePoliceCaseNumbers,
 } from '../../file'
+import { Defendant } from '../../repository'
 
 @Injectable()
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
@@ -57,7 +58,11 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
         if (
           isDefenceUser(user) &&
           isIndictmentCase(theCase.type) &&
-          theCase.policeCaseNumbers
+          theCase.policeCaseNumbers &&
+          Defendant.isConfirmedDefenderOfDefendant(
+            user.nationalId,
+            theCase.defendants,
+          )
         ) {
           policeCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
             user.nationalId,
