@@ -337,9 +337,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             )
             return {
               notificationTemplateId:
-                NotificationConfig[
-                  NotificationType.AccidentNotificationPruned
-                ].templateId,
+                NotificationConfig[NotificationType.AccidentNotificationPruned]
+                  .templateId,
               ...(nationalId && { internalBody: nationalId }),
             }
           }),

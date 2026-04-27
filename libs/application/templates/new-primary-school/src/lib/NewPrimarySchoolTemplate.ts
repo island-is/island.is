@@ -262,9 +262,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             )
             return {
               notificationTemplateId:
-                NotificationConfig[
-                  NotificationType.NewPrimarySchoolPruned
-                ].templateId,
+                NotificationConfig[NotificationType.NewPrimarySchoolPruned]
+                  .templateId,
               ...(nationalId && { internalBody: nationalId }),
             }
           }),
@@ -390,9 +389,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             )
             return {
               notificationTemplateId:
-                NotificationConfig[
-                  NotificationType.NewPrimarySchoolPruned
-                ].templateId,
+                NotificationConfig[NotificationType.NewPrimarySchoolPruned]
+                  .templateId,
               ...(nationalId && { internalBody: nationalId }),
             }
           }),
