@@ -9,6 +9,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  NotificationType,
+  NotificationConfig,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -253,6 +255,20 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
+            pruneMessage: (application) => {
+              const regNumber = getValueViaPath(
+                application.answers,
+                'machine.regNumber',
+                undefined,
+              ) as string | undefined
+              return {
+                notificationTemplateId:
+                  NotificationConfig[
+                    NotificationType.TransferOfMachineOwnershipPruned
+                  ].templateId,
+                internalBody: regNumber ?? '',
+              }
+            },
           },
           roles: [
             {
