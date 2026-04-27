@@ -1,6 +1,5 @@
-import { getDefenderVisiblePoliceCaseNumbers } from './caseFileCategory'
-
 import { Defendant } from '../../repository'
+import { getDefenderVisiblePoliceCaseNumbers } from './caseFileCategory'
 
 const makeDefendant = (
   overrides: Partial<{

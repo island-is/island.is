@@ -3,12 +3,12 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
