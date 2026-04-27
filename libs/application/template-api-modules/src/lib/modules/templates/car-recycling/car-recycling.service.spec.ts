@@ -26,7 +26,12 @@ describe('CarRecyclingService', () => {
               }),
           })),
         },
-        VehicleSearchApi,
+        {
+          provide: VehicleSearchApi,
+          useValue: {
+            // Mock methods as needed for your tests
+          },
+        },
       ],
     }).compile()
 
