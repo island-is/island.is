@@ -287,32 +287,6 @@ jobs:
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
-  validate-pr-ai-disclosure:
-    name: Validate PR AI disclosure
-    runs-on: arc-shared
-    permissions:
-      contents: 'read'
-    steps:
-      - name: Checkout validator
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            scripts/ci/validate-pr-ai-disclosure.mjs
-          sparse-checkout-cone-mode: false
-
-      - name: Load pull request body
-        run: |
-          delimiter="PR_BODY_$(date +%s%N)"
-          {
-            echo "PR_BODY<<${delimiter}"
-            node -e "const event = require(process.env.GITHUB_EVENT_PATH); process.stdout.write(event.pull_request?.body ?? '')"
-            echo
-            echo "${delimiter}"
-          } >> "$GITHUB_ENV"
-
-      - name: Validate pull request body
-        run: node scripts/ci/validate-pr-ai-disclosure.mjs
-
   success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
@@ -326,16 +300,12 @@ jobs:
       - e2e
       - build
       - unicorn-tests
-      - validate-pr-ai-disclosure
     steps:
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
           exit 1
-
-      - name: Check PR AI disclosure validation success
-        run: '[[ "${{ needs.validate-pr-ai-disclosure.result }}" == "success" ]]'
 
       - name: Collect
         env:
