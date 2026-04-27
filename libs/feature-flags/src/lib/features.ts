@@ -181,8 +181,6 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
-  // Service portal dashboard v2
-  isServicePortalDashboardV2PageEnabled = 'isServicePortalDashboardV2PageEnabled',
 }
 
 export enum ServerSideFeature {
