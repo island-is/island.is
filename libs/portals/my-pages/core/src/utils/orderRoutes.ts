@@ -8,9 +8,7 @@ const menuConfigSchema = z.object({
 
 export type MenuConfig = z.infer<typeof menuConfigSchema>
 
-export const parseMenuConfig = (
-  orderInput?: string | string[],
-): MenuConfig => {
+export const parseMenuConfig = (orderInput?: string | string[]): MenuConfig => {
   if (Array.isArray(orderInput)) return { menu: orderInput }
   if (typeof orderInput !== 'string') return { menu: [] }
   try {

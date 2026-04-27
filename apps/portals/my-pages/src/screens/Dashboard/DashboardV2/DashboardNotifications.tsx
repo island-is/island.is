@@ -70,9 +70,14 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                 color="blue400"
                 size="medium"
               />
-              <Box className={styles.notificationBadge[badgeActive]} aria-hidden="true" />
+              <Box
+                className={styles.notificationBadge[badgeActive]}
+                aria-hidden="true"
+              />
               {hasUnread && (
-                <VisuallyHidden>{formatMessage(m.notificationsUnread)}</VisuallyHidden>
+                <VisuallyHidden>
+                  {formatMessage(m.notificationsUnread)}
+                </VisuallyHidden>
               )}
             </Box>
             <Text variant="h4" as="h2" color="blue400">
@@ -219,7 +224,9 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`${item.message.title} - ${formatMessage(m.notificationOpensInNewTab)}`}
+                aria-label={`${item.message.title} - ${formatMessage(
+                  m.notificationOpensInNewTab,
+                )}`}
                 className={styles.notificationLink}
               >
                 {content}
