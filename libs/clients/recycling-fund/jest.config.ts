@@ -1,16 +1,11 @@
 /* eslint-disable */
 export default {
   displayName: 'clients-recycling-fund',
-  preset: './jest.preset.js',
-  rootDir: '../../../..',
-  roots: [__dirname],
-  globals: {},
+  preset: '../../../jest.preset.js',
+  testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]sx?$': [
-      'ts-jest',
-      { tsconfig: `${__dirname}/tsconfig.spec.json` },
-    ],
+    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/recycling-fund',
+  moduleFileExtensions: ['ts', 'js', 'html'],
+  coverageDirectory: '../../../coverage/libs/clients/recycling-fund',
 }
