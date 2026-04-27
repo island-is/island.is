@@ -21,6 +21,8 @@ export const useDashboardNav = () => {
       item.path !== DocumentsPaths.ElectronicDocumentsRoot,
   )
 
+  // Temporary handling of the navigation ordering until we can remove DashboardV1
+  // and only use the new Dashboard ordering for everything
   const { data: configData } = useQuery<Query, QueryGetNamespaceArgs>(
     GET_NAMESPACE_QUERY,
     {
