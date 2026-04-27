@@ -140,17 +140,6 @@ export const buildPaymentState = <
         shouldDeleteChargeIfPaymentFulfilled: true,
         ...options.lifecycle,
       },
-      scheduledNotifications: [
-        {
-          template:
-            NotificationConfig[NotificationType.PaymentReminder].templateId,
-          delayInMs: 10000,
-          args: {
-            applicationLink: '1234567890',
-            expiryDate: '2026-05-01',
-          },
-        },
-      ],
       actionCard: {
         historyLogs: [
           {
