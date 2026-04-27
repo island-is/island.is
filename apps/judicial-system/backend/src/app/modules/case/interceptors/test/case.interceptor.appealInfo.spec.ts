@@ -26,10 +26,9 @@ describe('getRequestCaseLevelAppealInfo', () => {
   })
 
   it('returns canBeAppealed when prosecutor and defender postponed their decisions', () => {
-    const rulingDate = '2022-06-15T19:50:08.033Z'
     const theCase = {
       type: CaseType.CUSTODY,
-      rulingDate,
+      rulingDate: new Date('2022-06-15T19:50:08.033Z'),
       accusedAppealDecision: CaseAppealDecision.POSTPONE,
       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
     } as Case
@@ -41,7 +40,7 @@ describe('getRequestCaseLevelAppealInfo', () => {
       canBeAppealed: true,
       canDefenderAppeal: true,
       canProsecutorAppeal: true,
-      appealDeadline: '2022-06-18T19:50:08.033Z',
+      appealDeadline: new Date('2022-06-18T19:50:08.033Z'),
       isAppealDeadlineExpired: true,
     })
   })
@@ -49,7 +48,7 @@ describe('getRequestCaseLevelAppealInfo', () => {
   it('returns hasBeenAppealed when an appeal exists and the case was not accepted in court', () => {
     const theCase = {
       type: CaseType.CUSTODY,
-      rulingDate: '2022-06-15T19:50:08.033Z',
+      rulingDate: new Date('2022-06-15T19:50:08.033Z'),
       accusedAppealDecision: CaseAppealDecision.APPEAL,
       prosecutorAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
       appealCase: { appealState: AppealCaseState.APPEALED } as AppealCase,
@@ -62,7 +61,7 @@ describe('getRequestCaseLevelAppealInfo', () => {
       canBeAppealed: false,
       canDefenderAppeal: false,
       canProsecutorAppeal: false,
-      appealDeadline: '2022-06-18T19:50:08.033Z',
+      appealDeadline: new Date('2022-06-18T19:50:08.033Z'),
       isAppealDeadlineExpired: true,
     })
   })
@@ -70,7 +69,7 @@ describe('getRequestCaseLevelAppealInfo', () => {
   it('treats both parties accepting in court as not appealed even when an appealCase exists', () => {
     const theCase = {
       type: CaseType.CUSTODY,
-      rulingDate: '2022-06-15T19:50:08.033Z',
+      rulingDate: new Date('2022-06-15T19:50:08.033Z'),
       accusedAppealDecision: CaseAppealDecision.ACCEPT,
       prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
       appealCase: { appealState: AppealCaseState.APPEALED } as AppealCase,
@@ -94,7 +93,7 @@ describe('getRequestCaseLevelAppealInfo', () => {
     (decision: CaseAppealDecision, expected: boolean) => {
       const theCase = {
         type: CaseType.CUSTODY,
-        rulingDate: '2022-06-15T19:50:08.033Z',
+        rulingDate: new Date('2022-06-15T19:50:08.033Z'),
         prosecutorAppealDecision: decision,
       } as Case
 
@@ -114,7 +113,7 @@ describe('getRequestCaseLevelAppealInfo', () => {
     (decision: CaseAppealDecision, expected: boolean) => {
       const theCase = {
         type: CaseType.CUSTODY,
-        rulingDate: '2022-06-15T19:50:08.033Z',
+        rulingDate: new Date('2022-06-15T19:50:08.033Z'),
         accusedAppealDecision: decision,
       } as Case
 
@@ -130,7 +129,7 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.INDICTMENT,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-      rulingDate: '2022-06-15T19:50:08.033Z',
+      rulingDate: new Date('2022-06-15T19:50:08.033Z'),
     } as Case
 
     expect(getIndictmentCaseLevelAppealInfo(theCase)).toEqual({})
@@ -149,7 +148,7 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.INDICTMENT,
       indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
-      rulingDate: '2022-06-15T19:50:08.033Z',
+      rulingDate: new Date('2022-06-15T19:50:08.033Z'),
     } as Case
 
     expect(getIndictmentCaseLevelAppealInfo(theCase)).toEqual({
@@ -157,7 +156,7 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
       canBeAppealed: true,
       canProsecutorAppeal: true,
       canDefenderAppeal: true,
-      appealDeadline: '2022-06-18T19:50:08.033Z',
+      appealDeadline: new Date('2022-06-18T19:50:08.033Z'),
       isAppealDeadlineExpired: true,
     })
   })
@@ -166,7 +165,7 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.INDICTMENT,
       indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
-      rulingDate: '2022-06-15T19:50:08.033Z',
+      rulingDate: new Date('2022-06-15T19:50:08.033Z'),
       appealCase: { appealState: AppealCaseState.APPEALED } as AppealCase,
     } as Case
 
@@ -175,7 +174,7 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
       canBeAppealed: false,
       canProsecutorAppeal: false,
       canDefenderAppeal: false,
-      appealDeadline: '2022-06-18T19:50:08.033Z',
+      appealDeadline: new Date('2022-06-18T19:50:08.033Z'),
       isAppealDeadlineExpired: true,
     })
   })
@@ -186,7 +185,7 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.INDICTMENT,
       indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
-      rulingDate: rulingDate.toISOString(),
+      rulingDate,
     } as Case
 
     expect(
@@ -198,30 +197,32 @@ describe('getIndictmentCaseLevelAppealInfo', () => {
 describe('getAppealCaseInfo', () => {
   describe('case-level appeals (rulingFileId is null)', () => {
     it('attributes the appeal to the prosecutor when prosecutorPostponedAppealDate is set', () => {
+      const prosecutorPostponedAppealDate = new Date('2022-06-15T19:50:08.033Z')
       const theCase = {
         type: CaseType.CUSTODY,
-        prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        prosecutorPostponedAppealDate,
       } as Case
       const appealCase = {} as AppealCase
 
       expect(getAppealCaseInfo(appealCase, theCase)).toEqual({
         appealedByRole: UserRole.PROSECUTOR,
-        appealedDate: '2022-06-15T19:50:08.033Z',
+        appealedDate: prosecutorPostponedAppealDate,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
     })
 
     it('attributes the appeal to the defender when accusedPostponedAppealDate is set', () => {
+      const accusedPostponedAppealDate = new Date('2022-06-15T19:50:08.033Z')
       const theCase = {
         type: CaseType.CUSTODY,
-        accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        accusedPostponedAppealDate,
       } as Case
       const appealCase = {} as AppealCase
 
       expect(getAppealCaseInfo(appealCase, theCase)).toEqual({
         appealedByRole: UserRole.DEFENDER,
-        appealedDate: '2022-06-15T19:50:08.033Z',
+        appealedDate: accusedPostponedAppealDate,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
@@ -232,8 +233,8 @@ describe('getAppealCaseInfo', () => {
         type: CaseType.CUSTODY,
         prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
         accusedAppealDecision: CaseAppealDecision.ACCEPT,
-        prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-        accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        prosecutorPostponedAppealDate: new Date('2022-06-15T19:50:08.033Z'),
+        accusedPostponedAppealDate: new Date('2022-06-15T19:50:08.033Z'),
       } as Case
       const appealCase = {} as AppealCase
 
@@ -246,7 +247,7 @@ describe('getAppealCaseInfo', () => {
     it('returns statement deadline + expired flag when the appeal has been received by the court', () => {
       const theCase = {
         type: CaseType.CUSTODY,
-        prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        prosecutorPostponedAppealDate: new Date('2022-06-15T19:50:08.033Z'),
       } as Case
       const appealCase = {
         appealReceivedByCourtDate: new Date('2022-06-17T12:00:00.000Z'),
@@ -254,36 +255,38 @@ describe('getAppealCaseInfo', () => {
 
       const info = getAppealCaseInfo(appealCase, theCase)
 
-      expect(info.statementDeadline).toBe('2022-06-18T12:00:00.000Z')
+      expect(info.statementDeadline).toEqual(new Date('2022-06-18T12:00:00.000Z'))
       expect(info.isStatementDeadlineExpired).toBe(true)
     })
   })
 
   describe('ruling-order appeals (rulingFileId is set)', () => {
     it('attributes the appeal to the defender when appealedByNationalId is set', () => {
+      const created = new Date('2026-04-01T12:00:00.000Z')
       const theCase = { type: CaseType.INDICTMENT } as Case
       const appealCase = {
         rulingFileId: 'file-id',
         appealedByNationalId: '0101011010',
-        created: new Date('2026-04-01T12:00:00.000Z'),
+        created,
       } as AppealCase
 
       expect(getAppealCaseInfo(appealCase, theCase)).toMatchObject({
         appealedByRole: UserRole.DEFENDER,
-        appealedDate: '2026-04-01T12:00:00.000Z',
+        appealedDate: created,
       })
     })
 
     it('attributes the appeal to the prosecutor when no appealedByNationalId is set', () => {
+      const created = new Date('2026-04-01T12:00:00.000Z')
       const theCase = { type: CaseType.INDICTMENT } as Case
       const appealCase = {
         rulingFileId: 'file-id',
-        created: new Date('2026-04-01T12:00:00.000Z'),
+        created,
       } as AppealCase
 
       expect(getAppealCaseInfo(appealCase, theCase)).toMatchObject({
         appealedByRole: UserRole.PROSECUTOR,
-        appealedDate: '2026-04-01T12:00:00.000Z',
+        appealedDate: created,
       })
     })
 
@@ -295,8 +298,8 @@ describe('getAppealCaseInfo', () => {
         created: new Date('2026-04-01T12:00:00.000Z'),
       } as AppealCase
 
-      expect(getAppealCaseInfo(appealCase, theCase).statementDeadline).toBe(
-        '2026-04-03T12:00:00.000Z',
+      expect(getAppealCaseInfo(appealCase, theCase).statementDeadline).toEqual(
+        new Date('2026-04-03T12:00:00.000Z'),
       )
     })
   })
@@ -330,7 +333,7 @@ describe('getRulingOrderAppealInfo', () => {
       canBeAppealed: true,
       isAppealDeadlineExpired: true,
     })
-    expect(info.appealDeadline).toBeDefined()
+    expect(info.appealDeadline).toBeInstanceOf(Date)
   })
 
   it('returns hasBeenAppealed true when an appeal exists for this ruling file', () => {
