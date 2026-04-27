@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { v4 as uuid } from 'uuid'
 
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import {
   CaseFileCategory,
@@ -52,22 +52,22 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
   const res = { end: jest.fn() } as unknown as Response
 
   let mockawsS3Service: AwsS3Service
+  let limitedAccessCaseController: Awaited<
+    ReturnType<typeof createTestingCaseModule>
+  >['limitedAccessCaseController']
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      policeDigitalCaseFileRepositoryService,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const module = await createTestingCaseModule()
 
-    mockawsS3Service = awsS3Service
+    limitedAccessCaseController = module.limitedAccessCaseController
+    mockawsS3Service = module.awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockawsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
     const mockFindAll =
-      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
+      module.policeDigitalCaseFileRepositoryService.findAll as jest.Mock
     mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (policeCaseNumber: string) => {
@@ -143,6 +143,52 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toEqual(
         `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    })
+  })
+
+  describe('defender does not have access to police case number', () => {
+    const otherDefenderPoliceCaseNumber = theCase.policeCaseNumbers[0]
+    let then: Then
+
+    beforeEach(async () => {
+      const caseWithDefendants = {
+        ...theCase,
+        defendants: [
+          {
+            defenderNationalId: user.nationalId,
+            isDefenderChoiceConfirmed: true,
+            policeCaseNumbers: [policeCaseNumber],
+          },
+          {
+            defenderNationalId: '9999999999',
+            isDefenderChoiceConfirmed: true,
+            policeCaseNumbers: [otherDefenderPoliceCaseNumber],
+          },
+        ],
+      } as Case
+
+      const then2 = {} as Then
+
+      try {
+        await limitedAccessCaseController.getCaseFilesRecordPdf(
+          caseId,
+          otherDefenderPoliceCaseNumber,
+          user,
+          caseWithDefendants,
+          res,
+        )
+      } catch (error) {
+        then2.error = error as Error
+      }
+
+      then = then2
+    })
+
+    it('should return ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toEqual(
+        `Defender does not have access to police case number ${otherDefenderPoliceCaseNumber}`,
       )
     })
   })
