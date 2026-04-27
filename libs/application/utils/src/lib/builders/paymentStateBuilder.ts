@@ -136,7 +136,7 @@ export const buildPaymentState = <
       name: 'Greiðsla',
       status: 'inprogress',
       lifecycle: {
-        ...pruneAfterDays(2),
+        ...pruneAfterDays(1),
         shouldDeleteChargeIfPaymentFulfilled: true,
         ...options.lifecycle,
       },
