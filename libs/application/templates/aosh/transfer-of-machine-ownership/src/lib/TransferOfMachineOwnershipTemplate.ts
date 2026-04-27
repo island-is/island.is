@@ -256,11 +256,11 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
             pruneMessage: (application) => {
-              const regNumber = getValueViaPath(
+              const regNumber = getValueViaPath<string | undefined>(
                 application.answers,
                 'machine.regNumber',
                 undefined,
-              ) as string | undefined
+              )
               return {
                 notificationTemplateId:
                   NotificationConfig[
