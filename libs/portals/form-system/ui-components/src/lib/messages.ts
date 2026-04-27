@@ -6,6 +6,16 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknarsmiður',
     description: 'Form builder',
   },
+  showSidebar: {
+    id: 'form.system:show-sidebar',
+    defaultMessage: 'Sýna valmynd',
+    description: 'Show sidebar',
+  },
+  hideSidebar: {
+    id: 'form.system:hide-sidebar',
+    defaultMessage: 'Fela valmynd',
+    description: 'Hide sidebar',
+  },
   form: {
     id: 'form.system:form',
     defaultMessage: 'Form',
@@ -473,8 +483,8 @@ export const m = defineMessages({
   },
   chooseListType: {
     id: 'form.system:choose-list-type',
-    defaultMessage: 'Veldu lista tegund',
-    description: 'Choose list type',
+    defaultMessage: 'Veldu lista',
+    description: 'Choose list',
   },
   addLink: {
     id: 'form.system:add-link',
@@ -1242,7 +1252,7 @@ export const m = defineMessages({
   translationNeededError: {
     id: 'form.system:translation-needed-error',
     defaultMessage:
-      'Ekki er hægt að gefa út formið. Allir nafnreitir með íslensku þurfa enska þýðingu.',
+      'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
   },

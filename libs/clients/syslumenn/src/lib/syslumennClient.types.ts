@@ -379,6 +379,23 @@ export interface InheritanceReportInfo {
   inheritanceTax?: InheritanceTax
 }
 
+export interface InheritanceSignatory {
+  name: string
+  nationalId: string
+  signed: boolean
+}
+
+// Estate types for signatories API
+// These match the types accepted by the Syslumenn API
+export enum SignatoryEstateTypes {
+  Einkaskipti = 'Einkaskipti',
+  OskiptBu = 'OskiptBu',
+  ErfdafjarSkyrsla = 'ErfdafjarSkyrsla',
+  FyrirFramGreiddur = 'FyrirFramGreiddur',
+  OpinberSkipti = 'OpinberSkipti',
+  Eignaleysi = 'Eignaleysi',
+}
+
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
 export interface PropertyDetail {
   defaultAddress?: PropertyLocation

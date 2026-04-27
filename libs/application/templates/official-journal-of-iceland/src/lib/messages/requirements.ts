@@ -35,6 +35,11 @@ export const requirements = {
     },
   }),
   additionalParties: defineMessages({
+    checkbox: {
+      id: 'ojoi.application:requirements.additionalParties.checkbox',
+      defaultMessage: 'Bæta við öðrum aðilum',
+      description: 'Checkbox label for adding additional parties',
+    },
     label: {
       id: 'ojoi.application:requirements.additionalParties.label',
       defaultMessage: 'Aðrir aðilar',

@@ -60,6 +60,8 @@ export {
   eventTypes,
   DefendantEventType,
   defendantEventTypes,
+  AppealEventType,
+  appealEventTypes,
 } from './lib/eventLog'
 
 export { DateType, dateTypes } from './lib/dateLog'

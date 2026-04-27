@@ -23,7 +23,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseUI } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
@@ -35,7 +35,7 @@ const CourtOfAppealOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { appealBanner } = useAppealCase()
+  const { appealBanner } = useAppealCaseUI()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
