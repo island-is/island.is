@@ -1,10 +1,10 @@
-import { ApiClientCallback, Callback } from '@island.is/api/domains/payment'
+import { ApiClientCallback } from '@island.is/api/domains/payment'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   BadRequestException,
   Body,
   Controller,
-  Param,
-  ParseUUIDPipe,
+  Inject,
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -13,23 +13,10 @@ import { PaymentService } from './payment.service'
 @ApiTags('payment-callback')
 @Controller()
 export class PaymentCallbackController {
-  constructor(private readonly paymentService: PaymentService) {}
-
-  @Post('application-payment/:applicationId/:id')
-  async paymentApproved(
-    @Body() callback: Callback,
-    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<void> {
-    if (callback.status !== 'paid') {
-      return
-    }
-    await this.paymentService.fulfillPayment(
-      id,
-      callback.receptionID,
-      applicationId,
-    )
-  }
+  constructor(
+    private readonly paymentService: PaymentService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   /**
    * Handles payment callback notifications from the API client for successful payments.
@@ -54,6 +41,10 @@ export class PaymentCallbackController {
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
     if (callback.type === 'success') {
+      //log all the data thats going into fulfillPayment for easier debugging in case of errors
+      this.logger.info(
+        `Received successful payment callback with data: paymentId=${callback.paymentFlowMetadata.paymentId}, applicationId=${callback.paymentFlowMetadata.applicationId}, receptionId=${callback.details?.eventMetadata?.charge?.receptionId}, paymentFlowId=${callback.paymentFlowId}`,
+      )
       if (!callback.paymentFlowMetadata.paymentId) {
         throw new BadRequestException('No paymentId found in success callback')
       }
@@ -62,15 +53,16 @@ export class PaymentCallbackController {
           'No applicationId found in success callback',
         )
       }
-      // if (!callback.details?.eventMetadata?.charge?.receptionId) {
-      //   throw new BadRequestException(
-      //     'No receptionId found in success callback',
-      //   )
-      // }
+      if (!callback.details?.eventMetadata?.charge?.receptionId) {
+        throw new BadRequestException(
+          'No receptionId found in success callback',
+        )
+      }
       await this.paymentService.fulfillPayment(
         callback.paymentFlowMetadata.paymentId,
         callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
+        callback.paymentFlowId,
       )
     }
   }
