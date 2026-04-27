@@ -889,9 +889,28 @@ export const slices = gql`
         dateTo
         status
         statusText
+        categoryTags {
+          id
+          title
+          genericTagGroup {
+            title
+          }
+        }
         fund {
           id
           title
+          featuredImage {
+            id
+            url
+          }
+          parentOrganization {
+            id
+            title
+            logo {
+              url
+              title
+            }
+          }
         }
       }
     }

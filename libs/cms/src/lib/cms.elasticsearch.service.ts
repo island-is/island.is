@@ -887,15 +887,21 @@ export class CmsElasticsearchService {
     }
 
     let sortRules: ('_score' | sortRule)[] = []
-    if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
-      sortRules = [
-        { dateUpdated: { order: SortDirection.ASC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-      ]
-    } else if (sort === GrantsSortBy.ALPHABETICAL) {
+
+    if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
+      ]
+    } else if (sort === GrantsSortBy.DEADLINE) {
+      sortRules = [
+        { dateCreated: { order: SortDirection.ASC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+      ]
+    } else {
+      sortRules = [
+        { dateUpdated: { order: SortDirection.ASC } },
+        { 'title.sort': { order: SortDirection.ASC } },
       ]
     }
 
@@ -949,44 +955,10 @@ export class CmsElasticsearchService {
 
     if (filterOutDateToPassed) {
       must.push({
-        bool: {
-          should: [
-            {
-              bool: {
-                filter: [
-                  {
-                    range: {
-                      //date to
-                      dateCreated: {
-                        gt: 'now',
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-            {
-              nested: {
-                path: 'tags',
-                query: {
-                  bool: {
-                    must: [
-                      {
-                        term: {
-                          'tags.type': 'status',
-                        },
-                      },
-                      {
-                        terms: {
-                          'tags.key': ['Open with note', 'Always open'],
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+        range: {
+          dateCreated: {
+            gt: 'now',
+          },
         },
       })
     }

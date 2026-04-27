@@ -1,8 +1,8 @@
+import format from 'date-fns/format'
+
 import { Box, InfoCardGrid, Text } from '@island.is/island-ui/core'
-import {
-  Grant,
-  LastCallsForGrants as LastCallsForGrantsSchema,
-} from '@island.is/web/graphql/schema'
+import { isDefined } from '@island.is/shared/utils'
+import { LastCallsForGrants as LastCallsForGrantsSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -24,9 +24,6 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
 
   const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
-  const getStatus = (grant: Grant) =>
-    parseGrantStatus(grant, activeLocale, getTranslation)
-
   return (
     <Box>
       <Text marginBottom={1} variant="h3">
@@ -34,23 +31,63 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
       </Text>
       <InfoCardGrid
         variant="detailed"
-        columns={2}
+        columns={1}
         cardsBorder="blue200"
-        cards={grantItems.map((grant) => ({
-          id: grant.id,
-          title: grant.name,
-          eyebrow: grant.fund?.title ?? '',
-          description: getStatus(grant) ?? '',
-          link: {
-            label: getTranslation('seeMore'),
-            href: linkResolver(
-              'grantsplazagrant',
-              [grant?.applicationId ?? ''],
-              activeLocale,
-            ).href,
-          },
-        }))}
-      ></InfoCardGrid>
+        cards={grantItems.map((grant) => {
+          const status = parseGrantStatus(grant, activeLocale, getTranslation)
+          return {
+            id: grant.id,
+            title: grant.name,
+            eyebrow: grant.fund?.title ?? grant.name ?? '',
+            subEyebrow: grant.fund?.parentOrganization.title,
+            description: '',
+            tags: status
+              ? [
+                  {
+                    label: status,
+                    variant: status === 'open' ? 'mint' : 'rose',
+                  },
+                ]
+              : undefined,
+            logo:
+              grant.fund?.featuredImage?.url ??
+              grant.fund?.parentOrganization?.logo?.url ??
+              '',
+            logoAlt:
+              grant.fund?.featuredImage?.title ??
+              grant.fund?.parentOrganization?.logo?.title ??
+              '',
+            link: {
+              label: getTranslation('seeMore'),
+              href: linkResolver(
+                'grantsplazagrant',
+                [grant?.applicationId ?? ''],
+                activeLocale,
+              ).href,
+            },
+            detailLines: [
+              grant.dateFrom && grant.dateTo
+                ? {
+                    icon: 'calendar' as const,
+                    text: `${format(
+                      new Date(grant.dateFrom),
+                      'dd.MM.yyyy',
+                    )} - ${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                  }
+                : null,
+              grant.categoryTags
+                ? {
+                    icon: 'informationCircle' as const,
+                    text: grant.categoryTags
+                      .map((ct) => ct.title)
+                      .filter(isDefined)
+                      .join(', '),
+                  }
+                : undefined,
+            ].filter(isDefined),
+          }
+        })}
+      />
     </Box>
   )
 }

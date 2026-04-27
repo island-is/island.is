@@ -4,6 +4,7 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 import {
   GetGrantsInput,
   GrantsAvailabilityStatus,
+  GrantsSortBy,
 } from '../dto/getGrants.input'
 import { GrantList } from './grantList.model'
 import { SystemMetadata } from '@island.is/shared/types'
@@ -48,10 +49,9 @@ export const mapLastCallsForGrants = ({
         ? [fields.parentOrganization.fields.slug]
         : undefined,
       size: fields.maxNumberOfCards,
+      sort: GrantsSortBy.DEADLINE,
       filterOutDateToPassed: true,
-      status: fields.onlyShowOpenForApplication
-        ? GrantsAvailabilityStatus.OPEN
-        : undefined,
+      status: GrantsAvailabilityStatus.OPEN,
     },
     onlyShowOpenForApplication: fields.onlyShowOpenForApplication,
     maxNumberOfCards: fields.maxNumberOfCards,

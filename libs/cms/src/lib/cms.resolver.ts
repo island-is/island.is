@@ -1023,9 +1023,9 @@ export class GrantCardsListResolver {
       getElasticsearchIndex(input.lang),
       {
         ...input,
-        ...(maxNumberOfCards && {
-          size: maxNumberOfCards,
-        }),
+        //...(maxNumberOfCards && {
+        //  size: maxNumberOfCards,
+        //}),
       },
     )
   }

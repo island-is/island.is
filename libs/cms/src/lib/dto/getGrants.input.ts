@@ -12,6 +12,7 @@ import { CacheField } from '@island.is/nest/graphql'
 export enum GrantsSortBy {
   ALPHABETICAL,
   RECENTLY_UPDATED,
+  DEADLINE,
 }
 
 registerEnumType(GrantsSortBy, {
@@ -78,7 +79,7 @@ export class GetGrantsInput {
 
   @Field({
     nullable: true,
-    description: 'Retrieve only grants whose application period has not passed',
+    description: 'Retrieve only grants with a defined future end date',
   })
   @IsBoolean()
   @IsOptional()
