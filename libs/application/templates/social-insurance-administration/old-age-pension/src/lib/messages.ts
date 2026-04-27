@@ -486,6 +486,13 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Starfshlutfall vantar',
     description: 'Employer rate missing',
   },
+  employerRequiredForHalfPension: {
+    id: 'oap.application:employer.required.for.half.pension',
+    defaultMessage:
+      'Skrá þarf a.m.k. einn atvinnurekanda þegar sótt er um hálfan ellilífeyri',
+    description:
+      'At least one employer must be registered when applying for half old-age pension',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
