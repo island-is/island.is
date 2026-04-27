@@ -132,7 +132,7 @@ export class WebSitemapService {
     const urls: SitemapUrl[] = []
 
     const flushSitemapUrlsToFile = async () => {
-      const fileName = `${s3FileUrls.length + 1}.xml`
+      const fileName = `sitemap/${s3FileUrls.length + 1}.xml`
       await this.uploadXmlFile(
         `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -141,7 +141,7 @@ export class WebSitemapService {
         fileName,
       )
       this.logger.info(`${fileName} uploaded`)
-      s3FileUrls.push(`https://island.is/sitemap/${fileName}`)
+      s3FileUrls.push(`https://island.is/${fileName}`)
       urls.length = 0
     }
 
