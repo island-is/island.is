@@ -19,12 +19,11 @@ describe('CarRecyclingService', () => {
         },
         {
           provide: CarRecyclingClientService,
-          useClass: jest.fn(() => ({
-            sendApplication: () =>
-              Promise.resolve({
-                applicationLineId: '123A',
-              }),
-          })),
+          useValue: {
+            sendApplication: jest.fn().mockResolvedValue({
+              applicationLineId: '123A',
+            }),
+          },
         },
         {
           provide: VehicleSearchApi,
@@ -51,18 +50,9 @@ describe('CarRecyclingService', () => {
       },
     })
 
-    // Also need to mock the Create vehicles here
     jest.spyOn(carRecyclingService, 'createOwner').mockImplementation(jest.fn())
-
-    // Also need to mock the Create vehicles here
-    jest
-      .spyOn(carRecyclingService, 'createVehicle')
-      .mockImplementation(jest.fn())
-
-    // Also need to mock the recycling vehicles
-    jest
-      .spyOn(carRecyclingService, 'recycleVehicle')
-      .mockImplementation(jest.fn())
+    jest.spyOn(carRecyclingService, 'createVehicle').mockImplementation(jest.fn())
+    jest.spyOn(carRecyclingService, 'recycleVehicle').mockImplementation(jest.fn())
 
     const result = await carRecyclingService.sendApplication({
       application,
