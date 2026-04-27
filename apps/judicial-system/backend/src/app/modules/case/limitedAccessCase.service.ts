@@ -15,6 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  appealEventTypes,
   CaseFileCategory,
   CaseFileState,
   CaseState,
@@ -38,6 +39,7 @@ import {
 } from '../file'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
   CaseFile,
   CaseRepositoryService,
@@ -173,6 +175,13 @@ export const include: Includeable[] = [
         model: User,
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
       },
     ],
   },
@@ -509,6 +518,41 @@ export class LimitedAccessCaseService {
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private resolveDefencePartyIds(
+    theCase: Case,
+    user: TUser,
+  ): { defendantId?: string; civilClaimantId?: string } {
+    if (!isIndictmentCase(theCase.type)) {
+      return {}
+    }
+
+    const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+    // Only confirmed defenders / spokespersons can act on behalf of a party —
+    // unconfirmed picks shouldn't be tied to appeal events.
+    const defendant = theCase.defendants?.find(
+      (d) =>
+        d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId &&
+        normalizedId.includes(d.defenderNationalId),
+    )
+    if (defendant) {
+      return { defendantId: defendant.id }
+    }
+
+    const civilClaimant = theCase.civilClaimants?.find(
+      (c) =>
+        c.isSpokespersonConfirmed &&
+        c.spokespersonNationalId &&
+        normalizedId.includes(c.spokespersonNationalId),
+    )
+    if (civilClaimant) {
+      return { civilClaimantId: civilClaimant.id }
+    }
+
+    return {}
+  }
 
   async findById(
     caseId: string,

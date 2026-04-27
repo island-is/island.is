@@ -49,7 +49,7 @@ export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
   return (
     <Box className={styles.header}>
       <Row>
-        <Column span={['5/12', '6/12', '7/12']}>
+        <Column span={['6/12', '7/12', '6/12', '7/12']}>
           <Box
             paddingLeft={2}
             display="flex"
@@ -71,7 +71,7 @@ export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
         <Column span="2/12" hiddenBelow="md">
           <Box
             display="flex"
-            justifyContent="flexEnd"
+            justifyContent="flexStart"
             alignItems="center"
             cursor="pointer"
             onClick={() => onSort('lastModified')}
@@ -87,10 +87,10 @@ export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
           </Box>
         </Column>
 
-        <Column span={['3/12', '3/12', '2/12']}>
+        <Column span={['2/12', '2/12', '2/12', '1/12']}>
           <Box
             display="flex"
-            justifyContent="center"
+            justifyContent="flexStart"
             alignItems="center"
             cursor="pointer"
             onClick={() => onSort('status')}
@@ -106,10 +106,12 @@ export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
           </Box>
         </Column>
 
-        <Column span={['4/12', '4/12', '1/12']}>
-          <Text variant="medium" fontWeight="semiBold">
-            {formatMessage(m.actions)}
-          </Text>
+        <Column span={['4/12', '3/12', '2/12', '2/12']}>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Text variant="medium" fontWeight="semiBold">
+              {formatMessage(m.actions)}
+            </Text>
+          </Box>
         </Column>
       </Row>
     </Box>
