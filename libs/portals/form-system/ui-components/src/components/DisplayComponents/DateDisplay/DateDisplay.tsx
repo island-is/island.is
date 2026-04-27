@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 interface Props {

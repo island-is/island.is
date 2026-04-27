@@ -9,7 +9,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppealCase, UpdateAppealCase } from '../repository'
+import { AppealCase } from '../models/appealCase.model'
+import { UpdateAppealCase } from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction

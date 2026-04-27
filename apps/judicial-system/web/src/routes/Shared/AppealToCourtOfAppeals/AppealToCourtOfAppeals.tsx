@@ -135,14 +135,10 @@ const AppealToCourtOfAppeals = () => {
   )
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isCreatingAppealCase}
-      notFound={false}
-    >
+    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>Kæra til Landsréttar</PageTitle>
+        <PageTitle>Kæra til Landsréttar</PageTitle>
         <Box component="section" marginBottom={5}>
           <Text variant="h2" as="h2">
             {`Mál nr. ${workingCase.courtCaseNumber}`}

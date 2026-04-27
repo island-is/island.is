@@ -93,6 +93,7 @@
       "@island.is/api/domains/energy-funds": [
         "libs/api/domains/energy-funds/src/index.ts"
       ],
+      "@island.is/api/domains/farmers": ["libs/api/domains/farmers/src/index.ts"],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -138,6 +139,9 @@
       ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
+      ],
+      "@island.is/api/domains/icelandic-medicines-agency": [
+        "libs/api/domains/icelandic-medicines-agency/src/index.ts"
       ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
@@ -773,6 +777,7 @@
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
+      "@island.is/clients/farmers": ["libs/clients/farmers/src/index.ts"],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
       "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
@@ -840,6 +845,9 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
+      "@island.is/clients/lyfjastofnun-pharmacies": [
+        "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -1332,6 +1340,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
+
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
