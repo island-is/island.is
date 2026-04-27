@@ -93,7 +93,9 @@
       "@island.is/api/domains/energy-funds": [
         "libs/api/domains/energy-funds/src/index.ts"
       ],
-      "@island.is/api/domains/farmers": ["libs/api/domains/farmers/src/index.ts"],
+      "@island.is/api/domains/farmers": [
+        "libs/api/domains/farmers/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -897,6 +899,9 @@
       "@island.is/clients/practical-exams-ver": [
         "libs/clients/practical-exams-ver/src/index.ts"
       ],
+      "@island.is/clients/recycling-fund": [
+        "libs/clients/recycling-fund/src/index.ts"
+      ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -1340,7 +1345,6 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true

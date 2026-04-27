@@ -256,6 +256,7 @@ import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-s
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { DocumentProviderDashboardClientConfig } from '@island.is/clients/document-provider-dashboard'
 import { DocumentProviderDashboardClientModule } from '@island.is/clients/document-provider-dashboard'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
@@ -534,6 +535,7 @@ const environment = getConfig
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
+        RecyclingFundClientConfig,
       ],
     }),
   ],
