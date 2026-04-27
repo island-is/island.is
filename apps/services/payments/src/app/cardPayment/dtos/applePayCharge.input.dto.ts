@@ -13,17 +13,26 @@ import {
 class ApplePayPaymentHeader {
   @IsString()
   @MaxLength(256)
-  @ApiProperty({ description: 'Ephemeral public key (SPKI base64)', type: String })
+  @ApiProperty({
+    description: 'Ephemeral public key (SPKI base64)',
+    type: String,
+  })
   ephemeralPublicKey!: string
 
   @IsString()
   @Length(1, 128)
-  @ApiProperty({ description: 'Public key hash (SHA-256 base64)', type: String })
+  @ApiProperty({
+    description: 'Public key hash (SHA-256 base64)',
+    type: String,
+  })
   publicKeyHash!: string
 
   @IsString()
   @Matches(/^[a-fA-F0-9]{1,128}$/)
-  @ApiProperty({ description: 'Apple Pay device transaction id (hex)', type: String })
+  @ApiProperty({
+    description: 'Apple Pay device transaction id (hex)',
+    type: String,
+  })
   transactionId!: string
 }
 
@@ -40,7 +49,10 @@ class ApplePayPaymentData {
 
   @IsString()
   @MaxLength(16384)
-  @ApiProperty({ description: 'Detached PKCS#7 signature (base64)', type: String })
+  @ApiProperty({
+    description: 'Detached PKCS#7 signature (base64)',
+    type: String,
+  })
   signature!: string
 
   @IsObject()
