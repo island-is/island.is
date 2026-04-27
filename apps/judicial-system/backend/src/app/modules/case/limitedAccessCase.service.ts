@@ -838,17 +838,16 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const policeCaseNumbersForZip =
-        Defendant.isConfirmedDefenderOfDefendant(
-          user.nationalId,
-          theCase.defendants,
-        )
-          ? getDefenderVisiblePoliceCaseNumbers(
-              user.nationalId,
-              theCase.defendants,
-              theCase.policeCaseNumbers,
-            )
-          : theCase.policeCaseNumbers
+      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      )
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        : theCase.policeCaseNumbers
 
       policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(

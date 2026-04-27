@@ -66,8 +66,8 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockawsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
-    const mockFindAll =
-      module.policeDigitalCaseFileRepositoryService.findAll as jest.Mock
+    const mockFindAll = module.policeDigitalCaseFileRepositoryService
+      .findAll as jest.Mock
     mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (policeCaseNumber: string) => {

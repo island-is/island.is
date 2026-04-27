@@ -10,10 +10,9 @@ const makeDefendant = (
 ): Defendant =>
   ({
     defenderNationalId: overrides.defenderNationalId ?? null,
-    isDefenderChoiceConfirmed:
-      overrides.isDefenderChoiceConfirmed ?? false,
+    isDefenderChoiceConfirmed: overrides.isDefenderChoiceConfirmed ?? false,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
-  }) as unknown as Defendant
+  } as unknown as Defendant)
 
 describe('getDefenderVisiblePoliceCaseNumbers', () => {
   it('should return all police case numbers when no defendants have police case numbers (legacy case)', () => {
