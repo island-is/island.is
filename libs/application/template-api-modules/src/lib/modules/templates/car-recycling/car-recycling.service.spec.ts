@@ -5,6 +5,8 @@ import { CarRecyclingService } from './car-recycling.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import { RecyclingFundClientService } from '@island.is/clients/recycling-fund'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 describe('CarRecyclingService', () => {
   let carRecyclingService: CarRecyclingService
@@ -31,6 +33,20 @@ describe('CarRecyclingService', () => {
             // Mock methods as needed for your tests
           },
         },
+        {
+          provide: RecyclingFundClientService,
+          useValue: {
+            createOwner: jest.fn(),
+            createVehicle: jest.fn(),
+            recycleVehicle: jest.fn(),
+          },
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {
+            getValue: jest.fn().mockResolvedValue(false),
+          },
+        },
       ],
     }).compile()
 
@@ -51,8 +67,12 @@ describe('CarRecyclingService', () => {
     })
 
     jest.spyOn(carRecyclingService, 'createOwner').mockImplementation(jest.fn())
-    jest.spyOn(carRecyclingService, 'createVehicle').mockImplementation(jest.fn())
-    jest.spyOn(carRecyclingService, 'recycleVehicle').mockImplementation(jest.fn())
+    jest
+      .spyOn(carRecyclingService, 'createVehicle')
+      .mockImplementation(jest.fn())
+    jest
+      .spyOn(carRecyclingService, 'recycleVehicle')
+      .mockImplementation(jest.fn())
 
     const result = await carRecyclingService.sendApplication({
       application,
