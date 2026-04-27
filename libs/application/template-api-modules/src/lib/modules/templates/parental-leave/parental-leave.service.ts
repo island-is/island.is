@@ -128,6 +128,33 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  private assertExistingApplicationHasFundId(application: Application) {
+    const statesThatUpdateExistingApplication: string[] = [
+      States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+      States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+      States.EMPLOYER_APPROVE_EDITS,
+      States.EMPLOYER_EDITS_ACTION,
+      States.VINNUMALASTOFNUN_APPROVE_EDITS,
+      States.VINNUMALASTOFNUN_EDITS_ACTION,
+      States.RESIDENCE_GRANT_APPLICATION,
+      States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
+    ]
+
+    if (!statesThatUpdateExistingApplication.includes(application.state)) {
+      return
+    }
+
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    if (!applicationFundId) {
+      throw new Error(
+        `Missing applicationFundId for existing parental leave application ${application.id}`,
+      )
+    }
+  }
+
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
   }
@@ -916,8 +943,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     //   return
     // }
     const nationalRegistryId = application.applicant
-    const attachments = await this.getAttachments(application)
     const type = getType(application)
+    this.assertExistingApplicationHasFundId(application)
+    const attachments = await this.getAttachments(application)
 
     const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
       application,
@@ -1014,6 +1042,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (previousState === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE) {
       return
     }
+    this.assertExistingApplicationHasFundId(application)
     const attachments = await this.getAttachments(application)
 
     const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
@@ -1059,6 +1088,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
+      )
+    }
+
+    return null
+  }
+
+  async setApplicationFundId({ application }: TemplateApiModuleActionProps) {
+    try {
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return applicationInformation.applicationFundId || null
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch applicationFundId on applicationId: ${application.id} with error: ${e}`,
       )
     }
 
