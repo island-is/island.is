@@ -585,8 +585,8 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
     // Grouped menu that powers the new DesktopNav / MobileNav sections
-    // (Stofnanir / Þjónustuflokkar / Lífsviðburðir). Editor-managed in
-    // Contentful — the 3 child menus must stay in that order.
+    // (Þjónustuflokkar / Lífsviðburðir / Stofnanir). Matching uses child
+    // menu IDs, so Contentful order does not affect the header order.
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,

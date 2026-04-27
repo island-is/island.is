@@ -25,9 +25,9 @@ export interface HeaderNavSection {
 export type HeaderNavData = Record<HeaderNavKey, HeaderNavSection>
 
 export const HEADER_NAV_KEYS: HeaderNavKey[] = [
-  'organizations',
   'categories',
   'lifeEvents',
+  'organizations',
 ]
 
 export const HEADER_NAV_MAX_ITEMS = 8
