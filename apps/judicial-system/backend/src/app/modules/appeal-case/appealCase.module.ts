@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AppealCase } from '../repository'
-import { CaseModule, EventModule, RepositoryModule } from '..'
+import { CaseModule, EventModule, RepositoryModule, UserModule } from '..'
 import { AppealCaseController } from './appealCase.controller'
 import { AppealCaseService } from './appealCase.service'
 import { AppealCaseRepositoryService } from './appealCaseRepository.service'
@@ -12,6 +12,7 @@ import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.con
   imports: [
     SequelizeModule.forFeature([AppealCase]),
     forwardRef(() => CaseModule),
+    forwardRef(() => UserModule),
     forwardRef(() => EventModule),
     forwardRef(() => RepositoryModule),
   ],
