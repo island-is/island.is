@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/portals/core'
+import add from 'date-fns/add'
 import format from 'date-fns/format'
 import {
   useDelegationForm,
@@ -21,6 +22,7 @@ import { m } from '../../lib/messages'
 type ScopesTableProps = {
   scopes?: AuthApiScope[]
   showCheckbox?: boolean
+  showSelectAll?: boolean
   onSelectScope?: (scope: AuthApiScope) => void
   showDate?: boolean
   editableDates?: boolean
@@ -29,6 +31,7 @@ type ScopesTableProps = {
 export const ScopesTable = ({
   scopes: scopesProp,
   showCheckbox,
+  showSelectAll,
   onSelectScope,
   showDate,
   editableDates = true,
@@ -47,9 +50,40 @@ export const ScopesTable = ({
     )
   }
 
+  const allSelected =
+    scopes.length > 0 &&
+    scopes.every((s) => selectedScopes?.some((sel) => sel.name === s.name))
+
+  const onSelectAll = () => {
+    if (allSelected) {
+      const scopeNames = new Set(scopes.map((s) => s.name))
+      setSelectedScopes(selectedScopes.filter((s) => !scopeNames.has(s.name)))
+    } else {
+      const alreadySelected = new Set(selectedScopes.map((s) => s.name))
+      const newScopes = scopes
+        .filter((s) => !alreadySelected.has(s.name))
+        .map((s) => ({ ...s, validTo: add(new Date(), { years: 1 }) }))
+      setSelectedScopes([...selectedScopes, ...newScopes])
+    }
+  }
+
   if (!md) {
     return (
       <Box display="flex" flexDirection="column">
+        {showCheckbox && showSelectAll && (
+          <>
+            <Box paddingY={2}>
+              <Checkbox
+                name="select-all-scopes-mobile"
+                label={formatMessage(m.selectAll)}
+                checked={allSelected}
+                onChange={onSelectAll}
+                disabled={scopes.length === 0}
+              />
+            </Box>
+            <Divider />
+          </>
+        )}
         {scopes.map((scope, index) => {
           const permissionType = scope.allowsWrite
             ? formatMessage(m.readAndWrite)
@@ -171,7 +205,6 @@ export const ScopesTable = ({
   }
 
   const headers: string[] = [
-    ...(showCheckbox ? [''] : []),
     formatMessage(m.headerScopeName),
     formatMessage(m.headerDescription),
     ...(showDate ? [formatMessage(m.headerValidityPeriod)] : []),
@@ -184,6 +217,18 @@ export const ScopesTable = ({
     >
       <T.Head>
         <T.Row>
+          {showCheckbox && (
+            <T.HeadData style={{ paddingLeft: 16, paddingRight: 0 }}>
+              {showSelectAll && (
+                <Checkbox
+                  name="select-all-scopes"
+                  checked={allSelected}
+                  onChange={onSelectAll}
+                  disabled={scopes.length === 0}
+                />
+              )}
+            </T.HeadData>
+          )}
           {headers.map((item) => (
             <T.HeadData style={{ paddingInline: 16 }} key={item}>
               <Text variant="medium" fontWeight="semiBold">
