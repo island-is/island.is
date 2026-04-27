@@ -157,8 +157,6 @@ export class NotifyService {
 
       const data = await response.json()
 
-      console.log('NTI login response data:', data)
-
       if (!data?.accessToken) {
         throw new Error('NTI login response missing accessToken')
       }
