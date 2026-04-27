@@ -9,7 +9,6 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import {
   CreatePaymentRequestInput,
-  PaymentApprovedInput,
   PaymentCallbackInput,
   PaymentStatusInput,
 } from '../../dto/payment.input'
@@ -45,17 +44,6 @@ export class PaymentsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.paymentsService.paymentCallback(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'formSystemPaymentApprovedCallback',
-  })
-  async paymentApprovedCallback(
-    @Args('input', { type: () => PaymentApprovedInput })
-    input: PaymentApprovedInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.paymentsService.paymentApprovedCallback(user, input)
   }
 
   @Mutation(() => CreatePaymentResponse, {
