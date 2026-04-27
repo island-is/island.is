@@ -112,7 +112,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
               heading={title}
               headingVariant="h4"
               headingAs="h2"
-              text={description}
+              text={description ?? title}
               icon={iconEl}
               customImage={
                 image && !isMobile ? (

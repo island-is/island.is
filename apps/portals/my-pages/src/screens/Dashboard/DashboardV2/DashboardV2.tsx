@@ -59,6 +59,7 @@ export const DashboardV2 = () => {
         <Box paddingBottom={6}>
           <Text
             variant="eyebrow"
+            as="h2"
             color="purple400"
             marginBottom={2}
             marginTop={2}

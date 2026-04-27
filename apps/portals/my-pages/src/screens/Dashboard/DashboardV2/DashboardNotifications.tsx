@@ -11,7 +11,8 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
 import { Link } from 'react-router-dom'
-import * as styles from '../Dashboard.css'
+import { lock } from '../Dashboard.css'
+import * as styles from './DashboardNotifications.css'
 
 export const DashboardNotifications = ({ limit }: { limit: number }) => {
   const { formatMessage, lang } = useLocale()
@@ -43,7 +44,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       paddingX={4}
     >
       {!loading && !hasDelegationAccess && (
-        <span className={styles.lock}>
+        <span className={lock}>
           <Icon icon="lockClosed" type="outline" color="blue600" size="small" />
         </span>
       )}
