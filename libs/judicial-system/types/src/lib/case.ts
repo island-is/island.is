@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import addDays from 'date-fns/addDays'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
