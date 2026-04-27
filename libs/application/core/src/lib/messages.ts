@@ -322,7 +322,7 @@ export const coreMessages = defineMessages({
   paymentPendingInvoiceDescription: {
     id: 'application.system:core.payment.pendingInvoiceDescription#markdown',
     defaultMessage:
-      '* Krafa hefur verið stofnuð og verði send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan 48 klst mun umsóknin verða felld niður.',
+      '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan 48 klst (á virkum degi) mun umsóknin verða felld niður.',
     description: 'Description for payment pending invoice',
   },
 })
