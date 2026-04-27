@@ -16,6 +16,7 @@ import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
   BlueBox,
+  ChangeProsecutorModal,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -27,7 +28,6 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
-  ProsecutorSelection,
   SectionHeading,
   ServiceAnnouncements,
   UserContext,
@@ -59,12 +59,10 @@ const Overview: FC = () => {
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
-  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
-  const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
 
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, updateCase, isTransitioningCase } = useCase()
+  const { transitionCase, isTransitioningCase } = useCase()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -158,19 +156,6 @@ const Overview: FC = () => {
     }
 
     router.push(getStandardUserDashboardRoute(user))
-  }
-
-  const calculateMargin = (count: number) => {
-    if (count === 0) {
-      return 40
-    }
-
-    const cappedCount = Math.min(count, 5)
-    const baseMargin = 50
-    const marginPerProsecutor = 65
-    const margin = baseMargin + (cappedCount - 2) * marginPerProsecutor
-
-    return Math.max(2, margin)
   }
 
   return (
@@ -374,42 +359,7 @@ const Overview: FC = () => {
             }}
           />
         ) : modal === 'editProsecutor' ? (
-          <Modal
-            title="Breyta um ákæranda"
-            text="Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar."
-            onClose={() => setModal('noModal')}
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: async () => {
-                const prosecutorId = workingCase?.prosecutor?.id
-                await updateCase(workingCase.id, {
-                  prosecutorId,
-                })
-                setModal('noModal')
-              },
-            }}
-            secondaryButton={{
-              text: 'Loka glugga',
-              onClick: () => setModal('noModal'),
-            }}
-          >
-            <div
-              style={{
-                marginBottom: menuIsOpen
-                  ? calculateMargin(prosecutorsCount)
-                  : 40,
-              }}
-            >
-              <ProsecutorSelection
-                placeholder="Veldu ákæranda til að taka við málinu"
-                isRequired={false}
-                shouldInitializeSelector={true}
-                onMenuOpen={() => setMenuIsOpen(true)}
-                onMenuClose={() => setMenuIsOpen(false)}
-                onProsecutorsLoaded={(count) => setProsecutorsCount(count)}
-              />
-            </div>
-          </Modal>
+          <ChangeProsecutorModal onClose={() => setModal('noModal')} />
         ) : null}
       </AnimatePresence>
     </PageLayout>
