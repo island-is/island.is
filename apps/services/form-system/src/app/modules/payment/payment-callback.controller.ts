@@ -72,6 +72,7 @@ export class PaymentCallbackController {
         callback.paymentFlowMetadata.paymentId,
         callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
+        callback.paymentFlowId,
       )
     }
   }
