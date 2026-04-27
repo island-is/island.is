@@ -55,7 +55,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
           ? formatMessage(item.description)
           : undefined
 
-        const image = item.customShortcut?.image ?? item.featuredImage
+        const image = item.featuredImage
 
         const icon = item.icon
         const iconEl = icon ? (

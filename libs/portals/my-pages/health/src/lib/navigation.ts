@@ -48,6 +48,10 @@ export const healthNavigation: PortalNavigationItem = {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
+      customShortcut: {
+        name: messages.referrals,
+        description: messages.referrals,
+      },
       children: [
         {
           name: messages.singleReferral,

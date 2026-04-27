@@ -51,18 +51,7 @@ export interface PortalNavigationItem {
   customShortcut?: {
     name: MessageDescriptor
     description: MessageDescriptor
-    /** Fallback: promotes this item to featured when the Contentful featured list is not set up. */
-    featured?: boolean
-    /** Illustration image URL shown on the right side of the featured card. */
-    image?: string
   }
-
-  /**
-   * Fallback: promotes a top-level module to the featured sidebar when the
-   * Contentful "Mínar síður Ísland.is flokkar og röðun" namespace has no
-   * featured list configured. Once that entry exists, this flag is ignored.
-   */
-  featured?: boolean
 
   /**
    * Illustration image URL shown on the right side of the featured card.
