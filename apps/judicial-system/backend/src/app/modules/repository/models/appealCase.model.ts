@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -12,11 +13,12 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealEventLog } from './appealEventLog.model'
 import { Case } from './case.model'
 import { User } from './user.model'
 
@@ -63,10 +65,10 @@ export class AppealCase extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(CaseAppealState),
+    values: Object.values(AppealCaseState),
   })
-  @ApiProperty({ enum: CaseAppealState })
-  appealState!: CaseAppealState
+  @ApiProperty({ enum: AppealCaseState })
+  appealState!: AppealCaseState
 
   /**********
    * The appeal case number assigned in the court of appeals
@@ -162,10 +164,10 @@ export class AppealCase extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(CaseAppealRulingDecision),
+    values: Object.values(AppealCaseRulingDecision),
   })
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  appealRulingDecision?: CaseAppealRulingDecision
+  @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
+  appealRulingDecision?: AppealCaseRulingDecision
 
   /**********
    * The appeal conclusion
@@ -217,4 +219,20 @@ export class AppealCase extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   appealIsolationToDate?: Date
+
+  /**********
+   * The national ID of the person who filed the appeal — used for indictment
+   * cases where multiple defenders/civil claimant lawyers exist.
+   * Not used for request cases.
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealedByNationalId?: string
+
+  /**********
+   * Appeal lifecycle events (statement sent, etc.) anchored to this appeal case
+   **********/
+  @HasMany(() => AppealEventLog, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealEventLog, isArray: true })
+  appealEventLogs?: AppealEventLog[]
 }

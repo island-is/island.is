@@ -25,6 +25,8 @@ import { SupportCategoryRepository } from '../repositories/web-sitemap/content-t
 
 @Injectable()
 export class WebSitemapService {
+  private static readonly RETRY_DELAY_MS = 3000
+  private static readonly MAX_RETRIES = 3
   private readonly fetchers: SitemapUrlFetcher[]
 
   constructor(
@@ -77,6 +79,49 @@ export class WebSitemapService {
     )
   }
 
+  private isRateLimitError = (error: {
+    code?: number
+    status?: number
+    response?: { status?: number }
+  }) =>
+    error?.code === 429 ||
+    error?.status === 429 ||
+    error?.response?.status === 429
+
+  private wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms))
+
+  private fetchSitemapUrlsWithRetry = async (
+    fetcher: SitemapUrlFetcher,
+    itemsPerPage: number,
+    pageIndex: number,
+  ): Promise<{ urls: SitemapUrl[]; nextPageIndex: number }> => {
+    let attempt = 0
+
+    while (attempt <= WebSitemapService.MAX_RETRIES) {
+      try {
+        const result = await fetcher.getSitemapUrls(itemsPerPage, pageIndex)
+        return result
+      } catch (error) {
+        if (
+          !this.isRateLimitError(error) ||
+          attempt === WebSitemapService.MAX_RETRIES
+        )
+          throw error
+
+        attempt += 1
+        this.logger.warn('Rate limited by Contentful, retrying sitemap fetch', {
+          attempt,
+          maxRetries: WebSitemapService.MAX_RETRIES,
+          retryDelayMs: WebSitemapService.RETRY_DELAY_MS,
+        })
+        await this.wait(WebSitemapService.RETRY_DELAY_MS * attempt)
+      }
+    }
+
+    return fetcher.getSitemapUrls(itemsPerPage, pageIndex)
+  }
+
   public async run() {
     this.logger.info('Web sitemap worker starting...')
 
@@ -87,7 +132,7 @@ export class WebSitemapService {
     const urls: SitemapUrl[] = []
 
     const flushSitemapUrlsToFile = async () => {
-      const fileName = `${s3FileUrls.length + 1}.xml`
+      const fileName = `sitemap/${s3FileUrls.length + 1}.xml`
       await this.uploadXmlFile(
         `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -96,17 +141,22 @@ export class WebSitemapService {
         fileName,
       )
       this.logger.info(`${fileName} uploaded`)
-      s3FileUrls.push(`https://island.is/sitemap/${fileName}`)
+      s3FileUrls.push(`https://island.is/${fileName}`)
       urls.length = 0
     }
 
     for (const fetcher of this.fetchers) {
       let pageIndex = 0
       while (pageIndex >= 0) {
-        const response = await fetcher.getSitemapUrls(itemsPerPage, pageIndex)
+        const response = await this.fetchSitemapUrlsWithRetry(
+          fetcher,
+          itemsPerPage,
+          pageIndex,
+        )
         pageIndex = response.nextPageIndex
         urls.push(...response.urls)
         if (urls.length >= maxUrlsPerFile) await flushSitemapUrlsToFile()
+        await this.wait(100)
       }
     }
 

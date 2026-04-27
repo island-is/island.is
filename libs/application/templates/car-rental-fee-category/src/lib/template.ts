@@ -18,7 +18,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import { SkatturApi, VehiclesApi } from '../dataProviders'
+import { VehicleCarMapApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { isCompany } from 'kennitala'
@@ -57,7 +57,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [VehiclesApi, SkatturApi],
+              api: [VehicleCarMapApi],
               delete: true,
             },
             {
@@ -95,7 +95,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [VehiclesApi, SkatturApi],
+              api: [VehicleCarMapApi],
             },
           ],
           onExit: defineTemplateApi({

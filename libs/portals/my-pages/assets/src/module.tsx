@@ -9,6 +9,9 @@ import { redirects } from './assetRedirects'
 import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
 import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 
+const USER_SHIPS_FLAG = 'UserShips'
+const FARMERS_LANDS_FLAG = 'FarmersLands'
+
 const IPOverview = lazy(() =>
   import(
     './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
@@ -46,11 +49,25 @@ const VehicleHistory = lazy(() =>
   import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+
+const ShipsOverview = lazy(() =>
+  import('./screens/Ships/Overview/ShipsOverview'),
+)
+const ShipDetail = lazy(() => import('./screens/Ships/Detail/ShipDetail'))
+
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
 const WorkMachinesDetail = lazy(() =>
   import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+)
+
+const FarmerLandsOverview = lazy(() =>
+  import('./screens/FarmerLands/Overview/FarmerLandsOverview'),
+)
+
+const FarmerLandDetail = lazy(() =>
+  import('./screens/FarmerLands/Detail/FarmerLandDetail'),
 )
 
 const VehicleMileage = lazy(() =>
@@ -85,6 +102,7 @@ export const assetsModule: PortalModule = {
           ApiScope.assets,
           ApiScope.workMachines,
           ApiScope.vehicles,
+          ApiScope.ships,
           ApiScope.internal,
           ApiScope.internalProcuring,
         ].some((scope) => userInfo.scopes.includes(scope)),
@@ -103,6 +121,20 @@ export const assetsModule: PortalModule = {
         element: <RealEstateAssetDetail />,
       },
       {
+        name: m.myShips,
+        path: AssetsPaths.AssetsShips,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.ships),
+        element: <ShipsOverview />,
+      },
+      {
+        name: m.myShips,
+        path: AssetsPaths.AssetsShipDetail,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.ships),
+        element: <ShipDetail />,
+      },
+      {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachines,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
@@ -113,6 +145,20 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsWorkMachinesDetail,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
         element: <WorkMachinesDetail />,
+      },
+      {
+        name: m.farmerLands,
+        path: AssetsPaths.AssetsFarmerLands,
+        key: FARMERS_LANDS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <FarmerLandsOverview />,
+      },
+      {
+        name: m.farmerLands,
+        path: AssetsPaths.AssetsFarmerLandDetail,
+        key: FARMERS_LANDS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <FarmerLandDetail />,
       },
       {
         name: m.myVehicles,

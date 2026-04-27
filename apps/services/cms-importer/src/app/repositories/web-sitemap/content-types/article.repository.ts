@@ -54,7 +54,7 @@ export class ArticleRepository implements SitemapUrlFetcher {
       .filter((url) => url !== null)
 
     while (subArticleIds.length > 0) {
-      const ids = subArticleIds.splice(0, 10)
+      const ids = subArticleIds.splice(0, 15)
       const subArticleResponse = await this.managementClient.getEntries({
         content_type: 'subArticle',
         select: 'sys,fields.url,fields.title',

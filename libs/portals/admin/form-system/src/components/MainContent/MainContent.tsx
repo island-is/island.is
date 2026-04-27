@@ -1,4 +1,8 @@
-import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
+} from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
@@ -11,17 +15,18 @@ import {
   Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Completed } from './components/Completed/Completed'
 import { FieldContent } from './components/FieldContent/FieldContent'
+import { Lifetime } from './components/Lifetime/Lifetime'
+import { Payment } from './components/Payment/Payment'
 import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
-import { Lifetime } from './components/Lifetime/Lifetime'
 
 export const MainContent = () => {
   const {
@@ -32,7 +37,7 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem, form, isPublished } = control
+  const { activeItem, form, isReadOnly } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
@@ -40,6 +45,27 @@ export const MainContent = () => {
     (form.useValidate &&
       (activeItem.data as FormSystemScreen)?.shouldValidate) ||
     (form.usePopulate && (activeItem.data as FormSystemScreen)?.shouldPopulate)
+
+  const activeScreen =
+    activeItem.type === 'Screen'
+      ? (activeItem.data as FormSystemScreen)
+      : undefined
+
+  const screenHasMultisetFields = useMemo(() => {
+    if (!activeScreen?.id) return false
+
+    return (
+      form.fields?.some(
+        (field) =>
+          field?.screenId === activeScreen.id &&
+          (field as FormSystemField)?.isPartOfMultiset === true,
+      ) ?? false
+    )
+  }, [form.fields, activeScreen?.id])
+
+  // 3) Disable only when checkbox is checked AND there are multiset fields
+  const disableAllowMultiple =
+    (activeScreen?.isMulti ?? false) && screenHasMultisetFields
 
   return (
     <Box>
@@ -67,6 +93,9 @@ export const MainContent = () => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Lifetime' ? (
         <Lifetime />
+      ) : (activeItem.data as FormSystemSection).sectionType ===
+        SectionTypes.PAYMENT ? (
+        <Payment />
       ) : (
         <Stack space={2}>
           <Row>
@@ -76,7 +105,7 @@ export const MainContent = () => {
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -98,7 +127,7 @@ export const MainContent = () => {
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -133,10 +162,15 @@ export const MainContent = () => {
           {activeItem.type === 'Screen' && (
             <>
               <Row>
-                <Column span="12/12">
+                <Column span="4/12">
                   <Checkbox
                     name="multi"
-                    disabled={isPublished}
+                    disabled={isReadOnly || disableAllowMultiple}
+                    tooltip={
+                      disableAllowMultiple
+                        ? 'Ekki er hægt að afmerkja skjá sem fjölval ef hann hefur reit sem er merktur sem hluti af fjölmenginu'
+                        : undefined
+                    }
                     label={formatMessage(m.allowMultiple)}
                     checked={
                       (activeItem.data as FormSystemScreen).isMulti ?? false
@@ -168,7 +202,7 @@ export const MainContent = () => {
                       <Select
                         name="multiMax"
                         label={formatMessage(m.multiMax)}
-                        isDisabled={isPublished}
+                        isDisabled={isReadOnly}
                         backgroundColor="blue"
                         options={Array.from({ length: 35 - 2 + 1 }, (_, i) => {
                           const n = i + 2

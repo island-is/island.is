@@ -1,34 +1,34 @@
-import { CaseAppealState } from '@island.is/judicial-system/types'
+import { AppealCaseState } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions } from '../caseTable.types'
-import { courtOfAppealsRequestCasesAccessWhereOptions } from './access'
+import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
-// Court of appeals request cases
+// Court of appeals cases
 
-export const courtOfAppealsRequestCasesInProgressWhereOptions =
+export const courtOfAppealsCasesInProgressWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
       appealCase: {
         attributes: [],
         required: true,
         where: {
-          appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+          appeal_state: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
         },
       },
     },
-    where: courtOfAppealsRequestCasesAccessWhereOptions,
+    where: courtOfAppealsCasesAccessWhereOptions(),
   })
 
-export const courtOfAppealsRequestCasesCompletedWhereOptions =
+export const courtOfAppealsCasesCompletedWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
       appealCase: {
         attributes: [],
         required: true,
         where: {
-          appeal_state: CaseAppealState.COMPLETED,
+          appeal_state: AppealCaseState.COMPLETED,
         },
       },
     },
-    where: courtOfAppealsRequestCasesAccessWhereOptions,
+    where: courtOfAppealsCasesAccessWhereOptions(),
   })

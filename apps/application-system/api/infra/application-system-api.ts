@@ -46,7 +46,6 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
-  HealthDirectorateOrganDonation,
   WorkAccidents,
   NationalRegistryB2C,
   SecondarySchool,
@@ -357,6 +356,11 @@ export const serviceSetup = (services: {
           '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
       },
+      HH_COURSES_ZENDESK_ENV_TAG: {
+        dev: 'hh_env_dev',
+        staging: 'hh_env_staging',
+        prod: 'hh_env_prod',
+      },
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -419,7 +423,6 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateVaccination,
       HealthDirectorateHealthService,
-      HealthDirectorateOrganDonation,
       WorkAccidents,
       SecondarySchool,
       PracticalExams,
@@ -467,8 +470,6 @@ export const serviceSetup = (services: {
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HMS_CONTRACTS_AUTH_CLIENT_SECRET:
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
-      HH_ZENDESK_CONTACT_FORM_EMAIL:
-        '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN:
         '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
       ZENDESK_CONTACT_FORM_SUBDOMAIN:

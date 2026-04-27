@@ -96,6 +96,7 @@ const PatientDataPermits: FC = () => {
               eyebrow={formatMessage(messages.healthDirectorate)}
               eyebrowColor="purple400"
               heading={formatMessage(messages.patientDataPermit)}
+              headingVariant="h4"
               text={formatMessage(messages.patientDataSharedDescription)}
               tag={permitTagSelector(permit.status, formatMessage)}
               cta={{

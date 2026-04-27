@@ -174,6 +174,119 @@ export const messages = defineMessages({
   },
 })
 
+export const farmerLandsMessages = defineMessages({
+  farmNumber: {
+    id: 'sp.farmer-lands:farm-number',
+    defaultMessage: 'Búsnúmer: {arg}',
+  },
+  // Tab labels
+  selectTab: {
+    id: 'sp.farmer-lands:select-tab',
+    defaultMessage: 'Velja flipa',
+  },
+  tabRightsHolders: {
+    id: 'sp.farmer-lands:tab-rights-holders',
+    defaultMessage: 'Handhafar',
+  },
+  tabLandRegistry: {
+    id: 'sp.farmer-lands:tab-land-registry',
+    defaultMessage: 'Jarðaskrá',
+  },
+  tabSubsidies: {
+    id: 'sp.farmer-lands:tab-subsidies',
+    defaultMessage: 'Stuðningsgreiðslur',
+  },
+  // Rights holders columns
+  rightsHolder: {
+    id: 'sp.farmer-lands:rights-holder',
+    defaultMessage: 'Handhafi',
+  },
+  bankInfo: {
+    id: 'sp.farmer-lands:bank-info',
+    defaultMessage: 'Bankaupplýsingar',
+  },
+  isatNumber: {
+    id: 'sp.farmer-lands:isat-number',
+    defaultMessage: 'Ísat númer',
+  },
+  vatNumber: {
+    id: 'sp.farmer-lands:vat-number',
+    defaultMessage: 'Vsk. númer',
+  },
+  // Payment columns
+  paymentType: {
+    id: 'sp.farmer-lands:payment-type',
+    defaultMessage: 'Greiðslutegund',
+  },
+  share: {
+    id: 'sp.farmer-lands:share',
+    defaultMessage: 'Hlutfall',
+  },
+  pendingPayments: {
+    id: 'sp.farmer-lands:pending-payments',
+    defaultMessage: 'Greiðslur í bið',
+  },
+  operation: {
+    id: 'sp.farmer-lands:operation',
+    defaultMessage: 'Rekstur',
+  },
+  inOperation: {
+    id: 'sp.farmer-lands:in-operation',
+    defaultMessage: 'Í rekstri',
+  },
+  finished: {
+    id: 'sp.farmer-lands:finished',
+    defaultMessage: 'Lokið',
+  },
+  // Land registry columns
+  landRegistryEntry: {
+    id: 'sp.farmer-lands:land-registry-entry',
+    defaultMessage: 'Jarðaskrá',
+  },
+  ownershipType: {
+    id: 'sp.farmer-lands:ownership-type',
+    defaultMessage: 'Tegund eignar',
+  },
+  usage: {
+    id: 'sp.farmer-lands:usage',
+    defaultMessage: 'Notkun matshluta',
+  },
+  // Subsidies pagination
+  subsidyPrevPage: {
+    id: 'sp.farmer-lands:subsidy-prev-page',
+    defaultMessage: 'Fyrri síða',
+  },
+  subsidyNextPage: {
+    id: 'sp.farmer-lands:subsidy-next-page',
+    defaultMessage: 'Næsta síða',
+  },
+  // Subsidies columns
+  subsidyOffset: {
+    id: 'sp.farmer-lands:subsidy-offset',
+    defaultMessage: 'Skuldajöf.',
+  },
+  subsidyNetPaid: {
+    id: 'sp.farmer-lands:subsidy-net-paid',
+    defaultMessage: 'Útborgað',
+  },
+  subsidyUnits: {
+    id: 'sp.farmer-lands:subsidy-units',
+    defaultMessage: 'Eining',
+  },
+  subsidyUnitPrice: {
+    id: 'sp.farmer-lands:subsidy-unit-price',
+    defaultMessage: 'Einingaverð',
+  },
+  noFarmerLandsTitle: {
+    id: 'sp.farmer-lands:no-farmer-lands-title',
+    defaultMessage: 'Engar jarðir skráðar',
+  },
+  noFarmerLandFound: {
+    id: 'sp.farmer-lands:no-farmer-land-found',
+    defaultMessage: 'Jörð finnst ekki',
+  },
+})
+
 export const vehicleMessage = defineMessages({
   foundSingular: {
     id: 'sp.vehicles:found-singular',
@@ -1629,5 +1742,181 @@ export const urls = defineMessages({
   licenseApplication: {
     id: 'sp.vehicles:url-license-application',
     defaultMessage: 'https://island.is/umsoknir/okuskirteini',
+  },
+})
+
+export const shipsMessages = defineMessages({
+  title: {
+    id: 'sp.ships:title',
+    defaultMessage: 'Mín skip',
+  },
+  intro: {
+    id: 'sp.ships:intro',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þín skip úr skipaskrá Samgöngustofu',
+  },
+  notFound: {
+    id: 'sp.ships:not-found',
+    defaultMessage: 'Skip fannst ekki',
+  },
+  registrationNumber: {
+    id: 'sp.ships:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+  },
+  shipType: {
+    id: 'sp.ships:ship-type',
+    defaultMessage: 'Tegund skips',
+  },
+  imoNumber: {
+    id: 'sp.ships:imo-number',
+    defaultMessage: 'IMO-nr',
+  },
+  validTag: {
+    id: 'sp.ships:valid-tag',
+    defaultMessage: 'Í gildi',
+  },
+  invalidTag: {
+    id: 'sp.ships:expired-tag',
+    defaultMessage: 'Ógilt',
+  },
+  reinspectionNeededTag: {
+    id: 'sp.ships:reinspection-needed-tag',
+    defaultMessage: 'Þarfnast endurskoðunar',
+  },
+  registrationTab: {
+    id: 'sp.ships:registration-tab',
+    defaultMessage: 'Skráning',
+  },
+  certificatesTab: {
+    id: 'sp.ships:certificates-tab',
+    defaultMessage: 'Skírteini og leyfi',
+  },
+  operatorTitle: {
+    id: 'sp.ships:operator-title',
+    defaultMessage: 'Útgerðaraðili',
+  },
+  operatorName: {
+    id: 'sp.ships:operator-name',
+    defaultMessage: 'Útgerð',
+  },
+  operatorAddress: {
+    id: 'sp.ships:operator-address',
+    defaultMessage: 'Heimilisfang',
+  },
+  operatorLocation: {
+    id: 'sp.ships:operator-location',
+    defaultMessage: 'Staður',
+  },
+  region: {
+    id: 'sp.ships:region',
+    defaultMessage: 'Umdæmisnr.',
+  },
+  phoneOnBoard: {
+    id: 'sp.ships:phone-on-board',
+    defaultMessage: 'Sími um borð',
+  },
+  bruttoWeight: {
+    id: 'sp.ships:brutto-tonnage',
+    defaultMessage: 'Brúttótonn',
+  },
+  constructionTitle: {
+    id: 'sp.ships:construction-title',
+    defaultMessage: 'Smíði',
+  },
+  constructionYard: {
+    id: 'sp.ships:construction-yard',
+    defaultMessage: 'Smíðastöð',
+  },
+  constructionYear: {
+    id: 'sp.ships:construction-year',
+    defaultMessage: 'Smíðaár',
+  },
+  hullMaterial: {
+    id: 'sp.ships:hull-material',
+    defaultMessage: 'Efni í bol',
+  },
+  classification: {
+    id: 'sp.ships:classification',
+    defaultMessage: 'Klassi',
+  },
+  measurementsTitle: {
+    id: 'sp.ships:measurements-title',
+    defaultMessage: 'Mælistærðir',
+  },
+  registeredLength: {
+    id: 'sp.ships:registered-length',
+    defaultMessage: 'Skr. lengd',
+  },
+  maxLength: {
+    id: 'sp.ships:max-length',
+    defaultMessage: 'Mesta lengd',
+  },
+  width: {
+    id: 'sp.ships:width',
+    defaultMessage: 'Breidd',
+  },
+  grossTonnage: {
+    id: 'sp.ships:gross-tonnage',
+    defaultMessage: 'B.rúml.',
+  },
+  depth: {
+    id: 'sp.ships:depth',
+    defaultMessage: 'Dýpt',
+  },
+  enginesTitle: {
+    id: 'sp.ships:engines-title',
+    defaultMessage: 'Vélar',
+  },
+  enginePower: {
+    id: 'sp.ships:engine-power',
+    defaultMessage: 'Afl',
+  },
+  engineYear: {
+    id: 'sp.ships:engine-year',
+    defaultMessage: 'Árgerð',
+  },
+  view: {
+    id: 'sp.ships:view',
+    defaultMessage: 'Skoða',
+  },
+  certificatesType: {
+    id: 'sp.ships:certificates-type',
+    defaultMessage: 'Skírteinistegund',
+  },
+  certificatesExpiry: {
+    id: 'sp.ships:certificates-expiry',
+    defaultMessage: 'Gildisdagsetning',
+  },
+  certificatesStatus: {
+    id: 'sp.ships:certificates-status',
+    defaultMessage: 'Staða',
+  },
+  certificatesIssueDate: {
+    id: 'sp.ships:certificates-issue-date',
+    defaultMessage: 'Útgáfudagsetning',
+  },
+  certificatesExtendedTo: {
+    id: 'sp.ships:certificates-extended-to',
+    defaultMessage: 'Framlengt til',
+  },
+  certificatesEmpty: {
+    id: 'sp.ships:certificates-empty',
+    defaultMessage: 'Engin skírteini fundust',
+  },
+  seaworthinessTitle: {
+    id: 'sp.ships:seaworthiness-title',
+    defaultMessage: 'Gildistími haffæraskírteinis',
+  },
+  seaworthinessValidTo: {
+    id: 'sp.ships:seaworthiness-valid-to',
+    defaultMessage: 'Í gildi til {date}',
+  },
+  certificatesSearchPlaceholder: {
+    id: 'sp.ships:certificates-search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
+  inInspectionWindowTag: {
+    id: 'sp.ships:in-inspection-window-tag',
+    defaultMessage: 'Í skoðunarglugga',
   },
 })

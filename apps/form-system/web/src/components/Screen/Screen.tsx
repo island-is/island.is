@@ -1,4 +1,13 @@
+import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import {
+  FieldTypesEnum,
+  NotificationCommands,
+} from '@island.is/form-system/enums'
+import {
+  NOTIFY_EXTERNAL_SERVICE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -8,25 +17,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { LoadingScreen } from '@island.is/react/components'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
 import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
+import { Payment } from './components/Payment/Payment'
 import { Summary } from './components/Summary/Summary'
-import {
-  NotificationCommands,
-  FieldTypesEnum,
-} from '@island.is/form-system/enums'
-import { useMutation } from '@apollo/client'
-import {
-  NOTIFY_EXTERNAL_SERVICE,
-  removeTypename,
-} from '@island.is/form-system/graphql'
-import { LoadingScreen } from '@island.is/react/components'
-import { useIntl } from 'react-intl'
 
 export const Screen = () => {
   const { state, dispatch } = useApplicationContext()
@@ -49,17 +50,21 @@ export const Screen = () => {
 
   const [numberOfItems, setNumberOfItems] = useState(1)
 
-  useEffect(() => {
+  const calculatedMaxItems = useMemo(() => {
     if (isMulti && multiMax > 1) {
-      const maxItems = Math.max(
+      return Math.max(
         1,
         ...visibleFields.map((f) => (f.values?.length as number) ?? 1),
       )
-      setNumberOfItems(maxItems)
-    } else {
-      setNumberOfItems(1)
     }
-  }, [currentScreen?.data?.id, isMulti, multiMax, visibleFields])
+    return 1
+  }, [isMulti, multiMax, visibleFields])
+
+  useEffect(() => {
+    setNumberOfItems((prev) =>
+      prev !== calculatedMaxItems ? calculatedMaxItems : prev,
+    )
+  }, [currentScreen?.data?.id, calculatedMaxItems])
 
   const shouldMoveCurrencySumBox =
     numberOfItems > 1 &&
@@ -70,6 +75,12 @@ export const Screen = () => {
         f.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
         f.isPartOfMultiset !== false,
     )
+
+  const displayMultiButtons =
+    numberOfItems > 1 ||
+    (isMulti &&
+      multiMax > 1 &&
+      visibleFields.some((f) => f.isPartOfMultiset !== false))
 
   const currencySumField = shouldMoveCurrencySumBox
     ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
@@ -111,7 +122,7 @@ export const Screen = () => {
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.POPULATE,
-              screen: state.currentScreen?.data,
+              screenDto: state.currentScreen?.data,
             },
           },
         })
@@ -169,6 +180,67 @@ export const Screen = () => {
 
   if (loading) return <LoadingScreen ariaLabel="loading" />
 
+  const multiSetContent = currentScreen ? (
+    <Box>
+      {Array.from({ length: numberOfItems }).map((_, itemIndex) => (
+        <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
+          {fieldsForMultisetLoop
+            .filter(
+              (field) => field.isPartOfMultiset !== false || itemIndex === 0,
+            )
+            .map((field, fieldIndex) => {
+              const key = `${field.id ?? 'field'}-${itemIndex}`
+              const valueIndex =
+                field.isPartOfMultiset === false ? 0 : itemIndex
+
+              const isRepeatingField = field.isPartOfMultiset !== false
+
+              const showRowGutter =
+                isRepeatingField &&
+                numberOfItems > 1 &&
+                (itemIndex !== 0 ||
+                  anchorFieldIndex === -1 ||
+                  fieldIndex >= anchorFieldIndex)
+
+              let gutterLabel: string | null = null
+              if (isRepeatingField && numberOfItems > 1) {
+                if (itemIndex === 0) {
+                  if (anchorFieldIndex === -1) {
+                    if (fieldIndex === 0) gutterLabel = '1.'
+                  } else {
+                    if (fieldIndex === anchorFieldIndex) gutterLabel = '1.'
+                  }
+                } else {
+                  if (fieldIndex === 0) gutterLabel = `${itemIndex + 1}.`
+                }
+              }
+
+              return (
+                <Box key={key} display="flex" alignItems="flexStart">
+                  {showRowGutter && (
+                    <Box
+                      marginRight={2}
+                      flexShrink={0}
+                      marginTop={4}
+                      style={{ width: '2ch' }}
+                      display="flex"
+                      justifyContent="flexEnd"
+                    >
+                      {gutterLabel && <Text variant="h4">{gutterLabel}</Text>}
+                    </Box>
+                  )}
+
+                  <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
+                    <Field field={field} valueIndex={valueIndex} />
+                  </Box>
+                </Box>
+              )
+            })}
+        </Box>
+      ))}
+    </Box>
+  ) : null
+
   return (
     <Box
       component="form"
@@ -216,68 +288,8 @@ export const Screen = () => {
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
-
-        {currentScreen &&
-          Array.from({ length: numberOfItems }).map((_, itemIndex) => (
-            <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
-              {fieldsForMultisetLoop
-                .filter(
-                  (field) =>
-                    field.isPartOfMultiset !== false || itemIndex === 0,
-                )
-                .map((field, fieldIndex) => {
-                  const key = `${field.id ?? 'field'}-${itemIndex}`
-                  const valueIndex =
-                    field.isPartOfMultiset === false ? 0 : itemIndex
-
-                  const isRepeatingField = field.isPartOfMultiset !== false
-
-                  const showRowGutter =
-                    isRepeatingField &&
-                    numberOfItems > 1 &&
-                    (itemIndex !== 0 ||
-                      anchorFieldIndex === -1 ||
-                      fieldIndex >= anchorFieldIndex)
-
-                  let gutterLabel: string | null = null
-                  if (isRepeatingField && numberOfItems > 1) {
-                    if (itemIndex === 0) {
-                      if (anchorFieldIndex === -1) {
-                        if (fieldIndex === 0) gutterLabel = '1.'
-                      } else {
-                        if (fieldIndex === anchorFieldIndex) gutterLabel = '1.'
-                      }
-                    } else {
-                      if (fieldIndex === 0) gutterLabel = `${itemIndex + 1}.`
-                    }
-                  }
-
-                  return (
-                    <Box key={key} display="flex" alignItems="flexStart">
-                      {showRowGutter && (
-                        <Box
-                          marginRight={2}
-                          flexShrink={0}
-                          marginTop={4}
-                          style={{ width: '2ch' }}
-                          display="flex"
-                          justifyContent="flexEnd"
-                        >
-                          {gutterLabel && (
-                            <Text variant="h4">{gutterLabel}</Text>
-                          )}
-                        </Box>
-                      )}
-
-                      <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
-                        <Field field={field} valueIndex={valueIndex} />
-                      </Box>
-                    </Box>
-                  )
-                })}
-            </Box>
-          ))}
-
+        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
+        {multiSetContent}
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
             <Field
@@ -288,7 +300,7 @@ export const Screen = () => {
           </Box>
         )}
 
-        {isMulti && multiMax > 1 && (
+        {isMulti && multiMax > 1 && displayMultiButtons && (
           <Box display="flex" justifyContent="flexEnd">
             <Box marginRight={2}>
               {numberOfItems > 1 && (

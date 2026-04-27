@@ -20,7 +20,7 @@ export const GET_VERDICTS_QUERY = gql`
       input {
         searchTerm
         page
-        courtLevel
+        court
         keywords
         caseNumber
         caseCategories
@@ -68,6 +68,12 @@ export const GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY = gql`
         }
       }
       districtCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
+      retrialCourt {
         options {
           label
           typeOfOption

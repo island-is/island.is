@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { isCourseForProfessionals } from '../../utils/isCourseForProfessionals'
 
 export const userInformation = buildSection({
   id: 'userInformation',
@@ -84,6 +85,18 @@ export const userInformation = buildSection({
               externalData,
               'currentHealthcenter.data.healthCenter',
             ),
+        }),
+        buildTextField({
+          id: 'workplace',
+          title: m.userInformation.workplace,
+          width: 'half',
+          condition: (answers) => isCourseForProfessionals(answers),
+        }),
+        buildTextField({
+          id: 'jobTitle',
+          title: m.userInformation.jobTitle,
+          width: 'half',
+          condition: (answers) => isCourseForProfessionals(answers),
         }),
       ],
     }),

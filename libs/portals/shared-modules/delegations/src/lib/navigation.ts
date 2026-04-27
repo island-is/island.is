@@ -30,7 +30,6 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     path: DelegationPaths.DelegationAccess,
     navHide: true,
   },
-
   {
     name: m.grantAccessNewTitle,
     path: DelegationPaths.DelegationsGrantNew,
@@ -53,7 +52,7 @@ export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
     breadcrumbHide: false,
   },
   {
-    name: m.whichDelegationsSuit,
+    name: m.delegationTypes,
     path: DelegationPaths.ServiceCategories,
     navHide: false,
     breadcrumbHide: false,

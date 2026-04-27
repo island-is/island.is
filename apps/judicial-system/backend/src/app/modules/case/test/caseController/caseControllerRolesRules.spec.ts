@@ -13,12 +13,6 @@ import {
 import { verifyRolesRules } from '../../../../test'
 import { CaseController } from '../../case.controller'
 import {
-  courtOfAppealsAssistantTransitionRule,
-  courtOfAppealsAssistantUpdateRule,
-  courtOfAppealsJudgeTransitionRule,
-  courtOfAppealsJudgeUpdateRule,
-  courtOfAppealsRegistrarTransitionRule,
-  courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
   districtCourtJudgeSignRulingRule,
@@ -47,9 +41,6 @@ describe('CaseController - Update rules', () => {
     districtCourtJudgeUpdateRule,
     districtCourtRegistrarUpdateRule,
     districtCourtAssistantUpdateRule,
-    courtOfAppealsJudgeUpdateRule,
-    courtOfAppealsRegistrarUpdateRule,
-    courtOfAppealsAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   ])
 })
@@ -61,9 +52,6 @@ describe('CaseController - Transition rules', () => {
     districtCourtJudgeTransitionRule,
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
-    courtOfAppealsJudgeTransitionRule,
-    courtOfAppealsRegistrarTransitionRule,
-    courtOfAppealsAssistantTransitionRule,
   ])
 })
 
@@ -121,6 +109,9 @@ describe('CaseController - Get case files record pdf rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 
@@ -166,6 +157,9 @@ describe('CaseController - Get indictment pdf rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 

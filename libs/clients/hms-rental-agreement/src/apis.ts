@@ -25,6 +25,7 @@ export const exportedApis = [HomeApi].map((Api) => ({
             clientId: config.authClientId,
             clientSecret: config.authClientSecret,
             scope: [`api://${config.authClientId}/.default`],
+            headerName: 'X-Client-Authorization',
           },
         }),
         headers: { 'X-Road-Client': xRoadConfig.xRoadClient },

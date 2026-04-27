@@ -19,7 +19,7 @@ export const generateExcelSheet = (
     headers,
     ...Object.entries(vehicleRateMap)
       .filter(([_, data]) => data.category !== rateToChangeTo)
-      .map(([permno, data]) => [permno, data.milage, '']),
+      .map(([permno, data]) => [permno, data.mileage, '']),
   ]
 
   const icelandicPrefix = 'skra-bila-a-'

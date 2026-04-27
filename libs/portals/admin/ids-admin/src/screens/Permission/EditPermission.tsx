@@ -4,6 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import { PermissionContent } from './components/PermissionContent'
 import { PermissionSecurityAndCapabilities } from './components/PermissionSecurityAndCapabilities'
 import { PermissionAccessControl } from './components/PermissionAccessControl'
+import { PermissionApplications } from './components/PermissionApplications'
 import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { usePermission } from './PermissionContext'
 import { PublishPermission } from './PublishPermission/PublishPermission'
@@ -49,6 +50,7 @@ export const EditPermission = () => {
           isNewPermissionsOptionsEnabled={isNewPermissionsOptionsEnabled}
         />
         <PermissionAccessControl />
+        <PermissionApplications />
         <PublishPermission />
       </Box>
     </EnvironmentProvider>

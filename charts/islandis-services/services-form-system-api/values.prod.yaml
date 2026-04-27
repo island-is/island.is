@@ -19,6 +19,7 @@ global:
 name: 'services-form-system-api'
 enabled: true
 env:
+  CLIENT_LOCATION_ORIGIN: 'https://island.is/form'
   CODE_OWNER: 'Advania'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
   DB_HOST: 'postgres-applications.internal'
@@ -36,16 +37,24 @@ env:
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+  PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+  PAYMENT_API_CALLBACK_URL: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+  REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   S3_REGION: 'eu-west-1'
   S3_TIME_TO_LIVE_GET: '5'
   S3_TIME_TO_LIVE_POST: '15'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   XROAD_BASE_PATH: 'http://securityserver.island.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+  XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
   XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+  XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
+  XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/'
+  XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
 grantNamespaces:
+  - 'services-payments'
   - 'islandis'
   - 'nginx-ingress-external'
   - 'nginx-ingress-internal'
@@ -139,9 +148,13 @@ secrets:
   FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
   FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+  NTI_PASSWORD: '/k8s/form-system/NTI_PASSWORD'
+  NTI_USERNAME: '/k8s/form-system/NTI_USERNAME'
   SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
   SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'
+  XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
+  XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

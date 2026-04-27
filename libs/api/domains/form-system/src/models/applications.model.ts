@@ -90,6 +90,9 @@ export class Application {
 
   @Field(() => CompletedSectionInfo, { nullable: true })
   completedSectionInfo?: CompletedSectionInfo
+
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
 }
 
 @ObjectType('FormSystemApplicationListDto')

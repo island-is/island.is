@@ -28,10 +28,12 @@ export type FieldTypeMapping = {
     checkboxValue?: FormSystemValue['checkboxValue']
   }
   [FieldTypesEnum.RADIO_BUTTONS]: {
-    listValue?: FormSystemValue['listValue']
+    label?: FormSystemValue['label']
+    value?: FormSystemValue['value']
   }
   [FieldTypesEnum.DROPDOWN_LIST]: {
-    listValue?: FormSystemValue['listValue']
+    label?: FormSystemValue['label']
+    value?: FormSystemValue['value']
   }
   [FieldTypesEnum.TIME_INPUT]: {
     time?: FormSystemValue['time']
@@ -65,6 +67,9 @@ export type FieldTypeMapping = {
     name?: FormSystemValue['name']
     nationalId?: FormSystemValue['nationalId']
   }
+  [FieldTypesEnum.PAYMENT_QUANTITY]: {
+    number?: FormSystemValue['number']
+  }
 }
 
 export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
@@ -88,9 +93,9 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
     case FieldTypesEnum.CHECKBOX:
       return { checkboxValue: null } as FieldTypeMapping[T]
     case FieldTypesEnum.RADIO_BUTTONS:
-      return { listValue: undefined } as FieldTypeMapping[T]
+      return { label: undefined, value: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.DROPDOWN_LIST:
-      return { listValue: undefined } as FieldTypeMapping[T]
+      return { label: undefined, value: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.TIME_INPUT:
       return { time: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.MESSAGE:
@@ -114,6 +119,8 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
       return { iskNumber: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.APPLICANT:
       return { name: undefined, nationalId: undefined } as FieldTypeMapping[T]
+    case FieldTypesEnum.PAYMENT_QUANTITY:
+      return { number: undefined } as FieldTypeMapping[T]
     default:
       throw new Error(`Field type ${fieldType} not supported`)
   }

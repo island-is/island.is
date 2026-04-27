@@ -1,4 +1,9 @@
+import { isCompany } from 'kennitala'
+
+import { DogStatsD } from '@island.is/infra-metrics'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
+
+import { METRICS_PREFIX } from './utils'
 import {
   Body,
   Controller,
@@ -7,6 +12,8 @@ import {
   HttpStatus,
   Inject,
   Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -20,6 +27,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
+import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { NotificationsService } from './notifications.service'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -33,6 +41,8 @@ import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
 @Controller('notifications')
 @ApiTags('notifications')
 export class NotificationsController {
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationsService: NotificationsService,
@@ -128,6 +138,23 @@ export class NotificationsController {
     return this.notificationsService.findActorNotifications(nationalId, query)
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/:id/deliveries')
+  @Documentation({
+    summary:
+      'Returns delivery records (email/sms/push) for a notification. ' +
+      'If `isActor` is true, looks up by actor_notification_id; ' +
+      'otherwise returns direct deliveries for the user notification.',
+    response: { status: HttpStatus.OK, type: [NotificationDeliveryDto] },
+  })
+  findDeliveries(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('isActor', new ParseBoolPipe({ optional: true })) isActor?: boolean,
+  ): Promise<NotificationDeliveryDto[]> {
+    return this.notificationsService.findDeliveries(id, isActor ?? false)
+  }
+
   @Documentation({
     summary: 'Creates a new notification and adds to queue',
     includeNoContentResponse: true,
@@ -152,6 +179,12 @@ export class NotificationsController {
     }
 
     const id = await this.queue.add(sanitizedBody)
+
+    this.metrics.increment('notification.created', 1, {
+      templateId: body.templateId,
+      recipient_type: isCompany(body.recipient) ? 'company' : 'individual',
+    })
+
     const flattenedArgs: Record<string, string> = {}
     for (const arg of validArgs) {
       flattenedArgs[arg.key] = arg.value

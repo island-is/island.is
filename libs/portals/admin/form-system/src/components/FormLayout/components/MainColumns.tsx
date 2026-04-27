@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemScreen } from '@island.is/api/schema'
 import {
   DELETE_FIELD,
   DELETE_SCREEN,
@@ -15,17 +16,25 @@ import { DeleteButton } from './DeleteButton'
 import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch, inSettings } = useContext(ControlContext)
-  const { activeItem, form, isPublished } = control
-  const { screens, fields } = form
+  const { control, controlDispatch, inSettings, inListBuilder } =
+    useContext(ControlContext)
+  const { activeItem, form, isReadOnly } = control
+  const { sections, screens, fields } = form
   const { type } = activeItem
   const { formatMessage } = useIntl()
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
-  const partiesSection =
+  const staticSection =
     activeItem.type === 'Section' &&
-    (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
+    ((activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES' ||
+      (activeItem.data as { sectionType?: string })?.sectionType === 'PAYMENT')
+  const staticScreen =
+    activeItem.type === 'Screen' &&
+    sections?.find(
+      (section) =>
+        section?.id === (activeItem?.data as FormSystemScreen)?.sectionId,
+    )?.sectionType === 'PAYMENT'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -81,7 +90,11 @@ export const MainContentColumn = () => {
 
   return (
     <Box className={cn(styles.mainColumn)} padding={2}>
-      {!isPublished && !inSettings && !partiesSection ? (
+      {!isReadOnly &&
+      !inSettings &&
+      !staticSection &&
+      !staticScreen &&
+      !inListBuilder ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -106,7 +119,7 @@ export const MainContentColumn = () => {
       <Box
         width="full"
         style={{
-          minHeight: '500px',
+          minHeight: 'clamp(300px, 50vh, 500px)',
         }}
       >
         <MainContent />

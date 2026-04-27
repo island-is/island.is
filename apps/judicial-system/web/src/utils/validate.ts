@@ -4,9 +4,9 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseRulingDecision,
+  AppealCaseState,
   Case,
-  CaseAppealRulingDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
@@ -139,24 +139,31 @@ export const validate = (items: ValidateItem[]): IsValid => {
     : { isValid: true, errorMessage: '' }
 }
 
+const isDefendantInvalid = (defendant: Defendant): boolean => {
+  return (
+    (!isBusiness(defendant.nationalId) && !defendant.gender) ||
+    !validate([
+      [
+        defendant.nationalId,
+        defendant.noNationalId ? ['date-of-birth'] : ['empty', 'national-id'],
+      ],
+      [defendant.name, ['empty']],
+      [defendant.address, ['empty']],
+    ]).isValid
+  )
+}
+
+/** Restriction cases only show the first defendant in the UI (police may sync more). */
+const firstDefendantIsInvalid = (workingCase: Case): boolean => {
+  const first = workingCase.defendants?.[0]
+  return Boolean(first && isDefendantInvalid(first))
+}
+
 const someDefendantIsInvalid = (workingCase: Case): boolean => {
   return Boolean(
     workingCase.defendants &&
       workingCase.defendants.length > 0 &&
-      workingCase.defendants.some(
-        (defendant) =>
-          (!isBusiness(defendant.nationalId) && !defendant.gender) ||
-          !validate([
-            [
-              defendant.nationalId,
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-            ],
-            [defendant.name, ['empty']],
-            [defendant.address, ['empty']],
-          ]).isValid,
-      ),
+      workingCase.defendants.some((defendant) => isDefendantInvalid(defendant)),
   )
 }
 
@@ -193,6 +200,10 @@ export const isRegistrationStepValid = (
   )
 }
 
+/**
+ * Restriction / travel-ban prosecutor defendant step. The form only edits
+ * `defendants[0]`; Police system may sync additional defendants, so only the first is validated here.
+ */
 export const isDefendantStepValidRC = (
   workingCase: Case,
   policeCaseNumbers?: string[] | null,
@@ -200,7 +211,8 @@ export const isDefendantStepValidRC = (
   return Boolean(
     policeCaseNumbers &&
       policeCaseNumbers.length > 0 &&
-      !someDefendantIsInvalid(workingCase) &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
+      !firstDefendantIsInvalid(workingCase) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
@@ -219,7 +231,8 @@ export const isDefendantStepValidRC = (
 
 export const isDefendantStepValidIC = (workingCase: Case): boolean => {
   return Boolean(
-    !someDefendantIsInvalid(workingCase) &&
+    (workingCase.defendants?.length ?? 0) > 0 &&
+      !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
@@ -680,7 +693,7 @@ export const isAdminUserFormValid = (user: User): boolean => {
 
 export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   return Boolean(
-    (workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN ||
+    (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN ||
       (workingCase.appealCase?.appealJudge1 &&
         workingCase.appealCase?.appealJudge2 &&
         workingCase.appealCase?.appealJudge3 &&
@@ -700,7 +713,7 @@ export const isCourtOfAppealRulingStepFieldsValid = (
   return Boolean(
     workingCase.appealCase?.appealRulingDecision &&
       (workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
+        AppealCaseRulingDecision.DISCONTINUED ||
         validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
           .isValid),
   )
@@ -710,7 +723,7 @@ export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
   return Boolean(
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
       (workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
+        AppealCaseRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,
         )),
