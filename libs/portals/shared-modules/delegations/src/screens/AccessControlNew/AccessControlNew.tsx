@@ -141,10 +141,19 @@ const AccessControlNew = () => {
 
   const incomingCustomDelegations = incomingDelegationGroups.Custom
 
-  const legalGuardianDelegations = [
-    ...(incomingDelegationGroups.LegalGuardian || []),
-    ...(incomingDelegationGroups.LegalGuardianMinor || []),
-  ]
+  const legalGuardianDelegations = useMemo(() => {
+    const guardianMinor = incomingDelegationGroups.LegalGuardianMinor || []
+    const guardian = incomingDelegationGroups.LegalGuardian || []
+    const minorNationalIds = new Set(guardianMinor.map((d) => d.nationalId))
+    // Filter out LegalGuardian entries for people who already appear as LegalGuardianMinor
+    const filteredGuardian = guardian.filter(
+      (d) => !minorNationalIds.has(d.nationalId),
+    )
+    return [...guardianMinor, ...filteredGuardian]
+  }, [
+    incomingDelegationGroups.LegalGuardian,
+    incomingDelegationGroups.LegalGuardianMinor,
+  ])
 
   const procuringHolderDelegations = incomingDelegationGroups.ProcurationHolder
 

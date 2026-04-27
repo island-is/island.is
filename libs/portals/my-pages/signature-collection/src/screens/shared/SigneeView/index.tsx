@@ -59,6 +59,7 @@ const SigneeView = ({
                   <ActionCard
                     key={list.id}
                     backgroundColor="white"
+                    headingVariant="h4"
                     eyebrow={`${formatMessage(m.endTime)} ${format(
                       new Date(list.endTime),
                       'dd.MM.yyyy',

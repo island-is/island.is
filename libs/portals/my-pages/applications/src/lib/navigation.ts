@@ -34,5 +34,10 @@ export const applicationsNavigation: PortalNavigationItem = {
       description: m.applicationsIntroFinished,
       path: ApplicationsPaths.ApplicationCompleteApplications,
     },
+    {
+      name: m.olderApplications,
+      description: m.applicationsIntroOlder,
+      path: ApplicationsPaths.ApplicationOlderApplications,
+    },
   ],
 }

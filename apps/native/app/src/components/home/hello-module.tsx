@@ -4,7 +4,6 @@ import { FormattedMessage } from 'react-intl'
 import { Image, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { DISMISSED_KEYS } from '@/constants/dissmissed-keys'
 import { useGetFrontPageImageQuery } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { usePreferencesStore } from '@/stores/preferences-store'
@@ -25,7 +24,7 @@ const getFileExtension = (url: string): string => {
 
 export const HelloModule = React.memo(() => {
   const theme = useTheme()
-  const { dismissed, graphicWidgetEnabled } = usePreferencesStore()
+  const { graphicWidgetEnabled } = usePreferencesStore()
   const { userInfo } = useAuthStore()
   const [imageSrc, setImageSrc] = React.useState<string | undefined>(undefined)
 
@@ -81,11 +80,6 @@ export const HelloModule = React.memo(() => {
   useEffect(() => {
     handleImage()
   }, [image])
-
-  // If the onboardingWidget is shown, don't show this module
-  if (!dismissed.includes(DISMISSED_KEYS.ONBOARDING_WIDGET)) {
-    return null
-  }
 
   return (
     <SafeAreaView
