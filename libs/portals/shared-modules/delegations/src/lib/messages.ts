@@ -616,6 +616,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:header-permission-type',
     defaultMessage: 'Tegund réttinda',
   },
+  selectAll: {
+    id: 'sp.access-control-delegations:select-all',
+    defaultMessage: 'Velja allt',
+  },
   noDelegationsFound: {
     id: 'sp.access-control-delegations:no-delegations-found',
     defaultMessage: 'Engin rafræn umboð fundust',
