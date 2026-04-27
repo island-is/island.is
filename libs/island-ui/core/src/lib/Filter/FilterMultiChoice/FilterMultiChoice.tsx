@@ -50,7 +50,7 @@ export interface FilterMultiChoiceProps {
   /** Array of different categories grouping different filter values */
   categories: ReadonlyArray<FilterCategory>
   /** Label for clear button for localization */
-  labelClear: string
+  labelClear?: string
   /** Only expand one accordion item at a time */
   singleExpand?: boolean
   /** OnChange event handler when user checks/unchecks a value */
@@ -153,13 +153,14 @@ export const FilterMultiChoice: FC<
           key={category.id}
           id={category.id}
           label={category.label}
+          startExpanded={category.startExpanded}
           iconVariant="small"
         >
           <Stack space={2}>
             <CheckboxWrapper inline={category.inline}>
               {renderCategoryFilters(category)}
             </CheckboxWrapper>
-            {category.selected.length > 0 && (
+            {category.selected.length > 0 && !!labelClear && (
               <Box textAlign="right">
                 <Button
                   icon="reload"
@@ -200,7 +201,7 @@ export const FilterMultiChoice: FC<
               <CheckboxWrapper inline={category.inline}>
                 {renderCategoryFilters(category)}
               </CheckboxWrapper>
-              {category.selected.length > 0 && (
+              {category.selected.length > 0 && !!labelClear && (
                 <Box textAlign="right">
                   <Button
                     icon="reload"

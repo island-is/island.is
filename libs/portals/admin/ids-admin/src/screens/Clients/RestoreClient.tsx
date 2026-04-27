@@ -30,19 +30,23 @@ export const RestoreClient: FC<Props> = ({
       return
     }
 
-    const res = await restoreClientMutation({
-      variables: {
-        input: {
-          tenantId,
-          clientId,
+    try {
+      const res = await restoreClientMutation({
+        variables: {
+          input: {
+            tenantId,
+            clientId,
+          },
         },
-      },
-    })
+      })
 
-    if (res.data?.restoreAuthAdminClient) {
-      toast.success(formatMessage(m.successRestoringClient))
-      onSuccess()
-    } else {
+      if (res.data?.restoreAuthAdminClient) {
+        toast.success(formatMessage(m.successRestoringClient))
+        onSuccess()
+      } else {
+        toast.error(formatMessage(m.errorDefault))
+      }
+    } catch {
       toast.error(formatMessage(m.errorDefault))
     }
   }

@@ -270,7 +270,11 @@ export class AdminClientsService {
       },
     })
 
-    if (!client || !client.archived) {
+    if (!client) {
+      throw new NoContentException()
+    }
+
+    if (!client.archived) {
       return
     }
 

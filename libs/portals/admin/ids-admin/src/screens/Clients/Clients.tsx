@@ -140,7 +140,7 @@ const Clients = () => {
           <Inline>
             <FilterInput
               placeholder={formatMessage(m.searchPlaceholder)}
-              name="session-nationalId-input"
+              name="clients-search-input"
               value={inputSearchValue}
               onChange={handleSearch}
               backgroundColor="blue"
@@ -149,17 +149,14 @@ const Clients = () => {
           <Filter
             variant="popover"
             align="right"
-            hideClearAll
-            popoverShadow="small"
             labelClear={formatMessage(m.clearFilter)}
-            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelClearAll={formatMessage(m.clearFilter)}
             labelOpen={formatMessage(m.openFilter)}
             labelClose={formatMessage(m.closeFilter)}
             filterCount={statusFilter !== 'active' ? 1 : 0}
             onFilterClear={() => setStatusFilter('active')}
           >
             <FilterMultiChoice
-              labelClear={formatMessage(m.clearFilter)}
               singleExpand
               onChange={({ selected }) => {
                 setStatusFilter(selected[0] ?? 'active')
@@ -193,6 +190,18 @@ const Clients = () => {
             />
           </Filter>
         </Box>
+
+        {filteredClients.length === 0 && originalClients.length > 0 && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            padding={6}
+            border="standard"
+            borderRadius="large"
+          >
+            <Text>{formatMessage(m.noMatchingClients)}</Text>
+          </Box>
+        )}
 
         {filteredClients.map((item) => {
           const href = replaceParams({

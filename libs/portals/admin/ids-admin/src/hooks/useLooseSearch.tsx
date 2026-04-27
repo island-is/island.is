@@ -17,11 +17,7 @@ export const useLooseSearch = <T,>(
   keyPath: string,
 ): [T[], (searchValue: string) => void] => {
   const [filteredList, setFilteredList] = useState(fullList)
-
-  // Reset filtered list when source data changes (e.g. after revalidation)
-  useEffect(() => {
-    setFilteredList(fullList)
-  }, [fullList])
+  const [lastSearchValue, setLastSearchValue] = useState('')
 
   // Populate the search map with the full list.
   const searchMap = useMemo(() => {
@@ -52,32 +48,40 @@ export const useLooseSearch = <T,>(
     return map
   }, [fullList, keyPath, searchPaths])
 
-  const filterList = (searchValue = '') => {
+  const applySearch = (searchValue: string, list: T[]) => {
     if (searchValue.length === 0) {
-      setFilteredList(fullList)
-      return
+      return list
     }
 
     const tokens = pseudolocalizeString(searchValue).toLowerCase().split(' ')
 
-    setFilteredList(
-      fullList.filter((item) => {
-        const key = get(item, keyPath)
+    return list.filter((item) => {
+      const key = get(item, keyPath)
 
-        if (!key) {
-          return false
-        }
+      if (!key) {
+        return false
+      }
 
-        const concatenatedStr = searchMap.get(key)
+      const concatenatedStr = searchMap.get(key)
 
-        if (!concatenatedStr) {
-          return false
-        }
+      if (!concatenatedStr) {
+        return false
+      }
 
-        return tokens.every((token) => concatenatedStr.includes(token))
-      }),
-    )
+      return tokens.every((token) => concatenatedStr.includes(token))
+    })
   }
+
+  const filterList = (searchValue = '') => {
+    setLastSearchValue(searchValue)
+    setFilteredList(applySearch(searchValue, fullList))
+  }
+
+  // Re-apply current search when source data changes (e.g. after revalidation)
+  useEffect(() => {
+    setFilteredList(applySearch(lastSearchValue, fullList))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullList])
 
   return [filteredList, filterList]
 }

@@ -93,6 +93,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
   },
+  noMatchingClients: {
+    id: 'ap.ids-admin:no-matching-clients',
+    defaultMessage: 'No applications match the current filter.',
+  },
   noClients: {
     id: 'ap.ids-admin:no-clients',
     defaultMessage: 'No applications',

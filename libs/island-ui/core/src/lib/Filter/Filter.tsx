@@ -69,12 +69,6 @@ export interface FilterProps {
 
   /** Remove left margin from filter button */
   removeLeftMargin?: boolean
-
-  /** Hide the clear all button area in the popover */
-  hideClearAll?: boolean
-
-  /** Override the box shadow on the popover container */
-  popoverShadow?: 'subtle' | 'small' | 'medium' | 'large' | 'strong'
 }
 
 /**
@@ -110,8 +104,6 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   mobileWrap = true,
   removeLeftMargin = false,
   usePopoverDiscloureButtonStyling,
-  hideClearAll = false,
-  popoverShadow = 'subtle',
 }) => {
   const dialog = useDialogState({ modal: true })
   const popover = usePopoverState({
@@ -135,7 +127,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
       component={component ? Popover : undefined}
       background="white"
       borderRadius="large"
-      boxShadow={popoverShadow}
+      boxShadow="subtle"
       className={styles.popoverContainer}
       {...popover}
     >
@@ -143,25 +135,23 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
         {children}
       </Stack>
 
-      {!hideClearAll && (
-        <Box
-          display="flex"
-          width="full"
-          paddingX={3}
-          paddingY={2}
-          justifyContent="center"
-          background="blue100"
+      <Box
+        display="flex"
+        width="full"
+        paddingX={3}
+        paddingY={2}
+        justifyContent="center"
+        background="blue100"
+      >
+        <Button
+          icon="reload"
+          size="small"
+          variant="text"
+          onClick={onFilterClear}
         >
-          <Button
-            icon="reload"
-            size="small"
-            variant="text"
-            onClick={onFilterClear}
-          >
-            {labelClearAll}
-          </Button>
-        </Box>
-      )}
+          {labelClearAll}
+        </Button>
+      </Box>
     </Box>
   )
 
