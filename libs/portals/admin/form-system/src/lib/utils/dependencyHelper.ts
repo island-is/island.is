@@ -15,22 +15,6 @@ export const hasDependency = (
   })
 }
 
-const isFieldInDependencies = (
-  id: string | null | undefined,
-  dependencyArray?: Array<FormSystemDependency | null>,
-) => {
-  if (id == null || !dependencyArray) return false
-
-  return dependencyArray.some((dependency) => {
-    const childProps =
-      dependency?.childProps?.filter(
-        (child): child is string => child != null,
-      ) ?? []
-
-    return dependency?.parentProp === id || childProps.includes(id)
-  })
-}
-
 const filterEmptyDependencies = (
   dependencies: FormSystemDependency[],
 ): FormSystemDependency[] =>

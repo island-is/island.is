@@ -44,6 +44,7 @@ export const FormContextWrapper: FC<
         isCaseUpToDate: true,
         refreshCase: jest.fn(),
         getCase: jest.fn(),
+        isCreating: false,
       }}
     >
       {children}
