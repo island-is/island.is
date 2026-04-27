@@ -93,7 +93,8 @@ export class PersonalTaxCreditResolver {
   })
   @Audit()
   async setSocialInsurancePersonalTaxCreditTaxBracket(
-    @Args('taxBracket', { type: () => TaxBracketAction }) taxBracket: TaxBracketAction,
+    @Args('taxBracket', { type: () => TaxBracketAction })
+    taxBracket: TaxBracketAction,
     @CurrentUser() user: User,
   ): Promise<boolean> {
     await this.service.setTaxBracket(user, taxBracket)
