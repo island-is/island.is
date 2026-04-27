@@ -44,6 +44,7 @@ import {
   generateVerificationRequestOptions,
   getPayloadFromMd,
   redactCardNumber,
+  validateAndParseApplePayValidationUrl,
 } from './cardPayment.utils'
 import {
   ApplePayChargeInput,
@@ -391,6 +392,9 @@ export class CardPaymentService {
       agentAlreadyMemoized: this.applePayMerchantAgent !== null,
     })
 
+    // SSRF guard: re-validate the URL host at the fetch site.
+    validateAndParseApplePayValidationUrl(validationURL)
+
     const dispatcher = this.getApplePayMerchantAgent(
       applePayMerchantIdentityCert,
       applePayMerchantIdentityKey,
@@ -630,9 +634,6 @@ export class CardPaymentService {
     this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Token decrypted`, {
       paymentFlowId,
       maskedCardNumber: redactCardNumber(decryptedData.cardNumber),
-      cardNumberLength: decryptedData.cardNumber.length,
-      expirationMonth: decryptedData.expirationMonth,
-      expirationYear: decryptedData.expirationYear,
       cryptogramLength: decryptedData.paymentCryptogram.length,
     })
 
@@ -644,6 +645,26 @@ export class CardPaymentService {
       paymentTrackingData,
       amount: totalPrice,
     })
+
+    // Mark the Apple Pay token as consumed BEFORE calling Valitor so a
+    // mid-flight failure (response parse error, TLS drop, timeout) can't
+    // be retried into a double-charge. The token is consumed at Apple's
+    // side regardless of how we handle the response — replay is unsafe.
+    // TTL caps the window at one day per Apple Pay token lifetime.
+    try {
+      await this.cacheManager.set(
+        replayCacheKey,
+        true,
+        Math.max(this.config.memCacheExpiryMinutes, 60 * 24) * 60000,
+      )
+    } catch (e) {
+      // Don't fail the charge on a Redis blip — fall back to today's
+      // "no replay protection on this request" behaviour.
+      this.logger.error(
+        `${logPrefix} Failed to record Apple Pay transactionIdentifier for replay protection (continuing without)`,
+        e,
+      )
+    }
 
     // DEBUG-APPLEPAY: log the gateway request shape so we can verify the payload matches Valitor's WalletPayment spec
     this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Gateway request prepared`, {
@@ -698,21 +719,8 @@ export class CardPaymentService {
       errorMessage: 'Failed to charge Apple Pay payment',
     })
 
-    // Mark the Apple Pay token as consumed so a replay is rejected.
-    // Set after Valitor confirms success so a gateway error lets the user
-    // retry. TTL caps the window at one day per Apple Pay token lifetime.
-    try {
-      await this.cacheManager.set(
-        replayCacheKey,
-        true,
-        Math.max(this.config.memCacheExpiryMinutes, 60 * 24) * 60000,
-      )
-    } catch (e) {
-      this.logger.error(
-        `${logPrefix} Failed to record Apple Pay transactionIdentifier for replay protection`,
-        e,
-      )
-    }
+    // Replay marker is already set pre-fetch; on success there's nothing
+    // more to do here.
 
     this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Charge succeeded`, {
       paymentFlowId,

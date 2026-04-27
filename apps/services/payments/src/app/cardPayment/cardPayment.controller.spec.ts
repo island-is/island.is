@@ -1013,7 +1013,10 @@ describe('CardPaymentController', () => {
     })
 
     describe('POST /apple-pay/charge', () => {
-      const getApplePayChargeInput = (transactionIdentifier = uuid()) => ({
+      // Hex strings to satisfy the @Matches(/^[a-fA-F0-9]{1,128}$/) bound on
+      // transactionId and transactionIdentifier introduced in this round.
+      const hexId = () => uuid().replace(/-/g, '')
+      const getApplePayChargeInput = (transactionIdentifier = hexId()) => ({
         paymentFlowId,
         paymentData: {
           version: 'EC_v1',
@@ -1022,7 +1025,7 @@ describe('CardPaymentController', () => {
           header: {
             ephemeralPublicKey: 'ephemeral-public-key',
             publicKeyHash: 'public-key-hash',
-            transactionId: 'transaction-id',
+            transactionId: hexId(),
           },
         },
         transactionIdentifier,
@@ -1406,7 +1409,7 @@ describe('CardPaymentController', () => {
       })
 
       it('should reject a replayed transactionIdentifier on the second call', async () => {
-        const sharedTransactionIdentifier = uuid()
+        const sharedTransactionIdentifier = hexId()
 
         const mockedChargeResponse: CardPaymentResponse = {
           acquirerReferenceNumber: 'string',
@@ -1519,6 +1522,100 @@ describe('CardPaymentController', () => {
         getPaymentFlowChargeDetailsSpy.mockRestore()
         getPaymentFlowStatusSpy.mockRestore()
         fjsSpy.mockRestore()
+        fetchSpy.mockRestore()
+      })
+
+      it('should keep the replay marker when Valitor charge fails (no double-charge on retry)', async () => {
+        const sharedTransactionIdentifier = hexId()
+
+        // Valitor returns a non-2xx WalletPayment response; the marker
+        // is still set pre-fetch, so the same transactionIdentifier
+        // cannot be retried.
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url) => {
+            if (typeof url === 'string') {
+              if (url.includes(ON_UPDATE_URL)) {
+                return {
+                  json: async () => ({ isSuccess: true }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/WalletPayment')) {
+                return {
+                  json: async () => ({}),
+                  text: async () => 'gateway exploded',
+                  status: 500,
+                  statusText: 'Internal Server Error',
+                  ok: false,
+                } as Response
+              }
+            }
+
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        const firstResponse = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput(sharedTransactionIdentifier))
+
+        // First call fails on Valitor side
+        expect(firstResponse.status).toBe(400)
+
+        // Second call with the same transactionIdentifier should be
+        // rejected as a replay even though the first never returned a
+        // success — this is the fix for the set-on-success window.
+        const secondResponse = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput(sharedTransactionIdentifier))
+
+        expect(secondResponse.status).toBe(400)
+        expect(secondResponse.body.detail).toBe(
+          CardErrorCode.ApplePayReplayDetected,
+        )
+
+        getPaymentFlowDetailsSpy.mockRestore()
+        getPaymentFlowChargeDetailsSpy.mockRestore()
+        getPaymentFlowStatusSpy.mockRestore()
         fetchSpy.mockRestore()
       })
     })
