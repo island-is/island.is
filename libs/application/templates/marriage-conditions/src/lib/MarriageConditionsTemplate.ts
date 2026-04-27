@@ -129,9 +129,8 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: pruneAfterDaysWithMessage(60, () => ({
             notificationTemplateId:
-              NotificationConfig[
-                NotificationType.MarriageConditionsPruned
-              ].templateId,
+              NotificationConfig[NotificationType.MarriageConditionsPruned]
+                .templateId,
           })),
           onEntry: defineTemplateApi({
             action: ApiActions.assignSpouse,
