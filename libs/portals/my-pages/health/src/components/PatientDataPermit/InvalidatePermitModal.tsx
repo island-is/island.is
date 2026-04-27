@@ -34,6 +34,7 @@ export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
           eyebrow={formatMessage(messages.healthDirectorate)}
           eyebrowColor="purple400"
           heading={formatMessage(messages.patientDataPermit)}
+          headingVariant="h4"
           text={formatMessage(messages.validToFrom, {
             fromDate: validFrom,
             toDate: validTo,

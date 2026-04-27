@@ -21,12 +21,12 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  CaseTransition,
+  AppealCaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
-  useCase,
+  useAppealCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   hasSentNotification,
@@ -47,16 +47,17 @@ const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const [visibleModal, setVisibleModal] = useState<ModalType>('none')
 
   const handleComplete = async () => {
     const caseTransitioned =
       workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED
-        ? await transitionCase(
+        ? await transitionAppealCase(
             workingCase.id,
-            CaseTransition.COMPLETE_APPEAL,
+            workingCase.appealCase?.id ?? '',
+            AppealCaseTransition.COMPLETE_APPEAL,
             setWorkingCase,
           )
         : true
@@ -135,7 +136,7 @@ const Summary: FC = () => {
             nextButtonIcon="checkmark"
             nextButtonText={formatMessage(strings.nextButtonFooter)}
             onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isTransitioningCase}
+            nextIsDisabled={isTransitioningAppealCase}
           />
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (

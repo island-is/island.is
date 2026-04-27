@@ -328,7 +328,7 @@ export const TableRow = ({
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
         <Row key={id}>
-          <Column span="7/12">
+          <Column span={['6/12', '7/12', '6/12', '7/12']}>
             <Inline space={2}>
               <Icon
                 icon={isOpen ? 'remove' : 'add'}
@@ -338,8 +338,8 @@ export const TableRow = ({
               <ColumnText text={name ? name : ''} isOpen={isOpen} />
             </Inline>
           </Column>
-          <Column span="2/12">
-            <Box display="flex" justifyContent="flexEnd">
+          <Column span="2/12" hiddenBelow="md">
+            <Box display="flex" justifyContent="flexStart">
               <Text variant="medium">
                 {formatDate(lastModified ? lastModified : new Date(), {
                   day: '2-digit',
@@ -350,28 +350,14 @@ export const TableRow = ({
             </Box>
           </Column>
 
-          <Column span="2/12">
-            <Box display="flex" justifyContent="center">
+          <Column span={['2/12', '2/12', '2/12', '1/12']}>
+            <Box display="flex" justifyContent="flexStart">
               <StatusTag status={status ?? ''} />
             </Box>
           </Column>
 
-          <Column span="1/12">
+          <Column span={['4/12', '3/12', '2/12', '2/12']}>
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              >
-                <Button
-                  icon="eye"
-                  circle
-                  colorScheme="negative"
-                  inline
-                  onClick={() => view()}
-                  title="Skoða"
-                />
-              </Box>
               {(status === FormStatus.IN_DEVELOPMENT ||
                 status === FormStatus.PUBLISHED_BEING_CHANGED) && (
                 <Box
@@ -389,6 +375,21 @@ export const TableRow = ({
                   />
                 </Box>
               )}
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <Button
+                  icon="eye"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={() => view()}
+                  title="Skoða"
+                />
+              </Box>
+
               <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}

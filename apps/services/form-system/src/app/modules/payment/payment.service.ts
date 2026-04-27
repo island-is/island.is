@@ -1,9 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import {
-  CatalogItem,
-  ChargeFjsV2ClientService,
-  ExtraData,
-} from '@island.is/clients/charge-fjs-v2'
+import { CatalogItem, ExtraData } from '@island.is/clients/charge-fjs-v2'
 import { PaymentsApi } from '@island.is/clients/payments'
 import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from '@island.is/form-system/enums'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,7 +13,6 @@ import { PaymentModuleConfig } from './payment.config'
 import { Payment } from './payment.model'
 import { CreateChargeResult } from './types/createChargeResult'
 import { PaymentStatus } from './types/paymentStatus'
-import { BasicChargeItem } from './types/paymentType'
 
 @Injectable()
 export class PaymentService {
@@ -26,7 +21,7 @@ export class PaymentService {
     private paymentModel: typeof Payment,
     @Inject(PaymentModuleConfig.KEY)
     private config: ConfigType<typeof PaymentModuleConfig>,
-    private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    // private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly auditService: AuditService,
     private readonly applicationsService: ApplicationsService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -168,41 +163,41 @@ export class PaymentService {
     return await this.paymentModel.create(paymentModel)
   }
 
-  async findCatalogChargeItems(
-    performingOrganizationID: string,
-    targetChargeItems: BasicChargeItem[],
-  ): Promise<CatalogItem[]> {
-    const { item: catalogItems } =
-      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
-        performingOrgID: performingOrganizationID,
-      })
+  // async findCatalogChargeItems(
+  //   performingOrganizationID: string,
+  //   targetChargeItems: BasicChargeItem[],
+  // ): Promise<CatalogItem[]> {
+  //   const { item: catalogItems } =
+  //     await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+  //       performingOrgID: performingOrganizationID,
+  //     })
 
-    // get list of items with catalog info, but make sure to allow duplicates
-    const result: CatalogItem[] = []
-    for (let i = 0; i < targetChargeItems.length; i++) {
-      const chargeItem = targetChargeItems[i]
-      const catalogItem = catalogItems.find(
-        (item) => item.chargeItemCode === chargeItem.code,
-      )
-      if (catalogItem) {
-        result.push({ ...catalogItem, quantity: chargeItem.quantity })
-      }
-    }
+  //   // get list of items with catalog info, but make sure to allow duplicates
+  //   const result: CatalogItem[] = []
+  //   for (let i = 0; i < targetChargeItems.length; i++) {
+  //     const chargeItem = targetChargeItems[i]
+  //     const catalogItem = catalogItems.find(
+  //       (item) => item.chargeItemCode === chargeItem.code,
+  //     )
+  //     if (catalogItem) {
+  //       result.push({ ...catalogItem, quantity: chargeItem.quantity })
+  //     }
+  //   }
 
-    if (!result || result.length === 0) {
-      throw new Error('Bad chargeItems or empty catalog')
-    }
+  //   if (!result || result.length === 0) {
+  //     throw new Error('Bad chargeItems or empty catalog')
+  //   }
 
-    const firstItem = result[0]
-    const notSame = result.find(
-      (item) => item.chargeType !== firstItem.chargeType,
-    )
-    if (notSame) {
-      throw new Error('Not all chargeItems have the same chargeType')
-    }
+  //   const firstItem = result[0]
+  //   const notSame = result.find(
+  //     (item) => item.chargeType !== firstItem.chargeType,
+  //   )
+  //   if (notSame) {
+  //     throw new Error('Not all chargeItems have the same chargeType')
+  //   }
 
-    return result
-  }
+  //   return result
+  // }
 
   /**
    * Creates a payment charge through the Íslandis payment system. If a payment already exists
@@ -231,26 +226,26 @@ export class PaymentService {
   async createCharge(
     user: User,
     performingOrganizationID: string,
-    chargeItems: BasicChargeItem[],
+    catalogChargeItems: CatalogItem[],
     applicationId: string,
     extraData: ExtraData[] | undefined,
     locale?: string | undefined,
     payerNationalId?: string,
   ): Promise<CreateChargeResult> {
     // Retrieve charge items from FJS
-    const catalogChargeItems = await this.findCatalogChargeItems(
-      performingOrganizationID,
-      chargeItems,
-    ).then((catalogChargeItems) => {
-      return catalogChargeItems.map((catalogChargeItem, i) => {
-        // If the price is dynamic, we need to update the price of the
-        // catalogChargeItems with the price from the chargeItems
-        return {
-          ...catalogChargeItem,
-          priceAmount: chargeItems[i].amount ?? catalogChargeItem.priceAmount,
-        }
-      })
-    })
+    // const catalogChargeItems = await this.findCatalogChargeItems(
+    //   performingOrganizationID,
+    //   chargeItems,
+    // ).then((catalogChargeItems) => {
+    //   return catalogChargeItems.map((catalogChargeItem, i) => {
+    //     // If the price is dynamic, we need to update the price of the
+    //     // catalogChargeItems with the price from the chargeItems
+    //     return {
+    //       ...catalogChargeItem,
+    //       priceAmount: chargeItems[i].amount ?? catalogChargeItem.priceAmount,
+    //     }
+    //   })
+    // })
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
@@ -280,7 +275,7 @@ export class PaymentService {
     }
     // no model existed orpayment url was not set, meaning no flow was created so we need to create a new one
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
-    onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+    onUpdateUrl.pathname = '/form-payment/api-client-payment-callback'
 
     const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
 
