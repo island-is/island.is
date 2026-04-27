@@ -1811,6 +1811,14 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
+    if (
+      update.reopenReason !== undefined &&
+      isIndictmentCase(theCase.type) &&
+      isCompletedCase(theCase.state)
+    ) {
+      update.state = CaseState.RECEIVED
+    }
+
     // Keep transient defendant event log decisions out of the case persistence
     // payload without mutating the original update object.
     const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
