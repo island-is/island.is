@@ -376,6 +376,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
+              refetchApplicationAfterSubmit: (event) => {
+                return event === DefaultEvents.ABORT
+              },
               actions: [
                 {
                   event: DefaultEvents.ABORT,

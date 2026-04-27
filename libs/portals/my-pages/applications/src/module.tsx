@@ -33,5 +33,11 @@ export const applicationsModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApplicationScope.read),
       element: <OverviewScreen />,
     },
+    {
+      name: m.olderApplications,
+      path: ApplicationsPaths.ApplicationOlderApplications,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      element: <OverviewScreen />,
+    },
   ],
 }

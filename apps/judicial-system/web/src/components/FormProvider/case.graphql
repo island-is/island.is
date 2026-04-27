@@ -84,6 +84,10 @@ query Case($input: CaseQueryInput!) {
       isDrivingLicenseSuspended
       appealStatementDate
       policeCaseNumbers
+      indictmentCancelledOrDismissedState {
+        type
+        time
+      }
       subpoenas {
         id
         created
