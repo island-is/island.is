@@ -86,16 +86,14 @@ interface Props {
 
 const CaseOverviewHeader: FC<Props> = (props) => {
   const { alerts } = props
-  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const router = useRouter()
 
   const wasAppealedAfterDeadline =
-    workingCase.appealedDate &&
+    workingCase.appealCase?.appealedDate &&
     workingCase.appealDeadline &&
-    workingCase.appealedDate > workingCase.appealDeadline
+    workingCase.appealCase.appealedDate > workingCase.appealDeadline
 
   return (
     <div className={grid({ gap: 5 })}>

@@ -390,18 +390,18 @@ query Case($input: CaseQueryInput!) {
       generatedPdfUri
     }
     requestDriversLicenseSuspension
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     canProsecutorAppeal
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
       id
       appealState
       appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate

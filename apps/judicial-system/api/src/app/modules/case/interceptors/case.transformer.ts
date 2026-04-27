@@ -1,30 +1,14 @@
 import {
-  CaseAppealDecision,
   CaseIndictmentRulingDecision,
-  getAppealDeadlineDate,
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
   getIndictmentVerdictAppealDeadlineStatus,
-  getMillisecondsFromDays,
-  getStatementDeadline,
   hasDatePassed,
   isRequestCase,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
-
-interface AppealInfo {
-  canBeAppealed?: boolean
-  hasBeenAppealed?: boolean
-  appealDeadline?: string
-  appealedByRole?: UserRole
-  appealedDate?: string
-  statementDeadline?: string
-  canProsecutorAppeal?: boolean
-  canDefenderAppeal?: boolean
-}
 
 interface IndictmentInfo {
   indictmentAppealDeadline?: string
@@ -38,85 +22,10 @@ interface IndictmentInfoParams {
   defendants?: Defendant[]
 }
 
-const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
-  if (!decision) {
-    return false
-  }
-  return [
-    CaseAppealDecision.POSTPONE,
-    CaseAppealDecision.NOT_APPLICABLE,
-  ].includes(decision)
-}
-
-export const getAppealInfo = (theCase: Case): AppealInfo => {
-  const {
-    rulingDate,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    prosecutorPostponedAppealDate,
-    accusedPostponedAppealDate,
-    isCompletedWithoutRuling,
-  } = theCase
-  const { appealState, appealReceivedByCourtDate } = theCase.appealCase ?? {}
-  const appealInfo: AppealInfo = {}
-
-  if (!rulingDate) {
-    return appealInfo
-  }
-
-  const didProsecutorAcceptInCourt =
-    prosecutorAppealDecision === CaseAppealDecision.ACCEPT
-  const didAccusedAcceptInCourt =
-    accusedAppealDecision === CaseAppealDecision.ACCEPT
-  const didAllAcceptInCourt =
-    didProsecutorAcceptInCourt && didAccusedAcceptInCourt
-
-  const hasBeenAppealed = Boolean(appealState) && !didAllAcceptInCourt
-  appealInfo.hasBeenAppealed = hasBeenAppealed
-
-  if (hasBeenAppealed) {
-    appealInfo.appealedByRole =
-      prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
-        ? UserRole.PROSECUTOR
-        : accusedPostponedAppealDate && !didAccusedAcceptInCourt
-        ? UserRole.DEFENDER
-        : undefined
-
-    appealInfo.appealedDate =
-      appealInfo.appealedByRole === UserRole.PROSECUTOR
-        ? prosecutorPostponedAppealDate ?? undefined
-        : accusedPostponedAppealDate ?? undefined
-  }
-
-  appealInfo.canBeAppealed = Boolean(
-    !hasBeenAppealed &&
-      !isCompletedWithoutRuling &&
-      (isAppealableDecision(accusedAppealDecision) ||
-        isAppealableDecision(prosecutorAppealDecision)),
-  )
-
-  appealInfo.canProsecutorAppeal =
-    appealInfo.canBeAppealed && isAppealableDecision(prosecutorAppealDecision)
-
-  appealInfo.canDefenderAppeal =
-    appealInfo.canBeAppealed && isAppealableDecision(accusedAppealDecision)
-
-  const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = getAppealDeadlineDate(theRulingDate).toISOString()
-
-  if (appealReceivedByCourtDate) {
-    appealInfo.statementDeadline = getStatementDeadline(
-      new Date(appealReceivedByCourtDate),
-    )
-  }
-
-  return appealInfo
-}
-
 const transformRequestCase = (theCase: Case): Case => {
-  const { appealReceivedByCourtDate } = theCase.appealCase ?? {}
-  const appealInfo = getAppealInfo(theCase)
-
+  // Appeal-info fields (hasBeenAppealed, canBeAppealed, appealDeadline,
+  // isAppealDeadlineExpired, etc., plus per-appeal fields on case.appealCase)
+  // are now computed in the backend's CaseInterceptor and arrive populated.
   return {
     ...theCase,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
@@ -125,23 +34,6 @@ const transformRequestCase = (theCase: Case): Case => {
     isValidToDateInThePast: theCase.validToDate
       ? hasDatePassed(new Date(theCase.validToDate))
       : theCase.isValidToDateInThePast,
-
-    // TODO: Move remaining appeal fields to appealInfo
-    isAppealDeadlineExpired: appealInfo.appealDeadline
-      ? Date.now() >= new Date(appealInfo.appealDeadline).getTime()
-      : false,
-    isStatementDeadlineExpired: appealReceivedByCourtDate
-      ? Date.now() >=
-        new Date(appealReceivedByCourtDate).getTime() +
-          getMillisecondsFromDays(1)
-      : false,
-    accusedPostponedAppealDate: appealInfo.hasBeenAppealed
-      ? theCase.accusedPostponedAppealDate
-      : undefined,
-    prosecutorPostponedAppealDate: appealInfo.hasBeenAppealed
-      ? theCase.prosecutorPostponedAppealDate
-      : undefined,
-    ...appealInfo,
   }
 }
 
@@ -209,61 +101,13 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
   })
 }
 
-export const getIndictmentDismissalAppealInfo = (theCase: Case): AppealInfo => {
-  const appealInfo: AppealInfo = {}
-
-  if (
-    theCase.indictmentRulingDecision !==
-      CaseIndictmentRulingDecision.DISMISSAL ||
-    !theCase.rulingDate
-  ) {
-    return appealInfo
-  }
-
-  const { appealState, appealReceivedByCourtDate } = theCase.appealCase ?? {}
-  const hasBeenAppealed = Boolean(appealState)
-  appealInfo.hasBeenAppealed = hasBeenAppealed
-
-  if (hasBeenAppealed) {
-    appealInfo.appealedByRole = theCase.prosecutorPostponedAppealDate
-      ? UserRole.PROSECUTOR
-      : theCase.accusedPostponedAppealDate
-      ? UserRole.DEFENDER
-      : undefined
-
-    appealInfo.appealedDate =
-      appealInfo.appealedByRole === UserRole.PROSECUTOR
-        ? theCase.prosecutorPostponedAppealDate ?? undefined
-        : theCase.accusedPostponedAppealDate ?? undefined
-  }
-
-  appealInfo.canBeAppealed = !hasBeenAppealed
-  appealInfo.canProsecutorAppeal = appealInfo.canBeAppealed
-  appealInfo.canDefenderAppeal = appealInfo.canBeAppealed
-
-  const theRulingDate = new Date(theCase.rulingDate)
-  appealInfo.appealDeadline = getAppealDeadlineDate(theRulingDate).toISOString()
-
-  if (appealReceivedByCourtDate) {
-    appealInfo.statementDeadline = getStatementDeadline(
-      new Date(appealReceivedByCourtDate),
-    )
-  }
-
-  return appealInfo
-}
-
 const transformIndictmentCase = (theCase: Case): Case => {
-  const {
-    rulingDate,
-    defendants,
-    indictmentRulingDecision,
-    accusedPostponedAppealDate,
-    prosecutorPostponedAppealDate,
-  } = theCase
-  const { appealReceivedByCourtDate } = theCase.appealCase ?? {}
-  const dismissalAppealInfo = getIndictmentDismissalAppealInfo(theCase)
+  const { rulingDate, defendants, indictmentRulingDecision } = theCase
 
+  // Verdict-appeal info (indictmentAppealDeadline, indictmentVerdictViewedByAll,
+  // indictmentVerdictAppealDeadlineExpired) is computed here.
+  // Case-level dismissal-appeal info is computed in the backend and arrives
+  // pre-populated.
   return {
     ...theCase,
     ...getIndictmentInfo({
@@ -271,21 +115,6 @@ const transformIndictmentCase = (theCase: Case): Case => {
       rulingDate,
       defendants,
     }),
-    ...dismissalAppealInfo,
-    isAppealDeadlineExpired: dismissalAppealInfo.appealDeadline
-      ? Date.now() >= new Date(dismissalAppealInfo.appealDeadline).getTime()
-      : false,
-    isStatementDeadlineExpired: appealReceivedByCourtDate
-      ? Date.now() >=
-        new Date(appealReceivedByCourtDate).getTime() +
-          getMillisecondsFromDays(1)
-      : false,
-    accusedPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
-      ? accusedPostponedAppealDate
-      : undefined,
-    prosecutorPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
-      ? prosecutorPostponedAppealDate
-      : undefined,
   }
 }
 

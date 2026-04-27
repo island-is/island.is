@@ -1,3 +1,5 @@
+import { addDays } from 'date-fns'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -501,10 +503,8 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-export const getStatementDeadline = (appealReceived: Date): string => {
-  return new Date(
-    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
-  ).toISOString()
+export const getStatementDeadline = (appealReceived: Date): Date => {
+  return addDays(appealReceived, 1)
 }
 
 export const isIndictmentCaseState = (
