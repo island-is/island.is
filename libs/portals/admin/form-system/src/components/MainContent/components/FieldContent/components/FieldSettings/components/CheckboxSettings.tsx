@@ -18,6 +18,7 @@ export const CheckboxSettings = () => {
   const currentItem = activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { formatMessage } = useLocale()
+
   return (
     <Stack space={2}>
       <Row>
@@ -72,7 +73,7 @@ export const CheckboxSettings = () => {
       )}
       <Row>
         <Column>
-          <ToggleConnection />
+          <ToggleConnection isPartOfMultiset={currentItem.isPartOfMultiset} />
         </Column>
       </Row>
     </Stack>

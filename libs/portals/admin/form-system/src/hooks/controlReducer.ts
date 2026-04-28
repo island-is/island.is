@@ -568,12 +568,16 @@ export const controlReducer = (
     case 'CHANGE_FIELD_TYPE': {
       const { newValue, fieldSettings, update } = action.payload
       const currentData = activeItem.data as FormSystemField
+      const isListType =
+        newValue === FieldTypesEnum.DROPDOWN_LIST ||
+        newValue === FieldTypesEnum.RADIO_BUTTONS
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
           fieldType: newValue,
           fieldSettings: removeTypename(fieldSettings),
+          list: isListType ? currentData.list : [],
         },
       }
       let newFields = fields?.map((field) =>
@@ -970,10 +974,6 @@ export const controlReducer = (
     // If parent exists and child exists, remove it from the array and also remove the dependency object if the array is empty
     case 'TOGGLE_DEPENDENCY': {
       const { activeId, itemId, update } = action.payload
-
-      const dependency = form.dependencies?.find(
-        (dep) => dep?.parentProp === activeId,
-      )
 
       let updatedDependencies = form.dependencies ?? []
 

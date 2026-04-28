@@ -253,7 +253,7 @@ export const getStatistics = ({
     return []
   }
 
-  const isDateHeader = _tryToGetDate(allSourceDataForKey[0]?.header) !== null
+  const isDateHeader = !Number.isNaN(Number(allSourceDataForKey[0]?.header))
 
   const mapped = allSourceDataForKey.map((item) => ({
     ...item,
@@ -261,7 +261,7 @@ export const getStatistics = ({
   }))
 
   const dropLeft = (item: StatisticSourceValue) => {
-    if (isDateHeader && dateFrom && new Date(item.header) < dateFrom) {
+    if (isDateHeader && dateFrom && new Date(Number(item.header)) < dateFrom) {
       return true
     }
 
@@ -273,7 +273,7 @@ export const getStatistics = ({
   }
 
   const dropRight = (item: StatisticSourceValue) => {
-    if (isDateHeader && dateTo && new Date(item.header) > dateTo) {
+    if (isDateHeader && dateTo && new Date(Number(item.header)) > dateTo) {
       return true
     }
 
@@ -372,7 +372,7 @@ export const getMultipleStatistics = async (
   } else if (dateFrom) {
     // If we have only date from, get the X number of data points from that date
     return filterByInterval(
-      trimmedResult.slice(numberOfDataPointsToUse),
+      trimmedResult.slice(0, numberOfDataPointsToUse),
       interval,
     )
   } else if (dateTo) {

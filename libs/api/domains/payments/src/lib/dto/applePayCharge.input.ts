@@ -27,15 +27,6 @@ class ApplePayPaymentData {
   header!: ApplePayPaymentHeader
 }
 
-@InputType('PaymentsApplePayPaymentMethod')
-class ApplePayPaymentMethod {
-  @Field(() => String)
-  displayName!: string
-
-  @Field(() => String)
-  network!: string
-}
-
 @InputType('PaymentsApplePayChargeInput')
 export class ApplePayChargeInput {
   @Field(() => String)
@@ -43,9 +34,6 @@ export class ApplePayChargeInput {
 
   @Field(() => ApplePayPaymentData)
   paymentData!: ApplePayPaymentData
-
-  @Field(() => ApplePayPaymentMethod)
-  paymentMethod!: ApplePayPaymentMethod
 
   @Field(() => String)
   transactionIdentifier!: string
