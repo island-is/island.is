@@ -182,7 +182,10 @@ export const BankAccountFormField = ({
         </Box>
       )}
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '4/12']}
+          paddingBottom={2}
+        >
           <Box>
             <InputController
               id={`${id}.bankNumber`}
@@ -201,7 +204,10 @@ export const BankAccountFormField = ({
             />
           </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '3/12', '2/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '3/12', '2/12']}
+          paddingBottom={2}
+        >
           <Box>
             <InputController
               id={`${id}.ledger`}

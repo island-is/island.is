@@ -14,18 +14,21 @@ import {
   UnemploymentApplicationValidatePaymentPageRequest,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
+  ApplicantInfoApi,
+  GaldurXRoadAPIModelsApplicantInfoResponse,
+  GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
   ApplicantApi,
-  GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
-  GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
-  GaldurExternalDomainRequestsApplicantCreateForeignTravelResponse,
-  ApplicantCreateForeignTravelRequest,
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
+  ApplicantUpdateApplicantRequest,
+  ApplicantGetApplicantInfoRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -40,6 +43,7 @@ type VmstApis =
   | UnemploymentApplicationApi
   | ActivationGrantApi
   | AttachmentApi
+  | ApplicantInfoApi
   | ApplicantApi
   | SupportDataApi
 
@@ -194,14 +198,8 @@ export class VmstUnemploymentClientService {
   }
 
   async canUserWithdrawUnemploymentApplication(
-    auth: User,
+    applicantId: string,
   ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
-    const { applicantId } = await this.resolveApplicant(auth)
-
-    if (!applicantId) {
-      throw new Error('Failed to resolve applicantId')
-    }
-
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
@@ -324,9 +322,8 @@ export class VmstUnemploymentClientService {
     })
   }
 
-  async checkConfirmTravelEligibility(
-    auth: User,
-  ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
+  async checkConfirmTravelEligibility(auth: User): Promise<any> {
+    // todo fix any
     const { applicantId } = await this.resolveApplicant(auth)
 
     if (!applicantId) {
@@ -370,5 +367,36 @@ export class VmstUnemploymentClientService {
       id: applicantId,
       galdurExternalDomainRequestsApplicantCreateForeignStayRequest: request,
     })
+  }
+
+  async getCurrentApplicationForActions(
+    requestParameters: ApplicantGetApplicantInfoRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantGetApplicantInfo(requestParameters)
+  }
+
+  async getCurrentApplicationSupportDataForActions(): Promise<GaldurXRoadAPIModelsApplicantInfoSupportDataResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantGetApplicantInfoSupportData()
+  }
+
+  async updateCurrentApplicationForActions(
+    requestParameters: ApplicantUpdateApplicantRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantUpdateApplicant(requestParameters)
   }
 }

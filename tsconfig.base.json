@@ -678,6 +678,9 @@
       "@island.is/application/templates/vmst/de-register-unemployment-benefits": [
         "libs/application/templates/vmst/de-register-unemployment-benefits/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/edit-unemployment-information": [
+        "libs/application/templates/vmst/edit-unemployment-information/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
