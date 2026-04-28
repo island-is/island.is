@@ -107,6 +107,10 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
     const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {
       evt.stopPropagation()
 
+      if (item.href) {
+        return
+      }
+
       setOpen(false)
       setIsLoading(true)
 
@@ -141,9 +145,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
                 <Box component="li" width="full">
                   <Box
                     component={item.href ? 'a' : 'button'}
-                    onClick={
-                      item.href ? undefined : (evt) => handleClick(evt, item)
-                    }
+                    onClick={(evt) => handleClick(evt, item)}
                     href={item.href ?? undefined}
                     className={cn(
                       menuItemBoxStyle,

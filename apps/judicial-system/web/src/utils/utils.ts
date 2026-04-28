@@ -345,14 +345,20 @@ export const isMatchingAppealCaseFile = (
     category?: CaseFileCategory | null
     defendantId?: string | null
     civilClaimantId?: string | null
+    rulingFileId?: string | null
   },
   user: User | undefined,
+  rulingFileId?: string | null,
 ): boolean => {
   if (!file.category) {
     return false
   }
 
   if (!categories.includes(file.category)) {
+    return false
+  }
+
+  if (rulingFileId && file.rulingFileId !== rulingFileId) {
     return false
   }
 
