@@ -536,8 +536,6 @@ export interface UpdateAppealCase
     AppealCase,
     | 'appealCaseNumber'
     | 'appealReceivedByCourtDate'
-    | 'prosecutorStatementDate'
-    | 'defendantStatementDate'
     | 'appealAssistantId'
     | 'appealJudge1Id'
     | 'appealJudge2Id'
