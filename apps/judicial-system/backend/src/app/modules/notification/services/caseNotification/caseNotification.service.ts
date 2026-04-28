@@ -82,7 +82,6 @@ import { DefendantService } from '../../../defendant'
 import { EventService } from '../../../event'
 import {
   type Case,
-  CaseString,
   type CivilClaimant,
   DateLog,
   type Defendant,
@@ -161,7 +160,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return (courtId && this.config.email.courtsEmails[courtId]) ?? undefined
   }
 
-  private getIndictmentAppealDefenceRecipients(
+  private getIndictmentDefenceRecipients(
     theCase: Case,
     excludeNationalId?: string,
   ) {
@@ -1922,21 +1921,39 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<DeliverResponse> {
     const courtCaseNumber = theCase.courtCaseNumber ?? ''
-    const reopenReason = CaseString.reopenReason(theCase.caseStrings)
     const subject = `Mál ${courtCaseNumber} enduropnað`
-    const html = `${theCase.court?.name} hefur enduropnað mál ${courtCaseNumber}.<br /><br />Fyrri lyktum hefur verið eytt og málið verður afgreitt á ný.<br /><br /><a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+    const body = `${theCase.court?.name} hefur enduropnað mál ${courtCaseNumber}.<br /><br />Fyrri lyktum hefur verið eytt og málið verður afgreitt á ný.`
+    const prosecutorHtml = `${body}<br /><br /><a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+    const defenderLink = formatDefenderRoute(
+      this.config.clientUrl,
+      theCase.type,
+      theCase.id,
+    )
+    const defenderHtml = `${body}<br /><br /><a href="${defenderLink}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
-    const recipient = await this.sendEmail({
-      subject,
-      html,
-      recipientName: theCase.prosecutor?.name,
-      recipientEmail: theCase.prosecutor?.email,
-    })
+    const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
+
+    const recipients = await Promise.all([
+      this.sendEmail({
+        subject,
+        html: prosecutorHtml,
+        recipientName: theCase.prosecutor?.name,
+        recipientEmail: theCase.prosecutor?.email,
+      }),
+      ...defenceRecipients.map((r) =>
+        this.sendEmail({
+          subject,
+          html: defenderHtml,
+          recipientName: r.name,
+          recipientEmail: r.email,
+        }),
+      ),
+    ])
 
     return this.recordNotification(
       theCase.id,
       CaseNotificationType.INDICTMENT_REOPENED,
-      [recipient],
+      recipients,
     )
   }
   //#endregion
@@ -2479,7 +2496,7 @@ export class CaseNotificationService extends BaseNotificationService {
       )
       promises.push(this.sendSms(smsText, theCase.prosecutor?.mobileNumber))
 
-      const defenceRecipients = this.getIndictmentAppealDefenceRecipients(
+      const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
         theCase.appealCase?.appealedByNationalId,
       )
@@ -2512,7 +2529,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (isProsecutionUser(user)) {
       const defenceRecipients =
-        this.getIndictmentAppealDefenceRecipients(theCase)
+        this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
@@ -2752,7 +2769,7 @@ export class CaseNotificationService extends BaseNotificationService {
       }),
     )
 
-    const defenceRecipients = this.getIndictmentAppealDefenceRecipients(theCase)
+    const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
     for (const recipient of defenceRecipients) {
       const defenderUrl = recipient.nationalId
@@ -2887,7 +2904,7 @@ export class CaseNotificationService extends BaseNotificationService {
         }),
       )
 
-      const defenceRecipients = this.getIndictmentAppealDefenceRecipients(
+      const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
         user.nationalId,
       )
@@ -2921,7 +2938,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (isProsecutionUser(user)) {
       const defenceRecipients =
-        this.getIndictmentAppealDefenceRecipients(theCase)
+        this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
@@ -3170,7 +3187,7 @@ export class CaseNotificationService extends BaseNotificationService {
         }),
       )
 
-      const defenceRecipients = this.getIndictmentAppealDefenceRecipients(
+      const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
         user.nationalId,
       )
@@ -3201,7 +3218,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (isProsecutionUser(user)) {
       const defenceRecipients =
-        this.getIndictmentAppealDefenceRecipients(theCase)
+        this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
@@ -3402,7 +3419,7 @@ export class CaseNotificationService extends BaseNotificationService {
     // Skip prison admin and prison — not relevant for indictment cases
 
     // Notify ALL defenders and civil claimant lawyers
-    const defenceRecipients = this.getIndictmentAppealDefenceRecipients(theCase)
+    const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
     for (const recipient of defenceRecipients) {
       const defenderUrl = recipient.nationalId
@@ -3590,7 +3607,7 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     // Notify ALL defenders and civil claimant lawyers
-    const defenceRecipients = this.getIndictmentAppealDefenceRecipients(theCase)
+    const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
     for (const recipient of defenceRecipients) {
       const defenderHtml = this.formatMessage(
@@ -3738,7 +3755,7 @@ export class CaseNotificationService extends BaseNotificationService {
     if (isProsecutionUser(user)) {
       // Notify ALL defenders and civil claimant lawyers
       const defenceRecipients =
-        this.getIndictmentAppealDefenceRecipients(theCase)
+        this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         promises.push(
@@ -3765,7 +3782,7 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       // Notify all OTHER defenders and civil claimant lawyers
-      const defenceRecipients = this.getIndictmentAppealDefenceRecipients(
+      const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
         theCase.appealCase?.appealedByNationalId,
       )
