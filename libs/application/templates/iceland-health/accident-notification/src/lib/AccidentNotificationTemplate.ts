@@ -1,5 +1,6 @@
 import {
   coreHistoryMessages,
+  defaultLifecycleWithPruneMessage,
   DefaultStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -14,6 +15,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   FormModes,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
@@ -327,7 +330,18 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           status: 'completed',
           name: States.IN_FINAL_REVIEW,
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: defaultLifecycleWithPruneMessage((application) => {
+            const nationalId = getValueViaPath<string>(
+              application.answers,
+              'injuredPersonInformation.nationalId',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.AccidentNotificationPruned]
+                  .templateId,
+              ...(nationalId && { internalBody: nationalId }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: ApiActions.reviewApplication,
           }),
