@@ -11,12 +11,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import {
-  AppealCase,
-  AppealEventLog,
-  Case,
-  CaseFile,
-} from '../../../repository'
+import { AppealCase, AppealEventLog, Case, CaseFile } from '../../../repository'
 import {
   getAppealCaseInfo,
   getAppealCaseStatementDates,
@@ -554,7 +549,8 @@ describe('getAppealCaseStatementDates', () => {
       const theCase = { type: CaseType.INDICTMENT } as Case
 
       expect(
-        getAppealCaseStatementDates(appealCase, theCase).prosecutorStatementDate,
+        getAppealCaseStatementDates(appealCase, theCase)
+          .prosecutorStatementDate,
       ).toEqual(later)
     })
 
