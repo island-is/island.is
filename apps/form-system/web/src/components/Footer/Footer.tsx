@@ -169,8 +169,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                   }
                 }
                 chargeItems.push({
-                  performingOrgID:
-                    state.application.organizationNationalId ?? '',
+                  performingOrgID: '6509142520', //state.application.organizationNationalId ?? '',
                   chargeType: field.fieldSettings.chargeType || 'default',
                   chargeItemCode: code,
                   chargeItemName:
@@ -187,8 +186,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID:
-                state.application.organizationNationalId,
+              performingOrganizationID: '6509142520', //state.application.organizationNationalId,
               chargeItems,
             },
           },
