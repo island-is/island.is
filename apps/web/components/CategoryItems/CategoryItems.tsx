@@ -68,7 +68,7 @@ export const CategoryItems = ({
       <GridItems
         third
         mobileItemWidth={270}
-        mobileItemsRows={3}
+        mobileItemsRows={2}
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer

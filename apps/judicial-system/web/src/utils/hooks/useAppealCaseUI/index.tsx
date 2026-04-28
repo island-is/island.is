@@ -28,13 +28,17 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  CaseTransition,
+  AppealCaseTransition,
   InstitutionType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getAppealActorText, hasSentNotification } from '../../utils'
-import useCase from '../useCase'
+import {
+  getAppealActorText,
+  getDefenceUserPartyIds,
+  hasSentNotification,
+} from '../../utils'
+import useAppealCase from '../useAppealCase'
 import * as styles from './useAppealCase.css'
 
 const renderLinkButton = (text: string, href: string) => {
@@ -79,9 +83,9 @@ export const getAppealDecision = (
 const useAppealCaseUI = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, setWorkingCase } =
+  const { workingCase, isLoadingWorkingCase, setWorkingCase, refreshCase } =
     useContext(FormContext)
-  const { transitionCase } = useCase()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const [appealModalVisible, setAppealModalVisible] = useState<
     | 'ConfirmAppealAfterDeadline'
@@ -90,16 +94,21 @@ const useAppealCaseUI = () => {
     | undefined
   >()
 
-  const handleReceivedTransition = () => {
-    transitionCase(
+  const handleReceivedTransition = async () => {
+    const success = await transitionAppealCase(
       workingCase.id,
-      CaseTransition.RECEIVE_APPEAL,
+      workingCase.appealCase?.id ?? '',
+      AppealCaseTransition.RECEIVE_APPEAL,
       setWorkingCase,
-    ).then((updatedCase) => {
-      if (updatedCase) {
-        setAppealModalVisible('AppealReceived')
-      }
-    })
+    )
+
+    if (!success) {
+      return
+    }
+
+    setAppealModalVisible('AppealReceived')
+
+    refreshCase()
   }
 
   const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
@@ -133,9 +142,33 @@ const useAppealCaseUI = () => {
     isProsecutionUser(user) &&
     user?.institution?.id === sharedWithProsecutorsOffice?.id
 
-  const hasCurrentUserSentStatement =
-    (isProsecutionUser(user) && prosecutorStatementDate) ||
-    (isDefenceUser(user) && defendantStatementDate)
+  // For indictment cases each defender / civil claimant spokesperson sends
+  // their own statement, so resolve the per-party date by national-id match
+  // against confirmed parties only. Request cases have a single defender,
+  // so the aggregated appealCase.defendantStatementDate is the right answer.
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    workingCase,
+    user,
+  )
+  const currentDefenceStatementDate = defendantId
+    ? workingCase.defendants?.find((d) => d.id === defendantId)
+        ?.appealStatementDate
+    : civilClaimantId
+    ? workingCase.civilClaimants?.find((c) => c.id === civilClaimantId)
+        ?.appealStatementDate
+    : isIndictmentCase(workingCase.type)
+    ? // Indictment defence user whose pick isn't confirmed: no per-party
+      // statement is attributable to them.
+      undefined
+    : defendantStatementDate
+
+  const currentUserStatementDate = isProsecutionUser(user)
+    ? prosecutorStatementDate
+    : isDefenceUser(user)
+    ? currentDefenceStatementDate
+    : undefined
+
+  const hasCurrentUserSentStatement = Boolean(currentUserStatementDate)
 
   const appealCompletedDate = hasSentNotification(
     NotificationType.APPEAL_COMPLETED,
@@ -176,12 +209,7 @@ const useAppealCaseUI = () => {
     if (hasCurrentUserSentStatement) {
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
-          {`Greinargerð send ${formatDate(
-            isProsecutionUser(user)
-              ? prosecutorStatementDate
-              : defendantStatementDate,
-            'PPPp',
-          )}`}
+          {`Greinargerð send ${formatDate(currentUserStatementDate, 'PPPp')}`}
         </Text>
       )
     } else if (isDistrictCourtUser(user)) {
@@ -224,9 +252,7 @@ const useAppealCaseUI = () => {
         ? (child = (
             <Text variant="small" color="mint800" fontWeight="semiBold">
               {`Greinargerð send ${formatDate(
-                isProsecutionUser(user)
-                  ? prosecutorStatementDate
-                  : defendantStatementDate,
+                currentUserStatementDate,
                 'PPPp',
               )}`}
             </Text>
@@ -244,6 +270,7 @@ const useAppealCaseUI = () => {
             variant="text"
             size="small"
             onClick={handleReceivedTransition}
+            loading={isTransitioningAppealCase}
           >
             {'Senda tilkynningu um kæru til Landsréttar'}
           </Button>

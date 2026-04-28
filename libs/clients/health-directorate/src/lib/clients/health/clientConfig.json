@@ -1651,7 +1651,7 @@
     },
     "/v1/me/appointments": {
       "get": {
-        "description": "Get user's appointments",
+        "description": "Get user's appointments (summary)",
         "operationId": "MeAppointmentController_getPatientAppointments_v1",
         "parameters": [
           {
@@ -1686,7 +1686,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AppointmentDto"
+                    "$ref": "#/components/schemas/AppointmentBaseDto"
                   }
                 }
               }
@@ -1713,6 +1713,87 @@
             }
           },
           "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Appointments"]
+      }
+    },
+    "/v1/me/appointments/{id}": {
+      "get": {
+        "description": "Get a single appointment by id (full detail)",
+        "operationId": "MeAppointmentController_getPatientAppointmentById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Appointment id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
             "description": "",
             "content": {
               "application/json": {
@@ -2244,6 +2325,7 @@
           "notFullyDispensed",
           "isRegiment",
           "drugNotOnMedCard",
+          "noMedCard",
           "noPrimaryCareClinic",
           "moreRecentPrescriptionExists",
           "specialistOnlyPrescription"
@@ -2738,6 +2820,11 @@
             "type": "string",
             "description": "Name of the sender of the questionnaire"
           },
+          "senderGroupName": {
+            "type": "string",
+            "description": "Name of the sender group of the questionnaire",
+            "nullable": true
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -2765,6 +2852,11 @@
             "format": "date-time",
             "type": "string",
             "description": "The date when the questionnaire was last submitted (not when a draft was saved)"
+          },
+          "nextSubmissionDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Earliest next submission date when daysBetweenReplies > 0; omitted if never submitted or no cooldown"
           },
           "hasDraft": {
             "type": "boolean"
@@ -3354,8 +3446,8 @@
           },
           "answer": {
             "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           }
         },
         "required": ["questionId", "answer"]
@@ -3464,8 +3556,8 @@
                       },
                       "answer": {
                         "type": "string",
-                        "format": "date-time",
-                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3606,6 +3698,11 @@
             "type": "string",
             "description": "Name of the sender of the questionnaire"
           },
+          "senderGroupName": {
+            "type": "string",
+            "description": "Name of the sender group of the questionnaire",
+            "nullable": true
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -3633,6 +3730,11 @@
             "format": "date-time",
             "type": "string",
             "description": "The date when the questionnaire was last submitted (not when a draft was saved)"
+          },
+          "nextSubmissionDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Earliest next submission date when daysBetweenReplies > 0; omitted if never submitted or no cooldown"
           },
           "hasDraft": {
             "type": "boolean"
@@ -3762,8 +3864,8 @@
                     },
                     "answer": {
                       "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
                     }
                   },
                   "required": ["questionId", "answer"]
@@ -3872,8 +3974,8 @@
                                 },
                                 "answer": {
                                   "type": "string",
-                                  "format": "date-time",
-                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                                  "format": "date",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
                                 }
                               },
                               "required": ["questionId", "answer"]
@@ -4106,12 +4208,131 @@
         "type": "string",
         "enum": ["booked", "cancelled", "fulfilled", "arrived", "checked-in"]
       },
-      "AppointmentLocationDto": {
+      "AppointmentLocationBaseDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "organization": {
+            "type": "string",
+            "description": "Organization the location belongs to"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street name, number, direction & P.O. Box etc."
+          },
+          "city": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Geographic latitude of the location"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Geographic longitude of the location"
+          }
+        },
+        "required": ["name", "address"]
+      },
+      "AppointmentBaseDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
+          "startTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Appointment start time"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description / title text"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the appointment"
+          },
+          "patientInstruction": {
+            "type": "string",
+            "description": "Patient-facing instructions",
+            "deprecated": true
+          },
+          "duration": {
+            "type": "number",
+            "description": "Duration in whole minutes"
+          },
+          "location": {
+            "$ref": "#/components/schemas/AppointmentLocationBaseDto"
+          },
+          "practitioners": {
+            "description": "Practitioner display names",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "startTime",
+          "description",
+          "status",
+          "practitioners"
+        ]
+      },
+      "OpeningHoursSlotDto": {
+        "type": "object",
+        "properties": {
+          "open": {
+            "type": "string",
+            "description": "Opening time (e.g. \"08:00\")"
+          },
+          "close": {
+            "type": "string",
+            "description": "Closing time (e.g. \"16:00\")"
+          }
+        },
+        "required": ["open", "close"]
+      },
+      "OpeningHoursScheduleDto": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "enum": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+          },
+          "closed": {
+            "type": "boolean"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpeningHoursSlotDto"
+            }
+          }
+        },
+        "required": ["day"]
+      },
+      "OpeningHoursDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "schedule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpeningHoursScheduleDto"
+            }
+          }
+        }
+      },
+      "AppointmentLocationDto": {
+        "type": "object",
+        "properties": {
           "name": {
             "type": "string"
           },
@@ -4122,6 +4343,22 @@
           "address": {
             "type": "string",
             "description": "Street name, number, direction & P.O. Box etc."
+          },
+          "department": {
+            "type": "string",
+            "description": "The department of the location"
+          },
+          "wing": {
+            "type": "string",
+            "description": "The wing of the location"
+          },
+          "floor": {
+            "type": "string",
+            "description": "The floor of the location"
+          },
+          "room": {
+            "type": "string",
+            "description": "The room of the location"
           },
           "directions": {
             "type": "string",
@@ -4139,6 +4376,23 @@
             "type": "string",
             "description": "The country of the address"
           },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Contact phone number for the location"
+          },
+          "openingHours": {
+            "nullable": true,
+            "description": "The opening hours of the location",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursDto"
+              }
+            ]
+          },
+          "link": {
+            "type": "string",
+            "description": "The link to the location"
+          },
           "latitude": {
             "type": "number",
             "description": "The latitude of the location"
@@ -4150,7 +4404,7 @@
         },
         "required": ["name", "address"]
       },
-      "AppointmentDto": {
+      "AppointmentDetailDto": {
         "type": "object",
         "properties": {
           "id": {

@@ -28,6 +28,7 @@ query DefenderCases($input: CaseListQueryInput) {
     rulingDate
     accusedPostponedAppealDate
     parentCaseId
+    appealCaseId
     appealState
     appealCaseNumber
     appealRulingDecision

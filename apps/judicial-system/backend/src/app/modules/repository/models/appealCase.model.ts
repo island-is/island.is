@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +18,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealEventLog } from './appealEventLog.model'
 import { Case } from './case.model'
 import { User } from './user.model'
 
@@ -226,4 +228,11 @@ export class AppealCase extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   appealedByNationalId?: string
+
+  /**********
+   * Appeal lifecycle events (statement sent, etc.) anchored to this appeal case
+   **********/
+  @HasMany(() => AppealEventLog, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealEventLog, isArray: true })
+  appealEventLogs?: AppealEventLog[]
 }

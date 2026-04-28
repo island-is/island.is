@@ -25,6 +25,8 @@ export enum AssetsPaths {
   AssetsIntellectualPropertiesTrademark = '/eignir/hugverkarettindi/vorumerki/:id',
   AssetsIntellectualPropertiesPatent = '/eignir/hugverkarettindi/einkaleyfi/:id',
   AssetsIntellectualPropertiesDesign = '/eignir/hugverkarettindi/honnun/:id',
+  AssetsFarmerLands = '/eignir/jardabok',
+  AssetsFarmerLandDetail = '/eignir/jardabok/:id',
 
   AssetsShips = '/eignir/skip',
   AssetsShipDetail = '/eignir/skip/:id',

@@ -1,4 +1,5 @@
 import {
+  ApplicationEvents,
   ApplicationStatus,
   FieldTypesEnum,
   SectionTypes,
@@ -301,13 +302,17 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: true,
-        history:
-          app.events?.map((event) => {
+        history: (app.events ?? [])
+          .filter(
+            (event) =>
+              event.eventType !== ApplicationEvents.APPLICATION_FETCHED,
+          )
+          .map((event) => {
             return {
               date: event.created,
               log: event.eventMessage[locale],
             }
-          }) || [],
+          }),
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
         displayPruneAt: true,
@@ -346,13 +351,17 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: false,
-        history:
-          app.events?.map((event) => {
+        history: (app.events ?? [])
+          .filter(
+            (event) =>
+              event.eventType !== ApplicationEvents.APPLICATION_FETCHED,
+          )
+          .map((event) => {
             return {
               date: event.created,
               log: event.eventMessage[locale],
             }
-          }) || [],
+          }),
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
         displayPruneAt: true,

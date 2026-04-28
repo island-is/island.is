@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   ParseUUIDPipe,
+  ParseBoolPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
@@ -181,6 +182,20 @@ export class ApplicationController {
     description:
       'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
   })
+  @ApiQuery({
+    name: 'showPruned',
+    required: false,
+    type: 'boolean',
+    description:
+      'To include pruned applications in the response. Defaults to false.',
+  })
+  @ApiQuery({
+    name: 'excludeAttributes',
+    required: false,
+    type: 'string',
+    description:
+      'Comma-separated list of column names to exclude from the query (e.g. "answers,externalData,attachments").',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -191,13 +206,19 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
-    @Query('scopeCheck') scopeCheck?: boolean,
+    @Query('scopeCheck', new ParseBoolPipe({ optional: true }))
+    scopeCheck?: boolean,
+    @Query('showPruned', new ParseBoolPipe({ optional: true }))
+    showPruned?: boolean,
+    @Query('excludeAttributes') excludeAttributes?: string,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
+      showPruned ?? false,
+      excludeAttributes?.split(','),
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -217,12 +238,16 @@ export class ApplicationController {
     nationalId: string,
     typeId?: string,
     status?: string,
+    showPruned?: boolean,
+    excludeAttributes?: string[],
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
+      showPruned,
+      excludeAttributes,
     )
   }
 
