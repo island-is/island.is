@@ -2,6 +2,7 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
   universityCareersStudentTrack(input: $input) {
     transcript {
       degree
+      level
       faculty
       graduationDate
       institution {

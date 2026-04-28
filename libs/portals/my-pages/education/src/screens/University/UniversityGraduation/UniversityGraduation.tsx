@@ -91,17 +91,25 @@ export const UniversityGraduation = ({ studyType }: Props) => {
               //TODO: Replace with Island UI Card when it supports images
               <ActionCard
                 key={`education-graduation-${index}`}
-                heading={
-                  item.studyProgram && item.degree
-                    ? `${item.studyProgram} - ${item.degree}`
+                heading={(() => {
+                  const qualifier =
+                    studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+                      ? item.level
+                      : item.degree
+                  return item.studyProgram && qualifier
+                    ? `${item.studyProgram} - ${qualifier}`
                     : item.institution.displayName ?? undefined
-                }
+                })()}
                 text={item.faculty}
-                subText={
-                  item.studyProgram && item.degree
+                subText={(() => {
+                  const qualifier =
+                    studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+                      ? item.level
+                      : item.degree
+                  return item.studyProgram && qualifier
                     ? item.institution.displayName ?? undefined
                     : undefined
-                }
+                })()}
                 cta={{
                   label: formatMessage(uniMessages.seeDetails),
                   variant: 'text',

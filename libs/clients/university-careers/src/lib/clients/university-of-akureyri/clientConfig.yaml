@@ -163,6 +163,11 @@ components:
           nullable: true
           description: 'Námsgráða'
           example: 'BA'
+        level:
+          type: 'string'
+          nullable: true
+          description: 'Námsstig'
+          example: 'Grunnstig'
     studentFile:
       type: 'object'
       properties:

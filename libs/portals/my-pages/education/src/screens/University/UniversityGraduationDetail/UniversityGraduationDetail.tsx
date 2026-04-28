@@ -14,7 +14,6 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatNationalId } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   InfoLineStack,
@@ -178,7 +177,9 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
               loading={loading}
               content={graduationDate}
             />
-            {studentInfo?.degree && (
+            {(studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+              ? studentInfo?.level
+              : studentInfo?.degree) && (
               <InfoLine
                 label={formatMessage(
                   studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
@@ -186,7 +187,11 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
                     : uniMessages.degree,
                 )}
                 loading={loading}
-                content={studentInfo.degree}
+                content={
+                  studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+                    ? studentInfo?.level ?? ''
+                    : studentInfo?.degree ?? ''
+                }
               />
             )}
             {studentInfo?.studyProgram && (

@@ -45,6 +45,7 @@ export const mapToStudent = (
     faculty: data.faculty,
     studyProgram: data.studyProgram,
     degree: data.degree,
+    level: data.level,
     graduationDate: data.graduationDate.toISOString(),
   }
 }

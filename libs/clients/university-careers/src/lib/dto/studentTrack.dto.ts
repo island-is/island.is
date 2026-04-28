@@ -15,6 +15,7 @@ export interface StudentTrackDto {
   faculty?: string
   studyProgram?: string
   degree?: string
+  level?: string
   programId?: string
 }
 
@@ -37,5 +38,6 @@ export const mapToStudentTrackDto = (
     graduationDate: new Date(transcript.graduationDate),
     studyProgram: transcript.studyProgram ?? undefined,
     degree: transcript.degree ?? undefined,
+    level: transcript.level ?? undefined,
   }
 }
