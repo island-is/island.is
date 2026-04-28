@@ -1771,7 +1771,7 @@ export class CaseService {
           !theCase.unfiledCourtDocuments?.length))
 
     const isCompletingRequestCase =
-      isRequestCase(theCase.type) && isCompletedCase(theCase.state)
+      isRequestCase(theCase.type) && isCompletedCase(update.state)
 
     const isCompletingIndictmentCase =
       isIndictmentCase(theCase.type) &&
