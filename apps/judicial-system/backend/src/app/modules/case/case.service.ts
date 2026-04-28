@@ -963,6 +963,18 @@ export class CaseService {
     })
   }
 
+  private addMessagesForReopenedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: CaseNotificationType.INDICTMENT_REOPENED },
+    })
+  }
+
   private addMessagesForIndictmentArraignmentCompletionToQueue(
     theCase: Case,
     user: TUser,
@@ -1005,6 +1017,12 @@ export class CaseService {
       ) {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         this.addMessagesForReceivedCaseToQueue(updatedCase, user)
+      } else if (
+        updatedCase.state === CaseState.RECEIVED &&
+        theCase.state === CaseState.COMPLETED &&
+        isIndictment
+      ) {
+        this.addMessagesForReopenedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         if (!isIndictment) {
           this.addMessagesForDeletedCaseToQueue(updatedCase, user)

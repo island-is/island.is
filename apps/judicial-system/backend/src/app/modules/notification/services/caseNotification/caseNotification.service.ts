@@ -82,6 +82,7 @@ import { DefendantService } from '../../../defendant'
 import { EventService } from '../../../event'
 import {
   type Case,
+  CaseString,
   type CivilClaimant,
   DateLog,
   type Defendant,
@@ -1911,6 +1912,30 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.recordNotification(
       theCase.id,
       CaseNotificationType.INDICTMENT_DENIED,
+      [recipient],
+    )
+  }
+  //#endregion
+
+  //#region INDICTMENT_REOPENED notifications
+  private async sendIndictmentReopenedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtCaseNumber = theCase.courtCaseNumber ?? ''
+    const reopenReason = CaseString.reopenReason(theCase.caseStrings)
+    const subject = `Mál ${courtCaseNumber} enduropnað`
+    const html = `${theCase.court?.name} hefur enduropnað mál ${courtCaseNumber}.<br /><br />Fyrri lyktum hefur verið eytt og málið verður afgreitt á ný.<br /><br /><a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      CaseNotificationType.INDICTMENT_REOPENED,
       [recipient],
     )
   }
@@ -4019,6 +4044,8 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendRulingOrderAddedNotifications(theCase)
       case CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
+      case CaseNotificationType.INDICTMENT_REOPENED:
+        return this.sendIndictmentReopenedNotifications(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,
