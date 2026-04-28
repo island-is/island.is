@@ -53,6 +53,9 @@ export class PoliceDigitalCaseFileService {
       currentPoliceDigitalCaseFiles,
       policeCaseNumbers,
     )
+    const newlyCreatedPoliceDigitalFileIds = new Set(
+      filesToCreate.map((f) => f.id),
+    )
 
     if (filesToCreate.length > 0) {
       await this.sequelize.transaction(async (transaction) => {
@@ -94,6 +97,7 @@ export class PoliceDigitalCaseFileService {
         displayDate: f.displayDate,
         orderWithinChapter: f.orderWithinChapter,
         isDeletable: !policeSystemDigitalCaseFileIds.has(f.policeDigitalFileId),
+        isNew: newlyCreatedPoliceDigitalFileIds.has(f.policeDigitalFileId),
       }))
   }
 
