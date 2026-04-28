@@ -1932,6 +1932,9 @@ export class CaseNotificationService extends BaseNotificationService {
     const defenderHtml = `${body}<br /><br /><a href="${defenderLink}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
     const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
+    const hasSentToPrisonAdmin = theCase.defendants?.some(
+      (d) => d.isSentToPrisonAdmin,
+    )
 
     const recipients = await Promise.all([
       this.sendEmail({
@@ -1948,6 +1951,16 @@ export class CaseNotificationService extends BaseNotificationService {
           recipientEmail: r.email,
         }),
       ),
+      ...(hasSentToPrisonAdmin
+        ? [
+            this.sendEmail({
+              subject,
+              html: body,
+              recipientName: 'Fangelsismálastofnun',
+              recipientEmail: this.config.email.prisonAdminEmail,
+            }),
+          ]
+        : []),
     ])
 
     return this.recordNotification(
