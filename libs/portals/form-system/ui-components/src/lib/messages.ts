@@ -1229,6 +1229,16 @@ export const m = defineMessages({
     defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
     description: 'Maximum amount must not be higher than {maxAmount}',
   },
+  minValue: {
+    id: 'form.system:min-value',
+    defaultMessage: 'Gildi má ekki vera lægra en {minValue}',
+    description: 'Minimum value must not be lower than {minValue}',
+  },
+  maxValue: {
+    id: 'form.system:max-value',
+    defaultMessage: 'Gildi má ekki vera hærra en {maxValue}',
+    description: 'Maximum value must not be higher than {maxValue}',
+  },
   total: {
     id: 'form.system:total',
     defaultMessage: 'Samtals',

@@ -21,7 +21,6 @@ export class PaymentService {
     private paymentModel: typeof Payment,
     @Inject(PaymentModuleConfig.KEY)
     private config: ConfigType<typeof PaymentModuleConfig>,
-    // private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly auditService: AuditService,
     private readonly applicationsService: ApplicationsService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -312,7 +311,7 @@ export class PaymentService {
     returnUrl.search = 'done'
 
     const cancelUrl = new URL(this.config.clientLocationOrigin)
-    cancelUrl.pathname = `form/${slug}` // Not including the applicationId to avoid getting forwarded back to the payment screen since the application will be in the payment state
+    cancelUrl.pathname = `form/${slug}`
 
     return { returnUrl: returnUrl.toString(), cancelUrl: cancelUrl.toString() }
   }

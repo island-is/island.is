@@ -394,6 +394,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/car-recycling/                                                                                   @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                                              @island-is/deloitte
 /libs/clients/car-recycling/                                                                                                 @island-is/deloitte
+/libs/clients/recycling-fund                                                                                                 @island-is/deloitte
 /libs/application/templates/new-primary-school/                                                                              @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                                         @island-is/deloitte
 /libs/clients/mms/frigg                                                                                                      @island-is/deloitte
@@ -422,6 +423,7 @@ codemagic.yaml                                                                  
 
 /libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                                        @island-is/origo
 /libs/application/templates/activation-allowance                                                                             @island-is/origo
+/libs/application/templates/vmst/confirm-job-search                                                                          @island-is/origo
 /libs/clients/vmst-unemployment                                                                                              @island-is/origo
 /libs/api/domains/vmst-applications                                                                                          @island-is/origo
 
