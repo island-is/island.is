@@ -220,8 +220,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ namespace }) => {
   return (
     <Box>
       <HeroSection n={n} />
-
-      <GridContainer>
         <SidebarLayout
           paddingTop={[2, 2, 9]}
           paddingBottom={[4, 4, 4]}
@@ -277,7 +275,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ namespace }) => {
             />
           </Box>
         </SidebarLayout>
-      </GridContainer>
+      
     </Box>
   )
 }
@@ -302,6 +300,16 @@ OpenDataPage.getProps = async ({ apolloClient, locale }) => {
 
   return {
     namespace,
+    customAlertBanner: {
+      showAlertBanner: true,
+      bannerVariant: 'info',
+      title: namespace.alertTitle || 'Opin gögn í vinnslu',
+      description:
+        namespace.alertMessage ||
+        'Þessi síða er í vinnslu. Gögn og virkni geta breyst.',
+      isDismissable: true,
+      dismissedForDays: 7,
+    },
   }
 }
 
