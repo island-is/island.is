@@ -912,7 +912,7 @@ export const m = defineMessages({
   },
   scopeUsersPlaceholder: {
     id: 'ap.ids-admin:scope-users-placeholder',
-    defaultMessage: 'Select users...',
+    defaultMessage: 'Choose from the list or create a new user',
   },
   scopeUsersLoading: {
     id: 'ap.ids-admin:scope-users-loading',
@@ -920,7 +920,7 @@ export const m = defineMessages({
   },
   addScopeUser: {
     id: 'ap.ids-admin:add-scope-user',
-    defaultMessage: 'Add user',
+    defaultMessage: 'Create new user',
   },
   createScopeUserTitle: {
     id: 'ap.ids-admin:create-scope-user-title',
@@ -1089,10 +1089,6 @@ export const m = defineMessages({
   apiScopeUsersScopes: {
     id: 'ap.ids-admin:api-scope-users-scopes',
     defaultMessage: 'Scopes',
-  },
-  apiScopeUsersScopesLoading: {
-    id: 'ap.ids-admin:api-scope-users-scopes-loading',
-    defaultMessage: 'Loading scopes...',
   },
   apiScopeUsersPublishSuccess: {
     id: 'ap.ids-admin:api-scope-users-publish-success',

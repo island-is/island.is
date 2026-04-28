@@ -16,7 +16,10 @@ import { Modal } from '@island.is/react/components'
 
 import { m } from '../../../lib/messages'
 import { authAdminEnvironments } from '../../../utils/environments'
-import { useCreateApiScopeUserMutation } from '../../AdminControls/ApiScopeUsers/ApiScopeUsers.generated'
+import {
+  useCreateApiScopeUserMutation,
+  useGetConfiguredEnvironmentsQuery,
+} from '../../AdminControls/ApiScopeUsers/ApiScopeUsers.generated'
 
 const NATIONAL_ID_REGEX = /^\d{10}$/
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -34,10 +37,16 @@ interface FormErrors {
   environments?: string
 }
 
+export interface CreatedScopeUser {
+  nationalId: string
+  name: string
+  email: string
+}
+
 interface CreateScopeUserModalProps {
   visible: boolean
   onClose: () => void
-  onCreated: (nationalId: string) => void
+  onCreated: (user: CreatedScopeUser) => void
 }
 
 export const CreateScopeUserModal = ({
@@ -57,6 +66,9 @@ export const CreateScopeUserModal = ({
   >([])
 
   const [createUser, { loading }] = useCreateApiScopeUserMutation()
+  const { data: configuredEnvData } = useGetConfiguredEnvironmentsQuery()
+  const configuredEnvironments =
+    configuredEnvData?.authAdminApiScopeUserConfiguredEnvironments ?? []
 
   const resetAndClose = () => {
     setFormData({ nationalId: '', name: '', email: '' })
@@ -112,9 +124,9 @@ export const CreateScopeUserModal = ({
       })
 
       toast.success(formatMessage(m.createScopeUserSuccess))
-      const createdNationalId = formData.nationalId
+      const createdUser: CreatedScopeUser = { ...formData }
       resetAndClose()
-      onCreated(createdNationalId)
+      onCreated(createdUser)
     } catch {
       toast.error(formatMessage(m.createScopeUserError))
     }
@@ -208,6 +220,7 @@ export const CreateScopeUserModal = ({
                       value={env}
                       checked={selectedEnvironments.includes(env)}
                       onChange={() => handleEnvironmentCheckboxChange(env)}
+                      disabled={!configuredEnvironments.includes(env)}
                       large
                     />
                   </Box>

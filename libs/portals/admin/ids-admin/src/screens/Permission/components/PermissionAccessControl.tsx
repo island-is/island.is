@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
 import { MultiValue } from 'react-select'
 
@@ -10,9 +9,9 @@ import {
   Button,
   Checkbox,
   CheckboxProps,
+  LoadingDots,
   Select,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 
 import { usePermission } from '../PermissionContext'
@@ -23,10 +22,14 @@ import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import {
-  GetScopeUsersDocument,
-  GetAllApiScopeUsersForSelectDocument,
+  useGetScopeUsersQuery,
+  useGetAllApiScopeUsersForSelectQuery,
 } from './PermissionAccessControl.generated'
-import { CreateScopeUserModal } from './CreateScopeUserModal'
+import {
+  CreateScopeUserModal,
+  type CreatedScopeUser,
+} from './CreateScopeUserModal'
+import * as styles from './PermissionAccessControl.css'
 
 type UserOption = { label: string; value: string }
 
@@ -72,47 +75,47 @@ export const PermissionAccessControl = () => {
   const showUserSelection = isSuperAdmin && inputValues.isAccessControlled
 
   // Fetch users assigned to this scope
-  const {
-    data: scopeUsersData,
-    loading: scopeUsersLoading,
-    refetch: refetchScopeUsers,
-  } = useQuery(GetScopeUsersDocument, {
-    variables: {
-      input: {
-        tenantId,
-        scopeName,
-        environment: selectedPermission.environment,
-      },
-    },
-    skip: !showUserSelection,
-    fetchPolicy: 'network-only',
-  })
-
-  // Fetch all API scope users for the dropdown
-  const { data: allUsersData, loading: allUsersLoading } = useQuery(
-    GetAllApiScopeUsersForSelectDocument,
-    {
+  const { data: scopeUsersData, loading: scopeUsersLoading } =
+    useGetScopeUsersQuery({
       variables: {
         input: {
-          searchString: '',
-          page: 1,
-          count: 1000,
+          tenantId,
+          scopeName,
+          environment: selectedPermission.environment,
         },
       },
       skip: !showUserSelection,
+      fetchPolicy: 'network-only',
+    })
+
+  // Fetch all API scope users for the dropdown
+  const {
+    data: allUsersData,
+    loading: allUsersLoading,
+    refetch: refetchAllUsers,
+  } = useGetAllApiScopeUsersForSelectQuery({
+    variables: {
+      input: {
+        searchString: '',
+        page: 1,
+        count: 1000,
+      },
     },
-  )
+    skip: !showUserSelection,
+  })
 
   const allUserOptions: UserOption[] = useMemo(
     () =>
       (allUsersData?.authAdminApiScopeUsers?.rows ?? []).map((user) => ({
-        label: `${user.name ?? user.nationalId} - ${user.nationalId}`,
+        label: user.name
+          ? `${user.name} - ${user.nationalId}`
+          : user.nationalId,
         value: user.nationalId,
       })),
     [allUsersData],
   )
 
-  // Initialize selected users from scope users query
+  // Initialize selected users when scope users data loads (not when allUserOptions changes)
   useEffect(() => {
     if (!scopeUsersData?.authAdminScopeUsers) return
 
@@ -121,27 +124,15 @@ export const PermissionAccessControl = () => {
     )
     setOriginalUserNationalIds(scopeUserNationalIds)
 
-    const preSelected = scopeUserNationalIds
-      .map((nid) => {
-        const found = allUserOptions.find((opt) => opt.value === nid)
-        if (found) return found
-        // If user isn't in the all-users list yet, create an option from scope data
-        const scopeUser = scopeUsersData.authAdminScopeUsers.find(
-          (u) => u.nationalId === nid,
-        )
-        return scopeUser
-          ? {
-              label: `${scopeUser.name ?? scopeUser.nationalId} - ${scopeUser.nationalId}`,
-              value: scopeUser.nationalId,
-            }
-          : null
-      })
-      .filter((opt): opt is UserOption => opt !== null)
+    const preSelected = scopeUsersData.authAdminScopeUsers.map((u) => ({
+      label: u.name ? `${u.name} - ${u.nationalId}` : u.nationalId,
+      value: u.nationalId,
+    }))
 
     setSelectedUsers(preSelected)
     setUsersDirty(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scopeUsersData, allUserOptions])
+  }, [scopeUsersData])
 
   const handleUserChange = (value: MultiValue<UserOption>) => {
     setSelectedUsers(value)
@@ -150,12 +141,12 @@ export const PermissionAccessControl = () => {
     setUsersDirty(!isEqual(newIds, origIds))
   }
 
-  const handleUserCreated = (nationalId: string) => {
-    refetchScopeUsers()
+  const handleUserCreated = (user: CreatedScopeUser) => {
+    refetchAllUsers()
     // Add the newly created user as selected
     const newOption: UserOption = {
-      label: nationalId,
-      value: nationalId,
+      label: user.name ? `${user.name} - ${user.nationalId}` : user.nationalId,
+      value: user.nationalId,
     }
     setSelectedUsers((prev) => [...prev, newOption])
     setUsersDirty(true)
@@ -169,17 +160,13 @@ export const PermissionAccessControl = () => {
 
   const addedNationalIds = useMemo(
     () =>
-      selectedNationalIds.filter(
-        (id) => !originalUserNationalIds.includes(id),
-      ),
+      selectedNationalIds.filter((id) => !originalUserNationalIds.includes(id)),
     [selectedNationalIds, originalUserNationalIds],
   )
 
   const removedNationalIds = useMemo(
     () =>
-      originalUserNationalIds.filter(
-        (id) => !selectedNationalIds.includes(id),
-      ),
+      originalUserNationalIds.filter((id) => !selectedNationalIds.includes(id)),
     [selectedNationalIds, originalUserNationalIds],
   )
 
@@ -205,7 +192,7 @@ export const PermissionAccessControl = () => {
       ])}
       customValidation={customValidation}
     >
-      <Stack space={3}>
+      <div className={styles.userSelectionContainer}>
         {isSuperAdmin && (
           <Checkbox
             label={formatMessage(m.isAccessControlled)}
@@ -222,13 +209,16 @@ export const PermissionAccessControl = () => {
           >
             {showUserSelection ? (
               <Stack space={2}>
-                <Text paddingBottom={1}>
-                  {formatMessage(m.scopeUsersLabel)}
-                </Text>
                 {isLoading ? (
-                  <Text>{formatMessage(m.scopeUsersLoading)}</Text>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <LoadingDots />
+                  </Box>
                 ) : (
-                  <Box display="flex" alignItems="flexStart" columnGap={2}>
+                  <Box display="flex" alignItems="flexEnd" columnGap={2}>
                     <Box style={{ flex: 1 }}>
                       <input
                         type="hidden"
@@ -243,17 +233,18 @@ export const PermissionAccessControl = () => {
                       <Select
                         value={selectedUsers}
                         options={allUserOptions}
+                        label={formatMessage(m.apiScopeUsers)}
                         onChange={(value) => {
                           handleUserChange(value as MultiValue<UserOption>)
                         }}
                         placeholder={formatMessage(m.scopeUsersPlaceholder)}
                         isMulti
-                        size="sm"
+                        size="xs"
                       />
                     </Box>
                     <Box paddingTop={1}>
                       <Button
-                        variant="ghost"
+                        variant="utility"
                         size="small"
                         icon="add"
                         onClick={() => setCreateModalVisible(true)}
@@ -298,7 +289,7 @@ export const PermissionAccessControl = () => {
           }}
           {...commonProps}
         />
-      </Stack>
+      </div>
     </FormCard>
   )
 }
