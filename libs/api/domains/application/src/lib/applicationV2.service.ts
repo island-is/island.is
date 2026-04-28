@@ -48,6 +48,7 @@ export class ApplicationV2Service {
             status: input?.status?.join(','),
             scopeCheck: input?.scopeCheck,
             showPruned: input?.showPruned,
+            excludeAttributes: input?.excludeAttributes?.join(','),
           },
         ),
         this.formSystemApplicationApiWithAuth(

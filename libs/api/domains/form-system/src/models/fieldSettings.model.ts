@@ -10,6 +10,9 @@ export class FieldSettings {
   @Field(() => Int, { nullable: true })
   maxValue?: number
 
+  @Field(() => Boolean, { nullable: true })
+  isDecimal?: boolean
+
   @Field(() => Int, { nullable: true })
   minLength?: number
 

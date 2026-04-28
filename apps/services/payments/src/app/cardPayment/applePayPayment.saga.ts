@@ -64,9 +64,12 @@ export const createApplePayPaymentSaga = (
         },
       })
 
+      const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
+
       const paymentResult = await cardPaymentService.chargeApplePay(
         ctx.input,
         ctx.trackingData,
+        totalPrice,
       )
 
       return { paymentResult }
