@@ -1027,6 +1027,155 @@
         ]
       }
     },
+    "/api/applicants/{applicantId}/attachments": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir viðhengi umsækjanda",
+        "operationId": "Applicant_GetApplicantAttachments",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/attachments/requests": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir tegundir viðhengja sem umsækjanda vantar",
+        "operationId": "Applicant_GetApplicantRequestedAttachments",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/attachments/requests/{requestId}": {
+      "post": {
+        "tags": ["Applicant"],
+        "summary": "Skrá umbeðið fylgiskjal",
+        "operationId": "Applicant_CreateApplicantRequestedAttachment",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni gangaöflunar.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_CreateAttachmentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
         "tags": ["ApplicantInfo"],
@@ -6389,6 +6538,55 @@
           }
         }
       },
+      "Galdur_External_Domain_Models_Attachment_AttachmentListItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "typeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": ""
+          }
+        }
+      },
+      "Galdur_Domain_Models_Attachments_CreateAttachmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileType": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "attachmentTypeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
       "Galdur_XRoad_API_Models_Application_GetApplicationsOverviewRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -6466,30 +6664,6 @@
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypeCategories_AttachmentTypeCategoryDTO"
             }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Attachments_CreateAttachmentRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileType": {
-            "type": "string",
-            "nullable": true
-          },
-          "data": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "attachmentTypeId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
           }
         }
       },
@@ -7732,6 +7906,31 @@
                   "type": "string",
                   "format": "guid"
                 }
+              },
+              "maxRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "minRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "monthsWithMaxRepayment": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "monthsBetweenChangesOnRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "decreaseRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
               }
             }
           }
