@@ -55,6 +55,11 @@ export class PaymentCallbackController {
           'No applicationId found in success callback',
         )
       }
+      if (!callback.paymentFlowId) {
+        throw new BadRequestException(
+          'No paymentFlowId found in success callback',
+        )
+      }
 
       const result = await this.applicationsService.submit(
         callback.paymentFlowMetadata.applicationId,
