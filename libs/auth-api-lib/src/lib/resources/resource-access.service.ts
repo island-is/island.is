@@ -95,13 +95,7 @@ export class ResourceAccessService {
     const newApiScopeUser = await this.apiScopeUser.create(apiScopeUser)
 
     if (newApiScopeUser) {
-      const apiScopeResponse = await this.createUserScopes(userAccess)
-
-      if (apiScopeResponse) {
-        return newApiScopeUser
-      } else {
-        throw new Error('Error inserting scopes')
-      }
+      await this.createUserScopes(userAccess)
     }
 
     return newApiScopeUser
@@ -127,8 +121,10 @@ export class ResourceAccessService {
 
     await apiScopeUser.update({ ...apiScopeUserData })
 
-    await this.deleteUserScopes(nationalId)
-    await this.createUserScopes(userAccess)
+    if (userAccess !== undefined) {
+      await this.deleteUserScopes(nationalId)
+      await this.createUserScopes(userAccess)
+    }
 
     return (await this.findOne(nationalId)) as ApiScopeUser
   }
