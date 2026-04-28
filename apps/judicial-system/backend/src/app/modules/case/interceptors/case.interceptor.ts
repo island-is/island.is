@@ -226,6 +226,51 @@ export const getAppealCaseInfo = (
   }
 }
 
+export interface AppealCaseStatementDates {
+  prosecutorStatementDate?: Date
+  defendantStatementDate?: Date
+  defendantStatementDates?: { defendantId: string; statementDate: Date }[]
+  civilClaimantStatementDates?: {
+    civilClaimantId: string
+    statementDate: Date
+  }[]
+}
+
+export const getAppealCaseStatementDates = (
+  appealCase: AppealCase,
+  theCase: Case,
+): AppealCaseStatementDates => {
+  const eventLogs = appealCase.appealEventLogs
+  const prosecutorStatementDate = AppealEventLog.getLatestDateByRole(
+    AppealEventType.APPEAL_STATEMENT_SENT,
+    prosecutionRoles,
+    eventLogs,
+  )
+
+  if (isRequestCase(theCase.type)) {
+    return {
+      prosecutorStatementDate,
+      defendantStatementDate: AppealEventLog.getLatestDateByRole(
+        AppealEventType.APPEAL_STATEMENT_SENT,
+        UserRole.DEFENDER,
+        eventLogs,
+      ),
+    }
+  }
+
+  return {
+    prosecutorStatementDate,
+    defendantStatementDates: AppealEventLog.groupLatestByDefendant(
+      AppealEventType.APPEAL_STATEMENT_SENT,
+      eventLogs,
+    ),
+    civilClaimantStatementDates: AppealEventLog.groupLatestByCivilClaimant(
+      AppealEventType.APPEAL_STATEMENT_SENT,
+      eventLogs,
+    ),
+  }
+}
+
 export interface RulingOrderAppealInfo {
   hasBeenAppealed?: boolean
   canBeAppealed?: boolean
@@ -266,12 +311,10 @@ export const transformDefendants = ({
   defendants,
   indictmentRulingDecision,
   rulingDate,
-  appealEventLogs,
 }: {
   defendants?: Defendant[]
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   rulingDate?: Date
-  appealEventLogs?: AppealEventLog[]
 }) => {
   return defendants?.map((defendant) => {
     // Only the latest verdict is relevant
@@ -339,11 +382,6 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
-      appealStatementDate: AppealEventLog.getDateForDefendant(
-        AppealEventType.APPEAL_STATEMENT_SENT,
-        defendant.id,
-        appealEventLogs,
-      ),
       indictmentCancelledOrDismissedState,
     }
   })
@@ -351,19 +389,10 @@ export const transformDefendants = ({
 
 export const transformCivilClaimants = ({
   civilClaimants,
-  appealEventLogs,
 }: {
   civilClaimants?: CivilClaimant[]
-  appealEventLogs?: AppealEventLog[]
 }) => {
-  return civilClaimants?.map((civilClaimant) => ({
-    ...civilClaimant.toJSON(),
-    appealStatementDate: AppealEventLog.getDateForCivilClaimant(
-      AppealEventType.APPEAL_STATEMENT_SENT,
-      civilClaimant.id,
-      appealEventLogs,
-    ),
-  }))
+  return civilClaimants?.map((civilClaimant) => civilClaimant.toJSON())
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {
@@ -492,22 +521,13 @@ const transformCase = (
         }
       : {}
 
-  // Derive aggregated statement dates from the appeal event log.
-  const appealEventLogs = theCase.appealCase?.appealEventLogs
+  // Per-appeal statement dates are derived from each appeal's own event log,
+  // never from the parent case's union — keeps attribution scoped to the row.
   const appealCaseOverride = theCase.appealCase
     ? {
         appealCase: {
           ...theCase.appealCase.toJSON(),
-          prosecutorStatementDate: AppealEventLog.getLatestDateByRole(
-            AppealEventType.APPEAL_STATEMENT_SENT,
-            prosecutionRoles,
-            appealEventLogs,
-          ),
-          defendantStatementDate: AppealEventLog.getEarliestDateByRole(
-            AppealEventType.APPEAL_STATEMENT_SENT,
-            UserRole.DEFENDER,
-            appealEventLogs,
-          ),
+          ...getAppealCaseStatementDates(theCase.appealCase, theCase),
           ...getAppealCaseInfo(theCase.appealCase, theCase),
           appealEventLogs: undefined,
         },
@@ -518,7 +538,9 @@ const transformCase = (
     ? {
         rulingOrderAppealCases: theCase.rulingOrderAppealCases.map((ac) => ({
           ...ac.toJSON(),
+          ...getAppealCaseStatementDates(ac, theCase),
           ...getAppealCaseInfo(ac, theCase),
+          appealEventLogs: undefined,
         })),
       }
     : {}
@@ -541,11 +563,9 @@ const transformCase = (
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
-      appealEventLogs,
     }),
     civilClaimants: transformCivilClaimants({
       civilClaimants: theCase.civilClaimants,
-      appealEventLogs,
     }),
     caseFiles: theCase.caseFiles
       ?.filter(
