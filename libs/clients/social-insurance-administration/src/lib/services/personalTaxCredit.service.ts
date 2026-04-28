@@ -42,7 +42,10 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getTaxCardMonthsAndYearsWhenDiscontinuing(
     user: User,
-  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[] | null> {
+  ): Promise<
+    | TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[]
+    | null
+  > {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsWhenDiscontinuingGet()
       .catch(handle404)
@@ -58,7 +61,10 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getTaxCardMonthsAndYears(
     user: User,
-  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[] | null> {
+  ): Promise<
+    | TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[]
+    | null
+  > {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsGet()
       .catch(handle404)
