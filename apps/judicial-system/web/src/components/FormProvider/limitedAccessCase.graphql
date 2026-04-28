@@ -261,6 +261,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealReceivedByCourtDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -515,6 +523,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         appealReceivedByCourtDate
         prosecutorStatementDate
         defendantStatementDate
+        defendantStatementDates {
+          defendantId
+          statementDate
+        }
+        civilClaimantStatementDates {
+          civilClaimantId
+          statementDate
+        }
         appealAssistant {
           id
           name

@@ -454,6 +454,14 @@ query Case($input: CaseQueryInput!) {
       appealReceivedByCourtDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -653,6 +661,14 @@ query Case($input: CaseQueryInput!) {
         appealReceivedByCourtDate
         prosecutorStatementDate
         defendantStatementDate
+        defendantStatementDates {
+          defendantId
+          statementDate
+        }
+        civilClaimantStatementDates {
+          civilClaimantId
+          statementDate
+        }
         appealAssistant {
           id
           name
