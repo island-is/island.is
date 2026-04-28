@@ -30,6 +30,7 @@ export const Applications = () => {
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loginAllowed, setLoginAllowed] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
+  const [createDisabled, setCreateDisabled] = useState(false)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
   const { formatMessage } = useIntl()
@@ -39,6 +40,7 @@ export const Applications = () => {
   })
 
   const createApplication = useCallback(async () => {
+    setCreateDisabled(true)
     try {
       const app = await createApplicationMutation({
         variables: {
@@ -57,6 +59,8 @@ export const Applications = () => {
     } catch (error) {
       console.error('Error creating application:', error)
       return null
+    } finally {
+      setCreateDisabled(false)
     }
   }, [createApplicationMutation, slug, navigate])
 
@@ -156,7 +160,11 @@ export const Applications = () => {
         marginBottom={4}
       >
         <Text variant="h1">{formatMessage(m.yourApplications)}</Text>
-        <Button variant="primary" onClick={createApplication}>
+        <Button
+          variant="primary"
+          onClick={createApplication}
+          disabled={createDisabled}
+        >
           {formatMessage(m.newApplication)}
         </Button>
       </Box>
