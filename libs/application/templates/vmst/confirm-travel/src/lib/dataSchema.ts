@@ -1,11 +1,15 @@
 import { z } from 'zod'
 
-const dummySchema = z.object({
-  dummyTextField: z.string(),
+export const dateSchema = z.object({
+  from: z.string().min(1),
+  to: z.string().min(1),
 })
 
-export const dataSchema = z.object({
-  dummy: dummySchema,
+export const ConfirmTravelUnemploymentBenefitsSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  date: z.array(dateSchema),
 })
 
-export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
+export type ConfirmTravelUnemploymentBenefits = z.TypeOf<
+  typeof ConfirmTravelUnemploymentBenefitsSchema
+>

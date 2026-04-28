@@ -39,7 +39,10 @@ export enum Features {
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
   RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
+  estateReviewEnabled = 'isEstateReviewEnabled',
+  inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
   isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
+  isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -63,6 +66,7 @@ export enum Features {
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
   servicePortalPoliceCasesPageEnabled = 'isServicePortalPoliceCasesPageEnabled',
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
+  isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
   //Occupational License Health directorate fetch enabled
@@ -178,6 +182,9 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
+
+  // Car recycling
+  isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
 }
 
 export enum ServerSideFeature {

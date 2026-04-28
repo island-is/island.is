@@ -16,7 +16,8 @@ import { DeleteButton } from './DeleteButton'
 import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch, inSettings } = useContext(ControlContext)
+  const { control, controlDispatch, inSettings, inListBuilder } =
+    useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
   const { type } = activeItem
@@ -89,7 +90,11 @@ export const MainContentColumn = () => {
 
   return (
     <Box className={cn(styles.mainColumn)} padding={2}>
-      {!isReadOnly && !inSettings && !staticSection && !staticScreen ? (
+      {!isReadOnly &&
+      !inSettings &&
+      !staticSection &&
+      !staticScreen &&
+      !inListBuilder ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -114,7 +119,7 @@ export const MainContentColumn = () => {
       <Box
         width="full"
         style={{
-          minHeight: '500px',
+          minHeight: 'clamp(300px, 50vh, 500px)',
         }}
       >
         <MainContent />

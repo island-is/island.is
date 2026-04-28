@@ -42,6 +42,7 @@ export const mapAppSystemCards = (
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
     pruneAt: application.pruneAt,
+    pruned: application.pruned,
   }
 }
 

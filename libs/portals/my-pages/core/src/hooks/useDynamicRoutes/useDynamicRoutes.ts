@@ -6,6 +6,7 @@ import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { DynamicPaths } from './paths'
 import { orderRoutes } from '../../utils/orderRoutes'
+export { parseMenuConfig } from '../../utils/orderRoutes'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -102,7 +103,5 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
 
   const sortedNavigation = orderRoutes(nav, data?.getNamespace?.fields)
 
-  const navigation = useNavigation(sortedNavigation, activeDynamicRoutes)
-
-  return navigation
+  return useNavigation(sortedNavigation, activeDynamicRoutes)
 }

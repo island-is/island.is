@@ -7,27 +7,30 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
+import { prerequisitesForm } from '../../lib/messages'
+import { getEligability } from '../../dataProviders'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
+  logo: DirectorateOfLabourLogo,
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: prerequisitesForm.general.tabTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: prerequisitesForm.general.externalDataTitle,
           dataProviders: [
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
+              provider: getEligability,
+              title: prerequisitesForm.dataProviders.vmstTitle,
+              subTitle: prerequisitesForm.dataProviders.vmstSubTitle,
             }),
-            // Add more data providers as needed
           ],
           submitField: buildSubmitField({
             id: 'submit',

@@ -7,39 +7,30 @@ import {
   Application,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { dataSchema } from './dataSchema'
+import { ConfirmTravelUnemploymentBenefitsSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { applicationMessages } from './messages'
+import { getEligability } from '@/dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.CONFIRM_TRAVEL, // TODO: Change to the correct type
+  type: ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL,
   name: 'confirm-travel template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.ConfirmTravel.translation], // TODO: Change to the correct translation namespace
-  dataSchema,
-  // Note: only use this if any data should remain after pruning for better visibility in the admin portal
-  adminDataConfig: {
-    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
-    answers: [
-      {
-        key: 'pickVehicle.plate',
-        isListed: true,
-        label: 'Bílnúmer',
-      },
-    ],
-  },
+  codeOwner: CodeOwners.Origo,
+  institution: applicationMessages.institutionName,
+  translationNamespaces:
+    ApplicationConfigurations.UnemploymentConfirmTravel.translation,
+  dataSchema: ConfirmTravelUnemploymentBenefitsSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -61,7 +52,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [getEligability],
               delete: true,
             },
           ],

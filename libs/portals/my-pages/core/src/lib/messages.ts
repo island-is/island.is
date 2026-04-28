@@ -192,6 +192,10 @@ export const m = defineMessages({
     id: 'service.portal:nothing',
     defaultMessage: 'Hér er ekkert...',
   },
+  inputSearchTerm: {
+    id: 'service.portal:input-search-term',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
   searchForResults: {
     id: 'service.portal:search-for-results',
     defaultMessage: 'Sláðu inn leitarstreng til að fá niðurstöður.',
@@ -509,6 +513,10 @@ export const m = defineMessages({
     id: 'service.portal:open-documents',
     defaultMessage: 'Opna pósthólf',
   },
+  moreCategories: {
+    id: 'service.portal:more-categories',
+    defaultMessage: 'Fleiri flokkar',
+  },
   documentsDescription: {
     id: 'service.portal:documents-description',
     defaultMessage: 'Erindi til þín frá opinberum aðilum',
@@ -556,6 +564,15 @@ export const m = defineMessages({
   inProgressApplications: {
     id: 'service.portal:inProgressApplications',
     defaultMessage: 'Umsóknir í vinnslu',
+  },
+  olderApplications: {
+    id: 'service.portal:older-applications',
+    defaultMessage: 'Eldri umsóknir',
+  },
+  applicationsIntroOlder: {
+    id: 'service.portal:applications-intro-older',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir eldri umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
   },
   myInfo: {
     id: 'service.portal:my-info',
@@ -663,6 +680,14 @@ export const m = defineMessages({
   notificationsViewAll: {
     id: 'service.portal:notifications-view-all',
     defaultMessage: 'Sjá allar tilkynningar',
+  },
+  notificationUnread: {
+    id: 'service.portal:notification-unread',
+    defaultMessage: 'Ólesið',
+  },
+  notificationOpensInNewTab: {
+    id: 'service.portal:notification-opens-in-new-tab',
+    defaultMessage: 'Opnast í nýjum glugga',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -1585,6 +1610,15 @@ export const m = defineMessages({
     defaultMessage:
       'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
   },
+  farmerLands: {
+    id: 'service.portal:farmer-lands',
+    defaultMessage: 'Jarðabók',
+  },
+  farmerLandsIntro: {
+    id: 'service.portal:farmer-lands-intro',
+    defaultMessage:
+      'Hér getur þú skoðað yfirlit yfir bújarðir þínar og tengdar upplýsingar.',
+  },
   workMachines: {
     id: 'service.portal:work-machines',
     defaultMessage: 'Vinnuvélar',
@@ -1720,6 +1754,11 @@ export const m = defineMessages({
   workmachineTooltip: {
     id: 'service.portal:workmachine-tooltip',
     defaultMessage: 'Vinnueftirlitið hefur umsjón með gögnum um vinnuvélar.',
+  },
+  farmerLandTooltip: {
+    id: 'service.portal:farmer-land-tooltip',
+    defaultMessage:
+      'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
   },
   financeTooltip: {
     id: 'service.portal:finance-tooltip',
