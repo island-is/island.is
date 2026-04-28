@@ -10,6 +10,7 @@ import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
+import { employeeRatio } from '../../utils/constants'
 
 interface MonthObject {
   [key: string]: string
@@ -86,9 +87,9 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
                 id={`${id}.${e.value.toLowerCase()}`}
                 placeholder="0%"
                 label={formatMessage(oldAgePensionFormMessage.employer.ratio)}
-                maxLength={4}
                 type="number"
                 suffix="%"
+                max={employeeRatio}
                 onChange={(val) => onChange(val.target.value, e.value)}
                 backgroundColor="blue"
               />

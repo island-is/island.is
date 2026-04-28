@@ -11,6 +11,8 @@ import { PaymentService } from './payment.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import { ApiTags } from '@nestjs/swagger'
 import addMonths from 'date-fns/addMonths'
+import { addWorkDays } from './utils'
+import isBefore from 'date-fns/isBefore'
 
 @ApiTags('payment-callback')
 @Controller()
@@ -46,7 +48,8 @@ export class PaymentCallbackController {
   }
 
   /**
-   * Handles payment callback notifications from the API client for successful payments.
+   * Handles payment callback notifications from the API client for successful payments
+   * and invoice payments.
    *
    * @async
    * @param {ApiClientCallback} callback - The callback data from the payment system containing:
@@ -54,23 +57,51 @@ export class PaymentCallbackController {
    *   - details: Payment event details including charge information
    *   - paymentFlowMetadata: Metadata containing paymentId and applicationId
    *
-   * @throws {Error} If no receptionId is found in a success callback
+   * @throws {Error} If no paymentId or applicationId is found in a success callback
    *
    * @remarks
    * The function:
    * 1. For successful payments:
-   *    - Extracts receptionId from callback
+   *    - Extracts paymentId and applicationId from callback
    *    - Fulfills the payment using paymentService
-   * 2. Updates application pruning schedule:
    *    - Extends pruneAt date to one month from now
    *    - Default pruning is 24 hours, but paid applications are kept longer
    *    to handle potential error states
-   *
+   * 2. For invoice payments:
+   *    - Extracts paymentId and applicationId from callback
+   *    - Extends pruneAt date to two working days from now
    */
   @Post('application-payment/api-client-payment-callback/')
   async apiClientPaymentCallback(
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
+    if (callback.type === 'update') {
+      if (!callback.paymentFlowMetadata?.applicationId) {
+        throw new BadRequestException(
+          'No applicationId found in update callback',
+        )
+      }
+      if (
+        callback.details?.reason === 'payment_started' &&
+        callback.details?.message === 'Invoice created'
+      ) {
+        const application = await this.applicationService.findOneById(
+          callback.paymentFlowMetadata.applicationId,
+        )
+        if (application) {
+          const twoWorkingDaysFromNow = addWorkDays(new Date(), 2)
+
+          await this.applicationService.update(
+            callback.paymentFlowMetadata.applicationId,
+            {
+              ...application,
+              pruneAt: twoWorkingDaysFromNow,
+            },
+          )
+        }
+      }
+      return
+    }
     if (callback.type === 'success') {
       if (!callback.paymentFlowMetadata.paymentId) {
         throw new BadRequestException('No paymentId found in success callback')
