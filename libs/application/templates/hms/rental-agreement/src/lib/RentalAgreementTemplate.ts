@@ -3,7 +3,8 @@ import { assign } from 'xstate'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  pruneAfterDays,
+  getValueViaPath,
+  pruneAfterDaysWithMessage,
 } from '@island.is/application/core'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -20,6 +21,8 @@ import {
   defineTemplateApi,
   InstitutionNationalIds,
   IdentityApi,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import { Events } from '../utils/types'
 import { States, Roles } from '../utils/enums'
@@ -177,7 +180,18 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.INREVIEW,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(10),
+          lifecycle: pruneAfterDaysWithMessage(10, (application) => {
+            const address = getValueViaPath<string>(
+              application.answers,
+              'registerProperty.searchresults.address',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.RentalAgreementPruned]
+                  .templateId,
+              ...(address && { internalBody: address }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendDraft,
           }),
@@ -245,7 +259,18 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.SIGNING,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(31),
+          lifecycle: pruneAfterDaysWithMessage(31, (application) => {
+            const address = getValueViaPath<string>(
+              application.answers,
+              'registerProperty.searchresults.address',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.RentalAgreementPruned]
+                  .templateId,
+              ...(address && { internalBody: address }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplicationToHmsRentalService,
           }),
