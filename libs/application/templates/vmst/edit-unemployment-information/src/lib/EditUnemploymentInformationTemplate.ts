@@ -10,32 +10,32 @@ import {
   ApplicationConfigurations,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { DeregisterUnemploymentBenefitsSchema } from './dataSchema'
+import { editUnemploymentInfoDataSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
+import { UnemploymentApi } from '../dataProviders'
+import { ApiActions } from '../utils/constants'
+import { application as applicationMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { applicationMessages } from './messages'
-import { getSupportDataApi } from '../dataProviders'
 
-const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
+const EditUnemploymentInformationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS,
-  name: applicationMessages.name,
+  type: ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION,
+  name: applicationMessages.applicationName,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
   translationNamespaces:
-    ApplicationConfigurations.DeregisterUnemploymentBenefits.translation,
-  dataSchema: DeregisterUnemploymentBenefitsSchema,
-  featureFlag: Features.isDeregisterUnemploymentBenefitsEnabled,
+    ApplicationConfigurations.EditUnemploymentInformation.translation,
+  dataSchema: editUnemploymentInfoDataSchema,
+  featureFlag: Features.editUnemploymentInformation,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -46,18 +46,6 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
-          actionCard: {
-            tag: {
-              label: applicationMessages.actionCardPrerequisites,
-              variant: 'blue',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -69,7 +57,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [getSupportDataApi],
+              api: [UnemploymentApi],
               delete: true,
             },
           ],
@@ -86,18 +74,6 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: pruneAfterDays(2),
-          actionCard: {
-            tag: {
-              label: applicationMessages.actionCardDraft,
-              variant: 'blue',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationSent,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-          },
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
@@ -111,8 +87,8 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
-
               write: 'all',
+              read: 'all',
               delete: true,
             },
           ],
@@ -129,12 +105,6 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
-          actionCard: {
-            tag: {
-              label: applicationMessages.actionCardSubmitted,
-              variant: 'mint',
-            },
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,4 +131,4 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
   },
 }
 
-export default DeregisterUnemploymentBenefitsTemplate
+export default EditUnemploymentInformationTemplate
