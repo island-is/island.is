@@ -18,9 +18,8 @@ export const getApplePayChargeInput = (): ApplePayChargeInput => ({
     header: {
       ephemeralPublicKey: 'key',
       publicKeyHash: 'hash',
-      transactionId: 'tx-id',
+      transactionId: 'abcdef0123456789',
     },
   },
-  paymentMethod: { displayName: 'Visa 1234', network: 'Visa' },
-  transactionIdentifier: 'tx-identifier',
+  transactionIdentifier: 'abcdef0123456789',
 })

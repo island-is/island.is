@@ -463,10 +463,6 @@ export class PoliceService {
     user: User,
     source: string,
   ) {
-    if (!this.config.policeDigitalCaseFilesApiAvailable) {
-      return undefined
-    }
-
     const startTime = nowFactory()
     const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
 
@@ -541,12 +537,6 @@ export class PoliceService {
     user: User,
     source: string,
   ): Promise<string> {
-    if (!this.config.policeDigitalCaseFilesApiAvailable) {
-      throw new ServiceUnavailableException(
-        'Police digital case files API not available',
-      )
-    }
-
     const startTime = nowFactory()
     const query = new URLSearchParams({
       rvgCaseId,

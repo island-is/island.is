@@ -62,7 +62,7 @@ export const LifeEventsSection = ({
       </GridContainer>
       <GridItems
         mobileItemWidth={215}
-        mobileItemsRows={1}
+        mobileItemsRows={2}
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer
