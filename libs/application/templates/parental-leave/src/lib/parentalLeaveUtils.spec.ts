@@ -1268,6 +1268,23 @@ describe('getApplicationExternalData', () => {
       userPhoneNumber: 'Mock number',
     })
   })
+
+  it('should get applicationFundId from persisted navId external data', () => {
+    const application = buildApplication({
+      externalData: {
+        navId: {
+          data: '2025-03076',
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getApplicationExternalData(application.externalData)).toMatchObject({
+      applicationFundId: '2025-03076',
+      navId: '2025-03076',
+    })
+  })
 })
 
 describe('ParentWithOutBirthParent', () => {
