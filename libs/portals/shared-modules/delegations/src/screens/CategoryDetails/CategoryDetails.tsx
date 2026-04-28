@@ -121,6 +121,7 @@ export const CategoryDetails = () => {
               <ScopesTable
                 scopes={data?.scopes as AuthApiScope[]}
                 showCheckbox
+                showSelectAll
                 onSelectScope={onSelectScope}
               />
               {loading && (

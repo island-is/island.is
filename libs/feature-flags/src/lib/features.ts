@@ -182,6 +182,9 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
+
+  // Car recycling
+  isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
 }
 
 export enum ServerSideFeature {
