@@ -148,4 +148,7 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly appealStatementDate?: string
+
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
 }
