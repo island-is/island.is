@@ -14,11 +14,11 @@ import {
   DrivingLicenseBook,
   Education,
   EnergyFunds,
+  Farmers,
   Finance,
   Firearm,
   FishingLicense,
   Frigg,
-  HealthDirectorateOrganDonation,
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
@@ -65,6 +65,7 @@ import {
   FireCompensation,
   VMSTUnemployment,
   GoProVerdicts,
+  RecyclingFund,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -314,6 +315,11 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      LYFJASTOFNUN_PHARMACIES_BASE_URL: {
+        dev: 'https://api.serlyfjaskra.is',
+        staging: 'https://api.serlyfjaskra.is',
+        prod: 'https://api.serlyfjaskra.is',
+      },
       HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
         dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
         staging:
@@ -524,6 +530,7 @@ export const serviceSetup = (services: {
       NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
+      Farmers,
       Finance,
       FireCompensation,
       Education,
@@ -561,7 +568,6 @@ export const serviceSetup = (services: {
       OfficialJournalOfIcelandApplication,
       LegalGazette,
       Frigg,
-      HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
       HealthDirectorateHealthService,
       WorkAccidents,
@@ -572,6 +578,7 @@ export const serviceSetup = (services: {
       PracticalExams,
       VMSTUnemployment,
       GoProVerdicts,
+      RecyclingFund,
     )
     .ingress({
       primary: {

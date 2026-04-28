@@ -2701,7 +2701,7 @@
             "name": "typa",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/Type"
+              "$ref": "#/components/schemas/EstateType"
             },
             "x-position": 2
           },
@@ -3312,6 +3312,71 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SvarSkeyti"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/IslandIsUmsokn": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "IslandIsUmsokn_Post",
+        "requestBody": {
+          "x-name": "umsokn",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Umsokn"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Umsokn"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -3935,6 +4000,57 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/WebhookEventPayload"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/MottakaTolvupostUrOutlook": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "MottakaTolvupostUrOutlook_Get",
+        "requestBody": {
+          "x-name": "skeyti",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MottakaTolvupostUrOutlookSkeyti"
+                }
               }
             }
           },
@@ -5865,8 +5981,7 @@
               {
                 "$ref": "#/components/schemas/AdfaraBeidni"
               }
-            ],
-            "type": "object"
+            ]
           },
           "audkenni": {
             "type": "string",
@@ -5903,8 +6018,7 @@
               {
                 "$ref": "#/components/schemas/AdfaraAdili"
               }
-            ],
-            "type": "object"
+            ]
           },
           "umbodsmadur": {
             "nullable": true,
@@ -5912,8 +6026,7 @@
               {
                 "$ref": "#/components/schemas/AdfaraAdili"
               }
-            ],
-            "type": "object"
+            ]
           },
           "dags": {
             "type": "string",
@@ -5962,8 +6075,7 @@
               {
                 "$ref": "#/components/schemas/Fyrirsvarsmadur"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -6168,8 +6280,7 @@
               {
                 "$ref": "#/components/schemas/Stadavidskiptamanns"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -6863,8 +6974,7 @@
               {
                 "$ref": "#/components/schemas/Malsvari"
               }
-            ],
-            "type": "object"
+            ]
           },
           "arfshlutfall": {
             "type": "number",
@@ -7296,7 +7406,7 @@
           }
         }
       },
-      "Type": {
+      "EstateType": {
         "type": "string",
         "description": "",
         "x-enumNames": [
@@ -7348,8 +7458,7 @@
               {
                 "$ref": "#/components/schemas/SyslGagnaSkeyti"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -7550,8 +7659,8 @@
             "nullable": true
           },
           "gildi": {
-            "nullable": true,
-            "type": "object"
+            "type": "object",
+            "nullable": true
           }
         }
       },
@@ -7681,8 +7790,8 @@
             "nullable": true
           },
           "gildi": {
-            "nullable": true,
-            "type": "object"
+            "type": "object",
+            "nullable": true
           }
         }
       },
@@ -7959,6 +8068,323 @@
           }
         }
       },
+      "Umsokn": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "notification": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Notification"
+              }
+            ]
+          },
+          "audkenni": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "isTest": {
+            "type": "boolean"
+          },
+          "command": {
+            "type": "string",
+            "nullable": true
+          },
+          "screen": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Screen"
+              }
+            ]
+          }
+        }
+      },
+      "Screen": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "sectionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Name"
+              }
+            ]
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "isCompleted": {
+            "type": "boolean"
+          },
+          "multiset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shouldValidate": {
+            "type": "boolean"
+          },
+          "shouldPopulate": {
+            "type": "boolean"
+          },
+          "screenError": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Screenerror"
+              }
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Field"
+            }
+          }
+        }
+      },
+      "Name": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_is": {
+            "type": "string",
+            "nullable": true
+          },
+          "en": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Screenerror": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "hasError": {
+            "type": "boolean"
+          },
+          "title": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Title"
+              }
+            ]
+          },
+          "message": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Message"
+              }
+            ]
+          }
+        }
+      },
+      "Title": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_is": {
+            "type": "string",
+            "nullable": true
+          },
+          "en": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_is": {
+            "type": "string",
+            "nullable": true
+          },
+          "en": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Field": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "screenId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Name1"
+              }
+            ]
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Description"
+              }
+            ]
+          },
+          "isPartOfMultiset": {
+            "type": "boolean"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "fieldSettings": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Fieldsettings"
+              }
+            ]
+          },
+          "fieldType": {
+            "type": "string",
+            "nullable": true
+          },
+          "list": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object"
+            }
+          },
+          "values": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Value"
+            }
+          }
+        }
+      },
+      "Name1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_is": {
+            "type": "string",
+            "nullable": true
+          },
+          "en": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Description": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_is": {
+            "type": "string",
+            "nullable": true
+          },
+          "en": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Fieldsettings": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "zendeskIsCustomField": {
+            "type": "boolean"
+          },
+          "zendeskCustomFieldId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Value": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "json": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/JsonText"
+              }
+            ]
+          }
+        }
+      },
+      "JsonText": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "KannaRafraenSkilrikiSimiKennitala": {
         "type": "object",
         "additionalProperties": false,
@@ -7991,8 +8417,7 @@
               {
                 "$ref": "#/components/schemas/ActiveCertsModel"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -8230,8 +8655,7 @@
               {
                 "$ref": "#/components/schemas/SignedDocumentEventData"
               }
-            ],
-            "type": "object"
+            ]
           },
           "eventSignature": {
             "nullable": true,
@@ -8239,8 +8663,7 @@
               {
                 "$ref": "#/components/schemas/EventSignature"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -8373,6 +8796,28 @@
           }
         }
       },
+      "MottakaTolvupostUrOutlookSkeyti": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "malsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "filename": {
+            "type": "string",
+            "nullable": true
+          },
+          "filecontent": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ZendeskSkeyti": {
         "type": "object",
         "additionalProperties": false,
@@ -8432,8 +8877,7 @@
               {
                 "$ref": "#/components/schemas/Villur"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -8460,8 +8904,7 @@
               {
                 "$ref": "#/components/schemas/Utgefandi"
               }
-            ],
-            "type": "object"
+            ]
           },
           "stada": {
             "nullable": true,
@@ -8469,8 +8912,7 @@
               {
                 "$ref": "#/components/schemas/Stada"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -8530,8 +8972,7 @@
               {
                 "$ref": "#/components/schemas/Leyfi"
               }
-            ],
-            "type": "object"
+            ]
           },
           "svid": {
             "type": "array",
@@ -8546,8 +8987,7 @@
               {
                 "$ref": "#/components/schemas/Textar"
               }
-            ],
-            "type": "object"
+            ]
           },
           "adgerdir": {
             "type": "array",
@@ -8569,8 +9009,7 @@
               {
                 "$ref": "#/components/schemas/Villur"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -8969,8 +9408,7 @@
               {
                 "$ref": "#/components/schemas/Okutaeki"
               }
-            ],
-            "type": "object"
+            ]
           },
           "skip": {
             "nullable": true,
@@ -8978,8 +9416,7 @@
               {
                 "$ref": "#/components/schemas/Skip"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -9077,8 +9514,7 @@
               {
                 "$ref": "#/components/schemas/Seaworhiness"
               }
-            ],
-            "type": "object"
+            ]
           },
           "identification": {
             "nullable": true,
@@ -9086,8 +9522,7 @@
               {
                 "$ref": "#/components/schemas/Identification"
               }
-            ],
-            "type": "object"
+            ]
           },
           "mainMeasurements": {
             "nullable": true,
@@ -9095,8 +9530,7 @@
               {
                 "$ref": "#/components/schemas/Mainmeasurements"
               }
-            ],
-            "type": "object"
+            ]
           },
           "crew": {
             "type": "array",
@@ -9139,8 +9573,7 @@
               {
                 "$ref": "#/components/schemas/Fishery"
               }
-            ],
-            "type": "object"
+            ]
           },
           "constructionPlace": {
             "type": "string",
@@ -9407,8 +9840,7 @@
               {
                 "$ref": "#/components/schemas/Insurancetype"
               }
-            ],
-            "type": "object"
+            ]
           },
           "insuranceCompany": {
             "nullable": true,
@@ -9416,8 +9848,7 @@
               {
                 "$ref": "#/components/schemas/Insurancecompany"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },
@@ -9479,8 +9910,7 @@
               {
                 "$ref": "#/components/schemas/Usage"
               }
-            ],
-            "type": "object"
+            ]
           },
           "manufacturer": {
             "nullable": true,
@@ -9488,8 +9918,7 @@
               {
                 "$ref": "#/components/schemas/Manufacturer"
               }
-            ],
-            "type": "object"
+            ]
           }
         }
       },

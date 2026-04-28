@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Text, Stack } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useLocale } from '@island.is/localization'
 

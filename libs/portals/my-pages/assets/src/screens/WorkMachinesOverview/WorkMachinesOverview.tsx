@@ -237,6 +237,7 @@ const WorkMachinesOverview = () => {
                     : formatMessage(messages.noInspection)
                 }`}
                 heading={wm?.type ? `${wm.type} ${wm.model}`.trim() : ''}
+                headingVariant="h4"
                 cta={{
                   label: formatMessage(m.seeDetails),
                   variant: 'text',

@@ -1,4 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -12,8 +13,8 @@ const TEXTBOX_COMPONENT_MAP = {
   NUMBERBOX: 'number',
   TIME_INPUT: 'time',
   DATE_PICKER: 'date',
-  DROPDOWN_LIST: 'listValue',
-  RADIO_BUTTONS: 'listValue',
+  DROPDOWN_LIST: 'label',
+  RADIO_BUTTONS: 'label',
   APPLICANT: '',
   PAYMENT_QUANTITY: 'number',
 } as const
@@ -35,12 +36,20 @@ export const DefaultDisplay = ({ item, valueIndex }: Props) => {
   const json = value?.json as Record<string, unknown> | null | undefined
   const extracted = valueKey ? json?.[valueKey] : json
 
-  const displayValue =
-    extracted == null
-      ? ''
-      : typeof extracted === 'object'
-      ? JSON.stringify(extracted)
-      : String(extracted)
+  let displayValue = ''
+  if (
+    item.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+    item.fieldType === FieldTypesEnum.RADIO_BUTTONS
+  ) {
+    displayValue = value?.json?.label?.[lang] ?? ''
+  } else {
+    displayValue =
+      extracted == null
+        ? ''
+        : typeof extracted === 'object'
+        ? JSON.stringify(extracted)
+        : String(extracted)
+  }
 
   return (
     <Box

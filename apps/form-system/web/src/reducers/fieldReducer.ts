@@ -8,8 +8,12 @@ export const fieldReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'SET_LIST_VALUE': {
-      const { value, id, valueIndex } = action.payload
-      return setFieldValue(state, 'listValue', id, value, valueIndex)
+      const { id, value, valueIndex } = action.payload
+      const values = {
+        label: value?.label,
+        value: value?.value,
+      }
+      return setMultipleFieldValues(state, id, values, valueIndex)
     }
     case 'SET_CHECKBOX_VALUE': {
       const { value, id, valueIndex } = action.payload
@@ -96,10 +100,11 @@ const setMultipleFieldValues = (
   id: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values: Record<string, any>,
+  valueIndex?: number,
 ): ApplicationState => {
   return Object.entries(values).reduce(
     (acc, [fieldName, fieldValue]) =>
-      setFieldValue(acc, fieldName, id, fieldValue),
+      setFieldValue(acc, fieldName, id, fieldValue, valueIndex),
     state,
   )
 }

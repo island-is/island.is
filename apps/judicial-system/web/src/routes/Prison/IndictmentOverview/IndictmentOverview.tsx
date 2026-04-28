@@ -161,7 +161,7 @@ const IndictmentOverview = () => {
     >
       <PageHeader title="Yfirlit ákæru - Réttarvörslugátt" />
       <FormContentContainer>
-        <PageTitle previousUrl={getStandardUserDashboardRoute(user)}>
+        <PageTitle>
           {workingCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.FINE
             ? 'Viðurlagaákvörðun til fullnustu'

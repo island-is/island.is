@@ -33,27 +33,29 @@ import {
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isUserCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
+import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
 
+const prosecutorDeleteCategories = [
+  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+]
+const defenceDeleteCategories = [
+  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+]
 const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   category &&
-  [
-    CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-  ].includes(category)
-
-const isDefenceCategory = (category: CaseFileCategory | undefined | null) =>
-  category &&
-  [
-    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-  ].includes(category)
+  ([
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  ].includes(category) ||
+    prosecutorDeleteCategories.includes(category))
 
 const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
@@ -101,6 +103,14 @@ const AppealCaseFilesOverview = () => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
+
+  const deleteCategories = isProsecutionUser(user)
+    ? prosecutorDeleteCategories
+    : isDefenceUser(user)
+    ? defenceDeleteCategories
+    : []
+  const canDeleteFile = (file: CaseFile) =>
+    isMatchingAppealCaseFile(workingCase, deleteCategories, file, user)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -172,12 +182,7 @@ const AppealCaseFilesOverview = () => {
           />
           {allFiles.map((file) => {
             const isDisabled = !file.isKeyAccessible
-            const canDeleteFile =
-              (isProsecutionUser(user) &&
-                isProsecutorCategory(file.category)) ||
-              (isDefenceUser(user) &&
-                isDefenceCategory(file.category) &&
-                isUserCaseFile(workingCase, file, user))
+            const canDelete = canDeleteFile(file)
 
             return (
               <PdfButton
@@ -187,11 +192,7 @@ const AppealCaseFilesOverview = () => {
                 disabled={isDisabled}
                 handleClick={() => onOpen(file.id)}
               >
-                <Box
-                  display="flex"
-                  alignItems={['flexEnd', 'flexEnd', 'center']}
-                  justifyContent={['spaceBetween', 'spaceBetween', 'center']}
-                >
+                <Box className={styles.metadataRow}>
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
                       {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
@@ -217,7 +218,7 @@ const AppealCaseFilesOverview = () => {
                           onClick: () => onOpen(file.id),
                           icon: 'open' as IconMapIcon,
                         },
-                        ...(canDeleteFile
+                        ...(canDelete
                           ? [
                               {
                                 title: 'Eyða',

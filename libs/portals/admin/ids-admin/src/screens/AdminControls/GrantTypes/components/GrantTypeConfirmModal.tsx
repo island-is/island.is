@@ -112,8 +112,7 @@ export const GrantTypeConfirmModal = ({
                     checked={selectedEnvironments.includes(env)}
                     onChange={() => handleEnvironmentChange(env)}
                     disabled={
-                      !isGrantTypeEnv ||
-                      !configuredEnvironments.includes(env)
+                      !isGrantTypeEnv || !configuredEnvironments.includes(env)
                     }
                     large
                   />
