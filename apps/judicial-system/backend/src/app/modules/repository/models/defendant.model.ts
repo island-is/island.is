@@ -195,6 +195,16 @@ export class Defendant extends Model {
   })
   caseDefendantPoliceCaseNumbers?: CaseDefendantPoliceCaseNumber[]
 
+  @Column({ type: DataType.VIRTUAL })
+  @ApiProperty({ type: String, isArray: true })
+  get policeCaseNumbers(): string[] {
+    const rows = this.caseDefendantPoliceCaseNumbers
+
+    return [...new Set((rows ?? []).map((r) => r.policeCaseNumber))].sort(
+      (a, b) => a.localeCompare(b),
+    )
+  }
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
