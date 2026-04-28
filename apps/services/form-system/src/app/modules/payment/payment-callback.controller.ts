@@ -55,9 +55,9 @@ export class PaymentCallbackController {
           'No applicationId found in success callback',
         )
       }
-      if (!callback.details?.eventMetadata?.charge?.receptionId) {
+      if (!callback.paymentFlowId) {
         throw new BadRequestException(
-          'No receptionId found in success callback',
+          'No paymentFlowId found in success callback',
         )
       }
 
@@ -70,7 +70,6 @@ export class PaymentCallbackController {
 
       await this.paymentService.fulfillPayment(
         callback.paymentFlowMetadata.paymentId,
-        callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
         callback.paymentFlowId,
       )
