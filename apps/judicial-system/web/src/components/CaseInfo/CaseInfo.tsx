@@ -1,7 +1,8 @@
 import { FC, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence } from 'motion/react'
+import { useRouter } from 'next/router'
 
 import { Box, Button, Input, Tag, Text } from '@island.is/island-ui/core'
 import {
@@ -9,6 +10,7 @@ import {
   enumerate,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isIndictmentCase,
@@ -131,6 +133,8 @@ export const ProsecutorAndDefendantsEntries: FC<Props> = ({
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  const router = useRouter()
+
   const [modalVisible, setModalVisible] = useState<'REOPEN'>()
   const [reopenReason, setReopenReason] = useState<string>()
 
@@ -202,7 +206,9 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
               isDisabled: !reopenReason,
               onClick: async () => {
                 await updateCase(workingCase.id, { reopenReason })
-                setModalVisible(undefined)
+                router.push(
+                  `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                )
               },
             }}
           >

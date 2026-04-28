@@ -1835,6 +1835,8 @@ export class CaseService {
       isCompletedCase(theCase.state)
     ) {
       update.state = CaseState.RECEIVED
+      update.indictmentDecision = IndictmentDecision.POSTPONING
+      update.postponedIndefinitelyExplanation = 'Mál enduropnað'
     }
 
     // Keep transient defendant event log decisions out of the case persistence
