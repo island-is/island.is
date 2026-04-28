@@ -40,6 +40,7 @@ import {
   CaseState,
   CaseType,
   DefenderSubRole,
+  EventType,
   getIndictmentAppealDeadline,
   getStatementDeadline,
   isDefenceUser,
@@ -85,6 +86,8 @@ import {
   type CivilClaimant,
   DateLog,
   type Defendant,
+  EventLog,
+  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -111,6 +114,7 @@ export class CaseNotificationService extends BaseNotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly defendantService: DefendantService,
+    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
@@ -1935,6 +1939,18 @@ export class CaseNotificationService extends BaseNotificationService {
     const hasSentToPrisonAdmin = theCase.defendants?.some(
       (d) => d.isSentToPrisonAdmin,
     )
+    const hasSentToPublicProsecutor = Boolean(
+      EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        theCase.eventLogs,
+      ),
+    )
+    const publicProsecutorEmail = hasSentToPublicProsecutor
+      ? await this.institutionContactRepositoryService.getInstitutionContact(
+          this.config.publicProsecutorId,
+          CaseNotificationType.INDICTMENT_REOPENED,
+        )
+      : null
 
     const recipients = await Promise.all([
       this.sendEmail({
@@ -1958,6 +1974,16 @@ export class CaseNotificationService extends BaseNotificationService {
               html: body,
               recipientName: 'Fangelsismálastofnun',
               recipientEmail: this.config.email.prisonAdminEmail,
+            }),
+          ]
+        : []),
+      ...(publicProsecutorEmail
+        ? [
+            this.sendEmail({
+              subject,
+              html: body,
+              recipientName: 'Ríkissaksóknari',
+              recipientEmail: publicProsecutorEmail,
             }),
           ]
         : []),

@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseNotificationType,
   DefendantNotificationType,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
@@ -21,6 +22,7 @@ export class InstitutionContactRepositoryService {
   async getInstitutionContact(
     institutionId: string,
     notificationType:
+      | CaseNotificationType
       | IndictmentCaseNotificationType
       | DefendantNotificationType,
   ): Promise<string | null> {
