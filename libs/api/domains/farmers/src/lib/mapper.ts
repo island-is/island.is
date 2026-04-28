@@ -106,13 +106,14 @@ export const mapToLandRegistryEntry = (
   owner: AssetOwner,
 ): LandRegistryEntry | undefined => {
   const farmId = owner.details?.farmId?.toString()
-  const nationalId = owner.details?.nationalId
-  const name = owner.details?.farmName
-  if (!farmId || !nationalId || !name) return undefined
+  const ownerNationalId = owner.details?.nationalId
+  const name = owner.details?.name
+  if (!farmId || !ownerNationalId || !name) return undefined
   return {
-    id: `${farmId}:${nationalId}`,
+    id: `${farmId}:${ownerNationalId}`,
     name,
-    nationalId,
+    ownerName: owner.details?.name,
+    ownerNationalId,
     properties: (owner.list ?? [])
       .map((a) => {
         if (!a.ownerType && !a.usage && a.share == null) return undefined
