@@ -97,12 +97,17 @@ export const PermissionDelegations = ({
 
   const categories: Option[] = useMemo(
     () =>
-      categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
-        label: cat.title,
-        value: cat.id,
-        description: cat.description ?? '',
-      })) ?? [],
-    [categoriesData?.authAdminScopeCategories],
+      categoriesData?.authAdminScopeCategories
+        .filter(
+          (cat: Category) =>
+            isSuperAdmin || !cat.id.startsWith('virtual-'),
+        )
+        .map((cat: Category) => ({
+          label: cat.title,
+          value: cat.id,
+          description: cat.description ?? '',
+        })) ?? [],
+    [categoriesData?.authAdminScopeCategories, isSuperAdmin],
   )
   const tags: Option[] = useMemo(
     () =>

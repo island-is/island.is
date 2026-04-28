@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CmsContentfulService } from '@island.is/cms'
 
 import { DEFAULT_DOMAIN } from '../types'
@@ -20,17 +21,65 @@ import { ResourceTranslationService } from './resource-translation.service'
 import { DelegationResourcesService } from './delegation-resources.service'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
 
+const VIRTUAL_MUNICIPALITY_TAG_ID = 'virtual-mitt-sveitarfelag'
+const VIRTUAL_MUNICIPALITY_TAG_SLUG = 'mitt-sveitarfelag'
+
+// Virtual categories not backed by CMS. Scopes are assigned via
+// api_scope_category using these IDs, visible to superadmins in the admin portal.
+export const ISLAND_IS_CATEGORY = {
+  id: 'virtual-thjonusta-island-is',
+  slug: 'thjonusta-island-is',
+  title: { is: 'Þjónusta ísland.is', en: 'island.is services' },
+  description: {
+    is: 'Ráðgjöf, vörur og þjónusta sem Stafrænt Ísland veitir fyrirtækjum og stofnunum',
+    en: 'Consulting, products and services provided by Digital Iceland to companies and institutions',
+  },
+} as const
+
 @Injectable()
 export class ScopeService {
+  private readonly logger = new Logger(ScopeService.name)
+
   constructor(
     @InjectModel(ApiScope)
     private apiScopeModel: typeof ApiScope,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
+    @InjectModel(Domain)
+    private domainModel: typeof Domain,
     private resourceTranslationService: ResourceTranslationService,
     private cmsContentfulService: CmsContentfulService,
     private delegationResourcesService: DelegationResourcesService,
+    private nationalRegistryService: NationalRegistryV3ClientService,
   ) {}
+
+  /**
+   * Looks up the user's municipality from the National Registry and finds
+   * a matching domain by comparing against Domain.displayName.
+   */
+  private async getUserMunicipalDomain(user: User): Promise<string | null> {
+    try {
+      const address = await this.nationalRegistryService.getAddress(
+        user.nationalId,
+      )
+      const sveitarfelag = address?.sveitarfelag?.trim()
+      if (!sveitarfelag) return null
+
+      const domain = await this.domainModel.findOne({
+        attributes: ['name'],
+        where: { displayName: sveitarfelag },
+      })
+
+      return domain?.name ?? null
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch municipality for user (${
+          (error as Error)?.name ?? 'unknown'
+        }), falling back to normal categories`,
+      )
+      return null
+    }
+  }
 
   async findScopeTree(
     requestedScopes: string[],
@@ -164,7 +213,7 @@ export class ScopeService {
 
     // Map CMS categories to DTO with their scopes
     const resolvedCategoryIds = new Set(cmsCategories.map((c) => c.id))
-    const result = cmsCategories
+    let result = cmsCategories
       .map((cmsCategory) => {
         const scopes = categoryMap.get(cmsCategory.id) ?? []
         return {
@@ -175,13 +224,15 @@ export class ScopeService {
           scopes,
         }
       })
-      .filter((category) => category.scopes.length > 0) // Only return categories that have scopes
+      .filter((category) => category.scopes.length > 0)
       .sort((a, b) => a.title.localeCompare(b.title))
 
     // Collect orphaned scopes whose categoryId no longer exists in CMS
+    // (excluding virtual categories which are handled separately)
+    const virtualCategoryIds = new Set<string>([ISLAND_IS_CATEGORY.id])
     const orphanedScopes = new Map<string, ScopeDTO>()
     for (const [categoryId, catScopes] of categoryMap.entries()) {
-      if (!resolvedCategoryIds.has(categoryId)) {
+      if (!resolvedCategoryIds.has(categoryId) && !virtualCategoryIds.has(categoryId)) {
         for (const scope of catScopes) {
           orphanedScopes.set(scope.name, scope)
         }
@@ -198,6 +249,20 @@ export class ScopeService {
       })
     }
 
+    // Virtual "Þjónusta ísland.is" category — scopes assigned to this
+    // category ID in the DB won't match a CMS category, so build it here.
+    const islandIsScopes = categoryMap.get(ISLAND_IS_CATEGORY.id)
+    if (islandIsScopes && islandIsScopes.length > 0) {
+      result.push({
+        id: ISLAND_IS_CATEGORY.id,
+        title: ISLAND_IS_CATEGORY.title[lang === 'en' ? 'en' : 'is'],
+        description:
+          ISLAND_IS_CATEGORY.description[lang === 'en' ? 'en' : 'is'],
+        slug: ISLAND_IS_CATEGORY.slug,
+        scopes: islandIsScopes,
+      })
+    }
+
     return result
   }
 
@@ -206,30 +271,32 @@ export class ScopeService {
     lang: string,
     direction?: DelegationDirection,
   ): Promise<ScopeTagDTO[]> {
-    // Fetch tags from CMS
-    const cmsTags = await this.cmsContentfulService.getDelegationScopeTags(lang)
-
-    const scopes = await this.delegationResourcesService.findScopesInternal({
-      user,
-      language: lang,
-      direction,
-      attributes: [
-        'name',
-        'displayName',
-        'description',
-        'domainName',
-        'order',
-        'allowsWrite',
-      ],
-      additionalIncludes: [
-        {
-          model: ApiScopeTag,
-          as: 'tags',
-          attributes: ['tagId'],
-          required: true,
-        },
-      ],
-    })
+    // Fetch tags, scopes, and user municipality in parallel
+    const [cmsTags, scopes, municipalDomainName] = await Promise.all([
+      this.cmsContentfulService.getDelegationScopeTags(lang),
+      this.delegationResourcesService.findScopesInternal({
+        user,
+        language: lang,
+        direction,
+        attributes: [
+          'name',
+          'displayName',
+          'description',
+          'domainName',
+          'order',
+          'allowsWrite',
+        ],
+        additionalIncludes: [
+          {
+            model: ApiScopeTag,
+            as: 'tags',
+            attributes: ['tagId'],
+            required: true,
+          },
+        ],
+      }),
+      this.getUserMunicipalDomain(user),
+    ])
 
     // Group scopes by tag
     const tagMap = new Map<string, ScopeDTO[]>()
@@ -253,7 +320,7 @@ export class ScopeService {
     }
     // Map CMS life events to DTO with their scopes
     const resolvedTagIds = new Set(cmsTags.map((t) => t.id))
-    const result = cmsTags
+    let result = cmsTags
       .map((tag) => {
         const scopes = tagMap.get(tag.id) ?? []
         return {
@@ -285,6 +352,38 @@ export class ScopeService {
         slug: 'uncategorized-tag',
         scopes: Array.from(orphanedScopes.values()),
       })
+    }
+
+    // If the user has a municipal domain, extract matching scopes from the
+    // "Sveitarfélag" tag into a virtual "Mitt sveitarfélag" tag.
+    // Scopes remain in their original tag as well.
+    if (municipalDomainName) {
+      const sveitarfelagTag = result.find(
+        (tag) => tag.slug === 'sveitarfelog',
+      )
+
+      if (sveitarfelagTag) {
+        const municipalScopes = sveitarfelagTag.scopes.filter(
+          (scope) => scope.domainName === municipalDomainName,
+        )
+
+        if (municipalScopes.length > 0) {
+          result = [
+            {
+              id: VIRTUAL_MUNICIPALITY_TAG_ID,
+              title:
+                lang === 'en' ? 'My municipality' : 'Mitt sveitarfélag',
+              description:
+                lang === 'en'
+                  ? 'Services from your municipality'
+                  : 'Þjónusta frá þínu sveitarfélagi',
+              slug: VIRTUAL_MUNICIPALITY_TAG_SLUG,
+              scopes: municipalScopes,
+            },
+            ...result,
+          ]
+        }
+      }
     }
 
     return result
