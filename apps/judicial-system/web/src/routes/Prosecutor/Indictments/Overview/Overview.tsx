@@ -44,7 +44,7 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 
 const Overview: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -195,9 +195,15 @@ const Overview: FC = () => {
           <Box marginBottom={2}>
             <AlertMessage
               title="Mál enduropnað"
-              message={`${formatDate(workingCase.reopenReasonCreated)} - ${
-                workingCase.reopenReason
-              }`}
+              message={`${capitalize(
+                formatDate(workingCase.reopenReasonCreated, 'PPPP')?.replace(
+                  ',',
+                  '',
+                ),
+              )} kl. ${formatDate(
+                workingCase.reopenReasonCreated,
+                constants.TIME_FORMAT,
+              )} - ${workingCase.reopenReason}`}
               type="info"
             />
           </Box>

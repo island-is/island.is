@@ -32,7 +32,7 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Overview.strings'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
 const OverviewBody = ({
@@ -64,9 +64,15 @@ const OverviewBody = ({
           {workingCase.reopenReason && (
             <AlertMessage
               title="Mál enduropnað"
-              message={`${formatDate(workingCase.reopenReasonCreated)} - ${
-                workingCase.reopenReason
-              }`}
+              message={`${capitalize(
+                formatDate(workingCase.reopenReasonCreated, 'PPPP')?.replace(
+                  ',',
+                  '',
+                ),
+              )} kl. ${formatDate(
+                workingCase.reopenReasonCreated,
+                constants.TIME_FORMAT,
+              )} - ${workingCase.reopenReason}`}
               type="info"
             />
           )}
