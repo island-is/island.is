@@ -17,8 +17,9 @@ export const Application = () => {
 
   const { data, loading, error, refetch } = useQuery(GET_APPLICATION, {
     variables: {
-      input: { id },
+      input: { id, slug },
     },
+    skip: !id || !slug,
     fetchPolicy: isPaymentReturn ? 'network-only' : 'cache-first',
     notifyOnNetworkStatusChange: true,
   })
