@@ -7,7 +7,7 @@ export class LandRegistryEntry {
   id!: string
 
   @Field({ nullable: true })
-  name!: string
+  name?: string
 
   @Field({ nullable: true })
   ownerName?: string
