@@ -8,9 +8,9 @@ import {
   SocialInsuranceAdministrationPaymentTypesOverviewService,
   SocialInsuranceAdministrationPensionCalculatorService,
   SocialInsuranceAdministrationPersonalTaxCreditService,
-  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -291,21 +291,21 @@ export class SocialInsuranceService {
 
   async setTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.setTaxCardAllowance(user, input)
   }
 
   async editTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.editTaxCardAllowance(user, input)
   }
 
   async discontinueTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
