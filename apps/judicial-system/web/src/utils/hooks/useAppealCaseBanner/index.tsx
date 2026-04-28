@@ -132,6 +132,8 @@ const useAppealCaseBanner = () => {
     appealState,
     prosecutorStatementDate,
     defendantStatementDate,
+    defendantStatementDates,
+    civilClaimantStatementDates,
     appealReceivedByCourtDate,
     appealRulingDecision,
     statementDeadline,
@@ -143,23 +145,22 @@ const useAppealCaseBanner = () => {
     user?.institution?.id === sharedWithProsecutorsOffice?.id
 
   // For indictment cases each defender / civil claimant spokesperson sends
-  // their own statement, so resolve the per-party date by national-id match
-  // against confirmed parties only. Request cases have a single defender,
-  // so the aggregated appealCase.defendantStatementDate is the right answer.
+  // their own statement, so resolve the per-party date from the per-appeal
+  // lists by id. Request cases have a single defender, so the aggregated
+  // appealCase.defendantStatementDate is the right answer.
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
     user,
   )
-  const currentDefenceStatementDate = defendantId
-    ? workingCase.defendants?.find((d) => d.id === defendantId)
-        ?.appealStatementDate
-    : civilClaimantId
-    ? workingCase.civilClaimants?.find((c) => c.id === civilClaimantId)
-        ?.appealStatementDate
-    : isIndictmentCase(workingCase.type)
-    ? // Indictment defence user whose pick isn't confirmed: no per-party
-      // statement is attributable to them.
-      undefined
+  const currentDefenceStatementDate = isIndictmentCase(workingCase.type)
+    ? defendantId
+      ? defendantStatementDates?.find((d) => d.defendantId === defendantId)
+          ?.statementDate
+      : civilClaimantId
+      ? civilClaimantStatementDates?.find(
+          (c) => c.civilClaimantId === civilClaimantId,
+        )?.statementDate
+      : undefined
     : defendantStatementDate
 
   const currentUserStatementDate = isProsecutionUser(user)
