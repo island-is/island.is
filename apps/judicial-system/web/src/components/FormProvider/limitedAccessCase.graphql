@@ -105,6 +105,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         time
       }
       appealStatementDate
+      policeCaseNumbers
       subpoenas {
         id
         created
