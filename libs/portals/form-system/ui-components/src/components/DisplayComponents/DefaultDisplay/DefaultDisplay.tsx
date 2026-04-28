@@ -1,4 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -37,8 +38,8 @@ export const DefaultDisplay = ({ item, valueIndex }: Props) => {
 
   let displayValue = ''
   if (
-    item.fieldType === 'DROPDOWN_LIST' ||
-    item.fieldType === 'RADIO_BUTTONS'
+    item.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+    item.fieldType === FieldTypesEnum.RADIO_BUTTONS
   ) {
     displayValue = value?.json?.label?.[lang] ?? ''
   } else {

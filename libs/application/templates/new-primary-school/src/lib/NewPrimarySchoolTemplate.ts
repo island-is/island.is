@@ -1,9 +1,11 @@
 import {
   DefaultStateLifeCycle,
+  defaultLifecycleWithPruneMessage,
   EphemeralStateLifeCycle,
   YES,
   coreHistoryMessages,
   corePendingActionMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -17,6 +19,8 @@ import {
   FormModes,
   InstitutionNationalIds,
   NationalRegistryV3UserApi,
+  NotificationConfig,
+  NotificationType,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -251,7 +255,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         meta: {
           name: States.OTHER_GUARDIAN_APPROVAL,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: defaultLifecycleWithPruneMessage((application) => {
+            const nationalId = getValueViaPath<string>(
+              application.answers,
+              'childNationalId',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.NewPrimarySchoolPruned]
+                  .templateId,
+              ...(nationalId && { internalBody: nationalId }),
+            }
+          }),
           actionCard: {
             pendingAction: otherGuardianApprovalStatePendingAction,
             historyLogs: [
@@ -367,7 +382,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         meta: {
           name: States.PAYER_APPROVAL,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: defaultLifecycleWithPruneMessage((application) => {
+            const nationalId = getValueViaPath<string>(
+              application.answers,
+              'childNationalId',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.NewPrimarySchoolPruned]
+                  .templateId,
+              ...(nationalId && { internalBody: nationalId }),
+            }
+          }),
           actionCard: {
             pendingAction: payerApprovalStatePendingAction,
             historyLogs: [

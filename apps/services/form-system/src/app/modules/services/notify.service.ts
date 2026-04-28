@@ -131,14 +131,18 @@ export class NotifyService {
 
     const loginUrl = `${this.xroadBase}${env}/NatturuhamfaratryggingIslands-Protected/Tjonakerfi_NTI-v0.1/services/oauth2/token`
 
+    if (!this.NTI_USERNAME || !this.NTI_PASSWORD) {
+      throw new Error('Missing NTI credentials')
+    }
+
     try {
       const response = await this.enhancedFetch(loginUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
           'X-Road-Client': this.xroadClient,
         },
-        body: JSON.stringify({
+        body: new URLSearchParams({
           client_id: this.NTI_USERNAME,
           client_secret: this.NTI_PASSWORD,
           grant_type: 'client_credentials',

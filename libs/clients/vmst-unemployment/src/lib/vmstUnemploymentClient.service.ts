@@ -26,6 +26,8 @@ import {
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -275,6 +277,48 @@ export class VmstUnemploymentClientService {
     return await api.unemploymentApplicationCreateUnemploymentApplication(
       request,
     )
+  }
+
+  async submitJobSearchConfirmation(
+    auth: User,
+    request: GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  ): Promise<void> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+    await api.applicantCreateJobSearchConfirmations({
+      id: applicantId,
+      galdurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest:
+        request,
+    })
+  }
+
+  async checkJobSearchConfirmationEligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantGetJobSearchConfirmationEligibility({
+      id: applicantId,
+    })
   }
 
   async getCurrentApplicationForActions(

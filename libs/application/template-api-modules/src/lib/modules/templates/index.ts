@@ -1,3 +1,5 @@
+import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
+import { ConfirmJobSearchService } from './vmst/confirm-job-search/confirm-job-search.service'
 import { EditUnemploymentInformationModule } from './vmst/edit-unemployment-information/edit-unemployment-information.module'
 import { EditUnemploymentInformationService } from './vmst/edit-unemployment-information/edit-unemployment-information.service'
 import { DeRegisterUnemploymentBenefitsModule } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.module'
@@ -280,6 +282,7 @@ export const modules = [
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
   CoursesModule,
+  ConfirmJobSearchModule,
   EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
 ]
@@ -376,6 +379,7 @@ export const services = [
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
   CoursesService,
+  ConfirmJobSearchService,
   EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,
 ]
