@@ -220,62 +220,61 @@ const OpenDataPage: Screen<OpenDataProps> = ({ namespace }) => {
   return (
     <Box>
       <HeroSection n={n} />
-        <SidebarLayout
-          paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 4]}
-          isSticky={false}
-          fullWidthContent={true}
-          sidebarContent={
-            <FilterSidebar
-              filterOptions={filterOptions}
-              filters={filters}
-              isOpen={isOpen}
-              onFilterChange={handleFilters}
-              onClearFilterType={clearFilterType}
-              onClearAllFilters={clearAllFilters}
-              onToggleIsOpen={toggleIsOpen}
-              onToggleOpenAll={toggleOpenAll}
-              onToggleCloseAll={toggleCloseAll}
-              areAnyFiltersOpen={areAnyFiltersOpen}
-              n={n}
-            />
-          }
-        >
-          <Box minWidth={0} className={styles.mainContentWrapper}>
-            <SearchSection
-              query={query}
-              onQueryChange={setQuery}
-              filters={filters}
-              filterOptions={filterOptions}
-              onRemoveTag={handleRemoveTag}
-              onClearAllFilters={clearAllFilters}
-              onFilterTypeChange={handleFilterType}
-              onClearFilterType={clearFilterType}
-              totalCount={totalCount}
-              n={n}
-              titleRef={titleRef}
-            />
+      <SidebarLayout
+        paddingTop={[2, 2, 9]}
+        paddingBottom={[4, 4, 4]}
+        isSticky={false}
+        fullWidthContent={true}
+        sidebarContent={
+          <FilterSidebar
+            filterOptions={filterOptions}
+            filters={filters}
+            isOpen={isOpen}
+            onFilterChange={handleFilters}
+            onClearFilterType={clearFilterType}
+            onClearAllFilters={clearAllFilters}
+            onToggleIsOpen={toggleIsOpen}
+            onToggleOpenAll={toggleOpenAll}
+            onToggleCloseAll={toggleCloseAll}
+            areAnyFiltersOpen={areAnyFiltersOpen}
+            n={n}
+          />
+        }
+      >
+        <Box minWidth={0} className={styles.mainContentWrapper}>
+          <SearchSection
+            query={query}
+            onQueryChange={setQuery}
+            filters={filters}
+            filterOptions={filterOptions}
+            onRemoveTag={handleRemoveTag}
+            onClearAllFilters={clearAllFilters}
+            onFilterTypeChange={handleFilterType}
+            onClearFilterType={clearFilterType}
+            totalCount={totalCount}
+            n={n}
+            titleRef={titleRef}
+          />
 
-            <DatasetList
-              datasets={datasets}
-              loading={loading}
-              error={error}
-              totalCount={totalCount}
-              totalPages={totalPages}
-              selectedPage={selectedPage}
-              onPageChange={setSelectedPage}
-              gridView={gridView}
-              onToggleView={() => setGridView(!gridView)}
-              formatDate={formatDate}
-              n={n}
-              isMobileScreenWidth={isMobileScreenWidth}
-              isTabletScreenWidth={isTabletScreenWidth}
-              titleRef={titleRef}
-              itemsPerPage={ITEMS_PER_PAGE}
-            />
-          </Box>
-        </SidebarLayout>
-      
+          <DatasetList
+            datasets={datasets}
+            loading={loading}
+            error={error}
+            totalCount={totalCount}
+            totalPages={totalPages}
+            selectedPage={selectedPage}
+            onPageChange={setSelectedPage}
+            gridView={gridView}
+            onToggleView={() => setGridView(!gridView)}
+            formatDate={formatDate}
+            n={n}
+            isMobileScreenWidth={isMobileScreenWidth}
+            isTabletScreenWidth={isTabletScreenWidth}
+            titleRef={titleRef}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
+        </Box>
+      </SidebarLayout>
     </Box>
   )
 }
