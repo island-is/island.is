@@ -132,9 +132,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const [modalVisible, setModalVisible] = useState<'REOPEN'>()
-  const [reopenReason, setReopenReason] = useState(
-    workingCase.reopenReason ?? '',
-  )
+  const [reopenReason, setReopenReason] = useState<string>()
 
   return (
     <>
@@ -201,6 +199,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
             primaryButton={{
               text: 'Halda áfram',
               colorScheme: 'destructive',
+              isDisabled: !reopenReason,
               onClick: async () => {
                 await updateCase(workingCase.id, { reopenReason })
                 setModalVisible(undefined)
@@ -216,6 +215,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 rows={6}
                 value={reopenReason}
                 onChange={(e) => setReopenReason(e.target.value)}
+                required
               />
             </Box>
           </Modal>

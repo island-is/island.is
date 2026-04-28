@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, Box, Button } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -32,6 +32,7 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Overview.strings'
+import { formatDate } from '@island.is/judicial-system/formatters'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
 const OverviewBody = ({
@@ -51,6 +52,7 @@ const OverviewBody = ({
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
+
   return (
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
@@ -59,6 +61,15 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.reopenReason && (
+            <AlertMessage
+              title="Mál enduropnað"
+              message={`${formatDate(workingCase.reopenReasonCreated)} - ${
+                workingCase.reopenReason
+              }`}
+              type="info"
+            />
+          )}
           {workingCase.court &&
             latestDate?.date &&
             workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
