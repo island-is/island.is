@@ -6,7 +6,10 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
+import { pruneAfterDaysWithMessage } from '@island.is/application/core'
 
 import { assign } from 'xstate'
 
@@ -180,7 +183,11 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           status: 'inprogress',
-          lifecycle: oneMonthLifeCycle,
+          lifecycle: pruneAfterDaysWithMessage(31, () => ({
+            notificationTemplateId:
+              NotificationConfig[NotificationType.FinancialAidPruned]
+                .templateId,
+          })),
           actionCard: {
             description: stateDescriptions.spouse,
             historyLogs: [
