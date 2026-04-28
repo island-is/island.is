@@ -164,6 +164,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
+    reopenReason
+    reopenReasonCreated
     registrar {
       id
       name

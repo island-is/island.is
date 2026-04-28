@@ -166,6 +166,17 @@ const IndictmentOverview: FC = () => {
               }
             />
           )}
+          {workingCase.reopenReason && (
+            <Box marginBottom={2}>
+              <AlertMessage
+                title="Mál enduropnað"
+                message={`${formatDate(workingCase.reopenReasonCreated)} - ${
+                  workingCase.reopenReason
+                }`}
+                type="info"
+              />
+            </Box>
+          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
