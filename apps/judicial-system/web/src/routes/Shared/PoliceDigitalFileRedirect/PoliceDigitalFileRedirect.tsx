@@ -1,9 +1,20 @@
 import { useCallback } from 'react'
 import { useRouter } from 'next/router'
+import type { ApolloError } from '@apollo/client'
 
 import { usePoliceDigitalCaseFileTokenUrlLazyQuery } from '@island.is/judicial-system-web/src/utils/hooks/usePoliceDigitalCaseFile/policeDigitalCaseFileTokenUrl.generated'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
-import RouteHandler from '../RouteHandler/RouteHandler'
+import RouteHandler, {
+  policeDigitalCaseFileNotPublishedResult,
+} from '../RouteHandler/RouteHandler'
+
+const HTTP_STATUS_TOO_EARLY = 425
+
+const isTooEarlyProblem = (error: ApolloError | undefined) => {
+  const problem = findProblemInApolloError(error)
+  return problem?.status === HTTP_STATUS_TOO_EARLY
+}
 
 const PoliceDigitalFileRedirect = () => {
   const router = useRouter()
@@ -26,6 +37,13 @@ const PoliceDigitalFileRedirect = () => {
     const result = await getTokenUrl({
       variables: { input: { caseId, policeDigitalFileId: fileId } },
     })
+
+    if (result.error) {
+      if (isTooEarlyProblem(result.error)) {
+        return policeDigitalCaseFileNotPublishedResult
+      }
+      return null
+    }
 
     return result.data?.policeDigitalCaseFileTokenUrl ?? null
   }, [router.isReady, caseId, fileId, getTokenUrl])
