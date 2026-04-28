@@ -15,11 +15,15 @@ import { CmsContentfulService } from '@island.is/cms'
 
 import { Scope } from './models/scope.model'
 import { ScopeClient } from './models/scope-client.model'
+import { ScopeUser } from './models/scope-user.model'
 import { CreateScopeInput } from './dto/create-scope.input'
+import { CreateScopeUserInput } from './dto/create-scope-user.input'
+import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
 import { ScopeService } from './scope.service'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { ScopeInput } from './dto/scope.input'
 import { ScopeClientsInput } from './dto/scope-clients.input'
+import { ScopeUsersInput } from './dto/scope-users.input'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { ScopesInput } from './dto/scopes.input'
 import { ScopesPayload } from './dto/scopes.payload'
@@ -146,5 +150,44 @@ export class ScopeResolver {
     lang?: string,
   ): Promise<ScopeTag[]> {
     return this.cmsContentfulService.getDelegationScopeTags(lang ?? 'is')
+  }
+
+  @Query(() => [ScopeUser], {
+    name: 'authAdminScopeUsers',
+    description: 'Get all users with access to a specific scope',
+  })
+  getScopeUsers(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeUsersInput })
+    input: ScopeUsersInput,
+  ): Promise<ScopeUser[]> {
+    return this.scopeService.getScopeUsers(
+      user,
+      input.tenantId,
+      input.scopeName,
+      input.environment,
+    )
+  }
+
+  @Mutation(() => ScopeUser, {
+    name: 'createAuthAdminScopeUser',
+  })
+  createScopeUser(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => CreateScopeUserInput })
+    input: CreateScopeUserInput,
+  ): Promise<ScopeUser> {
+    return this.scopeService.createScopeUser(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'updateAuthAdminScopeUsers',
+  })
+  updateScopeUsers(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => UpdateScopeUsersInput })
+    input: UpdateScopeUsersInput,
+  ): Promise<boolean> {
+    return this.scopeService.updateScopeUsers(user, input)
   }
 }

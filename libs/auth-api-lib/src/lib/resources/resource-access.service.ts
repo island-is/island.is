@@ -169,6 +169,50 @@ export class ResourceAccessService {
     return response
   }
 
+  /** Gets all Api Scope Users that have access to a specific scope */
+  async findUsersByScope(scopeName: string): Promise<ApiScopeUser[]> {
+    this.logger.debug(
+      `Finding Api Scope Users for scope - "${scopeName}"`,
+    )
+
+    return this.apiScopeUser.findAll({
+      include: [
+        {
+          model: ApiScopeUserAccess,
+          where: { scope: scopeName },
+        },
+      ],
+    })
+  }
+
+  /** Updates the user list for a specific scope by adding/removing access */
+  async updateScopeUsers(
+    scopeName: string,
+    addedNationalIds: string[],
+    removedNationalIds: string[],
+  ): Promise<void> {
+    this.logger.debug(
+      `Updating scope users for scope "${scopeName}" - adding: ${addedNationalIds.length}, removing: ${removedNationalIds.length}`,
+    )
+
+    if (removedNationalIds.length > 0) {
+      await this.apiScopeUserAccess.destroy({
+        where: {
+          scope: scopeName,
+          nationalId: { [Op.in]: removedNationalIds },
+        },
+      })
+    }
+
+    if (addedNationalIds.length > 0) {
+      await Promise.all(
+        addedNationalIds.map((nationalId) =>
+          this.apiScopeUserAccess.create({ nationalId, scope: scopeName }),
+        ),
+      )
+    }
+  }
+
   /** Creates User Scopes of Api Scope User */
   async createUserScopes(
     scopes: ApiScopeUserAccessDTO[] | undefined,
