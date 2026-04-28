@@ -165,6 +165,7 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.PaymentReminder]: {
     templateId: 'HNIPP.AS.PAY.REMINDER',
+  },
   [NotificationType.TransferOfMachineOwnershipPruned]: {
     templateId: 'HNIPP.AS.VER.TOMO.PRUNED',
   },
