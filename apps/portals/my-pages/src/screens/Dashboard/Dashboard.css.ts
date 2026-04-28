@@ -1,6 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { styleVariants } from '@vanilla-extract/css'
-import { style, globalStyle } from '@vanilla-extract/css'
+import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 
 export const badge = styleVariants({
   active: {
@@ -11,11 +10,6 @@ export const badge = styleVariants({
     width: theme.spacing[1],
     borderRadius: '50%',
     backgroundColor: theme.color.red400,
-    ...themeUtils.responsiveStyle({
-      md: {
-        left: 67,
-      },
-    }),
   },
   inactive: {
     display: 'none',
@@ -48,4 +42,16 @@ export const svgOutline = style({})
 
 globalStyle(`${svgOutline} svg path`, {
   stroke: theme.color.blue400,
+})
+
+export const featuredCardImage = style({
+  height: 110,
+  width: 'auto',
+  display: 'block',
+})
+
+export const featuredCardNoText = style({})
+
+globalStyle(`${featuredCardNoText} p`, {
+  display: 'none',
 })

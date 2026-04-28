@@ -164,7 +164,13 @@ export const AccessScopes = () => {
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <RecipientsTag />
-      <Box display="flex" columnGap={[0, 2]} marginBottom={2}>
+      <Box
+        display="flex"
+        columnGap={[0, 2]}
+        justifyContent={['spaceBetween', 'spaceBetween', 'flexStart']}
+        marginBottom={2}
+        width="full"
+      >
         <div className={styles.input}>
           <Input
             name="search"
@@ -213,6 +219,7 @@ export const AccessScopes = () => {
         <ScopesTable
           scopes={filteredScopes}
           showCheckbox
+          showSelectAll
           onSelectScope={onSelectScope}
         />
       ) : (
