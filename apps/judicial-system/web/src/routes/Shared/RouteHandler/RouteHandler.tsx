@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Box, LoadingDots } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   INDICTMENTS_COMPLETED_ROUTE,
@@ -94,8 +94,29 @@ const getRoute = (caseToOpen: Case, user: User): string => {
   return route ? `${route}/${caseToOpen.id}` : '/'
 }
 
+export const policeDigitalCaseFileNotPublishedResult = Object.freeze({
+  kind: 'police_digital_case_file_not_published' as const,
+})
+
+export type PoliceDigitalCaseFileNotPublishedResult =
+  typeof policeDigitalCaseFileNotPublishedResult
+
+export type RouteHandlerResolveResult =
+  | string
+  | null
+  | undefined
+  | PoliceDigitalCaseFileNotPublishedResult
+
+const isPoliceDigitalCaseFileNotPublishedResult = (
+  value: RouteHandlerResolveResult,
+): value is PoliceDigitalCaseFileNotPublishedResult =>
+  typeof value === 'object' &&
+  value !== null &&
+  'kind' in value &&
+  value.kind === 'police_digital_case_file_not_published'
+
 interface Props {
-  resolve?: () => Promise<string | null | undefined>
+  resolve?: () => Promise<RouteHandlerResolveResult>
 }
 
 const RouteHandler: FC<Props> = ({ resolve }) => {
@@ -103,7 +124,12 @@ const RouteHandler: FC<Props> = ({ resolve }) => {
   const { user } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
   const [caseToOpen, setCaseToOpen] = useState<Case>()
+  const [resolveView, setResolveView] = useState<'loading' | 'notPublished'>(
+    'loading',
+  )
   const resolveRef = useRef(resolve)
+
+  resolveRef.current = resolve
 
   const handleGetCase = useCallback(
     (caseId?: string) => {
@@ -125,17 +151,22 @@ const RouteHandler: FC<Props> = ({ resolve }) => {
 
   useEffect(() => {
     if (!resolveRef.current) return
-    resolveRef.current().then((url) => {
-      if (url === undefined) {
+    resolveRef.current().then((result) => {
+      if (result === undefined) {
         return
-      } else if (url) {
-        window.location.href = url
-      } else {
-        new BroadcastChannel('police-digital-file-redirect').postMessage({
-          type: 'error',
-        })
-        window.close()
       }
+      if (isPoliceDigitalCaseFileNotPublishedResult(result)) {
+        setResolveView('notPublished')
+        return
+      }
+      if (typeof result === 'string' && result) {
+        window.location.href = result
+        return
+      }
+      new BroadcastChannel('police-digital-file-redirect').postMessage({
+        type: 'error',
+      })
+      window.close()
     })
   }, [router])
 
@@ -151,7 +182,13 @@ const RouteHandler: FC<Props> = ({ resolve }) => {
 
   return (
     <Box className={styles.loadingContainer}>
-      <LoadingDots />
+      {resolveView === 'notPublished' ? (
+        <Text>
+          Tenging við öruggt gagnasvæði í vinnslu. Reynið aftur síðar.
+        </Text>
+      ) : (
+        <LoadingDots />
+      )}
     </Box>
   )
 }
