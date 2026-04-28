@@ -360,7 +360,9 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       try {
         await this.typedRequest(user, environment, (api) => {
           requestMade = true
-          return api.meApiScopeUsersControllerDeleteRaw({ xQueryNationalId: nationalId })
+          return api.meApiScopeUsersControllerDeleteRaw({
+            xQueryNationalId: nationalId,
+          })
         })
 
         if (requestMade) {
