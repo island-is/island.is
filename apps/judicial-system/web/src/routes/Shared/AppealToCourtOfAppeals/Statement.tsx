@@ -27,6 +27,7 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -187,6 +188,10 @@ const Statement = () => {
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={rulingFileId}
+          />
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (
             <Text variant="h5" as="h5">
