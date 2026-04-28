@@ -60,14 +60,11 @@ export const editPermissionAction: WrappedActionFn =
     const { syncEnvironments, environment, ...rawData } = result.data
 
     // Extract scope user fields if present (only in ACCESS_CONTROL intent)
-    const {
-      addedScopeUserNationalIds,
-      removedScopeUserNationalIds,
-      ...data
-    } = rawData as typeof rawData & {
-      addedScopeUserNationalIds?: string[]
-      removedScopeUserNationalIds?: string[]
-    }
+    const { addedScopeUserNationalIds, removedScopeUserNationalIds, ...data } =
+      rawData as typeof rawData & {
+        addedScopeUserNationalIds?: string[]
+        removedScopeUserNationalIds?: string[]
+      }
 
     const environments: AuthAdminEnvironment[] = []
 
@@ -113,13 +110,9 @@ export const editPermissionAction: WrappedActionFn =
       // Update scope users if there are changes
       const hasUserChanges =
         (addedScopeUserNationalIds && addedScopeUserNationalIds.length > 0) ||
-        (removedScopeUserNationalIds &&
-          removedScopeUserNationalIds.length > 0)
+        (removedScopeUserNationalIds && removedScopeUserNationalIds.length > 0)
 
-      if (
-        intent === PermissionFormTypes.ACCESS_CONTROL &&
-        hasUserChanges
-      ) {
+      if (intent === PermissionFormTypes.ACCESS_CONTROL && hasUserChanges) {
         await client.mutate<
           UpdateScopeUsersMutation,
           UpdateScopeUsersMutationVariables
