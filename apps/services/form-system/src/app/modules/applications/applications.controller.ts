@@ -1,3 +1,6 @@
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 import {
   Body,
   Controller,
@@ -21,16 +24,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import type { Locale } from '@island.is/shared/types'
-import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
-import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
+import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -161,11 +161,8 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(
-    @Param('id') id: string,
-    @CurrentUser() user: User,
-  ): Promise<SubmitApplicationResponseDto> {
-    return await this.applicationsService.submit(id, user)
+  async submit(@Param('id') id: string): Promise<SubmitApplicationResponseDto> {
+    return await this.applicationsService.submit(id)
   }
 
   @ApiOperation({ summary: 'Delete an application by id' })
