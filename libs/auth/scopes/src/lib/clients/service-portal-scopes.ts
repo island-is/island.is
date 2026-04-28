@@ -34,6 +34,7 @@ export const servicePortalScopes = [
   ApiScope.licenses,
   ApiScope.licensesVerify,
   ApiScope.company,
+  ApiScope.ships,
   ApiScope.vehicles,
   ApiScope.workMachines,
   ApiScope.health,
