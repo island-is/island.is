@@ -163,6 +163,7 @@ export class ScopeService {
     }
 
     // Map CMS categories to DTO with their scopes
+    const resolvedCategoryIds = new Set(cmsCategories.map((c) => c.id))
     const result = cmsCategories
       .map((cmsCategory) => {
         const scopes = categoryMap.get(cmsCategory.id) ?? []
@@ -176,6 +177,26 @@ export class ScopeService {
       })
       .filter((category) => category.scopes.length > 0) // Only return categories that have scopes
       .sort((a, b) => a.title.localeCompare(b.title))
+
+    // Collect orphaned scopes whose categoryId no longer exists in CMS
+    const orphanedScopes = new Map<string, ScopeDTO>()
+    for (const [categoryId, catScopes] of categoryMap.entries()) {
+      if (!resolvedCategoryIds.has(categoryId)) {
+        for (const scope of catScopes) {
+          orphanedScopes.set(scope.name, scope)
+        }
+      }
+    }
+
+    if (orphanedScopes.size > 0) {
+      result.push({
+        id: '__uncategorized__',
+        title: lang === 'is' ? 'Annað' : 'Other',
+        description: '',
+        slug: 'uncategorized-category',
+        scopes: Array.from(orphanedScopes.values()),
+      })
+    }
 
     return result
   }
@@ -231,7 +252,8 @@ export class ScopeService {
       }
     }
     // Map CMS life events to DTO with their scopes
-    return cmsTags
+    const resolvedTagIds = new Set(cmsTags.map((t) => t.id))
+    const result = cmsTags
       .map((tag) => {
         const scopes = tagMap.get(tag.id) ?? []
         return {
@@ -244,5 +266,27 @@ export class ScopeService {
       })
       .filter((tag) => tag.scopes.length > 0) // Only return tags that have scopes
       .sort((a, b) => a.title.localeCompare(b.title))
+
+    // Collect orphaned scopes whose tagId no longer exists in CMS
+    const orphanedScopes = new Map<string, ScopeDTO>()
+    for (const [tagId, tagScopes] of tagMap.entries()) {
+      if (!resolvedTagIds.has(tagId)) {
+        for (const scope of tagScopes) {
+          orphanedScopes.set(scope.name, scope)
+        }
+      }
+    }
+
+    if (orphanedScopes.size > 0) {
+      result.push({
+        id: '__uncategorized__',
+        title: lang === 'is' ? 'Annað' : 'Other',
+        description: '',
+        slug: 'uncategorized-tag',
+        scopes: Array.from(orphanedScopes.values()),
+      })
+    }
+
+    return result
   }
 }
