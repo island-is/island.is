@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Icon,
@@ -46,6 +47,7 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
+import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -610,6 +612,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   })}
               </div>
             )}
+            {showRulingOrderAppealMenu &&
+              (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
+                <Box>
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    {workingCase.rulingOrderAppealCases?.map((appealCase) => {
+                      const rulingFile = workingCase.caseFiles?.find(
+                        (f) => f.id === appealCase.rulingFileId,
+                      )
+                      if (!rulingFile) {
+                        return null
+                      }
+                      return (
+                        <RulingOrderAppealFilesAccordion
+                          key={appealCase.id}
+                          appealCase={appealCase}
+                          rulingFile={rulingFile}
+                          onOpenFile={onOpen}
+                        />
+                      )
+                    })}
+                  </Accordion>
+                </Box>
+              )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}
