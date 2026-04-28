@@ -308,6 +308,7 @@ export class ApplicationService {
     typeId?: string,
     status?: string,
     showPruned?: boolean,
+    excludeAttributes?: string[],
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
@@ -320,6 +321,9 @@ export class ApplicationService {
     }
 
     return this.applicationModel.findAll({
+      ...(excludeAttributes?.length && {
+        attributes: { exclude: excludeAttributes },
+      }),
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),

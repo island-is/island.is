@@ -83,7 +83,7 @@ export const getAppealDecision = (
 const useAppealCaseUI = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, setWorkingCase } =
+  const { workingCase, isLoadingWorkingCase, setWorkingCase, refreshCase } =
     useContext(FormContext)
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
@@ -94,17 +94,21 @@ const useAppealCaseUI = () => {
     | undefined
   >()
 
-  const handleReceivedTransition = () => {
-    transitionAppealCase(
+  const handleReceivedTransition = async () => {
+    const success = await transitionAppealCase(
       workingCase.id,
       workingCase.appealCase?.id ?? '',
       AppealCaseTransition.RECEIVE_APPEAL,
       setWorkingCase,
-    ).then((success) => {
-      if (success) {
-        setAppealModalVisible('AppealReceived')
-      }
-    })
+    )
+
+    if (!success) {
+      return
+    }
+
+    setAppealModalVisible('AppealReceived')
+
+    refreshCase()
   }
 
   const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE

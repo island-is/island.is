@@ -42,6 +42,7 @@ export enum Features {
   estateReviewEnabled = 'isEstateReviewEnabled',
   inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
   isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
+  isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -183,6 +184,8 @@ export enum Features {
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
   // University micro-credentials (örnám)
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
+  // Car recycling
+  isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
 }
 
 export enum ServerSideFeature {
