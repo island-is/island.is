@@ -3,8 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
-  Param,
   ParseIntPipe,
   Patch,
   Post,
@@ -93,17 +93,25 @@ export class MeApiScopeUsersController {
     return this.accessService.findAndCountAll(searchString, page, count)
   }
 
-  @Get(':nationalId')
+  @Get('national-id')
   @Documentation({
     description: 'Get an API scope user by national ID.',
     response: { status: 200, type: ApiScopeUser },
     includeNoContentResponse: true,
+    request: {
+      header: {
+        'X-Query-National-Id': {
+          required: true,
+          description: 'The national ID of the API scope user',
+        },
+      },
+    },
   })
   @Audit<ApiScopeUser>({
     resources: (user) => user?.nationalId,
   })
   async findOne(
-    @Param('nationalId') nationalId: string,
+    @Headers('X-Query-National-Id') nationalId: string,
   ): Promise<ApiScopeUser> {
     const apiScopeUser = await this.accessService.findOne(nationalId)
     if (!apiScopeUser) {
@@ -125,14 +133,22 @@ export class MeApiScopeUsersController {
     return this.accessService.create(input)
   }
 
-  @Patch(':nationalId')
+  @Patch()
   @Documentation({
     description: 'Update an existing API scope user.',
     response: { status: 200, type: ApiScopeUser },
+    request: {
+      header: {
+        'X-Query-National-Id': {
+          required: true,
+          description: 'The national ID of the API scope user',
+        },
+      },
+    },
   })
   update(
     @CurrentUser() user: User,
-    @Param('nationalId') nationalId: string,
+    @Headers('X-Query-National-Id') nationalId: string,
     @Body() input: ApiScopeUserUpdateDTO,
   ): Promise<ApiScopeUser> {
     return this.auditService.auditPromise<ApiScopeUser>(
@@ -148,15 +164,23 @@ export class MeApiScopeUsersController {
     )
   }
 
-  @Delete(':nationalId')
+  @Delete()
   @HttpCode(204)
   @Documentation({
     description: 'Delete an API scope user.',
     response: { status: 204 },
+    request: {
+      header: {
+        'X-Query-National-Id': {
+          required: true,
+          description: 'The national ID of the API scope user',
+        },
+      },
+    },
   })
   async delete(
     @CurrentUser() user: User,
-    @Param('nationalId') nationalId: string,
+    @Headers('X-Query-National-Id') nationalId: string,
   ): Promise<void> {
     await this.auditService.auditPromise(
       {
