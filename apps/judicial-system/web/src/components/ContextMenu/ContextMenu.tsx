@@ -136,6 +136,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
           store={menu}
           gutter={gutter}
           shift={shift}
+          portal
           unmountOnHide
         >
           {items?.map((item, index) => (
