@@ -21,6 +21,7 @@ export enum NotificationType {
   TransferOfVehicleOwnershipPruned = 'TransferOfVehicleOwnershipPrunedNotification',
   ChangeCoOwnerOfVehiclePruned = 'ChangeCoOwnerOfVehiclePrunedNotification',
   ChangeOperatorOfVehiclePruned = 'ChangeOperatorOfVehiclePrunedNotification',
+  PaymentReminder = 'PaymentReminderNotification',
   TransferOfMachineOwnershipPruned = 'TransferOfMachineOwnershipPrunedNotification',
   AccidentNotificationPruned = 'AccidentNotificationPrunedNotification',
   PassportPruned = 'PassportPrunedNotification',
@@ -84,6 +85,10 @@ interface NotificationKeysMap {
     name: string
     id: string
     applicationLink: string
+  }
+  [NotificationType.PaymentReminder]: {
+    applicationLink: string
+    expiryDate: string
   }
 }
 
@@ -157,6 +162,9 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.ChangeOperatorOfVehiclePruned]: {
     templateId: 'HNIPP.AS.TA.COV.PRUNED',
+  },
+  [NotificationType.PaymentReminder]: {
+    templateId: 'HNIPP.AS.PAY.REMINDER',
   },
   [NotificationType.TransferOfMachineOwnershipPruned]: {
     templateId: 'HNIPP.AS.VER.TOMO.PRUNED',
