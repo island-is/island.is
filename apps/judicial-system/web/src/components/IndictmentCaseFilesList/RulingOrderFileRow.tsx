@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
@@ -28,14 +29,16 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   CaseFile,
-  CaseFileCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCase,
   useAppealCaseModals,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  getAppealActorText,
+  getCurrentUserStatementDate,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
 
@@ -108,36 +111,26 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     refreshCase()
   }
 
-  // Has the current user already submitted an appeal statement for this
-  // ruling-order appeal? Determined by category + rulingFileId match against
-  // the appeal-related case files. Prosecution-side: any prosecutor's
-  // statement counts. Defence-side: a single submission per side is also the
-  // current convention; refine if needed once multi-defender stories land.
-  const userStatementCategory = isProsecution
-    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
-    : isDefence
-    ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
-    : undefined
-  const hasSentStatement =
-    userStatementCategory !== undefined &&
-    Boolean(
-      workingCase.caseFiles?.some(
-        (f) =>
-          f.rulingFileId === file.id && f.category === userStatementCategory,
-      ),
-    )
+  const hasBeenAppealed = appealCase && Boolean(file.hasBeenAppealed)
+
+  const currentUserStatementDate = getCurrentUserStatementDate(
+    workingCase,
+    appealCase,
+    user,
+  )
 
   const isAppellant =
-    Boolean(appealCase) &&
-    ((appealCase?.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
-      (appealCase?.appealedByRole === UserRole.DEFENDER &&
+    hasBeenAppealed &&
+    user &&
+    ((appealCase.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
+      (appealCase.appealedByRole === UserRole.DEFENDER &&
         isDefence &&
-        Boolean(user?.nationalId) &&
-        user?.nationalId === appealCase?.appealedByNationalId))
+        Boolean(user.nationalId) &&
+        user.nationalId === appealCase.appealedByNationalId))
 
   const items: ContextMenuItem[] = []
 
-  if (!appealCase) {
+  if (!hasBeenAppealed) {
     if (file.canBeAppealed && (isProsecution || isDefence)) {
       items.push({
         title: 'Senda inn kæru',
@@ -152,7 +145,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     appealCase.appealState === AppealCaseState.RECEIVED
   ) {
     if (isProsecution || isDefence) {
-      if (!hasSentStatement) {
+      if (!currentUserStatementDate) {
         items.push({
           title: 'Senda inn greinargerð',
           icon: 'document',
@@ -186,57 +179,48 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
   // the row without status text or actions.
   let statusText: string | undefined
-  const isVisibleRole = isProsecution || isDefence || isDistrictCourt
 
-  if (isVisibleRole) {
-    if (!appealCase) {
-      // Pre-appeal: only the appealing-eligible parties see the deadline.
-      if ((isProsecution || isDefence) && file.appealDeadline) {
-        statusText = `Kærufrestur ${
-          file.isAppealDeadlineExpired ? 'rann' : 'rennur'
-        } út ${formatDate(file.appealDeadline, 'PPPp')}`
-      }
-    } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
-      statusText = 'Afturkallað'
-    } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
-      // No notification template for ruling-order appeal completion yet
-      // (open question #8). Use the row's modified timestamp as the proxy
-      // for "completion date" — the last write was the COMPLETE_APPEAL
-      // transition.
-      statusText = `Niðurstaða Landsréttar ${formatDate(
-        appealCase.modified,
-        'PPP',
-      )}`
-    } else if (appealCase.appealState === AppealCaseState.APPEALED) {
-      statusText = getAppealActorText(workingCase, appealCase)
-    } else if (appealCase.appealState === AppealCaseState.RECEIVED) {
-      if (isDistrictCourt) {
-        statusText = `Tilkynning um móttöku send ${formatDate(
-          appealCase.appealReceivedByCourtDate,
-          'PPPp',
-        )}`
-      } else if (isProsecution || isDefence) {
-        if (hasSentStatement && userStatementCategory) {
-          const sentStatementFile = workingCase.caseFiles?.find(
-            (f) =>
-              f.rulingFileId === file.id &&
-              f.category === userStatementCategory,
-          )
-          statusText = `Greinargerð send ${formatDate(
-            sentStatementFile?.created,
-            'PPPp',
-          )}`
-        } else if (appealCase.statementDeadline) {
-          statusText = `Frestur til að skila greinargerð ${
-            appealCase.isStatementDeadlineExpired ? 'rann' : 'rennur'
-          } út ${formatDate(appealCase.statementDeadline, 'PPPp')}`
-        }
-      }
+  if (!hasBeenAppealed) {
+    // Pre-appeal: only the appealing-eligible parties see the deadline.
+    if ((isProsecution || isDefence) && !isCompletedCase(workingCase.state)) {
+      statusText = `Kærufrestur ${
+        file.isAppealDeadlineExpired ? 'rann' : 'rennur'
+      } út ${formatDate(file.appealDeadline, 'PPPp')}`
     }
+  } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
+    statusText = 'Kæra afturkölluð'
+  } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
+    // No notification template for ruling-order appeal completion yet
+    // (open question #8). Use the row's modified timestamp as the proxy
+    // for "completion date" — the last write was the COMPLETE_APPEAL
+    // transition.
+    statusText = `Niðurstaða Landsréttar ${formatDate(
+      appealCase.modified,
+      'PPP',
+    )}`
+  } else if (currentUserStatementDate) {
+    statusText = `Greinargerð send ${formatDate(
+      currentUserStatementDate,
+      'PPPp',
+    )}`
+  } else if (isProsecution || isDefence) {
+    statusText = `Frestur til að skila greinargerð ${
+      appealCase.isStatementDeadlineExpired ? 'rann' : 'rennur'
+    } út ${formatDate(appealCase.statementDeadline, 'PPPp')}`
+  } else if (
+    isDistrictCourt &&
+    appealCase.appealState === AppealCaseState.RECEIVED
+  ) {
+    statusText = `Tilkynning um móttöku send ${formatDate(
+      appealCase.appealReceivedByCourtDate,
+      'PPPp',
+    )}`
+  } else {
+    statusText = getAppealActorText(workingCase, appealCase)
   }
 
   const showCompletedPill =
-    isVisibleRole && appealCase?.appealState === AppealCaseState.COMPLETED
+    appealCase?.appealState === AppealCaseState.COMPLETED
 
   const fileName = file.userGeneratedFilename ?? file.name ?? ''
 

@@ -460,7 +460,9 @@ export const isAppealFileCategoryVisible = (
           civilClaimant?.hasSpokesperson &&
             civilClaimant.isSpokespersonConfirmed &&
             civilClaimant.spokespersonNationalId &&
-            normalizedAppellantId.includes(civilClaimant.spokespersonNationalId),
+            normalizedAppellantId.includes(
+              civilClaimant.spokespersonNationalId,
+            ),
         )
       }
       return false
@@ -583,6 +585,60 @@ export const isMatchingAppealCaseFile = (
   }
 
   return false
+}
+
+// For indictment cases each defender / civil claimant spokesperson sends
+// their own statement, so resolve the per-party date from the per-appeal
+// lists by id. Request cases have a single defender, so the aggregated
+// appealCase.defendantStatementDate is the right answer.
+export const getCurrentUserStatementDate = (
+  workingCase: Case,
+  appealCase: AppealCase | null | undefined,
+  user: User | undefined,
+): string | undefined => {
+  if (!appealCase) {
+    return undefined
+  }
+
+  const isProsecution = isProsecutionUser(user)
+  const isDefence = isDefenceUser(user)
+
+  if (!isProsecution && !isDefence) {
+    return undefined
+  }
+
+  if (isRequestCase(workingCase.type)) {
+    return isProsecution
+      ? appealCase.prosecutorStatementDate ?? undefined
+      : appealCase.defendantStatementDate ?? undefined
+  }
+
+  if (!isIndictmentCase(workingCase.type)) {
+    return undefined
+  }
+
+  if (isProsecution) {
+    return appealCase.prosecutorStatementDate ?? undefined
+  }
+
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    workingCase,
+    user,
+  )
+
+  if (defendantId) {
+    return appealCase?.defendantStatementDates?.find(
+      (d) => d.defendantId === defendantId,
+    )?.statementDate
+  }
+
+  if (civilClaimantId) {
+    return appealCase?.civilClaimantStatementDates?.find(
+      (c) => c.civilClaimantId === civilClaimantId,
+    )?.statementDate
+  }
+
+  return undefined
 }
 
 // Use the gender of the single defendant if there is only one,
