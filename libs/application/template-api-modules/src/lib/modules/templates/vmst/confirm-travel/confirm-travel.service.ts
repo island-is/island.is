@@ -1,10 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
-  VmstUnemploymentClientService,
-} from '@island.is/clients/vmst-unemployment'
+import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -73,22 +70,16 @@ export class ConfirmTravelService extends BaseTemplateApiService {
 
   async submitApplication({ auth, application }: TemplateApiModuleActionProps) {
     try {
-      const travelPeriods: Array<GaldurExternalDomainRequestsApplicantCreateForeignStayRequest> =
-        (
-          getValueViaPath<Array<DateInAnswers>>(
-            application.answers,
-            'dates',
-            [],
-          ) || []
-        ).map((item) => ({
-          dateFrom: item.from,
-          dateTo: item.to,
-        }))
-
-      await this.vmstUnemploymentClientService.submitTravelConfirmation(
-        auth,
-        travelPeriods[0], //TODO fix when decided if list or single item
+      const travelPeriod = getValueViaPath<DateInAnswers>(
+        application.answers,
+        'date',
+        undefined,
       )
+
+      await this.vmstUnemploymentClientService.submitTravelConfirmation(auth, {
+        dateFrom: travelPeriod.from,
+        dateTo: travelPeriod.to,
+      })
 
       return true
     } catch (e) {

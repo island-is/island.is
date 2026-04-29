@@ -18,6 +18,7 @@ import {
 } from '@island.is/application/core'
 import { applicationMessages } from './messages'
 import { getEligability } from '@/dataProviders'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -31,6 +32,7 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.UnemploymentConfirmTravel.translation,
   dataSchema: ConfirmTravelUnemploymentBenefitsSchema,
+  featureFlag: Features.isTravelConfirmationEnabled,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

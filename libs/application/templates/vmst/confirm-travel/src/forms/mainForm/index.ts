@@ -1,6 +1,6 @@
 import {
+  buildDateField,
   buildDescriptionField,
-  buildFieldsRepeaterField,
   buildForm,
   buildMultiField,
   buildSubmitField,
@@ -23,26 +23,20 @@ export const MainForm = buildForm({
           id: 'dateDescription',
           title: mainForm.dateTitle,
         }),
-        buildFieldsRepeaterField({
-          id: 'dates',
-          title: mainForm.dateTitle,
-          addItemButtonText: mainForm.addDateButtonLabel,
-          fields: {
-            from: {
-              component: 'date',
-              label: mainForm.dateFrom,
-              width: 'half',
-              required: true,
-            },
-            to: {
-              component: 'date',
-              label: mainForm.dateTo,
-              width: 'half',
-              required: true,
-            },
-          },
+        buildDateField({
+          id: 'date.from',
+          title: mainForm.dateFrom,
+          placeholder: mainForm.datePlaceholder,
+          width: 'half',
+          required: true,
         }),
-
+        buildDateField({
+          id: 'date.to',
+          title: mainForm.dateTo,
+          placeholder: mainForm.datePlaceholder,
+          width: 'half',
+          required: true,
+        }),
         buildSubmitField({
           id: 'submit',
           title: 'Submit',

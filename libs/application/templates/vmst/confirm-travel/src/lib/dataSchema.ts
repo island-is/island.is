@@ -7,7 +7,7 @@ export const dateSchema = z.object({
 
 export const ConfirmTravelUnemploymentBenefitsSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  date: z.array(dateSchema),
+  date: dateSchema,
 })
 
 export type ConfirmTravelUnemploymentBenefits = z.TypeOf<
