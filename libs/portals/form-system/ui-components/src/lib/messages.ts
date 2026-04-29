@@ -1158,8 +1158,10 @@ export const m = defineMessages({
   },
   zendeskPrivate: {
     id: 'form.system:zendesk-private',
-    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
-    description: 'Applications should be marked as internal/private in Zendesk',
+    defaultMessage:
+      'Merkja umsóknirnar sem internal/private í Zendesk. Þá fer innihald umsókna ekki með í samskiptum við umsækjanda frá Zendesk.',
+    description:
+      'Mark applications as internal/private in Zendesk. This way, the content of the applications will not be included in communication with the applicant from Zendesk.',
   },
   useValidate: {
     id: 'form.system:use-validate',

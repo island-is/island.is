@@ -10,13 +10,15 @@ import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { ZENDESK_INSTANCES } from './zendesk-mapping/zendesk-instances'
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
   private readonly SANDBOX_TENANT_ID =
-    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX
+    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX ??
+    'digitaliceland1715002531'
   private readonly PROD_TENANT_ID =
-    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD
+    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD ?? 'digitaliceland'
   private readonly SANDBOX_API_KEY =
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX
   private readonly PROD_API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
@@ -36,10 +38,18 @@ export class ZendeskService {
   async sendToZendesk(applicationDto: ApplicationDto): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
-    const tenantId =
-      applicationDto.isTest === true || environment.production === false
-        ? this.SANDBOX_TENANT_ID
-        : this.PROD_TENANT_ID
+
+    let tenantId = this.SANDBOX_TENANT_ID
+
+    if (applicationDto.isTest === false && environment.production === true) {
+      const orgNationalId = applicationDto.organizationNationalId
+      const instance = ZENDESK_INSTANCES.find(
+        (i) => i.nationalId === orgNationalId,
+      )?.instance
+
+      tenantId = instance ?? this.PROD_TENANT_ID
+    }
+
     const apiKey =
       applicationDto.isTest === true || environment.production === false
         ? this.SANDBOX_API_KEY
@@ -47,6 +57,7 @@ export class ZendeskService {
     if (!tenantId || !apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
+
     const zendeskUrl = `https://${tenantId}.zendesk.com`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
@@ -252,6 +263,11 @@ export class ZendeskService {
         `<strong>Innsend:</strong> ${formatDateIs(applicationDto.submittedAt)}`,
       ),
       p0(`<strong>Númer:</strong> ${applicationDto.id ?? ''}`),
+      p0(
+        `<strong>Kennitala stofnunar:</strong> ${
+          applicationDto.organizationNationalId ?? ''
+        }`,
+      ),
       '<br />',
     )
 

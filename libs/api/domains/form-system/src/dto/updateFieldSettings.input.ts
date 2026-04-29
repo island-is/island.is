@@ -105,4 +105,7 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   paymentQuantityId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskTicketFieldId?: string
 }

@@ -4,6 +4,8 @@ import { m } from '@island.is/form-system/ui'
 import {
   Button,
   GridColumn as Column,
+  GridRow as Row,
+  Input,
   RadioButton,
   Select,
   Stack,
@@ -21,11 +23,15 @@ export const ListSettings = () => {
     !currentItem.fieldSettings?.listType ||
       currentItem.fieldSettings?.listType === ListTypesEnum.CUSTOM,
   )
+  const [isZendeskList, setIsZendeskList] = useState(
+    currentItem.fieldSettings?.listType === ListTypesEnum.ZENDESK_LIST,
+  )
 
   const { formatMessage } = useLocale()
 
   const predeterminedLists = [
     { label: 'Landalisti', value: ListTypesEnum.COUNTRIES },
+    { label: 'Zendesk listi', value: ListTypesEnum.ZENDESK_LIST },
     // { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
     // { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
   ]
@@ -78,26 +84,53 @@ export const ListSettings = () => {
         </Button>
       )}
       {!isCustom && (
-        <Column span="5/10">
-          <Select
-            placeholder={formatMessage(m.chooseListType)}
-            name="predeterminedLists"
-            label={formatMessage(m.predeterminedLists)}
-            options={predeterminedLists}
-            value={selectedPredetermined}
-            isDisabled={isReadOnly}
-            backgroundColor="blue"
-            onChange={(option) => {
-              controlDispatch({
-                type: 'SET_LIST_TYPE',
-                payload: {
-                  listType: option?.value ?? ListTypesEnum.CUSTOM,
-                  update: updateActiveItem,
-                },
-              })
-            }}
-          />
-        </Column>
+        <Row>
+          <Column span="5/10">
+            <Select
+              placeholder={formatMessage(m.chooseListType)}
+              name="predeterminedLists"
+              label={formatMessage(m.predeterminedLists)}
+              options={predeterminedLists}
+              value={selectedPredetermined}
+              isDisabled={isReadOnly}
+              backgroundColor="blue"
+              onChange={(option) => {
+                controlDispatch({
+                  type: 'SET_LIST_TYPE',
+                  payload: {
+                    listType: option?.value ?? ListTypesEnum.CUSTOM,
+                    update: updateActiveItem,
+                  },
+                })
+              }}
+            />
+          </Column>
+          {currentItem.fieldSettings?.listType ===
+            ListTypesEnum.ZENDESK_LIST && (
+            <Column span="5/10">
+              <Input
+                label="Zendesk ticket field ID"
+                name="zendeskTicketFieldId"
+                value={
+                  currentItem.fieldSettings?.zendeskTicketFieldId
+                    ? String(currentItem.fieldSettings.zendeskTicketFieldId)
+                    : ''
+                }
+                backgroundColor="blue"
+                readOnly={isReadOnly}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'SET_ANY_FIELD_SETTING',
+                    payload: {
+                      property: 'zendeskTicketFieldId',
+                      value: Number(e.target.value),
+                    },
+                  })
+                }
+              />
+            </Column>
+          )}
+        </Row>
       )}
     </Stack>
   )

@@ -114,4 +114,7 @@ export class FieldSettings {
 
   @Field(() => String, { nullable: true })
   paymentQuantityId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskTicketFieldId?: string
 }
