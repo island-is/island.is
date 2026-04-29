@@ -40,6 +40,7 @@ import { Case, CourtSession, CourtSessionString } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
+import { CurrentCourtSession } from './guards/courtSession.decorator'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
 import { CourtSessionService } from './courtSession.service'
 
@@ -96,6 +97,8 @@ export class CourtSessionController {
     @Param('courtSessionId') courtSessionId: string,
     @Body() courtSessionToUpdate: UpdateCourtSessionDto,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
   ): Promise<CourtSession> {
     this.logger.debug(
       `Updating court session ${courtSessionId} of case ${caseId}`,
@@ -103,8 +106,8 @@ export class CourtSessionController {
 
     return this.sequelize.transaction(async (transaction) =>
       this.courtSessionService.update(
-        caseId,
-        courtSessionId,
+        theCase,
+        courtSession,
         courtSessionToUpdate,
         user,
         transaction,

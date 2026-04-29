@@ -330,6 +330,7 @@ query Case($input: CaseQueryInput!) {
       entries
       rulingType
       ruling
+      rulingFileId
       isAttestingWitness
       attestingWitnessId
       attestingWitness {
