@@ -43,7 +43,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  getAppealActorText,
+  getCaseAppealActorText,
   getDefenceUserPartyIds,
   isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
@@ -195,7 +195,7 @@ const Statement = () => {
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (
             <Text variant="h5" as="h5">
-              {getAppealActorText(workingCase)}
+              {getCaseAppealActorText(workingCase)}
             </Text>
           )}
         </Box>

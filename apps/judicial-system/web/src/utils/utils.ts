@@ -10,6 +10,7 @@ import {
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCase,
   AppealCaseState,
   Case,
   CaseAppealDecision,
@@ -259,7 +260,7 @@ export const getDefenceUserPartyIds = (
  * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
  * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
  */
-export const getAppealActorText = (workingCase: Case): string => {
+export const getCaseAppealActorText = (workingCase: Case): string => {
   const appealedInCourt =
     workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
     workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
@@ -284,6 +285,31 @@ export const getAppealActorText = (workingCase: Case): string => {
   return party
     ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
     : `Kært af verjanda ${dateStr}`
+}
+
+/**
+ * Subject-verb form of "X kærði úrskurðinn DD.MM.YYYY kl. HH:MM" used in the
+ * ruling-order row status. Distinct from `getAppealActorText`, which is
+ * scoped to the case-level appeal and uses an "Kært af X" form.
+ */
+export const getRulingOrderAppealActorText = (
+  workingCase: Case,
+  appealCase: AppealCase,
+): string => {
+  const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
+
+  if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
+    return `Sækjandi kærði úrskurðinn ${dateStr}`
+  }
+
+  const party = getAppealingPartyInfo(
+    workingCase,
+    appealCase.appealedByNationalId,
+  )
+
+  return party
+    ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+    : `Verjandi kærði úrskurðinn ${dateStr}`
 }
 
 /**

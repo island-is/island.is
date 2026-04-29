@@ -18,7 +18,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
+import { getCaseAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './CaseInfo.strings'
 
@@ -150,7 +150,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
           {workingCase.appealCase?.appealedDate && (
             <Box marginBottom={1}>
               <Text as="h5" variant="h5">
-                {getAppealActorText(workingCase)}
+                {getCaseAppealActorText(workingCase)}
               </Text>
             </Box>
           )}

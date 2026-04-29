@@ -147,7 +147,7 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
       ),
     ),
   )
-  console.log('files', appealCase, visibleCategories, files)
+
   const deleteCategories = isProsecutionUser(user)
     ? prosecutorDeleteCategories
     : isDefenceUser(user)

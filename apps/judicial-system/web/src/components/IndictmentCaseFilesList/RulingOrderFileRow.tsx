@@ -25,10 +25,8 @@ import { useWithdrawAppeal } from '@island.is/judicial-system-web/src/components
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import TagAppealState from '@island.is/judicial-system-web/src/components/Tags/TagAppealState/TagAppealState'
 import {
-  AppealCase,
   AppealCaseState,
   AppealCaseTransition,
-  Case,
   CaseFile,
   CaseFileCategory,
   UserRole,
@@ -37,34 +35,9 @@ import {
   useAppealCase,
   useAppealCaseModals,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealingPartyInfo } from '@island.is/judicial-system-web/src/utils/utils'
+import { getRulingOrderAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
-
-/**
- * Subject-verb form of "X kærði úrskurðinn DD.MM.YYYY kl. HH:MM" used in the
- * ruling-order row status. Distinct from `getAppealActorText`, which is
- * scoped to the case-level appeal and uses an "Kært af X" form.
- */
-const getRulingOrderAppealActorText = (
-  workingCase: Case,
-  appealCase: AppealCase,
-): string => {
-  const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
-
-  if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
-    return `Sækjandi kærði úrskurðinn ${dateStr}`
-  }
-
-  const party = getAppealingPartyInfo(
-    workingCase,
-    appealCase.appealedByNationalId,
-  )
-
-  return party
-    ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
-    : `Verjandi kærði úrskurðinn ${dateStr}`
-}
 
 interface Props {
   file: CaseFile
