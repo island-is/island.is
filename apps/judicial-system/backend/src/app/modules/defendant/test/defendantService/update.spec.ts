@@ -1,6 +1,10 @@
 import { Transaction } from 'sequelize'
 
-import { CaseType, DefenderChoice, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  DefenderChoice,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 

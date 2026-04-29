@@ -359,7 +359,10 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    if (update.defenderChoice === DefenderChoice.DELAY && update.defenderNationalId === null) {
+    if (
+      update.defenderChoice === DefenderChoice.DELAY &&
+      update.defenderNationalId === null
+    ) {
       const { defenderNationalId: _, ...rest } = update
       update = rest
     }
@@ -393,7 +396,10 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    if (update.defenderChoice === DefenderChoice.DELAY && update.defenderNationalId === null) {
+    if (
+      update.defenderChoice === DefenderChoice.DELAY &&
+      update.defenderNationalId === null
+    ) {
       const { defenderNationalId: _, ...rest } = update
       update = rest
     }
