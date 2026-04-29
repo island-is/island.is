@@ -157,8 +157,8 @@ export const Subsidies = ({ farmId }: Props) => {
           return value ? new Date(value).toLocaleDateString('is-IS') : ''
         },
       }),
-      columnHelper.accessor('contract', {
-        header: formatMessage(m.contract),
+      columnHelper.accessor('paymentCategory', {
+        header: formatMessage(m.type),
       }),
       columnHelper.accessor('grossAmount', {
         header: formatMessage(m.amount),
@@ -206,10 +206,10 @@ export const Subsidies = ({ farmId }: Props) => {
       </DetailRow>
       <DetailRow>
         <DetailCell label white>
-          {formatMessage(m.type)}
+          {formatMessage(m.contract)}
         </DetailCell>
         <DetailCell white span={3}>
-          {row.original.paymentCategory}
+          {row.original.contract}
         </DetailCell>
       </DetailRow>
     </>
