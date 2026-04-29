@@ -2567,8 +2567,7 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     if (isProsecutionUser(user)) {
-      const defenceRecipients =
-        this.getIndictmentDefenceRecipients(theCase)
+      const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
@@ -2976,8 +2975,7 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     if (isProsecutionUser(user)) {
-      const defenceRecipients =
-        this.getIndictmentDefenceRecipients(theCase)
+      const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
@@ -3256,8 +3254,7 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     if (isProsecutionUser(user)) {
-      const defenceRecipients =
-        this.getIndictmentDefenceRecipients(theCase)
+      const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
@@ -3793,8 +3790,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (isProsecutionUser(user)) {
       // Notify ALL defenders and civil claimant lawyers
-      const defenceRecipients =
-        this.getIndictmentDefenceRecipients(theCase)
+      const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
         promises.push(
