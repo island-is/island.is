@@ -19,6 +19,7 @@ export const serviceSetup = (services: {
     .replicaCount({ min: 1, max: 1, default: 1 })
     .command('node')
     .args('main.cjs')
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       // Schedule to run daily at 2:00 AM and 9:00 AM
       dev: { schedule: '0 2,9 * * *' },

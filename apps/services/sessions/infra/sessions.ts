@@ -117,6 +117,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
       extensions: ['uuid-ossp'],
       readOnly: false,
     })
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: extraAttributes,
       staging: extraAttributes,

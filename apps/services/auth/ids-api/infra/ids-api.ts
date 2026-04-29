@@ -176,6 +176,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
         prod: 'https://innskra.island.is',
       },
     })
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: schedule,
       staging: schedule,

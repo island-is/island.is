@@ -115,6 +115,7 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
       UniversityGatewayReykjavikUniversity,
     )
     .db()
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       // Schedule to run hourly at minute :00 (while testing)
       dev: { schedule: '0 * * * *' },

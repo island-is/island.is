@@ -257,6 +257,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .args('main.cjs', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: { schedule: '@hourly' },
       staging: { schedule: '@midnight' },
@@ -300,6 +301,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       },
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: { schedule: '0 12 * * *' }, // 12 at noon every day
       staging: { schedule: '@midnight' },

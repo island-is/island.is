@@ -18,6 +18,7 @@ export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
     .xroad(Base, Client)
     .command('node')
     .args('main.cjs')
+    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: { schedule: '0 2 * * *' },
       staging: { schedule: '0 2 * * *' },
