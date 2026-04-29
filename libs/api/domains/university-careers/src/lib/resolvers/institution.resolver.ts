@@ -12,9 +12,9 @@ import {
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import { UniversityContentfulReferenceIds } from '../universityCareers.types'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { AUDIT_NAMESPACE } from '../constants'
 import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -22,8 +22,6 @@ import { CodeOwner } from '@island.is/nest/core'
 @Audit({ namespace: AUDIT_NAMESPACE })
 @CodeOwner(CodeOwners.Hugsmidjan)
 export class InstitutionResolver {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
-
   @ResolveField('displayName', () => String, {
     nullable: true,
   })
