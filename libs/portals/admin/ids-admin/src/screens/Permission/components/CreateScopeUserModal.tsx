@@ -85,7 +85,9 @@ export const CreateScopeUserModal = ({
   const validate = (): FormErrors => {
     const errors: FormErrors = {}
 
-    if (!NATIONAL_ID_REGEX.test(formData.nationalId)) {
+    const trimmedNationalId = formData.nationalId.trim()
+
+    if (!NATIONAL_ID_REGEX.test(trimmedNationalId)) {
       errors.nationalId = formatMessage(m.apiScopeUsersErrorNationalId)
     }
 
@@ -109,11 +111,14 @@ export const CreateScopeUserModal = ({
 
   const handleSubmit = async () => {
     const errors = validate()
+    const nationalId = formData.nationalId.trim()
+    const name = formData.name.trim()
+    const email = formData.email.trim()
 
     if (Object.keys(errors).length === 0) {
       try {
         const { data } = await fetchUser({
-          variables: { nationalId: formData.nationalId },
+          variables: { nationalId },
         })
         if (data?.authAdminApiScopeUser) {
           errors.nationalId = formatMessage(
@@ -135,16 +140,13 @@ export const CreateScopeUserModal = ({
       return
     }
 
-    const trimmedName = formData.name.trim()
-    const trimmedEmail = formData.email.trim()
-
     try {
       await createUser({
         variables: {
           input: {
-            nationalId: formData.nationalId,
-            name: trimmedName,
-            email: trimmedEmail,
+            nationalId,
+            name,
+            email,
             environments: selectedEnvironments,
           },
         },
@@ -152,9 +154,9 @@ export const CreateScopeUserModal = ({
 
       toast.success(formatMessage(m.createScopeUserSuccess))
       const createdUser: CreatedScopeUser = {
-        nationalId: formData.nationalId,
-        name: trimmedName,
-        email: trimmedEmail,
+        nationalId,
+        name,
+        email,
       }
       resetAndClose()
       onCreated(createdUser)
