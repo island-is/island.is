@@ -171,9 +171,7 @@ export class ResourceAccessService {
 
   /** Gets all Api Scope Users that have access to a specific scope */
   async findUsersByScope(scopeName: string): Promise<ApiScopeUser[]> {
-    this.logger.debug(
-      `Finding Api Scope Users for scope - "${scopeName}"`,
-    )
+    this.logger.debug(`Finding Api Scope Users for scope - "${scopeName}"`)
 
     return this.apiScopeUser.findAll({
       include: [

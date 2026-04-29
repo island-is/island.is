@@ -62,8 +62,7 @@ export class MeScopeUsersController {
 
   @Post()
   @Documentation({
-    description:
-      'Create a new API scope user with access to a specific scope.',
+    description: 'Create a new API scope user with access to a specific scope.',
     response: { status: 201, type: ApiScopeUser },
   })
   @Audit<ApiScopeUser>({
