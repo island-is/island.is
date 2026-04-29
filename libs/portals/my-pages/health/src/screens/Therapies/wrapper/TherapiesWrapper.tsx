@@ -6,11 +6,11 @@ import {
   IntroWrapper,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
-  m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
+import { HealthPaths } from '../../../lib/paths'
 import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 type Props = {
@@ -42,7 +42,9 @@ export const TherapiesWrapper = ({
         label={formatMessage(messages.therapyType)}
         pathname={pathname}
         items={
-          healthNavigation.children?.find((itm) => itm.name === m.therapies)
+          healthNavigation.children
+            ?.find((itm) => itm.path === HealthPaths.HealthTherapiesAndAids)
+            ?.children?.find((itm) => itm.path === HealthPaths.HealthTherapies)
             ?.children ?? []
         }
       />
