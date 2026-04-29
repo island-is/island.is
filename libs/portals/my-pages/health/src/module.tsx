@@ -222,7 +222,9 @@ export const healthModule: PortalModule = {
     {
       name: hm.occupationalTherapy,
       path: HealthPaths.HealthTherapiesOccupationalOld,
-      element: <Navigate to={HealthPaths.HealthTherapiesOccupational} replace />,
+      element: (
+        <Navigate to={HealthPaths.HealthTherapiesOccupational} replace />
+      ),
     },
     {
       name: hm.aidsAndNutritionTitle,
