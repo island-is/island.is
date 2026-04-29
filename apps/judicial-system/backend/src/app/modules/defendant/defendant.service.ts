@@ -1,6 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -359,7 +359,14 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    if (update.defenderChoice === DefenderChoice.DELAY && update.defenderNationalId === null) {
+    if (
+      update.defenderNationalId === null &&
+      !(
+        update.defenderEmail === null &&
+        update.defenderName === null &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
       const { defenderNationalId: _, ...rest } = update
       update = rest
     }
@@ -393,7 +400,14 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    if (update.defenderChoice === DefenderChoice.DELAY && update.defenderNationalId === null) {
+    if (
+      update.defenderNationalId === null &&
+      !(
+        update.defenderEmail === null &&
+        update.defenderName === null &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
       const { defenderNationalId: _, ...rest } = update
       update = rest
     }
