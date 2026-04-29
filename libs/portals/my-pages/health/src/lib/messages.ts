@@ -48,6 +48,14 @@ export const messages = defineMessages({
     defaultMessage: 'Öll lyf',
     id: 'sp.health:all-medicine',
   },
+  myMedicine: {
+    defaultMessage: 'Lyfin mín',
+    id: 'sp.health:my-medicine',
+  },
+  therapiesAndAids: {
+    defaultMessage: 'Þjálfun og hjálpartæki',
+    id: 'sp.health:therapies-and-aids',
+  },
   ALM: {
     defaultMessage: 'Almennur sjúklingur',
     id: 'sp.health:alm',
