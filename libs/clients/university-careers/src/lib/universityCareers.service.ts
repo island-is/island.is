@@ -31,7 +31,7 @@ export class UniversityCareersClientService {
   private getClient = (university: UniversityId): Client => {
     const apiClient = this.clients.get(university)
     if (!apiClient) {
-      this.logger.warn(`No client configured for university`, {
+      this.logger.error(`No client configured for university`, {
         university,
       })
       throw new Error(`No client configured for university: ${university}`)
