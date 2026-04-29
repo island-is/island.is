@@ -33,7 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
-  getCaseAppealActorText,
+  getAppealActorText,
   getDefenceUserPartyIds,
   hasSentNotification,
 } from '../../utils'
@@ -245,7 +245,7 @@ const useAppealCaseBanner = () => {
   // When case has been appealed by prosecutor or defender
   else if (hasBeenAppealed) {
     title = 'Úrskurður kærður'
-    description = getCaseAppealActorText(workingCase)
+    description = getAppealActorText(workingCase)
     if (isProsecutionUser(user) || isDefenceUser(user)) {
       child = hasCurrentUserSentStatement ? (
         <Text variant="small" color="mint800" fontWeight="semiBold">

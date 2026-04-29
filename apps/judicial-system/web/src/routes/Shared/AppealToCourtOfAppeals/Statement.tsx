@@ -43,7 +43,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  getCaseAppealActorText,
+  getAppealActorText,
   getDefenceUserPartyIds,
   isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
@@ -85,11 +85,12 @@ const Statement = () => {
   // Statement events target the specific appeal-case row. For ruling-order
   // appeals, look up the matching row by rulingFileId; otherwise use the
   // case-level appeal.
-  const targetAppealCaseId = rulingFileId
+  const targetAppealCase = rulingFileId
     ? workingCase.rulingOrderAppealCases?.find(
         (a) => a.rulingFileId === rulingFileId,
-      )?.id
-    : workingCase.appealCase?.id
+      )
+    : workingCase.appealCase
+  const targetAppealCaseId = targetAppealCase?.id
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -192,11 +193,9 @@ const Statement = () => {
             caseFiles={workingCase.caseFiles}
             rulingFileId={rulingFileId}
           />
-          {workingCase.hasBeenAppealed && (
-            <Text variant="h5" as="h5">
-              {getCaseAppealActorText(workingCase)}
-            </Text>
-          )}
+          <Text variant="h5" as="h5">
+            {getAppealActorText(workingCase, targetAppealCase)}
+          </Text>
         </Box>
         {user && (
           <>

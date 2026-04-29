@@ -42,7 +42,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  getCaseAppealActorText,
+  getAppealActorText,
   getDefenceUserPartyIds,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -54,6 +54,11 @@ const AppealFiles = () => {
   const { id, rulingFileId: rulingFileIdQuery } = router.query
   const rulingFileId =
     typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
+  const targetAppealCase = rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (a) => a.rulingFileId === rulingFileId,
+      )
+    : workingCase.appealCase
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -148,11 +153,9 @@ const AppealFiles = () => {
             caseFiles={workingCase.caseFiles}
             rulingFileId={rulingFileId}
           />
-          {workingCase.hasBeenAppealed && (
-            <Text variant="h5" as="h5">
-              {getCaseAppealActorText(workingCase)}
-            </Text>
-          )}
+          <Text variant="h5" as="h5">
+            {getAppealActorText(workingCase, targetAppealCase)}
+          </Text>
         </Box>
         <Box
           component="section"

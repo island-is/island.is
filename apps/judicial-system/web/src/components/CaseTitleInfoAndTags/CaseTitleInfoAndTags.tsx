@@ -7,7 +7,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { AppealCaseState, InstitutionType } from '../../graphql/schema'
 import { CaseNumbers } from '../../routes/CourtOfAppeal/components'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
-import { getCaseAppealActorText } from '../../utils/utils'
+import { getAppealActorText } from '../../utils/utils'
 import DateLabel from '../DateLabel/DateLabel'
 import RulingDateLabel from '../DateLabel/RulingDateLabel'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -42,11 +42,11 @@ const CaseTitleInfoAndTags: FC = () => {
           ) : (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           ))}
-        {workingCase.appealCase?.appealedDate && (
+        {workingCase.hasBeenAppealed && (
           <>
             <Box marginTop={1}>
               <Text as="h5" variant="h5">
-                {getCaseAppealActorText(workingCase)}
+                {getAppealActorText(workingCase)}
               </Text>
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&

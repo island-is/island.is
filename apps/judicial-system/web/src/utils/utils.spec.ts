@@ -1,14 +1,25 @@
 import faker from 'faker'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  AppealCase,
+  Case,
+  CaseAppealDecision,
+  CaseType,
+  CivilClaimant,
   Defendant,
   Gender,
   Notification,
   NotificationType,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as formatters from './formatters'
-import { getDefaultDefendantGender, hasSentNotification } from './utils'
+import {
+  getAppealActorText,
+  getDefaultDefendantGender,
+  hasSentNotification,
+} from './utils'
 
 describe('Utils', () => {
   describe('removeTabs', () => {
@@ -303,6 +314,211 @@ describe('Utils', () => {
 
       // Assert
       expect(gender).toBe(Gender.MALE)
+    })
+  })
+
+  describe('getAppealActorText', () => {
+    const appealedDate = '2026-04-01T12:00:00.000Z'
+    const dateStr = formatDate(appealedDate, 'PPPp') ?? ''
+
+    describe('request cases', () => {
+      test('returns "Sækjandi kærði í þinghaldi" when prosecutor appealed in court', () => {
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+          appealCase: { appealedByRole: UserRole.PROSECUTOR } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          'Sækjandi kærði í þinghaldi',
+        )
+      })
+
+      test('returns "Varnaraðili kærði í þinghaldi" when defender appealed in court', () => {
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          accusedAppealDecision: CaseAppealDecision.APPEAL,
+          appealCase: { appealedByRole: UserRole.DEFENDER } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          'Varnaraðili kærði í þinghaldi',
+        )
+      })
+
+      test('returns "Kært af sækjanda {date}" for out-of-court prosecutor appeal', () => {
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+          appealCase: {
+            appealedByRole: UserRole.PROSECUTOR,
+            appealedDate,
+          } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Kært af sækjanda ${dateStr}`,
+        )
+      })
+
+      test('returns "Verjandi {name} kærði úrskurðinn {date}" for confirmed defender', () => {
+        const nationalId = '0101011010'
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          defendants: [
+            {
+              id: 'defendant-1',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: nationalId,
+              defenderName: 'Jón Jónsson',
+            } as Defendant,
+          ],
+          appealCase: {
+            appealedByRole: UserRole.DEFENDER,
+            appealedByNationalId: nationalId,
+            appealedDate,
+          } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
+        )
+      })
+
+      test('falls back to "Kært af verjanda {date}" when defender national id has no match', () => {
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          defendants: [],
+          civilClaimants: [],
+          appealCase: {
+            appealedByRole: UserRole.DEFENDER,
+            appealedByNationalId: '0202022020',
+            appealedDate,
+          } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Kært af verjanda ${dateStr}`,
+        )
+      })
+    })
+
+    describe('indictment case-level appeals', () => {
+      test('uses passive form for prosecutor appeal', () => {
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          appealCase: {
+            appealedByRole: UserRole.PROSECUTOR,
+            appealedDate,
+          } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Kært af sækjanda ${dateStr}`,
+        )
+      })
+
+      test('uses passive fallback for defender without party match', () => {
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          defendants: [],
+          appealCase: {
+            appealedByRole: UserRole.DEFENDER,
+            appealedByNationalId: '0202022020',
+            appealedDate,
+          } as AppealCase,
+        } as Case
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Kært af verjanda ${dateStr}`,
+        )
+      })
+    })
+
+    describe('indictment ruling-order appeals', () => {
+      test('uses subject-verb form for prosecutor', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          rulingFileId: 'file-1',
+          appealedByRole: UserRole.PROSECUTOR,
+          appealedDate,
+        } as AppealCase
+
+        expect(getAppealActorText(workingCase, appealCase)).toBe(
+          `Sækjandi kærði úrskurðinn ${dateStr}`,
+        )
+      })
+
+      test('returns "Verjandi {name} kærði úrskurðinn {date}" for confirmed defender', () => {
+        const nationalId = '0101011010'
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant-1',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: nationalId,
+              defenderName: 'Jón Jónsson',
+            } as Defendant,
+          ],
+        } as Case
+        const appealCase = {
+          rulingFileId: 'file-1',
+          appealedByRole: UserRole.DEFENDER,
+          appealedByNationalId: nationalId,
+          appealedDate,
+        } as AppealCase
+
+        expect(getAppealActorText(workingCase, appealCase)).toBe(
+          `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
+        )
+      })
+
+      test('returns "Lögmaður {name} kærði úrskurðinn {date}" for confirmed civil-claimant lawyer', () => {
+        const nationalId = '0303033030'
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          civilClaimants: [
+            {
+              id: 'cc-1',
+              hasSpokesperson: true,
+              isSpokespersonConfirmed: true,
+              spokespersonIsLawyer: true,
+              spokespersonNationalId: nationalId,
+              spokespersonName: 'Anna Önnudóttir',
+            } as CivilClaimant,
+          ],
+        } as Case
+        const appealCase = {
+          rulingFileId: 'file-1',
+          appealedByRole: UserRole.DEFENDER,
+          appealedByNationalId: nationalId,
+          appealedDate,
+        } as AppealCase
+
+        expect(getAppealActorText(workingCase, appealCase)).toBe(
+          `Lögmaður Anna Önnudóttir kærði úrskurðinn ${dateStr}`,
+        )
+      })
+
+      test('falls back to "Verjandi kærði úrskurðinn {date}" when no party matches', () => {
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          defendants: [],
+        } as unknown as Case
+        const appealCase = {
+          rulingFileId: 'file-1',
+          appealedByRole: UserRole.DEFENDER,
+          appealedByNationalId: '0404044040',
+          appealedDate,
+        } as AppealCase
+
+        expect(getAppealActorText(workingCase, appealCase)).toBe(
+          `Verjandi kærði úrskurðinn ${dateStr}`,
+        )
+      })
     })
   })
 })

@@ -254,62 +254,81 @@ export const getDefenceUserPartyIds = (
 /**
  * Returns a human-readable description of who appealed and when.
  *
- * Examples:
- * - "Sækjandi kærði í þinghaldi"
- * - "Kært af sækjanda 1. apríl 2026 kl. 10:00"
- * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
- * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
+ * Branches by case type, then by appeal kind for indictment cases:
+ * - Request cases (case-level appeals only): in-court branch + "Kært af X"
+ *   passive form.
+ * - Indictment ruling-order appeals: subject-verb form ("Sækjandi kærði
+ *   úrskurðinn …").
+ * - Indictment case-level appeals (dismissal): same passive form as request
+ *   cases out-of-court — no in-court mechanic.
+ *
+ * `appealCase` defaults to `workingCase.appealCase` so case-level call sites
+ * can omit it; ruling-order call sites pass the specific appeal-case row.
  */
-export const getCaseAppealActorText = (workingCase: Case): string => {
-  const appealedInCourt =
-    workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-    workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+export const getAppealActorText = (
+  workingCase: Case,
+  appealCase: AppealCase | null | undefined = workingCase.appealCase,
+): string => {
+  if (isRequestCase(workingCase.type)) {
+    const appealedInCourt =
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
 
-  if (appealedInCourt) {
-    return workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR
-      ? 'Sækjandi kærði í þinghaldi'
-      : 'Varnaraðili kærði í þinghaldi'
+    if (appealedInCourt) {
+      return appealCase?.appealedByRole === UserRole.PROSECUTOR
+        ? 'Sækjandi kærði í þinghaldi'
+        : 'Varnaraðili kærði í þinghaldi'
+    }
+
+    const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
+
+    if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
+      return `Kært af sækjanda ${dateStr}`
+    }
+
+    const party = getAppealingPartyInfo(
+      workingCase,
+      appealCase?.appealedByNationalId,
+    )
+
+    return party
+      ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+      : `Kært af verjanda ${dateStr}`
   }
 
-  const dateStr = formatDate(workingCase.appealCase?.appealedDate, 'PPPp')
+  // Indictment case
+  if (appealCase?.rulingFileId) {
+    const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
-  if (workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR) {
+    if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
+      return `Sækjandi kærði úrskurðinn ${dateStr}`
+    }
+
+    const party = getAppealingPartyInfo(
+      workingCase,
+      appealCase.appealedByNationalId,
+    )
+
+    return party
+      ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+      : `Verjandi kærði úrskurðinn ${dateStr}`
+  }
+
+  // Indictment case-level (dismissal) appeal
+  const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
+
+  if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
     return `Kært af sækjanda ${dateStr}`
   }
 
   const party = getAppealingPartyInfo(
     workingCase,
-    workingCase.appealCase?.appealedByNationalId,
+    appealCase?.appealedByNationalId,
   )
 
   return party
     ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
     : `Kært af verjanda ${dateStr}`
-}
-
-/**
- * Subject-verb form of "X kærði úrskurðinn DD.MM.YYYY kl. HH:MM" used in the
- * ruling-order row status. Distinct from `getAppealActorText`, which is
- * scoped to the case-level appeal and uses an "Kært af X" form.
- */
-export const getRulingOrderAppealActorText = (
-  workingCase: Case,
-  appealCase: AppealCase,
-): string => {
-  const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
-
-  if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
-    return `Sækjandi kærði úrskurðinn ${dateStr}`
-  }
-
-  const party = getAppealingPartyInfo(
-    workingCase,
-    appealCase.appealedByNationalId,
-  )
-
-  return party
-    ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
-    : `Verjandi kærði úrskurðinn ${dateStr}`
 }
 
 /**

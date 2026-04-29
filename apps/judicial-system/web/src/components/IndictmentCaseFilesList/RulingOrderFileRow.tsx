@@ -35,7 +35,7 @@ import {
   useAppealCase,
   useAppealCaseModals,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getRulingOrderAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
+import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
 
@@ -208,7 +208,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         'PPP',
       )}`
     } else if (appealCase.appealState === AppealCaseState.APPEALED) {
-      statusText = getRulingOrderAppealActorText(workingCase, appealCase)
+      statusText = getAppealActorText(workingCase, appealCase)
     } else if (appealCase.appealState === AppealCaseState.RECEIVED) {
       if (isDistrictCourt) {
         statusText = `Tilkynning um móttöku send ${formatDate(
