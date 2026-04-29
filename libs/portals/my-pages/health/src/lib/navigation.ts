@@ -179,7 +179,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.therapiesAndAids,
-      path: HealthPaths.HealthTherapies,
+      path: HealthPaths.HealthTherapiesAndAids,
       children: [
         {
           name: m.therapies,

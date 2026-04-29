@@ -175,6 +175,17 @@ export const healthModule: PortalModule = {
       element: <HealthOverview />,
     },
     {
+      name: hm.therapiesAndAids,
+      path: HealthPaths.HealthTherapiesAndAids,
+      enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
+      element: <Navigate to={HealthPaths.HealthTherapies} replace />,
+    },
+    {
+      name: hm.therapiesAndAids,
+      path: HealthPaths.HealthTherapiesAndAidsOld,
+      element: <Navigate to={HealthPaths.HealthTherapiesAndAids} replace />,
+    },
+    {
       name: hm.therapyTitle,
       path: HealthPaths.HealthTherapies,
       enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
@@ -187,10 +198,20 @@ export const healthModule: PortalModule = {
       element: <TherapiesPhysical />,
     },
     {
+      name: hm.physicalTherapy,
+      path: HealthPaths.HealthTherapiesPhysicalOld,
+      element: <Navigate to={HealthPaths.HealthTherapiesPhysical} replace />,
+    },
+    {
       name: hm.speechTherapy,
       path: HealthPaths.HealthTherapiesSpeech,
       enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
       element: <TherapiesSpeech />,
+    },
+    {
+      name: hm.speechTherapy,
+      path: HealthPaths.HealthTherapiesSpeechOld,
+      element: <Navigate to={HealthPaths.HealthTherapiesSpeech} replace />,
     },
     {
       name: hm.occupationalTherapy,
@@ -199,10 +220,20 @@ export const healthModule: PortalModule = {
       element: <TherapiesOccupational />,
     },
     {
+      name: hm.occupationalTherapy,
+      path: HealthPaths.HealthTherapiesOccupationalOld,
+      element: <Navigate to={HealthPaths.HealthTherapiesOccupational} replace />,
+    },
+    {
       name: hm.aidsAndNutritionTitle,
       path: HealthPaths.HealthAidsAndNutrition,
       enabled: userInfo.scopes.includes(ApiScope.healthAssistiveAndNutrition),
       element: <AidsAndNutrition />,
+    },
+    {
+      name: hm.aidsAndNutritionTitle,
+      path: HealthPaths.HealthAidsAndNutritionOld,
+      element: <Navigate to={HealthPaths.HealthAidsAndNutrition} replace />,
     },
     {
       name: hm.payments,
@@ -241,6 +272,11 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthPaymentRights,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <Rights />,
+    },
+    {
+      name: hm.basicInformation,
+      path: HealthPaths.HealthBasicInformation,
+      element: <Navigate to={HealthPaths.HealthCenter} replace />,
     },
     {
       name: hm.dentistsTitle,
@@ -407,6 +443,11 @@ export const healthModule: PortalModule = {
       element: <Bloodtype />,
     },
     {
+      name: hm.bloodtype,
+      path: HealthPaths.HealthBloodtypeOld,
+      element: <Navigate to={HealthPaths.HealthBloodtype} replace />,
+    },
+    {
       name: hm.referrals,
       path: HealthPaths.HealthReferrals,
       key: 'Referrals',
@@ -435,6 +476,11 @@ export const healthModule: PortalModule = {
       element: <WaitlistDetail />,
     },
     {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsDetailOld,
+      element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
+    },
+    {
       name: hm.questionnaires,
       path: HealthPaths.HealthQuestionnaires,
       key: 'HealthQuestionnaires',
@@ -449,6 +495,11 @@ export const healthModule: PortalModule = {
       element: <QuestionnairesDetail />,
     },
     {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthQuestionnairesDetailOld,
+      element: <Navigate to={HealthPaths.HealthQuestionnaires} replace />,
+    },
+    {
       name: hm.questionnaire,
       path: HealthPaths.HealthQuestionnairesAnswer,
       key: 'HealthQuestionnaires',
@@ -457,10 +508,20 @@ export const healthModule: PortalModule = {
     },
     {
       name: hm.questionnaire,
+      path: HealthPaths.HealthQuestionnairesAnswerOld,
+      element: <Navigate to={HealthPaths.HealthQuestionnaires} replace />,
+    },
+    {
+      name: hm.questionnaire,
       path: HealthPaths.HealthQuestionnairesAnswered,
       key: 'HealthQuestionnaires',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesAnswered />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthQuestionnairesAnsweredOld,
+      element: <Navigate to={HealthPaths.HealthQuestionnaires} replace />,
     },
     {
       name: hm.patientData,
