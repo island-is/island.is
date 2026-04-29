@@ -328,6 +328,7 @@ export class ScopeService {
           title: tag.title,
           description: tag.description ?? '',
           slug: tag.slug,
+          showAsCard: tag.showAsCard,
           scopes,
         }
       })
@@ -350,6 +351,7 @@ export class ScopeService {
         title: lang === 'is' ? 'Annað' : 'Other',
         description: '',
         slug: 'uncategorized-tag',
+        showAsCard: true,
         scopes: Array.from(orphanedScopes.values()),
       })
     }
@@ -378,6 +380,7 @@ export class ScopeService {
                   ? 'Services from your municipality'
                   : 'Þjónusta frá þínu sveitarfélagi',
               slug: VIRTUAL_MUNICIPALITY_TAG_SLUG,
+              showAsCard: true,
               scopes: municipalScopes,
             },
             ...result,

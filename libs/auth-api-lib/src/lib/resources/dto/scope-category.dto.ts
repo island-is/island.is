@@ -61,6 +61,12 @@ export class ScopeTagDTO {
   slug!: string
 
   @ApiProperty({
+    description: 'Whether this tag should be displayed as a card on the service categories page',
+    required: false,
+  })
+  showAsCard?: boolean
+
+  @ApiProperty({
     description: 'List of scopes tagged with this life event',
     type: [ScopeDTO],
   })

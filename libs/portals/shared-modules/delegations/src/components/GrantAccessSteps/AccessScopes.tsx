@@ -1,3 +1,4 @@
+import { VIRTUAL_MUNICIPALITY_TAG_ID } from '../../constants/domain'
 import { useQuery } from '@apollo/client'
 import {
   AuthScopeCategoriesDocument,
@@ -219,7 +220,12 @@ export const AccessScopes = () => {
         <ScopesCategoriesList
           loading={categoriesLoading}
           error={!!categoriesError}
-          categories={categoriesData?.authScopeCategories || []}
+          categories={[
+            ...(tagsData?.authScopeTags
+              ?.filter((t) => t.id === VIRTUAL_MUNICIPALITY_TAG_ID)
+              .map(({ __typename, showAsCard, ...tag }) => tag) ?? []),
+            ...(categoriesData?.authScopeCategories || []),
+          ]}
           onSelectScope={onSelectScope}
           selectedScopes={selectedScopes}
           onSelectCategory={onSelectCategory}
