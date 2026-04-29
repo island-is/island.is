@@ -12,7 +12,10 @@ import { ApplicationService } from '@island.is/application/api/core'
 import { ApiTags } from '@nestjs/swagger'
 import addMonths from 'date-fns/addMonths'
 import { addWorkDays } from './utils'
-import isBefore from 'date-fns/isBefore'
+import {
+  NotificationConfig,
+  NotificationType,
+} from '@island.is/application/types'
 
 @ApiTags('payment-callback')
 @Controller()
@@ -90,13 +93,44 @@ export class PaymentCallbackController {
         )
         if (application) {
           const twoWorkingDaysFromNow = addWorkDays(new Date(), 2)
-
+          const applicationLink = await this.paymentService.getApplicationUrl(
+            application.id,
+          )
           await this.applicationService.update(
             callback.paymentFlowMetadata.applicationId,
             {
               ...application,
               pruneAt: twoWorkingDaysFromNow,
             },
+          )
+          await this.applicationService.createScheduledNotifications(
+            application.id,
+            application.state,
+            [
+              {
+                template:
+                  NotificationConfig[NotificationType.PaymentReminder]
+                    .templateId,
+                schedule_time: addWorkDays(new Date(), 1),
+                args: [
+                  {
+                    key: 'expiryDate',
+                    value: twoWorkingDaysFromNow.toLocaleDateString('is-IS'),
+                  },
+                  {
+                    key: 'expiryTime',
+                    value: twoWorkingDaysFromNow.toLocaleTimeString('is-IS', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }),
+                  },
+                  {
+                    key: 'applicationLink',
+                    value: applicationLink,
+                  },
+                ],
+              },
+            ],
           )
         }
       }
