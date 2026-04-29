@@ -15,6 +15,7 @@ query studentInfo($input: UniversityCareersStudentInfoInput!) {
       faculty
       studyProgram
       degree
+      level
     }
     errors {
       institution {
