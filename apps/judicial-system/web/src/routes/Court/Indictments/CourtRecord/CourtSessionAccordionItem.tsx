@@ -1612,6 +1612,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 </BlueBox>
               </Box>
               {(courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+                courtSession.rulingType ===
+                  CourtSessionRulingType.DISMISSAL_ORDER ||
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
                 <>
                   <Box>
