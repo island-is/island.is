@@ -1614,6 +1614,10 @@ export const m = defineMessages({
     id: 'service.portal:farmer-lands',
     defaultMessage: 'Jarðabók',
   },
+  farmerLand: {
+    id: 'service.portal:farmer-land',
+    defaultMessage: 'Jörð',
+  },
   farmerLandsIntro: {
     id: 'service.portal:farmer-lands-intro',
     defaultMessage:
