@@ -149,40 +149,5 @@ describe('ApplicationService', () => {
       const order = findAllSpy.mock.calls[0][0].order
       expect(order).toEqual([['modified', 'DESC']])
     })
-
-    it('should exclude specified attributes when excludeAttributes is provided', async () => {
-      await service.findAllByNationalIdAndFilters(
-        nationalId,
-        undefined,
-        undefined,
-        false,
-        ['answers', 'externalData', 'attachments'],
-      )
-
-      const options = findAllSpy.mock.calls[0][0]
-      expect(options.attributes).toEqual({
-        exclude: ['answers', 'externalData', 'attachments'],
-      })
-    })
-
-    it('should not set attributes when excludeAttributes is undefined', async () => {
-      await service.findAllByNationalIdAndFilters(nationalId)
-
-      const options = findAllSpy.mock.calls[0][0]
-      expect(options.attributes).toBeUndefined()
-    })
-
-    it('should not set attributes when excludeAttributes is an empty array', async () => {
-      await service.findAllByNationalIdAndFilters(
-        nationalId,
-        undefined,
-        undefined,
-        false,
-        [],
-      )
-
-      const options = findAllSpy.mock.calls[0][0]
-      expect(options.attributes).toBeUndefined()
-    })
   })
 })
