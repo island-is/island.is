@@ -100,7 +100,7 @@ describe('MeApiScopeUsersController', () => {
       })
     })
 
-    describe('GET /v2/me/api-scope-users/:nationalId', () => {
+    describe('GET /v2/me/api-scope-users/national-id', () => {
       it('should return an API scope user by national ID', async () => {
         const nationalId = createNationalId('person')
         await apiScopeUserModel.create({
@@ -109,9 +109,9 @@ describe('MeApiScopeUsersController', () => {
           email: 'test@test.is',
         })
 
-        const response = await server.get(
-          `/v2/me/api-scope-users/${nationalId}`,
-        )
+        const response = await server
+          .get('/v2/me/api-scope-users/national-id')
+          .set('X-Query-National-Id', nationalId)
 
         expect(response.status).toEqual(200)
         expect(response.body).toMatchObject({
@@ -122,9 +122,9 @@ describe('MeApiScopeUsersController', () => {
       })
 
       it('should return 204 when user is not found', async () => {
-        const response = await server.get(
-          `/v2/me/api-scope-users/${createNationalId('person')}`,
-        )
+        const response = await server
+          .get('/v2/me/api-scope-users/national-id')
+          .set('X-Query-National-Id', createNationalId('person'))
 
         expect(response.status).toEqual(204)
       })
@@ -153,7 +153,7 @@ describe('MeApiScopeUsersController', () => {
       })
     })
 
-    describe('PATCH /v2/me/api-scope-users/:nationalId', () => {
+    describe('PATCH /v2/me/api-scope-users with X-Query-National-Id', () => {
       it('should update an existing API scope user', async () => {
         const nationalId = createNationalId('person')
         await apiScopeUserModel.create({
@@ -163,7 +163,8 @@ describe('MeApiScopeUsersController', () => {
         })
 
         const response = await server
-          .patch(`/v2/me/api-scope-users/${nationalId}`)
+          .patch('/v2/me/api-scope-users')
+          .set('X-Query-National-Id', nationalId)
           .send({
             name: 'Updated Name',
             email: 'updated@test.is',
@@ -178,7 +179,7 @@ describe('MeApiScopeUsersController', () => {
       })
     })
 
-    describe('DELETE /v2/me/api-scope-users/:nationalId', () => {
+    describe('DELETE /v2/me/api-scope-users with X-Query-National-Id', () => {
       it('should delete an API scope user', async () => {
         const nationalId = createNationalId('person')
         await apiScopeUserModel.create({
@@ -187,9 +188,9 @@ describe('MeApiScopeUsersController', () => {
           email: 'delete@test.is',
         })
 
-        const response = await server.delete(
-          `/v2/me/api-scope-users/${nationalId}`,
-        )
+        const response = await server
+          .delete('/v2/me/api-scope-users')
+          .set('X-Query-National-Id', nationalId)
 
         expect(response.status).toEqual(204)
 

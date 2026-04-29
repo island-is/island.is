@@ -54,7 +54,7 @@ interface ApiScopeUsersApi {
   }): Promise<ApiResponse<PagedApiScopeUsersResponse>>
 
   meApiScopeUsersControllerFindOneRaw(params: {
-    nationalId: string
+    xQueryNationalId: string
   }): Promise<ApiResponse<ApiScopeUserResponse>>
 
   meApiScopeUsersControllerCreateRaw(params: {
@@ -67,7 +67,7 @@ interface ApiScopeUsersApi {
   }): Promise<ApiResponse<ApiScopeUserResponse>>
 
   meApiScopeUsersControllerUpdateRaw(params: {
-    nationalId: string
+    xQueryNationalId: string
     apiScopeUserUpdateDTO: {
       name?: string
       email?: string
@@ -76,7 +76,7 @@ interface ApiScopeUsersApi {
   }): Promise<ApiResponse<ApiScopeUserResponse>>
 
   meApiScopeUsersControllerDeleteRaw(params: {
-    nationalId: string
+    xQueryNationalId: string
   }): Promise<ApiResponse<number>>
 }
 
@@ -130,7 +130,9 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     for (const environment of environments) {
       const result = await this.typedRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerFindOneRaw({ nationalId }),
+        api.meApiScopeUsersControllerFindOneRaw({
+          xQueryNationalId: nationalId,
+        }),
       )
 
       if (result) {
@@ -295,7 +297,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       try {
         const result = await this.typedRequest(user, environment, (api) =>
           api.meApiScopeUsersControllerUpdateRaw({
-            nationalId: input.nationalId,
+            xQueryNationalId: input.nationalId,
             apiScopeUserUpdateDTO: {
               name: input.name ?? undefined,
               email: input.email ?? undefined,
@@ -358,7 +360,9 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       try {
         await this.typedRequest(user, environment, (api) => {
           requestMade = true
-          return api.meApiScopeUsersControllerDeleteRaw({ nationalId })
+          return api.meApiScopeUsersControllerDeleteRaw({
+            xQueryNationalId: nationalId,
+          })
         })
 
         if (requestMade) {

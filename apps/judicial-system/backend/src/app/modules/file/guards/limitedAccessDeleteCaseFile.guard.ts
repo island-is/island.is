@@ -53,7 +53,9 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
       // Uploaded appeal defendant case files can be deleted by the defender
       // Only one defender and no civil claimants in request cases
       return [
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(category)
@@ -82,7 +84,9 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
     ) {
       // The user controls this case file
       return [
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(category)

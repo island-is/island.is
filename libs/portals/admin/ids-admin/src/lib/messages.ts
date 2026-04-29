@@ -1090,6 +1090,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-scopes',
     defaultMessage: 'Scopes',
   },
+  apiScopeUsersScopesLoading: {
+    id: 'ap.ids-admin:api-scope-users-scopes-loading',
+    defaultMessage: 'Loading scopes...',
+  },
   apiScopeUsersPublishSuccess: {
     id: 'ap.ids-admin:api-scope-users-publish-success',
     defaultMessage: 'User published to {environment} successfully',

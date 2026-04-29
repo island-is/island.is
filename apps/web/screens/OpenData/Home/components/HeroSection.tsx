@@ -24,7 +24,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ n }) => {
         >
           <Box style={{ flex: '1 1 65%', paddingRight: '2rem' }}>
             <Text variant="h1" as="h1" marginBottom={2}>
-              {n('heroTitle', 'Opin Gögn')}
+              {n('heroTitle', 'Opin gögn')}
             </Text>
             <Text marginBottom={2}>
               {n(

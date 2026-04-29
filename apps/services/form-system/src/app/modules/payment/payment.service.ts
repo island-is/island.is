@@ -46,15 +46,14 @@ export class PaymentService {
 
   async fulfillPayment(
     paymentId: string,
-    receptionId: string,
     applicationId: string,
-    paymentFlowId?: string,
+    paymentFlowId: string,
   ): Promise<void> {
     try {
       await this.paymentModel.update(
         {
           fulfilled: true,
-          referenceId: receptionId,
+          referenceId: paymentFlowId,
         },
         {
           where: {
