@@ -8,7 +8,7 @@ export enum HealthPaths {
   HealthRoot = '/heilsa',
 
   HealthBasicInformation = `${basicInformation}`,
-  HealthOverview = `${basicInformation}/yfirlit`,
+  HealthOverview = '/heilsa/yfirlit',
   HealthDentists = `${basicInformation}/tannlaeknar`,
   HealthDentistRegistration = `${basicInformation}/tannlaeknar/skraning`,
   HealthOrganDonation = `${basicInformation}/liffaeragjof`,
@@ -67,7 +67,7 @@ export enum HealthPaths {
   HealthAppointmentDetail = '/heilsa/timabokanir/:id',
 
   // Deprecated paths - kept for redirects
-  HealthBasicOld = '/heilsa/yfirlit',
+  HealthOverviewOld = `${basicInformation}/yfirlit`,
   HealthBloodtypeOld = '/heilsa/blodflokkur',
   HealthDentistsOld = '/heilsa/tannlaeknar',
   HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',

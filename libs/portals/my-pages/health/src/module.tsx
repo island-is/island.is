@@ -164,8 +164,8 @@ export const healthModule: PortalModule = {
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
     {
-      name: hm.basicInformation,
-      path: HealthPaths.HealthBasicOld,
+      name: hm.overviewTitle,
+      path: HealthPaths.HealthOverviewOld,
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
     {
@@ -177,8 +177,14 @@ export const healthModule: PortalModule = {
     {
       name: hm.therapiesAndAids,
       path: HealthPaths.HealthTherapiesAndAids,
-      enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
-      element: <Navigate to={HealthPaths.HealthTherapies} replace />,
+      enabled:
+        userInfo.scopes.includes(ApiScope.healthTherapies) ||
+        userInfo.scopes.includes(ApiScope.healthAssistiveAndNutrition),
+      element: userInfo.scopes.includes(ApiScope.healthTherapies) ? (
+        <Navigate to={HealthPaths.HealthTherapies} replace />
+      ) : (
+        <Navigate to={HealthPaths.HealthAidsAndNutrition} replace />
+      ),
     },
     {
       name: hm.therapiesAndAids,
@@ -437,6 +443,21 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
     },
+    {
+      name: hm.vaccinations,
+      path: HealthPaths.HealthVaccinationsOld,
+      element: <Navigate to={HealthPaths.HealthVaccinations} replace />,
+    },
+    {
+      name: hm.vaccinations,
+      path: HealthPaths.HealthVaccinationsGeneralOld,
+      element: <Navigate to={HealthPaths.HealthVaccinationsGeneral} replace />,
+    },
+    {
+      name: hm.vaccinations,
+      path: HealthPaths.HealthVaccinationsOtherOld,
+      element: <Navigate to={HealthPaths.HealthVaccinationsOther} replace />,
+    },
 
     {
       name: hm.bloodtype,
@@ -479,6 +500,11 @@ export const healthModule: PortalModule = {
     },
     {
       name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsOld,
+      element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
+    },
+    {
+      name: hm.waitlists,
       path: HealthPaths.HealthWaitlistsDetailOld,
       element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
     },
@@ -488,6 +514,11 @@ export const healthModule: PortalModule = {
       key: 'HealthQuestionnaires',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Questionnaires />,
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthQuestionnairesOld,
+      element: <Navigate to={HealthPaths.HealthQuestionnaires} replace />,
     },
     {
       name: hm.questionnaires,
