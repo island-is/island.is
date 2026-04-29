@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, FormatMessage } from '@island.is/application/types'
-import * as m from '../../lib/messages'
-import { institutionRequestedDocumentTypes } from '../../lib/dataSchema'
+import * as m from '../lib/messages'
+import { institutionRequestedDocumentTypes } from '../lib/dataSchema'
 
 const requestedDocumentMessage = {
   exemptionReason: m.extraDataMessages.documentExemptionReason,

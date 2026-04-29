@@ -21,13 +21,15 @@ import {
   incomeNoTaxReturnOverviewAttachments,
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
+  applicantSubmitAccessAgreementOverviewAttachments,
 } from '../../../utils/getOverviewItems'
+import { shouldShowApplicantSubmitAccessAgreementSection } from '../../../utils/assigneeUtils'
 import { doesAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 import { isTaxReturnFiled, isTaxReturnNotFiled } from '../../../utils/utils'
 
 export const applicantOverviewSection = buildSection({
   id: 'applicantSubmitOverviewSection',
-  tabTitle: asm.applicantOverviewSectionTitle,
+  title: asm.applicantOverviewSectionTitle,
   children: [
     buildMultiField({
       id: 'applicantSubmitOverviewMultiField',
@@ -43,6 +45,22 @@ export const applicantOverviewSection = buildSection({
           id: 'submitRentalAgreementOverview',
           title: m.draftMessages.rentalAgreement.title,
           items: rentalAgreementOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'submitApplicantSubmitAccessAgreementOverview',
+          title: asm.applicantSubmitAccessAgreementTitle,
+          backId: 'applicantSubmitAccessAgreement',
+          condition: (answers, externalData) =>
+            shouldShowApplicantSubmitAccessAgreementSection(
+              answers,
+              externalData,
+            ) ||
+            applicantSubmitAccessAgreementOverviewAttachments(
+              answers,
+              externalData,
+            ).length > 0,
+          attachments: applicantSubmitAccessAgreementOverviewAttachments,
+          hideIfEmpty: true,
         }),
         buildOverviewField({
           id: 'submitExemptionOverview',

@@ -1,4 +1,5 @@
 import { Contract } from '@island.is/clients/hms-rental-agreement'
+import { Address } from '@island.is/application/types'
 
 const normalizeForAddressComparison = (
   val: string | number | null | undefined,
@@ -15,6 +16,22 @@ export const getContractAddressKey = (contract: Contract): string => {
     normalizeForAddressComparison(prop.streetAndHouseNumber),
     normalizeForAddressComparison(prop.postalCode),
   ].join('|')
+}
+
+/** Legal domicile in National Registry vs contract property. */
+export const doesDomicileAddressMatchContractProperty = (
+  address: Pick<Address, 'streetAddress' | 'postalCode'> | null,
+  property: NonNullable<Contract['contractProperty']>[number],
+): boolean => {
+  if (!address) {
+    return false
+  }
+  return (
+    normalizeForAddressComparison(address.streetAddress) ===
+      normalizeForAddressComparison(property.streetAndHouseNumber) &&
+    normalizeForAddressComparison(address.postalCode) ===
+      normalizeForAddressComparison(property.postalCode)
+  )
 }
 
 export const normalizeNationalId = (nationalId: string): string =>

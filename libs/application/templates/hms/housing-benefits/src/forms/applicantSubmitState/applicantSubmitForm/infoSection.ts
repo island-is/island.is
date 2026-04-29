@@ -10,7 +10,7 @@ import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantS
 
 export const infoSection = buildSection({
   id: 'applicantSubmitInfoSection',
-  tabTitle: asm.infoSectionTitle,
+  title: asm.infoSectionTitle,
   children: [
     buildMultiField({
       id: 'applicantSubmitInfoMultiField',

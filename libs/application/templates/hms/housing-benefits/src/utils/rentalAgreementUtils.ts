@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  ApplicantChildCustodyInformationV3,
   Application,
   ExternalData,
   FormValue,
@@ -259,14 +260,22 @@ export const getLandlordOptionsForSelectedContract = (
   }))
 }
 
-/**
- * Gets renters from the selected contract for display in the household members table repeater.
- * Returns flat { name, nationalId, custodyAgreementFile } for table display. The nationalIdWithName component
- * stores nested format; handleCustomMappedValues flattens it for display.
- */
-export const getHouseholdMembersForTable = (
+const normalizeKennitalaKey = (nationalId: string | undefined | null) => {
+  if (!nationalId || typeof nationalId !== 'string') return ''
+  const trimmed = nationalId.trim()
+  if (!trimmed) return ''
+  return kennitala.isValid(trimmed) ? kennitala.sanitize(trimmed) : trimmed
+}
+
+const displayNationalId = (nationalId: string) => {
+  const trimmed = nationalId.trim()
+  return kennitala.isValid(trimmed) ? kennitala.sanitize(trimmed) : trimmed
+}
+
+/** Renters (tenants) on the selected contract — also used for read-only static table rows. */
+export const getRentalAgreementTenantsFlat = (
   application: Application,
-): Record<string, string>[] => {
+): Array<{ name: string; nationalId: string }> => {
   const contract = getSelectedContract(
     application.answers,
     application.externalData,
@@ -274,23 +283,204 @@ export const getHouseholdMembersForTable = (
   const tenants = contract?.contractParty?.filter(
     (p) => p.partyTypeUseCode === 'TENANT' && p.kennitala,
   )
+  return (tenants ?? []).map((p) => ({
+    name: p.name ?? '',
+    nationalId: displayNationalId(p.kennitala ?? ''),
+  }))
+}
 
-  if (!tenants?.length) {
+/**
+ * `getStaticTableData` shape for the household table: not editable and not deletable
+ * (see table repeater documentation).
+ */
+export const getRentalAgreementTenantsForStaticTable = (
+  application: Application,
+): Record<string, string>[] => {
+  const tenants = getRentalAgreementTenantsFlat(application)
+  if (tenants.length === 0) {
+    return []
+  }
+  const fileUploaded = isFileUploaded(application.answers)
+  if (fileUploaded) {
+    return tenants.map((p) => ({
+      name: p.name,
+      nationalId: p.nationalId,
+      file: '',
+    }))
+  }
+  return tenants.map((p) => ({
+    name: p.name,
+    nationalId: p.nationalId,
+  }))
+}
+
+const mergeDomicileAndCustodyExcludingContractTenants = (
+  application: Application,
+): Array<{ name: string; nationalId: string }> => {
+  const tenantKeys = new Set(
+    getRentalAgreementTenantsFlat(application).map((m) =>
+      normalizeKennitalaKey(m.nationalId),
+    ),
+  )
+
+  const byKennitala = new Map<string, { name: string; nationalId: string }>()
+
+  const tryAdd = (name: string, nationalId: string | undefined | null) => {
+    if (!nationalId) return
+    const key = normalizeKennitalaKey(nationalId)
+    if (!key || tenantKeys.has(key) || byKennitala.has(key)) return
+    byKennitala.set(key, {
+      name: name ?? '',
+      nationalId: displayNationalId(nationalId),
+    })
+  }
+
+  const selectedContractId = getValueViaPath<string | number>(
+    application.answers,
+    'rentalAgreement.answer',
+  )
+  if (selectedContractId === undefined || selectedContractId === '') {
+    return Array.from(byKennitala.values())
+  }
+  const selectedNormalized = String(selectedContractId).trim()
+
+  const domicilePayload = getValueViaPath<{
+    contracts?: Array<{
+      contractId: string
+      residents: Array<{ nationalId?: string; name?: string | null }>
+    }>
+  }>(application.externalData, 'getDomicileResidentsByRentalContracts.data')
+
+  const contractDomicile = domicilePayload?.contracts?.find(
+    (c) => String(c.contractId).trim() === selectedNormalized,
+  )
+  for (const p of contractDomicile?.residents ?? []) {
+    tryAdd(p.name ?? '', p.nationalId)
+  }
+
+  const custodyRaw = getValueViaPath<ApplicantChildCustodyInformationV3[]>(
+    application.externalData,
+    'childrenCustodyInformation.data',
+  )
+  for (const child of Array.isArray(custodyRaw) ? custodyRaw : []) {
+    tryAdd(child.fullName ?? '', child.nationalId)
+  }
+
+  return Array.from(byKennitala.values())
+}
+
+/**
+ * Full list: contract tenants, then domicile residents, then custody children, deduplicated
+ * (used when the repeater has not been stored yet, e.g. overview preview).
+ */
+const mergeHouseholdMemberSources = (
+  application: Application,
+): Array<{ name: string; nationalId: string }> => {
+  const byKennitala = new Map<string, { name: string; nationalId: string }>()
+
+  const tryAdd = (name: string, nationalId: string | undefined | null) => {
+    if (!nationalId) return
+    const key = normalizeKennitalaKey(nationalId)
+    if (!key || byKennitala.has(key)) return
+    byKennitala.set(key, {
+      name: name ?? '',
+      nationalId: displayNationalId(nationalId),
+    })
+  }
+
+  for (const t of getRentalAgreementTenantsFlat(application)) {
+    tryAdd(t.name, t.nationalId)
+  }
+
+  const selectedContractId = getValueViaPath<string | number>(
+    application.answers,
+    'rentalAgreement.answer',
+  )
+  if (selectedContractId === undefined || selectedContractId === '') {
+    return Array.from(byKennitala.values())
+  }
+  const selectedNormalized = String(selectedContractId).trim()
+
+  const domicilePayload = getValueViaPath<{
+    contracts?: Array<{
+      contractId: string
+      residents: Array<{ nationalId?: string; name?: string | null }>
+    }>
+  }>(application.externalData, 'getDomicileResidentsByRentalContracts.data')
+
+  const contractDomicile = domicilePayload?.contracts?.find(
+    (c) => String(c.contractId).trim() === selectedNormalized,
+  )
+  for (const p of contractDomicile?.residents ?? []) {
+    tryAdd(p.name ?? '', p.nationalId)
+  }
+
+  const custodyRaw = getValueViaPath<ApplicantChildCustodyInformationV3[]>(
+    application.externalData,
+    'childrenCustodyInformation.data',
+  )
+  for (const child of Array.isArray(custodyRaw) ? custodyRaw : []) {
+    tryAdd(child.fullName ?? '', child.nationalId)
+  }
+
+  return Array.from(byKennitala.values())
+}
+
+/**
+ * Flat name/nationalId rows for overview and for assignee logic when the table repeater has no
+ * stored value yet. The nationalIdWithName component uses nested form values; see
+ * getHouseholdMembersTableRepeaterDefaultValue for initial row shape.
+ */
+export const getHouseholdMembersForTable = (
+  application: Application,
+): Record<string, string>[] => {
+  const members = mergeHouseholdMemberSources(application)
+  if (members.length === 0) {
     return []
   }
 
   const fileUploaded = isFileUploaded(application.answers)
 
   if (fileUploaded) {
-    return tenants.map((p) => ({
-      name: p.name ?? '',
-      nationalId: p.kennitala ?? '',
+    return members.map((p) => ({
+      name: p.name,
+      nationalId: p.nationalId,
       file: '',
     }))
   }
 
-  return tenants.map((p) => ({
-    name: p.name ?? '',
-    nationalId: p.kennitala ?? '',
+  return members.map((p) => ({
+    name: p.name,
+    nationalId: p.nationalId,
   }))
+}
+
+/**
+ * defaultValue for the household members table repeater: domicile + custody only; contract
+ * tenants are shown via getStaticTableData (read-only). Rows here are editable and deletable.
+ */
+export const getHouseholdMembersTableRepeaterDefaultValue = (
+  application: Application,
+): Array<{
+  nationalIdWithName: { name: string; nationalId: string }
+  file?: []
+}> => {
+  const members = mergeDomicileAndCustodyExcludingContractTenants(application)
+  if (members.length === 0) {
+    return []
+  }
+
+  const fileUploaded = isFileUploaded(application.answers)
+
+  return members.map((m) => {
+    if (fileUploaded) {
+      return {
+        nationalIdWithName: { name: m.name, nationalId: m.nationalId },
+        file: [],
+      }
+    }
+    return {
+      nationalIdWithName: { name: m.name, nationalId: m.nationalId },
+    }
+  })
 }

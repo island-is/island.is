@@ -9,6 +9,7 @@ import * as m from '../../../lib/messages'
 import {
   assigneePersonalInfoOverviewItems,
   assigneeAssetDeclarationOverviewItems,
+  assigneeAccessAgreementOverviewAttachments,
   assigneeAddressMatchOverviewItems,
 } from '../../../utils/getOverviewItems'
 import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
@@ -35,6 +36,13 @@ export const assigneeOverviewSection = buildSection({
           title: m.assigneeDraftOverview.assetDeclarationTitle,
           backId: 'assetDecleration',
           items: assigneeAssetDeclarationOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'assigneeAccessAgreementOverview',
+          title: m.assigneeDraftOverview.accessAgreementTitle,
+          backId: 'assigneeAccessAgreement',
+          attachments: assigneeAccessAgreementOverviewAttachments,
+          hideIfEmpty: true,
         }),
         buildOverviewField({
           id: 'assigneeAddressMatchOverview',

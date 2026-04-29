@@ -22,17 +22,21 @@ import * as m from './messages'
 import {
   AssigneeUserProfileApi,
   AssigneePersonalTaxReturnApi,
+  ChildrenCustodyInformationApiV3,
+  DomicileResidentsByRentalContractsApi,
   HouseholdMembersApi,
   NationalRegistryApi,
   PersonalTaxReturnApi,
   RentalAgreementsApi,
   AssigneeNationalRegistryApi,
+  AssigneeChildrenCustodyInformationApiV3,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import * as kennitala from 'kennitala'
 import {
   getAssigneeNationalIds,
   needsHouseholdMemberApproval,
+  shouldShowApplicantSubmitAccessAgreementSection,
 } from '../utils/assigneeUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
@@ -92,7 +96,9 @@ const template: ApplicationTemplate<
               api: [
                 UserProfileApi,
                 NationalRegistryApi,
+                ChildrenCustodyInformationApiV3,
                 RentalAgreementsApi,
+                DomicileResidentsByRentalContractsApi,
                 PersonalTaxReturnApi,
                 HouseholdMembersApi,
               ],
@@ -193,6 +199,7 @@ const template: ApplicationTemplate<
                 AssigneeNationalRegistryApi,
                 AssigneePersonalTaxReturnApi,
                 AssigneeUserProfileApi,
+                AssigneeChildrenCustodyInformationApiV3,
                 UserProfileApi,
               ],
             },
@@ -204,7 +211,10 @@ const template: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
-              api: [AssigneeNationalRegistryApi],
+              api: [
+                AssigneeNationalRegistryApi,
+                AssigneeChildrenCustodyInformationApiV3,
+              ],
             },
             {
               id: Roles.SIGNED_ASSIGNEE,
@@ -273,6 +283,11 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            cond: ({ application }: ApplicationContext) =>
+              !shouldShowApplicantSubmitAccessAgreementSection(
+                application.answers,
+                application.externalData,
+              ),
           },
         },
       },

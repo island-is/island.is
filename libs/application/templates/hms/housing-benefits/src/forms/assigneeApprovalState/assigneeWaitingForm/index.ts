@@ -5,28 +5,14 @@ import {
   buildImageField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Application, FormModes } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { MovingSearching } from '@island.is/application/assets/graphics'
 import {
-  getSignedApprovalNames,
-  getUnsignedApprovalNames,
-} from '../../../utils/assigneeUtils'
+  assigneeWaitingApprovedDescription,
+  assigneeWaitingPendingDescription,
+} from '../../../utils/assigneeWaitingUtils'
 import * as m from '../../../lib/messages'
-
-const getApprovedDescription = (application: Application) => ({
-  ...m.assigneeWaiting.approvedList,
-  values: {
-    names: getSignedApprovalNames(application).join(' \n\n * ') || '—',
-  },
-})
-
-const getPendingDescription = (application: Application) => ({
-  ...m.assigneeWaiting.pendingList,
-  values: {
-    names: getUnsignedApprovalNames(application).join(' \n\n * ') || '—',
-  },
-})
 
 export const AssigneeWaitingForm = buildForm({
   id: 'AssigneeWaiting',
@@ -61,12 +47,12 @@ export const AssigneeWaitingForm = buildForm({
             }),
             buildDescriptionField({
               id: 'assigneeWaitingApproved',
-              description: getApprovedDescription,
+              description: assigneeWaitingApprovedDescription,
               marginBottom: 4,
             }),
             buildDescriptionField({
               id: 'assigneeWaitingPending',
-              description: getPendingDescription,
+              description: assigneeWaitingPendingDescription,
               marginBottom: 8,
             }),
             buildImageField({

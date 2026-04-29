@@ -10,6 +10,7 @@ import { paymentSection } from './paymentSection'
 import { incomeSection } from './incomeSection'
 import { incomeNoTaxReturnSection } from './incomeNoTaxReturnSection'
 import { assetsDeclarationSection } from './assetsDeclarationSection'
+import { accessAgreementSection } from './accessAgreementSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -22,6 +23,7 @@ export const MainForm = buildForm({
     rentalAgreementSection,
     exemptionSection,
     householdMembersSection,
+    accessAgreementSection,
     incomeSection,
     incomeNoTaxReturnSection,
     assetsDeclarationSection,

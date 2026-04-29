@@ -3,12 +3,16 @@ import {
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
+  buildHiddenInput,
   getValueViaPath,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import * as m from '../../lib/messages'
-import { getHouseholdMembersForTable } from '../../utils/rentalAgreementUtils'
-import { isFileUploaded, isHouseholdMemberUnder18 } from '../../utils/utils'
+import {
+  getHouseholdMembersTableRepeaterDefaultValue,
+  getRentalAgreementTenantsForStaticTable,
+} from '../../utils/rentalAgreementUtils'
+import { hasNonCustodyMinorsInHousehold } from '../../utils/utils'
 
 export const householdMembersSection = buildSection({
   id: 'householdMembersSection',
@@ -49,8 +53,10 @@ export const householdMembersSection = buildSection({
             m.draftMessages.householdMembersSection.addMemberButton,
           editField: true,
           maxRows: 20,
-          getStaticTableData: (application) =>
-            getHouseholdMembersForTable(application),
+          getStaticTableData: (application: Application) =>
+            getRentalAgreementTenantsForStaticTable(application),
+          defaultValue: (application: Application) =>
+            getHouseholdMembersTableRepeaterDefaultValue(application),
           fields: {
             nationalIdWithName: {
               component: 'nationalIdWithName',
@@ -58,39 +64,13 @@ export const householdMembersSection = buildSection({
               searchPersons: true,
               required: true,
             },
-            file: {
-              component: 'fileUpload',
-              title:
-                m.draftMessages.householdMembersSection
-                  .custodyAgreementUploadTitle,
-              introduction:
-                m.draftMessages.householdMembersSection
-                  .custodyAgreementUploadDescription,
-              displayInTable: false,
-              condition: isHouseholdMemberUnder18,
-              required: true,
-            },
           },
           table: {
-            header: (answers) => {
-              const fileUploaded = isFileUploaded(answers)
-              const lastCol = fileUploaded
-                ? [
-                    m.draftMessages.householdMembersSection
-                      .custodyAgreementUploadTitle,
-                  ]
-                : []
-              return [
-                m.draftMessages.householdMembersSection.nameColumn,
-                m.draftMessages.householdMembersSection.nationalIdColumn,
-                ...lastCol,
-              ]
-            },
-            rows: (answers) => {
-              const fileUploaded = isFileUploaded(answers)
-              const lastCol = fileUploaded ? ['file'] : []
-              return ['name', 'nationalId', ...lastCol]
-            },
+            header: [
+              m.draftMessages.householdMembersSection.nameColumn,
+              m.draftMessages.householdMembersSection.nationalIdColumn,
+            ],
+            rows: ['name', 'nationalId'],
             format: {
               file: (value) => {
                 const files = Array.isArray(value) ? value : []
@@ -98,6 +78,12 @@ export const householdMembersSection = buildSection({
               },
             },
           },
+        }),
+        buildHiddenInput({
+          condition: (answers, externalData) =>
+            !!getValueViaPath<string>(answers, 'rentalAgreement.answer') &&
+            hasNonCustodyMinorsInHousehold(answers, externalData),
+          id: 'householdMembersHiddenField',
         }),
       ],
     }),

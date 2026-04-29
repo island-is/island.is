@@ -230,7 +230,8 @@ const baseSchema = z.object({
       }
     })
     .optional(),
-})
+  // Preserve per-user buckets (`{nationalId}.*`) used by applicant/assignee forms.
+}).passthrough()
 
 export const dataSchema = baseSchema
   .superRefine((data, ctx) => {
@@ -394,6 +395,72 @@ export const dataSchema = baseSchema
     requireFiles('exemptionReason')
     requireFiles('custodyAgreement')
     requireFiles('changedCircumstances')
+  })
+  .superRefine((data, ctx) => {
+    const applicantNatRaw = data.applicant?.nationalId?.trim()
+    if (!applicantNatRaw || !kennitala.isValid(applicantNatRaw)) return
+
+    const kt = kennitala.sanitize(applicantNatRaw)
+    const bucket = (data as Record<string, unknown>)[kt]
+    if (!bucket || typeof bucket !== 'object') return
+
+    const repeater = (
+      bucket as { applicantSubmitAccessAgreementRepeater?: unknown }
+    ).applicantSubmitAccessAgreementRepeater
+    if (!Array.isArray(repeater) || repeater.length === 0) return
+
+    repeater.forEach((row, index) => {
+      const file = (row as { file?: unknown }).file
+      const hasFiles =
+        Array.isArray(file) &&
+        file.length > 0 &&
+        file.every(
+          (f) =>
+            typeof f === 'object' &&
+            f !== null &&
+            typeof (f as { key?: string }).key === 'string' &&
+            typeof (f as { name?: string }).name === 'string',
+        )
+      if (hasFiles) return
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [kt, 'applicantSubmitAccessAgreementRepeater', index, 'file'],
+        params: m.extraDataMessages.validationFileRequired,
+      })
+    })
+  })
+  .superRefine((data, ctx) => {
+    const repeater = (
+      data as { mainFormAccessAgreementRepeater?: unknown }
+    ).mainFormAccessAgreementRepeater
+    if (!Array.isArray(repeater)) return
+
+    repeater.forEach((row, index) => {
+      const file = (row as { file?: unknown }).file
+      const hasFiles =
+        Array.isArray(file) &&
+        file.length > 0 &&
+        file.every(
+          (f) =>
+            typeof f === 'object' &&
+            f !== null &&
+            typeof (f as { key?: string }).key === 'string' &&
+            typeof (f as { name?: string }).name === 'string',
+        )
+      if (!hasFiles) return
+
+      const cid = (row as { childNationalId?: string }).childNationalId?.trim()
+      if (!cid || !kennitala.isValid(cid)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['mainFormAccessAgreementRepeater', index, 'childNationalId'],
+          params:
+            m.draftMessages.accessAgreementSection
+              .validationChildNationalIdWhenFileUploaded,
+        })
+      }
+    })
   })
   .superRefine((data, ctx) => {
     if (data.incomeHasOtherIncome !== YES) return

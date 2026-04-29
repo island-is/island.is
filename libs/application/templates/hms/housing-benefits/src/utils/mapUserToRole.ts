@@ -91,3 +91,5 @@ export const mapUserToRole = (
 
   return Roles.UNSIGNED_PREREQ_ASSIGNEE
 }
+
+export { hasAssigneeCompletedPrereq as hasAssigneeRolePrereqOk }

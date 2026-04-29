@@ -6,46 +6,18 @@ import {
   buildRadioField,
   buildSection,
   buildTextField,
-  getValueViaPath,
   NO,
   YES,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
 import * as m from '../../lib/messages'
+import {
+  contractorIncomeSelected,
+  foreignIncomeSelected,
+  incomeOtherIncomeYes,
+  incomeRadioClearChildren,
+  otherIncomeSelected,
+} from '../../utils/incomeSectionUtils'
 import { isTaxReturnFiled } from '../../utils/utils'
-
-const incomeOtherIncomeYes = (answers: FormValue) =>
-  getValueViaPath<string>(answers, 'incomeHasOtherIncome') === YES
-
-const contractorIncomeSelected = (answers: FormValue) =>
-  incomeOtherIncomeYes(answers) &&
-  (
-    getValueViaPath<string[]>(answers, 'incomeContractorCheckbox') ?? []
-  ).includes(YES)
-
-const foreignIncomeSelected = (answers: FormValue) =>
-  incomeOtherIncomeYes(answers) &&
-  (getValueViaPath<string[]>(answers, 'incomeForeignCheckbox') ?? []).includes(
-    YES,
-  )
-
-const otherIncomeSelected = (answers: FormValue) =>
-  incomeOtherIncomeYes(answers) &&
-  (getValueViaPath<string[]>(answers, 'incomeOtherCheckbox') ?? []).includes(
-    YES,
-  )
-
-const incomeRadioClearChildren = [
-  'incomeContractorCheckbox',
-  'incomeForeignCheckbox',
-  'incomeOtherCheckbox',
-  'incomeContractorDescription',
-  'incomeContractorFiles',
-  'incomeForeignDescription',
-  'incomeForeignFiles',
-  'incomeOtherDescription',
-  'incomeOtherFiles',
-]
 
 export const incomeSection = buildSection({
   id: 'incomeSection',
@@ -63,7 +35,7 @@ export const incomeSection = buildSection({
           titleVariant: 'h3',
           marginBottom: 4,
           required: true,
-          clearOnChange: incomeRadioClearChildren,
+          clearOnChange: [...incomeRadioClearChildren],
           options: [
             {
               value: YES,

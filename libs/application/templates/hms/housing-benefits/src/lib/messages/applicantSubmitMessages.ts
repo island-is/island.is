@@ -44,7 +44,7 @@ export const applicantSubmitMessages = defineMessages({
   // --- Applicant-facing messages ---
   infoSectionTitle: {
     id: 'hb.application:applicantSubmit.infoSectionTitle',
-    defaultMessage: 'Staðfesting',
+    defaultMessage: 'Inngangur',
     description: 'Info screen section tab title',
   },
   infoTitle: {
@@ -100,6 +100,30 @@ export const applicantSubmitMessages = defineMessages({
     defaultMessage:
       'Hér má sjá yfirlit yfir upplýsingar frá heimilismönnum sem samþykktu umsóknina.',
     description: 'Assignee overview screen description',
+  },
+  applicantSubmitAccessAgreementSectionTitle: {
+    id: 'hb.application:applicantSubmit.accessAgreementSectionTitle',
+    defaultMessage: 'Umgengnissamningur',
+    description: 'Tab title for applicant submit access agreement section',
+  },
+  applicantSubmitAccessAgreementTitle: {
+    id: 'hb.application:applicantSubmit.accessAgreementTitle',
+    defaultMessage: 'Umgengnissamningar',
+    description: 'Title for applicant submit access agreement multi field',
+  },
+  applicantSubmitAccessAgreementDescription: {
+    id: 'hb.application:applicantSubmit.accessAgreementDescription#markdown',
+    defaultMessage:
+      'Umgengnissamningur vantar enn fyrir einstakling undir 18 ára. Hægt er að senda inn skjöl hér áður en umsóknin fer til meðferðar.',
+    description:
+      'Description when applicant must upload custody access agreements at submit',
+  },
+  applicantSubmitAccessAgreementDescriptionWithChildren: {
+    id: 'hb.application:applicantSubmit.accessAgreementDescriptionWithChildren#markdown',
+    defaultMessage:
+      'Umgengnissamningur vantar enn fyrir eftirfarandi einstaklinga undir 18 ára: {names}. Hægt er að senda inn skjöl hér áður en umsóknin fer til meðferðar.',
+    description:
+      'Description including names of minors missing an umgengnissamningur at applicant submit',
   },
   submitButton: {
     id: 'hb.application:applicantSubmit.submitButton',

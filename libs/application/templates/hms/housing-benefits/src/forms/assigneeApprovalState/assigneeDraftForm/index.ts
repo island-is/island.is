@@ -4,6 +4,7 @@ import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { personalInformationSection } from './personalInformationSection'
 import { wrongHomeSection } from './wrongHomeSection'
 import { refetchNationalRegistrySection } from './refetchNationalRegistrySection'
+import { accessAgreementSection } from './accessAgreementSection'
 import { assetDeclerationSection } from './assetDeclerationSection'
 import { assigneeOverviewSection } from './assigneeOverviewSection'
 
@@ -17,6 +18,7 @@ export const AssigneeDraftForm = buildForm({
     wrongHomeSection,
     refetchNationalRegistrySection,
     personalInformationSection,
+    accessAgreementSection,
     assetDeclerationSection,
     assigneeOverviewSection,
   ],

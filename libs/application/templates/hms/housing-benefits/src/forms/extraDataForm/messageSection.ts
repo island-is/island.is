@@ -9,7 +9,7 @@ import * as m from '../../lib/messages'
 import {
   buildInstitutionMessageMarkdown,
   buildRequestedDocumentsMarkdown,
-} from './shared'
+} from '../../utils/extraDataUtils'
 
 export const extraDataMessageSection = buildSection({
   id: 'extraDataMessageSection',

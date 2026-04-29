@@ -15,6 +15,8 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
+  mainFormAccessAgreementOverviewItems,
+  mainFormAccessAgreementOverviewAttachments,
   incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
@@ -23,7 +25,11 @@ import {
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
 import { doesAddressMatchRentalContract } from '../../utils/rentalAgreementUtils'
-import { isTaxReturnFiled, isTaxReturnNotFiled } from '../../utils/utils'
+import {
+  hasNonCustodyMinorsInHousehold,
+  isTaxReturnFiled,
+  isTaxReturnNotFiled,
+} from '../../utils/utils'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -61,6 +67,30 @@ export const overviewSection = buildSection({
           backId: 'householdMembersMultiField',
           items: householdMembersOverviewItems,
           attachments: householdMembersOverviewAttachments,
+        }),
+        buildOverviewField({
+          id: 'mainFormAccessAgreementOverview',
+          title: m.draftMessages.accessAgreementSection.title,
+          backId: 'accessAgreementMultiField',
+          condition: (answers, externalData) => {
+            if (!getValueViaPath<string>(answers, 'rentalAgreement.answer')) {
+              return false
+            }
+            if (!hasNonCustodyMinorsInHousehold(answers, externalData)) {
+              return false
+            }
+            const items = mainFormAccessAgreementOverviewItems(
+              answers,
+              externalData,
+            )
+            const attachments = mainFormAccessAgreementOverviewAttachments(
+              answers,
+              externalData,
+            )
+            return items.length > 0 || attachments.length > 0
+          },
+          items: mainFormAccessAgreementOverviewItems,
+          attachments: mainFormAccessAgreementOverviewAttachments,
         }),
         buildOverviewField({
           id: 'incomeSectionOverview',

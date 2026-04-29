@@ -9,6 +9,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import {
   format as formatKennitala,
+  isValid as isValidKennitala,
   sanitize as sanitizeKennitala,
 } from 'kennitala'
 import {
@@ -19,6 +20,7 @@ import * as m from '../lib/messages'
 import {
   doesAssigneeAddressMatchRentalContract,
   getHouseholdMembersForTable,
+  getRentalAgreementTenantsFlat,
   getSelectedContract,
   getSelectedLandlordForPayment,
 } from './rentalAgreementUtils'
@@ -254,13 +256,61 @@ export const householdMembersOverviewItems = (
   _userNationalId?: string,
   _locale?: Locale,
 ): Array<KeyValueItem> => {
+  const normalizeId = (id: string) => (id ?? '').replace(/\D/g, '')
+
+  const tableRepeater = getValueViaPath<unknown>(
+    answers,
+    'householdMembersTableRepeater',
+  )
+
+  if (Array.isArray(tableRepeater)) {
+    const app = { answers, externalData } as Application
+    const staticTenants = getRentalAgreementTenantsFlat(app)
+    const answerMembers = getMembersFromAnswers(answers)
+    const tenantIdSet = new Set(
+      staticTenants.map((t) => normalizeId(t.nationalId)).filter(Boolean),
+    )
+    const answerByNationalId = new Map(
+      answerMembers.map((am) => [normalizeId(am.nationalId), am]),
+    )
+
+    const members: Array<HouseholdMember> = []
+    staticTenants.forEach((t) => {
+      members.push({ name: t.name, nationalId: t.nationalId })
+    })
+    answerMembers.forEach((am) => {
+      if (am.nationalId && !tenantIdSet.has(normalizeId(am.nationalId))) {
+        members.push({ name: am.name, nationalId: am.nationalId })
+      }
+    })
+
+    if (members.length === 0) {
+      return [
+        {
+          width: 'full',
+          keyText: m.draftMessages.overviewSection.householdMembers,
+          valueText: '-',
+        },
+      ]
+    }
+    return members.map((member) => {
+      const answerRow = answerByNationalId.get(normalizeId(member.nationalId))
+      const displayName = answerRow?.name || member.name
+      const displayNationalId = answerRow?.nationalId || member.nationalId
+      return {
+        width: 'full' as const,
+        keyText: displayName,
+        valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
+      }
+    })
+  }
+
   const contractMembers = getHouseholdMembersForTable({
     answers,
     externalData,
   } as Application)
   const answerMembers = getMembersFromAnswers(answers)
 
-  const normalizeId = (id: string) => (id ?? '').replace(/\D/g, '')
   const contractNationalIds = new Set(
     contractMembers.map((cm) => normalizeId(cm.nationalId)).filter(Boolean),
   )
@@ -749,6 +799,358 @@ export const assigneeAssetDeclarationOverviewItems = (
     }
   }
 
+  return items
+}
+
+const assigneeAccessAgreementChildDisplayName = (
+  answers: FormValue,
+  forChildId: string | undefined,
+): string => {
+  const trimmed = forChildId?.trim()
+  if (!trimmed) {
+    return ''
+  }
+  const rows = getValueViaPath<
+    Array<{
+      nationalIdWithName?: { nationalId?: string; name?: string }
+      isRemoved?: boolean
+    }>
+  >(answers, 'householdMembersTableRepeater')
+  if (Array.isArray(rows)) {
+    for (const row of rows) {
+      if (row.isRemoved) {
+        continue
+      }
+      const id = row.nationalIdWithName?.nationalId?.trim()
+      if (id && sanitizeKennitala(id) === sanitizeKennitala(trimmed)) {
+        return (
+          row.nationalIdWithName?.name?.trim() ||
+          formatKennitala(sanitizeKennitala(id))
+        )
+      }
+    }
+  }
+  return isValidKennitala(trimmed)
+    ? formatKennitala(sanitizeKennitala(trimmed))
+    : trimmed
+}
+
+export const applicantSubmitAccessAgreementOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<AttachmentItem> => {
+  const applicantRaw = getValueViaPath<string>(
+    answers,
+    'applicant.nationalId',
+  )?.trim()
+  if (!applicantRaw || !isValidKennitala(applicantRaw)) {
+    return []
+  }
+  const prefix = sanitizeKennitala(applicantRaw)
+  const repeater = getValueViaPath<
+    Array<{
+      childNationalId?: string
+      file?: Array<{ name: string; key: string }>
+    }>
+  >(answers, `${prefix}.applicantSubmitAccessAgreementRepeater`)
+  if (!Array.isArray(repeater) || repeater.length === 0) {
+    return []
+  }
+  const out: Array<AttachmentItem> = []
+  for (const row of repeater) {
+    const files = row.file
+    if (!Array.isArray(files) || files.length === 0) {
+      continue
+    }
+    const forChildName = assigneeAccessAgreementChildDisplayName(
+      answers,
+      row.childNationalId,
+    )
+    for (const file of files) {
+      if (!file.name) {
+        continue
+      }
+      out.push({
+        width: 'full',
+        fileName: forChildName ? `${forChildName}: ${file.name}` : file.name,
+        fileType: file.name.split('.').pop(),
+      })
+    }
+  }
+  return out
+}
+
+/** Main draft form: custody/access agreement uploads per child (mainFormAccessAgreementRepeater). */
+export const mainFormAccessAgreementOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const repeater = getValueViaPath<
+    Array<{
+      childNationalId?: string
+      file?: Array<{ name: string; key: string }>
+    }>
+  >(answers, 'mainFormAccessAgreementRepeater')
+  if (!Array.isArray(repeater) || repeater.length === 0) {
+    return []
+  }
+
+  const items: Array<KeyValueItem> = []
+  let lineAbove = false
+  for (const row of repeater) {
+    const files = row.file
+    const fileNames = Array.isArray(files)
+      ? files.map((f) => f.name).filter(Boolean).join(', ')
+      : ''
+    if (!fileNames) {
+      continue
+    }
+
+    const forChildName = assigneeAccessAgreementChildDisplayName(
+      answers,
+      row.childNationalId,
+    )
+    items.push({
+      width: 'full',
+      keyText: forChildName
+        ? {
+            ...m.assigneeDraftOverview.accessAgreementRowKey,
+            values: { childName: forChildName },
+          }
+        : m.assigneeDraftOverview.accessAgreementTitle,
+      valueText: fileNames,
+      ...(lineAbove && { lineAboveKeyText: true }),
+    })
+    lineAbove = true
+  }
+  return items
+}
+
+export const mainFormAccessAgreementOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<AttachmentItem> => {
+  const repeater = getValueViaPath<
+    Array<{
+      childNationalId?: string
+      file?: Array<{ name: string; key: string }>
+    }>
+  >(answers, 'mainFormAccessAgreementRepeater')
+  if (!Array.isArray(repeater) || repeater.length === 0) {
+    return []
+  }
+
+  const out: Array<AttachmentItem> = []
+  for (const row of repeater) {
+    const files = row.file
+    if (!Array.isArray(files) || files.length === 0) {
+      continue
+    }
+    const forChildName = assigneeAccessAgreementChildDisplayName(
+      answers,
+      row.childNationalId,
+    )
+    for (const file of files) {
+      if (!file.name) {
+        continue
+      }
+      out.push({
+        width: 'full',
+        fileName: forChildName ? `${forChildName}: ${file.name}` : file.name,
+        fileType: file.name.split('.').pop(),
+      })
+    }
+  }
+  return out
+}
+
+type AssigneeAccessAgreementRepeaterRow = {
+  forChildName: string
+  files: Array<{ name: string; key: string }>
+}
+
+type AssigneeAccessAgreementState =
+  | { kind: 'repeater'; rows: Array<AssigneeAccessAgreementRepeaterRow> }
+  | {
+      kind: 'legacy'
+      files: Array<{ name: string; key: string }>
+      forChildName: string
+    }
+
+const getAssigneeAccessAgreementState = (
+  answers: FormValue,
+  userNationalId: string | undefined,
+): AssigneeAccessAgreementState | null => {
+  const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
+  if (!prefix) {
+    return null
+  }
+
+  const repeater = getValueViaPath<
+    Array<{
+      childNationalId?: string
+      file?: Array<{ name: string; key: string }>
+    }>
+  >(answers, `${prefix}.assigneeAccessAgreementRepeater`)
+
+  if (Array.isArray(repeater) && repeater.length > 0) {
+    const rows: Array<AssigneeAccessAgreementRepeaterRow> = []
+    for (const row of repeater) {
+      const files = row.file
+      if (!Array.isArray(files) || files.length === 0) {
+        continue
+      }
+      if (
+        !files
+          .map((f) => f.name)
+          .filter(Boolean)
+          .join(', ')
+      ) {
+        continue
+      }
+      const forChildName = assigneeAccessAgreementChildDisplayName(
+        answers,
+        row.childNationalId,
+      )
+      rows.push({ forChildName, files })
+    }
+    if (rows.length > 0) {
+      return { kind: 'repeater', rows }
+    }
+  }
+
+  const files = getValueViaPath<Array<{ name: string; key: string }>>(
+    answers,
+    `${prefix}.assigneeUmgengnissamningurFile`,
+  )
+  if (!Array.isArray(files) || files.length === 0) {
+    return null
+  }
+  if (
+    !files
+      .map((f) => f.name)
+      .filter(Boolean)
+      .join(', ')
+  ) {
+    return null
+  }
+
+  const forChildId = getValueViaPath<string>(
+    answers,
+    `${prefix}.assigneeUmgengnissamningurForChildNationalId`,
+  )?.trim()
+  const forChildName = assigneeAccessAgreementChildDisplayName(
+    answers,
+    forChildId,
+  )
+  return { kind: 'legacy', files, forChildName }
+}
+
+export const assigneeAccessAgreementOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  userNationalId?: string,
+): Array<AttachmentItem> => {
+  const state = getAssigneeAccessAgreementState(answers, userNationalId)
+  if (!state) {
+    return []
+  }
+  const out: Array<AttachmentItem> = []
+  if (state.kind === 'repeater') {
+    for (const row of state.rows) {
+      for (const file of row.files) {
+        if (!file.name) {
+          continue
+        }
+        const fileType = file.name.split('.').pop()
+        out.push({
+          width: 'full',
+          fileName: row.forChildName
+            ? `${row.forChildName}: ${file.name}`
+            : file.name,
+          fileType,
+        })
+      }
+    }
+    return out
+  }
+  for (const file of state.files) {
+    if (!file.name) {
+      continue
+    }
+    const fileType = file.name.split('.').pop()
+    out.push({
+      width: 'full',
+      fileName: state.forChildName
+        ? `${state.forChildName}: ${file.name}`
+        : file.name,
+      fileType,
+    })
+  }
+  return out
+}
+
+/** Full key–value list for sign / document overview (file names in text). */
+export const assigneeUmgengnissamningurOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const state = getAssigneeAccessAgreementState(answers, userNationalId)
+  if (!state) {
+    return []
+  }
+  if (state.kind === 'repeater') {
+    const items: Array<KeyValueItem> = []
+    let lineAbove = false
+    for (const row of state.rows) {
+      const fileNames = row.files
+        .map((f) => f.name)
+        .filter(Boolean)
+        .join(', ')
+      if (!fileNames) {
+        continue
+      }
+      const { forChildName } = row
+      items.push({
+        width: 'full',
+        keyText: forChildName
+          ? {
+              ...m.assigneeDraftOverview.accessAgreementRowKey,
+              values: { childName: forChildName },
+            }
+          : m.assigneeDraftOverview.accessAgreementTitle,
+        valueText: fileNames,
+        ...(lineAbove && { lineAboveKeyText: true }),
+      })
+      lineAbove = true
+    }
+    return items
+  }
+  const fileNames = state.files
+    .map((f) => f.name)
+    .filter(Boolean)
+    .join(', ')
+  if (!fileNames) {
+    return []
+  }
+  const items: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText: m.assigneeDraftOverview.accessAgreementTitle,
+      valueText: fileNames,
+    },
+  ]
+  if (state.forChildName) {
+    items.push({
+      width: 'full',
+      keyText: m.assigneeDraftOverview.accessAgreementForChild,
+      valueText: state.forChildName,
+    })
+  }
   return items
 }
 

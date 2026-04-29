@@ -4,7 +4,10 @@ import {
 } from '@island.is/application/types'
 import { nationalIdPreface } from '../utils/assigneeUtils'
 
-export { IdentityApi } from '@island.is/application/types'
+export {
+  ChildrenCustodyInformationApiV3,
+  IdentityApi,
+} from '@island.is/application/types'
 
 export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
   order: 1,
@@ -15,14 +18,19 @@ export const RentalAgreementsApi = defineTemplateApi({
   order: 2,
 })
 
+export const DomicileResidentsByRentalContractsApi = defineTemplateApi({
+  action: 'getDomicileResidentsByRentalContracts',
+  order: 3,
+})
+
 export const HouseholdMembersApi = defineTemplateApi({
   action: 'getHouseholdMembers',
-  order: 3,
+  order: 4,
 })
 
 export const PersonalTaxReturnApi = defineTemplateApi({
   action: 'getPersonalTaxReturn',
-  order: 4,
+  order: 5,
 })
 
 // Assignee dataproviders with dynamic ids
@@ -43,4 +51,10 @@ export const AssigneePersonalTaxReturnApi = defineTemplateApi({
   action: 'getAssigneePersonalTaxReturn',
   externalDataId: (application, user) =>
     nationalIdPreface(application, user, 'assigneeTaxReturn'),
+})
+
+export const AssigneeChildrenCustodyInformationApiV3 = defineTemplateApi({
+  action: 'assigneeChildrenCustodyInformation',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeChildrenCustody'),
 })

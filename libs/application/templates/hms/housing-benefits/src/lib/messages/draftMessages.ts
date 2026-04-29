@@ -172,7 +172,7 @@ export const draftMessages = {
     description3: {
       id: 'hb.application:draft.householdMembersSection.description3',
       defaultMessage:
-        'Ef við á verður umgengnissamningur að fylgja með einstaklingar undir 18 ára aldri eru skráðir heimilismenn.',
+        'Ef einstaklingur undir 18 ára er skráður sem heimilismaður en er ekki undir þinni forsjá þá verður umgengnissamningur að fylgja með.',
       description: 'Household members description',
     },
     description4: {
@@ -180,6 +180,19 @@ export const draftMessages = {
       defaultMessage:
         'Allir heimilismenn eldri en 18 ára munu þurfa að skrá sig inn á Ísland.is og samþykkja að upplýsingar um þá verði sóttar í meðferð þessarar umsóknar.',
       description: 'Household members description',
+    },
+    nonCustodyMinorMissingAgreementAlertTitle: {
+      id: 'hb.application:draft.householdMembersSection.nonCustodyMinorMissingAgreementAlertTitle',
+      defaultMessage: 'Umgengnissamning vantar',
+      description:
+        'Alert when an under-18 household member is not in custody and no agreement file is uploaded',
+    },
+    nonCustodyMinorMissingAgreementAlertMessage: {
+      id: 'hb.application:draft.householdMembersSection.nonCustodyMinorMissingAgreementAlertMessage#markdown',
+      defaultMessage:
+        'Þú hefur skráð eftirfarandi heimilismenn undir 18 ára aldri sem ekki eru undir þinni forsjá:\n\n **{names}**.',
+      description:
+        'Body text for the non-custody minor missing custody agreement alert. {names} is a formatted list of household members (Icelandic name list).',
     },
     tableRepeaterTitle: {
       id: 'hb.application:draft.householdMembersSection.tableRepeaterTitle',
@@ -228,6 +241,38 @@ export const draftMessages = {
       id: 'hb.application:draft.householdMembersSection.validationNationalIdRequired',
       defaultMessage: 'Gild kennitala er nauðsynleg',
       description: 'Valid national ID required for household member',
+    },
+  }),
+  accessAgreementSection: defineMessages({
+    title: {
+      id: 'hb.application:draft.accessAgreementSection.title',
+      defaultMessage: 'Umgengnissamningur',
+      description: 'Access agreement section title',
+    },
+    multiFieldTitle: {
+      id: 'hb.application:draft.accessAgreementSection.multiFieldTitle',
+      defaultMessage: 'Umgengnissamningur',
+      description: 'Access agreement multi field title',
+    },
+    repeaterIntroDescription: {
+      id: 'hb.application:draft.accessAgreementSection.repeaterIntroDescription#markdown',
+      defaultMessage:
+        'Ef þú ert með umgengnissamning sem á við barn á heimilinu geturðu valið að hladata honum upp hér. Þetta er valfrjálst og getur auðveldað meðferð umsóknarinnar.',
+      description:
+        'Intro for optional access-agreement fields repeater on main draft form (no specific minors listed)',
+    },
+    repeaterIntroDescriptionWithChildren: {
+      id: 'hb.application:draft.accessAgreementSection.repeaterIntroDescriptionWithChildren#markdown',
+      defaultMessage:
+        '* Ef annar heimilismaður er með forsjá, þá þarf ekki að setja inn umgengnissamning.\n\n* Ef annar heimilismaður er með umgengnissamning, þá má setja hann inn á seinni stigum umsóknarinnar.',
+      description:
+        'Intro for optional access-agreement repeater including formatted minor names',
+    },
+    validationChildNationalIdWhenFileUploaded: {
+      id: 'hb.application:draft.accessAgreementSection.validationChildNationalIdWhenFileUploaded',
+      defaultMessage: 'Vinsamlegast veldu barn sem skjalið tengist.',
+      description:
+        'Validation when a row has uploaded files but no selected child',
     },
   }),
   incomeSection: defineMessages({
@@ -571,7 +616,7 @@ export const draftMessages = {
     },
     submit: {
       id: 'hb.application:draft.overviewSection.submit',
-      defaultMessage: 'Senda inn umsókn',
+      defaultMessage: 'Senda umsókn til heimilismanna',
       description: 'Submit application button',
     },
     name: {

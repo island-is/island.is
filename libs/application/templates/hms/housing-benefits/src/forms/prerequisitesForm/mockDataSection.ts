@@ -3,23 +3,14 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  getValueViaPath,
   NO,
   YES,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
 import { prereqMessages as m } from '../../lib/messages'
-
-const devMockEnabled = (answers: FormValue) =>
-  getValueViaPath<string>(answers, 'devMockSettings.useMock') === YES
-
-const devMockTaxChecked = (answers: FormValue) => {
-  const tax = getValueViaPath<string[]>(
-    answers,
-    'devMockSettings.mockTaxReturn',
-  )
-  return Array.isArray(tax) && tax.includes(YES)
-}
+import {
+  devMockEnabled,
+  devMockTaxChecked,
+} from '../../utils/prerequisiteMockDataUtils'
 
 export const mockDataSection = buildSection({
   id: 'mockDataSection',

@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ChildrenCustodyInformationParameters,
+} from '@island.is/application/types'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -9,10 +12,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { getValueViaPath } from '@island.is/application/core'
 import { ContractStatus } from './types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { mockGetRentalAgreements } from '../terminate-rental-agreement/mockedRentalAgreements'
-import { filterContractsForHousingBenefits } from './utils'
+import {
+  doesDomicileAddressMatchContractProperty,
+  filterContractsForHousingBenefits,
+} from './utils'
 import {
   applyMockAssigneeNationalRegistryAddress,
   getAssigneePersonalTaxMockMode,
@@ -152,6 +159,68 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * Uses the signed-in user’s lögheimilistengsl (same source as getHouseholdMembers). For each
+   * rental contract, returns those people whose legal domicile matches the contract property
+   * (street + postal code). Requires `getRentalAgreements` to have run first.
+   */
+  async getDomicileResidentsByRentalContracts(
+    props: TemplateApiModuleActionProps,
+  ) {
+    const { application } = props
+    const contracts = getValueViaPath<Contract[] | undefined>(
+      application.externalData,
+      'getRentalAgreements.data',
+    )
+    if (!Array.isArray(contracts) || contracts.length === 0) {
+      return { contracts: [] as const }
+    }
+
+    let domicileGroup
+    try {
+      domicileGroup = await this.nationalRegistryV3Service.getCohabitantsDetailed(
+        props,
+      )
+    } catch (e) {
+      this.logger.error(
+        'Failed to fetch lögheimilistengsl for domicile residents:',
+        e,
+      )
+      throw e instanceof TemplateApiError ? e : new TemplateApiError(e, 500)
+    }
+
+    const people = domicileGroup.filter(
+      (p): p is NonNullable<typeof p> => p !== null && Boolean(p.nationalId),
+    )
+
+    return {
+      contracts: contracts.map((contract) => {
+        const contractId =
+          contract.contractId !== undefined && contract.contractId !== null
+            ? String(contract.contractId)
+            : ''
+        const property = contract.contractProperty?.[0]
+        if (!property) {
+          return { contractId, residents: [] as const }
+        }
+        return {
+          contractId,
+          residents: people
+            .filter((person) =>
+              doesDomicileAddressMatchContractProperty(
+                person.address,
+                property,
+              ),
+            )
+            .map((person) => ({
+              nationalId: person.nationalId,
+              name: person.fullName,
+            })),
+        }
+      }),
+    }
+  }
+
   async assigneeNationalRegistry({
     application,
     auth,
@@ -193,6 +262,15 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       this.logger.error('Failed to fetch individual from National Registry:', e)
       throw new TemplateApiError(e, 500)
     }
+  }
+
+  /**
+   * Children in the signing assignee’s custody (same Þjónusta as applicant’s childrenCustody).
+   */
+  async assigneeChildrenCustodyInformation(
+    props: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>,
+  ) {
+    return this.nationalRegistryV3Service.childrenCustodyInformation(props)
   }
 
   async submitApplication() {

@@ -11,7 +11,7 @@ import { getSignedAssigneeOverviewItems } from '../../../utils/assigneeUtil'
 
 export const assigneeOverviewSection = buildSection({
   id: 'applicantSubmitAssigneeOverviewSection',
-  tabTitle: asm.assigneeOverviewSectionTitle,
+  title: asm.assigneeOverviewSectionTitle,
   children: [
     buildMultiField({
       id: 'applicantSubmitAssigneeOverviewMultiField',

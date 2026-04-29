@@ -10,6 +10,7 @@ import {
   AssigneeUserProfileApi,
   AssigneeNationalRegistryApi,
   AssigneePersonalTaxReturnApi,
+  AssigneeChildrenCustodyInformationApiV3,
 } from '../../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
@@ -44,6 +45,13 @@ export const externalDataSection = buildSection({
           provider: AssigneePersonalTaxReturnApi,
           title: m.assigneeApproval.taxTitle,
           subTitle: m.assigneeApproval.taxSubtitle,
+        }),
+        buildDataProviderItem({
+          id: (application, user) =>
+            nationalIdPreface(application, user, 'assigneeChildrenCustody'),
+          provider: AssigneeChildrenCustodyInformationApiV3,
+          title: m.prereqMessages.childrenCustodyTitle,
+          subTitle: m.prereqMessages.childrenCustodySubtitle,
         }),
       ],
       submitField: buildSubmitField({

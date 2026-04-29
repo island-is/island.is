@@ -86,6 +86,28 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Upplýsingar um leigusamninga sem þú ert aðili að',
     description: 'HMS subtitle',
   },
+  domicileResidentsTitle: {
+    id: 'hb.application:prereq.domicileResidentsTitle',
+    defaultMessage: 'Lögheimili við leigu',
+    description: 'Data provider: domicile residents at rental address',
+  },
+  domicileResidentsSubtitle: {
+    id: 'hb.application:prereq.domicileResidentsSubtitle',
+    defaultMessage:
+      'Einstaklingar með sama lögheimilistengsl og þú í Þjóðskrá, þar sem heimilisfang samsvarar leigulausn hvers leigusamnings',
+    description: 'Data provider: domicile residents subtitle (signed-in user lögheimilistengsl)',
+  },
+  childrenCustodyTitle: {
+    id: 'hb.application:prereq.childrenCustodyTitle',
+    defaultMessage: 'Börn í þinni forsjá',
+    description: 'Data provider: children in custody (national registry) title',
+  },
+  childrenCustodySubtitle: {
+    id: 'hb.application:prereq.childrenCustodySubtitle',
+    defaultMessage:
+      'Upplýsingar um börn sem skráð eru undir forsjá þína í Þjóðskrá',
+    description: 'Data provider: children in custody subtitle',
+  },
   taxTitle: {
     id: 'hb.application:prereq.taxTitle',
     defaultMessage: 'Skatturinn',

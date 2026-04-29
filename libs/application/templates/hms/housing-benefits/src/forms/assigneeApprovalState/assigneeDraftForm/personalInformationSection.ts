@@ -28,6 +28,11 @@ export const personalInformationSection = buildSection({
       title: m.assigneeDraft.title,
       children: [
         buildTextField({
+          condition: (answers, externalData) => {
+            console.log('externalData: ', externalData)
+
+            return true
+          },
           id: (application, user) =>
             nationalIdPreface(application, user, 'assigneeInfo.name'),
           title: labels.name,

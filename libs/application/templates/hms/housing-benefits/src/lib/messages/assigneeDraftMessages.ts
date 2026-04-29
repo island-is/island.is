@@ -57,6 +57,23 @@ export const assigneeDraftOverview = defineMessages({
     defaultMessage: 'Lögheimili passar við heimilisfang á leigusamningi',
     description: 'Address matches rental agreement',
   },
+  accessAgreementTitle: {
+    id: 'hb.application:assigneeDraft.overview.accessAgreementTitle',
+    defaultMessage: 'Umgengnissamningur',
+    description: 'Assignee overview access agreement title',
+  },
+  accessAgreementForChild: {
+    id: 'hb.application:assigneeDraft.overview.accessAgreementForChild',
+    defaultMessage: 'Tengist barni',
+    description:
+      'Overview label: which child the custody agreement file applies to',
+  },
+  accessAgreementRowKey: {
+    id: 'hb.application:assigneeDraft.overview.accessAgreementRowKey',
+    defaultMessage: 'Umgengnissamningur – {childName}',
+    description:
+      'Overview row title when each repeater row maps one child to uploaded files',
+  },
   submitButton: {
     id: 'hb.application:assigneeDraft.overview.submitButton',
     defaultMessage: 'Staðfesta',
@@ -120,5 +137,52 @@ export const assigneeDraft = defineMessages({
     defaultMessage:
       'Eftirfarandi upplýsingar verða sóttar til að uppfæra lögheimiliskráningu þína.',
     description: 'Subtitle for refetch external data screen',
+  },
+  umgengnissamningurTitle: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurTitle',
+    defaultMessage: 'Umgengnissamningur',
+    description: 'Assignee draft umgengnissamningur screen title',
+  },
+  umgengnissamningurDescription: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurDescription#markdown',
+    defaultMessage:
+      'Undir 18 ára heimilismenn sem ekki koma undir forsjá umsækjanda né þína forsjá skv. gögnum hér, og þar sem enginn annar heimilismaður er með forsjá eftir gögnum, kunna að krefjast umgengnissamnings. Bættu við línu fyrir hvert barn sem þú vilt senda inn umgengnissamning um, veldu barnið og hladdu upp skjali ef þú ert með það.',
+    description: 'Description for assignee umgengnissamningur upload screen',
+  },
+  umgengnissamningurDescriptionWithChildren: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurDescriptionWithChildren#markdown',
+    defaultMessage:
+      'Undir 18 ára heimilismenn sem ekki koma undir forsjá umsækjanda né þína forsjá skv. gögnum hér, og þar sem enginn annar heimilismaður er með forsjá eftir gögnum, kunna að krefjast umgengnissamnings.\n\n**Heimilismenn undir 18 sem um getur:** {names}\n\nBættu við línu fyrir hvert barn sem þú vilt senda inn umgengnissamning um, veldu viðeigandi barn og hladdu upp skjali ef þú ert með það.',
+    description:
+      'Assignee umgengnissamningur screen description including names of relevant minors',
+  },
+  umgengnissamningurRepeaterFormTitle: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurRepeaterFormTitle',
+    defaultMessage: 'Skjal {index}',
+    description:
+      'Title for each row in assignee umgengnissamningur fields repeater',
+  },
+  umgengnissamningurRepeaterAddItem: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurRepeaterAddItem',
+    defaultMessage: 'Bæta við skjali',
+    description: 'Add row button for umgengnissamningur fields repeater',
+  },
+  umgengnissamningurSelectChildTitle: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurSelectChildTitle',
+    defaultMessage: 'Hvaða barn tengist umgengnissamningnum sem þú hleður upp?',
+    description:
+      'Title for radio when multiple minors need an umgengnissamningur from this assignee',
+  },
+  umgengnissamningurSelectChildDescription: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurSelectChildDescription#markdown',
+    defaultMessage:
+      'Ef einungis einn umgengnissamningur er til staðar skaltu velja barnið sem hann á við. Ef þú hleður ekki upp skjali þarftu ekki að velja.',
+    description:
+      'Help text for child selection when several minors need an agreement',
+  },
+  umgengnissamningurFileTitle: {
+    id: 'hb.application:assigneeDraft.umgengnissamningurFileTitle',
+    defaultMessage: 'Umgengnissamningur',
+    description: 'File upload title for umgengnissamningur (optional)',
   },
 })

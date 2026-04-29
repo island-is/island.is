@@ -7,6 +7,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, UserProfileApi } from '@island.is/application/types'
 import {
+  ChildrenCustodyInformationApiV3,
+  DomicileResidentsByRentalContractsApi,
   NationalRegistryApi,
   PersonalTaxReturnApi,
   RentalAgreementsApi,
@@ -34,9 +36,19 @@ export const externalDataSection = buildSection({
           subTitle: m.prereqMessages.nationalRegistrySubtitle,
         }),
         buildDataProviderItem({
+          provider: ChildrenCustodyInformationApiV3,
+          title: m.prereqMessages.childrenCustodyTitle,
+          subTitle: m.prereqMessages.childrenCustodySubtitle,
+        }),
+        buildDataProviderItem({
           provider: RentalAgreementsApi,
           title: m.prereqMessages.hmsTitle,
           subTitle: m.prereqMessages.hmsSubtitle,
+        }),
+        buildDataProviderItem({
+          provider: DomicileResidentsByRentalContractsApi,
+          title: m.prereqMessages.domicileResidentsTitle,
+          subTitle: m.prereqMessages.domicileResidentsSubtitle,
         }),
         buildDataProviderItem({
           provider: PersonalTaxReturnApi,

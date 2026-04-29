@@ -4,9 +4,12 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { assigneePersonalInfoOverviewItems } from './getOverviewItems'
-import { assigneeAssetDeclarationOverviewItems } from './getOverviewItems'
-import { assigneeAddressMatchOverviewItems } from './getOverviewItems'
+import {
+  assigneePersonalInfoOverviewItems,
+  assigneeAssetDeclarationOverviewItems,
+  assigneeUmgengnissamningurOverviewItems,
+  assigneeAddressMatchOverviewItems,
+} from './getOverviewItems'
 import {
   format as formatKennitala,
   sanitize as sanitizeKennitala,
@@ -41,6 +44,11 @@ export const getSignedAssigneeOverviewItems = (
       externalData,
       nationalId,
     )
+    const umgengnissamningurItems = assigneeUmgengnissamningurOverviewItems(
+      answers,
+      externalData,
+      nationalId,
+    )
     const addressItems = assigneeAddressMatchOverviewItems(
       answers,
       externalData,
@@ -56,6 +64,7 @@ export const getSignedAssigneeOverviewItems = (
       },
       ...filteredPersonalItems,
       ...assetItems,
+      ...umgengnissamningurItems,
       ...addressItems,
     )
   })
