@@ -88,13 +88,14 @@ export const CreateScopeUserModal = ({
       errors.nationalId = formatMessage(m.apiScopeUsersErrorNationalId)
     }
 
-    if (formData.name.length < 2) {
+    if (formData.name.trim().length < 2) {
       errors.name = formatMessage(m.apiScopeUsersErrorNameMinLength)
     }
 
-    if (!formData.email.trim()) {
+    const trimmedEmail = formData.email.trim()
+    if (!trimmedEmail) {
       errors.email = formatMessage(m.apiScopeUsersErrorEmailRequired)
-    } else if (!EMAIL_REGEX.test(formData.email)) {
+    } else if (!EMAIL_REGEX.test(trimmedEmail)) {
       errors.email = formatMessage(m.apiScopeUsersErrorEmailFormat)
     }
 
@@ -133,20 +134,27 @@ export const CreateScopeUserModal = ({
       return
     }
 
+    const trimmedName = formData.name.trim()
+    const trimmedEmail = formData.email.trim()
+
     try {
       await createUser({
         variables: {
           input: {
             nationalId: formData.nationalId,
-            name: formData.name,
-            email: formData.email,
+            name: trimmedName,
+            email: trimmedEmail,
             environments: selectedEnvironments,
           },
         },
       })
 
       toast.success(formatMessage(m.createScopeUserSuccess))
-      const createdUser: CreatedScopeUser = { ...formData }
+      const createdUser: CreatedScopeUser = {
+        nationalId: formData.nationalId,
+        name: trimmedName,
+        email: trimmedEmail,
+      }
       resetAndClose()
       onCreated(createdUser)
     } catch {

@@ -77,10 +77,7 @@ export class MeScopeUsersController {
     await this.accessService.validateScopeTenant(scopeName, tenantId)
     return this.accessService.create({
       ...input,
-      userAccess: [
-        ...(input.userAccess ?? []),
-        { nationalId: input.nationalId, scope: scopeName },
-      ],
+      userAccess: [{ nationalId: input.nationalId, scope: scopeName }],
     })
   }
 

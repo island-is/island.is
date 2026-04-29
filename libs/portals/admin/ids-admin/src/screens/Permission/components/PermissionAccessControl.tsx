@@ -141,15 +141,14 @@ export const PermissionAccessControl = () => {
     setUsersDirty(!isEqual(newIds, origIds))
   }
 
-  const handleUserCreated = async (user: CreatedScopeUser) => {
-    await refetchAllUsers()
-    // Add the newly created user as selected
+  const handleUserCreated = (user: CreatedScopeUser) => {
     const newOption: UserOption = {
       label: user.name ? `${user.name} - ${user.nationalId}` : user.nationalId,
       value: user.nationalId,
     }
     setSelectedUsers((prev) => [...prev, newOption])
     setUsersDirty(true)
+    refetchAllUsers()
   }
 
   // Compute added/removed for form submission
