@@ -31,6 +31,7 @@ interface SignatureConfirmationModalProps {
   signatureType: SignatureType
   isAudkenni: boolean
   onClose: () => void
+  onErrorOrCanceledClose?: () => void
   navigateOnClose?: boolean
   onRetry?: () => void
 }
@@ -78,6 +79,7 @@ export const SignatureConfirmationModal: FC<
   signatureType,
   isAudkenni,
   onClose,
+  onErrorOrCanceledClose,
   navigateOnClose = true,
   onRetry,
 }) => {
@@ -190,6 +192,12 @@ export const SignatureConfirmationModal: FC<
       router.push(
         `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
       )
+    } else if (
+      (signingProgress === 'error' || signingProgress === 'canceled') &&
+      onErrorOrCanceledClose
+    ) {
+      onErrorOrCanceledClose()
+      return
     }
     onClose()
   }
