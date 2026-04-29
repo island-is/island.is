@@ -8,7 +8,10 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { UniversityCareersClientService } from './universityCareers.service'
+import {
+  UniversityCareersClientService,
+  UniversityClientMap,
+} from './universityCareers.service'
 import { UNI_FACTORY, UniversityId } from './universityCareers.types'
 import { AgriculturalUniversityOfIcelandCareerClientConfig } from './clients/agricultural-university-of-iceland/agriculturalUniversityOfIcelandCareerClient.config'
 import { BifrostUniversityCareerClientConfig } from './clients/bifrost-university/bifrostUniversityCareerClient.config'
@@ -35,7 +38,7 @@ import { IcelandUniversityOfTheArtsCareerClientConfig } from './clients/iceland-
         lhiConfig: ConfigType<
           typeof IcelandUniversityOfTheArtsCareerClientConfig
         >,
-      ) => {
+      ): UniversityClientMap => {
         const makeClient = (
           config: { xroadPath: string; scope: string[] },
           name: string,
