@@ -29,10 +29,10 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('name', {
+      columnHelper.accessor('ownerName', {
         header: formatMessage(fm.landRegistryEntry),
       }),
-      columnHelper.accessor('nationalId', {
+      columnHelper.accessor('ownerNationalId', {
         header: formatMessage(m.natreg),
         cell: ({ getValue }) => formatNationalId(getValue() ?? ''),
       }),
