@@ -5,12 +5,12 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Button, Input, Tag, Text } from '@island.is/island-ui/core'
+import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   enumerate,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isIndictmentCase,
@@ -24,8 +24,8 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { strings } from './CaseInfo.strings'
 import Modal from '../Modals/Modal/Modal'
+import { strings } from './CaseInfo.strings'
 
 const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null

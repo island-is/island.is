@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -32,7 +33,6 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Overview.strings'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
 const OverviewBody = ({
