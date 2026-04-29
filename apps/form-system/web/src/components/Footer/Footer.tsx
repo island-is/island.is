@@ -169,7 +169,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                   }
                 }
                 chargeItems.push({
-                  performingOrgID: '6509142520',
+                  performingOrgID: '6509142520', //state.application.organizationNationalId ?? '',
                   chargeType: field.fieldSettings.chargeType || 'default',
                   chargeItemCode: code,
                   chargeItemName:
@@ -186,13 +186,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID: '6509142520',
+              performingOrganizationID: '6509142520', //state.application.organizationNationalId,
               chargeItems,
             },
           },
         },
       })
-      console.log(data)
       if (data?.createFormSystemPayment?.paymentUrl) {
         window.location.href = data.createFormSystemPayment.paymentUrl
       }

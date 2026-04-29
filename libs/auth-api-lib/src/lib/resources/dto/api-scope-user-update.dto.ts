@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 import { ApiScopeUserAccessDTO } from './api-scope-user-access.dto'
 
 export class ApiScopeUserUpdateDTO {
@@ -17,7 +17,7 @@ export class ApiScopeUserUpdateDTO {
   })
   email?: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     example: [{ nationalId: '0123456789', scope: 'scope_name' }],
   })
