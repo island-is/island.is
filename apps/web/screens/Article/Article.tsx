@@ -52,6 +52,7 @@ import type {
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -356,6 +357,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   webChat,
 }) => {
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
   const portalRef = useRef()
   const processEntryRef = useRef(null)
   const [mounted, setMounted] = useState(false)
@@ -562,6 +564,22 @@ const ArticleScreen: Screen<ArticleProps> = ({
             activeLocale,
           )}
           <AppendedArticleComponents article={article} />
+          {article?.showDateOfTheMostRecentReview &&
+            article?.contentLastReviewed && (
+              <Box paddingTop={2}>
+                <Text>
+                  {n(
+                    'contentLastReviewedLabel',
+                    activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
+                  )}
+                  {': '}
+                  {format(
+                    new Date(article.contentLastReviewed),
+                    'do MMMM yyyy',
+                  )}
+                </Text>
+              </Box>
+            )}
         </Box>
       )}
 

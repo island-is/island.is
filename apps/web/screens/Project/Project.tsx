@@ -35,6 +35,7 @@ import {
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -74,6 +75,7 @@ const ProjectPage: Screen<PageProps> = ({
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
 
   const router = useRouter()
 
@@ -192,6 +194,22 @@ const ProjectPage: Screen<PageProps> = ({
               )}
             </Box>
           )}
+          {subpage.showDateOfTheMostRecentReview &&
+            subpage.contentLastReviewed && (
+              <Box paddingTop={2}>
+                <Text>
+                  {n(
+                    'contentLastReviewedLabel',
+                    activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
+                  )}
+                  {': '}
+                  {format(
+                    new Date(subpage.contentLastReviewed),
+                    'do MMMM yyyy',
+                  )}
+                </Text>
+              </Box>
+            )}
         </Box>
       )}
       {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
