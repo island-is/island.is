@@ -27,6 +27,7 @@ import {
   Case,
   CaseFile,
   CaseFileCategory,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
@@ -124,7 +125,7 @@ const AppealCaseFilesOverview = () => {
         workingCase.caseFiles.filter((caseFile) => {
           return (
             caseFile.category &&
-            ((workingCase.prosecutorPostponedAppealDate &&
+            ((workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR &&
               [
                 CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
                 CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
@@ -134,7 +135,7 @@ const AppealCaseFilesOverview = () => {
                   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
                   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
                 ].includes(caseFile.category)) ||
-              (workingCase.accusedPostponedAppealDate &&
+              (workingCase.appealCase?.appealedByRole === UserRole.DEFENDER &&
                 [
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
@@ -162,13 +163,12 @@ const AppealCaseFilesOverview = () => {
       )
     }
   }, [
-    user,
-    workingCase.accusedPostponedAppealDate,
-    workingCase.appealCase?.appealState,
-    workingCase.caseFiles,
     hasAnyDefendantStatement,
-    workingCase.prosecutorPostponedAppealDate,
+    user,
+    workingCase.appealCase?.appealState,
+    workingCase.appealCase?.appealedByRole,
     workingCase.appealCase?.prosecutorStatementDate,
+    workingCase.caseFiles,
   ])
 
   return (

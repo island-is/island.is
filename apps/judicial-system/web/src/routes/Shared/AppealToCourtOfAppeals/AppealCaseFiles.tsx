@@ -148,8 +148,7 @@ const AppealFiles = () => {
             caseFiles={workingCase.caseFiles}
             rulingFileId={rulingFileId}
           />
-          {(workingCase.prosecutorPostponedAppealDate ||
-            workingCase.accusedPostponedAppealDate) && (
+          {workingCase.hasBeenAppealed && (
             <Text variant="h5" as="h5">
               {getCaseAppealActorText(workingCase)}
             </Text>
