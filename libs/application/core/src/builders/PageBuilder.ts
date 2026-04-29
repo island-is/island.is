@@ -10,6 +10,8 @@ import {
   MultiField,
   StaticCheck,
   FormText,
+  StaticText,
+  DataTableRow,
 } from '@island.is/application/types'
 import { BoxProps } from '@island.is/island-ui/core/types'
 
@@ -57,6 +59,16 @@ interface FieldOptions {
   min?: number
   max?: number
   step?: string
+  marginTop?: BoxProps['marginTop']
+  marginBottom?: BoxProps['marginBottom']
+  space?: BoxProps['paddingTop']
+  titleVariant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
+  titleTooltip?: FormText
+  uploadAccept?: string
+  uploadMultiple?: boolean
+  uploadHeader?: FormText
+  uploadDescription?: FormText
+  maxSize?: number
 }
 
 type OptionList = Array<string | { label: string; value: string }>
@@ -69,6 +81,35 @@ interface RadioSelectOptions extends FieldOptions {
 /** Select-only: template API `action` names to run on SDF REFETCH when the value changes. */
 interface SelectFieldOptions extends RadioSelectOptions {
   onSelectRefetch?: string[]
+  refetchTargets?: string[]
+}
+
+interface SearchFieldOptions extends FieldOptions {
+  searchAction: string
+  options: OptionList | DynamicOptions
+  onSelectRefetch?: string[]
+  refetchTargets?: string[]
+  minQueryLength?: number
+}
+
+interface DataTableFieldOptions extends Omit<FieldOptions, 'rows'> {
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: DataTableRow[] | ((application: Application) => DataTableRow[])
+}
+
+interface AlertMessageFieldOptions extends FieldOptions {
+  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+  message: FormText | ((application: Application) => FormText)
+  title?: FormText
+}
+
+interface StaticTableFieldOptions extends Omit<FieldOptions, 'rows'> {
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+}
+
+interface HiddenInputWithWatchedValueFieldOptions extends FieldOptions {
+  watchValue: string
 }
 
 const toStaticCheck = (c: SimpleCondition): StaticCheck => {
@@ -231,6 +272,36 @@ const makeBaseField = (
   if (opts?.step !== undefined) {
     m.step = opts.step
   }
+  if (opts?.marginTop !== undefined) {
+    m.marginTop = opts.marginTop
+  }
+  if (opts?.marginBottom !== undefined) {
+    m.marginBottom = opts.marginBottom
+  }
+  if (opts?.space !== undefined) {
+    m.space = opts.space
+  }
+  if (opts?.titleVariant !== undefined) {
+    m.titleVariant = opts.titleVariant
+  }
+  if (opts?.titleTooltip !== undefined) {
+    m.titleTooltip = opts.titleTooltip
+  }
+  if (opts?.uploadAccept !== undefined) {
+    m.uploadAccept = opts.uploadAccept
+  }
+  if (opts?.uploadMultiple !== undefined) {
+    m.uploadMultiple = opts.uploadMultiple
+  }
+  if (opts?.uploadHeader !== undefined) {
+    m.uploadHeader = opts.uploadHeader
+  }
+  if (opts?.uploadDescription !== undefined) {
+    m.uploadDescription = opts.uploadDescription
+  }
+  if (opts?.maxSize !== undefined) {
+    m.maxSize = opts.maxSize
+  }
 
   return field
 }
@@ -252,6 +323,7 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
+  /** When `opts.width` is `'half'`, SDF renders options side-by-side (e.g. Já/Nei); `'full'` stacks one per row. */
   addRadioField(id: string, title: FormText, opts?: RadioSelectOptions): this {
     const field = makeBaseField(
       id,
@@ -281,6 +353,51 @@ export class PageBuilder<TSchema = unknown> {
     if (opts?.onSelectRefetch?.length) {
       field.inlineRefetchTemplateApis = opts.onSelectRefetch
     }
+    if (opts?.refetchTargets?.length) {
+      field.refetchTargets = opts.refetchTargets
+    }
+    this.fields.push(field)
+    return this
+  }
+
+  addSearchField(id: string, title: FormText, opts: SearchFieldOptions): this {
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.SEARCH,
+      'SearchFormField',
+      opts,
+    )
+    field.searchAction = opts.searchAction
+    field.options = normalizeOptions(opts.options)
+    if (opts.minQueryLength !== undefined) {
+      field.minQueryLength = opts.minQueryLength
+    }
+    if (opts.onSelectRefetch?.length) {
+      field.inlineRefetchTemplateApis = opts.onSelectRefetch
+    }
+    if (opts.refetchTargets?.length) {
+      field.refetchTargets = opts.refetchTargets
+    }
+    this.fields.push(field)
+    return this
+  }
+
+  addDataTableField(
+    id: string,
+    title: FormText,
+    opts: DataTableFieldOptions,
+  ): this {
+    const { header, rows, ...fieldOpts } = opts
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.DATA_TABLE,
+      'DataTableFormField',
+      fieldOpts,
+    )
+    field.header = header
+    field.rows = rows
     this.fields.push(field)
     return this
   }
@@ -341,6 +458,64 @@ export class PageBuilder<TSchema = unknown> {
         opts,
       ),
     )
+    return this
+  }
+
+  addAlertMessageField(
+    id: string,
+    opts: AlertMessageFieldOptions,
+  ): this {
+    const field = makeBaseField(
+      id,
+      opts.title ?? '',
+      FieldTypes.ALERT_MESSAGE,
+      'AlertMessageFormField',
+      {
+        ...opts,
+        doesNotRequireAnswer: true,
+      },
+    )
+    field.alertType = opts.alertType ?? 'info'
+    field.message = opts.message
+    this.fields.push(field)
+    return this
+  }
+
+  addStaticTableField(
+    id: string,
+    title: FormText,
+    opts: StaticTableFieldOptions,
+  ): this {
+    const { header, rows, ...fieldOpts } = opts
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.STATIC_TABLE,
+      'StaticTableFormField',
+      {
+        ...fieldOpts,
+        doesNotRequireAnswer: true,
+      },
+    )
+    field.header = header
+    field.rows = rows
+    this.fields.push(field)
+    return this
+  }
+
+  addHiddenInputWithWatchedValue(
+    id: string,
+    opts: HiddenInputWithWatchedValueFieldOptions,
+  ): this {
+    const field = makeBaseField(
+      id,
+      '',
+      FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE,
+      'HiddenInputWithWatchedValueFormField',
+      opts,
+    )
+    field.watchValue = opts.watchValue
+    this.fields.push(field)
     return this
   }
 

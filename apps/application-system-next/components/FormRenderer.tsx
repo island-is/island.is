@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type {
   SdfComponentData,
+  SdfDataTableEditableRow,
+  SdfDataTableRow,
   SdfValidationError,
   ClientCondition,
 } from '../lib/graphql'
@@ -21,6 +23,7 @@ import {
   AccordionCard,
   Accordion,
   AccordionItem,
+  AsyncSearch,
   Box,
   Text,
   Button,
@@ -36,6 +39,7 @@ import {
   LinkV2,
   GridRow,
   GridColumn,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import type { InputBackgroundColor } from '@island.is/island-ui/core/types'
@@ -61,6 +65,53 @@ const buildSdfTextFieldLabel = (
   return core
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const getObjectAnswer = (value: unknown): Record<string, unknown> =>
+  isRecord(value) ? value : {}
+
+const getStringAnswerValue = (
+  value: Record<string, unknown>,
+  key: string,
+): string => {
+  const result = value[key]
+  return typeof result === 'string' ? result : ''
+}
+
+const getDataTableUnits = (
+  value: Record<string, unknown>,
+): Record<string, unknown>[] =>
+  Array.isArray(value.units)
+    ? value.units.filter((unit): unit is Record<string, unknown> =>
+        isRecord(unit),
+      )
+    : []
+
+const getDataTableUnitKey = (unit: Record<string, unknown>): string => {
+  const propertyCode = unit.propertyCode
+  const unitCode = unit.unitCode
+  if (propertyCode !== undefined && unitCode !== undefined) {
+    return `${propertyCode}_${unitCode}`
+  }
+  const id = unit.id ?? unit.rowId
+  return id !== undefined ? String(id) : ''
+}
+
+const parseDataTableInputValue = (
+  value: string,
+  type: string,
+): string | number => {
+  if (type !== 'number') {
+    return value
+  }
+  if (value.trim() === '') {
+    return 0
+  }
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
 const FULL_ROW_TYPES = new Set([
   'SdfRadioField',
   'SdfCheckboxField',
@@ -69,6 +120,8 @@ const FULL_ROW_TYPES = new Set([
   'SdfExpandableDescriptionField',
   'SdfAccordionField',
   'SdfStaticTableField',
+  'SdfDataTableField',
+  'SdfSearchField',
   'SdfFileUploadField',
   'SdfSliderField',
   'SdfDividerField',
@@ -117,6 +170,7 @@ export type SdfFormDispatch = (
   fieldIds?: string[],
   event?: string,
   refetchTemplateApiActions?: string[],
+  refetchTargets?: string[],
 ) => void | Promise<void>
 
 interface FormRendererProps {
@@ -131,6 +185,7 @@ interface FormRendererProps {
    * overlay is applied without mutating persisted answers.
    */
   displayValues?: Record<string, string>
+  pendingRefetchTargets?: string[]
 }
 
 export const FormRenderer = ({
@@ -140,6 +195,7 @@ export const FormRenderer = ({
   onAnswerChange,
   dispatch,
   displayValues,
+  pendingRefetchTargets = [],
 }: FormRendererProps) => {
   const errorMap = useMemo(() => {
     const map: Record<string, string> = {}
@@ -165,6 +221,7 @@ export const FormRenderer = ({
               onAnswerChange={onAnswerChange}
               dispatch={dispatch}
               displayValues={displayValues}
+              pendingRefetchTargets={pendingRefetchTargets}
             />
           )
         }
@@ -184,6 +241,7 @@ export const FormRenderer = ({
                   onAnswerChange={onAnswerChange}
                   dispatch={dispatch}
                   displayValues={displayValues}
+                  pendingRefetchTargets={pendingRefetchTargets}
                 />
               </GridColumn>
             ))}
@@ -201,6 +259,7 @@ interface ComponentSwitchProps {
   onAnswerChange: (fieldId: string, value: unknown) => void
   dispatch?: SdfFormDispatch
   displayValues?: Record<string, string>
+  pendingRefetchTargets?: string[]
 }
 
 const ComponentSwitch = ({
@@ -210,7 +269,13 @@ const ComponentSwitch = ({
   onAnswerChange,
   dispatch,
   displayValues,
+  pendingRefetchTargets = [],
 }: ComponentSwitchProps) => {
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [expandedDataTableRows, setExpandedDataTableRows] = useState<
+    Record<string, boolean>
+  >({})
+
   const handleChange = useCallback(
     (value: unknown) => {
       if (component.id) {
@@ -228,6 +293,9 @@ const ComponentSwitch = ({
   if (!visible) return null
 
   const currentValue = component.id ? answers[component.id] : undefined
+  const isRefetchPending = component.id
+    ? pendingRefetchTargets.includes(component.id)
+    : false
 
   switch (component.__typename) {
     case 'SdfTextField': {
@@ -375,14 +443,102 @@ const ComponentSwitch = ({
       )
     }
 
+    case 'SdfSearchField': {
+      const searchValue = getObjectAnswer(currentValue)
+      const selectedValue = getStringAnswerValue(searchValue, 'value')
+      const selectedLabel = getStringAnswerValue(searchValue, 'label')
+      const query = getStringAnswerValue(searchValue, 'query') || selectedLabel
+      const minQueryLength = component.minQueryLength ?? 3
+      const searchRefetchPending = (component.refetchTargets ?? []).some((target) =>
+        pendingRefetchTargets.includes(target),
+      )
+
+      return (
+        <Box
+          marginBottom={
+            component.refetchTargets?.length ? 0 : SDF_FIELD_BLOCK_MARGIN_BOTTOM
+          }
+        >
+          <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
+            <AsyncSearch
+              options={component.options ?? []}
+              placeholder={component.placeholder ?? ''}
+              initialInputValue={selectedLabel}
+              inputValue={query}
+              closeMenuOnSubmit
+              openMenuOnFocus
+              size="large"
+              colored
+              loading={searchRefetchPending}
+              onChange={(selection: { value: string; label?: string } | null) => {
+                const selectedOption = component.options?.find(
+                  (option) => option.value === selection?.value,
+                )
+                const nextValue = selection
+                  ? {
+                      ...searchValue,
+                      value: selection.value,
+                      label: selectedOption?.label ?? selection.label ?? '',
+                      query: selectedOption?.label ?? selection.label ?? '',
+                    }
+                  : { query: '' }
+                handleChange(nextValue)
+                if (component.onSelectRefetchTemplateApis?.length && dispatch) {
+                  void dispatch(
+                    'REFETCH',
+                    component.id ? { [component.id]: nextValue } : undefined,
+                    undefined,
+                    undefined,
+                    component.onSelectRefetchTemplateApis,
+                    component.refetchTargets,
+                  )
+                }
+              }}
+              onInputValueChange={(nextQuery: string) => {
+                const nextValue = { ...searchValue, query: nextQuery }
+                handleChange(nextValue)
+                if (searchDebounceRef.current) {
+                  clearTimeout(searchDebounceRef.current)
+                }
+                if (
+                  !dispatch ||
+                  !component.searchAction ||
+                  (nextQuery.length > 0 && nextQuery.length < minQueryLength)
+                ) {
+                  return
+                }
+                searchDebounceRef.current = setTimeout(() => {
+                  void dispatch(
+                    'REFETCH',
+                    component.id ? { [component.id]: nextValue } : undefined,
+                    undefined,
+                    undefined,
+                    [component.searchAction ?? ''],
+                    undefined,
+                  )
+                }, 300)
+              }}
+            />
+            {error && (
+              <Box marginTop={1}>
+                <InputError errorMessage={error} />
+              </Box>
+            )}
+            {selectedValue && <input type="hidden" value={selectedValue} readOnly />}
+          </Box>
+        </Box>
+      )
+    }
+
     case 'SdfSelectField':
       return (
-        <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+        <Box marginBottom={5}>
           <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
             <Select
               name={component.id ?? ''}
               label={component.label ?? ''}
               placeholder={component.placeholder ?? 'Select...'}
+              backgroundColor="blue"
               isDisabled={component.disabled}
               required={component.required}
               hasError={!!error}
@@ -415,6 +571,7 @@ const ComponentSwitch = ({
                     undefined,
                     undefined,
                     component.onSelectRefetchTemplateApis,
+                    component.refetchTargets,
                   )
                 }
               }}
@@ -424,39 +581,87 @@ const ComponentSwitch = ({
       )
 
     case 'SdfRadioField': {
-      const radioSplit = component.width === 'HALF' ? '1/2' : '1/1'
+      /** Same layout as `RadioController` + `RadioFormField` (application-system-form). */
+      const radioLabel = (component.label ?? '').trim()
+      const split: '1/1' | '1/2' =
+        String(component.width ?? '').toUpperCase() === 'HALF'
+          ? '1/2'
+          : '1/1'
+
+      const optionList = component.options ?? []
+
       return (
-        <Box marginBottom={3} paddingTop={0}>
-          <Text variant="h4" as="h4" marginBottom={2}>
-            {component.label}
-          </Text>
-          <GridRow>
-            {component.options?.map((opt) => (
-              <GridColumn
-                key={opt.value}
-                span={['1/1', radioSplit]}
-                paddingBottom={2}
+        <Box marginBottom={1} paddingTop={0} width="full">
+          {radioLabel ? (
+            <Text variant="h4" as="h4" marginBottom={2}>
+              {component.label}
+            </Text>
+          ) : null}
+          {split === '1/2' ? (
+            <>
+              {/** Equal flex slots: large radios otherwise shrink-wrap and cluster left vs full-width Select */}
+              <Box
+                display="flex"
+                flexDirection={['column', 'row']}
+                width="full"
+                columnGap={2}
+                rowGap={2}
                 paddingTop={2}
               >
-                <RadioButton
-                  id={`${component.id}-${opt.value}`}
-                  name={component.id ?? ''}
-                  label={opt.label}
-                  value={opt.value}
-                  checked={currentValue === opt.value}
-                  disabled={component.disabled}
-                  onChange={() => handleChange(opt.value)}
-                  hasError={!!error}
-                  large
-                  backgroundColor="blue"
-                />
-              </GridColumn>
-            ))}
-          </GridRow>
-          {error && (
-            <Text variant="small" color="red600" marginTop={1}>
-              {error}
-            </Text>
+                {optionList.map((opt) => (
+                  <Box key={opt.value} flexGrow={1} minWidth={0}>
+                    <Box width="full">
+                      <RadioButton
+                        id={`${component.id}-${opt.value}`}
+                        name={component.id ?? ''}
+                        label={opt.label}
+                        value={opt.value}
+                        checked={currentValue === opt.value}
+                        disabled={component.disabled}
+                        onChange={() => handleChange(opt.value)}
+                        hasError={!!error}
+                        large
+                        backgroundColor="blue"
+                      />
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+              {error ? (
+                <Box paddingTop={2}>
+                  <InputError errorMessage={error} />
+                </Box>
+              ) : null}
+            </>
+          ) : (
+            <GridRow width="full">
+              {optionList.map((opt) => (
+                <GridColumn
+                  key={opt.value}
+                  span={['1/1', split]}
+                  paddingBottom={0}
+                  paddingTop={2}
+                >
+                  <RadioButton
+                    id={`${component.id}-${opt.value}`}
+                    name={component.id ?? ''}
+                    label={opt.label}
+                    value={opt.value}
+                    checked={currentValue === opt.value}
+                    disabled={component.disabled}
+                    onChange={() => handleChange(opt.value)}
+                    hasError={!!error}
+                    large
+                    backgroundColor="blue"
+                  />
+                </GridColumn>
+              ))}
+              {error ? (
+                <GridColumn span={['1/1', split]} paddingBottom={0} paddingTop={2}>
+                  <InputError errorMessage={error} />
+                </GridColumn>
+              ) : null}
+            </GridRow>
           )}
         </Box>
       )
@@ -630,15 +835,31 @@ const ComponentSwitch = ({
         </Box>
       )
 
-    case 'SdfDescriptionField':
+    case 'SdfDescriptionField': {
+      const primaryLabel = (component.label ?? '').trim()
+      const secondaryText = (component.description ?? '').trim()
+      const hasPrimary = primaryLabel.length > 0
+      const hasSecondary = secondaryText.length > 0
       return (
-        <Box marginBottom={3}>
-          <Text variant="h3" marginBottom={1}>
-            {component.label}
-          </Text>
-          {component.description && <Text>{component.description}</Text>}
+        <Box
+          marginTop={component.marginTop}
+          marginBottom={component.marginBottom ?? 3}
+        >
+          {hasPrimary && hasSecondary ? (
+            <>
+              <Text variant="h3" marginBottom={1}>
+                {component.label}
+              </Text>
+              <Text>{component.description}</Text>
+            </>
+          ) : hasPrimary ? (
+            <Text>{component.label}</Text>
+          ) : hasSecondary ? (
+            <Text>{component.description}</Text>
+          ) : null}
         </Box>
       )
+    }
 
     case 'SdfDividerField':
       return (
@@ -1062,7 +1283,312 @@ const ComponentSwitch = ({
         </Box>
       )
 
-    case 'SdfStaticTableField':
+    case 'SdfDataTableField': {
+      const tableValue = getObjectAnswer(currentValue)
+      const selectedUnits = getDataTableUnits(tableValue)
+      const dataRows = (component.rows ?? []) as SdfDataTableRow[]
+      const tableStyle: React.CSSProperties = {
+        width: '100%',
+        borderCollapse: 'collapse',
+        tableLayout: 'fixed',
+      }
+      const headerCellStyle: React.CSSProperties = {
+        background: '#f2f7ff',
+        padding: '24px 16px',
+        fontSize: 14,
+        fontWeight: 700,
+        textAlign: 'left',
+        lineHeight: 1.25,
+      }
+      const parentCellStyle: React.CSSProperties = {
+        padding: '24px 16px',
+        borderBottom: '1px solid #e6ecf7',
+        textAlign: 'left',
+        verticalAlign: 'middle',
+      }
+      const childCellStyle: React.CSSProperties = {
+        padding: '16px',
+        borderBottom: '1px solid #e6ecf7',
+        background: '#f2f7ff',
+        textAlign: 'left',
+        verticalAlign: 'middle',
+      }
+      const numericCellStyle: React.CSSProperties = {
+        ...childCellStyle,
+        textAlign: 'right',
+        whiteSpace: 'nowrap',
+      }
+      const inputStyle: React.CSSProperties = {
+        width: '100%',
+        minWidth: 0,
+        padding: '10px',
+        fontSize: 14,
+        textAlign: 'right',
+        border: '1px solid #CCDFFF',
+        borderRadius: 8,
+        background: '#fff',
+        boxSizing: 'border-box',
+      }
+      const toggleButtonStyle = (expanded: boolean): React.CSSProperties => ({
+        width: 24,
+        height: 24,
+        borderRadius: '50%',
+        border: 0,
+        background: expanded ? '#00e4ca' : '#fff',
+        color: '#00103f',
+        cursor: 'pointer',
+        lineHeight: '24px',
+        padding: 0,
+        fontWeight: 700,
+      })
+
+      const getSelectedUnit = (rowId: string) =>
+        selectedUnits.find((unit) => getDataTableUnitKey(unit) === rowId)
+
+      const setSelectedUnits = (nextUnits: Record<string, unknown>[]) => {
+        handleChange({
+          ...tableValue,
+          units: nextUnits,
+        })
+      }
+
+      const updateSelectedUnit = (
+        rowId: string,
+        patch: Record<string, unknown>,
+      ) => {
+        setSelectedUnits(
+          selectedUnits.map((unit) =>
+            getDataTableUnitKey(unit) === rowId ? { ...unit, ...patch } : unit,
+          ),
+        )
+      }
+
+      const toggleEditableRow = (
+        editableRow: SdfDataTableEditableRow,
+        checked: boolean,
+      ) => {
+        const rowId = editableRow.id
+        if (!checked) {
+          setSelectedUnits(
+            selectedUnits.filter((unit) => getDataTableUnitKey(unit) !== rowId),
+          )
+          return
+        }
+
+        const defaults = editableRow.defaultValues ?? {}
+        const inputDefaults = Object.fromEntries(
+          editableRow.inputs.map((input) => [
+            input.key,
+            defaults[input.key] ??
+              (input.type === 'number' ? 0 : ''),
+          ]),
+        )
+        const nextUnit = {
+          ...(editableRow.payload ?? { id: rowId }),
+          ...inputDefaults,
+          checked: true,
+        }
+
+        setSelectedUnits([
+          ...selectedUnits.filter((unit) => getDataTableUnitKey(unit) !== rowId),
+          nextUnit,
+        ])
+      }
+
+      return (
+        <Box marginBottom={3}>
+          {component.label && (
+            <Text variant="h3" marginBottom={2}>
+              {component.label}
+            </Text>
+          )}
+          {isRefetchPending ? (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              paddingY={5}
+            >
+              <LoadingDots />
+            </Box>
+          ) : dataRows.length === 0 ? null : (
+            <Box marginTop={6} overflow="auto">
+              <table style={tableStyle}>
+                <colgroup>
+                  <col style={{ width: 56 }} />
+                  <col style={{ width: '50%' }} />
+                  <col style={{ width: '22%' }} />
+                  <col style={{ width: 130 }} />
+                  <col style={{ width: 88 }} />
+                </colgroup>
+                {component.header && component.header.length > 0 ? (
+                  <thead>
+                    <tr>
+                      <th style={{ ...headerCellStyle, width: 56 }} />
+                      {component.header.map((h: string, i: number) => (
+                        <th
+                          key={i}
+                          style={{
+                            ...headerCellStyle,
+                            textAlign: i >= 2 ? 'right' : 'left',
+                          }}
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                ) : null}
+                <tbody>
+                  {dataRows.map((row) => {
+                    const expanded = expandedDataTableRows[row.id] === true
+                    const childRows = row.expandable?.rows ?? []
+
+                    return (
+                      <React.Fragment key={row.id}>
+                        <tr>
+                          <td style={{ ...parentCellStyle, textAlign: 'center' }}>
+                            {childRows.length > 0 && (
+                              <button
+                                type="button"
+                                style={toggleButtonStyle(expanded)}
+                                onClick={() =>
+                                  setExpandedDataTableRows((current) => ({
+                                    ...current,
+                                    [row.id]: !expanded,
+                                  }))
+                                }
+                                aria-label={
+                                  expanded
+                                    ? `Collapse ${row.id}`
+                                    : `Expand ${row.id}`
+                                }
+                              >
+                                {expanded ? '-' : '+'}
+                              </button>
+                            )}
+                          </td>
+                          {row.cells.map((cell, cellIndex) => (
+                            <td
+                              key={cellIndex}
+                              style={
+                                cellIndex >= 2
+                                  ? { ...parentCellStyle, textAlign: 'right' }
+                                  : parentCellStyle
+                              }
+                            >
+                              <Text fontWeight="regular" variant="medium">
+                                {cell}
+                              </Text>
+                            </td>
+                          ))}
+                        </tr>
+                        {expanded &&
+                          childRows.map((editableRow) => {
+                            const selectedUnit = getSelectedUnit(editableRow.id)
+                            const checked = selectedUnit !== undefined
+                            return (
+                              <tr key={editableRow.id}>
+                                <td style={childCellStyle} />
+                                <td style={childCellStyle}>
+                                  {editableRow.hasCheckbox ? (
+                                    <Checkbox
+                                      id={`${component.id}-${editableRow.id}-checked`}
+                                      name={`${component.id}-${editableRow.id}-checked`}
+                                      label={editableRow.label}
+                                      checked={checked}
+                                      onChange={(event) =>
+                                        toggleEditableRow(
+                                          editableRow,
+                                          event.target.checked,
+                                        )
+                                      }
+                                    />
+                                  ) : (
+                                    <Text variant="medium">
+                                      {editableRow.label}
+                                    </Text>
+                                  )}
+                                </td>
+                                <td style={childCellStyle}>
+                                  <Text variant="medium">
+                                    {editableRow.cells[0] ?? ''}
+                                  </Text>
+                                </td>
+                                {editableRow.inputs.map((input) => {
+                                  const value =
+                                    selectedUnit?.[input.key] ??
+                                    editableRow.defaultValues?.[input.key] ??
+                                    ''
+                                  return (
+                                    <td key={input.key} style={numericCellStyle}>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'flex-end',
+                                          gap: 4,
+                                        }}
+                                      >
+                                        <input
+                                          name={`${component.id}-${editableRow.id}-${input.key}`}
+                                          type="text"
+                                          min={input.min}
+                                          max={input.max}
+                                          step={
+                                            input.type === 'number'
+                                              ? 'any'
+                                              : undefined
+                                          }
+                                          disabled={!checked}
+                                          style={{
+                                            ...inputStyle,
+                                            flex: input.suffix ? '1 1 auto' : undefined,
+                                            opacity: checked ? 1 : 0.7,
+                                          }}
+                                          value={String(value)}
+                                          onChange={(event) =>
+                                            updateSelectedUnit(editableRow.id, {
+                                              [input.key]: parseDataTableInputValue(
+                                                event.target.value,
+                                                input.type,
+                                              ),
+                                            })
+                                          }
+                                        />
+                                        {input.suffix ? (
+                                          <span style={{ fontSize: 14, flexShrink: 0 }}>
+                                            {input.suffix}
+                                          </span>
+                                        ) : null}
+                                      </div>
+                                    </td>
+                                  )
+                                })}
+                              </tr>
+                            )
+                          })}
+                      </React.Fragment>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </Box>
+          )}
+          {error && (
+            <Box marginTop={1}>
+              <InputError errorMessage={error} />
+            </Box>
+          )}
+        </Box>
+      )
+    }
+
+    case 'SdfStaticTableField': {
+      const staticRows = (component.rows ?? []) as string[][]
+      if (staticRows.length === 0) {
+        return null
+      }
       return (
         <Box marginBottom={3}>
           {component.label && (
@@ -1072,7 +1598,7 @@ const ComponentSwitch = ({
           )}
           <Box overflow="auto">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              {component.header && (
+              {component.header && component.header.length > 0 ? (
                 <thead>
                   <tr>
                     {component.header.map((h: string, i: number) => (
@@ -1091,9 +1617,9 @@ const ComponentSwitch = ({
                     ))}
                   </tr>
                 </thead>
-              )}
+              ) : null}
               <tbody>
-                {component.rows?.map((row: string[], ri: number) => (
+                {staticRows.map((row: string[], ri: number) => (
                   <tr key={ri}>
                     {row.map((cell: string, ci: number) => (
                       <td key={ci}>
@@ -1114,6 +1640,7 @@ const ComponentSwitch = ({
           </Box>
         </Box>
       )
+    }
 
     case 'SdfHiddenInputField':
     case 'SdfHiddenInputWithWatchedValueField':

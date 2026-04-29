@@ -22,7 +22,9 @@ export const FIELD_TYPE_TO_GRAPHQL_TYPENAME: Record<
 > = {
   [FieldTypes.TEXT]: 'SdfTextField',
   [FieldTypes.EMAIL]: 'SdfTextField',
+  [FieldTypes.SEARCH]: 'SdfSearchField',
   [FieldTypes.SELECT]: 'SdfSelectField',
+  [FieldTypes.DATA_TABLE]: 'SdfDataTableField',
   [FieldTypes.RADIO]: 'SdfRadioField',
   [FieldTypes.CHECKBOX]: 'SdfCheckboxField',
   [FieldTypes.DATE]: 'SdfDateField',

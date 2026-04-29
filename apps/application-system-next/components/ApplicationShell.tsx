@@ -33,6 +33,7 @@ export const ApplicationShell = ({
     screen,
     isPending,
     error,
+    pendingRefetchTargets,
     answers,
     onAnswerChange,
     nextPage,
@@ -105,6 +106,7 @@ export const ApplicationShell = ({
                         onAnswerChange={onAnswerChange}
                         dispatch={dispatch}
                         displayValues={displayValues}
+                        pendingRefetchTargets={pendingRefetchTargets}
                       />
                     </Box>
                   </GridColumn>

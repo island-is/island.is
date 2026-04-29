@@ -15,6 +15,8 @@ export const useFormActions = (
     initialScreen.answers ?? {},
   )
   const pageIndexRef = useRef(initialScreen.page.index)
+  const pendingTargetCountsRef = useRef<Record<string, number>>({})
+  const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>([])
   const [, forceRender] = useState(0)
 
   // When the page index changes, merge the server snapshot for that screen.
@@ -39,6 +41,28 @@ export const useFormActions = (
     [setAnswer],
   )
 
+  const updatePendingRefetchTargets = useCallback(
+    (targets: string[] | undefined, delta: 1 | -1) => {
+      if (!targets?.length) {
+        return
+      }
+
+      const nextCounts = { ...pendingTargetCountsRef.current }
+      for (const target of targets) {
+        const current = nextCounts[target] ?? 0
+        const next = current + delta
+        if (next > 0) {
+          nextCounts[target] = next
+        } else {
+          delete nextCounts[target]
+        }
+      }
+      pendingTargetCountsRef.current = nextCounts
+      setPendingRefetchTargets(Object.keys(nextCounts))
+    },
+    [],
+  )
+
   const dispatch = useCallback(
     async (
       actionType: string,
@@ -46,10 +70,17 @@ export const useFormActions = (
       fieldIds?: string[],
       event?: string,
       refetchTemplateApiActions?: string[],
+      refetchTargets?: string[],
       lastKnownPageIndex?: number,
     ) => {
       setError(null)
       const mergedAnswers = { ...answersRef.current, ...extraAnswers }
+      const targets =
+        actionType === 'REFETCH' && refetchTargets?.length
+          ? refetchTargets
+          : undefined
+
+      updatePendingRefetchTargets(targets, 1)
 
       startTransition(async () => {
         try {
@@ -76,16 +107,19 @@ export const useFormActions = (
           forceRender((n) => n + 1)
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Action failed')
+        } finally {
+          updatePendingRefetchTargets(targets, -1)
         }
       })
     },
-    [applicationId],
+    [applicationId, updatePendingRefetchTargets],
   )
 
   const nextPage = useCallback(
     () =>
       dispatch(
         'NEXT_PAGE',
+        undefined,
         undefined,
         undefined,
         undefined,
@@ -119,6 +153,7 @@ export const useFormActions = (
     screen,
     isPending,
     error,
+    pendingRefetchTargets,
     answers: answersRef,
     setAnswer,
     onAnswerChange,

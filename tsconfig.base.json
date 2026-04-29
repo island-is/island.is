@@ -483,6 +483,9 @@
       "@island.is/application/templates/hms/rental-agreement": [
         "libs/application/templates/hms/rental-agreement/src/index.ts"
       ],
+      "@island.is/application/templates/hms/rental-agreement-sdf": [
+        "libs/application/templates/hms/rental-agreement-sdf/src/index.ts"
+      ],
       "@island.is/application/templates/hms/terminate-rental-agreement": [
         "libs/application/templates/hms/terminate-rental-agreement/src/index.ts"
       ],

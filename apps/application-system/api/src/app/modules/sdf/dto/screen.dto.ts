@@ -22,6 +22,35 @@ export class MultiClientConditionDto {
   checks!: SingleClientConditionDto[]
 }
 
+export type DataTableInputDto = {
+  key: string
+  label?: string
+  type: 'text' | 'number'
+  min?: number
+  max?: number
+  format?: string
+  suffix?: string
+}
+
+export type DataTableEditableRowDto = {
+  id: string
+  label: string
+  cells: string[]
+  hasCheckbox: boolean
+  checkboxKey?: string
+  inputs: DataTableInputDto[]
+  payload?: Record<string, unknown>
+  defaultValues?: Record<string, unknown>
+}
+
+export type DataTableRowDto = {
+  id: string
+  cells: string[]
+  expandable?: {
+    rows: DataTableEditableRowDto[]
+  }
+}
+
 export class ValidationErrorDto {
   @ApiProperty()
   componentId!: string
@@ -69,6 +98,22 @@ export class ComponentDto {
     type: [String],
   })
   onSelectRefetchTemplateApis?: string[]
+
+  @ApiPropertyOptional({
+    description:
+      'Component ids that should show loading UI while this inline REFETCH is pending.',
+    type: [String],
+  })
+  refetchTargets?: string[]
+
+  @ApiPropertyOptional({
+    description:
+      'Template API action to run while searching generic SDF search fields.',
+  })
+  searchAction?: string
+
+  @ApiPropertyOptional()
+  minQueryLength?: number
 
   @ApiPropertyOptional()
   title?: string
@@ -212,7 +257,7 @@ export class ComponentDto {
   header?: string[]
 
   @ApiPropertyOptional()
-  rows?: string[][]
+  rows?: string[][] | DataTableRowDto[]
 
   @ApiPropertyOptional({ type: [Object] })
   items?: Array<{ label: string; content: string }>
@@ -291,6 +336,13 @@ export class ComponentDto {
   /** Display field: inline label rendered inside the read-only Input (distinct from the h4 title which uses `label`). */
   @ApiPropertyOptional()
   displayInputLabel?: string
+
+  /** Optional vertical spacing (design system spacing units), e.g. description fields. */
+  @ApiPropertyOptional()
+  marginTop?: number
+
+  @ApiPropertyOptional()
+  marginBottom?: number
 }
 
 export class PageDto {

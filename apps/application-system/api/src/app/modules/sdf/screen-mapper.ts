@@ -45,8 +45,40 @@ type SelectedChargeListItem = {
   extraLabel?: unknown
 }
 
+type RawDataTableInput = {
+  key: string
+  label?: unknown
+  type: 'text' | 'number'
+  min?: number
+  max?: number
+  format?: string
+  suffix?: unknown
+}
+
+type RawDataTableEditableRow = {
+  id: string
+  label: unknown
+  cells?: unknown[]
+  hasCheckbox?: boolean
+  checkboxKey?: string
+  inputs?: RawDataTableInput[]
+  payload?: unknown
+  defaultValues?: unknown
+}
+
+type RawDataTableRow = {
+  id: string
+  cells: unknown[]
+  expandable?: {
+    rows: RawDataTableEditableRow[]
+  }
+}
+
 const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
 
 const buildPaymentChargeOverviewFields = (
   raw: PaymentChargeOverviewRaw,
@@ -114,6 +146,56 @@ const buildPaymentChargeOverviewFields = (
   }
 }
 
+const mapDataTableRows = (
+  rows: unknown,
+  resolver: FormTextResolver,
+): ComponentDto['rows'] => {
+  if (!Array.isArray(rows)) {
+    return []
+  }
+
+  return rows.map((row) => {
+    const dataRow = row as Partial<RawDataTableRow>
+    return {
+      id: String(dataRow.id ?? ''),
+      cells: Array.isArray(dataRow.cells)
+        ? dataRow.cells.map((cell) =>
+            resolver.resolve(asResolvableFormText(cell)),
+          )
+        : [],
+      expandable: dataRow.expandable
+        ? {
+            rows: (dataRow.expandable.rows ?? []).map((editableRow) => ({
+              id: String(editableRow.id ?? ''),
+              label:
+                resolver.resolve(asResolvableFormText(editableRow.label)) || '',
+              cells: (editableRow.cells ?? []).map((cell) =>
+                resolver.resolve(asResolvableFormText(cell)),
+              ),
+              hasCheckbox: editableRow.hasCheckbox === true,
+              checkboxKey: editableRow.checkboxKey,
+              inputs: (editableRow.inputs ?? []).map((input) => ({
+                key: input.key,
+                label: resolver.resolve(asResolvableFormText(input.label)),
+                type: input.type,
+                min: input.min,
+                max: input.max,
+                format: input.format,
+                suffix: resolver.resolve(asResolvableFormText(input.suffix)),
+              })),
+              payload: isRecord(editableRow.payload)
+                ? editableRow.payload
+                : undefined,
+              defaultValues: isRecord(editableRow.defaultValues)
+                ? editableRow.defaultValues
+                : undefined,
+            })),
+          }
+        : undefined,
+    }
+  })
+}
+
 /**
  * Field props may be values or template callbacks with application-specific
  * signatures; `unknown[]` is too narrow for those callbacks.
@@ -161,9 +243,14 @@ const mapFieldToComponent = (
 
   if (raw.placeholder) {
     component.placeholder = resolver.resolve(raw.placeholder)
-  } else if (raw.description && raw.type !== FieldTypes.CHECKBOX) {
+  } else if (
+    raw.description &&
+    raw.type !== FieldTypes.CHECKBOX &&
+    raw.type !== FieldTypes.DESCRIPTION
+  ) {
     // CHECKBOX uses `description` as a FieldDescription below the title, not as
-    // a placeholder. All other fields keep the legacy placeholder fallback.
+    // a placeholder. DESCRIPTION uses `description` as body copy (see switch).
+    // All other fields keep the legacy placeholder fallback.
     component.placeholder = resolver.resolve(raw.description)
   }
 
@@ -176,6 +263,21 @@ const mapFieldToComponent = (
     const apis = raw.inlineRefetchTemplateApis as string[] | undefined
     if (Array.isArray(apis) && apis.length > 0) {
       component.onSelectRefetchTemplateApis = apis
+    }
+    const refetchTargets = raw.refetchTargets as string[] | undefined
+    if (Array.isArray(refetchTargets) && refetchTargets.length > 0) {
+      component.refetchTargets = refetchTargets
+    }
+  }
+
+  if (raw.type === FieldTypes.SEARCH) {
+    const apis = raw.inlineRefetchTemplateApis as string[] | undefined
+    if (Array.isArray(apis) && apis.length > 0) {
+      component.onSelectRefetchTemplateApis = apis
+    }
+    const refetchTargets = raw.refetchTargets as string[] | undefined
+    if (Array.isArray(refetchTargets) && refetchTargets.length > 0) {
+      component.refetchTargets = refetchTargets
     }
   }
 
@@ -249,6 +351,14 @@ const mapFieldToComponent = (
       component.introText = resolver.resolve(raw.introText)
       break
 
+    case FieldTypes.DESCRIPTION:
+      if (raw.description) {
+        component.description = resolver.resolve(
+          asResolvableFormText(raw.description),
+        )
+      }
+      break
+
     case FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE:
       component.watchValue = raw.watchValue ?? ''
       break
@@ -275,6 +385,22 @@ const mapFieldToComponent = (
               : [],
           )
         : []
+      break
+    }
+
+    case FieldTypes.SEARCH:
+      component.searchAction = String(raw.searchAction ?? '')
+      component.minQueryLength =
+        typeof raw.minQueryLength === 'number' ? raw.minQueryLength : undefined
+      break
+
+    case FieldTypes.DATA_TABLE: {
+      const header = resolveFieldProp(raw.header, application)
+      const rows = resolveFieldProp(raw.rows, application)
+      component.header = Array.isArray(header)
+        ? header.map((h: unknown) => resolver.resolve(asResolvableFormText(h)))
+        : []
+      component.rows = mapDataTableRows(rows, resolver)
       break
     }
 
@@ -450,6 +576,13 @@ const mapFieldToComponent = (
         )
       }
       break
+  }
+
+  if (typeof raw.marginTop === 'number') {
+    component.marginTop = raw.marginTop
+  }
+  if (typeof raw.marginBottom === 'number') {
+    component.marginBottom = raw.marginBottom
   }
 
   return component

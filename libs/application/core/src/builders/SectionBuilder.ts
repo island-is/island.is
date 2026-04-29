@@ -1,21 +1,78 @@
 import {
+  DataProviderBuilderItem,
+  DataProviderItem,
+  DataProviderPermissionItem,
+  ExternalDataProvider,
+  FieldComponents,
+  FieldTypes,
   FormItemTypes,
   FormLeaf,
   Section,
   SectionChildren,
   SubSection,
   FormText,
+  StaticText,
+  SubmitField,
 } from '@island.is/application/types'
 import { PageBuilder } from './PageBuilder'
+
+type SectionBuilderOptions = Omit<Section, 'children' | 'id' | 'title' | 'type'>
+type SubSectionBuilderOptions = Omit<
+  SubSection,
+  'children' | 'id' | 'title' | 'type'
+>
+
+type ExternalDataProviderOptions = {
+  checkboxLabel?: StaticText
+  dataProviders: DataProviderBuilderItem[]
+  description?: StaticText
+  enableMockPayment?: boolean
+  otherPermissions?: DataProviderPermissionItem[]
+  subDescription?: StaticText
+  subTitle?: StaticText
+  submitField?: SubmitFieldOptions
+}
+
+type SubmitFieldOptions = {
+  actions: SubmitField['actions']
+  id: string
+  placement?: SubmitField['placement']
+  refetchApplicationAfterSubmit?: SubmitField['refetchApplicationAfterSubmit']
+  title?: FormText
+}
+
+const toDataProviderItem = (data: DataProviderBuilderItem): DataProviderItem => ({
+  id: data.provider?.externalDataId ?? data.provider?.action ?? '',
+  action: data.provider?.actionId,
+  order: data.provider?.order,
+  title: data.title ?? '',
+  subTitle: data.subTitle,
+  pageTitle: data.pageTitle,
+  source: data.source,
+})
+
+const toSubmitField = (data: SubmitFieldOptions): SubmitField => ({
+  id: data.id,
+  title: data.title ?? '',
+  actions: data.actions,
+  placement: data.placement ?? 'footer',
+  refetchApplicationAfterSubmit: data.refetchApplicationAfterSubmit ?? false,
+  doesNotRequireAnswer: true,
+  children: undefined,
+  type: FieldTypes.SUBMIT,
+  component: FieldComponents.SUBMIT,
+})
 
 export class SubSectionBuilder<TSchema = unknown> {
   private children: FormLeaf[] = []
   private _id: string
   private _title: FormText
+  private opts?: SubSectionBuilderOptions
 
-  constructor(id: string, title: FormText) {
+  constructor(id: string, title: FormText, opts?: SubSectionBuilderOptions) {
     this._id = id
     this._title = title
+    this.opts = opts
   }
 
   addPage(
@@ -35,6 +92,7 @@ export class SubSectionBuilder<TSchema = unknown> {
       title: this._title,
       type: FormItemTypes.SUB_SECTION,
       children: this.children,
+      ...this.opts,
     }
   }
 }
@@ -43,10 +101,12 @@ export class SectionBuilder<TSchema = unknown> {
   private children: SectionChildren[] = []
   private _id: string
   private _title: FormText
+  private opts?: SectionBuilderOptions
 
-  constructor(id: string, title: FormText) {
+  constructor(id: string, title: FormText, opts?: SectionBuilderOptions) {
     this._id = id
     this._title = title
+    this.opts = opts
   }
 
   addPage(
@@ -64,10 +124,46 @@ export class SectionBuilder<TSchema = unknown> {
     id: string,
     title: FormText,
     builderFn: (s: SubSectionBuilder<TSchema>) => void,
+    opts?: SubSectionBuilderOptions,
   ): this {
-    const subSectionBuilder = new SubSectionBuilder<TSchema>(id, title)
+    const subSectionBuilder = new SubSectionBuilder<TSchema>(id, title, opts)
     builderFn(subSectionBuilder)
     this.children.push(subSectionBuilder.build())
+    return this
+  }
+
+  addExternalDataProvider(
+    id: string,
+    title: StaticText,
+    opts: ExternalDataProviderOptions,
+  ): this {
+    const externalDataProvider: ExternalDataProvider = {
+      id,
+      title,
+      type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
+      children: undefined,
+      isPartOfRepeater: false,
+      dataProviders: opts.dataProviders.map(toDataProviderItem),
+      ...(opts.checkboxLabel !== undefined && {
+        checkboxLabel: opts.checkboxLabel,
+      }),
+      ...(opts.description !== undefined && { description: opts.description }),
+      ...(opts.enableMockPayment !== undefined && {
+        enableMockPayment: opts.enableMockPayment,
+      }),
+      ...(opts.otherPermissions !== undefined && {
+        otherPermissions: opts.otherPermissions,
+      }),
+      ...(opts.subDescription !== undefined && {
+        subDescription: opts.subDescription,
+      }),
+      ...(opts.subTitle !== undefined && { subTitle: opts.subTitle }),
+      ...(opts.submitField !== undefined && {
+        submitField: toSubmitField(opts.submitField),
+      }),
+    }
+
+    this.children.push(externalDataProvider)
     return this
   }
 
@@ -77,6 +173,7 @@ export class SectionBuilder<TSchema = unknown> {
       title: this._title,
       type: FormItemTypes.SECTION,
       children: this.children,
+      ...this.opts,
     }
   }
 }

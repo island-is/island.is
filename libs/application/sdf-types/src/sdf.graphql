@@ -74,7 +74,9 @@ type ValidationError {
 
 union Component =
     TextField
+  | SearchField
   | SelectField
+  | DataTableField
   | RadioField
   | CheckboxField
   | DateField
@@ -165,6 +167,8 @@ type SelectField {
   required: Boolean!
   disabled: Boolean!
   options: [SelectOption!]!
+  onSelectRefetchTemplateApis: [String!]
+  refetchTargets: [String!]
   width: ComponentWidth
   clientCondition: ClientCondition
 }
@@ -172,6 +176,60 @@ type SelectField {
 type SelectOption {
   label: String!
   value: String!
+}
+
+type SearchField {
+  id: String!
+  label: String!
+  placeholder: String
+  required: Boolean!
+  disabled: Boolean!
+  options: [SelectOption!]!
+  searchAction: String!
+  minQueryLength: Int
+  onSelectRefetchTemplateApis: [String!]
+  refetchTargets: [String!]
+  width: ComponentWidth
+  clientCondition: ClientCondition
+}
+
+type DataTableInput {
+  key: String!
+  label: String
+  type: String!
+  min: Int
+  max: Int
+  format: String
+  suffix: String
+}
+
+type DataTableEditableRow {
+  id: String!
+  label: String!
+  cells: [String!]!
+  hasCheckbox: Boolean!
+  checkboxKey: String
+  inputs: [DataTableInput!]!
+  payload: JSON
+  defaultValues: JSON
+}
+
+type DataTableExpandable {
+  rows: [DataTableEditableRow!]!
+}
+
+type DataTableRow {
+  id: String!
+  cells: [String!]!
+  expandable: DataTableExpandable
+}
+
+type DataTableField {
+  id: String!
+  label: String!
+  header: [String!]!
+  rows: [DataTableRow!]!
+  clientCondition: ClientCondition
 }
 
 type RadioField {
@@ -275,6 +333,8 @@ type DescriptionField {
   id: String!
   label: String!
   description: String
+  marginTop: Int
+  marginBottom: Int
   clientCondition: ClientCondition
 }
 

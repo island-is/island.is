@@ -191,6 +191,135 @@ export class SdfSelectField {
 
   @Field(() => [String], { nullable: true })
   onSelectRefetchTemplateApis?: string[]
+
+  @Field(() => [String], { nullable: true })
+  refetchTargets?: string[]
+}
+
+@ObjectType('SdfSearchField')
+export class SdfSearchField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field({ nullable: true })
+  placeholder?: string
+
+  @Field()
+  required!: boolean
+
+  @Field()
+  disabled!: boolean
+
+  @Field(() => [SdfSelectOption])
+  options!: SdfSelectOption[]
+
+  @Field()
+  searchAction!: string
+
+  @Field(() => Int, { nullable: true })
+  minQueryLength?: number
+
+  @Field(() => SdfComponentWidth, { nullable: true })
+  width?: SdfComponentWidth
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
+
+  @Field(() => [String], { nullable: true })
+  onSelectRefetchTemplateApis?: string[]
+
+  @Field(() => [String], { nullable: true })
+  refetchTargets?: string[]
+}
+
+@ObjectType('SdfDataTableInput')
+export class SdfDataTableInput {
+  @Field()
+  key!: string
+
+  @Field({ nullable: true })
+  label?: string
+
+  @Field()
+  type!: string
+
+  @Field(() => Int, { nullable: true })
+  min?: number
+
+  @Field(() => Int, { nullable: true })
+  max?: number
+
+  @Field({ nullable: true })
+  format?: string
+
+  @Field({ nullable: true })
+  suffix?: string
+}
+
+@ObjectType('SdfDataTableEditableRow')
+export class SdfDataTableEditableRow {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => [String])
+  cells!: string[]
+
+  @Field()
+  hasCheckbox!: boolean
+
+  @Field({ nullable: true })
+  checkboxKey?: string
+
+  @Field(() => [SdfDataTableInput])
+  inputs!: SdfDataTableInput[]
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  payload?: Record<string, unknown>
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  defaultValues?: Record<string, unknown>
+}
+
+@ObjectType('SdfDataTableExpandable')
+export class SdfDataTableExpandable {
+  @Field(() => [SdfDataTableEditableRow])
+  rows!: SdfDataTableEditableRow[]
+}
+
+@ObjectType('SdfDataTableRow')
+export class SdfDataTableRow {
+  @Field()
+  id!: string
+
+  @Field(() => [String])
+  cells!: string[]
+
+  @Field(() => SdfDataTableExpandable, { nullable: true })
+  expandable?: SdfDataTableExpandable
+}
+
+@ObjectType('SdfDataTableField')
+export class SdfDataTableField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => [String])
+  header!: string[]
+
+  @Field(() => [SdfDataTableRow])
+  rows!: SdfDataTableRow[]
+
+  @Field(() => SdfClientCondition, { nullable: true })
+  clientCondition?: typeof SdfClientCondition
 }
 
 @ObjectType('SdfRadioField')
@@ -447,6 +576,12 @@ export class SdfDescriptionField {
 
   @Field({ nullable: true })
   description?: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => SdfClientCondition, { nullable: true })
   clientCondition?: typeof SdfClientCondition
@@ -987,7 +1122,9 @@ export class SdfRepeaterComponent {
 const allComponentTypes = () =>
   [
     SdfTextField,
+    SdfSearchField,
     SdfSelectField,
+    SdfDataTableField,
     SdfRadioField,
     SdfCheckboxField,
     SdfDateField,
@@ -1038,7 +1175,9 @@ const resolveComponentTypeByName = (
   const typeMap: Record<string, new () => unknown> = {
     TEXT: SdfTextField,
     EMAIL: SdfTextField,
+    SEARCH: SdfSearchField,
     SELECT: SdfSelectField,
+    DATA_TABLE: SdfDataTableField,
     RADIO: SdfRadioField,
     CHECKBOX: SdfCheckboxField,
     DATE: SdfDateField,

@@ -76,6 +76,7 @@ import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
+import { HmsConfig } from '@island.is/clients/hms'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
@@ -152,6 +153,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         BankInfoClientConfig,
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,
+        HmsConfig,
         HmsRentalAgreementClientConfig,
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,

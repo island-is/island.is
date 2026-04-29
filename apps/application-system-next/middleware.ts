@@ -1,25 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ApplicationConfigurations } from '@island.is/application/types'
+import { SDF_ENABLED_APPLICATION_SLUGS } from '@island.is/application/types'
 
 /**
- * Middleware that validates the incoming slug against ApplicationConfigurations.
+ * Middleware that validates the incoming slug against the SDF allowlist.
  *
  * In production, the ingress layer routes traffic based on the useSdf flag
  * in ApplicationConfigurations. This middleware acts as the BFF-level check:
  *
- * - If useSdf is true for the slug, the request proceeds to Next.js.
- * - If useSdf is false or absent, the request is redirected to the legacy SPA.
+ * - If the slug is in `SDF_ENABLED_APPLICATION_SLUGS`, the request proceeds to Next.js.
+ * - Otherwise, the request is redirected to the legacy SPA.
  *
- * Slugs are derived from ApplicationConfigurations (single source of truth).
- * In Phase 5+, this could be replaced with a runtime ConfigCat lookup for
- * instant rollback (§8, Constraint 10).
+ * Slugs are listed explicitly in `SDF_ENABLED_APPLICATION_SLUGS` (see that module)
+ * so the Edge bundle stays reliable; `sdfEnabledApplicationSlugs.spec.ts` keeps the
+ * list in sync with `ApplicationConfigurations`.
  */
 
-const SDF_ENABLED_SLUGS = new Set(
-  Object.values(ApplicationConfigurations)
-    .filter((c) => c.useSdf)
-    .map((c) => c.slug),
-)
+const SDF_ENABLED_SLUGS = new Set(SDF_ENABLED_APPLICATION_SLUGS)
 
 const LEGACY_SPA_BASE =
   process.env.LEGACY_SPA_URL ?? 'http://localhost:4242'

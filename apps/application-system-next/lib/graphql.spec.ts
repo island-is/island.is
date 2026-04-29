@@ -24,6 +24,20 @@ describe('graphql SDF queries', () => {
     expect(EXECUTE_ACTION_MUTATION).toContain('displayValue: value')
   })
 
+  it('requests inline refetch targets for select and search fields', () => {
+    expect(GET_SCREEN_QUERY).toContain('onSelectRefetchTemplateApis')
+    expect(GET_SCREEN_QUERY).toContain('refetchTargets')
+    expect(EXECUTE_ACTION_MUTATION).toContain('onSelectRefetchTemplateApis')
+    expect(EXECUTE_ACTION_MUTATION).toContain('refetchTargets')
+  })
+
+  it('requests data table row payload and default metadata', () => {
+    expect(GET_SCREEN_QUERY).toContain('payload')
+    expect(GET_SCREEN_QUERY).toContain('defaultValues')
+    expect(EXECUTE_ACTION_MUTATION).toContain('payload')
+    expect(EXECUTE_ACTION_MUTATION).toContain('defaultValues')
+  })
+
   it('validates the screen query against the api schema', () => {
     expect(validate(schema, parse(GET_SCREEN_QUERY))).toEqual([])
   })

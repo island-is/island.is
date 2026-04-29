@@ -243,6 +243,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/practical-exam'),
   [ApplicationTypes.RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/hms/rental-agreement'),
+  [ApplicationTypes.RENTAL_AGREEMENT_SDF]: () =>
+    import('@island.is/application/templates/hms/rental-agreement-sdf'),
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/hms/terminate-rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>

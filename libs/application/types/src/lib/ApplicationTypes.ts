@@ -85,6 +85,7 @@ export enum ApplicationTypes {
   MACHINE_REGISTRATION = 'MachineRegistration',
   PRACTICAL_EXAM = 'PracticalExam',
   RENTAL_AGREEMENT = 'RentalAgreement',
+  RENTAL_AGREEMENT_SDF = 'RentalAgreementSdf',
   TERMINATE_RENTAL_AGREEMENT = 'TerminateRentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
@@ -459,6 +460,11 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
     translation: ['ra.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.RENTAL_AGREEMENT_SDF]: {
+    slug: 'leigusamningur2',
+    translation: 'application.system',
+    useSdf: true,
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
     slug: 'uppsogn-eda-riftun-leigusamnings',

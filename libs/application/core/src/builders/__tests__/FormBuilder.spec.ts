@@ -1,8 +1,11 @@
 import { FormBuilder } from '../FormBuilder'
 import {
   Comparators,
+  DefaultEvents,
+  ExternalDataProvider,
+  FieldComponents,
   FieldTypes,
-  Form,
+  FormModes,
   FormItemTypes,
   MultiField,
   Section,
@@ -163,5 +166,73 @@ describe('FormBuilder', () => {
     expect(form.children).toHaveLength(2)
     expect((form.children[0] as Section).id).toBe('s1')
     expect((form.children[1] as Section).id).toBe('s2')
+  })
+
+  it('supports form and section options', () => {
+    const form = new FormBuilder('f', 'F', {
+      mode: FormModes.NOT_STARTED,
+      renderLastScreenButton: true,
+    })
+      .addSection('s', 'S', () => undefined, { tabTitle: 'Tab' })
+      .build()
+
+    expect(form.mode).toBe(FormModes.NOT_STARTED)
+    expect(form.renderLastScreenButton).toBe(true)
+    expect((form.children[0] as Section).tabTitle).toBe('Tab')
+  })
+
+  it('supports external data providers', () => {
+    const form = new FormBuilder('f', 'F')
+      .addSection('s', 'S', (section) => {
+        section.addExternalDataProvider('approveExternalData', 'Data collection', {
+          checkboxLabel: 'I approve',
+          dataProviders: [
+            {
+              provider: {
+                action: 'searchAddresses',
+                actionId: 'searchAddresses',
+                externalDataId: 'searchAddresses',
+                order: 1,
+              },
+              title: 'Property information',
+              subTitle: 'Information from HMS.',
+            },
+          ],
+          submitField: {
+            id: 'submit',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: 'Next',
+                type: 'primary',
+              },
+            ],
+          },
+        })
+      })
+      .build()
+
+    const section = form.children[0] as Section
+    const externalDataProvider = section.children[0] as ExternalDataProvider
+
+    expect(externalDataProvider.type).toBe(FormItemTypes.EXTERNAL_DATA_PROVIDER)
+    expect(externalDataProvider.checkboxLabel).toBe('I approve')
+    expect(externalDataProvider.dataProviders).toEqual([
+      {
+        id: 'searchAddresses',
+        action: 'searchAddresses',
+        order: 1,
+        title: 'Property information',
+        subTitle: 'Information from HMS.',
+      },
+    ])
+    expect(externalDataProvider.submitField).toMatchObject({
+      id: 'submit',
+      placement: 'footer',
+      refetchApplicationAfterSubmit: true,
+      type: FieldTypes.SUBMIT,
+      component: FieldComponents.SUBMIT,
+    })
   })
 })
