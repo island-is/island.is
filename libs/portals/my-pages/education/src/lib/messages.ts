@@ -160,7 +160,7 @@ export const uniMessages = defineMessages({
   graduationIntro: {
     id: 'sp.education-graduation:education-graduation-intro',
     defaultMessage:
-      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
+      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi',
     description: 'education graduation intro',
   },
   seeDetails: {
@@ -186,5 +186,16 @@ export const uniMessages = defineMessages({
   graduationFiles: {
     id: 'sp.education-graduation:graduation-files',
     defaultMessage: 'Brautskráningargögn',
+  },
+  microCredentialsIntro: {
+    id: 'sp.education-graduation:micro-credentials-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir örnám frá háskólanámi',
+    description: 'Micro-credentials list intro',
+  },
+  studyLevel: {
+    id: 'sp.education-graduation:study-level',
+    defaultMessage: 'Námsstig',
+    description:
+      'Level of study label (used instead of degree for micro-credentials)',
   },
 })
