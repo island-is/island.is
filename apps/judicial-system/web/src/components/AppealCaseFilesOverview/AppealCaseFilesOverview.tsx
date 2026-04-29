@@ -8,7 +8,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
-  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -27,14 +26,16 @@ import {
   Case,
   CaseFile,
   CaseFileCategory,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isAppealFileCategoryVisible,
+  isMatchingAppealCaseFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'
@@ -113,63 +114,20 @@ const AppealCaseFilesOverview = () => {
   const canDeleteFile = (file: CaseFile) =>
     isMatchingAppealCaseFile(workingCase, deleteCategories, file, user)
 
-  const hasAnyDefendantStatement = Boolean(
-    workingCase.appealCase?.defendantStatementDate ||
-      workingCase.appealCase?.defendantStatementDates?.length ||
-      workingCase.appealCase?.civilClaimantStatementDates?.length,
-  )
-
   useEffect(() => {
     if (workingCase.caseFiles) {
       setAllFiles(
-        workingCase.caseFiles.filter((caseFile) => {
-          return (
-            caseFile.category &&
-            ((workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR &&
-              [
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-              ].includes(caseFile.category)) ||
-              (workingCase.appealCase?.prosecutorStatementDate &&
-                [
-                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              (workingCase.appealCase?.appealedByRole === UserRole.DEFENDER &&
-                [
-                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              (hasAnyDefendantStatement &&
-                [
-                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              [
-                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-              ].includes(caseFile.category) ||
-              ((workingCase.appealCase?.appealState ===
-                AppealCaseState.COMPLETED ||
-                isCourtOfAppealsUser(user)) &&
-                caseFile.category === CaseFileCategory.APPEAL_RULING) ||
-              (((workingCase.appealCase?.appealState ===
-                AppealCaseState.COMPLETED &&
-                isDefenceUser(user)) ||
-                isCourtOfAppealsUser(user)) &&
-                caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
-          )
-        }),
+        workingCase.caseFiles.filter((caseFile) =>
+          isAppealFileCategoryVisible(
+            workingCase,
+            workingCase.appealCase,
+            caseFile,
+            user,
+          ),
+        ),
       )
     }
-  }, [
-    hasAnyDefendantStatement,
-    user,
-    workingCase.appealCase?.appealState,
-    workingCase.appealCase?.appealedByRole,
-    workingCase.appealCase?.prosecutorStatementDate,
-    workingCase.caseFiles,
-  ])
+  }, [user, workingCase])
 
   return (
     isCompletedCase(workingCase.state) &&

@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 
 import {
   AccordionItem,
@@ -9,7 +9,6 @@ import {
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  isCourtOfAppealsUser,
   isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -22,7 +21,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCase,
-  AppealCaseState,
   Case,
   CaseFile,
   CaseFileCategory,
@@ -31,7 +29,10 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isAppealFileCategoryVisible,
+  isMatchingAppealCaseFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import * as styles from './RulingOrderAppealFilesAccordion.css'
 
@@ -98,53 +99,9 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
   const { user } = useContext(UserContext)
   const { handleRemove } = useS3Upload(workingCase.id)
 
-  const visibleCategories = useMemo<CaseFileCategory[]>(() => {
-    const categories: CaseFileCategory[] = [
-      // Brief files exist as soon as the appealCase row exists.
-      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-      CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-      CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-    ]
-
-    if (appealCase.prosecutorStatementDate) {
-      categories.push(
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-      )
-    }
-
-    if (appealCase.defendantStatementDate) {
-      categories.push(
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-      )
-    }
-
-    if (
-      appealCase.appealState === AppealCaseState.COMPLETED ||
-      isCourtOfAppealsUser(user)
-    ) {
-      categories.push(
-        CaseFileCategory.APPEAL_COURT_RECORD,
-        CaseFileCategory.APPEAL_RULING,
-      )
-    }
-
-    return categories
-  }, [appealCase, user])
-
   const [files, setFiles] = useState<CaseFile[]>(() =>
     (workingCase.caseFiles ?? []).filter((file) =>
-      isMatchingAppealCaseFile(
-        workingCase,
-        visibleCategories,
-        file,
-        user,
-        appealCase.rulingFileId,
-      ),
+      isAppealFileCategoryVisible(workingCase, appealCase, file, user),
     ),
   )
 

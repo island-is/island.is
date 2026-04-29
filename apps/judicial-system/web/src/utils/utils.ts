@@ -4,6 +4,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -381,6 +382,135 @@ export const getAppealingPartyInfo = (
   }
 
   return undefined
+}
+
+/**
+ * Returns true iff the file's category is visible per the appeal-state rules,
+ * given the specific appeal-case row in scope. Encodes:
+ * - Brief categories: visible iff the appellant's role matches.
+ * - Statement categories: visible iff the submitter has actually submitted on
+ *   this appeal — singular date gate for request cases, per-party (defendantId
+ *   / civilClaimantId match against the lists) for indictment cases.
+ * - Free-form *_APPEAL_CASE_FILE: always visible while the appeal exists.
+ * - APPEAL_RULING / APPEAL_COURT_RECORD: visible to Court of Appeals always,
+ *   to all parties once the appeal is COMPLETED.
+ *
+ * Returns false when the file lacks a category, when the appeal-case row is
+ * absent, or when the category is not appeal-related.
+ */
+export const isAppealFileCategoryVisible = (
+  workingCase: Case,
+  appealCase: AppealCase | null | undefined,
+  file: {
+    category?: CaseFileCategory | null
+    defendantId?: string | null
+    civilClaimantId?: string | null
+    rulingFileId?: string | null
+  },
+  user: User | undefined,
+): boolean => {
+  if (!file.category || !appealCase) {
+    return false
+  }
+
+  // Each AppealCase row owns its own files. Case-level appeals (rulingFileId
+  // null) only see case-level files; ruling-order appeals only see files
+  // tagged with their specific rulingFileId.
+  if ((appealCase.rulingFileId ?? null) !== (file.rulingFileId ?? null)) {
+    return false
+  }
+
+  switch (file.category) {
+    case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
+    case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
+      return appealCase.appealedByRole === UserRole.PROSECUTOR
+
+    case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+    case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE: {
+      if (appealCase.appealedByRole !== UserRole.DEFENDER) {
+        return false
+      }
+      if (isRequestCase(workingCase.type)) {
+        return true
+      }
+      // Indictment: the appellant's national id must match the confirmed
+      // defender of the file's defendant, or the confirmed spokesperson of
+      // the file's civil claimant.
+      if (!appealCase.appealedByNationalId) {
+        return false
+      }
+      const normalizedAppellantId = normalizeAndFormatNationalId(
+        appealCase.appealedByNationalId,
+      )
+      if (file.defendantId) {
+        const defendant = workingCase.defendants?.find(
+          (d) => d.id === file.defendantId,
+        )
+        return Boolean(
+          defendant?.isDefenderChoiceConfirmed &&
+            defendant.defenderNationalId &&
+            normalizedAppellantId.includes(defendant.defenderNationalId),
+        )
+      }
+      if (file.civilClaimantId) {
+        const civilClaimant = workingCase.civilClaimants?.find(
+          (cc) => cc.id === file.civilClaimantId,
+        )
+        return Boolean(
+          civilClaimant?.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.spokespersonNationalId &&
+            normalizedAppellantId.includes(civilClaimant.spokespersonNationalId),
+        )
+      }
+      return false
+    }
+
+    case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
+    case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
+      return Boolean(appealCase.prosecutorStatementDate)
+
+    case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
+    case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
+      if (isRequestCase(workingCase.type)) {
+        return Boolean(appealCase.defendantStatementDate)
+      }
+      if (file.defendantId) {
+        return Boolean(
+          appealCase.defendantStatementDates?.some(
+            (d) => d.defendantId === file.defendantId,
+          ),
+        )
+      }
+      if (file.civilClaimantId) {
+        return Boolean(
+          appealCase.civilClaimantStatementDates?.some(
+            (cc) => cc.civilClaimantId === file.civilClaimantId,
+          ),
+        )
+      }
+      return false
+
+    case CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE:
+      // Hidden from defenders in request cases (prosecution-only material).
+      if (isRequestCase(workingCase.type) && isDefenceUser(user)) {
+        return false
+      }
+      return true
+
+    case CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE:
+      return true
+
+    case CaseFileCategory.APPEAL_RULING:
+    case CaseFileCategory.APPEAL_COURT_RECORD:
+      return (
+        appealCase.appealState === AppealCaseState.COMPLETED ||
+        isCourtOfAppealsUser(user)
+      )
+
+    default:
+      return false
+  }
 }
 
 export const isMatchingAppealCaseFile = (

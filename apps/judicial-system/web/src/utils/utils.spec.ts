@@ -3,14 +3,19 @@ import faker from 'faker'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealCase,
+  AppealCaseState,
   Case,
   CaseAppealDecision,
+  CaseFile,
+  CaseFileCategory,
   CaseType,
   CivilClaimant,
   Defendant,
   Gender,
+  InstitutionType,
   Notification,
   NotificationType,
+  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -19,6 +24,7 @@ import {
   getAppealActorText,
   getDefaultDefendantGender,
   hasSentNotification,
+  isAppealFileCategoryVisible,
 } from './utils'
 
 describe('Utils', () => {
@@ -519,6 +525,511 @@ describe('Utils', () => {
           `Verjandi kærði úrskurðinn ${dateStr}`,
         )
       })
+    })
+  })
+
+  describe('isAppealFileCategoryVisible', () => {
+    const courtOfAppealsUser = {
+      role: UserRole.COURT_OF_APPEALS_JUDGE,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as User
+    const otherUser = {
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    const file = (
+      category: CaseFileCategory,
+      extra: Partial<CaseFile> = {},
+    ): CaseFile => ({ id: 'f', category, ...extra } as CaseFile)
+
+    describe('briefs — appellant role', () => {
+      test('shows prosecutor brief when prosecutor appealed', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealedByRole: UserRole.PROSECUTOR,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides prosecutor brief when defender appealed', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealedByRole: UserRole.DEFENDER,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('shows defendant brief when defender appealed', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealedByRole: UserRole.DEFENDER,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides defendant brief when prosecutor appealed', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealedByRole: UserRole.PROSECUTOR,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_BRIEF),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('indictment: shows defendant brief when appellant national id matches the file\'s defender', () => {
+        const nationalId = '0101011010'
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'd-1',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: nationalId,
+            } as Defendant,
+          ],
+        } as Case
+        const appealCase = {
+          appealedByRole: UserRole.DEFENDER,
+          appealedByNationalId: nationalId,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_BRIEF, {
+              defendantId: 'd-1',
+            }),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('indictment: hides defendant brief when appellant national id does NOT match the file\'s defender', () => {
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'd-1',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: '0101011010',
+            } as Defendant,
+            {
+              id: 'd-2',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: '0202022020',
+            } as Defendant,
+          ],
+        } as Case
+        const appealCase = {
+          appealedByRole: UserRole.DEFENDER,
+          appealedByNationalId: '0101011010',
+        } as AppealCase
+
+        // d-2's brief should be hidden — appellant is d-1's defender.
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_BRIEF, {
+              defendantId: 'd-2',
+            }),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('indictment: shows defendant brief when appellant matches the file\'s civil-claimant spokesperson', () => {
+        const nationalId = '0303033030'
+        const workingCase = {
+          type: CaseType.INDICTMENT,
+          civilClaimants: [
+            {
+              id: 'cc-1',
+              hasSpokesperson: true,
+              isSpokespersonConfirmed: true,
+              spokespersonNationalId: nationalId,
+            } as CivilClaimant,
+          ],
+        } as Case
+        const appealCase = {
+          appealedByRole: UserRole.DEFENDER,
+          appealedByNationalId: nationalId,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE, {
+              civilClaimantId: 'cc-1',
+            }),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+    })
+
+    describe('statements — request cases (singular gate)', () => {
+      test('shows defence statement when defendantStatementDate is set', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          defendantStatementDate: '2026-04-01T12:00:00.000Z',
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides defence statement when defendantStatementDate is unset', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {} as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('shows prosecutor statement when prosecutorStatementDate is set', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          prosecutorStatementDate: '2026-04-01T12:00:00.000Z',
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+    })
+
+    describe('statements — indictment cases (per-party gate)', () => {
+      test('shows defendant statement when that defendant has submitted', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          defendantStatementDates: [
+            { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
+          ],
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT, {
+              defendantId: 'd-1',
+            }),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides defendant statement when that defendant has NOT submitted', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          defendantStatementDates: [
+            { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
+          ],
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT, {
+              defendantId: 'd-2',
+            }),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('shows civil-claimant statement when that claimant has submitted', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          civilClaimantStatementDates: [
+            {
+              civilClaimantId: 'cc-1',
+              statementDate: '2026-04-01T12:00:00.000Z',
+            },
+          ],
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE, {
+              civilClaimantId: 'cc-1',
+            }),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides defence statement file with no party id attached', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          defendantStatementDates: [
+            { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
+          ],
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+    })
+
+    describe('APPEAL_RULING and APPEAL_COURT_RECORD', () => {
+      test('shows APPEAL_COURT_RECORD to all parties at COMPLETED', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealState: AppealCaseState.COMPLETED,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.APPEAL_COURT_RECORD),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides APPEAL_COURT_RECORD pre-COMPLETED to non-Court-of-Appeals users', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealState: AppealCaseState.RECEIVED,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.APPEAL_COURT_RECORD),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('shows APPEAL_RULING to Court of Appeals at any state', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {
+          appealState: AppealCaseState.APPEALED,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.APPEAL_RULING),
+            courtOfAppealsUser,
+          ),
+        ).toBe(true)
+      })
+    })
+
+    describe('free-form *_APPEAL_CASE_FILE', () => {
+      test('shows PROSECUTOR_APPEAL_CASE_FILE to prosecutors in request cases', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {} as AppealCase
+        const prosecutor = { role: UserRole.PROSECUTOR } as User
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE),
+            prosecutor,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides PROSECUTOR_APPEAL_CASE_FILE from defenders in request cases', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {} as AppealCase
+        const defender = { role: UserRole.DEFENDER } as User
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE),
+            defender,
+          ),
+        ).toBe(false)
+      })
+
+      test('shows PROSECUTOR_APPEAL_CASE_FILE to defenders in indictment cases', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {} as AppealCase
+        const defender = { role: UserRole.DEFENDER } as User
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE),
+            defender,
+          ),
+        ).toBe(true)
+      })
+
+      test('shows DEFENDANT_APPEAL_CASE_FILE always', () => {
+        const workingCase = { type: CaseType.CUSTODY } as Case
+        const appealCase = {} as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+    })
+
+    describe('rulingFileId scoping', () => {
+      test('shows ruling-order file when its rulingFileId matches the appeal-case row', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          rulingFileId: 'ruling-1',
+          appealedByRole: UserRole.PROSECUTOR,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF, {
+              rulingFileId: 'ruling-1',
+            }),
+            otherUser,
+          ),
+        ).toBe(true)
+      })
+
+      test('hides ruling-order file when its rulingFileId points to a different appeal', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          rulingFileId: 'ruling-1',
+          appealedByRole: UserRole.PROSECUTOR,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF, {
+              rulingFileId: 'ruling-2',
+            }),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('hides ruling-order file from a case-level appeal-case row', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          appealedByRole: UserRole.PROSECUTOR,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF, {
+              rulingFileId: 'ruling-1',
+            }),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+
+      test('hides case-level file from a ruling-order appeal-case row', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          rulingFileId: 'ruling-1',
+          appealedByRole: UserRole.PROSECUTOR,
+        } as AppealCase
+
+        expect(
+          isAppealFileCategoryVisible(
+            workingCase,
+            appealCase,
+            file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF),
+            otherUser,
+          ),
+        ).toBe(false)
+      })
+    })
+
+    test('returns false when no appealCase row is provided', () => {
+      const workingCase = { type: CaseType.CUSTODY } as Case
+
+      expect(
+        isAppealFileCategoryVisible(
+          workingCase,
+          undefined,
+          file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF),
+          otherUser,
+        ),
+      ).toBe(false)
     })
   })
 })
