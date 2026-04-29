@@ -185,8 +185,8 @@ export const applicationReducer = (
     }
 
     case 'EXTERNAL_SERVICE_NOTIFICATION': {
-      const { screen, isPopulateError } = action.payload
-      return setExternalServiceErrors(state, screen, isPopulateError)
+      const { screen } = action.payload
+      return setExternalServiceErrors(state, screen)
     }
 
     case 'SUBMITTED': {

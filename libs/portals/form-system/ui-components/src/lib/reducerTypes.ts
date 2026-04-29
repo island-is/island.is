@@ -15,7 +15,6 @@ export interface ApplicationState {
   }
   currentScreen?: {
     index: number
-    isPopulateError?: boolean
     data?: FormSystemScreen
   }
   errors?: string[]

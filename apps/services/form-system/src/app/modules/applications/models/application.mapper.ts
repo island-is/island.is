@@ -45,7 +45,6 @@ export class ApplicationMapper {
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
       useValidate: form.useValidate,
-      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
@@ -90,7 +89,6 @@ export class ApplicationMapper {
               multiMax: screen.multiMax,
               isMulti: screen.isMulti,
               shouldValidate: form.useValidate && screen.shouldValidate,
-              shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
                 hasError: false,
                 title: { is: '', en: '' },

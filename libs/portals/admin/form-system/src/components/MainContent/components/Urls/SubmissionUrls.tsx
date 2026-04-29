@@ -201,18 +201,6 @@ export const SubmissionUrls = () => {
               formUpdate({ ...form, useValidate: e.target.checked })
             }}
           />
-          <Checkbox
-            label={formatMessage(m.usePopulate)}
-            checked={!!form.usePopulate}
-            disabled={isReadOnly}
-            onChange={(e) => {
-              controlDispatch({
-                type: 'CHANGE_USE_POPULATE',
-                payload: { value: e.target.checked },
-              })
-              formUpdate({ ...form, usePopulate: e.target.checked })
-            }}
-          />
         </>
       )}
     </Stack>

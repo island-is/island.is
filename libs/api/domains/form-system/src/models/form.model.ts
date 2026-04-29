@@ -54,9 +54,6 @@ export class Form {
   @Field(() => Boolean, { nullable: true })
   useValidate?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  usePopulate?: boolean
-
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 

@@ -84,9 +84,6 @@ export class ApplicationDto {
   useValidate?: boolean
 
   @ApiPropertyOptional()
-  usePopulate?: boolean
-
-  @ApiPropertyOptional()
   submissionServiceUrl?: string
 
   @ApiPropertyOptional()

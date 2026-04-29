@@ -42,9 +42,7 @@ export const MainContent = () => {
   const { formatMessage } = useIntl()
 
   const showIdentifier =
-    (form.useValidate &&
-      (activeItem.data as FormSystemScreen)?.shouldValidate) ||
-    (form.usePopulate && (activeItem.data as FormSystemScreen)?.shouldPopulate)
+    form.useValidate && (activeItem.data as FormSystemScreen)?.shouldValidate
 
   const activeScreen =
     activeItem.type === 'Screen'
@@ -246,27 +244,6 @@ export const MainContent = () => {
                             onChange={(e) =>
                               controlDispatch({
                                 type: 'TOGGLE_SHOULD_VALIDATE',
-                                payload: {
-                                  checked: e.target.checked,
-                                  update: updateActiveItem,
-                                },
-                              })
-                            }
-                          />
-                        </Box>
-                      )}
-                      {form.usePopulate && (
-                        <Box marginTop={2}>
-                          <Checkbox
-                            name="populate"
-                            label={formatMessage(m.screenPopulate)}
-                            checked={
-                              (activeItem.data as FormSystemScreen)
-                                .shouldPopulate ?? false
-                            }
-                            onChange={(e) =>
-                              controlDispatch({
-                                type: 'TOGGLE_SHOULD_POPULATE',
                                 payload: {
                                   checked: e.target.checked,
                                   update: updateActiveItem,

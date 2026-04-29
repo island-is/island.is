@@ -200,10 +200,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       return
     }
 
-    if (state.currentScreen?.isPopulateError) {
-      return
-    }
-
     if (
       !onSubmit &&
       state.currentScreen?.data?.shouldValidate &&
@@ -323,8 +319,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 !enableContinueButton ||
                 paymentLoading ||
                 submitLoading ||
-                notifyLoading ||
-                state.currentScreen?.isPopulateError
+                notifyLoading
               }
               loading={submitLoading || notifyLoading || paymentLoading}
             >

@@ -134,7 +134,6 @@ export class FormsService {
       'modified',
       'zendeskInternal',
       'useValidate',
-      'usePopulate',
       'submissionServiceUrl',
       'isTranslated',
       'hasPayment',
@@ -845,7 +844,6 @@ export class FormsService {
       'allowProceedOnValidationFail',
       'zendeskInternal',
       'useValidate',
-      'usePopulate',
       'submissionServiceUrl',
       'hasSummaryScreen',
       'completedSectionInfo',
@@ -901,7 +899,6 @@ export class FormsService {
       'multiMax',
       'isMulti',
       'shouldValidate',
-      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',

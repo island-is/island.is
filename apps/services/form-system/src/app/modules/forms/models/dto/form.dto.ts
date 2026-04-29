@@ -48,9 +48,6 @@ export class FormDto {
   useValidate!: boolean
 
   @ApiProperty()
-  usePopulate!: boolean
-
-  @ApiProperty()
   submissionServiceUrl!: string
 
   @ApiProperty()
