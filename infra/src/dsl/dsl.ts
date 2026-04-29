@@ -598,7 +598,7 @@ export const json = (value: unknown): string => JSON.stringify(value)
  * Methods from ServiceBuilder that are not applicable to scheduled/cron jobs.
  * These are hidden from the ScheduledJobBuilder return type to prevent misuse.
  */
-type ScheduledJobOmittedMethods =
+export type ScheduledJobOmittedMethods =
   | 'ingress'
   | 'liveness'
   | 'readiness'
@@ -738,6 +738,28 @@ export class ScheduledJobBuilder<
 }
 
 /**
+ * The public return type of `scheduledJob()`.
+ *
+ * Use this in explicit type annotations instead of spelling out the full
+ * `Omit<ScheduledJobBuilder<S>, ...>` form.
+ *
+ * @example
+ * ```ts
+ * import { scheduledJob, ScheduledJob } from '../../../../infra/src/dsl/dsl'
+ *
+ * export const cleanupSetup = (): ScheduledJob<'services-sessions-cleanup'> =>
+ *   scheduledJob('services-sessions-cleanup')
+ *     .schedule('0 3 * * *')
+ *     .command('node')
+ *     .args('main.cjs', '--job=cleanup')
+ * ```
+ */
+export type ScheduledJob<S extends string> = Omit<
+  ScheduledJobBuilder<S>,
+  ScheduledJobOmittedMethods
+>
+
+/**
  * Creates a new scheduled job (Kubernetes CronJob) builder.
  *
  * The returned builder extends ServiceBuilder with cron-specific methods
@@ -766,7 +788,7 @@ export class ScheduledJobBuilder<
  */
 export const scheduledJob = <Service extends string>(
   name: Service,
-): Omit<ScheduledJobBuilder<Service>, ScheduledJobOmittedMethods> => {
+): ScheduledJob<Service> => {
   return new ScheduledJobBuilder<Service>(name)
 }
 

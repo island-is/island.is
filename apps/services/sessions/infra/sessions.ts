@@ -1,5 +1,7 @@
 import {
   CodeOwners,
+  ScheduledJob,
+  scheduledJob,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
@@ -92,11 +94,9 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     })
 
 const cleanupId = 'services-sessions-cleanup'
-// run daily at 3am
-const extraAttributes = { schedule: '0 3 * * *' }
 
-export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
-  service(cleanupId)
+export const cleanupSetup = (): ScheduledJob<typeof cleanupId> =>
+  scheduledJob(cleanupId)
     .namespace(namespace)
     .image(imageName)
     .codeOwner(CodeOwners.Aranja)
@@ -117,8 +117,4 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
       extensions: ['uuid-ossp'],
       readOnly: false,
     })
-    .extraAttributes({
-      dev: extraAttributes,
-      staging: extraAttributes,
-      prod: extraAttributes,
-    })
+    .schedule('0 3 * * *')
