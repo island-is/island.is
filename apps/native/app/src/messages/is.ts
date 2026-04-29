@@ -770,7 +770,7 @@ export const is = {
   'health.categories.moreOnMyPages': 'Meira á mínum síðum',
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
-  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires
