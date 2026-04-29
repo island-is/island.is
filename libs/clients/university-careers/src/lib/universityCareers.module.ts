@@ -9,7 +9,7 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { UniversityCareersClientService } from './universityCareers.service'
-import { UniversityId } from './universityCareers.types'
+import { UNI_FACTORY, UniversityId } from './universityCareers.types'
 import { AgriculturalUniversityOfIcelandCareerClientConfig } from './clients/agricultural-university-of-iceland/agriculturalUniversityOfIcelandCareerClient.config'
 import { BifrostUniversityCareerClientConfig } from './clients/bifrost-university/bifrostUniversityCareerClient.config'
 import { HolarUniversityCareerClientConfig } from './clients/holar-university/holarUniversityCareerClient.config'
@@ -20,7 +20,7 @@ import { IcelandUniversityOfTheArtsCareerClientConfig } from './clients/iceland-
 @Module({
   providers: [
     {
-      provide: 'test',
+      provide: UNI_FACTORY,
       scope: LazyDuringDevScope,
       useFactory: (
         xroadConfig: ConfigType<typeof XRoadConfig>,

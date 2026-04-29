@@ -11,7 +11,7 @@ import {
   StudentTrackOverviewDto,
   mapToStudentTrackOverviewDto,
 } from './dto'
-import { StudyType, UniversityId } from './universityCareers.types'
+import { StudyType, UNI_FACTORY, UniversityId } from './universityCareers.types'
 import { getNemandi, getNemandiFerillByFerill } from '../../gen/fetch'
 import type {
   GetNemandiFerillByFerillFileByTypeErrors,
@@ -23,7 +23,7 @@ export type UniversityClientMap = Map<UniversityId, Client>
 @Injectable()
 export class UniversityCareersClientService {
   constructor(
-    @Inject('test')
+    @Inject(UNI_FACTORY)
     private readonly clients: UniversityClientMap,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -31,6 +31,9 @@ export class UniversityCareersClientService {
   private getClient = (university: UniversityId): Client => {
     const apiClient = this.clients.get(university)
     if (!apiClient) {
+      this.logger.warn(`No client configured for university`, {
+        university,
+      })
       throw new Error(`No client configured for university: ${university}`)
     }
     return apiClient

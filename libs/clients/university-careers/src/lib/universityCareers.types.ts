@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+export const UNI_FACTORY = 'uni-factory'
+
 export const schema = z.object({
   xroadPath: z.string(),
   scope: z.array(z.string()),
