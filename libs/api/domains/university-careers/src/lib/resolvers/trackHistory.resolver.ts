@@ -13,11 +13,14 @@ import { StudentTrackHistory } from '../models/studentTrackHistory.model'
 import { UniversityCareersService } from '../universityCareers.service'
 import { StudentInfoInput } from '../dto/studentInfo.input'
 import { AUDIT_NAMESPACE } from '../constants'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Resolver(() => StudentTrackHistory)
 @Audit({ namespace: AUDIT_NAMESPACE })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class TrackHistoryResolver {
   constructor(private service: UniversityCareersService) {}
 

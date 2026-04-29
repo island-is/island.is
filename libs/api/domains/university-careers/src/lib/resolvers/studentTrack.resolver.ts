@@ -18,11 +18,14 @@ import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.inp
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
 import { isDefined, maskString } from '@island.is/shared/utils'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Resolver(() => StudentTrack)
 @Audit({ namespace: AUDIT_NAMESPACE })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class StudentTrackResolver {
   constructor(
     private service: UniversityCareersService,

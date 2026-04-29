@@ -17,6 +17,8 @@ import type {
   GetNemandiFerillByFerillFileByTypeErrors,
   GetNemandiFerillByFerillFileByTypeResponses,
 } from '../../gen/fetch'
+import { CodeOwners } from '@island.is/shared/constants'
+import { withCodeOwner } from '@island.is/infra-tracing'
 
 export type UniversityClientMap = Map<UniversityId, Client>
 
@@ -26,18 +28,21 @@ export class UniversityCareersClientService {
     @Inject(UNI_FACTORY)
     private readonly clients: UniversityClientMap,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
-
-  private getClient = (university: UniversityId): Client => {
-    const apiClient = this.clients.get(university)
-    if (!apiClient) {
-      this.logger.error(`No client configured for university`, {
-        university,
-      })
-      throw new Error(`No client configured for university: ${university}`)
-    }
-    return apiClient
+  ) {
+    this.logger = logger.child({ context: 'UniversityCareersClientService' })
   }
+
+  private getClient = (university: UniversityId): Client =>
+    withCodeOwner(CodeOwners.Hugsmidjan, () => {
+      const apiClient = this.clients.get(university)
+      if (!apiClient) {
+        this.logger.error(`No client configured for university`, {
+          university,
+        })
+        throw new Error(`No client configured for university: ${university}`)
+      }
+      return apiClient
+    })
 
   getStudentTrackHistory = async (
     user: User,
