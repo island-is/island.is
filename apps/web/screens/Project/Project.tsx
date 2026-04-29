@@ -197,7 +197,7 @@ const ProjectPage: Screen<PageProps> = ({
           {subpage.showDateOfTheMostRecentReview &&
             subpage.contentLastReviewed && (
               <Box paddingTop={2}>
-                <Text>
+                <Text variant="small">
                   {n(
                     'contentLastReviewedLabel',
                     activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',

@@ -195,6 +195,24 @@ export const SubPageContent = ({
                   </GridColumn>
                 </GridRow>
                 {content}
+                {subpage.showDateOfTheMostRecentReview &&
+                  subpage.contentLastReviewed && (
+                    <Box paddingTop={2}>
+                      <Text variant="small">
+                        {n(
+                          'contentLastReviewedLabel',
+                          activeLocale === 'is'
+                            ? 'Síðast uppfært'
+                            : 'Last updated',
+                        )}
+                        {': '}
+                        {format(
+                          new Date(subpage.contentLastReviewed),
+                          'do MMMM yyyy',
+                        )}
+                      </Text>
+                    </Box>
+                  )}
               </GridContainer>
             </GridColumn>
           </GridRow>
@@ -217,18 +235,6 @@ export const SubPageContent = ({
           organizationPage.slug,
         )}
       </Stack>
-      {subpage.showDateOfTheMostRecentReview && subpage.contentLastReviewed && (
-        <Box paddingTop={2}>
-          <Text>
-            {n(
-              'contentLastReviewedLabel',
-              activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
-            )}
-            {': '}
-            {format(new Date(subpage.contentLastReviewed), 'do MMMM yyyy')}
-          </Text>
-        </Box>
-      )}
     </>
   )
 }
