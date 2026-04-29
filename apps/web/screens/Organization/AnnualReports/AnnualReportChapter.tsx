@@ -17,6 +17,7 @@ import {
   OrganizationFooter,
   OrganizationHeader,
   Sticky,
+  TimelineSlice,
   Webreader,
 } from '@island.is/web/components'
 import {
@@ -25,7 +26,9 @@ import {
   OrganizationPage,
   Query,
   QueryGetAnnualReportArgs,
+  QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  TimelineSlice as Timeline,
 } from '@island.is/web/graphql/schema'
 import { linkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -39,6 +42,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import {
   GET_ANNUAL_REPORT_QUERY,
+  GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../../queries'
 
@@ -54,6 +58,7 @@ export interface AnnualReportChapterProps {
   organizationPage: OrganizationPage
   annualReport: AnnualReportType
   annualReportChapter: AnnualReportChapterType
+  namespace: Record<string, string>
 }
 
 type AnnualReportChapterScreenContext = ScreenContext & {
@@ -63,7 +68,7 @@ type AnnualReportChapterScreenContext = ScreenContext & {
 const AnnualReportChapter: Screen<
   AnnualReportChapterProps,
   AnnualReportChapterScreenContext
-> = ({ organizationPage, annualReport, annualReportChapter }) => {
+> = ({ organizationPage, annualReport, annualReportChapter, namespace }) => {
   useContentfulId(organizationPage?.id, annualReport.id, annualReportChapter.id)
   useLocalLinkTypeResolver('annualreportchapter')
 
@@ -171,7 +176,16 @@ const AnnualReportChapter: Screen<
                   <Box paddingY={4}>
                     {webRichText(
                       annualReportChapter.content as SliceType[],
-                      undefined,
+                      {
+                        renderComponent: {
+                          TimelineSlice: (slice: Timeline) => (
+                            <TimelineSlice
+                              slice={slice}
+                              namespace={namespace}
+                            />
+                          ),
+                        },
+                      },
                       activeLocale,
                     )}
                   </Box>
@@ -240,6 +254,7 @@ AnnualReportChapter.getProps = async ({
     {
       data: { getAnnualReport },
     },
+    namespace,
   ] = await Promise.all([
     !organizationPage
       ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -263,6 +278,21 @@ AnnualReportChapter.getProps = async ({
         },
       },
     }),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'OrganizationPages',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables?.data?.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields || '{}')
+          : {},
+      ),
   ])
 
   if (!getOrganizationPage) {
@@ -285,6 +315,7 @@ AnnualReportChapter.getProps = async ({
     organizationPage: getOrganizationPage,
     annualReport: getAnnualReport,
     annualReportChapter,
+    namespace,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

@@ -5,6 +5,7 @@ import {
   AnnualReportChapter,
   mapAnnualReportChapter,
 } from './annualReportChapter.model'
+import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 
 @ObjectType()
 export class AnnualReport {
@@ -22,6 +23,9 @@ export class AnnualReport {
 
   @CacheField(() => [AnnualReportChapter])
   chapters!: Array<AnnualReportChapter>
+
+  @CacheField(() => TimelineSlice, { nullable: true })
+  timeline?: TimelineSlice
 }
 
 export const mapAnnualReport = ({
@@ -33,4 +37,5 @@ export const mapAnnualReport = ({
   slug: fields.slug,
   intro: fields.intro ?? '',
   chapters: fields.chapters.map(mapAnnualReportChapter),
+  timeline: fields.timeline ? mapTimelineSlice(fields.timeline) : undefined,
 })
