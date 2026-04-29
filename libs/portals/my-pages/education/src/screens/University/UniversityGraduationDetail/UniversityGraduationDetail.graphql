@@ -2,6 +2,7 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
   universityCareersStudentTrack(input: $input) {
     transcript {
       degree
+      level
       faculty
       graduationDate
       institution {
@@ -16,8 +17,6 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
       trackNumber
     }
     files {
-      type
-      locale
       displayName
       fileName
       downloadServiceURL
