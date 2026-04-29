@@ -294,7 +294,7 @@ export const is = {
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.family': 'Fjölskylda',
+  'profile.myData': 'Mín gögn',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',

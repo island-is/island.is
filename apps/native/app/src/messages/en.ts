@@ -419,7 +419,7 @@ export const en: TranslatedMessages = {
   'profile.screenTitle': 'More',
   'profile.bottomTabText': 'More',
   'profile.seeInfo': 'See info',
-  'profile.family': 'Family',
+  'profile.myData': 'My information',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
