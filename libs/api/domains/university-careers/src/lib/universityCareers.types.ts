@@ -11,8 +11,8 @@ export interface InstitutionProps {
 }
 
 export enum StudyType {
-  UNIVERSITY_STUDIES = 'HASKOLANAM',
-  MICRO_CREDENTIALS = 'ORNAM',
+  UNIVERSITY_STUDIES = 'universityStudies',
+  MICRO_CREDENTIALS = 'microCredentials',
 }
 
 export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {

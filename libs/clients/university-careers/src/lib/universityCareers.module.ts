@@ -52,7 +52,7 @@ import { IcelandUniversityOfTheArtsCareerClientConfig } from './clients/iceland-
                 name,
                 organizationSlug,
                 authSource: 'context',
-                logErrorResponseBody: true,
+                logErrorResponseBody: false,
                 autoAuth: idsClientConfig.isConfigured
                   ? {
                       mode: 'tokenExchange',
