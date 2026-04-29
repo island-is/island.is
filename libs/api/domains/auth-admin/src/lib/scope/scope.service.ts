@@ -331,6 +331,7 @@ export class ScopeService extends MultiEnvironmentService {
     input: UpdateScopeUsersInput,
   ): Promise<boolean> {
     const targetEnvironments = input.environments
+    let anySuccess = false
 
     for (const environment of targetEnvironments) {
       try {
@@ -344,6 +345,7 @@ export class ScopeService extends MultiEnvironmentService {
             },
           }),
         )
+        anySuccess = true
       } catch (error) {
         this.logger.error(
           `Failed to update scope users in ${environment}`,
@@ -352,6 +354,6 @@ export class ScopeService extends MultiEnvironmentService {
       }
     }
 
-    return true
+    return anySuccess
   }
 }

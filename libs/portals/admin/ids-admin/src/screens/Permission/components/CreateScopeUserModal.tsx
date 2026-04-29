@@ -24,7 +24,7 @@ import {
 
 const NATIONAL_ID_REGEX = /^\d{10}$/
 const EMAIL_REGEX =
-  /^[\w!#$%&'*+/=?{|}~^-]+(?:.[\w!#$%&'*+/=?{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 
 interface FormData {
   nationalId: string

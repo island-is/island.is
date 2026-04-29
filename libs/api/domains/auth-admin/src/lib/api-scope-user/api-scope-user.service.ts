@@ -217,7 +217,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
             apiScopeUserUpdateDTO: {
               name: input.name ?? undefined,
               email: input.email ?? undefined,
-              userAccess: input.userAccess ?? [],
+              userAccess: input.userAccess,
             },
           }),
         )
