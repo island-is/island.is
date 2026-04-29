@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { parseAsString } from 'next-usequerystate'
 
 import initApollo from '@island.is/web/graphql/client'
 import {
@@ -7,6 +6,7 @@ import {
   GetVerdictsQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { GET_VERDICTS_QUERY } from '@island.is/web/screens/queries/Verdicts'
+import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
 
 interface Item {
   date: string | null | undefined
@@ -37,7 +37,7 @@ export default async function handler(
   const baseUrl = `${protocol}${host}/domar`
 
   let itemString = ''
-  const court = parseAsString.parseServerSide(req.query?.court)
+  const court = parseCommaSeparatedListFromQuery(req.query?.court)
 
   const verdicts = await apolloClient.query<
     GetVerdictsQuery,
@@ -47,7 +47,7 @@ export default async function handler(
     variables: {
       input: {
         page: 1,
-        courtLevel: court ?? undefined,
+        court: court.length > 0 ? court : undefined,
       },
     },
   })

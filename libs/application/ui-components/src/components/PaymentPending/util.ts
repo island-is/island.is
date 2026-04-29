@@ -4,19 +4,17 @@ export const getRedirectUrl = (paymentUrl: string) => {
 }
 
 export const isComingFromRedirect = () => {
-  return (
-    !!window.document.location.href.match(/\?done$/) ||
-    !!window.document.location.href.match(/\?cancelled$/)
-  )
+  const params = new URLSearchParams(window.document.location.search)
+  return params.has('done') || params.has('cancelled') || params.has('invoice')
 }
 
 // Is it done or cancelled?
 export const getRedirectStatus = () => {
-  return window.document.location.href.match(/\?done$/)
-    ? 'done'
-    : window.document.location.href.match(/\?cancelled$/)
-    ? 'cancelled'
-    : undefined
+  const params = new URLSearchParams(window.document.location.search)
+  if (params.has('done')) return 'done'
+  if (params.has('cancelled')) return 'cancelled'
+  if (params.has('invoice')) return 'invoice'
+  return undefined
 }
 
 export const removeCancelledfromHref = () => {

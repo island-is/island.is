@@ -268,29 +268,22 @@ const transformCase = (
         }
       : {}
 
-  // Derive aggregated statement dates from the appeal event log, falling back
-  // to the legacy appeal_case date columns for cases predating Phase 2.
+  // Derive aggregated statement dates from the appeal event log.
   const appealEventLogs = theCase.appealCase?.appealEventLogs
-  const derivedProsecutorStatementDate = AppealEventLog.getLatestDateByRole(
-    AppealEventType.APPEAL_STATEMENT_SENT,
-    prosecutionRoles,
-    appealEventLogs,
-  )
-  const derivedDefendantStatementDate = AppealEventLog.getEarliestDateByRole(
-    AppealEventType.APPEAL_STATEMENT_SENT,
-    UserRole.DEFENDER,
-    appealEventLogs,
-  )
   const appealCaseOverride = theCase.appealCase
     ? {
         appealCase: {
           ...theCase.appealCase.toJSON(),
-          prosecutorStatementDate:
-            derivedProsecutorStatementDate ??
-            theCase.appealCase.prosecutorStatementDate,
-          defendantStatementDate:
-            derivedDefendantStatementDate ??
-            theCase.appealCase.defendantStatementDate,
+          prosecutorStatementDate: AppealEventLog.getLatestDateByRole(
+            AppealEventType.APPEAL_STATEMENT_SENT,
+            prosecutionRoles,
+            appealEventLogs,
+          ),
+          defendantStatementDate: AppealEventLog.getEarliestDateByRole(
+            AppealEventType.APPEAL_STATEMENT_SENT,
+            UserRole.DEFENDER,
+            appealEventLogs,
+          ),
           appealEventLogs: undefined,
         },
       }
