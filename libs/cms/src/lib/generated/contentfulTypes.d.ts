@@ -321,6 +321,9 @@ export interface IArticleFields {
   /** Slug */
   slug: string
 
+  /** Content last reviewed */
+  contentLastReviewed?: string | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -377,6 +380,9 @@ export interface IArticleFields {
 
   /** Stepper */
   stepper?: IStepper | undefined
+
+  /** Show date of the most recent review */
+  showDateOfTheMostRecentReview?: boolean | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -3853,6 +3859,9 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
+  /** Content last reviewed */
+  contentLastReviewed?: string | undefined
+
   /** Intro */
   intro?: string | undefined
 
@@ -3915,6 +3924,9 @@ export interface IOrganizationSubpageFields {
 
   /** Short Description */
   shortDescription?: string | undefined
+
+  /** Show date of the last review */
+  showDateOfTheLastReview?: boolean | undefined
 }
 
 export interface IOrganizationSubpage
@@ -4290,6 +4302,9 @@ export interface IProjectSubpageFields {
   /** Slug */
   slug: string
 
+  /** Content last reviewed */
+  contentLastReviewed?: string | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -4323,6 +4338,9 @@ export interface IProjectSubpageFields {
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
+
+  /** Show date of the last review */
+  showDateOfTheLastReview?: boolean | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
