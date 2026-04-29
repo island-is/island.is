@@ -73,9 +73,7 @@ export class ScopeService {
       return domain?.name ?? null
     } catch (error) {
       this.logger.warn(
-        `Failed to fetch municipality for user (${
-          (error as Error)?.name ?? 'unknown'
-        }), falling back to normal categories`,
+        'Failed to fetch municipality, falling back to normal categories',
       )
       return null
     }
