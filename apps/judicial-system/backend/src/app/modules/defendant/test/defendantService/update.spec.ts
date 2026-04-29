@@ -1,8 +1,6 @@
 import { Transaction } from 'sequelize'
 
-import { BadRequestException } from '@nestjs/common'
-
-import { CaseType, User } from '@island.is/judicial-system/types'
+import { CaseType, DefenderChoice, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -64,33 +62,39 @@ describe('DefendantService - update', () => {
     }
   })
 
-  describe('when defenderName is set and defenderNationalId is set to null without also setting defenderName to null', () => {
-    let then: Then
+  describe('when defenderChoice is DELAY and defenderNationalId is null', () => {
+    const defendant = {
+      id: 'defendant-id',
+      caseId: theCase.id,
+      defenderNationalId: '0101302399',
+      defenderName: 'Defender Name',
+    } as Defendant
     const update = {
+      defenderChoice: DefenderChoice.DELAY,
       defenderNationalId: null,
     } as unknown as UpdateDefendantDto
+    const updatedDefendant = {
+      ...defendant,
+      defenderChoice: DefenderChoice.DELAY,
+    } as unknown as Defendant
+    let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(
-        {
-          id: 'defendant-id',
-          caseId: theCase.id,
-          defenderNationalId: '0101302399',
-          defenderName: 'Defender Name',
-          defenderEmail: 'defender@example.com',
-          defenderPhoneNumber: '5551234',
-        } as Defendant,
-        update,
-      )
+      ;(
+        mockDefendantRepositoryService.update as jest.Mock
+      ).mockResolvedValueOnce(updatedDefendant)
+
+      then = await givenWhenThen(defendant, update)
     })
 
-    it('should throw a bad request exception', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error).toHaveProperty(
-        'message',
-        'DefenderNationalId can only be set to null when defenderName is also set to null.',
+    it('should update the defendant without defenderNationalId', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        theCase.id,
+        defendant.id,
+        { defenderChoice: DefenderChoice.DELAY },
+        { transaction },
       )
-      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+      expect(then.result).toEqual(updatedDefendant)
     })
   })
 

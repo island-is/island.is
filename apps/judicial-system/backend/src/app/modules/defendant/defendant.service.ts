@@ -44,25 +44,6 @@ export class DefendantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private validateDefenderInfoRemoval(
-    defendant: Defendant,
-    update: Pick<
-      UpdateDefendantDto | InternalUpdateDefendantDto,
-      'defenderNationalId' | 'defenderName'
-    >,
-  ): void {
-    if (
-      defendant.defenderName &&
-      'defenderNationalId' in update &&
-      update.defenderNationalId === null &&
-      update.defenderName !== null
-    ) {
-      throw new BadRequestException(
-        'DefenderNationalId can only be set to null when defenderName is also set to null.',
-      )
-    }
-  }
-
   private addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
     theCase: Case,
     user: User,
@@ -378,7 +359,10 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    this.validateDefenderInfoRemoval(defendant, update)
+    if (update.defenderChoice === DefenderChoice.DELAY && update.defenderNationalId === null) {
+      const { defenderNationalId: _, ...rest } = update
+      update = rest
+    }
 
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
@@ -409,7 +393,10 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    this.validateDefenderInfoRemoval(defendant, update)
+    if (update.defenderChoice === DefenderChoice.DELAY && update.defenderNationalId === null) {
+      const { defenderNationalId: _, ...rest } = update
+      update = rest
+    }
 
     // If there is a change in the defender choice after the judge has confirmed the choice,
     // we need to set the isDefenderChoiceConfirmed to false
