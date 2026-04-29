@@ -608,7 +608,7 @@ describe('Utils', () => {
         ).toBe(false)
       })
 
-      test('indictment: shows defendant brief when appellant national id matches the file\'s defender', () => {
+      test("indictment: shows defendant brief when appellant national id matches the file's defender", () => {
         const nationalId = '0101011010'
         const workingCase = {
           type: CaseType.INDICTMENT,
@@ -637,7 +637,7 @@ describe('Utils', () => {
         ).toBe(true)
       })
 
-      test('indictment: hides defendant brief when appellant national id does NOT match the file\'s defender', () => {
+      test("indictment: hides defendant brief when appellant national id does NOT match the file's defender", () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
           defendants: [
@@ -671,7 +671,7 @@ describe('Utils', () => {
         ).toBe(false)
       })
 
-      test('indictment: shows defendant brief when appellant matches the file\'s civil-claimant spokesperson', () => {
+      test("indictment: shows defendant brief when appellant matches the file's civil-claimant spokesperson", () => {
         const nationalId = '0303033030'
         const workingCase = {
           type: CaseType.INDICTMENT,
