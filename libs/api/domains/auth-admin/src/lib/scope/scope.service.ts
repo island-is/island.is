@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common'
 import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
-import { AdminApi } from '@island.is/clients/auth/admin-api'
-import { ApiResponse } from '@island.is/clients/middlewares'
 
 import { Environment } from '@island.is/shared/types'
 
@@ -21,38 +19,6 @@ import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
-
-interface ScopeUserResponse {
-  nationalId: string
-  name?: string | null
-  email: string
-}
-
-interface ScopeUsersApi {
-  meScopeUsersControllerFindUsersByScopeRaw(params: {
-    tenantId: string
-    scopeName: string
-  }): Promise<ApiResponse<ScopeUserResponse[]>>
-
-  meScopeUsersControllerCreateRaw(params: {
-    tenantId: string
-    scopeName: string
-    apiScopeUserDTO: {
-      nationalId: string
-      name: string
-      email: string
-    }
-  }): Promise<ApiResponse<ScopeUserResponse>>
-
-  meScopeUsersControllerUpdateScopeUsersRaw(params: {
-    tenantId: string
-    scopeName: string
-    updateScopeUsersDto: {
-      addedNationalIds: string[]
-      removedNationalIds: string[]
-    }
-  }): Promise<ApiResponse<void>>
-}
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -289,18 +255,6 @@ export class ScopeService extends MultiEnvironmentService {
     }))
   }
 
-  private typedRequest<T>(
-    user: User,
-    environment: Environment,
-    request: (api: ScopeUsersApi) => Promise<ApiResponse<T>>,
-  ) {
-    return this.makeRequest(
-      user,
-      environment,
-      request as unknown as (api: AdminApi) => Promise<ApiResponse<T>>,
-    )
-  }
-
   /**
    * Gets all users with access to a specific scope in a given environment
    */
@@ -310,7 +264,7 @@ export class ScopeService extends MultiEnvironmentService {
     scopeName: string,
     environment: Environment,
   ): Promise<ScopeUser[]> {
-    const result = await this.typedRequest(user, environment, (api) =>
+    const result = await this.makeRequest(user, environment, (api) =>
       api.meScopeUsersControllerFindUsersByScopeRaw({
         tenantId,
         scopeName,
@@ -335,7 +289,7 @@ export class ScopeService extends MultiEnvironmentService {
 
     for (const environment of input.environments) {
       try {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meScopeUsersControllerCreateRaw({
             tenantId: input.tenantId,
             scopeName: input.scopeName,
@@ -380,7 +334,7 @@ export class ScopeService extends MultiEnvironmentService {
 
     for (const environment of targetEnvironments) {
       try {
-        await this.typedRequest(user, environment, (api) =>
+        await this.makeRequest(user, environment, (api) =>
           api.meScopeUsersControllerUpdateScopeUsersRaw({
             tenantId: input.tenantId,
             scopeName: input.scopeName,
