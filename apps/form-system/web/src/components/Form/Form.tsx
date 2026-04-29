@@ -76,6 +76,7 @@ export const Form = () => {
                   currentScreen={state.currentScreen}
                   hasSummaryScreen={state.application.hasSummaryScreen ?? false}
                   hasPayment={state.application.hasPayment ?? false}
+                  submitted={state.submitted ?? false}
                 />
               </Box>
             </Column>
