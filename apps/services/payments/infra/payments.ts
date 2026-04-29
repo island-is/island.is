@@ -103,6 +103,14 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
       PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM',
+      APPLE_PAY_MERCHANT_IDENTIFIER:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTIFIER',
+      APPLE_PAY_MERCHANT_IDENTITY_CERT:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_CERT',
+      APPLE_PAY_MERCHANT_IDENTITY_KEY:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY',
+      APPLE_PAY_PAYMENT_PROCESSING_KEY:
+        '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY',
     })
     .ingress({
       primary: {
