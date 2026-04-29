@@ -213,7 +213,7 @@ export class ScopeService {
 
     // Map CMS categories to DTO with their scopes
     const resolvedCategoryIds = new Set(cmsCategories.map((c) => c.id))
-    let result = cmsCategories
+    const result = cmsCategories
       .map((cmsCategory) => {
         const scopes = categoryMap.get(cmsCategory.id) ?? []
         return {
