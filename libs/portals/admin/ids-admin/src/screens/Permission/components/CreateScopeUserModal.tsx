@@ -19,6 +19,7 @@ import { authAdminEnvironments } from '../../../utils/environments'
 import {
   useCreateApiScopeUserMutation,
   useGetConfiguredEnvironmentsQuery,
+  useGetApiScopeUserLazyQuery,
 } from '../../AdminControls/ApiScopeUsers/ApiScopeUsers.generated'
 
 const NATIONAL_ID_REGEX = /^\d{10}$/
@@ -66,6 +67,9 @@ export const CreateScopeUserModal = ({
   >([])
 
   const [createUser, { loading }] = useCreateApiScopeUserMutation()
+  const [fetchUser, { loading: loadingUser }] = useGetApiScopeUserLazyQuery({
+    fetchPolicy: 'network-only',
+  })
   const { data: configuredEnvData } = useGetConfiguredEnvironmentsQuery()
   const configuredEnvironments =
     configuredEnvData?.authAdminApiScopeUserConfiguredEnvironments ?? []
@@ -95,9 +99,7 @@ export const CreateScopeUserModal = ({
     }
 
     if (selectedEnvironments.length === 0) {
-      errors.environments = formatMessage(
-        m.apiScopeUsersErrorEnvironmentRequired,
-      )
+      errors.environments = formatMessage(m.errorEnvironment)
     }
 
     return errors
@@ -105,6 +107,26 @@ export const CreateScopeUserModal = ({
 
   const handleSubmit = async () => {
     const errors = validate()
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        const { data } = await fetchUser({
+          variables: { nationalId: formData.nationalId },
+        })
+        if (data?.authAdminApiScopeUser) {
+          errors.nationalId = formatMessage(
+            m.apiScopeUsersErrorNationalIdExists,
+          )
+        }
+      } catch {
+        errors.nationalId = formatMessage(
+          m.apiScopeUsersErrorNationalIdCheckFailed,
+        )
+        setFormErrors(errors)
+        return
+      }
+    }
+
     setFormErrors(errors)
 
     if (Object.keys(errors).length > 0) {
@@ -241,10 +263,10 @@ export const CreateScopeUserModal = ({
               columnGap={2}
             >
               <Button variant="ghost" onClick={resetAndClose}>
-                {formatMessage(m.apiScopeUsersCancelButton)}
+                {formatMessage(m.cancel)}
               </Button>
-              <Button onClick={handleSubmit} loading={loading}>
-                {formatMessage(m.apiScopeUsersCreateButton)}
+              <Button onClick={handleSubmit} loading={loading || loadingUser}>
+                {formatMessage(m.create)}
               </Button>
             </Box>
           </Stack>

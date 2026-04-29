@@ -198,7 +198,7 @@ export const Checkbox = ({
       {children != null && (
         <Box className={styles.childrenContainerWrapper}>
           <Box
-            id="checkbox-children-container"
+            data-checkbox-children-container
             className={styles.childrenContainer}
           >
             {children}

@@ -7,7 +7,7 @@ export const userSelectionContainer = style({
   gap: spacing[3],
 })
 
-globalStyle(`${userSelectionContainer} #checkbox-children-container`, {
+globalStyle(`${userSelectionContainer} [data-checkbox-children-container]`, {
   padding: 0,
   border: 'none',
 })

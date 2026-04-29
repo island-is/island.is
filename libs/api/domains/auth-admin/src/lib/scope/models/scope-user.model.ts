@@ -8,6 +8,6 @@ export class ScopeUser {
   @Field(() => String, { nullable: true })
   name?: string
 
-  @Field(() => String)
-  email!: string
+  @Field(() => String, { nullable: true })
+  email?: string
 }

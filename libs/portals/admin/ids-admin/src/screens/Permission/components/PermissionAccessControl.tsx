@@ -141,8 +141,8 @@ export const PermissionAccessControl = () => {
     setUsersDirty(!isEqual(newIds, origIds))
   }
 
-  const handleUserCreated = (user: CreatedScopeUser) => {
-    refetchAllUsers()
+  const handleUserCreated = async (user: CreatedScopeUser) => {
+    await refetchAllUsers()
     // Add the newly created user as selected
     const newOption: UserOption = {
       label: user.name ? `${user.name} - ${user.nationalId}` : user.nationalId,
@@ -175,8 +175,7 @@ export const PermissionAccessControl = () => {
       if (!showUserSelection) return false
       return usersDirty
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [showUserSelection, usersDirty, selectedUsers],
+    [showUserSelection, usersDirty],
   )
 
   const isLoading = scopeUsersLoading || allUsersLoading

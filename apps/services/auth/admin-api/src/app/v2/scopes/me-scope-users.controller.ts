@@ -54,10 +54,10 @@ export class MeScopeUsersController {
     resources: (users) => users.map((user) => user.nationalId),
   })
   findUsersByScope(
-    @Param('tenantId') _tenantId: string,
+    @Param('tenantId') tenantId: string,
     @Param('scopeName') scopeName: string,
   ): Promise<ApiScopeUser[]> {
-    return this.accessService.findUsersByScope(scopeName)
+    return this.accessService.findUsersByScope(scopeName, tenantId)
   }
 
   @Post()
@@ -69,11 +69,12 @@ export class MeScopeUsersController {
     resources: (user) => user?.nationalId,
     alsoLog: true,
   })
-  create(
-    @Param('tenantId') _tenantId: string,
+  async create(
+    @Param('tenantId') tenantId: string,
     @Param('scopeName') scopeName: string,
     @Body() input: ApiScopeUserDTO,
   ): Promise<ApiScopeUser> {
+    await this.accessService.validateScopeTenant(scopeName, tenantId)
     return this.accessService.create({
       ...input,
       userAccess: [
@@ -91,7 +92,7 @@ export class MeScopeUsersController {
   })
   async updateScopeUsers(
     @CurrentUser() user: User,
-    @Param('tenantId') _tenantId: string,
+    @Param('tenantId') tenantId: string,
     @Param('scopeName') scopeName: string,
     @Body() input: UpdateScopeUsersDto,
   ): Promise<void> {
@@ -111,6 +112,7 @@ export class MeScopeUsersController {
         scopeName,
         input.addedNationalIds,
         input.removedNationalIds,
+        tenantId,
       ),
     )
   }
