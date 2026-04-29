@@ -232,7 +232,10 @@ export class ScopeService {
     const virtualCategoryIds = new Set<string>([ISLAND_IS_CATEGORY.id])
     const orphanedScopes = new Map<string, ScopeDTO>()
     for (const [categoryId, catScopes] of categoryMap.entries()) {
-      if (!resolvedCategoryIds.has(categoryId) && !virtualCategoryIds.has(categoryId)) {
+      if (
+        !resolvedCategoryIds.has(categoryId) &&
+        !virtualCategoryIds.has(categoryId)
+      ) {
         for (const scope of catScopes) {
           orphanedScopes.set(scope.name, scope)
         }
@@ -360,9 +363,7 @@ export class ScopeService {
     // "Sveitarfélag" tag into a virtual "Mitt sveitarfélag" tag.
     // Scopes remain in their original tag as well.
     if (municipalDomainName) {
-      const sveitarfelagTag = result.find(
-        (tag) => tag.slug === 'sveitarfelog',
-      )
+      const sveitarfelagTag = result.find((tag) => tag.slug === 'sveitarfelog')
 
       if (sveitarfelagTag) {
         const municipalScopes = sveitarfelagTag.scopes.filter(
@@ -373,8 +374,7 @@ export class ScopeService {
           result = [
             {
               id: VIRTUAL_MUNICIPALITY_TAG_ID,
-              title:
-                lang === 'en' ? 'My municipality' : 'Mitt sveitarfélag',
+              title: lang === 'en' ? 'My municipality' : 'Mitt sveitarfélag',
               description:
                 lang === 'en'
                   ? 'Services from your municipality'

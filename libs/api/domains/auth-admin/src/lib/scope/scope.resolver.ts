@@ -135,8 +135,9 @@ export class ScopeResolver {
     lang?: string,
   ): Promise<ScopeCategory[]> {
     const language = lang ?? 'is'
-    const cmsCategories =
-      await this.cmsContentfulService.getArticleCategories(language)
+    const cmsCategories = await this.cmsContentfulService.getArticleCategories(
+      language,
+    )
 
     return [
       ...cmsCategories,

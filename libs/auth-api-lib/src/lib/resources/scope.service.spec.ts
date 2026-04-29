@@ -35,7 +35,10 @@ function makeScope(
 
 describe('ScopeService', () => {
   let service: ScopeService
-  let mockCms: { getArticleCategories: jest.Mock; getDelegationScopeTags: jest.Mock }
+  let mockCms: {
+    getArticleCategories: jest.Mock
+    getDelegationScopeTags: jest.Mock
+  }
   let mockDelegationResources: { findScopesInternal: jest.Mock }
   let mockNationalRegistry: { getAddress: jest.Mock }
   let mockDomainModel: { findOne: jest.Mock }
@@ -59,12 +62,27 @@ describe('ScopeService', () => {
       providers: [
         ScopeService,
         { provide: getModelToken(ApiScope), useValue: { findAll: jest.fn() } },
-        { provide: getModelToken(IdentityResource), useValue: { findAll: jest.fn() } },
+        {
+          provide: getModelToken(IdentityResource),
+          useValue: { findAll: jest.fn() },
+        },
         { provide: getModelToken(Domain), useValue: mockDomainModel },
-        { provide: ResourceTranslationService, useValue: { translateApiScopes: jest.fn(), translateIdentityResources: jest.fn() } },
+        {
+          provide: ResourceTranslationService,
+          useValue: {
+            translateApiScopes: jest.fn(),
+            translateIdentityResources: jest.fn(),
+          },
+        },
         { provide: CmsContentfulService, useValue: mockCms },
-        { provide: DelegationResourcesService, useValue: mockDelegationResources },
-        { provide: NationalRegistryV3ClientService, useValue: mockNationalRegistry },
+        {
+          provide: DelegationResourcesService,
+          useValue: mockDelegationResources,
+        },
+        {
+          provide: NationalRegistryV3ClientService,
+          useValue: mockNationalRegistry,
+        },
       ],
     }).compile()
 
@@ -77,7 +95,10 @@ describe('ScopeService', () => {
         { id: 'cat-1', title: 'Fjármál', slug: 'fjarmal', description: 'desc' },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/finance:overview', '@island.is'), categories: [{ categoryId: 'cat-1' }] },
+        {
+          ...makeScope('@island.is/finance:overview', '@island.is'),
+          categories: [{ categoryId: 'cat-1' }],
+        },
       ])
 
       const result = await service.findScopeCategories(mockUser, 'is')
@@ -93,8 +114,14 @@ describe('ScopeService', () => {
         { id: 'cat-1', title: 'Fjármál', slug: 'fjarmal', description: '' },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/finance:overview', '@island.is'), categories: [{ categoryId: 'cat-1' }] },
-        { ...makeScope('@island.is/documents', '@island.is'), categories: [{ categoryId: ISLAND_IS_CATEGORY.id }] },
+        {
+          ...makeScope('@island.is/finance:overview', '@island.is'),
+          categories: [{ categoryId: 'cat-1' }],
+        },
+        {
+          ...makeScope('@island.is/documents', '@island.is'),
+          categories: [{ categoryId: ISLAND_IS_CATEGORY.id }],
+        },
       ])
 
       const result = await service.findScopeCategories(mockUser, 'is')
@@ -110,7 +137,10 @@ describe('ScopeService', () => {
     it('should return english title for virtual category when lang is en', async () => {
       mockCms.getArticleCategories.mockResolvedValue([])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/documents', '@island.is'), categories: [{ categoryId: ISLAND_IS_CATEGORY.id }] },
+        {
+          ...makeScope('@island.is/documents', '@island.is'),
+          categories: [{ categoryId: ISLAND_IS_CATEGORY.id }],
+        },
       ])
 
       const result = await service.findScopeCategories(mockUser, 'en')
@@ -123,7 +153,10 @@ describe('ScopeService', () => {
         { id: 'cat-1', title: 'Fjármál', slug: 'fjarmal', description: '' },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/finance:overview', '@island.is'), categories: [{ categoryId: 'cat-1' }] },
+        {
+          ...makeScope('@island.is/finance:overview', '@island.is'),
+          categories: [{ categoryId: 'cat-1' }],
+        },
       ])
 
       const result = await service.findScopeCategories(mockUser, 'is')
@@ -134,7 +167,10 @@ describe('ScopeService', () => {
     it('should not put virtual category scopes into orphaned/uncategorized', async () => {
       mockCms.getArticleCategories.mockResolvedValue([])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/documents', '@island.is'), categories: [{ categoryId: ISLAND_IS_CATEGORY.id }] },
+        {
+          ...makeScope('@island.is/documents', '@island.is'),
+          categories: [{ categoryId: ISLAND_IS_CATEGORY.id }],
+        },
       ])
 
       const result = await service.findScopeCategories(mockUser, 'is')
@@ -148,7 +184,10 @@ describe('ScopeService', () => {
     it('should put truly orphaned scopes into uncategorized', async () => {
       mockCms.getArticleCategories.mockResolvedValue([])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/something', '@island.is'), categories: [{ categoryId: 'deleted-cms-id' }] },
+        {
+          ...makeScope('@island.is/something', '@island.is'),
+          categories: [{ categoryId: 'deleted-cms-id' }],
+        },
       ])
 
       const result = await service.findScopeCategories(mockUser, 'is')
@@ -165,7 +204,10 @@ describe('ScopeService', () => {
         { id: 'tag-1', title: 'Eignir', slug: 'eignir', description: 'desc' },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/assets', '@island.is'), tags: [{ tagId: 'tag-1' }] },
+        {
+          ...makeScope('@island.is/assets', '@island.is'),
+          tags: [{ tagId: 'tag-1' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
@@ -176,15 +218,28 @@ describe('ScopeService', () => {
     })
 
     it('should create "Mitt sveitarfélag" tag when user municipality matches a domain', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: 'Kópavogur' })
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Kópavogur',
+      })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@kopavogur.is/service', '@kopavogur.is'), tags: [{ tagId: 'tag-sv' }] },
-        { ...makeScope('@arborg.is/service', '@arborg.is'), tags: [{ tagId: 'tag-sv' }] },
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+        {
+          ...makeScope('@arborg.is/service', '@arborg.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
@@ -197,14 +252,24 @@ describe('ScopeService', () => {
     })
 
     it('should keep scopes in original "Sveitarfélag" tag when creating "Mitt sveitarfélag"', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: 'Kópavogur' })
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Kópavogur',
+      })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@kopavogur.is/service', '@kopavogur.is'), tags: [{ tagId: 'tag-sv' }] },
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
@@ -216,16 +281,29 @@ describe('ScopeService', () => {
     })
 
     it('should pin "Mitt sveitarfélag" to the top of the list', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: 'Kópavogur' })
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Kópavogur',
+      })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
         { id: 'tag-other', title: 'Annað', slug: 'annad', description: '' },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@kopavogur.is/service', '@kopavogur.is'), tags: [{ tagId: 'tag-sv' }] },
-        { ...makeScope('@island.is/something', '@island.is'), tags: [{ tagId: 'tag-other' }] },
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+        {
+          ...makeScope('@island.is/something', '@island.is'),
+          tags: [{ tagId: 'tag-other' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
@@ -234,68 +312,111 @@ describe('ScopeService', () => {
     })
 
     it('should not create "Mitt sveitarfélag" when NatReg fails', async () => {
-      mockNationalRegistry.getAddress.mockRejectedValue(new Error('NatReg down'))
+      mockNationalRegistry.getAddress.mockRejectedValue(
+        new Error('NatReg down'),
+      )
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@kopavogur.is/service', '@kopavogur.is'), tags: [{ tagId: 'tag-sv' }] },
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
 
-      expect(result.find((t) => t.id === 'virtual-mitt-sveitarfelag')).toBeUndefined()
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
       expect(result).toHaveLength(1)
       expect(result[0].slug).toBe('sveitarfelog')
     })
 
     it('should not create "Mitt sveitarfélag" when no domain matches municipality', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: 'Dalvík' })
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Dalvík',
+      })
       mockDomainModel.findOne.mockResolvedValue(null)
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@kopavogur.is/service', '@kopavogur.is'), tags: [{ tagId: 'tag-sv' }] },
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
 
-      expect(result.find((t) => t.id === 'virtual-mitt-sveitarfelag')).toBeUndefined()
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
     })
 
     it('should not create "Mitt sveitarfélag" when no "Sveitarfélag" tag exists', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: 'Kópavogur' })
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Kópavogur',
+      })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         { id: 'tag-other', title: 'Eignir', slug: 'eignir', description: '' },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@island.is/assets', '@island.is'), tags: [{ tagId: 'tag-other' }] },
+        {
+          ...makeScope('@island.is/assets', '@island.is'),
+          tags: [{ tagId: 'tag-other' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
 
-      expect(result.find((t) => t.id === 'virtual-mitt-sveitarfelag')).toBeUndefined()
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
     })
 
     it('should not create "Mitt sveitarfélag" when user has no municipal scopes in the tag', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: 'Kópavogur' })
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Kópavogur',
+      })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@arborg.is/service', '@arborg.is'), tags: [{ tagId: 'tag-sv' }] },
+        {
+          ...makeScope('@arborg.is/service', '@arborg.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
 
-      expect(result.find((t) => t.id === 'virtual-mitt-sveitarfelag')).toBeUndefined()
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
       expect(result).toHaveLength(1)
     })
 
@@ -303,15 +424,25 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: null })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
-        { id: 'tag-sv', title: 'Sveitarfélag', slug: 'sveitarfelog', description: '' },
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
       ])
       mockDelegationResources.findScopesInternal.mockResolvedValue([
-        { ...makeScope('@kopavogur.is/service', '@kopavogur.is'), tags: [{ tagId: 'tag-sv' }] },
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
       ])
 
       const result = await service.findScopeTags(mockUser, 'is')
 
-      expect(result.find((t) => t.id === 'virtual-mitt-sveitarfelag')).toBeUndefined()
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
     })
   })
 })

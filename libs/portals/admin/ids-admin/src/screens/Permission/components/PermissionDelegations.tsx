@@ -99,8 +99,7 @@ export const PermissionDelegations = ({
     () =>
       categoriesData?.authAdminScopeCategories
         .filter(
-          (cat: Category) =>
-            isSuperAdmin || !cat.id.startsWith('virtual-'),
+          (cat: Category) => isSuperAdmin || !cat.id.startsWith('virtual-'),
         )
         .map((cat: Category) => ({
           label: cat.title,
@@ -159,7 +158,14 @@ export const PermissionDelegations = ({
       ),
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCategoriesAndTags, tags, categories, categoriesLoading, tagsLoading, selectedPermission.environment])
+  }, [
+    showCategoriesAndTags,
+    tags,
+    categories,
+    categoriesLoading,
+    tagsLoading,
+    selectedPermission.environment,
+  ])
 
   useEffect(() => {
     if (
@@ -321,9 +327,7 @@ export const PermissionDelegations = ({
                                   <input
                                     type="hidden"
                                     name="originalCategoryIds"
-                                    value={JSON.stringify(
-                                      baselineCategoryIds,
-                                    )}
+                                    value={JSON.stringify(baselineCategoryIds)}
                                   />
                                   <Select
                                     value={selectedCategories}
@@ -382,9 +386,7 @@ export const PermissionDelegations = ({
                                   <input
                                     type="hidden"
                                     name="originalTagIds"
-                                    value={JSON.stringify(
-                                      baselineTagIds,
-                                    )}
+                                    value={JSON.stringify(baselineTagIds)}
                                   />
                                   <Select
                                     value={selectedTags}
