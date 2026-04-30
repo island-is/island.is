@@ -58,24 +58,24 @@ export const ChildrenPassportReview: FC<Props> = ({
         leftColumnItems={[
           `${formatMessage(
             supportingDocuments.labels.passport.publishDate,
-          )}: ${publishDate ? formatDate(new Date(publishDate)) : ''}`,
+          )}: ${formatDate(new Date(publishDate as string))}`,
           `${formatMessage(
             supportingDocuments.labels.passport.expirationDate,
-          )}: ${expirationDate ? formatDate(new Date(expirationDate)) : ''}`,
+          )}: ${formatDate(new Date(expirationDate as string))}`,
           `${formatMessage(
             supportingDocuments.labels.passport.passportNumber,
-          )}: ${passportNumber ?? ''}`,
+          )}: ${passportNumber}`,
         ]}
         rightColumnItems={[
           `${formatMessage(
             supportingDocuments.labels.passport.passportType,
           )}: ${
             travelDocumentTypes.find((x) => x.id?.toString() === passportTypeId)
-              ?.name ?? ''
+              ?.name
           }`,
           `${formatMessage(supportingDocuments.labels.passport.publisher)}: ${
             countryOptions.find((x) => x.id?.toString() === countryOfIssuerId)
-              ?.name ?? ''
+              ?.name
           }`,
         ]}
         leftDescription={formatMessage(review.labels.passports, {

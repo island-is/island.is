@@ -24,8 +24,14 @@ import { FILE_TYPES_ALLOWED } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
-export const ChildrenPassportSubSection = (index: number) =>
-  buildSubSection({
+export const ChildrenPassportSubSection = (index: number) => {
+  const showWhenHasPassport = (formValue: FormValue) =>
+    getValueViaPath(
+      formValue,
+      `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+    ) !== NO
+
+  return buildSubSection({
     id: `${Routes.CHILDRENPASSPORT}[${index}]`,
     title: supportingDocuments.labels.passport.subSectionTitle,
     children: [
@@ -84,33 +90,21 @@ export const ChildrenPassportSubSection = (index: number) =>
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
             maxDate: new Date(),
-            condition: (formValue: FormValue) =>
-              getValueViaPath(
-                formValue,
-                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
-              ) !== NO,
+            condition: showWhenHasPassport,
           }),
           buildDateField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].expirationDate`,
             title: supportingDocuments.labels.passport.expirationDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
-            condition: (formValue: FormValue) =>
-              getValueViaPath(
-                formValue,
-                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
-              ) !== NO,
+            condition: showWhenHasPassport,
           }),
           buildTextField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].passportNumber`,
             title: supportingDocuments.labels.passport.passportNumber,
             placeholder: supportingDocuments.labels.passport.numberPlaceholder,
             width: 'half',
-            condition: (formValue: FormValue) =>
-              getValueViaPath(
-                formValue,
-                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
-              ) !== NO,
+            condition: showWhenHasPassport,
           }),
           buildSelectField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].passportTypeId`,
@@ -129,11 +123,7 @@ export const ChildrenPassportSubSection = (index: number) =>
                 label: name || '',
               }))
             },
-            condition: (formValue: FormValue) =>
-              getValueViaPath(
-                formValue,
-                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
-              ) !== NO,
+            condition: showWhenHasPassport,
           }),
           buildSelectField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].countryOfIssuerId`,
@@ -152,11 +142,7 @@ export const ChildrenPassportSubSection = (index: number) =>
                 label: name || '',
               }))
             },
-            condition: (formValue: FormValue) =>
-              getValueViaPath(
-                formValue,
-                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
-              ) !== NO,
+            condition: showWhenHasPassport,
           }),
           buildFileUploadField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].attachment`,
@@ -170,13 +156,10 @@ export const ChildrenPassportSubSection = (index: number) =>
               supportingDocuments.labels.otherDocuments.acceptedFileTypes,
             uploadButtonLabel:
               supportingDocuments.labels.otherDocuments.buttonText,
-            condition: (formValue: FormValue) =>
-              getValueViaPath(
-                formValue,
-                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
-              ) !== NO,
+            condition: showWhenHasPassport,
           }),
         ],
       }),
     ],
   })
+}
