@@ -15,4 +15,7 @@ export class StudentTrack {
 
   @Field(() => StudentTrackMetadata)
   metadata!: StudentTrackMetadata
+
+  // Internal only — not exposed in GraphQL schema
+  locale?: string
 }
