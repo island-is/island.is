@@ -894,6 +894,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:target-link-uri',
     defaultMessage: 'Target link URI',
   },
+  linkPreview: {
+    id: 'ap.ids-admin:link-preview',
+    defaultMessage: 'Link Preview',
+  },
+  linkPreviewPlaceholder: {
+    id: 'ap.ids-admin:link-preview-placeholder',
+    defaultMessage: 'Fill in the above fields to see a preview of the link',
+  },
   noTags: {
     id: 'ap.ids-admin:no-tags',
     defaultMessage: 'No tags available',

@@ -444,15 +444,23 @@ export const PermissionDelegations = ({
                                   }))
                                 }
                               />
-                              <Text variant="small" as="p">{`Preview: ${
-                                inputValues.originUrl.length > 0
-                                  ? inputValues.originUrl
-                                  : formatMessage(m.originUrl)
-                              }?login_hint={{subjectId}}&target_link_uri=${
-                                inputValues.targetLinkUri.length > 0
-                                  ? inputValues.targetLinkUri
-                                  : formatMessage(m.targetLinkUri)
-                              }`}</Text>
+                              <Input
+                                name="linkPreview"
+                                label={formatMessage(m.linkPreview)}
+                                size="xs"
+                                readOnly
+                                textarea
+                                rows={3}
+                                value={
+                                  inputValues.originUrl &&
+                                  inputValues.targetLinkUri
+                                    ? `${inputValues.originUrl}?login_hint={{subjectId}}&target_link_uri=${inputValues.targetLinkUri}`
+                                    : ''
+                                }
+                                placeholder={formatMessage(
+                                  m.linkPreviewPlaceholder,
+                                )}
+                              />
                             </Stack>
                           </Stack>
                         ) : undefined
