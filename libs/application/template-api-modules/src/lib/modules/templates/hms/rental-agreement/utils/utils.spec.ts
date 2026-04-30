@@ -71,10 +71,7 @@ describe('fetchFinancialIndexationForMonths', () => {
     const postOptions = fetchMock.mock.calls[1][1]
     const postBody = JSON.parse(postOptions?.body as string)
 
-    expect(postBody.query[0].selection.values).toEqual([
-      '2026M06',
-      '2026M05',
-    ])
+    expect(postBody.query[0].selection.values).toEqual(['2026M06', '2026M05'])
   })
 
   it('does not post to Hagstofa when none of the requested months are published', async () => {
@@ -90,9 +87,9 @@ describe('fetchFinancialIndexationForMonths', () => {
       }),
     } as Response)
 
-    await expect(fetchFinancialIndexationForMonths(['2026M07'])).resolves.toEqual(
-      [],
-    )
+    await expect(
+      fetchFinancialIndexationForMonths(['2026M07']),
+    ).resolves.toEqual([])
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
@@ -109,8 +106,8 @@ describe('fetchFinancialIndexationForMonths', () => {
       }),
     } as Response)
 
-    await expect(fetchFinancialIndexationForMonths(['2026M06'])).rejects.toThrow(
-      'Missing Mánuður variable in Hagstofa metadata response',
-    )
+    await expect(
+      fetchFinancialIndexationForMonths(['2026M06']),
+    ).rejects.toThrow('Missing Mánuður variable in Hagstofa metadata response')
   })
 })
