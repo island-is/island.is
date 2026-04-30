@@ -13,6 +13,18 @@ interface HeadWithSocialSharingProps {
 
 const usableContentTypes = ['image/jpeg', 'image/gif', 'image/png', undefined]
 
+const normalizeImageUrl = (imageUrl: string) => {
+  const imageUrlWithProtocol = `${
+    imageUrl.startsWith('//') ? 'https:' : ''
+  }${imageUrl}`
+
+  try {
+    return encodeURI(decodeURI(imageUrlWithProtocol))
+  } catch {
+    return encodeURI(imageUrlWithProtocol)
+  }
+}
+
 export const HeadWithSocialSharing: FC<
   React.PropsWithChildren<HeadWithSocialSharingProps>
 > = ({
@@ -32,7 +44,7 @@ export const HeadWithSocialSharing: FC<
 
   const encodedImageUrl = !imageUrl
     ? ''
-    : encodeURI(`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`)
+    : normalizeImageUrl(imageUrl)
 
   return (
     <Head>
