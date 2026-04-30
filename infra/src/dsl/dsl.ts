@@ -102,7 +102,7 @@ export class ServiceBuilder<ServiceType extends string> {
    *
    * **If you are using this solely to set a `schedule` field (CronJob), prefer
    * the dedicated `scheduledJob()` builder instead — it is type-safe, discoverable,
-   * and supports all CronJob-specific fields (`concurrencyPolicy`, `backoffLimit`, etc.).**
+    * and supports all CronJob-specific fields (`concurrencyPolicy`, `startingDeadlineSeconds`, etc.).**
    *
    * @example
    * ```ts
@@ -671,16 +671,6 @@ export class ScheduledJobBuilder<
   }
 
   /**
-   * Suspends the scheduled job without deleting it.
-   * Useful for temporarily disabling a job. Defaults to `false`.
-   */
-  suspend(suspend: boolean): this {
-    this.ensureScheduledJobConfig()
-    this.serviceDef.scheduledJob!.suspend = suspend
-    return this
-  }
-
-  /**
    * Deadline in seconds for starting the job if it misses its scheduled time
    * due to any reason (controller downtime, etc.).
    */
@@ -691,27 +681,8 @@ export class ScheduledJobBuilder<
   }
 
   /**
-   * Maximum duration in seconds that the job may run before it is forcefully terminated.
-   */
-  activeDeadlineSeconds(seconds: number): this {
-    this.ensureScheduledJobConfig()
-    this.serviceDef.scheduledJob!.activeDeadlineSeconds = seconds
-    return this
-  }
-
-  /**
-   * Number of retries before marking the job as failed.
-   * Defaults to the Kubernetes default (6).
-   */
-  backoffLimit(limit: number): this {
-    this.ensureScheduledJobConfig()
-    this.serviceDef.scheduledJob!.backoffLimit = limit
-    return this
-  }
-
-  /**
    * Number of successfully completed job pods to keep in history.
-   * Defaults to the Kubernetes default (3).
+   * Defaults to 3 (Helm chart default).
    */
   successfulJobsHistoryLimit(limit: number): this {
     this.ensureScheduledJobConfig()
@@ -721,7 +692,7 @@ export class ScheduledJobBuilder<
 
   /**
    * Number of failed job pods to keep in history.
-   * Defaults to the Kubernetes default (1).
+   * Defaults to 1 (Helm chart default).
    */
   failedJobsHistoryLimit(limit: number): this {
     this.ensureScheduledJobConfig()
@@ -763,7 +734,7 @@ export type ScheduledJob<S extends string> = Omit<
  * Creates a new scheduled job (Kubernetes CronJob) builder.
  *
  * The returned builder extends ServiceBuilder with cron-specific methods
- * (`.schedule()`, `.concurrencyPolicy()`, `.backoffLimit()`, etc.) and
+ * (`.schedule()`, `.concurrencyPolicy()`, `.startingDeadlineSeconds()`, etc.) and
  * hides methods that do not apply to CronJobs (`.ingress()`, `.liveness()`,
  * `.readiness()`, `.healthPort()`, `.targetPort()`, `.replicaCount()`, `.podDisruption()`).
  *
@@ -780,7 +751,6 @@ export type ScheduledJob<S extends string> = Omit<
  *   .image('services-cleanup')
  *   .schedule({ dev: '* * * * *', staging: '0 3 * * *', prod: '0 3 * * *' })
  *   .concurrencyPolicy('Forbid')
- *   .backoffLimit(3)
  *   .namespace('islandis')
  *   .command('node')
  *   .args('cleanup.js')
