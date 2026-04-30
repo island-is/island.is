@@ -116,6 +116,7 @@ export interface FinancialIndexationEntry {
 
 const FINANCIAL_INDEXATION_URL =
   'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
+const FINANCIAL_INDEXATION_FETCH_TIMEOUT = 10000
 
 export const listOfLastMonths = (
   numberOfMonths: number,
@@ -152,8 +153,38 @@ const parsePXMonth = (monthStr: string): Date => {
   return new Date(year, month, 1)
 }
 
+const isAbortError = (error: unknown): error is Error => {
+  return error instanceof Error && error.name === 'AbortError'
+}
+
+const fetchFinancialIndexation = async (
+  init?: RequestInit,
+): Promise<Response> => {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => {
+    controller.abort()
+  }, FINANCIAL_INDEXATION_FETCH_TIMEOUT)
+
+  try {
+    return await fetch(FINANCIAL_INDEXATION_URL, {
+      ...init,
+      signal: controller.signal,
+    })
+  } catch (error) {
+    if (isAbortError(error)) {
+      throw new Error(
+        `Hagstofa request timed out after ${FINANCIAL_INDEXATION_FETCH_TIMEOUT}ms`,
+      )
+    }
+
+    throw error
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 const fetchAvailableFinancialIndexationMonths = async () => {
-  const response = await fetch(FINANCIAL_INDEXATION_URL)
+  const response = await fetchFinancialIndexation()
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
@@ -199,7 +230,7 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
     },
   }
 
-  const response = await fetch(FINANCIAL_INDEXATION_URL, {
+  const response = await fetchFinancialIndexation({
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
