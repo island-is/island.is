@@ -102,7 +102,7 @@ export class ServiceBuilder<ServiceType extends string> {
    *
    * **If you are using this solely to set a `schedule` field (CronJob), prefer
    * the dedicated `scheduledJob()` builder instead — it is type-safe, discoverable,
-    * and supports all CronJob-specific fields (`concurrencyPolicy`, `startingDeadlineSeconds`, etc.).**
+   * and supports all CronJob-specific fields (`concurrencyPolicy`, `startingDeadlineSeconds`, etc.).**
    *
    * @example
    * ```ts
