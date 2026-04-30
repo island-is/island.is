@@ -121,20 +121,14 @@ describe('scheduledJob()', () => {
       const sut = scheduledJob('my-job')
         .schedule('0 3 * * *')
         .concurrencyPolicy('Replace')
-        .suspend(false)
         .startingDeadlineSeconds(200)
-        .activeDeadlineSeconds(3600)
-        .backoffLimit(3)
         .successfulJobsHistoryLimit(5)
         .failedJobsHistoryLimit(2)
       const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({
         schedule: '0 3 * * *',
         concurrencyPolicy: 'Replace',
-        suspend: false,
         startingDeadlineSeconds: 200,
-        activeDeadlineSeconds: 3600,
-        backoffLimit: 3,
         successfulJobsHistoryLimit: 5,
         failedJobsHistoryLimit: 2,
       })
@@ -145,9 +139,6 @@ describe('scheduledJob()', () => {
       const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
       const extra = result.serviceDef[0].extra!
       expect(extra).not.toHaveProperty('concurrencyPolicy')
-      expect(extra).not.toHaveProperty('suspend')
-      expect(extra).not.toHaveProperty('backoffLimit')
-      expect(extra).not.toHaveProperty('activeDeadlineSeconds')
       expect(extra).not.toHaveProperty('startingDeadlineSeconds')
       expect(extra).not.toHaveProperty('successfulJobsHistoryLimit')
       expect(extra).not.toHaveProperty('failedJobsHistoryLimit')
@@ -207,17 +198,17 @@ describe('scheduledJob()', () => {
     it('scheduledJob fields win when extraAttributes defines the same keys', async () => {
       const sut = scheduledJob('my-job')
         .extraAttributes({
-          dev: { schedule: '* * * * *', backoffLimit: 99 },
-          staging: { schedule: '* * * * *', backoffLimit: 99 },
-          prod: { schedule: '* * * * *', backoffLimit: 99 },
+          dev: { schedule: '* * * * *', concurrencyPolicy: 'Allow' },
+          staging: { schedule: '* * * * *', concurrencyPolicy: 'Allow' },
+          prod: { schedule: '* * * * *', concurrencyPolicy: 'Allow' },
         })
         .schedule('0 3 * * *')
-        .backoffLimit(3)
+        .concurrencyPolicy('Forbid')
 
       const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({
         schedule: '0 3 * * *',
-        backoffLimit: 3,
+        concurrencyPolicy: 'Forbid',
       })
     })
   })

@@ -287,32 +287,20 @@ export type ScheduledJobConfig = {
    */
   schedule: CronSchedule
   /**
-   * How to handle concurrent job executions. Default: 'Forbid'
+   * How to handle concurrent job executions. Default: 'Allow' (Helm chart default)
    * See: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
    */
   concurrencyPolicy?: ConcurrencyPolicy
-  /**
-   * Suspends the scheduled job without deleting it. Default: false
-   */
-  suspend?: boolean
   /**
    * Deadline in seconds for starting the job if it misses its scheduled time.
    */
   startingDeadlineSeconds?: number
   /**
-   * Maximum duration in seconds before the job is forcefully terminated.
-   */
-  activeDeadlineSeconds?: number
-  /**
-   * Number of retries before marking the job as failed. Default: Kubernetes default (6)
-   */
-  backoffLimit?: number
-  /**
-   * Number of successful completed job pods to retain. Default: Kubernetes default (3)
+   * Number of successful completed job pods to retain. Default: 3 (Helm chart default)
    */
   successfulJobsHistoryLimit?: number
   /**
-   * Number of failed job pods to retain. Default: Kubernetes default (1)
+   * Number of failed job pods to retain. Default: 1 (Helm chart default)
    */
   failedJobsHistoryLimit?: number
 }

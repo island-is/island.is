@@ -158,15 +158,22 @@ const serializeService: SerializeMethod<HelmService> = async (
 
   // scheduled job — merge cron fields into extra so they land as top-level Helm values
   if (serviceDef.scheduledJob) {
-    const { schedule, concurrencyPolicy, suspend, startingDeadlineSeconds, activeDeadlineSeconds, backoffLimit, successfulJobsHistoryLimit, failedJobsHistoryLimit } = serviceDef.scheduledJob
+    const {
+      schedule,
+      concurrencyPolicy,
+      startingDeadlineSeconds,
+      successfulJobsHistoryLimit,
+      failedJobsHistoryLimit,
+    } = serviceDef.scheduledJob
     const cronExtra: Record<string, string | number | boolean> = { schedule }
-    if (concurrencyPolicy !== undefined) cronExtra['concurrencyPolicy'] = concurrencyPolicy
-    if (suspend !== undefined) cronExtra['suspend'] = suspend
-    if (startingDeadlineSeconds !== undefined) cronExtra['startingDeadlineSeconds'] = startingDeadlineSeconds
-    if (activeDeadlineSeconds !== undefined) cronExtra['activeDeadlineSeconds'] = activeDeadlineSeconds
-    if (backoffLimit !== undefined) cronExtra['backoffLimit'] = backoffLimit
-    if (successfulJobsHistoryLimit !== undefined) cronExtra['successfulJobsHistoryLimit'] = successfulJobsHistoryLimit
-    if (failedJobsHistoryLimit !== undefined) cronExtra['failedJobsHistoryLimit'] = failedJobsHistoryLimit
+    if (concurrencyPolicy !== undefined)
+      cronExtra['concurrencyPolicy'] = concurrencyPolicy
+    if (startingDeadlineSeconds !== undefined)
+      cronExtra['startingDeadlineSeconds'] = startingDeadlineSeconds
+    if (successfulJobsHistoryLimit !== undefined)
+      cronExtra['successfulJobsHistoryLimit'] = successfulJobsHistoryLimit
+    if (failedJobsHistoryLimit !== undefined)
+      cronExtra['failedJobsHistoryLimit'] = failedJobsHistoryLimit
     result.extra = { ...(result.extra ?? {}), ...cronExtra }
   }
   // target port
