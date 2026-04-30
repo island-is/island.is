@@ -763,7 +763,7 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
-  'health.overview.medicine': 'Medicine',
+  'health.overview.medicine': 'My medicine',
   'health.overview.seeAllCategories': 'See all categories',
 
   // health: categories
@@ -925,7 +925,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.xMonths': '{months} months',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.screenTitle': 'My medicine',
   'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
   'health.prescriptionsAndCertificates.expired': 'Expired',
   'health.prescriptionsAndCertificates.rejected': 'Rejected',
