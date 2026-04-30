@@ -42,9 +42,7 @@ export const HeadWithSocialSharing: FC<
     : false
   const isUsableImage = !isSvg && usableContentTypes.includes(imageContentType)
 
-  const encodedImageUrl = !imageUrl
-    ? ''
-    : normalizeImageUrl(imageUrl)
+  const encodedImageUrl = !imageUrl ? '' : normalizeImageUrl(imageUrl)
 
   return (
     <Head>
