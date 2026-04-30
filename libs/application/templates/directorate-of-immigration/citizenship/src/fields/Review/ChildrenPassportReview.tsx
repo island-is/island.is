@@ -56,9 +56,9 @@ export const ChildrenPassportReview: FC<Props> = ({
       <GenericReview
         application={application}
         leftColumnItems={[
-          `${formatMessage(
-            supportingDocuments.labels.passport.publishDate,
-          )}: ${publishDate ? formatDate(new Date(publishDate)) : ''}`,
+          `${formatMessage(supportingDocuments.labels.passport.publishDate)}: ${
+            publishDate ? formatDate(new Date(publishDate)) : ''
+          }`,
           `${formatMessage(
             supportingDocuments.labels.passport.expirationDate,
           )}: ${expirationDate ? formatDate(new Date(expirationDate)) : ''}`,
