@@ -111,4 +111,7 @@ export class FieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   zendeskTicketFieldId?: string
+
+  @Field(() => String, { nullable: true })
+  dataSourceUrl?: string
 }

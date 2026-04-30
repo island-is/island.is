@@ -187,4 +187,9 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   zendeskTicketFieldId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  dataSourceUrl?: string
 }

@@ -13,18 +13,16 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
+import { ListFromUrl } from './ListFromUrl'
 
 export const ListSettings = () => {
   const { control, setInListBuilder, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
-  const { activeItem, isReadOnly } = control
+  const { activeItem, isReadOnly, form } = control
   const currentItem = activeItem.data as FormSystemField
   const [isCustom, setIsCustom] = useState(
     !currentItem.fieldSettings?.listType ||
       currentItem.fieldSettings?.listType === ListTypesEnum.CUSTOM,
-  )
-  const [isZendeskList, setIsZendeskList] = useState(
-    currentItem.fieldSettings?.listType === ListTypesEnum.ZENDESK_LIST,
   )
 
   const { formatMessage } = useLocale()
@@ -32,6 +30,9 @@ export const ListSettings = () => {
   const predeterminedLists = [
     { label: 'Landalisti', value: ListTypesEnum.COUNTRIES },
     { label: 'Zendesk listi', value: ListTypesEnum.ZENDESK_LIST },
+    ...(form?.submissionServiceUrl !== 'zendesk'
+      ? [{ label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL }]
+      : []),
     // { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
     // { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
   ]
@@ -59,23 +60,26 @@ export const ListSettings = () => {
     <Stack space={2}>
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <>
-          <RadioButton
-            id="listType-custom"
-            name="listTypeMode"
-            label={formatMessage(m.customList)}
-            disabled={isReadOnly}
-            checked={isCustom}
-            onChange={selectCustomRadio}
-          />
-
-          <RadioButton
-            id="listType-predetermined"
-            name="listTypeMode"
-            label={formatMessage(m.predeterminedLists)}
-            disabled={isReadOnly}
-            checked={!isCustom}
-            onChange={selectPredeterminedRadio}
-          />
+          <Column span="3/10">
+            <RadioButton
+              id="listType-custom"
+              name="listTypeMode"
+              label={formatMessage(m.customList)}
+              disabled={isReadOnly}
+              checked={isCustom}
+              onChange={selectCustomRadio}
+            />
+          </Column>
+          <Column span="3/10">
+            <RadioButton
+              id="listType-predetermined"
+              name="listTypeMode"
+              label={formatMessage(m.predeterminedLists)}
+              disabled={isReadOnly}
+              checked={!isCustom}
+              onChange={selectPredeterminedRadio}
+            />
+          </Column>
         </>
       )}
       {isCustom && (
@@ -84,53 +88,58 @@ export const ListSettings = () => {
         </Button>
       )}
       {!isCustom && (
-        <Row>
-          <Column span="5/10">
-            <Select
-              placeholder={formatMessage(m.chooseListType)}
-              name="predeterminedLists"
-              label={formatMessage(m.predeterminedLists)}
-              options={predeterminedLists}
-              value={selectedPredetermined}
-              isDisabled={isReadOnly}
-              backgroundColor="blue"
-              onChange={(option) => {
-                controlDispatch({
-                  type: 'SET_LIST_TYPE',
-                  payload: {
-                    listType: option?.value ?? ListTypesEnum.CUSTOM,
-                    update: updateActiveItem,
-                  },
-                })
-              }}
-            />
-          </Column>
-          {currentItem.fieldSettings?.listType ===
-            ListTypesEnum.ZENDESK_LIST && (
+        <>
+          <Row>
             <Column span="5/10">
-              <Input
-                label="Zendesk ticket field ID"
-                name="zendeskTicketFieldId"
-                value={
-                  currentItem.fieldSettings?.zendeskTicketFieldId
-                    ? String(currentItem.fieldSettings.zendeskTicketFieldId)
-                    : ''
-                }
+              <Select
+                placeholder={formatMessage(m.chooseListType)}
+                name="predeterminedLists"
+                label={formatMessage(m.predeterminedLists)}
+                options={predeterminedLists}
+                value={selectedPredetermined}
+                isDisabled={isReadOnly}
                 backgroundColor="blue"
-                readOnly={isReadOnly}
-                onChange={(e) =>
+                onChange={(option) => {
                   controlDispatch({
-                    type: 'SET_ANY_FIELD_SETTING',
+                    type: 'SET_LIST_TYPE',
                     payload: {
-                      property: 'zendeskTicketFieldId',
-                      value: Number(e.target.value),
+                      listType: option?.value ?? ListTypesEnum.CUSTOM,
+                      update: updateActiveItem,
                     },
                   })
-                }
+                }}
               />
             </Column>
-          )}
-        </Row>
+            {currentItem.fieldSettings?.listType ===
+              ListTypesEnum.ZENDESK_LIST && (
+              <Column span="5/10">
+                <Input
+                  label="Zendesk ticket field ID"
+                  name="zendeskTicketFieldId"
+                  type="text"
+                  value={
+                    currentItem.fieldSettings?.zendeskTicketFieldId
+                      ? String(currentItem.fieldSettings.zendeskTicketFieldId)
+                      : ''
+                  }
+                  backgroundColor="blue"
+                  readOnly={isReadOnly}
+                  onChange={(e) =>
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property: 'zendeskTicketFieldId',
+                        value: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </Column>
+            )}
+          </Row>
+          {currentItem.fieldSettings?.listType ===
+            ListTypesEnum.LIST_FROM_URL && <ListFromUrl />}
+        </>
       )}
     </Stack>
   )
