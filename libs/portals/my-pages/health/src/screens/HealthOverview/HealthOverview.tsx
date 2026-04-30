@@ -1,4 +1,4 @@
-import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import subYears from 'date-fns/subYears'
@@ -7,6 +7,7 @@ import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
   DEFAULT_APPOINTMENTS_STATUS,
+  SECTION_GAP,
 } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
@@ -23,6 +24,7 @@ import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
+import ContactLinks from './components/ContactLinks'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
@@ -34,7 +36,9 @@ export const HealthOverview = () => {
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
+
   const [showAppointments, setShowAppointments] = useState(false)
 
   const featureFlagClient = useFeatureFlagClient()
@@ -122,13 +126,14 @@ export const HealthOverview = () => {
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
   const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 1) || []
 
   return (
     <>
+      {/* Header + appointments on left, contact links on right */}
       <GridRow marginBottom={CONTENT_GAP_LG}>
-        <GridColumn span={isMobile ? '8/8' : '5/8'}>
-          <>
+        <GridColumn span={isMobile ? '12/12' : '7/12'}>
+          <Box marginBottom={SECTION_GAP}>
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
             </Text>
@@ -136,20 +141,50 @@ export const HealthOverview = () => {
             <Text variant="default" paddingTop={1}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
-          </>
+          </Box>
+          {isMobile && (
+            <Box marginBottom={CONTENT_GAP_LG}>
+              <ContactLinks />
+            </Box>
+          )}
+          {showAppointments && (
+            <Box marginRight={!isTablet ? 0 : 12}>
+              <Appointments
+                data={{
+                  data: { data: firstTwoAppointments },
+                  loading: appointmentsLoading,
+                  error: !!appointmentsError,
+                }}
+                showLinkButton
+                cardSize="large"
+              />
+            </Box>
+          )}
         </GridColumn>
+        {!isMobile && (
+          <GridColumn span="5/12">
+            <div style={{ position: 'relative' }}>
+              <img
+                src="./assets/images/jobs.svg"
+                alt=""
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '-200px',
+                  right: 0,
+                  width: '239px',
+                  height: '239px',
+                }}
+              />
+              <div
+                style={{ position: 'relative', zIndex: 1, marginTop: '55px' }}
+              >
+                <ContactLinks />
+              </div>
+            </div>
+          </GridColumn>
+        )}
       </GridRow>
-      {/* Appointments */}
-      {showAppointments && (
-        <Appointments
-          data={{
-            data: { data: firstTwoAppointments },
-            loading: appointmentsLoading,
-            error: !!appointmentsError,
-          }}
-          showLinkButton
-        />
-      )}
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
