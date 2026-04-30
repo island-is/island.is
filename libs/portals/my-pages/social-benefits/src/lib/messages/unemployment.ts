@@ -204,6 +204,11 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:myDataSubmitDocuments',
     defaultMessage: 'Skila gögnum',
   },
+  myDataSubmitDocumentsUrl: {
+    id: 'sp.social-benefits-unemployment:myDataSubmitDocumentsUrl',
+    defaultMessage:
+      'https://island.is/umsoknir/breyta-upplysingum-atvinnuleysisbaetur',
+  },
   myDataViewDocument: {
     id: 'sp.social-benefits-unemployment:myDataViewDocument',
     defaultMessage: 'Skoða',

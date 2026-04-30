@@ -258,6 +258,9 @@ export class VmstUnemploymentClientService {
     )
   }
 
+  /* 
+  Fetches application information for the overview page on My Pages island.is
+  */
   async getApplicationOverview(
     auth: User,
     language?: Locale,
@@ -304,6 +307,9 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  /**
+   * Returns overview of applications that should be shown for an applicant.
+   */
   async getApplicationsOverview(
     applicantId: string,
     language?: Locale,
@@ -319,10 +325,14 @@ export class VmstUnemploymentClientService {
     return await api.applicationOverview({
       galdurXRoadAPIModelsApplicationGetApplicationsOverviewRequest: {
         applicantId,
+        language: lang,
       },
     })
   }
 
+  /*
+    Return an overview of users information for My Pages.
+  */
   async getApplicantOverview(
     applicantId: string,
     language?: Locale,
@@ -341,6 +351,9 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  /*
+    Return all missing a submitted documents for a users application
+  */
   async getApplicantRequestedAttachments(
     applicantId: string,
   ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentRequestDTO>> {
@@ -355,6 +368,9 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  /*
+    Returns which actions a user can take on My Pages depending on application status.
+  */
   async getApplicantActions(
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsAvailableActions> {

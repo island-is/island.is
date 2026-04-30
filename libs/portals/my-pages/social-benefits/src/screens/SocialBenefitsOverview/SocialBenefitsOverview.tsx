@@ -60,7 +60,7 @@ const SocialBenefitsOverview = () => {
               icon: 'arrowForward',
               url: UnemploymentBenefitsPaths.Status,
             }}
-            image={{ type: 'logo', url: VMST_LOGO_URL }}
+            image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
             tag={getStatusTag(
               overview.unemploymentApplication.statusName,
               overview.unemploymentApplication.statusId,

@@ -97,7 +97,7 @@ const MyData = () => {
                     </Tag>
                   )}
                   editLink={{
-                    url: 'https://island.is/umsoknir/breyta-upplysingum-atvinnuleysisbaetur',
+                    url: formatMessage(um.myDataSubmitDocumentsUrl),
                     title: formatMessage(um.myDataSubmitDocuments),
                     icon: 'arrowForward',
                   }}
