@@ -127,7 +127,10 @@ const WorkMachinesDetail = () => {
     <IntroWrapper
       title={fullTypeName ?? ''}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: VINNUEFTIRLITID_SLUG, tooltip: formatMessage(m.workmachineTooltip) }}
+      serviceProvider={{
+        slug: VINNUEFTIRLITID_SLUG,
+        tooltip: formatMessage(m.workmachineTooltip),
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.workMachine && (

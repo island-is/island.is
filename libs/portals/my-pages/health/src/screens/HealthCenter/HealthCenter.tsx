@@ -68,7 +68,10 @@ const HealthCenter = () => {
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.healthCenterTitle)}
       intro={formatMessage(messages.healthCenterDescription)}
-      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {wasSuccessfulTransfer && !loading && (

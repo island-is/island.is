@@ -82,7 +82,10 @@ const ChildCustody = () => {
     <IntroWrapper
       title={child?.fullName ?? ''}
       intro={formatMessage(spmm.childIntro)}
-      serviceProvider={{ slug: THJODSKRA_SLUG, tooltip: formatMessage(m.tjodskraTooltip) }}
+      serviceProvider={{
+        slug: THJODSKRA_SLUG,
+        tooltip: formatMessage(m.tjodskraTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

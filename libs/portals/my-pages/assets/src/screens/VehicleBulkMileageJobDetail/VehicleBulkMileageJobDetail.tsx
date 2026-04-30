@@ -107,22 +107,27 @@ const VehicleBulkMileageJobDetail = () => {
         </>
       }
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
-      buttonGroup={{ actions: [
-        <Button
-          key="refresh-button"
-          variant="utility"
-          icon={
-            loading || networkStatus === NetworkStatus.refetch
-              ? undefined
-              : 'reload'
-          }
-          loading={loading || networkStatus === NetworkStatus.refetch}
-          onClick={handleRefresh}
-        >
-          {formatMessage(vehicleMessage.refreshJob)}
-        </Button>,
-      ] }}
+      serviceProvider={{
+        slug: SAMGONGUSTOFA_SLUG,
+        tooltip: formatMessage(m.vehiclesTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <Button
+            key="refresh-button"
+            variant="utility"
+            icon={
+              loading || networkStatus === NetworkStatus.refetch
+                ? undefined
+                : 'reload'
+            }
+            loading={loading || networkStatus === NetworkStatus.refetch}
+            onClick={handleRefresh}
+          >
+            {formatMessage(vehicleMessage.refreshJob)}
+          </Button>,
+        ],
+      }}
     >
       {!error && !loading && !jobsStatus && (
         <Problem

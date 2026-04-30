@@ -40,7 +40,10 @@ const UserContractsOverview = () => {
     <IntroWrapper
       title={cm.contractsOverviewTitle}
       intro={cm.contractsOverviewSubtitle}
-      serviceProvider={{ slug: HMS_SLUG, tooltip: formatMessage(m.rentalAgreementsTooltip) }}
+      serviceProvider={{
+        slug: HMS_SLUG,
+        tooltip: formatMessage(m.rentalAgreementsTooltip),
+      }}
       marginBottom={3}
       desktopContentSpan="10/12"
     >

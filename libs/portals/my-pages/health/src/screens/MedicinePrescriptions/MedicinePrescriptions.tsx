@@ -132,9 +132,12 @@ const MedicinePrescriptions = () => {
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptions)}
       intro={formatMessage(messages.medicinePrescriptionIntroText)}
-      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
-        messages.landlaeknirMedicinePrescriptionsTooltip,
-      ) }}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(
+          messages.landlaeknirMedicinePrescriptionsTooltip,
+        ),
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

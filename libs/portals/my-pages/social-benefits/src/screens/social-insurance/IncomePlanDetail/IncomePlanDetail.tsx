@@ -27,7 +27,10 @@ const IncomePlanDetail = () => {
     <IntroWrapper
       title={formatMessage(coreMessages.latestIncomePlan)}
       intro={formatMessage(m.incomePlanDetail)}
-      serviceProvider={{ slug: 'tryggingastofnun', tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
+      serviceProvider={{
+        slug: 'tryggingastofnun',
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />

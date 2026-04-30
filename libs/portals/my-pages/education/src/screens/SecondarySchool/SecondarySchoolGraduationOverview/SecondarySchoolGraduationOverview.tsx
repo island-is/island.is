@@ -30,7 +30,10 @@ export const EducationGraduationDetail = () => {
           'Hér getur þú fundið yfirlit yfir þínar útskriftir úr framhaldsskóla.',
       })}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltipSecondary) }}
+      serviceProvider={{
+        slug: MMS_SLUG,
+        tooltip: formatMessage(m.mmsTooltipSecondary),
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

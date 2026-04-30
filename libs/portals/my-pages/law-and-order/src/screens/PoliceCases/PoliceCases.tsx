@@ -27,25 +27,28 @@ const PoliceCases = () => {
       loading={loading}
       title={messages.policeCasesTitle}
       intro={messages.policeCasesDescription}
-      serviceProvider={{ slug: RIKISLOGREGLUSTJORI_SLUG, tooltip: formatMessage(
-        coreMessages.nationalPoliceCommissionerTooltip,
-      ) }}
-      buttonGroup={{ actions: [
-        <LinkButton
-          key="link-button-1"
-          to={formatMessage(messages.policeCasesHeaderLinkButton1Url)}
-          text={formatMessage(messages.policeCasesHeaderLinkButton1Text)}
-          icon="open"
-          variant="utility"
-        />,
-        <LinkButton
-          key="link-button-2"
-          to={formatMessage(messages.policeCasesHeaderLinkButton2Url)}
-          text={formatMessage(messages.policeCasesHeaderLinkButton2Text)}
-          icon="open"
-          variant="utility"
-        />,
-      ] }}
+      serviceProvider={{
+        slug: RIKISLOGREGLUSTJORI_SLUG,
+        tooltip: formatMessage(coreMessages.nationalPoliceCommissionerTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="link-button-1"
+            to={formatMessage(messages.policeCasesHeaderLinkButton1Url)}
+            text={formatMessage(messages.policeCasesHeaderLinkButton1Text)}
+            icon="open"
+            variant="utility"
+          />,
+          <LinkButton
+            key="link-button-2"
+            to={formatMessage(messages.policeCasesHeaderLinkButton2Url)}
+            text={formatMessage(messages.policeCasesHeaderLinkButton2Text)}
+            icon="open"
+            variant="utility"
+          />,
+        ],
+      }}
       desktopContentSpan="10/12"
     >
       {loading && !error && (

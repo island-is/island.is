@@ -81,7 +81,10 @@ export const AssetsOverview = () => {
           'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
       }}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: HMS_SLUG, tooltip: formatMessage(m.realEstateTooltip) }}
+      serviceProvider={{
+        slug: HMS_SLUG,
+        tooltip: formatMessage(m.realEstateTooltip),
+      }}
     >
       {loading && !error && <AssetCardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}

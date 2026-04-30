@@ -17,7 +17,10 @@ const UserProfile = () => {
       marginBottom={[4, 4, 6]}
       title={formatMessage(m.mySettings)}
       intro={formatMessage(msg.overlayIntro)}
-      serviceProvider={{ slug: ISLANDIS_SLUG, tooltip: formatMessage(m.userProfileTooltip) }}
+      serviceProvider={{
+        slug: ISLANDIS_SLUG,
+        tooltip: formatMessage(m.userProfileTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       <ProfileForm showIntroText={false} title={profile.name || ''} />

@@ -151,7 +151,10 @@ export const AirDiscountOverview = () => {
     <IntroWrapper
       title={formatMessage(m.introTitle)}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: VEGAGERDIN_SLUG, tooltip: formatMessage(coreMessage.airDiscountTooltip) }}
+      serviceProvider={{
+        slug: VEGAGERDIN_SLUG,
+        tooltip: formatMessage(coreMessage.airDiscountTooltip),
+      }}
     >
       <Box marginBottom={[3, 4, 5]}>
         <GridRow>

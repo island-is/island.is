@@ -33,39 +33,42 @@ const PatientDataPermits: FC = () => {
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
       intro={formatMessage(messages.patientDataPermitDescription)}
-      serviceProvider={{ slug: "landlaeknir", tooltip: formatMessage(
-        messages.landlaeknirPatientPermitsTooltip,
-      ) }}
+      serviceProvider={{
+        slug: 'landlaeknir',
+        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+      }}
       loading={loading}
       buttonGroup={
         !loading && !error
-          ? { actions: [
-              <LinkButton
-                key="readAboutPermit"
-                variant="utility"
-                size="small"
-                to={formatMessage(messages.patientDataPermitsLink)}
-                text={formatMessage(messages.patientDataPermitsLinkText)}
-                icon="open"
-              />,
-              ...(!consent
-                ? [
-                    <Button
-                      key="addNewPermit"
-                      variant="utility"
-                      colorScheme="primary"
-                      icon="arrowForward"
-                      iconType="outline"
-                      size="small"
-                      onClick={() =>
-                        navigate(HealthPaths.HealthPatientDataPermitsAdd)
-                      }
-                    >
-                      {formatMessage(messages.addPermit)}
-                    </Button>,
-                  ]
-                : []),
-            ] }
+          ? {
+              actions: [
+                <LinkButton
+                  key="readAboutPermit"
+                  variant="utility"
+                  size="small"
+                  to={formatMessage(messages.patientDataPermitsLink)}
+                  text={formatMessage(messages.patientDataPermitsLinkText)}
+                  icon="open"
+                />,
+                ...(!consent
+                  ? [
+                      <Button
+                        key="addNewPermit"
+                        variant="utility"
+                        colorScheme="primary"
+                        icon="arrowForward"
+                        iconType="outline"
+                        size="small"
+                        onClick={() =>
+                          navigate(HealthPaths.HealthPatientDataPermitsAdd)
+                        }
+                      >
+                        {formatMessage(messages.addPermit)}
+                      </Button>,
+                    ]
+                  : []),
+              ],
+            }
           : undefined
       }
       desktopContentSpan="10/12"

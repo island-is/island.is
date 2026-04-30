@@ -51,7 +51,9 @@ interface WithIntroProps extends BaseProps {
 }
 
 /** @deprecated Use `IntroWrapperProps` from `IntroWrapper` instead. */
-export type IntroWrapperDeprecatedProps = WithIntroComponentProps | WithIntroProps
+export type IntroWrapperDeprecatedProps =
+  | WithIntroComponentProps
+  | WithIntroProps
 
 /**
  * @deprecated Use `IntroWrapper` instead.

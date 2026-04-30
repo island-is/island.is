@@ -60,7 +60,10 @@ const Subpoena = () => {
       loading={loading}
       title={formatMessage(messages.subpoena)}
       intro={subpoena?.texts?.description ?? ''}
-      serviceProvider={{ slug: DOMSMALARADUNEYTID_SLUG, tooltip: formatMessage(m.domsmalaraduneytidTooltip) }}
+      serviceProvider={{
+        slug: DOMSMALARADUNEYTID_SLUG,
+        tooltip: formatMessage(m.domsmalaraduneytidTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {!loading && subpoena?.texts?.confirmation && (

@@ -33,9 +33,10 @@ const ReferralsDetail: React.FC = () => {
     <IntroWrapper
       title={referral?.serviceName || formatMessage(messages.referrals)}
       intro={formatMessage(messages.referralsDetailIntro)}
-      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
-        messages.landlaeknirReferralTooltip,
-      ) }}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirReferralTooltip),
+      }}
       loading={loading}
       marginBottom={6}
       desktopContentSpan="10/12"

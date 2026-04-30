@@ -34,7 +34,10 @@ export const TherapiesWrapper = ({
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.therapyTitle)}
       intro={formatMessage(messages.therapyDescription)}
-      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
     >
       <TabNavigation
         label={formatMessage(messages.therapyType)}

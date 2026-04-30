@@ -74,7 +74,10 @@ const VehicleBulkMileageUploadJobOverview = () => {
       title={m.vehiclesBulkMileageJobOverview}
       intro={m.vehiclesBulkMileageJobOverviewDescription}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
+      serviceProvider={{
+        slug: SAMGONGUSTOFA_SLUG,
+        tooltip: formatMessage(m.vehiclesTooltip),
+      }}
     >
       {error && <Problem error={error} noBorder={false} />}
       {!error && (

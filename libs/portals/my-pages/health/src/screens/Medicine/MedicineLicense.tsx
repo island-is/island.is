@@ -27,7 +27,10 @@ export const MedicineLicense = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineLicenseTitle)}
       intro={formatMessage(messages.medicineLicenseIntroText)}
-      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {error ? (

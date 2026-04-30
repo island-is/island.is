@@ -38,7 +38,10 @@ const FamilyMember = () => {
     <IntroWrapper
       title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
       intro={formatMessage(spmm.spouseIntro)}
-      serviceProvider={{ slug: THJODSKRA_SLUG, tooltip: formatMessage(m.tjodskraTooltip) }}
+      serviceProvider={{
+        slug: THJODSKRA_SLUG,
+        tooltip: formatMessage(m.tjodskraTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

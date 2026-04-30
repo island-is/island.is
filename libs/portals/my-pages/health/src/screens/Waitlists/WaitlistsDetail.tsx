@@ -36,9 +36,10 @@ const WaitlistsDetail: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.waitlists)}
       intro={formatMessage(messages.waitlistsIntro)}
-      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
-        messages.landlaeknirWaitlistTooltip,
-      ) }}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirWaitlistTooltip),
+      }}
       marginBottom={6}
       desktopContentSpan="10/12"
     >

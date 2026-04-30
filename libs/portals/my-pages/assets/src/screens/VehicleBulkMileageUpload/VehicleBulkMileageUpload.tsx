@@ -128,9 +128,12 @@ const VehicleBulkMileageUpload = () => {
       title={m.vehiclesBulkMileageUpload}
       intro={m.vehiclesBulkMileageUploadDescription}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
-      buttonGroup={{ actions:
-        templateData?.vehiclesMileageTemplateFileDownloadUrl
+      serviceProvider={{
+        slug: SAMGONGUSTOFA_SLUG,
+        tooltip: formatMessage(m.vehiclesTooltip),
+      }}
+      buttonGroup={{
+        actions: templateData?.vehiclesMileageTemplateFileDownloadUrl
           ? [
               <DropdownMenu
                 icon="ellipsisHorizontal"
@@ -158,7 +161,7 @@ const VehicleBulkMileageUpload = () => {
                 </Box>
               ) : null,
             ]
-          : []
+          : [],
       }}
     >
       <Stack space={2}>

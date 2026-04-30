@@ -69,7 +69,10 @@ const Dentists = () => {
       title={formatMessage(messages.dentistsTitle)}
       intro={formatMessage(messages.dentistsDescription)}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

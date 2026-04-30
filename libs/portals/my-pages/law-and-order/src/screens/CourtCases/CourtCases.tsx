@@ -29,7 +29,10 @@ const CourtCases = () => {
     <IntroWrapper
       title={messages.courtCases}
       intro={messages.courtCasesDescription}
-      serviceProvider={{ slug: DOMSMALARADUNEYTID_SLUG, tooltip: formatMessage(m.domsmalaraduneytidTooltip) }}
+      serviceProvider={{
+        slug: DOMSMALARADUNEYTID_SLUG,
+        tooltip: formatMessage(m.domsmalaraduneytidTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {loading && !error && (

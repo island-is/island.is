@@ -71,7 +71,10 @@ const PersonalTaxCredit = () => {
       title={formatMessage(m.personalTaxCredit)}
       intro={formatMessage(m.personalTaxCreditDescription)}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: TRYGGINGASTOFNUN_SLUG, tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
+      serviceProvider={{
+        slug: TRYGGINGASTOFNUN_SLUG,
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
     >
       {loading ? (
         <CardLoader />

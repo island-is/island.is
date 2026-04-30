@@ -84,63 +84,66 @@ const PermitDetail: React.FC = () => {
       introComponent={
         <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
       }
-      serviceProvider={{ slug: "landlaeknir", tooltip: formatMessage(
-        messages.landlaeknirPatientPermitsTooltip,
-      ) }}
+      serviceProvider={{
+        slug: 'landlaeknir',
+        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+      }}
       buttonGroup={
         !loading && !error
-          ? { actions: [
-              // TODO: Re-enable when backend PDF endpoint is available
-              // <Button
-              //   key="downloadPDF"
-              //   variant="utility"
-              //   icon="download"
-              //   iconType="outline"
-              //   size="small"
-              // >
-              //   {formatMessage(messages.downloadPDF)}
-              // </Button>,
-              ...(isActive
-                ? [
-                    <Button
-                      key="invalidatePermit"
-                      variant="utility"
-                      icon="eyeOff"
-                      iconType="outline"
-                      size="small"
-                      onClick={() => setModalOpen(true)}
-                    >
-                      {formatMessage(messages.patientDataPermitInvalidate)}
-                    </Button>,
-                  ]
-                : []),
-              <Button
-                key="editPermit"
-                variant="utility"
-                colorScheme="primary"
-                icon="arrowForward"
-                iconType="outline"
-                size="small"
-                onClick={() =>
-                  navigate(
-                    HealthPaths.HealthPatientDataPermitsAdd,
-                    isInactive
-                      ? undefined
-                      : {
-                          state: {
-                            countries: permit?.countries ?? [],
-                            validFrom: permit?.validFrom ?? null,
-                            validTo: permit?.validTo ?? null,
+          ? {
+              actions: [
+                // TODO: Re-enable when backend PDF endpoint is available
+                // <Button
+                //   key="downloadPDF"
+                //   variant="utility"
+                //   icon="download"
+                //   iconType="outline"
+                //   size="small"
+                // >
+                //   {formatMessage(messages.downloadPDF)}
+                // </Button>,
+                ...(isActive
+                  ? [
+                      <Button
+                        key="invalidatePermit"
+                        variant="utility"
+                        icon="eyeOff"
+                        iconType="outline"
+                        size="small"
+                        onClick={() => setModalOpen(true)}
+                      >
+                        {formatMessage(messages.patientDataPermitInvalidate)}
+                      </Button>,
+                    ]
+                  : []),
+                <Button
+                  key="editPermit"
+                  variant="utility"
+                  colorScheme="primary"
+                  icon="arrowForward"
+                  iconType="outline"
+                  size="small"
+                  onClick={() =>
+                    navigate(
+                      HealthPaths.HealthPatientDataPermitsAdd,
+                      isInactive
+                        ? undefined
+                        : {
+                            state: {
+                              countries: permit?.countries ?? [],
+                              validFrom: permit?.validFrom ?? null,
+                              validTo: permit?.validTo ?? null,
+                            },
                           },
-                        },
-                  )
-                }
-              >
-                {formatMessage(
-                  isInactive ? messages.activatePermit : messages.editPermit,
-                )}
-              </Button>,
-            ] }
+                    )
+                  }
+                >
+                  {formatMessage(
+                    isInactive ? messages.activatePermit : messages.editPermit,
+                  )}
+                </Button>,
+              ],
+            }
           : undefined
       }
       desktopContentSpan="10/12"

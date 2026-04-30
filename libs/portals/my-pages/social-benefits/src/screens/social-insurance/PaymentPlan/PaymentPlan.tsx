@@ -26,7 +26,10 @@ const PaymentPlan = () => {
         intro={formatMessage(
           coreMessages.socialInsuranceMaintenanceDescription,
         )}
-        serviceProvider={{ slug: 'tryggingastofnun', tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
+        serviceProvider={{
+          slug: 'tryggingastofnun',
+          tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+        }}
       >
         {error && !loading ? (
           <Problem error={error} noBorder={false} />

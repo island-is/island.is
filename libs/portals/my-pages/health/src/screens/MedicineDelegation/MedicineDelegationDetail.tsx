@@ -82,9 +82,10 @@ const MedicineDelegationDetail = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
-      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      ) }}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+      }}
       loading={loading}
       desktopContentSpan="10/12"
     >

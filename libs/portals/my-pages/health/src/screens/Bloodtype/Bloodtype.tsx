@@ -29,24 +29,29 @@ const Bloodtype: React.FC = () => {
       title={formatMessage(messages.bloodtype)}
       intro={bloodType?.description ?? formatMessage(messages.bloodtypeDesc)}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: LANDSPITALI_SLUG, tooltip: formatMessage(messages.landspitaliTooltip) }}
+      serviceProvider={{
+        slug: LANDSPITALI_SLUG,
+        tooltip: formatMessage(messages.landspitaliTooltip),
+      }}
       marginBottom={6}
-      buttonGroup={{ actions: [
-        <LinkButton
-          key={'bloodtype-link'}
-          to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
-          text={formatMessage(messages.readAboutBloodtypes)}
-          variant="utility"
-          icon="open"
-        />,
-        <LinkButton
-          key={'bloodbank-page-link'}
-          to={formatMessage(messages.contactBloodbankLink)}
-          text={formatMessage(messages.contactBloodbank)}
-          variant="utility"
-          icon="open"
-        />,
-      ] }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key={'bloodtype-link'}
+            to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
+            text={formatMessage(messages.readAboutBloodtypes)}
+            variant="utility"
+            icon="open"
+          />,
+          <LinkButton
+            key={'bloodbank-page-link'}
+            to={formatMessage(messages.contactBloodbankLink)}
+            text={formatMessage(messages.contactBloodbank)}
+            variant="utility"
+            icon="open"
+          />,
+        ],
+      }}
     >
       {!loading && !bloodType && !error && (
         <Problem type="no_data" noBorder={false} />

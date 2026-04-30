@@ -61,31 +61,34 @@ const MedicineDelegation = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
-      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      ) }}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+      }}
       loading={loading}
-      buttonGroup={{ actions: [
-        <>
-          <LinkButton
-            variant="utility"
-            size="small"
-            to={formatMessage(messages.medicineDelegationReadAboutLink)}
-            text={formatMessage(messages.readAboutPermit)}
-            icon="open"
-          />
-          <Button
-            variant="utility"
-            colorScheme="primary"
-            icon="arrowForward"
-            iconType="outline"
-            size="small"
-            onClick={() => navigate(HealthPaths.HealthMedicineDelegationAdd)}
-          >
-            {formatMessage(messages.addDelegation)}
-          </Button>
-        </>,
-      ] }}
+      buttonGroup={{
+        actions: [
+          <>
+            <LinkButton
+              variant="utility"
+              size="small"
+              to={formatMessage(messages.medicineDelegationReadAboutLink)}
+              text={formatMessage(messages.readAboutPermit)}
+              icon="open"
+            />
+            <Button
+              variant="utility"
+              colorScheme="primary"
+              icon="arrowForward"
+              iconType="outline"
+              size="small"
+              onClick={() => navigate(HealthPaths.HealthMedicineDelegationAdd)}
+            >
+              {formatMessage(messages.addDelegation)}
+            </Button>
+          </>,
+        ],
+      }}
       desktopContentSpan="10/12"
     >
       {!loading && !error && dataLength === 0 && (

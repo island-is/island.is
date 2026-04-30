@@ -158,7 +158,10 @@ const IncomePlan = () => {
       title={formatMessage(coreMessages.incomePlan)}
       intro={formatMessage(coreMessages.incomePlanDescription)}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: 'tryggingastofnun', tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
+      serviceProvider={{
+        slug: 'tryggingastofnun',
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
     >
       {renderContent()}
     </IntroWrapper>

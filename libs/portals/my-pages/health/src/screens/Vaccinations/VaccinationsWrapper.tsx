@@ -48,25 +48,30 @@ export const VaccinationsWrapper = () => {
     <IntroWrapper
       title={formatMessage(m.vaccinations)}
       intro={formatMessage(m.vaccinationsIntro)}
-      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(m.landlaeknirVaccinationsTooltip) }}
-      buttonGroup={{ actions: [
-        <LinkButton
-          key="vaccinations-read-about"
-          to={formatMessage(m.readAboutVaccinationsLink)}
-          icon="open"
-          variant="utility"
-          text={formatMessage(m.readAboutVaccinations)}
-        />,
-        <Button
-          key="vaccinations-status-info"
-          icon="informationCircle"
-          variant="utility"
-          iconType="outline"
-          onClick={() => setIsStatusModalOpen(true)}
-        >
-          {formatMessage(m.vaccinationStatusDesc)}
-        </Button>,
-      ] }}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(m.landlaeknirVaccinationsTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="vaccinations-read-about"
+            to={formatMessage(m.readAboutVaccinationsLink)}
+            icon="open"
+            variant="utility"
+            text={formatMessage(m.readAboutVaccinations)}
+          />,
+          <Button
+            key="vaccinations-status-info"
+            icon="informationCircle"
+            variant="utility"
+            iconType="outline"
+            onClick={() => setIsStatusModalOpen(true)}
+          >
+            {formatMessage(m.vaccinationStatusDesc)}
+          </Button>,
+        ],
+      }}
     >
       <Box>
         {loading && (

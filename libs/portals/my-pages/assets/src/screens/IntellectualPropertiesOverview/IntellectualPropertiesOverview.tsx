@@ -52,7 +52,10 @@ const IntellectualPropertiesOverview = () => {
         title={ipMessages.title}
         intro={ipMessages.description}
         desktopContentSpan="10/12"
-        serviceProvider={{ slug: HUGVERKASTOFAN_SLUG, tooltip: formatMessage(m.intellectualPropertiesTooltip) }}
+        serviceProvider={{
+          slug: HUGVERKASTOFAN_SLUG,
+          tooltip: formatMessage(m.intellectualPropertiesTooltip),
+        }}
       >
         {loading && (
           <Box marginBottom={2}>

@@ -126,60 +126,62 @@ const QuestionnaireDetail: FC = () => {
         formatMessage(messages.questionnairesIntro)
       }
       loading={loading}
-      buttonGroup={{ actions: [
-        link ? (
-          <>
-            {!isDraft && canSubmitAgain && (
-              <Box className={styles.button} key={'answer-again-link-box'}>
+      buttonGroup={{
+        actions: [
+          link ? (
+            <>
+              {!isDraft && canSubmitAgain && (
+                <Box className={styles.button} key={'answer-again-link-box'}>
+                  <Button
+                    key={'answer-again-link'}
+                    fluid
+                    variant="utility"
+                    colorScheme={'primary'}
+                    size="small"
+                    onClick={() => navigate(answerLink)}
+                  >
+                    {formatMessage(messages.answerAgain)}
+                  </Button>
+                </Box>
+              )}
+              <Box className={styles.button} key={'answer-link-box'}>
                 <Button
-                  key={'answer-again-link'}
+                  key={'answer-link'}
                   fluid
                   variant="utility"
-                  colorScheme={'primary'}
+                  colorScheme={isAnswered ? 'light' : 'primary'}
                   size="small"
-                  onClick={() => navigate(answerLink)}
+                  onClick={() => navigate(link)}
                 >
-                  {formatMessage(messages.answerAgain)}
+                  {isAnswered && !isExpired
+                    ? formatMessage(messages.seeAnswers)
+                    : isDraft
+                    ? formatMessage(messages.continueDraftQuestionnaire)
+                    : formatMessage(messages.answer)}
                 </Button>
               </Box>
-            )}
+            </>
+          ) : null,
+          isDraft && answeredLink ? (
             <Box className={styles.button} key={'answer-link-box'}>
               <Button
-                key={'answer-link'}
                 fluid
+                key={'answer-link'}
                 variant="utility"
-                colorScheme={isAnswered ? 'light' : 'primary'}
+                colorScheme="light"
                 size="small"
-                onClick={() => navigate(link)}
+                onClick={() =>
+                  navigate(answeredLink, {
+                    state: { submissionId: latestSubmissionId },
+                  })
+                }
               >
-                {isAnswered && !isExpired
-                  ? formatMessage(messages.seeAnswers)
-                  : isDraft
-                  ? formatMessage(messages.continueDraftQuestionnaire)
-                  : formatMessage(messages.answer)}
+                {formatMessage(messages.seeAnswers)}
               </Button>
             </Box>
-          </>
-        ) : null,
-        isDraft && answeredLink ? (
-          <Box className={styles.button} key={'answer-link-box'}>
-            <Button
-              fluid
-              key={'answer-link'}
-              variant="utility"
-              colorScheme="light"
-              size="small"
-              onClick={() =>
-                navigate(answeredLink, {
-                  state: { submissionId: latestSubmissionId },
-                })
-              }
-            >
-              {formatMessage(messages.seeAnswers)}
-            </Button>
-          </Box>
-        ) : null,
-      ] }}
+          ) : null,
+        ],
+      }}
       desktopContentSpan="10/12"
     >
       {questionnaire && !error && (

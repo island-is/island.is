@@ -37,7 +37,10 @@ const SubjectInfo = () => {
     <IntroWrapper
       title={nationalRegistryPerson?.name?.fullName || ''}
       intro={spmm.userInfoDesc}
-      serviceProvider={{ slug: THJODSKRA_SLUG, tooltip: formatMessage(m.tjodskraTooltip) }}
+      serviceProvider={{
+        slug: THJODSKRA_SLUG,
+        tooltip: formatMessage(m.tjodskraTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

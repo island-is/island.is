@@ -62,7 +62,10 @@ const PaymentTypes = () => {
       title={formatMessage(m.paymentTypesOverview)}
       intro={formatMessage(m.paymentTypesOverviewDescription)}
       desktopContentSpan="10/12"
-      serviceProvider={{ slug: TRYGGINGASTOFNUN_SLUG, tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
+      serviceProvider={{
+        slug: TRYGGINGASTOFNUN_SLUG,
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
       buttonGroup={{ actions: buttonGroup }}
     >
       <Stack space={6}>
