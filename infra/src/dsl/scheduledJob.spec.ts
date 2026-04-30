@@ -1,4 +1,4 @@
-import { scheduledJob } from './dsl'
+import { scheduledJob, ScheduledJob } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { MissingSetting } from './types/input-types'
 import {
@@ -39,12 +39,12 @@ const Prod: EnvironmentConfig = {
 }
 
 const runFor = async (
-  svc: ReturnType<typeof scheduledJob>,
+  svc: ScheduledJob<string>,
   env: EnvironmentConfig,
 ) =>
   generateOutputOne({
     outputFormat: renderers.helm,
-    service: svc as any,
+    service: svc as any, // ScheduledJob<S> is Omit<ScheduledJobBuilder<S>, ...>; class hierarchy lost by Omit
     runtime: new Kubernetes(env),
     env,
   })
@@ -189,7 +189,7 @@ describe('scheduledJob()', () => {
 
   describe('coexistence with extraAttributes', () => {
     it('merges scheduledJob fields with existing extraAttributes', async () => {
-      const sut = (scheduledJob('my-job') as any)
+      const sut = scheduledJob('my-job')
         .extraAttributes({
           dev: { customField: 'value' },
           staging: { customField: 'value' },
@@ -201,6 +201,23 @@ describe('scheduledJob()', () => {
       expect(result.serviceDef[0].extra).toMatchObject({
         customField: 'value',
         schedule: '0 3 * * *',
+      })
+    })
+
+    it('scheduledJob fields win when extraAttributes defines the same keys', async () => {
+      const sut = scheduledJob('my-job')
+        .extraAttributes({
+          dev: { schedule: '* * * * *', backoffLimit: 99 },
+          staging: { schedule: '* * * * *', backoffLimit: 99 },
+          prod: { schedule: '* * * * *', backoffLimit: 99 },
+        })
+        .schedule('0 3 * * *')
+        .backoffLimit(3)
+
+      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      expect(result.serviceDef[0].extra).toMatchObject({
+        schedule: '0 3 * * *',
+        backoffLimit: 3,
       })
     })
   })
