@@ -5,6 +5,10 @@ export const sharedMessages = defineMessages({
     id: 'sp.social-benefits-shared:myStatus',
     defaultMessage: 'Staðan þín',
   },
+  myData: {
+    id: 'sp.social-benefits-shared:myData',
+    defaultMessage: 'Mín gögn',
+  },
   overviewTitle: {
     id: 'sp.social-benefits-shared:overviewTitle',
     defaultMessage: 'Framfærsla',

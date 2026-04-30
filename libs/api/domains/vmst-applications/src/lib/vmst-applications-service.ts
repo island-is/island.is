@@ -7,6 +7,9 @@ import {
   GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
+  GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurXRoadAPIModelsAvailableActions,
+  GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
@@ -119,5 +122,23 @@ export class VMSTApplicationsService {
       applicantId,
       locale,
     )
+  }
+
+  async getApplicantRequestedAttachments(
+    applicantId: string,
+  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentRequestDTO>> {
+    return this.vmstUnemploymentService.getApplicantRequestedAttachments(
+      applicantId,
+    )
+  }
+
+  async getApplicantActions(
+    applicantId: string,
+  ): Promise<GaldurXRoadAPIModelsAvailableActions> {
+    return this.vmstUnemploymentService.getApplicantActions(applicantId)
+  }
+
+  async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {
+    return this.vmstUnemploymentService.getAttachmentTypes()
   }
 }

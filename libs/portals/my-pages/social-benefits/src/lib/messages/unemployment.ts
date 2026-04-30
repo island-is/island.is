@@ -174,4 +174,33 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:applicantEditInfoUrl',
     defaultMessage: 'https://island.is/umsoknir/breyta-upplysingum',
   },
+  myDataTitle: {
+    id: 'sp.social-benefits-unemployment:myDataTitle',
+    defaultMessage: 'Mín gögn',
+  },
+  myDataIntro: {
+    id: 'sp.social-benefits-unemployment:myDataIntro',
+    defaultMessage:
+      'Hér eru skjöl og gögn sem þú hefur lagt fram til Vinnumálastofnunar, ásamt yfirliti yfir það sem enn vantar.',
+  },
+  myDataMissingAttachmentsHeading: {
+    id: 'sp.social-benefits-unemployment:myDataMissingAttachmentsHeading',
+    defaultMessage: 'Óskað er eftir að eftirfarandi gögn verði lögð fram',
+  },
+  myDataSubmittedAttachmentsHeading: {
+    id: 'sp.social-benefits-unemployment:myDataSubmittedAttachmentsHeading',
+    defaultMessage: 'Gögn sem þú hefur skilað',
+  },
+  myDataMissingTag: {
+    id: 'sp.social-benefits-unemployment:myDataMissingTag',
+    defaultMessage: 'Vantar gögn',
+  },
+  myDataSubmitDocuments: {
+    id: 'sp.social-benefits-unemployment:myDataSubmitDocuments',
+    defaultMessage: 'Skila gögnum',
+  },
+  myDataViewDocument: {
+    id: 'sp.social-benefits-unemployment:myDataViewDocument',
+    defaultMessage: 'Skoða',
+  },
 })

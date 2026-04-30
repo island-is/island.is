@@ -25,6 +25,8 @@ import {
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
+  GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurXRoadAPIModelsAvailableActions,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -334,6 +336,34 @@ export class VmstUnemploymentClientService {
     return await api.applicantOverview({
       id: applicantId,
       language: lang,
+    })
+  }
+
+  async getApplicantRequestedAttachments(
+    applicantId: string,
+  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentRequestDTO>> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantGetApplicantRequestedAttachments({
+      applicantId,
+    })
+  }
+
+  async getApplicantActions(
+    applicantId: string,
+  ): Promise<GaldurXRoadAPIModelsAvailableActions> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantGetActions({
+      id: applicantId,
     })
   }
 }

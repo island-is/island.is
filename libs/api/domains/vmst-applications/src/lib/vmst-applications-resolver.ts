@@ -10,6 +10,9 @@ import {
   UnemploymentApplicationOverview,
   VmstApplicationsOverview,
   VmstApplicantOverview,
+  VmstApplicantRequestedAttachment,
+  VmstAvailableActions,
+  VmstAttachmentTypeList,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import type { Locale } from '@island.is/shared/types'
@@ -116,5 +119,47 @@ export class VMSTApplicationsResolver {
       applicantId,
       locale,
     )
+  }
+
+  @Query(() => [VmstApplicantRequestedAttachment], {
+    name: 'vmstApplicantRequestedAttachments',
+  })
+  @Audit()
+  async getApplicantRequestedAttachments(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    if (!applicantId) {
+      throw new Error('Could not resolve applicant')
+    }
+
+    return this.vmstApplicationsService.getApplicantRequestedAttachments(
+      applicantId,
+    )
+  }
+
+  @Query(() => VmstAvailableActions, {
+    name: 'vmstApplicantAvailableActions',
+  })
+  @Audit()
+  async getApplicantAvailableActions(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    if (!applicantId) {
+      throw new Error('Could not resolve applicant')
+    }
+
+    return this.vmstApplicationsService.getApplicantActions(applicantId)
+  }
+
+  @Query(() => VmstAttachmentTypeList, {
+    name: 'vmstAttachmentTypes',
+  })
+  @Audit()
+  async getAttachmentTypes() {
+    return this.vmstApplicationsService.getAttachmentTypes()
   }
 }

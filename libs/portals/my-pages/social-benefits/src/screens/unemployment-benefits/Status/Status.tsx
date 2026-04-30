@@ -5,8 +5,6 @@ import { useGetUnemploymentApplicationOverviewQuery } from './Status.generated'
 import {
   ActionCard,
   Box,
-  Button,
-  DropdownMenu,
   SkeletonLoader,
   Tabs,
 } from '@island.is/island-ui/core'
@@ -14,6 +12,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { OverviewTable } from './OverviewTable'
 import { ApplicantOverview } from './ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
+import { ActionButtons } from '../components/ActionButtons'
 
 // Atvinnuleysi – Staðan þín
 const Status = () => {
@@ -26,29 +25,6 @@ const Status = () => {
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
   const availableActions = overview?.availableActions
-  const showContactButton = availableActions?.canContact !== false
-  const dropdownActions = [
-    {
-      title: formatMessage(um.statusSubmitDocuments),
-      href: formatMessage(um.statusSubmitDocumentsUrl),
-      visible: availableActions?.canSubmitDocuments !== false,
-    },
-    {
-      title: formatMessage(um.statusReportIncome),
-      href: formatMessage(um.statusReportIncomeUrl),
-      visible: availableActions?.canReportWork !== false,
-    },
-    {
-      title: formatMessage(um.statusReportTravel),
-      href: formatMessage(um.statusReportTravelUrl),
-      visible: availableActions?.canReportTravel !== false,
-    },
-    {
-      title: formatMessage(um.statusUnsubscribe),
-      href: formatMessage(um.statusUnsubscribeUrl),
-      visible: availableActions?.canUnregister !== false,
-    },
-  ].filter((b) => b.visible)
 
   return (
     <IntroWrapperV2
@@ -60,36 +36,7 @@ const Status = () => {
       }}
       loading={loading}
     >
-      {!loading && (showContactButton || dropdownActions.length > 0) && (
-        <Box display="flex" columnGap={2} alignItems="center" marginBottom={4}>
-          {showContactButton && (
-            <a
-              href={formatMessage(um.statusContactUsUrl)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button
-                as="span"
-                unfocusable
-                variant="utility"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                {formatMessage(um.statusContactUs)}
-              </Button>
-            </a>
-          )}
-          {dropdownActions.length > 0 && (
-            <DropdownMenu
-              icon="ellipsisVertical"
-              menuLabel={formatMessage(um.statusMoreActions)}
-              title={formatMessage(um.statusMoreActions)}
-              items={dropdownActions}
-            />
-          )}
-        </Box>
-      )}
+      <ActionButtons availableActions={availableActions} loading={loading} />
       {!loading && availableActions?.canConfirmJobSearch !== false && (
         <Box marginBottom={4}>
           <ActionCard

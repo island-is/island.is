@@ -105,6 +105,7 @@ export const useDynamicRoutes = () => {
     const vmstData = vmstOverview?.vmstApplicationsOverview
     if (vmstData?.unemploymentApplication?.isVisible) {
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentStatus)
+      dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
     }
 
     // Combine routes, no duplicates.
