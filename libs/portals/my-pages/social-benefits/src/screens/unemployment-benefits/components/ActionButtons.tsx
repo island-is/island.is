@@ -1,8 +1,4 @@
-import {
-  Box,
-  Button,
-  DropdownMenu,
-} from '@island.is/island-ui/core'
+import { Box, Button, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { GetUnemploymentApplicationOverviewQuery } from '../Status/Status.generated'
