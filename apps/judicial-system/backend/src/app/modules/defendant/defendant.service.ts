@@ -1,6 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -43,33 +43,6 @@ export class DefendantService {
     private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private validateDefenderInfoRemoval(
-    update: Pick<
-      UpdateDefendantDto | InternalUpdateDefendantDto,
-      | 'defenderNationalId'
-      | 'defenderName'
-      | 'defenderEmail'
-      | 'defenderPhoneNumber'
-    >,
-  ): void {
-    if (
-      'defenderNationalId' in update &&
-      update.defenderNationalId === null &&
-      !(
-        'defenderName' in update &&
-        update.defenderName === null &&
-        'defenderEmail' in update &&
-        update.defenderEmail === null &&
-        'defenderPhoneNumber' in update &&
-        update.defenderPhoneNumber === null
-      )
-    ) {
-      throw new BadRequestException(
-        'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
-      )
-    }
-  }
 
   private addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
     theCase: Case,
@@ -386,7 +359,17 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    this.validateDefenderInfoRemoval(update)
+    if (
+      update.defenderNationalId === null &&
+      !(
+        update.defenderEmail === null &&
+        update.defenderName === null &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
+      const { defenderNationalId: _, ...rest } = update
+      update = rest
+    }
 
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
@@ -417,7 +400,17 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    this.validateDefenderInfoRemoval(update)
+    if (
+      update.defenderNationalId === null &&
+      !(
+        update.defenderEmail === null &&
+        update.defenderName === null &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
+      const { defenderNationalId: _, ...rest } = update
+      update = rest
+    }
 
     // If there is a change in the defender choice after the judge has confirmed the choice,
     // we need to set the isDefenderChoiceConfirmed to false

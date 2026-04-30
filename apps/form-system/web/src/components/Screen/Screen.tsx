@@ -76,6 +76,12 @@ export const Screen = () => {
         f.isPartOfMultiset !== false,
     )
 
+  const displayMultiButtons =
+    numberOfItems > 1 ||
+    (isMulti &&
+      multiMax > 1 &&
+      visibleFields.some((f) => f.isPartOfMultiset !== false))
+
   const currencySumField = shouldMoveCurrencySumBox
     ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
     : undefined
@@ -116,7 +122,7 @@ export const Screen = () => {
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.POPULATE,
-              screen: state.currentScreen?.data,
+              screenDto: state.currentScreen?.data,
             },
           },
         })
@@ -279,10 +285,15 @@ export const Screen = () => {
 
         {currentSectionType === SectionTypes.SUMMARY &&
           !!state.application.hasSummaryScreen &&
+          !state.submitted &&
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
-        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
-        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
+        {(currentSectionType === SectionTypes.COMPLETED || state.submitted) && (
+          <Completed />
+        )}
+        {currentSectionType === SectionTypes.PAYMENT && !state.submitted && (
+          <Payment />
+        )}
         {multiSetContent}
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
@@ -294,7 +305,7 @@ export const Screen = () => {
           </Box>
         )}
 
-        {isMulti && multiMax > 1 && (
+        {isMulti && multiMax > 1 && displayMultiButtons && (
           <Box display="flex" justifyContent="flexEnd">
             <Box marginRight={2}>
               {numberOfItems > 1 && (

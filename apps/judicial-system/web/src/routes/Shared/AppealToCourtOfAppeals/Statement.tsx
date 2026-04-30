@@ -29,9 +29,13 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useCase,
+  AppealEventType,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  TUploadFile,
+  useAppealCase,
   useFileList,
   useS3Upload,
   useUploadFiles,
@@ -39,13 +43,13 @@ import {
 import {
   getAppealActorText,
   getDefenceUserPartyIds,
-  isUserCaseFile,
+  isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { isUpdatingCase, updateCase } = useCase()
+  const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
@@ -101,22 +105,25 @@ const Statement = () => {
       return
     }
 
-    const updated = await updateCase(
+    if (!workingCase.appealCase?.id) {
+      return
+    }
+
+    const sent = await createAppealEventLog(
       workingCase.id,
-      isDefenceUser(user)
-        ? { defendantStatementDate: new Date().toISOString() } // TODO: Let the server override this date. It is already overriding prosecutorStatementDate.
-        : { prosecutorStatementDate: new Date().toISOString() },
+      workingCase.appealCase.id,
+      AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
-    if (updated) {
+    if (sent) {
       setVisibleModal('STATEMENT_SENT')
     }
   }, [
     handleUpload,
-    updateCase,
+    createAppealEventLog,
     updateUploadFile,
     uploadFiles,
-    user,
+    workingCase.appealCase?.id,
     workingCase.id,
   ])
 
@@ -137,17 +144,18 @@ const Statement = () => {
     })
   }
 
-  const appealStatementFiles = uploadFiles.filter(
-    (file) =>
-      file.category === appealStatementType &&
-      (isProsecutionUser(user) || isUserCaseFile(workingCase, file, user)),
+  const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
+    return isMatchingAppealCaseFile(workingCase, [category], file, user)
+  }
+  const appealStatementFiles = uploadFiles.filter((file) =>
+    filter(file, appealStatementType),
   )
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>Greinargerð</PageTitle>
+        <PageTitle>Greinargerð</PageTitle>
         <Box marginBottom={7}>
           {workingCase.courtCaseNumber && (
             <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
@@ -200,11 +208,8 @@ const Statement = () => {
               </Text>
               <InputFileUpload
                 name="appealCaseFiles"
-                files={uploadFiles.filter(
-                  (file) =>
-                    file.category === appealCaseFilesType &&
-                    (isProsecutionUser(user) ||
-                      isUserCaseFile(workingCase, file, user)),
+                files={uploadFiles.filter((file) =>
+                  filter(file, appealCaseFilesType),
                 )}
                 accept={'application/pdf'}
                 title={formatMessage(core.uploadBoxTitle)}
@@ -232,8 +237,10 @@ const Statement = () => {
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
-          nextIsDisabled={appealStatementFiles.length === 0 || isUpdatingCase}
-          nextIsLoading={!allFilesDoneOrError || isUpdatingCase}
+          nextIsDisabled={
+            appealStatementFiles.length === 0 || isCreatingAppealEventLog
+          }
+          nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />

@@ -240,6 +240,16 @@ export const Finance = new XroadConf({
   },
 })
 
+export const Farmers = new XroadConf({
+  env: {
+    XROAD_FARMERS_PATH: {
+      dev: 'IS-DEV/GOV/10094/Afurd-Private/baendur',
+      staging: 'IS-TEST/GOV/7108120120/Afurd-Private/baendur',
+      prod: 'IS/GOV/7108120120/Afurd-Private/baendur',
+    },
+  },
+})
+
 export const FireCompensation = new XroadConf({
   env: {
     XROAD_HMS_APPLICATION_SYSTEM_PATH: {
@@ -1136,6 +1146,17 @@ export const GoProVerdicts = new XroadConf({
       dev: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is',
       staging: 'IS-TEST/GOV/10019/Domstolasyslan-Client/Island-is',
       prod: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is',
+    },
+  },
+})
+
+export const RecyclingFund = new XroadConf({
+  env: {
+    XROAD_RECYCLING_FUND_PATH: {
+      dev: 'IS-DEV/GOV/10099/Urvinnslusjodur-Protected/skilavottord-api',
+      staging:
+        'IS-TEST/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
+      prod: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
     },
   },
 })

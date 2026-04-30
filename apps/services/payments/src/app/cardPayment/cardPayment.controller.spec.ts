@@ -2,6 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Cache as CacheManager } from 'cache-manager'
+import crypto from 'crypto'
 import request from 'supertest'
 import { v4 as uuid } from 'uuid'
 
@@ -32,6 +33,7 @@ import {
   SavedVerificationPendingData,
 } from '../../types/cardPayment'
 import { generateMd, getPayloadFromMd } from './cardPayment.utils'
+import * as cardPaymentUtils from './cardPayment.utils'
 import { ChargeCardInput, VerificationCallbackInput } from './dtos'
 import { RefundPaymentInput } from '../refund/dtos/refundPayment.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
@@ -98,6 +100,18 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = TOKEN_SIGNING_ALGORITHM
     process.env.PAYMENTS_APPLE_PAY_DOMAIN = 'island.is'
     process.env.PAYMENTS_APPLE_PAY_DISPLAY_NAME = 'island.is'
+    // Real EC PEM so the lazy processing-key validator doesn't reject a fake
+    // string at startup. Decryption itself is mocked, so the actual private
+    // key value doesn't matter — it just needs to parse.
+    process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY = crypto.generateKeyPairSync(
+      'ec',
+      {
+        namedCurve: 'prime256v1',
+        publicKeyEncoding: { type: 'spki', format: 'der' },
+        privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+      },
+    ).privateKey as string
+    process.env.APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.test'
 
     app = await testServer({
       appModule: AppModule,
@@ -176,6 +190,8 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_GATEWAY_API_URL = previousPaymentGatewayApiUrl
     process.env.PAYMENTS_TOKEN_SIGNING_SECRET = previousTokenSigningSecret
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = previousTokenSigningAlgorithm
+    delete process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY
+    delete process.env.APPLE_PAY_MERCHANT_IDENTIFIER
 
     jest.clearAllMocks()
     jest.restoreAllMocks()
@@ -398,8 +414,6 @@ describe('CardPaymentController', () => {
       // Valid md created with a valid secret
       const md = generateMd({
         correlationId: someCorrelationId,
-        paymentFlowId,
-        amount: 1000,
         paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
         paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
       })
@@ -431,8 +445,6 @@ describe('CardPaymentController', () => {
       // Invalid md
       const md = generateMd({
         correlationId: someCorrelationId,
-        paymentFlowId,
-        amount: 1000,
         paymentsTokenSigningSecret: 'some invalid secret',
         paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
       })
@@ -488,8 +500,6 @@ describe('CardPaymentController', () => {
       const originalCorrelationId = uuid()
       const md = generateMd({
         correlationId: originalCorrelationId,
-        paymentFlowId,
-        amount: 1000,
         paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
         paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
       })
@@ -948,116 +958,65 @@ describe('CardPaymentController', () => {
   })
 
   describe('Apple Pay', () => {
-    describe('GET /apple-pay/session', () => {
-      it('should successfully get an Apple Pay session', async () => {
-        const mockSession = 'eyJlcG9jaFRpbWVzdGFtcCI6MTY3ODg5...' // Mock session token
+    describe('POST /apple-pay/validate-merchant', () => {
+      const validValidationUrl =
+        'https://apple-pay-gateway.apple.com/paymentservices/startSession'
 
-        const fetchSpy = jest
-          .spyOn(global, 'fetch')
-          .mockImplementation(async (url) => {
-            if (
-              typeof url === 'string' &&
-              url.includes('/ApplePay/GetSession')
-            ) {
-              return {
-                json: async () => ({
-                  isSuccess: true,
-                  session: mockSession,
-                  responseCode: 'W0',
-                  responseDescription: 'Success',
-                  responseTime: '00:00:03',
-                  correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
-                }),
-                status: 200,
-                ok: true,
-              } as Response
-            }
+      it('should successfully validate merchant and return session', async () => {
+        const mockSession = 'eyJlcG9jaFRpbWVzdGFtcCI6MTY3ODg5...'
 
-            return {
-              json: async () => ({ error: 'Missing handler' }),
-              status: 500,
-              ok: false,
-            } as Response
-          })
+        process.env.APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.test'
+        process.env.APPLE_PAY_MERCHANT_IDENTITY_CERT =
+          '-----BEGIN CERTIFICATE-----\ntest\n-----END CERTIFICATE-----'
+        process.env.APPLE_PAY_MERCHANT_IDENTITY_KEY =
+          '-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----'
 
-        const response = await server.get('/v1/payments/card/apple-pay/session')
+        const validateSpy = jest
+          .spyOn(CardPaymentService.prototype, 'validateApplePayMerchant')
+          .mockResolvedValue({ session: mockSession })
 
-        expect(response.status).toBe(200)
+        const response = await server
+          .post('/v1/payments/card/apple-pay/validate-merchant')
+          .send({ validationURL: validValidationUrl })
+
+        expect(response.status).toBe(201)
         expect(response.body.session).toBe(mockSession)
+        expect(validateSpy).toHaveBeenCalledWith(validValidationUrl)
 
-        fetchSpy.mockRestore()
+        validateSpy.mockRestore()
+        delete process.env.APPLE_PAY_MERCHANT_IDENTIFIER
+        delete process.env.APPLE_PAY_MERCHANT_IDENTITY_CERT
+        delete process.env.APPLE_PAY_MERCHANT_IDENTITY_KEY
       })
 
-      it('should throw an error if the gateway returns an error', async () => {
-        const fetchSpy = jest
-          .spyOn(global, 'fetch')
-          .mockImplementation(async (url) => {
-            if (
-              typeof url === 'string' &&
-              url.includes('/ApplePay/GetSession')
-            ) {
-              return {
-                text: async () => 'Gateway error',
-                json: async () => ({}),
-                status: 500,
-                ok: false,
-                statusText: 'Internal Server Error',
-              } as Response
-            }
+      it('should throw an error if validation fails', async () => {
+        const validateSpy = jest
+          .spyOn(CardPaymentService.prototype, 'validateApplePayMerchant')
+          .mockRejectedValue(new Error('Validation failed'))
 
-            return {
-              json: async () => ({ error: 'Missing handler' }),
-              status: 500,
-              ok: false,
-            } as Response
-          })
-
-        const response = await server.get('/v1/payments/card/apple-pay/session')
+        const response = await server
+          .post('/v1/payments/card/apple-pay/validate-merchant')
+          .send({ validationURL: validValidationUrl })
 
         expect(response.status).toBe(400)
 
-        fetchSpy.mockRestore()
+        validateSpy.mockRestore()
       })
 
-      it('should throw an error if isSuccess is false', async () => {
-        const fetchSpy = jest
-          .spyOn(global, 'fetch')
-          .mockImplementation(async (url) => {
-            if (
-              typeof url === 'string' &&
-              url.includes('/ApplePay/GetSession')
-            ) {
-              return {
-                json: async () => ({
-                  isSuccess: false,
-                  responseCode: 'W2',
-                  responseDescription: 'Error getting Apple Pay session',
-                  responseTime: '00:00:01',
-                  correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
-                }),
-                status: 200,
-                ok: true,
-              } as Response
-            }
-
-            return {
-              json: async () => ({ error: 'Missing handler' }),
-              status: 500,
-              ok: false,
-            } as Response
-          })
-
-        const response = await server.get('/v1/payments/card/apple-pay/session')
+      it('should throw an error if validation URL is not in allowlist', async () => {
+        const response = await server
+          .post('/v1/payments/card/apple-pay/validate-merchant')
+          .send({ validationURL: 'https://evil.com/paymentservices/start' })
 
         expect(response.status).toBe(400)
-        expect(response.body.detail).toBe('ErrorGettingApplePaySession')
-
-        fetchSpy.mockRestore()
       })
     })
 
     describe('POST /apple-pay/charge', () => {
-      const getApplePayChargeInput = () => ({
+      // Hex strings to satisfy the @Matches(/^[a-fA-F0-9]{1,128}$/) bound on
+      // transactionId and transactionIdentifier introduced in this round.
+      const hexId = () => uuid().replace(/-/g, '')
+      const getApplePayChargeInput = (transactionIdentifier = hexId()) => ({
         paymentFlowId,
         paymentData: {
           version: 'EC_v1',
@@ -1066,14 +1025,27 @@ describe('CardPaymentController', () => {
           header: {
             ephemeralPublicKey: 'ephemeral-public-key',
             publicKeyHash: 'public-key-hash',
-            transactionId: 'transaction-id',
+            transactionId: hexId(),
           },
         },
-        paymentMethod: {
-          displayName: 'Visa 1234',
-          network: 'Visa',
-        },
-        transactionIdentifier: 'transaction-identifier',
+        transactionIdentifier,
+      })
+
+      let decryptSpy: jest.SpyInstance
+
+      beforeEach(() => {
+        decryptSpy = jest
+          .spyOn(cardPaymentUtils, 'decryptApplePayPaymentToken')
+          .mockReturnValue({
+            cardNumber: '4761340000054693',
+            expirationMonth: 12,
+            expirationYear: 2050,
+            paymentCryptogram: 'YwAAAGYAW9X4QucEhjf0gEBgAgB=',
+          })
+      })
+
+      afterEach(() => {
+        decryptSpy.mockRestore()
       })
 
       it('should successfully charge with Apple Pay', async () => {
@@ -1433,6 +1405,217 @@ describe('CardPaymentController', () => {
         getPaymentFlowChargeDetailsSpy.mockRestore()
         getPaymentFlowStatusSpy.mockRestore()
         fjsSpy.mockRestore()
+        fetchSpy.mockRestore()
+      })
+
+      it('should reject a replayed transactionIdentifier on the second call', async () => {
+        const sharedTransactionIdentifier = hexId()
+
+        const mockedChargeResponse: CardPaymentResponse = {
+          acquirerReferenceNumber: 'string',
+          transactionID: 'string',
+          authorizationCode: 'string',
+          transactionLifecycleId: 'string',
+          maskedCardNumber: 'string',
+          isSuccess: true,
+          cardInformation: {
+            cardScheme: 'Visa',
+            issuingCountry: 'IS',
+            cardUsage: 'string',
+            cardCategory: 'string',
+            outOfScaScope: false,
+          },
+          authorizationIdentifier: uuid(),
+          responseCode: '00',
+          responseDescription: 'Success',
+          responseTime: '12:00:00',
+          correlationID: uuid(),
+        }
+
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url) => {
+            if (typeof url === 'string') {
+              if (url.includes(ON_UPDATE_URL)) {
+                return {
+                  json: async () => ({ isSuccess: true }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/WalletPayment')) {
+                return {
+                  json: async () => mockedChargeResponse,
+                  status: 200,
+                  ok: true,
+                } as Response
+              }
+            }
+
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        const fjsSpy = jest
+          .spyOn(ChargeFjsV2ClientService.prototype, 'createCharge')
+          .mockReturnValue(
+            Promise.resolve({
+              user4: 'string',
+              receptionID: 'string',
+            } as ChargeResponse),
+          )
+
+        const firstResponse = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput(sharedTransactionIdentifier))
+
+        expect(firstResponse.status).toBe(201)
+        expect(firstResponse.body.isSuccess).toBe(true)
+
+        const secondResponse = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput(sharedTransactionIdentifier))
+
+        expect(secondResponse.status).toBe(400)
+        expect(secondResponse.body.detail).toBe(
+          CardErrorCode.ApplePayReplayDetected,
+        )
+
+        getPaymentFlowDetailsSpy.mockRestore()
+        getPaymentFlowChargeDetailsSpy.mockRestore()
+        getPaymentFlowStatusSpy.mockRestore()
+        fjsSpy.mockRestore()
+        fetchSpy.mockRestore()
+      })
+
+      it('should keep the replay marker when Valitor charge fails (no double-charge on retry)', async () => {
+        const sharedTransactionIdentifier = hexId()
+
+        // Valitor returns a non-2xx WalletPayment response; the marker
+        // is still set pre-fetch, so the same transactionIdentifier
+        // cannot be retried.
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url) => {
+            if (typeof url === 'string') {
+              if (url.includes(ON_UPDATE_URL)) {
+                return {
+                  json: async () => ({ isSuccess: true }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/WalletPayment')) {
+                return {
+                  json: async () => ({}),
+                  text: async () => 'gateway exploded',
+                  status: 500,
+                  statusText: 'Internal Server Error',
+                  ok: false,
+                } as Response
+              }
+            }
+
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        const firstResponse = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput(sharedTransactionIdentifier))
+
+        // First call fails on Valitor side
+        expect(firstResponse.status).toBe(400)
+
+        // Second call with the same transactionIdentifier should be
+        // rejected as a replay even though the first never returned a
+        // success — this is the fix for the set-on-success window.
+        const secondResponse = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput(sharedTransactionIdentifier))
+
+        expect(secondResponse.status).toBe(400)
+        expect(secondResponse.body.detail).toBe(
+          CardErrorCode.ApplePayReplayDetected,
+        )
+
+        getPaymentFlowDetailsSpy.mockRestore()
+        getPaymentFlowChargeDetailsSpy.mockRestore()
+        getPaymentFlowStatusSpy.mockRestore()
         fetchSpy.mockRestore()
       })
     })

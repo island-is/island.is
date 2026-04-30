@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 
 import { Checkbox } from '@island.is/island-ui/core'
 
-import { AppealCaseState } from '../../graphql/schema'
-import { setCheckboxAndSendToServer } from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
+import { AppealCase, AppealCaseState } from '../../graphql/schema'
+import { toggleInArray } from '../../utils/formHelper'
+import { useAppealCase } from '../../utils/hooks'
 import BlueBox from '../BlueBox/BlueBox'
 import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -14,7 +14,7 @@ import { requestAppealRulingNotToBePublishedCheckbox as strings } from './Reques
 const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { updateCase } = useCase()
+  const { updateAppealCase } = useAppealCase()
   const { user } = useContext(UserContext)
 
   return (
@@ -35,14 +35,24 @@ const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
         }
         onChange={() => {
           if (!user || user.role === undefined || user.role === null) return
+          if (!workingCase.appealCase?.id) return
 
-          setCheckboxAndSendToServer(
-            'requestAppealRulingNotToBePublished',
+          const updated = toggleInArray(
+            workingCase.appealCase?.requestAppealRulingNotToBePublished,
             user.role,
-            workingCase,
-            setWorkingCase,
-            updateCase,
           )
+
+          setWorkingCase((prevWorkingCase) => ({
+            ...prevWorkingCase,
+            appealCase: {
+              ...prevWorkingCase.appealCase,
+              requestAppealRulingNotToBePublished: updated,
+            } as AppealCase,
+          }))
+
+          updateAppealCase(workingCase.id, workingCase.appealCase.id, {
+            requestAppealRulingNotToBePublished: updated,
+          })
         }}
         large
         filled

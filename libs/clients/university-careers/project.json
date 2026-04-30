@@ -39,16 +39,9 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/gen/fetch -i libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/clientConfig.yaml",
-          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/holar-university/gen/fetch -i libs/clients/university-careers/src/lib/clients/holar-university/clientConfig.yaml",
-          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/bifrost-university/gen/fetch -i libs/clients/university-careers/src/lib/clients/bifrost-university/clientConfig.yaml",
-          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/university-of-akureyri/gen/fetch -i libs/clients/university-careers/src/lib/clients/university-of-akureyri/clientConfig.yaml",
-          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/university-of-iceland/gen/fetch -i libs/clients/university-careers/src/lib/clients/university-of-iceland/clientConfig.yaml",
-          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/iceland-university-of-the-arts/gen/fetch -i libs/clients/university-careers/src/lib/clients/iceland-university-of-the-arts/clientConfig.yaml"
-        ]
+        "command": "yarn openapi-ts -f libs/clients/university-careers/src/lib/openapi-ts.config.ts"
       },
-      "outputs": ["{projectRoot}/**/gen/fetch"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   }
 }
