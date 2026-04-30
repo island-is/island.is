@@ -49,12 +49,12 @@ export const en: TranslatedMessages = {
   'onboarding.pinCode.nonMatchingPinCodes': 'The numbers did not match',
   'onboarding.biometrics.title': 'Allow biometrics',
   'onboarding.biometrics.body':
-    'You can also use biometrics to access the app without entering a PIN.',
+    'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
   'onboarding.biometrics.noAuthenticationTypes':
     'Your device does not support biometrics',
-  'onboarding.biometrics.useBiometricsButtonText': 'Allow biometrics',
+  'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'biometrics',

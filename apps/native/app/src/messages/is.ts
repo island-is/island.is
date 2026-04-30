@@ -46,12 +46,12 @@ export const is = {
   'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
   'onboarding.biometrics.title': 'Leyfa lífkenni',
   'onboarding.biometrics.body':
-    'Þú getur einnig notað lífkenni til að opna appið án þess að slá inn PIN.',
+    'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.noAuthenticationTypes':
     'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
-  'onboarding.biometrics.useBiometricsButtonText': 'Leyfa lífkenni',
+  'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'lífkenni',
