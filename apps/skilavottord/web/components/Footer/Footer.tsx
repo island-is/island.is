@@ -10,10 +10,9 @@ export const Footer: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <IslandUIFooter
       topLinks={t.topLinksInfo}
-      topLinksContact={t.topLinksContact}
-      bottomLinksTitle={t.bottomLinksTitle}
-      bottomLinks={t.bottomLinks}
-      hideLanguageSwitch={true}
+      middleLinksTitle={t.bottomLinksTitle}
+      middleLinks={t.bottomLinks}
+      showMiddleLinks
     />
   )
 }
