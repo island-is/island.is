@@ -19,7 +19,9 @@ const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
       useFactory: () =>
         new MetaservicesApi(
           new Configuration({
-            fetchApi: createEnhancedFetch({ name: 'clients-xroad-metaservices' }),
+            fetchApi: createEnhancedFetch({
+              name: 'clients-xroad-metaservices',
+            }),
             basePath: XROAD_BASE_PATH,
             headers: {
               Accept: 'application/json',
