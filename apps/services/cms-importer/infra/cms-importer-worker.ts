@@ -17,7 +17,6 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
     })
     .command('node')
     .args('main.cjs', '--job', 'grant-import')
-    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       // Schedule to run daily at 15:00 and midnight, every 3 hours on dev.
       dev: { schedule: '0 */3 * * *' },
@@ -82,7 +81,6 @@ export const webSitemapImportSetup =
       })
       .command('node')
       .args('main.cjs', '--job', 'web-sitemap')
-      // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
       .extraAttributes({
         dev: { schedule: '0 0 * * *' },
         staging: { schedule: '0 0 * * 0' },
@@ -99,7 +97,6 @@ export const cmsCleanupSetup = (): ServiceBuilder<'cms-importer-cms-cleanup'> =>
     })
     .command('node')
     .args('main.cjs', '--job', 'cms-cleanup')
-    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: { schedule: '0 0 * * 0' },
       staging: { schedule: '0 0 * * 0' },

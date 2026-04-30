@@ -144,7 +144,6 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')
-    // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
       staging: { schedule: '*/30 * * * *' },

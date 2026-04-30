@@ -170,7 +170,6 @@ export const serviceSetupForWorker =
       .xroad(Base, Client, ChargeFjsV2)
       .command('node')
       .args('main.cjs', '--job', 'worker')
-      // TODO: migrate to scheduledJob() — see infra/src/dsl/dsl.ts
       .extraAttributes({
         dev: { schedule: '*/5 * * * *' },
         staging: { schedule: '*/5 * * * *' },
