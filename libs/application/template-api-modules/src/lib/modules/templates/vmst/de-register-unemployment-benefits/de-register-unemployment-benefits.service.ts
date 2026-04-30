@@ -22,18 +22,6 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
   }
 
   async getSupportData({ auth }: TemplateApiModuleActionProps) {
-<<<<<<< HEAD
-    let canWithdraw
-    try {
-      canWithdraw =
-        await this.vmstUnemploymentClientService.canUserWithdrawUnemploymentApplication(
-          auth,
-        )
-    } catch (e) {
-      this.logger.error(
-        '[VMST-Unemployment]: Error checking withdraw eligibility',
-        e,
-=======
     const resolvedApplicantId =
       await this.vmstUnemploymentClientService.resolveApplicant(auth)
 
@@ -55,28 +43,10 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
       this.logger.warn(
         '[VMST-Unemployment]: User cannot withdraw, creating application returned canWithdraw: False',
         canWithdraw.reason,
->>>>>>> origin/main
       )
       throw new TemplateApiError(
         {
           title: errorMsgs.cannotApplyErrorTitle,
-<<<<<<< HEAD
-          summary: errorMsgs.cannotApplyErrorSummary,
-        },
-        500,
-      )
-    }
-
-    if (!canWithdraw.isEligible) {
-      this.logger.warn(
-        '[VMST-Unemployment]: User cannot withdraw, isEligible: false',
-        canWithdraw.reason,
-      )
-      throw new TemplateApiError(
-        {
-          title: errorMsgs.cannotApplyErrorTitle,
-=======
->>>>>>> origin/main
           summary: canWithdraw.reason || errorMsgs.cannotApplyErrorSummary,
         },
         400,
@@ -88,10 +58,6 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
 
     return {
       canWithdraw: canWithdraw.isEligible,
-<<<<<<< HEAD
-      applicationId: canWithdraw.applicationId,
-=======
->>>>>>> origin/main
       delistingReasons,
     }
   }
