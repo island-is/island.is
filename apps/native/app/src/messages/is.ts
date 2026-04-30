@@ -294,7 +294,7 @@ export const is = {
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.family': 'Fjölskylda',
+  'profile.myData': 'Mín gögn',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
@@ -761,7 +761,7 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
-  'health.overview.medicine': 'Lyf',
+  'health.overview.medicine': 'Lyfin mín',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
 
   // health: categories
@@ -770,7 +770,7 @@ export const is = {
   'health.categories.moreOnMyPages': 'Meira á mínum síðum',
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
-  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires
@@ -920,7 +920,7 @@ export const is = {
   'health.medicineDelegation.form.xMonths': '{months} mán',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyfin mín',
   'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
   'health.prescriptionsAndCertificates.expired': 'Útrunnið',
   'health.prescriptionsAndCertificates.rejected': 'Hafnað',

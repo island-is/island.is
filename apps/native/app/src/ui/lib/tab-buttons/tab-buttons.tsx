@@ -4,6 +4,8 @@ import {
   Animated,
   Dimensions,
   LayoutChangeEvent,
+  StyleSheet,
+  View,
   useWindowDimensions,
 } from 'react-native'
 import { Typography } from '../typography/typography'
@@ -23,17 +25,12 @@ const TabText = styled(Typography)<{ isSelected: boolean }>`
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.color.blue400 : theme.color.dark400};
   font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
-  text-align: center;
 `
 
 const Tab = styled.Pressable<{ isSelected: boolean }>`
   height: 40px;
-  justify-content: center;
-  align-items: center;
   border-radius: 6px;
   flex: 1;
-  padding-left: 4px;
-  padding-right: 4px;
 `
 
 const ActiveBackground = styled(Animated.View)<{ buttonWidth: number }>`
@@ -60,6 +57,13 @@ interface TabButtonProps {
 
 function getButtonWidth(numButtons: number, containerWidth: number) {
   return containerWidth / numButtons
+}
+
+const tabContentStyle = {
+  flex: 1,
+  justifyContent: 'center' as const,
+  alignItems: 'center' as const,
+  paddingHorizontal: 4,
 }
 
 export const TabButtons = ({
@@ -120,9 +124,18 @@ export const TabButtons = ({
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`${button.title} tab`}
             >
-              <TabText variant="body3" isSelected={isSelected}>
-                {button.title}
-              </TabText>
+              <View style={StyleSheet.absoluteFill} pointerEvents="none">
+                <View style={tabContentStyle}>
+                  <TabText
+                    variant="body3"
+                    isSelected={isSelected}
+                    textAlign="center"
+                    numberOfLines={1}
+                  >
+                    {button.title}
+                  </TabText>
+                </View>
+              </View>
             </Tab>
           )
         })}
