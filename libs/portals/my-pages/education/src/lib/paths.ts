@@ -20,5 +20,8 @@ export enum EducationPaths {
   EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
   EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:uni/:id',
 
+  EducationHaskoliMicroCredentials = '/menntun/haskoli/ornam',
+  EducationHaskoliMicroCredentialsDetail = '/menntun/haskoli/ornam/:uni/:id',
+
   EducationDrivingLessons = '/menntun/okunam',
 }

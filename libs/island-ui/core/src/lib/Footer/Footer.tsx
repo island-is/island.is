@@ -35,7 +35,7 @@ interface FooterProps {
   /**
    * Bottom bar links with hardcoded icons.
    */
-  bottomBarLinks: FooterLinkProps[]
+  bottomBarLinks?: FooterLinkProps[]
 }
 
 const bottomBarIcons = ['informationCircle', 'person', 'document'] as const
@@ -48,7 +48,7 @@ export const Footer = ({
   tagLinks = [],
   tagLinksTitle = 'Flýtileiðir',
   showTagLinks = false,
-  bottomBarLinks,
+  bottomBarLinks = defaultBottomBarLinks,
 }: FooterProps) => {
   return (
     <footer>
@@ -235,6 +235,21 @@ const defaultTopLinksInfo = [
   {
     title: 'Lífsviðburðir',
     href: '/lifsvidburdir',
+  },
+]
+
+const defaultBottomBarLinks = [
+  {
+    title: 'Getum við aðstoðað?',
+    href: '/s/stafraent-island/hafa-samband',
+  },
+  {
+    title: 'Persónuverndarstefna',
+    href: '/personuverndarstefna-stafraent-islands',
+  },
+  {
+    title: 'Notendaskilmálar',
+    href: '/skilmalar-island-is',
   },
 ]
 

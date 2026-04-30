@@ -49,12 +49,12 @@ export const en: TranslatedMessages = {
   'onboarding.pinCode.nonMatchingPinCodes': 'The numbers did not match',
   'onboarding.biometrics.title': 'Allow biometrics',
   'onboarding.biometrics.body':
-    'You can also use biometrics to access the app without entering a PIN.',
+    'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
   'onboarding.biometrics.noAuthenticationTypes':
     'Your device does not support biometrics',
-  'onboarding.biometrics.useBiometricsButtonText': 'Allow biometrics',
+  'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'biometrics',
@@ -419,7 +419,7 @@ export const en: TranslatedMessages = {
   'profile.screenTitle': 'More',
   'profile.bottomTabText': 'More',
   'profile.seeInfo': 'See info',
-  'profile.family': 'Family',
+  'profile.myData': 'My information',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
@@ -763,7 +763,7 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
-  'health.overview.medicine': 'Medicine',
+  'health.overview.medicine': 'My medicine',
   'health.overview.seeAllCategories': 'See all categories',
 
   // health: categories
@@ -925,7 +925,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.xMonths': '{months} months',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.screenTitle': 'My medicine',
   'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
   'health.prescriptionsAndCertificates.expired': 'Expired',
   'health.prescriptionsAndCertificates.rejected': 'Rejected',
