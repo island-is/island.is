@@ -32,7 +32,10 @@ export { AppealCaseRepositoryService } from './services/appealCaseRepository.ser
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
-export { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
+export {
+  CourtSessionRepositoryService,
+  UpdateCourtSession,
+} from './services/courtSessionRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'

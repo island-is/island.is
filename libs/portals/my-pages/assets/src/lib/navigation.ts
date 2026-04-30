@@ -140,7 +140,7 @@ export const assetsNavigation: PortalNavigationItem = {
       path: AssetsPaths.AssetsFarmerLands,
       children: [
         {
-          name: 'id',
+          name: m.farmerLand,
           navHide: true,
           path: AssetsPaths.AssetsFarmerLandDetail,
         },

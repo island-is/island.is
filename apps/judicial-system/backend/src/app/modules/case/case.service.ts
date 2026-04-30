@@ -1846,29 +1846,6 @@ export class CaseService {
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
 
-    if (Object.keys(caseUpdate).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
-        transaction,
-      })
-    }
-
-    // Update police case numbers of case files if necessary
-    await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
-
-    // Reset case file states if court case number is changed
-    if (
-      theCase.courtCaseNumber &&
-      caseUpdate.courtCaseNumber &&
-      caseUpdate.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      await this.fileService.resetCaseFileStates(theCase.id, transaction)
-    }
-
-    // Handle court document creation on submitting an indictment case to court
-    if (shouldCreateCourtDocuments) {
-      await this.handleInitialCourtDocumentCreation(theCase, transaction)
-    }
-
     // Handle appealed in court
     if (isCompletingRequestCase) {
       const hasBeenAppealed = Boolean(theCase.appealCase)
@@ -1895,6 +1872,29 @@ export class CaseService {
           { transaction },
         )
       }
+    }
+
+    if (Object.keys(caseUpdate).length > 0) {
+      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
+        transaction,
+      })
+    }
+
+    // Update police case numbers of case files if necessary
+    await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
+
+    // Reset case file states if court case number is changed
+    if (
+      theCase.courtCaseNumber &&
+      caseUpdate.courtCaseNumber &&
+      caseUpdate.courtCaseNumber !== theCase.courtCaseNumber
+    ) {
+      await this.fileService.resetCaseFileStates(theCase.id, transaction)
+    }
+
+    // Handle court document creation on submitting an indictment case to court
+    if (shouldCreateCourtDocuments) {
+      await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them

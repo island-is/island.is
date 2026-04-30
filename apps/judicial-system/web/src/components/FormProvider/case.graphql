@@ -83,6 +83,7 @@ query Case($input: CaseQueryInput!) {
       indictmentReviewDecision
       isDrivingLicenseSuspended
       appealStatementDate
+      policeCaseNumbers
       indictmentCancelledOrDismissedState {
         type
         time
@@ -331,6 +332,7 @@ query Case($input: CaseQueryInput!) {
       entries
       rulingType
       ruling
+      rulingFileId
       isAttestingWitness
       attestingWitnessId
       attestingWitness {

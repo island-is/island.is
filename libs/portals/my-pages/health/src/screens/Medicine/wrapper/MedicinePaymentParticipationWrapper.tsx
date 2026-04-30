@@ -6,8 +6,8 @@ import {
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
 import { messages as m } from '../../../lib/messages'
-import { m as coreMessages } from '@island.is/portals/my-pages/core'
 import { healthNavigation } from '../../../lib/navigation'
+import { HealthPaths } from '../../../lib/paths'
 import { SECTION_GAP } from '../../../utils/constants'
 
 export const MedicinePaymentParticipationWrapper = ({
@@ -20,12 +20,12 @@ export const MedicinePaymentParticipationWrapper = ({
   const { formatMessage } = useLocale()
 
   const medicineChildren = healthNavigation.children?.find(
-    (itm) => itm.name === coreMessages.medicine,
+    (itm) => itm.path === HealthPaths.HealthMedicine,
   )
 
   const paymentParticipationChildren =
     medicineChildren?.children?.find(
-      (item) => item.name === coreMessages.medicinePaymentParticipation,
+      (item) => item.path === HealthPaths.HealthMedicinePaymentParticipation,
     )?.children ?? []
 
   return (
