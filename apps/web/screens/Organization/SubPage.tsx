@@ -195,7 +195,7 @@ export const SubPageContent = ({
                   </GridColumn>
                 </GridRow>
                 {content}
-                {subpage.showDateOfTheMostRecentReview &&
+                {subpage?.showDateOfTheMostRecentReview &&
                   subpage.contentLastReviewed && (
                     <Box paddingTop={2}>
                       <Text variant="small">
