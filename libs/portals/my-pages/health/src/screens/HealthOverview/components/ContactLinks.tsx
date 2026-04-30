@@ -52,7 +52,6 @@ const ContactLinks = () => {
       {link.description}{' '}
       {link.emergencyDescription ? (
         <Text
-          as="span"
           variant="small"
           fontWeight="light"
           lineHeight="lg"
@@ -111,10 +110,7 @@ const ContactLinks = () => {
           borderColor="blue200"
         >
           {link.href.startsWith('tel:') ? (
-            <a
-              href={link.href}
-              style={{ color: 'inherit', textDecoration: 'none' }}
-            >
+            <a href={link.href} className={styles.telLink}>
               {renderRowContent(link)}
             </a>
           ) : (

@@ -27,6 +27,7 @@ import BasicInformation from './components/BasicInformation'
 import ContactLinks from './components/ContactLinks'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import * as styles from './HealthOverview.css'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -37,7 +38,6 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
-  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   const [showAppointments, setShowAppointments] = useState(false)
 
@@ -125,60 +125,55 @@ export const HealthOverview = () => {
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
-  const firstTwoAppointments =
+  const upcomingAppointment =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 1) || []
 
   return (
     <>
       {/* Header + appointments on left, contact links on right */}
-      <GridRow marginBottom={CONTENT_GAP_LG}>
+      <GridRow marginBottom={CONTENT_GAP_LG} alignItems="stretch">
         <GridColumn span={isMobile ? '12/12' : '7/12'}>
-          <Box marginBottom={SECTION_GAP}>
-            <Text variant="h3" as={'h1'}>
-              {formatMessage(messages.healthOverview)}
-            </Text>
+          <div className={styles.leftColumn}>
+            <Box marginBottom={SECTION_GAP}>
+              <Text variant="h3" as={'h1'}>
+                {formatMessage(messages.healthOverview)}
+              </Text>
 
-            <Text variant="default" paddingTop={1}>
-              {formatMessage(messages.healthOverviewIntro)}
-            </Text>
-          </Box>
-          {isMobile && (
-            <Box marginBottom={CONTENT_GAP_LG}>
-              <ContactLinks />
+              <Text variant="default" paddingTop={1}>
+                {formatMessage(messages.healthOverviewIntro)}
+              </Text>
             </Box>
-          )}
-          {showAppointments && (
-            <Box marginRight={!isTablet ? 0 : 12}>
-              <Appointments
-                data={{
-                  data: { data: firstTwoAppointments },
-                  loading: appointmentsLoading,
-                  error: !!appointmentsError,
-                }}
-                showLinkButton
-                cardSize="large"
-              />
-            </Box>
-          )}
+            {isMobile && (
+              <Box marginBottom={CONTENT_GAP_LG}>
+                <ContactLinks />
+              </Box>
+            )}
+            {!isMobile && showAppointments && <Box flexGrow={1} />}
+            {showAppointments && (
+              <Box marginRight={[0, 0, 0, 0, 12]}>
+                <Appointments
+                  data={{
+                    data: { data: upcomingAppointment },
+                    loading: appointmentsLoading,
+                    error: !!appointmentsError,
+                  }}
+                  showLinkButton
+                  cardSize="large"
+                />
+              </Box>
+            )}
+          </div>
         </GridColumn>
         {!isMobile && (
           <GridColumn span="5/12">
-            <div style={{ position: 'relative' }}>
+            <div className={styles.imageWrapper}>
               <img
                 src="./assets/images/jobs.svg"
                 alt=""
                 aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  top: '-200px',
-                  right: 0,
-                  width: '239px',
-                  height: '239px',
-                }}
+                className={styles.decorativeImage}
               />
-              <div
-                style={{ position: 'relative', zIndex: 1, marginTop: '55px' }}
-              >
+              <div className={styles.contactLinksWrapper}>
                 <ContactLinks />
               </div>
             </div>

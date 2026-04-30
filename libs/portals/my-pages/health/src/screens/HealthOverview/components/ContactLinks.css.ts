@@ -16,3 +16,8 @@ export const descriptionText = style({
   lineHeight: '24px',
 })
 
+export const telLink = style({
+  color: 'inherit',
+  textDecoration: 'none',
+})
+
