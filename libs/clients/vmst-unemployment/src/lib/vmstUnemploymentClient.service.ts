@@ -19,6 +19,9 @@ import {
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
   GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
+  ApplicantInfoApi,
+  GaldurXRoadAPIModelsApplicantInfoResponse,
+  GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
   GaldurDomainModelsBaseViewModel,
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
@@ -27,6 +30,10 @@ import {
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurXRoadAPIModelsAvailableActions,
+  ApplicantUpdateApplicantRequest,
+  ApplicantGetApplicantInfoRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -42,6 +49,7 @@ type VmstApis =
   | UnemploymentApplicationApi
   | ActivationGrantApi
   | AttachmentApi
+  | ApplicantInfoApi
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
@@ -197,14 +205,8 @@ export class VmstUnemploymentClientService {
   }
 
   async canUserWithdrawUnemploymentApplication(
-    auth: User,
+    applicantId: string,
   ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
-    const { applicantId } = await this.resolveApplicant(auth)
-
-    if (!applicantId) {
-      throw new Error('Failed to resolve applicantId')
-    }
-
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
@@ -365,5 +367,78 @@ export class VmstUnemploymentClientService {
     return await api.applicantGetActions({
       id: applicantId,
     })
+  }
+
+  async submitJobSearchConfirmation(
+    auth: User,
+    request: GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  ): Promise<void> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+    await api.applicantCreateJobSearchConfirmations({
+      id: applicantId,
+      galdurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest:
+        request,
+    })
+  }
+
+  async checkJobSearchConfirmationEligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantGetJobSearchConfirmationEligibility({
+      id: applicantId,
+    })
+  }
+
+  async getCurrentApplicationForActions(
+    requestParameters: ApplicantGetApplicantInfoRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantGetApplicantInfo(requestParameters)
+  }
+
+  async getCurrentApplicationSupportDataForActions(): Promise<GaldurXRoadAPIModelsApplicantInfoSupportDataResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantGetApplicantInfoSupportData()
+  }
+
+  async updateCurrentApplicationForActions(
+    requestParameters: ApplicantUpdateApplicantRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantUpdateApplicant(requestParameters)
   }
 }

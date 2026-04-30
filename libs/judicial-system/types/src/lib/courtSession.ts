@@ -29,6 +29,7 @@ export enum CourtSessionRulingType {
   NONE = 'NONE',
   JUDGEMENT = 'JUDGEMENT',
   ORDER = 'ORDER',
+  DISMISSAL_ORDER = 'DISMISSAL_ORDER',
 }
 
 export enum CourtDocumentType {

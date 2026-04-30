@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ShipRegistryLocale } from '@island.is/api/schema'
 import {
   EmptyState,
   InfoLine,
@@ -16,6 +15,7 @@ import { shipsMessages } from '../../../lib/messages'
 import { useShipDetailQuery } from './ShipDetail.generated'
 import { CertificatesTable } from './components/CertificatesTable'
 import { RegistrationTab } from './components/RegistrationTab'
+import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 
 export const ShipDetail = () => {
   useNamespaces('sp.ships')
@@ -26,7 +26,7 @@ export const ShipDetail = () => {
     variables: {
       input: {
         registrationNumber: id ?? '',
-        locale: lang === 'en' ? ShipRegistryLocale.En : ShipRegistryLocale.Is,
+        locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is,
       },
     },
   })
