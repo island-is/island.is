@@ -78,11 +78,10 @@ const Waitlists: React.FC = () => {
           </Text>
         </Box>
       }
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
         messages.landlaeknirWaitlistTooltip,
-      )}
-      buttonGroup={[
+      ) }}
+      buttonGroup={{ actions: [
         <LinkButton
           key="waitlists-link"
           to={formatMessage(messages.waitlistsDescriptionLink)}
@@ -90,7 +89,8 @@ const Waitlists: React.FC = () => {
           variant="utility"
           icon="open"
         />,
-      ]}
+      ] }}
+      desktopContentSpan="10/12"
     >
       <WaitlistsInfoModal
         isOpen={isModalOpen}

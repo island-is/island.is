@@ -106,9 +106,9 @@ const VehicleBulkMileageJobDetail = () => {
           <Text>{formatMessage(vehicleMessage.refreshDataAboutJob)}</Text>
         </>
       }
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      buttonGroup={[
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
+      buttonGroup={{ actions: [
         <Button
           key="refresh-button"
           variant="utility"
@@ -122,7 +122,7 @@ const VehicleBulkMileageJobDetail = () => {
         >
           {formatMessage(vehicleMessage.refreshJob)}
         </Button>,
-      ]}
+      ] }}
     >
       {!error && !loading && !jobsStatus && (
         <Problem

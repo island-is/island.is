@@ -29,8 +29,8 @@ export const EducationGraduationDetail = () => {
         defaultMessage:
           'Hér getur þú fundið yfirlit yfir þínar útskriftir úr framhaldsskóla.',
       })}
-      serviceProviderSlug={MMS_SLUG}
-      serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltipSecondary) }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

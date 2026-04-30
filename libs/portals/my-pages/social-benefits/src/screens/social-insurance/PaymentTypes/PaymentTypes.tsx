@@ -61,11 +61,9 @@ const PaymentTypes = () => {
     <IntroWrapper
       title={formatMessage(m.paymentTypesOverview)}
       intro={formatMessage(m.paymentTypesOverviewDescription)}
-      serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
-      serviceProviderTooltip={formatMessage(
-        coreMessages.socialInsuranceTooltip,
-      )}
-      buttonGroup={buttonGroup}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: TRYGGINGASTOFNUN_SLUG, tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
+      buttonGroup={{ actions: buttonGroup }}
     >
       <Stack space={6}>
         {paymentTypesLoading ? (

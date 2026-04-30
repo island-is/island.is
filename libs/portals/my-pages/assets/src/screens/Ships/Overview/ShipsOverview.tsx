@@ -4,7 +4,7 @@ import { ActionCard, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
   EmptyState,
-  IntroWrapperV2,
+  IntroWrapper,
   SAMGONGUSTOFA_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
@@ -23,7 +23,7 @@ export const ShipsOverview = () => {
   const ships = data?.shipRegistryUserShips?.data ?? []
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={formatMessage(shipsMessages.title)}
       intro={formatMessage(shipsMessages.intro)}
       serviceProvider={{
@@ -73,7 +73,7 @@ export const ShipsOverview = () => {
           ))}
         </Stack>
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

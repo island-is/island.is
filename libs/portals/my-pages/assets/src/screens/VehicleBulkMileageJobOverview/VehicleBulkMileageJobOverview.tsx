@@ -73,8 +73,8 @@ const VehicleBulkMileageUploadJobOverview = () => {
     <IntroWrapper
       title={m.vehiclesBulkMileageJobOverview}
       intro={m.vehiclesBulkMileageJobOverviewDescription}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
     >
       {error && <Problem error={error} noBorder={false} />}
       {!error && (

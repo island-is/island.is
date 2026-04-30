@@ -80,8 +80,8 @@ export const AssetsOverview = () => {
         defaultMessage:
           'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
       }}
-      serviceProviderSlug={HMS_SLUG}
-      serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: HMS_SLUG, tooltip: formatMessage(m.realEstateTooltip) }}
     >
       {loading && !error && <AssetCardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}

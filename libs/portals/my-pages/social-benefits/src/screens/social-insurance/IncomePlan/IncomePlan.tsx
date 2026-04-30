@@ -157,10 +157,8 @@ const IncomePlan = () => {
     <IntroWrapper
       title={formatMessage(coreMessages.incomePlan)}
       intro={formatMessage(coreMessages.incomePlanDescription)}
-      serviceProviderSlug={'tryggingastofnun'}
-      serviceProviderTooltip={formatMessage(
-        coreMessages.socialInsuranceTooltip,
-      )}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: 'tryggingastofnun', tooltip: formatMessage(coreMessages.socialInsuranceTooltip) }}
     >
       {renderContent()}
     </IntroWrapper>

@@ -48,10 +48,8 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
       marginBottom={5}
       title={formatMessage(messages.paymentsAndRights)}
       intro={formatMessage(messages.paymentsIntro)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      childrenWidthFull
-      buttonGroup={[
+      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
+      buttonGroup={{ actions: [
         <Button
           variant="utility"
           disabled={displayConfirmationErrorAlert}
@@ -63,7 +61,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
         >
           {formatMessage(messages.healthInsuranceConfirmation)}
         </Button>,
-      ]}
+      ] }}
     >
       {displayConfirmationErrorAlert && (
         <Box marginBottom={4}>

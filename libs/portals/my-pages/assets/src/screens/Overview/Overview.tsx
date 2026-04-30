@@ -94,9 +94,9 @@ const VehiclesOverview = () => {
     <IntroWrapper
       title={messages.title}
       intro={messages.intro}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      buttonGroup={
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
+      buttonGroup={{ actions:
         (!loading && !error && filteredVehicles.length > 0) || searchLoading
           ? [
               ownershipLinks ? (
@@ -140,7 +140,7 @@ const VehiclesOverview = () => {
               />,
             ].filter(isDefined)
           : []
-      }
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       <Stack space={2}>

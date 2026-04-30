@@ -44,8 +44,8 @@ const CourtCaseDetail = () => {
         formatMessage(messages.courtCaseNumberNotRegistered)
       }
       intro={messages.courtCasesDescription}
-      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+      serviceProvider={{ slug: DOMSMALARADUNEYTID_SLUG, tooltip: formatMessage(m.domsmalaraduneytidTooltip) }}
+      desktopContentSpan="10/12"
     >
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail &&

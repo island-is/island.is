@@ -58,9 +58,8 @@ const UserContract = () => {
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
       intro={cm.contractDetailSubtitle}
-      serviceProviderSlug={HMS_SLUG}
-      serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
-      buttonGroup={[
+      serviceProvider={{ slug: HMS_SLUG, tooltip: formatMessage(m.rentalAgreementsTooltip) }}
+      buttonGroup={{ actions: [
         <Button
           key="download-button"
           title={formatMessage(cm.downloadAsPdf)}
@@ -87,7 +86,8 @@ const UserContract = () => {
               />,
             ]
           : []),
-      ]}
+      ] }}
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !contract && (

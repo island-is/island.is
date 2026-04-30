@@ -49,11 +49,10 @@ const PoliceCaseDetail = () => {
           arg: policeCaseNumber,
         })}
         intro={m.policeCaseDetailDescription}
-        serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-        serviceProviderTooltip={formatMessage(
+        serviceProvider={{ slug: RIKISLOGREGLUSTJORI_SLUG, tooltip: formatMessage(
           coreMessages.nationalPoliceCommissionerTooltip,
-        )}
-        buttonGroup={[
+        ) }}
+        buttonGroup={{ actions: [
           <LinkButton
             key="detail-link-button-1"
             to={formatMessage(m.policeCasesDetailHeaderLinkButton1Url)}
@@ -68,7 +67,8 @@ const PoliceCaseDetail = () => {
             icon="open"
             variant="utility"
           />,
-        ]}
+        ] }}
+        desktopContentSpan="10/12"
       />
       {error && !loading && <Problem error={error} noBorder={false} />}
 

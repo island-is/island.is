@@ -127,9 +127,9 @@ const VehicleBulkMileageUpload = () => {
     <IntroWrapper
       title={m.vehiclesBulkMileageUpload}
       intro={m.vehiclesBulkMileageUploadDescription}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      buttonGroup={
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
+      buttonGroup={{ actions:
         templateData?.vehiclesMileageTemplateFileDownloadUrl
           ? [
               <DropdownMenu
@@ -159,7 +159,7 @@ const VehicleBulkMileageUpload = () => {
               ) : null,
             ]
           : []
-      }
+      }}
     >
       <Stack space={2}>
         {(error ?? errorURL) && (

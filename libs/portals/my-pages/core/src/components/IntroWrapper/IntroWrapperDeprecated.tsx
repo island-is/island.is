@@ -50,12 +50,13 @@ interface WithIntroProps extends BaseProps {
   intro?: MessageDescriptor | string
 }
 
-export type IntroWrapperProps = WithIntroComponentProps | WithIntroProps
+/** @deprecated Use `IntroWrapperProps` from `IntroWrapper` instead. */
+export type IntroWrapperDeprecatedProps = WithIntroComponentProps | WithIntroProps
 
 /**
- * @deprecated Use `IntroWrapperV2` instead.
+ * @deprecated Use `IntroWrapper` instead.
  */
-export const IntroWrapper = (props: IntroWrapperProps) => {
+export const IntroWrapperDeprecated = (props: IntroWrapperDeprecatedProps) => {
   const { marginBottom, childrenWidthFull = false } = props
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -165,4 +166,4 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
   )
 }
 
-export default IntroWrapper
+export default IntroWrapperDeprecated

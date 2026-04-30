@@ -98,8 +98,8 @@ const UserNotifications = () => {
     <IntroWrapper
       title={m.notifications}
       intro={mInformationNotifications.description}
-      serviceProviderSlug={ISLANDIS_SLUG}
-      serviceProviderTooltip={formatMessage(m.notificationsProfileTooltip)}
+      serviceProvider={{ slug: ISLANDIS_SLUG, tooltip: formatMessage(m.notificationsProfileTooltip) }}
+      desktopContentSpan="10/12"
     >
       <Box display="flex" marginBottom={3}>
         <Columns space={2}>

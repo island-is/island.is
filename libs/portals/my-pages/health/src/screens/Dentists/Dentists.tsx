@@ -68,8 +68,8 @@ const Dentists = () => {
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.dentistsTitle)}
       intro={formatMessage(messages.dentistsDescription)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

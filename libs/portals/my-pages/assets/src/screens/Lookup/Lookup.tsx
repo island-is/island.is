@@ -18,9 +18,7 @@ const Lookup = () => {
     <IntroWrapper
       title={messages.vehiclesLookup}
       intro={messages.searchIntro}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      childrenWidthFull
+      serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
     >
       <Tabs
         contentBackground="white"

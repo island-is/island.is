@@ -48,10 +48,8 @@ export const VaccinationsWrapper = () => {
     <IntroWrapper
       title={formatMessage(m.vaccinations)}
       intro={formatMessage(m.vaccinationsIntro)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
-      childrenWidthFull
-      buttonGroup={[
+      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(m.landlaeknirVaccinationsTooltip) }}
+      buttonGroup={{ actions: [
         <LinkButton
           key="vaccinations-read-about"
           to={formatMessage(m.readAboutVaccinationsLink)}
@@ -68,7 +66,7 @@ export const VaccinationsWrapper = () => {
         >
           {formatMessage(m.vaccinationStatusDesc)}
         </Button>,
-      ]}
+      ] }}
     >
       <Box>
         {loading && (

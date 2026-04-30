@@ -127,9 +127,7 @@ const AnsweredQuestionnaire: FC = () => {
       }
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
-      childrenWidthFull
-      buttonGroupAlignment="spaceBetween"
-      buttonGroup={[
+      buttonGroup={{ actions: [
         <Box key="submission-select-container">
           <Inline space={2} alignY="bottom">
             <Box className={styles.select}>
@@ -190,7 +188,7 @@ const AnsweredQuestionnaire: FC = () => {
         >
           {formatMessage(m.print)}
         </Button>,
-      ]}
+      ], alignment: "spaceBetween" }}
     >
       {loading && !error && (
         <Box marginTop={6}>

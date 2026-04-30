@@ -28,10 +28,10 @@ const Bloodtype: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.bloodtype)}
       intro={bloodType?.description ?? formatMessage(messages.bloodtypeDesc)}
-      serviceProviderSlug={LANDSPITALI_SLUG}
-      serviceProviderTooltip={formatMessage(messages.landspitaliTooltip)}
+      desktopContentSpan="10/12"
+      serviceProvider={{ slug: LANDSPITALI_SLUG, tooltip: formatMessage(messages.landspitaliTooltip) }}
       marginBottom={6}
-      buttonGroup={[
+      buttonGroup={{ actions: [
         <LinkButton
           key={'bloodtype-link'}
           to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
@@ -46,7 +46,7 @@ const Bloodtype: React.FC = () => {
           variant="utility"
           icon="open"
         />,
-      ]}
+      ] }}
     >
       {!loading && !bloodType && !error && (
         <Problem type="no_data" noBorder={false} />

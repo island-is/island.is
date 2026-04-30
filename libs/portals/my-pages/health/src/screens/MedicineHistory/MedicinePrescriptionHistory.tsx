@@ -65,11 +65,9 @@ const MedicinePrescriptionHistory = () => {
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptionHistory)}
       intro={formatMessage(messages.medicinePrescriptionHistoryIntroText)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
-      )}
-      childrenWidthFull
+      ) }}
       marginBottom={6}
     >
       {!error && (

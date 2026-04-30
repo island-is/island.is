@@ -33,14 +33,13 @@ const PatientDataPermits: FC = () => {
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
       intro={formatMessage(messages.patientDataPermitDescription)}
-      serviceProviderSlug="landlaeknir"
-      loading={loading}
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: "landlaeknir", tooltip: formatMessage(
         messages.landlaeknirPatientPermitsTooltip,
-      )}
+      ) }}
+      loading={loading}
       buttonGroup={
         !loading && !error
-          ? [
+          ? { actions: [
               <LinkButton
                 key="readAboutPermit"
                 variant="utility"
@@ -66,9 +65,10 @@ const PatientDataPermits: FC = () => {
                     </Button>,
                   ]
                 : []),
-            ]
+            ] }
           : undefined
       }
+      desktopContentSpan="10/12"
     >
       {loading && !error && (
         <Box marginY={3}>

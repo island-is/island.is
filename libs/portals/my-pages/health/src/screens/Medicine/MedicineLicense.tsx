@@ -27,8 +27,8 @@ export const MedicineLicense = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineLicenseTitle)}
       intro={formatMessage(messages.medicineLicenseIntroText)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      serviceProvider={{ slug: SJUKRATRYGGINGAR_SLUG, tooltip: formatMessage(messages.healthTooltip) }}
+      desktopContentSpan="10/12"
     >
       {error ? (
         <Problem error={error} noBorder={false} />

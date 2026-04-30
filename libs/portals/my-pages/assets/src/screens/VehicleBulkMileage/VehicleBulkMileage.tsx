@@ -153,10 +153,8 @@ const VehicleBulkMileage = () => {
               })}
             </Text>
           }
-          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-          serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-          childrenWidthFull
-          buttonGroup={
+          serviceProvider={{ slug: SAMGONGUSTOFA_SLUG, tooltip: formatMessage(m.vehiclesTooltip) }}
+          buttonGroup={{ actions:
             isAllowedBulkMileageUpload
               ? [
                   ...buttons,
@@ -176,7 +174,7 @@ const VehicleBulkMileage = () => {
                   />,
                 ]
               : buttons
-          }
+          }}
         >
           {isAllowedBulkMileageUpload && (
             <Box marginBottom={2}>

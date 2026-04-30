@@ -126,7 +126,7 @@ const QuestionnaireDetail: FC = () => {
         formatMessage(messages.questionnairesIntro)
       }
       loading={loading}
-      buttonGroup={[
+      buttonGroup={{ actions: [
         link ? (
           <>
             {!isDraft && canSubmitAgain && (
@@ -179,7 +179,8 @@ const QuestionnaireDetail: FC = () => {
             </Button>
           </Box>
         ) : null,
-      ]}
+      ] }}
+      desktopContentSpan="10/12"
     >
       {questionnaire && !error && (
         <InfoLineStack>

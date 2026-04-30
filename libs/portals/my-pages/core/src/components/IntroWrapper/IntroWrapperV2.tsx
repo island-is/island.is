@@ -4,6 +4,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   ResponsiveProp,
   SkeletonLoader,
   Stack,
@@ -35,13 +36,13 @@ type IntroWrapperV2BaseProps = {
   }
 }
 
-export type IntroWrapperV2Props = IntroWrapperV2BaseProps &
+export type IntroWrapperProps = IntroWrapperV2BaseProps &
   (
     | { intro?: MessageDescriptor | string; introComponent?: never }
     | { introComponent?: React.ReactNode; intro?: never }
   )
 
-export const IntroWrapperV2 = ({
+export const IntroWrapper = ({
   title,
   intro,
   introComponent,
@@ -51,7 +52,7 @@ export const IntroWrapperV2 = ({
   marginBottom = [0, 0, 0, 4],
   serviceProvider,
   buttonGroup,
-}: IntroWrapperV2Props) => {
+}: IntroWrapperProps) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -69,19 +70,19 @@ export const IntroWrapperV2 = ({
   return (
     <GridContainer>
       <GridRow marginBottom={buttonGroup ? 0 : marginBottom}>
-        <GridColumn span="12/12">
+        <GridColumn span={['12/12', '12/12', '9/12']}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
             alignItems="flexStart"
             columnGap={4}
           >
-            <Box>
+            <Stack space={loading ? 2 : 1}>
               {loading ? (
-                <Stack space={2}>
+                <>
                   <SkeletonLoader height={24} width={120} />
                   <SkeletonLoader height={24} width={300} />
-                </Stack>
+                </>
               ) : (
                 <>
                   <Text variant="h3" as="h1">
@@ -95,28 +96,30 @@ export const IntroWrapperV2 = ({
                   {introComponent && <Box paddingTop={1}>{introComponent}</Box>}
                 </>
               )}
-            </Box>
-            {!isMobile && serviceProvider && organization?.link && (
-              <Box flexShrink={0}>
-                <InstitutionPanel
-                  loading={orgLoading}
-                  linkHref={organization.link}
-                  linkLabel={
-                    organization.title
-                      ? formatMessage(m.readMoreAbout, {
-                          arg: organization.title,
-                        })
-                      : ''
-                  }
-                  img={organization.logo?.url ?? ''}
-                  imgContainerDisplay="flex"
-                  isSvg={organization.logo?.contentType === 'image/svg+xml'}
-                  tooltipText={serviceProvider.tooltip}
-                />
-              </Box>
-            )}
+            </Stack>
           </Box>
         </GridColumn>
+        {organization?.link && serviceProvider && (
+          <GridColumn hiddenBelow="md" span={'3/12'}>
+            <Box alignSelf="flexEnd" flexShrink={0}>
+              <InstitutionPanel
+                loading={orgLoading}
+                linkHref={organization.link}
+                linkLabel={
+                  organization.title
+                    ? formatMessage(m.readMoreAbout, {
+                        arg: organization.title,
+                      })
+                    : ''
+                }
+                img={organization.logo?.url ?? ''}
+                imgContainerDisplay="flex"
+                isSvg={organization.logo?.contentType === 'image/svg+xml'}
+                tooltipText={serviceProvider.tooltip}
+              />
+            </Box>
+          </GridColumn>
+        )}
       </GridRow>
       {!loading && buttonGroup && (
         <GridRow marginBottom={marginBottom}>
@@ -146,4 +149,4 @@ export const IntroWrapperV2 = ({
   )
 }
 
-export default IntroWrapperV2
+export default IntroWrapper

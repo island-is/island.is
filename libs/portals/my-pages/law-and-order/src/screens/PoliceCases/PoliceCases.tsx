@@ -27,11 +27,10 @@ const PoliceCases = () => {
       loading={loading}
       title={messages.policeCasesTitle}
       intro={messages.policeCasesDescription}
-      serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: RIKISLOGREGLUSTJORI_SLUG, tooltip: formatMessage(
         coreMessages.nationalPoliceCommissionerTooltip,
-      )}
-      buttonGroup={[
+      ) }}
+      buttonGroup={{ actions: [
         <LinkButton
           key="link-button-1"
           to={formatMessage(messages.policeCasesHeaderLinkButton1Url)}
@@ -46,7 +45,8 @@ const PoliceCases = () => {
           icon="open"
           variant="utility"
         />,
-      ]}
+      ] }}
+      desktopContentSpan="10/12"
     >
       {loading && !error && (
         <Box width="full">

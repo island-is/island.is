@@ -59,10 +59,10 @@ const OccupationalLicenseDetail = () => {
       marginBottom={2}
       title={license?.title ?? formatMessage(om.occupationalLicense)}
       intro={res?.headerText ?? ''}
-      serviceProviderSlug={license?.issuer as OrganizationSlugType}
+      serviceProvider={{ slug: license?.issuer as OrganizationSlugType }}
       buttonGroup={
         !isOldEducationLicense && res?.actions
-          ? res.actions.map((a, index) => {
+          ? { actions: res.actions.map((a, index) => {
               if (!a) {
                 return null
               }
@@ -104,9 +104,10 @@ const OccupationalLicenseDetail = () => {
                   }
                 />
               )
-            })
+            }) }
           : undefined
       }
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem noBorder={false} error={error} />}
       {!error && !loading && isOldEducationLicense && (

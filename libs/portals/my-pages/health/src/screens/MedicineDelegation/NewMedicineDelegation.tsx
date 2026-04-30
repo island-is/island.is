@@ -70,10 +70,10 @@ const NewMedicineDelegation = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.newMedicineDelegationIntroText)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
-      )}
+      ) }}
+      desktopContentSpan="10/12"
     >
       {step === 1 && (
         <FirstStep setFormState={setFormState} formState={formState} />

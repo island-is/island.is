@@ -84,13 +84,12 @@ const PermitDetail: React.FC = () => {
       introComponent={
         <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
       }
-      serviceProviderSlug="landlaeknir"
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: "landlaeknir", tooltip: formatMessage(
         messages.landlaeknirPatientPermitsTooltip,
-      )}
+      ) }}
       buttonGroup={
         !loading && !error
-          ? [
+          ? { actions: [
               // TODO: Re-enable when backend PDF endpoint is available
               // <Button
               //   key="downloadPDF"
@@ -141,9 +140,10 @@ const PermitDetail: React.FC = () => {
                   isInactive ? messages.activatePermit : messages.editPermit,
                 )}
               </Button>,
-            ]
+            ] }
           : undefined
       }
+      desktopContentSpan="10/12"
     >
       {error && !loading && (
         <Problem title={formatMessage(messages.errorTryAgain)} />

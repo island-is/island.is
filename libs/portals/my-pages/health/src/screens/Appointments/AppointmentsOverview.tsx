@@ -69,11 +69,7 @@ const AppointmentsOverview = () => {
     <IntroWrapper
       title={messages.appointments}
       intro={messages.appointmentsIntro}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      childrenWidthFull
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      )}
+      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip) }}
     >
       <Box
         display="flex"

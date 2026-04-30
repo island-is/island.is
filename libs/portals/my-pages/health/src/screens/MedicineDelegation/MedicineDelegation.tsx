@@ -61,12 +61,11 @@ const MedicineDelegation = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
+      serviceProvider={{ slug: HEALTH_DIRECTORATE_SLUG, tooltip: formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
-      )}
+      ) }}
       loading={loading}
-      buttonGroup={[
+      buttonGroup={{ actions: [
         <>
           <LinkButton
             variant="utility"
@@ -86,7 +85,8 @@ const MedicineDelegation = () => {
             {formatMessage(messages.addDelegation)}
           </Button>
         </>,
-      ]}
+      ] }}
+      desktopContentSpan="10/12"
     >
       {!loading && !error && dataLength === 0 && (
         <Problem

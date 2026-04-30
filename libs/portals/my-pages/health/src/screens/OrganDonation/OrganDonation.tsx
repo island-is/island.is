@@ -59,7 +59,7 @@ const OrganDonation = () => {
     <IntroWrapper
       title={formatMessage(m.organDonation)}
       intro={formatMessage(m.organDonationDescription)}
-      buttonGroup={[
+      buttonGroup={{ actions: [
         <LinkResolver
           href={formatMessage(m.organDonationLink)}
           key="organ-donation"
@@ -68,7 +68,8 @@ const OrganDonation = () => {
             {formatMessage(m.readAboutOrganDonation)}
           </Button>
         </LinkResolver>,
-      ]}
+      ] }}
+      desktopContentSpan="10/12"
     >
       {loading && (
         <Box marginY={4}>
