@@ -289,7 +289,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const defendantsForCurrentDefender = isDefenceUser(user)
     ? workingCase.defendants?.filter(
-        (d) => d.defenderNationalId === user?.nationalId,
+        (d) =>
+          d.defenderNationalId === user?.nationalId &&
+          d.isDefenderChoiceConfirmed,
       )
     : undefined
 

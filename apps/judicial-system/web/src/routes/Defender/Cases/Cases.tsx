@@ -57,6 +57,7 @@ export const Cases: FC = () => {
         defendants?.filter(
           (defendant) =>
             defendant.defenderNationalId &&
+            defendant.isDefenderChoiceConfirmed &&
             normalizeAndFormatNationalId(defenderNationalId).includes(
               defendant.defenderNationalId,
             ),

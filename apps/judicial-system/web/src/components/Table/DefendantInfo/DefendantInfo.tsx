@@ -21,6 +21,7 @@ const DefendantInfo: FC<Props> = ({ defendants }) => {
     const defenderDefendants = defendants.filter(
       (d) =>
         d.defenderNationalId &&
+        d.isDefenderChoiceConfirmed &&
         normalizeAndFormatNationalId(user?.nationalId).includes(
           d.defenderNationalId,
         ),

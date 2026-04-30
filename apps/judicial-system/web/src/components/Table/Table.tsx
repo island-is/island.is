@@ -152,6 +152,7 @@ const Table: FC<TableProps> = (props) => {
           const defenderDefendants = entry.defendants?.filter(
             (defendant) =>
               defendant.defenderNationalId &&
+              defendant.isDefenderChoiceConfirmed &&
               normalizeAndFormatNationalId(user?.nationalId).includes(
                 defendant.defenderNationalId,
               ),
