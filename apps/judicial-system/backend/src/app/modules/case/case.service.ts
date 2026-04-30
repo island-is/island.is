@@ -1837,6 +1837,17 @@ export class CaseService {
       update.state = CaseState.RECEIVED
       update.indictmentDecision = IndictmentDecision.POSTPONING
       update.postponedIndefinitelyExplanation = 'Mál enduropnað'
+
+      await Promise.all(
+        (theCase.defendants ?? []).map((defendant) =>
+          this.defendantService.updateDatabaseDefendant(
+            theCase.id,
+            defendant.id,
+            { isSentToPrisonAdmin: false },
+            transaction,
+          ),
+        ),
+      )
     }
 
     // Keep transient defendant event log decisions out of the case persistence
