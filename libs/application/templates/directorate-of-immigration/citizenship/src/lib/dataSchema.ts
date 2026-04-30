@@ -193,13 +193,45 @@ const PassportSchema = z
 const ChildrenPassportSchema = z
   .object({
     nationalId: z.string().min(1),
-    publishDate: z.string().min(1),
-    expirationDate: z.string().min(1),
-    passportNumber: z.string().min(1),
-    passportTypeId: z.string().min(1),
-    countryOfIssuerId: z.string().min(1),
-    attachment: z.array(FileDocumentSchema).min(1),
+    hasPassport: z.string().min(1),
+    publishDate: z.string().optional(),
+    expirationDate: z.string().optional(),
+    passportNumber: z.string().optional(),
+    passportTypeId: z.string().optional(),
+    countryOfIssuerId: z.string().optional(),
+    attachment: z.array(FileDocumentSchema).optional(),
   })
+  .refine(
+    ({ hasPassport, publishDate }) =>
+      hasPassport === NO || (!!publishDate && publishDate.length > 0),
+    { path: ['publishDate'] },
+  )
+  .refine(
+    ({ hasPassport, expirationDate }) =>
+      hasPassport === NO || (!!expirationDate && expirationDate.length > 0),
+    { path: ['expirationDate'] },
+  )
+  .refine(
+    ({ hasPassport, passportNumber }) =>
+      hasPassport === NO || (!!passportNumber && passportNumber.length > 0),
+    { path: ['passportNumber'] },
+  )
+  .refine(
+    ({ hasPassport, passportTypeId }) =>
+      hasPassport === NO || (!!passportTypeId && passportTypeId.length > 0),
+    { path: ['passportTypeId'] },
+  )
+  .refine(
+    ({ hasPassport, countryOfIssuerId }) =>
+      hasPassport === NO ||
+      (!!countryOfIssuerId && countryOfIssuerId.length > 0),
+    { path: ['countryOfIssuerId'] },
+  )
+  .refine(
+    ({ hasPassport, attachment }) =>
+      hasPassport === NO || (!!attachment && attachment.length > 0),
+    { path: ['attachment'] },
+  )
   .refine(
     ({ expirationDate, publishDate }) => {
       const to = expirationDate ? new Date(expirationDate).getTime() : null

@@ -6,11 +6,14 @@ import {
   buildDateField,
   buildFileUploadField,
   buildSelectField,
+  buildRadioField,
   getValueViaPath,
   buildHiddenInput,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { supportingDocuments } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
+import { information, supportingDocuments } from '../../../lib/messages'
+import { Application, FormValue } from '@island.is/application/types'
 import {
   getSelectedCustodyChild,
   getSelectedIndividualName,
@@ -59,24 +62,55 @@ export const ChildrenPassportSubSection = (index: number) =>
               return selectedChild?.nationalId
             },
           }),
+          buildRadioField({
+            id: `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+            title: supportingDocuments.labels.passport.hasPassportTitle,
+            width: 'half',
+            defaultValue: YES,
+            options: [
+              {
+                value: YES,
+                label: information.labels.radioButtons.radioOptionYes,
+              },
+              {
+                value: NO,
+                label: information.labels.radioButtons.radioOptionNo,
+              },
+            ],
+          }),
           buildDateField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].publishDate`,
             title: supportingDocuments.labels.passport.publishDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
             maxDate: new Date(),
+            condition: (formValue: FormValue) =>
+              getValueViaPath(
+                formValue,
+                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+              ) !== NO,
           }),
           buildDateField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].expirationDate`,
             title: supportingDocuments.labels.passport.expirationDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
+            condition: (formValue: FormValue) =>
+              getValueViaPath(
+                formValue,
+                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+              ) !== NO,
           }),
           buildTextField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].passportNumber`,
             title: supportingDocuments.labels.passport.passportNumber,
             placeholder: supportingDocuments.labels.passport.numberPlaceholder,
             width: 'half',
+            condition: (formValue: FormValue) =>
+              getValueViaPath(
+                formValue,
+                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+              ) !== NO,
           }),
           buildSelectField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].passportTypeId`,
@@ -95,6 +129,11 @@ export const ChildrenPassportSubSection = (index: number) =>
                 label: name || '',
               }))
             },
+            condition: (formValue: FormValue) =>
+              getValueViaPath(
+                formValue,
+                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+              ) !== NO,
           }),
           buildSelectField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].countryOfIssuerId`,
@@ -113,6 +152,11 @@ export const ChildrenPassportSubSection = (index: number) =>
                 label: name || '',
               }))
             },
+            condition: (formValue: FormValue) =>
+              getValueViaPath(
+                formValue,
+                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+              ) !== NO,
           }),
           buildFileUploadField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].attachment`,
@@ -126,6 +170,11 @@ export const ChildrenPassportSubSection = (index: number) =>
               supportingDocuments.labels.otherDocuments.acceptedFileTypes,
             uploadButtonLabel:
               supportingDocuments.labels.otherDocuments.buttonText,
+            condition: (formValue: FormValue) =>
+              getValueViaPath(
+                formValue,
+                `${Routes.CHILDRENPASSPORT}[${index}].hasPassport`,
+              ) !== NO,
           }),
         ],
       }),
