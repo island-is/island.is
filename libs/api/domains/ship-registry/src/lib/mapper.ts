@@ -85,7 +85,7 @@ export const mapToUserShipFromDetails = (
 
   const seaworthinessDate =
     info.seaworthyExpiryDate?.value && info.seaworthyExpiryDate?.value !== '-'
-      ? parseDate(info.seaworthyExpiryDate.value, 'dd.MM.yyyy HH:mm:ss')
+      ? parseDate(info.seaworthyExpiryDate.value, 'yyyy-MM-dd HH:mm:ss')
       : undefined
 
   const fisheryName = toLocalizedValue(info.fishery, locale)
