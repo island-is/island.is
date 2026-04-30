@@ -9,12 +9,15 @@ import { NotificationResponseDto } from '../applications/models/dto/notification
 import { NotificationDto } from '../applications/models/dto/notification.dto'
 import { LoginResponseDto } from './models/login.response.dto'
 import { BodyRequestDto } from './models/body.request.dto'
+import { NotificationCommands } from '@island.is/form-system/shared'
 
 @Injectable()
 export class NotifyService {
   enhancedFetch: EnhancedFetchAPI
   private readonly SYSLUMENN_USERNAME = process.env.SYSLUMENN_USERNAME
   private readonly SYSLUMENN_PASSWORD = process.env.SYSLUMENN_PASSWORD
+  private readonly NTI_USERNAME = process.env.NTI_USERNAME
+  private readonly NTI_PASSWORD = process.env.NTI_PASSWORD
 
   constructor(
     @Inject(XRoadConfig.KEY)
@@ -76,9 +79,23 @@ export class NotifyService {
           `Non-OK response for application ${notificationDto.applicationId}`,
         )
       }
+
       const responseData = await response.json()
+      let operationSuccessful = response.ok
+
+      if (notificationDto.command === NotificationCommands.SUBMIT) {
+        if (response.ok && responseData.success !== true) {
+          this.logger.error(
+            `SUBMIT rejected by external system for application ${
+              notificationDto.applicationId
+            }: ${responseData.error ?? 'no error detail'}`,
+          )
+        }
+        operationSuccessful = response.ok && responseData.success === true
+      }
+
       const externalSystemResponse: NotificationResponseDto = {
-        operationSuccessful: response.ok,
+        operationSuccessful: operationSuccessful,
         screen: responseData.screen,
         screenError: responseData.screenError,
       }
@@ -94,9 +111,66 @@ export class NotifyService {
   private async getAccessToken(url: string): Promise<LoginResponseDto> {
     if (url.toLowerCase().includes('syslumenn-protected')) {
       return await this.getSyslumennLogin('syslumenn-protected')
+    } else if (
+      url.toLowerCase().includes('natturuhamfaratryggingislands-protected')
+    ) {
+      return await this.getNTILogin('natturuhamfaratryggingislands-protected')
     }
 
     return { accessToken: '', audkenni: '' }
+  }
+
+  private async getNTILogin(org: string): Promise<LoginResponseDto> {
+    const env = this.getEnv(org)
+
+    if (!env) {
+      throw new Error(
+        `Could not determine environment for organization: ${org}`,
+      )
+    }
+
+    const loginUrl = `${this.xroadBase}${env}/NatturuhamfaratryggingIslands-Protected/Tjonakerfi_NTI-v0.1/services/oauth2/token`
+
+    if (!this.NTI_USERNAME || !this.NTI_PASSWORD) {
+      throw new Error('Missing NTI credentials')
+    }
+
+    try {
+      const response = await this.enhancedFetch(loginUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Road-Client': this.xroadClient,
+        },
+        body: new URLSearchParams({
+          client_id: this.NTI_USERNAME,
+          client_secret: this.NTI_PASSWORD,
+          grant_type: 'client_credentials',
+        }),
+      })
+
+      if (!response.ok) {
+        this.logger.error(`NTI login failed with status: ${response.status}`)
+        this.logger.error(`NTI login failed with: ${response}`)
+        throw new Error('NTI login failed')
+      }
+
+      const data = await response.json()
+
+      if (!data?.accessToken) {
+        throw new Error('NTI login response missing accessToken')
+      }
+
+      const loginResponse: LoginResponseDto = {
+        accessToken: data.Access_Token,
+        audkenni: '',
+      }
+
+      return loginResponse
+    } catch (error) {
+      this.logger.error(`Error during NTI login: ${error}`)
+      throw error
+    }
   }
 
   private async getSyslumennLogin(org: string): Promise<LoginResponseDto> {
@@ -160,6 +234,10 @@ export class NotifyService {
       if (isDev) return '/r1/IS-DEV/GOV/10016'
       if (isStaging) return '/r1/IS-TEST/GOV/10016'
       return '/r1/IS/GOV/5512201410'
+    } else if (org === 'natturuhamfaratryggingislands-protected') {
+      if (isDev) return '/r1/IS-DEV/GOV/10037'
+      if (isStaging) return '/r1/IS-TEST/GOV/10037'
+      return '/r1/IS/GOV/5202760259'
     }
 
     return ''

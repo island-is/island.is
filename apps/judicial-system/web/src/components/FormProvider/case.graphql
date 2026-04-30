@@ -40,6 +40,7 @@ query Case($input: CaseQueryInput!) {
         submittedBy
         isKeyAccessible
         defendantId
+        civilClaimantId
       }
     }
     splitCase {
@@ -81,6 +82,12 @@ query Case($input: CaseQueryInput!) {
       alternativeServiceDescription
       indictmentReviewDecision
       isDrivingLicenseSuspended
+      appealStatementDate
+      policeCaseNumbers
+      indictmentCancelledOrDismissedState {
+        type
+        time
+      }
       subpoenas {
         id
         created
@@ -227,6 +234,8 @@ query Case($input: CaseQueryInput!) {
         key
         size
         isKeyAccessible
+        defendantId
+        civilClaimantId
       }
     }
     childCase {
@@ -267,6 +276,7 @@ query Case($input: CaseQueryInput!) {
       fileRepresentative
       isKeyAccessible
       defendantId
+      civilClaimantId
     }
     isAppealDeadlineExpired
     caseModifiedExplanation
@@ -320,6 +330,7 @@ query Case($input: CaseQueryInput!) {
       entries
       rulingType
       ruling
+      rulingFileId
       isAttestingWitness
       attestingWitnessId
       attestingWitness {
@@ -574,6 +585,8 @@ query Case($input: CaseQueryInput!) {
         displayDate
         submittedBy
         isKeyAccessible
+        defendantId
+        civilClaimantId
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -592,6 +605,7 @@ query Case($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
+      appealStatementDate
     }
     victims {
       id

@@ -146,6 +146,7 @@ const UniversitySubPage: Screen<UniversitySubPageProps> = ({
 
   return (
     <OrganizationWrapper
+      isSubpage={true}
       showExternalLinks={true}
       pageTitle={organizationPage?.title ?? ''}
       pageDescription={organizationPage?.description}

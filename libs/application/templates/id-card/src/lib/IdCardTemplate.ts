@@ -4,6 +4,7 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
+  pruneAfterDaysWithMessage,
 } from '@island.is/application/core'
 import {
   Application,
@@ -17,6 +18,8 @@ import {
   defineTemplateApi,
   DistrictsApi,
   InstitutionNationalIds,
+  NotificationConfig,
+  NotificationType,
   PassportsApi,
   StaticText,
 } from '@island.is/application/types'
@@ -168,7 +171,17 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'ParentB',
           status: 'inprogress',
-          lifecycle: pruneAfterDays(7),
+          lifecycle: pruneAfterDaysWithMessage(7, (application) => {
+            const nationalId = getValueViaPath<string>(
+              application.answers,
+              'applicantInformation.nationalId',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.IdCardPruned].templateId,
+              ...(nationalId && { internalBody: nationalId }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),

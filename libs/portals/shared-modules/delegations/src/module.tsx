@@ -10,6 +10,7 @@ import { m } from './lib/messages'
 import { Features } from '@island.is/react/feature-flags'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
+import { Navigate } from 'react-router-dom'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() =>
@@ -52,9 +53,13 @@ export const delegationsModule: PortalModule = {
     )
     const commonProps = {
       name: coreMessages.accessControlDelegations,
-      navHide: !hasAccess,
+      navHide: !hasAccess || useNewRoutes,
       enabled: hasAccess,
-      element: <AccessControl />,
+      element: useNewRoutes ? (
+        <Navigate to={DelegationPaths.DelegationsNew} replace />
+      ) : (
+        <AccessControl />
+      ),
     }
 
     const newRoutes: PortalRoute[] = [
@@ -122,15 +127,25 @@ export const delegationsModule: PortalModule = {
       {
         name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
-        element: <GrantAccess />,
+        navHide: useNewRoutes,
+        element: useNewRoutes ? (
+          <Navigate to={DelegationPaths.DelegationsGrantNew} replace />
+        ) : (
+          <GrantAccess />
+        ),
       },
       {
         name: coreMessages.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
-        element: <AccessOutgoing />,
+        navHide: useNewRoutes,
+        element: useNewRoutes ? (
+          <Navigate to={DelegationPaths.DelegationsNew} replace />
+        ) : (
+          <AccessOutgoing />
+        ),
       },
     ]
 
-    return useNewRoutes ? newRoutes : oldRoutes
+    return useNewRoutes ? [...newRoutes, ...oldRoutes] : oldRoutes
   },
 }

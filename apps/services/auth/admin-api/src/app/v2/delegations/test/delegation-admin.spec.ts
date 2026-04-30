@@ -350,6 +350,38 @@ describe('DelegationAdmin - With authentication', () => {
       expect(res.status).toEqual(400)
     })
 
+    it('POST /delegation-admin should not create delegation for deceased recipient', async () => {
+      // Arrange
+      jest
+        .spyOn(nationalRegistryApi, 'getAllDataIndividual')
+        .mockImplementation(async (id) => {
+          const user = createNationalRegistryUser({ nationalId: id }) as any
+          if (id === toNationalId) {
+            user.afdrif = 'LÉST'
+          }
+          return user
+        })
+
+      const delegation: CreatePaperDelegationDto = {
+        toNationalId,
+        fromNationalId,
+        referenceId: 'ref1',
+      }
+
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin').send(delegation)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        detail: 'Cannot create a delegation to a deceased individual',
+        status: 400,
+      })
+    })
+
     it('POST /delegation-admin should not create delegation since it already exists', async () => {
       // Arrange
       const { toNationalId, fromNationalId } = {

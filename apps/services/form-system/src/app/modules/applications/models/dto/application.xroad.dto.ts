@@ -1,3 +1,4 @@
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
@@ -21,19 +22,48 @@ export class ApplicationXroadValueDto {
   json!: Record<string, unknown>
 }
 
+export class ApplicationXroadListItemDto {
+  @ApiProperty({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  label!: LanguageType
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  description?: LanguageType
+
+  @ApiProperty()
+  @IsString()
+  value!: string
+
+  @ApiProperty()
+  @IsNumber()
+  displayOrder!: number
+
+  @ApiProperty()
+  @IsBoolean()
+  isSelected!: boolean
+}
 export class ApplicationXroadFieldDto {
   @ApiProperty()
   @IsString()
   identifier!: string
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsString()
-  screenIdentifier?: string
+  screenIdentifier!: string
 
   @ApiProperty()
   @IsString()
   fieldType!: string
+
+  @ApiPropertyOptional({ type: [ApplicationXroadListItemDto] })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => ApplicationXroadListItemDto)
+  list?: ApplicationXroadListItemDto[]
 
   @ApiProperty({ type: [ApplicationXroadValueDto] })
   @IsArray()
@@ -64,18 +94,6 @@ export class ApplicationXroadDto {
   @IsDate()
   @Type(() => Date)
   submittedAt?: Date | null
-
-  @ApiProperty({ type: [ApplicationXroadFieldDto] })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ApplicationXroadFieldDto)
-  fields!: ApplicationXroadFieldDto[]
-}
-
-export class ValidationScreenDto {
-  @ApiProperty()
-  @IsString()
-  screenIdentifier!: string
 
   @ApiProperty({ type: [ApplicationXroadFieldDto] })
   @IsArray()

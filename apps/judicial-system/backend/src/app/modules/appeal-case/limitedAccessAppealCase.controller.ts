@@ -36,11 +36,11 @@ import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from '../case/guards/limitedAccessCaseExists.guard'
 import { EventService } from '../event'
 import { AppealCase, Case } from '../repository'
+import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
 import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
-import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import { CurrentAppealCase } from './guards/appealCase.decorator'
 import { AppealCaseExistsGuard } from './guards/appealCaseExists.guard'
-import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
+import { defenderTransitionRule } from './guards/rolesRules'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -93,27 +93,29 @@ export class LimitedAccessAppealCaseController {
     RolesGuard,
     CaseWriteGuard,
   )
-  @RolesRules(defenderUpdateRule)
-  @Patch('case/:caseId/limitedAccess/appealCase/:appealCaseId')
-  @ApiOkResponse({
+  @RolesRules(defenderRule)
+  @Post('case/:caseId/limitedAccess/appealCase/:appealCaseId/eventLog')
+  @ApiCreatedResponse({
     type: AppealCase,
-    description: 'Updates an existing appeal case',
+    description: 'Records an appeal event and dispatches mapped side effects',
   })
-  async update(
+  async createEventLog(
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
-    @Body() updateDto: UpdateAppealCaseDto,
+    @Body() dto: CreateAppealEventLogDto,
   ): Promise<AppealCase> {
-    this.logger.debug(`Updating appeal case ${appealCaseId} of case ${caseId}`)
+    this.logger.debug(
+      `Creating appeal event log ${dto.eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
+    )
 
     return this.sequelize.transaction((transaction) =>
-      this.appealCaseService.update(
+      this.appealCaseService.createEventLog(
         theCase,
         appealCase,
-        updateDto,
+        dto.eventType,
         user,
         transaction,
       ),

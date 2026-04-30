@@ -38,10 +38,10 @@ export class ValueTypeFactory {
         keys = ['date']
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.DROPDOWN_LIST:
-        keys = ['listValue']
+        keys = ['label', 'value']
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.RADIO_BUTTONS:
-        keys = ['listValue']
+        keys = ['label', 'value']
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.EMAIL:
         keys = ['email']

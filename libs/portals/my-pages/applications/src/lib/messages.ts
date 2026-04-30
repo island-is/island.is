@@ -21,6 +21,11 @@ export const m = defineMessages({
     defaultMessage: 'Ókláraðar umsóknir',
     description: `heading for applications that are incomplete`,
   },
+  headingOlder: {
+    id: 'sp.applications:headingOlder',
+    defaultMessage: 'Eldri umsóknir',
+    description: 'heading for older (pruned) applications',
+  },
   introCopy: {
     id: 'sp.applications:intro.copy',
     defaultMessage:
@@ -47,6 +52,12 @@ export const m = defineMessages({
       'Hér sérðu yfirlit yfir þær ókláruðu umsóknir sem þú hefur hafið í gegnum Ísland.is.',
     description:
       'Intro copy to introduce to all applications that are incomplete',
+  },
+  introCopyOlder: {
+    id: 'sp.applications:intro.copyOlder',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir eldri umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
+    description: 'Intro copy to introduce to older (pruned) applications',
   },
   error: {
     id: 'sp.applications:error',
@@ -80,8 +91,13 @@ export const m = defineMessages({
   },
   finishedApplications: {
     id: 'sp.applications:finishedApplications-label',
-    defaultMessage: 'Eldri umsóknir',
+    defaultMessage: 'Kláraðar umsóknir',
     description: 'Label for finished application list',
+  },
+  olderApplications: {
+    id: 'sp.applications:olderApplications-label',
+    defaultMessage: 'Eldri umsóknir',
+    description: 'Label for older (pruned) application list',
   },
   focusedApplication: {
     id: 'sp.applications:focusedApplication-label',
@@ -114,6 +130,13 @@ export const m = defineMessages({
       'Engar kláraðar umsóknir fundust hjá Ísland.is á þessari kennitölu',
     description:
       'Error message when no completed applications are found in the overview for national id',
+  },
+  noOlderApplicationsAvailable: {
+    id: 'sp.applications:no-older-applications-available',
+    defaultMessage:
+      'Engar eldri umsóknir fundust hjá Ísland.is á þessari kennitölu',
+    description:
+      'Error message when no older (pruned) applications are found in the overview for national id',
   },
   defaultInstitutionLabel: {
     id: 'sp.applications:default-institution-label',

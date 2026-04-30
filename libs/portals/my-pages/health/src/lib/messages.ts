@@ -48,6 +48,14 @@ export const messages = defineMessages({
     defaultMessage: 'Öll lyf',
     id: 'sp.health:all-medicine',
   },
+  myMedicine: {
+    defaultMessage: 'Lyfin mín',
+    id: 'sp.health:my-medicine',
+  },
+  therapiesAndAids: {
+    defaultMessage: 'Þjálfun og hjálpartæki',
+    id: 'sp.health:therapies-and-aids',
+  },
   ALM: {
     defaultMessage: 'Almennur sjúklingur',
     id: 'sp.health:alm',
@@ -2447,9 +2455,9 @@ export const messages = defineMessages({
     id: 'sp.health:no-appointments',
     defaultMessage: 'Engar tímabókanir framundan',
   },
-  appointmentAt: {
-    id: 'sp.health:appointment-at',
-    defaultMessage: 'Tími hjá: {arg} ',
+  appointmentWith: {
+    id: 'sp.health:appointment-with',
+    defaultMessage: 'Tími hjá: {arg}',
   },
   appointmentAtSimple: {
     id: 'sp.health:appointment-at-simple',
@@ -2466,50 +2474,6 @@ export const messages = defineMessages({
   appointmentSearchPlaceholder: {
     id: 'sp.health:appointment-search-placeholder',
     defaultMessage: 'Leita að tíma eða stað',
-  },
-  appointmentStatusArrived: {
-    id: 'sp.health:appointment-status-arrived',
-    defaultMessage: 'Mætt/ur',
-  },
-  appointmentStatusBooked: {
-    id: 'sp.health:appointment-status-booked',
-    defaultMessage: 'Bókaður',
-  },
-  appointmentStatusCancelled: {
-    id: 'sp.health:appointment-status-cancelled',
-    defaultMessage: 'Afbókaður',
-  },
-  appointmentStatusCheckedIn: {
-    id: 'sp.health:appointment-status-checked-in',
-    defaultMessage: 'Skráður inn',
-  },
-  appointmentStatusDeleted: {
-    id: 'sp.health:appointment-status-deleted',
-    defaultMessage: 'Eytt',
-  },
-  appointmentStatusEnteredInError: {
-    id: 'sp.health:appointment-status-entered-in-error',
-    defaultMessage: 'Skráður fyrir mistök',
-  },
-  appointmentStatusFulfilled: {
-    id: 'sp.health:appointment-status-fulfilled',
-    defaultMessage: 'Uppfylltur',
-  },
-  appointmentStatusNoShow: {
-    id: 'sp.health:appointment-status-no-show',
-    defaultMessage: 'Mætti ekki',
-  },
-  appointmentStatusPending: {
-    id: 'sp.health:appointment-status-pending',
-    defaultMessage: 'Í bið',
-  },
-  appointmentStatusProposed: {
-    id: 'sp.health:appointment-status-proposed',
-    defaultMessage: 'Fyrirhugaður',
-  },
-  appointmentStatusWaitlist: {
-    id: 'sp.health:appointment-status-waitlist',
-    defaultMessage: 'Á biðlista',
   },
   prescriptionBlockedIsRegiment: {
     defaultMessage: 'Ekki er hægt að endurnýja lyfjakúr',
@@ -2645,5 +2609,13 @@ export const messages = defineMessages({
   argWithMinutes: {
     defaultMessage: '{arg} mínútur',
     id: 'sp.health:arg-with-minutes',
+  },
+  phoneNumber: {
+    id: 'sp.health:phone-number',
+    defaultMessage: 'Símanúmer',
+  },
+  openingHours: {
+    id: 'sp.health:opening-hours',
+    defaultMessage: 'Opnunartímar',
   },
 })

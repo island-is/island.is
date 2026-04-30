@@ -279,6 +279,16 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/transport-authority/mile-car'),
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
     import('@island.is/application/templates/hh/courses'),
+  [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: () =>
+    import(
+      '@island.is/application/templates/vmst/edit-unemployment-information'
+    ),
+  [ApplicationTypes.CONFIRM_JOB_SEARCH]: () =>
+    import('@island.is/application/templates/vmst/confirm-job-search'),
+  [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: () =>
+    import(
+      '@island.is/application/templates/vmst/de-register-unemployment-benefits'
+    ),
 }
 
 export default templates

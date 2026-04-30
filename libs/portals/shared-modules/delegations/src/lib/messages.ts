@@ -313,6 +313,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-create-error',
     defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
   },
+  grantDeceasedTitle: {
+    id: 'sp.access-control-delegations:grant-deceased-title',
+    defaultMessage: 'Ekki er hægt að stofna umboð',
+  },
+  grantDeceasedMessage: {
+    id: 'sp.access-control-delegations:grant-deceased-message',
+    defaultMessage: 'Ekki er hægt að veita umboð til látins einstaklings.',
+  },
   grantRequiredSsn: {
     id: 'sp.access-control-delegations:grant-required-ssn',
     defaultMessage: 'Þú þarft að setja inn kennitölu',
@@ -607,6 +615,10 @@ export const m = defineMessages({
   headerPermissionType: {
     id: 'sp.access-control-delegations:header-permission-type',
     defaultMessage: 'Tegund réttinda',
+  },
+  selectAll: {
+    id: 'sp.access-control-delegations:select-all',
+    defaultMessage: 'Velja allt',
   },
   noDelegationsFound: {
     id: 'sp.access-control-delegations:no-delegations-found',

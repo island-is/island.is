@@ -134,5 +134,17 @@ export const assetsNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.farmerLands,
+      description: m.farmerLandsIntro,
+      path: AssetsPaths.AssetsFarmerLands,
+      children: [
+        {
+          name: m.farmerLand,
+          navHide: true,
+          path: AssetsPaths.AssetsFarmerLandDetail,
+        },
+      ],
+    },
   ],
 }
