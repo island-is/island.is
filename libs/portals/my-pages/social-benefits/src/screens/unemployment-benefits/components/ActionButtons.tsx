@@ -17,27 +17,27 @@ export const ActionButtons = ({
 }: ActionButtonsProps) => {
   const { formatMessage } = useLocale()
 
-  const showContactButton = availableActions?.canContact !== false
+  const showContactButton = availableActions?.canContact === true
   const dropdownActions = [
     {
       title: formatMessage(um.statusSubmitDocuments),
       href: formatMessage(um.statusSubmitDocumentsUrl),
-      visible: availableActions?.canSubmitDocuments !== false,
+      visible: availableActions?.canSubmitDocuments === true,
     },
     {
       title: formatMessage(um.statusReportIncome),
       href: formatMessage(um.statusReportIncomeUrl),
-      visible: availableActions?.canReportWork !== false,
+      visible: availableActions?.canReportWork === true,
     },
     {
       title: formatMessage(um.statusReportTravel),
       href: formatMessage(um.statusReportTravelUrl),
-      visible: availableActions?.canReportTravel !== false,
+      visible: availableActions?.canReportTravel === true,
     },
     {
       title: formatMessage(um.statusUnsubscribe),
       href: formatMessage(um.statusUnsubscribeUrl),
-      visible: availableActions?.canUnregister !== false,
+      visible: availableActions?.canUnregister === true,
     },
   ].filter((b) => b.visible)
 

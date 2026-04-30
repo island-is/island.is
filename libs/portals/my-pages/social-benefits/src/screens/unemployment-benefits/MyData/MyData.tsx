@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionButtons } from '../components/ActionButtons'
+import { Problem } from '@island.is/react-spa/shared'
 
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
@@ -23,11 +24,17 @@ const MyData = () => {
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
 
-  const { data: attachmentsData, loading: attachmentsLoading } =
-    useGetApplicantRequestedAttachmentsQuery()
+  const {
+    data: attachmentsData,
+    loading: attachmentsLoading,
+    error: attachmentsError,
+  } = useGetApplicantRequestedAttachmentsQuery()
 
-  const { data: attachmentTypesData, loading: attachmentTypesLoading } =
-    useGetAttachmentTypesQuery()
+  const {
+    data: attachmentTypesData,
+    loading: attachmentTypesLoading,
+    error: attachmentTypesError,
+  } = useGetAttachmentTypesQuery()
 
   const availableActions = actionsData?.vmstApplicantAvailableActions
   const requestedAttachments =
@@ -36,6 +43,7 @@ const MyData = () => {
     attachmentTypesData?.vmstAttachmentTypes?.attachmentTypes
 
   const loading = actionsLoading || attachmentsLoading || attachmentTypesLoading
+  const attachmentsHasError = !!attachmentsError || !!attachmentTypesError
 
   const attachmentTypeMap = new Map(
     attachmentTypes?.map((t) => [t.id, t]) ?? [],
@@ -68,7 +76,12 @@ const MyData = () => {
           <SkeletonLoader repeat={5} space={2} />
         </Box>
       )}
-      {!loading && missingAttachments.length > 0 && (
+      {!loading && attachmentsHasError && (
+        <Box paddingTop={4}>
+          <Problem type="no_data" noBorder={false} />
+        </Box>
+      )}
+      {!loading && !attachmentsHasError && missingAttachments.length > 0 && (
         <Box paddingTop={4}>
           <Text variant="eyebrow" color="purple600" marginBottom={2}>
             {formatMessage(um.myDataMissingAttachmentsHeading)}
@@ -95,7 +108,7 @@ const MyData = () => {
           </Stack>
         </Box>
       )}
-      {!loading && submittedAttachments.length > 0 && (
+      {!loading && !attachmentsHasError && submittedAttachments.length > 0 && (
         <Box paddingTop={4}>
           <Text variant="eyebrow" color="purple600" marginBottom={2}>
             {formatMessage(um.myDataSubmittedAttachmentsHeading)}

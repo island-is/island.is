@@ -2,6 +2,7 @@ import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
 import { GetUnemploymentApplicationOverviewQuery } from './Status.generated'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { applicationStatusColorMap } from '../../../lib/utils/vmstApplicationStatusColorMap'
 
@@ -16,30 +17,32 @@ interface OverviewTableProps {
   dataRequested?: boolean | null
 }
 
-const getJobSearchConfirmationDateRange = (): string => {
+const getJobSearchConfirmationDateRange = (locale: Locale): string => {
   const now = new Date()
   const year = now.getFullYear()
   const month = now.getDate() > 25 ? now.getMonth() + 1 : now.getMonth()
   const start = new Date(year, month, 20)
   const end = new Date(year, month, 25)
 
+  const dateLocale = locale === 'is' ? 'is-IS' : 'en-GB'
   const fmt = (d: Date) =>
-    `${d.getDate()}.${d.toLocaleString('is-IS', { month: 'short' })}`
+    `${d.getDate()}.${d.toLocaleString(dateLocale, { month: 'short' })}`
 
-  return `Næst: ${fmt(start)}-${fmt(end)}`
+  return `${fmt(start)}-${fmt(end)}`
 }
 
 const getRowTag = (
   key: string | null | undefined,
   applicationStatusName?: string | null,
   applicationStatusId?: string | null,
+  dateRangeLabel?: string,
 ): (() => React.ReactNode) | undefined => {
   switch (key) {
     case 'application-status': {
       if (!applicationStatusName) return undefined
       const tagVariant =
         applicationStatusColorMap[applicationStatusId?.toUpperCase() ?? ''] ??
-        'mint'
+        'warn'
       return () => (
         <Tag variant={tagVariant} outlined disabled>
           {applicationStatusName}
@@ -49,7 +52,7 @@ const getRowTag = (
     case 'last-job-search-confirmation-date':
       return () => (
         <Tag variant="blue" outlined disabled>
-          {getJobSearchConfirmationDateRange()}
+          {dateRangeLabel}
         </Tag>
       )
     default:
@@ -63,7 +66,10 @@ export const OverviewTable = ({
   applicationStatusId,
   dataRequested,
 }: OverviewTableProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+  const dateRangeLabel = formatMessage(um.jobSearchConfirmationNextDate, {
+    dateRange: getJobSearchConfirmationDateRange(lang),
+  }) as string
   return (
     <Box paddingTop={4}>
       <Stack space={0}>
@@ -72,6 +78,7 @@ export const OverviewTable = ({
             item.key,
             applicationStatusName,
             applicationStatusId,
+            dateRangeLabel,
           )
           return (
             <Box key={item.key ?? index}>

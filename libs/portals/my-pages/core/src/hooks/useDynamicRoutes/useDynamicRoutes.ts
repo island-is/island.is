@@ -116,7 +116,7 @@ export const useDynamicRoutes = () => {
 
   return {
     activeDynamicRoutes,
-    loading: loading && licenseBookLoading && vmstLoading,
+    loading: loading || licenseBookLoading || vmstLoading,
   }
 }
 

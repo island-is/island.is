@@ -37,7 +37,7 @@ const Status = () => {
       loading={loading}
     >
       <ActionButtons availableActions={availableActions} loading={loading} />
-      {!loading && availableActions?.canConfirmJobSearch !== false && (
+      {!loading && availableActions?.canConfirmJobSearch === true && (
         <Box marginBottom={4}>
           <ActionCard
             heading={formatMessage(um.jobSearchConfirmationHeading)}
@@ -48,6 +48,11 @@ const Status = () => {
               variant: 'primary',
               icon: 'open',
               iconType: 'outline',
+              onClick: () =>
+                window.open(
+                  'https://island.is/umsoknir/stadfesta-atvinnuleit',
+                  '_blank',
+                ),
             }}
           />
         </Box>

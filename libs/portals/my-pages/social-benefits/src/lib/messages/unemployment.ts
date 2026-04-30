@@ -15,7 +15,7 @@ export const unemploymentBenefitsMessages = defineMessages({
   },
   tooltip: {
     id: 'sp.social-benefits-unemployment:tooltip',
-    defaultMessage: 'Vinnumálastofnun .... TODO',
+    defaultMessage: 'Vinnumálastofnun',
   },
   statusContactUs: {
     id: 'sp.social-benefits-unemployment:statusContactUs',
@@ -101,6 +101,11 @@ export const unemploymentBenefitsMessages = defineMessages({
   jobSearchConfirmationCta: {
     id: 'sp.social-benefits-unemployment:jobSearchConfirmationCta',
     defaultMessage: 'Staðfesta hér',
+  },
+  jobSearchConfirmationNextDate: {
+    id: 'sp.social-benefits-unemployment:jobSearchConfirmationNextDate',
+    defaultMessage: 'Næst: {dateRange}',
+    description: 'Label for next job search confirmation date range',
   },
   yes: {
     id: 'sp.social-benefits-unemployment:yes',

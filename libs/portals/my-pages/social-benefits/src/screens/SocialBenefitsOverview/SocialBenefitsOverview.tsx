@@ -67,23 +67,6 @@ const SocialBenefitsOverview = () => {
             )}
           />
         )}
-        {vmstReady && overview?.activationGrant?.isVisible && (
-          <ActionCard
-            heading={formatMessage(am.activationGrant)}
-            text={formatMessage(sharedMessages.activationGrantCardDescription)}
-            cta={{
-              label: formatMessage(sharedMessages.overviewCtaLabel),
-              url: UnemploymentBenefitsPaths.Status,
-              variant: 'text',
-              icon: 'arrowForward',
-            }}
-            image={{ type: 'logo', url: VMST_LOGO_URL }}
-            tag={getStatusTag(
-              overview.activationGrant.statusName,
-              overview.activationGrant.statusId,
-            )}
-          />
-        )}
         <ActionCard
           heading={formatMessage(coreMessages.socialSecurity)}
           text={formatMessage(sharedMessages.socialInsuranceCardDescription)}
