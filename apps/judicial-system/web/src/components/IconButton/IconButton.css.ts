@@ -17,6 +17,11 @@ export const iconButtonContainer = style({
   },
 })
 
+export const sizeSmall = style({
+  width: '30px',
+  height: '30px',
+})
+
 export const buttonDisabled = style({
   cursor: 'not-allowed',
   opacity: 0.5,

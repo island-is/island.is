@@ -12,6 +12,7 @@ interface Props {
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
   tooltipText?: string
+  size?: 'default' | 'small'
 }
 
 interface RenderButtonProps {
@@ -20,6 +21,7 @@ interface RenderButtonProps {
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
   ref: React.Ref<HTMLButtonElement>
+  size?: 'default' | 'small'
 }
 
 const RenderButton: FC<RenderButtonProps> = ({
@@ -28,6 +30,7 @@ const RenderButton: FC<RenderButtonProps> = ({
   onClick,
   disabled,
   ref,
+  size,
 }) => (
   <Box
     component={Button}
@@ -35,6 +38,7 @@ const RenderButton: FC<RenderButtonProps> = ({
     className={cn(styles.iconButtonContainer, {
       [styles.buttonDisabled]: disabled,
       [styles.transparent]: colorScheme === 'transparent',
+      [styles.sizeSmall]: size === 'small',
     })}
     background={
       colorScheme === 'blue'
@@ -49,18 +53,14 @@ const RenderButton: FC<RenderButtonProps> = ({
   >
     <Icon
       icon={icon}
-      color={
-        colorScheme === 'blue' || colorScheme === 'transparent'
-          ? 'blue400'
-          : 'red400'
-      }
+      color={colorScheme === 'red' ? 'red400' : 'blue400'}
       size="small"
     />
   </Box>
 )
 
 const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
-  const { icon, colorScheme, onClick, disabled, tooltipText } = props
+  const { icon, colorScheme, onClick, disabled, tooltipText, size } = props
 
   return tooltipText ? (
     <Tooltip placement="top" text={tooltipText}>
@@ -71,6 +71,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
           onClick={onClick}
           disabled={disabled}
           ref={ref}
+          size={size}
         />
       </span>
     </Tooltip>
@@ -81,6 +82,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
       onClick={onClick}
       disabled={disabled}
       ref={ref}
+      size={size}
     />
   )
 })
