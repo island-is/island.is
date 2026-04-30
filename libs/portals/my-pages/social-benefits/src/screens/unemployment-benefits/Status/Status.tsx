@@ -52,6 +52,7 @@ const Status = () => {
                 window.open(
                   'https://island.is/umsoknir/stadfesta-atvinnuleit',
                   '_blank',
+                  'noopener,noreferrer',
                 ),
             }}
           />
