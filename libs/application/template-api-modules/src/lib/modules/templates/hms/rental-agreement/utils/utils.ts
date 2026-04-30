@@ -95,11 +95,18 @@ export const getSecurityDepositTypeDescription = (
 // Utils for getting index from Hagstofan
 interface ApiDataItem {
   key: [string, 'financial_indexation']
-  values: [number]
+  values: [number | string]
 }
 
 interface ApiResponse {
   data: ApiDataItem[]
+}
+
+interface ApiMetadataResponse {
+  variables: Array<{
+    code: string
+    values: string[]
+  }>
 }
 
 export interface FinancialIndexationEntry {
@@ -107,29 +114,30 @@ export interface FinancialIndexationEntry {
   value: number
 }
 
-export const listOfLastMonths = (numberOfMonths: number) => {
-  const months: string[] = []
-  const now = new Date()
-  // Start from next month
-  let year = now.getFullYear()
-  let month = now.getMonth() + 2 // JS months are 0-based, so +1 for current, +1 for next
+const FINANCIAL_INDEXATION_URL =
+  'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
 
-  if (month > 12) {
-    month = 1
-    year += 1
-  }
+export const listOfLastMonths = (
+  numberOfMonths: number,
+  currentDate = new Date(),
+) => {
+  const months: string[] = []
+  const firstMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 2,
+    1,
+  )
 
   for (let i = 0; i < numberOfMonths; i++) {
-    // Pad month with zero
+    const date = new Date(
+      firstMonth.getFullYear(),
+      firstMonth.getMonth() - i,
+      1,
+    )
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
     const mm = month < 10 ? `0${month}` : `${month}`
     months.push(`${year}M${mm}`)
-
-    // Move to previous month
-    month--
-    if (month === 0) {
-      month = 12
-      year--
-    }
   }
 
   return months
@@ -144,9 +152,30 @@ const parsePXMonth = (monthStr: string): Date => {
   return new Date(year, month, 1)
 }
 
+const fetchAvailableFinancialIndexationMonths = async () => {
+  const response = await fetch(FINANCIAL_INDEXATION_URL)
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const json: ApiMetadataResponse = await response.json()
+  const monthVariable = json.variables.find(({ code }) => code === 'Mánuður')
+
+  if (!monthVariable) {
+    throw new Error('Missing Mánuður variable in Hagstofa metadata response')
+  }
+
+  return new Set(monthVariable.values)
+}
+
 export const fetchFinancialIndexationForMonths = async (months: string[]) => {
-  const url =
-    'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
+  const availableMonths = await fetchAvailableFinancialIndexationMonths()
+  const publishedMonths = months.filter((month) => availableMonths.has(month))
+
+  if (publishedMonths.length === 0) {
+    return []
+  }
 
   const payload = {
     query: [
@@ -154,7 +183,7 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
         code: 'Mánuður',
         selection: {
           filter: 'item',
-          values: months,
+          values: publishedMonths,
         },
       },
       {
@@ -170,7 +199,7 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
     },
   }
 
-  const response = await fetch(url, {
+  const response = await fetch(FINANCIAL_INDEXATION_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -185,7 +214,7 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
   return json.data.map(
     (item): FinancialIndexationEntry => ({
       month: parsePXMonth(item.key[0]),
-      value: item.values[0],
+      value: Number(item.values[0]),
     }),
   )
 }
