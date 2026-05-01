@@ -80,6 +80,9 @@ class VerdictByIdItem {
   @Field(() => String)
   presentings!: string
 
+  @CacheField(() => [String], { nullable: true })
+  lawCitations?: string[]
+
   @Field(() => String, { nullable: true })
   resolutionLink?: string | null
 }

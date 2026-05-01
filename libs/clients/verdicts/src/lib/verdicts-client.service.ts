@@ -61,6 +61,7 @@ type VerdictByIdResponse =
         caseNumber: string
         keywords: string[]
         presentings: string
+        lawCitations: string[]
       }
     }
   | {
@@ -73,6 +74,7 @@ type VerdictByIdResponse =
         keywords: string[]
         presentings: string
         resolutionLink: string
+        lawCitations: string[]
       }
     }
 
@@ -341,6 +343,8 @@ export class VerdictsClientService {
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
             presentings: response.item.presentings ?? '',
+            lawCitations:
+              response.item.lawCitations?.map((c) => c.citation ?? '') ?? [],
           },
         }
     } else if (id.startsWith(SUPREME_COURT_ID_PREFIX)) {
@@ -366,6 +370,7 @@ export class VerdictsClientService {
               response.item.resolutionLink.toLowerCase().startsWith('http')
                 ? response.item.resolutionLink
                 : '',
+            lawCitations: response.item.lawCitations ?? [],
           },
         }
     }
