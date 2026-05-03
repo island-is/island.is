@@ -22,8 +22,12 @@ export const GET_ANNUAL_REPORTS_QUERY = gql`
           description
         }
       }
+      timeline {
+        ...AllSlices
+      }
     }
   }
+  ${slices}
 `
 
 export const GET_ANNUAL_REPORT_QUERY = gql`
