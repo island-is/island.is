@@ -272,18 +272,14 @@ export class SubpoenaService {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
-          body: {
-            type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
-          },
+          body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
         })
       } else if (isFailedServiceStatus(serviceStatus)) {
         addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
-          body: {
-            type: SubpoenaNotificationType.SERVICE_FAILED,
-          },
+          body: { type: SubpoenaNotificationType.SERVICE_FAILED },
         })
       }
     }

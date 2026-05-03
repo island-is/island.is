@@ -5,9 +5,9 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseType,
-  NotificationType,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -82,7 +82,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       userDescriptor: { name: userName },
-      type: CaseNotificationType.COURT_DATE,
+      type: RequestCaseNotificationType.COURT_DATE,
     }
 
     const theCase = {
@@ -133,7 +133,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       userDescriptor: { name: userName },
-      type: CaseNotificationType.COURT_DATE,
+      type: RequestCaseNotificationType.COURT_DATE,
     }
 
     const theCase = {
@@ -156,7 +156,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
           notifications: [
             {
               caseId,
-              type: NotificationType.READY_FOR_COURT,
+              type: TrackedNotificationType.READY_FOR_COURT,
               recipients: [{ address: defender.email, success: true }],
             },
           ],

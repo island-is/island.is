@@ -3,10 +3,10 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
-  CaseNotificationType,
   CaseType,
   EventNotificationType,
   IndictmentCaseNotificationType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -101,7 +101,7 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
           type: MessageType.NOTIFICATION,
           caseId,
           body: {
-            type: CaseNotificationType.COURT_DATE,
+            type: RequestCaseNotificationType.COURT_DATE,
             userDescriptor: { name: user.name },
           },
         },

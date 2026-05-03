@@ -21,6 +21,7 @@ import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatter
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
+  TrackedNotificationType,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
@@ -78,7 +79,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendEmails(
     theCase: Case,
-    notificationType: IndictmentCaseNotificationType,
+    notificationType: TrackedNotificationType,
     subject: string,
     body: string,
     to: { name?: string; email?: string }[],
@@ -177,7 +178,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+      TrackedNotificationType.INDICTMENT_VERDICT_INFO,
       formattedSubject,
       formattedBody,
       [
@@ -213,7 +214,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+      TrackedNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
       formattedSubject,
       formattedBody,
       [
@@ -256,7 +257,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+      TrackedNotificationType.DRIVING_LICENSE_SUSPENSION,
       subject,
       html,
       [
@@ -510,7 +511,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const result = await this.recordNotification(
       theCase.id,
-      IndictmentCaseNotificationType.COURT_DATE,
+      TrackedNotificationType.COURT_DATE,
       recipients,
     )
 
@@ -579,7 +580,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     if (
       this.hasSentNotification(
-        IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+        TrackedNotificationType.INDICTMENT_SPLIT_COMPLETED,
         theCase.notifications,
       )
     ) {
@@ -595,7 +596,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const result = await this.recordNotification(
       theCase.id,
-      IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+      TrackedNotificationType.INDICTMENT_SPLIT_COMPLETED,
       recipients,
     )
 

@@ -6,10 +6,14 @@ import {
   addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { type User } from '@island.is/judicial-system/types'
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
+  IndictmentCaseNotificationType,
+  type User,
+} from '@island.is/judicial-system/types'
+import {
   CaseState,
+  RequestCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
@@ -21,7 +25,7 @@ export class NotificationService {
   constructor(private readonly eventService: EventService) {}
 
   private addMessageForNotificationToQueue(
-    type: CaseNotificationType,
+    type: RequestCaseNotificationType,
     user: User,
     theCase: Case,
   ): void {
@@ -34,13 +38,13 @@ export class NotificationService {
   }
 
   async addMessagesForNotificationToQueue(
-    type: CaseNotificationType,
+    type: RequestCaseNotificationType,
     eventOnly = false,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
     switch (type) {
-      case CaseNotificationType.READY_FOR_COURT:
+      case RequestCaseNotificationType.READY_FOR_COURT:
         this.addMessageForNotificationToQueue(type, user, theCase)
 
         if (theCase.state === CaseState.RECEIVED) {
@@ -51,7 +55,7 @@ export class NotificationService {
           })
         }
         break
-      case CaseNotificationType.COURT_DATE:
+      case RequestCaseNotificationType.COURT_DATE:
         if (eventOnly) {
           this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
 
@@ -59,7 +63,7 @@ export class NotificationService {
           // the judge chooses not to send a calendar invitation
           // Note: This is only relevant for non-indictment cases
           this.addMessageForNotificationToQueue(
-            CaseNotificationType.ADVOCATE_ASSIGNED,
+            RequestCaseNotificationType.ADVOCATE_ASSIGNED,
             user,
             theCase,
           )
@@ -67,11 +71,11 @@ export class NotificationService {
           this.addMessageForNotificationToQueue(type, user, theCase)
         }
         break
-      case CaseNotificationType.HEADS_UP:
-      case CaseNotificationType.APPEAL_JUDGES_ASSIGNED:
-      case CaseNotificationType.APPEAL_CASE_FILES_UPDATED:
-      case CaseNotificationType.CASE_FILES_UPDATED:
-      case CaseNotificationType.RULING_ORDER_ADDED:
+      case RequestCaseNotificationType.HEADS_UP:
+      case AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED as string:
+      case AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as string:
+      case RequestCaseNotificationType.CASE_FILES_UPDATED:
+      case IndictmentCaseNotificationType.RULING_ORDER_ADDED as string:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:

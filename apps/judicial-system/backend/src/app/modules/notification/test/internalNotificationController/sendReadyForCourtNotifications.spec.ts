@@ -10,12 +10,12 @@ import {
   RESTRICTION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseState,
   CaseType,
   DateType,
   IndictmentSubtype,
-  NotificationType,
+  TrackedNotificationType,
   RequestSharedWithDefender,
   User,
 } from '@island.is/judicial-system/types'
@@ -75,7 +75,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   } as Case
   const notificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.READY_FOR_COURT,
+    type: RequestCaseNotificationType.READY_FOR_COURT,
   }
 
   let mockEmailService: EmailService
@@ -155,7 +155,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           notifications: [
             {
               caseId,
-              type: NotificationType.READY_FOR_COURT,
+              type: TrackedNotificationType.READY_FOR_COURT,
               recipients: [
                 {
                   address:
@@ -233,7 +233,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           ...theCase,
           notifications: [
             {
-              type: NotificationType.READY_FOR_COURT,
+              type: TrackedNotificationType.READY_FOR_COURT,
               recipients: [{ address: defender.email, success: true }],
             },
           ],
@@ -270,7 +270,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   const notificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.READY_FOR_COURT,
+    type: RequestCaseNotificationType.READY_FOR_COURT,
   }
 
   let mockEmailService: EmailService
@@ -346,7 +346,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
-        type: CaseNotificationType.READY_FOR_COURT,
+        type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [
           { success: true, address: testCourt.email },
         ] as Recipient[],
@@ -402,7 +402,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
-        type: CaseNotificationType.READY_FOR_COURT,
+        type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [
           { success: true, address: testCourt.email },
         ] as Recipient[],

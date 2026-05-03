@@ -8,7 +8,7 @@ import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { TrackedNotificationType } from '@island.is/judicial-system/types'
 
 import { filterWhitelistEmails, stripHtmlTags } from '../../formatters'
 import { notifications } from '../../messages'
@@ -162,7 +162,7 @@ export abstract class BaseNotificationService {
 
   protected async recordNotification(
     caseId: string,
-    type: string,
+    type: TrackedNotificationType,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
     await this.notificationModel.create({
@@ -179,16 +179,19 @@ export abstract class BaseNotificationService {
     }
   }
 
-  protected hasSentNotification(type: string, notifications?: Notification[]) {
+  protected hasSentNotification(
+    type: TrackedNotificationType,
+    notifications?: Notification[],
+  ) {
     return notifications?.some((notification) => notification.type === type)
   }
 
   protected hasReceivedNotification(
-    type?: string | string[],
+    type?: TrackedNotificationType | TrackedNotificationType[],
     address?: string,
     notifications?: Notification[],
   ) {
-    const types = type ? [type].flat() : Object.values(NotificationType)
+    const types = type ? [type].flat() : Object.values(TrackedNotificationType)
 
     return notifications?.some((notification) => {
       return (

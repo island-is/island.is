@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseType,
   DefendantNotificationType,
   DefenderChoice,
@@ -169,7 +169,9 @@ describe('DefendantController - Update', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+          body: {
+            type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+          },
         },
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,

@@ -7,7 +7,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -628,7 +628,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: CaseNotificationType.MODIFIED },
+            body: { type: RequestCaseNotificationType.MODIFIED },
           },
           { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
         ])

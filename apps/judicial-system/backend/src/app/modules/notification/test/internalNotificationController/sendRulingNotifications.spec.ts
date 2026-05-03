@@ -10,7 +10,7 @@ import {
 import {
   CaseDecision,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseState,
   CaseType,
   User,
@@ -44,7 +44,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.RULING,
+    type: RequestCaseNotificationType.RULING,
   }
   const { testProsecutor } = createTestUsers(['testProsecutor'])
 

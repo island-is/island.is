@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
   AppealEventType,
@@ -24,11 +25,12 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseOrigin,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
+  RequestCaseNotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -142,7 +144,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
   }
 
@@ -154,7 +156,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
+      body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
     })
   }
 
@@ -183,7 +185,7 @@ export class AppealCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_COMPLETED },
+        body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
       },
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
@@ -212,7 +214,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_STATEMENT },
+      body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
     })
   }
 
@@ -224,7 +226,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
+      body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
     })
   }
 

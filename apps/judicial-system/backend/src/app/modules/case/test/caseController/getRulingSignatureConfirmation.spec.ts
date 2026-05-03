@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseOrigin,
   User,
 } from '@island.is/judicial-system/types'
@@ -137,7 +137,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.RULING },
+          body: { type: RequestCaseNotificationType.RULING },
         },
       ])
       expect(then.result).toEqual({ documentSigned: true })
@@ -174,7 +174,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.RULING },
+          body: { type: RequestCaseNotificationType.RULING },
         },
         { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
@@ -206,7 +206,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.RULING },
+          body: { type: RequestCaseNotificationType.RULING },
         },
         { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])

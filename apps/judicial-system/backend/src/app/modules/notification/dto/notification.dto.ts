@@ -2,13 +2,13 @@ import { IsBoolean, IsEnum, IsNotEmpty, IsOptional } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseNotificationType } from '@island.is/judicial-system/types'
+import { RequestCaseNotificationType } from '@island.is/judicial-system/types'
 
 export class NotificationDto {
   @IsNotEmpty()
-  @IsEnum(CaseNotificationType)
-  @ApiProperty({ enum: CaseNotificationType })
-  readonly type!: CaseNotificationType
+  @IsEnum(RequestCaseNotificationType)
+  @ApiProperty({ enum: RequestCaseNotificationType })
+  readonly type!: RequestCaseNotificationType
 
   @IsOptional()
   @IsBoolean()

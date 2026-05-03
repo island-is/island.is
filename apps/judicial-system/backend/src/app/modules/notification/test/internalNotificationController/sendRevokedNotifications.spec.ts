@@ -5,9 +5,9 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseType,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -82,7 +82,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
         .sendCaseNotification(
           theCase.id,
           { ...theCase, notifications } as Case,
-          { type: CaseNotificationType.REVOKED } as CaseNotificationDto,
+          { type: RequestCaseNotificationType.REVOKED } as CaseNotificationDto,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -97,7 +97,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
     beforeEach(async () => {
       then = await givenWhenThen([
         {
-          type: NotificationType.COURT_DATE,
+          type: TrackedNotificationType.COURT_DATE,
           recipients: [{ address: defender.email, success: true }],
         } as Notification,
       ])
@@ -129,7 +129,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId: caseId,
-        type: CaseNotificationType.REVOKED,
+        type: RequestCaseNotificationType.REVOKED,
         recipients: [
           { address: judge.email, success: true },
           { address: registrar.email, success: true },

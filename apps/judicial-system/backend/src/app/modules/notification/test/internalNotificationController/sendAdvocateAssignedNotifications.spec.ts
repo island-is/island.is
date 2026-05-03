@@ -5,7 +5,7 @@ import { ConfigType } from '@island.is/nest/config'
 
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import {
-  CaseNotificationType,
+  RequestCaseNotificationType,
   CaseType,
   DateType,
   User,
@@ -52,7 +52,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     notificationDTO = {
       user: { id: userId } as User,
-      type: CaseNotificationType.ADVOCATE_ASSIGNED,
+      type: RequestCaseNotificationType.ADVOCATE_ASSIGNED,
     }
 
     mockEmailService = emailService
