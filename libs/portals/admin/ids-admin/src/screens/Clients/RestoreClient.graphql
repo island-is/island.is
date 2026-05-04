@@ -1,0 +1,3 @@
+mutation RestoreClient($input: AuthAdminRestoreClientInput!) {
+  restoreAuthAdminClient(input: $input)
+}
