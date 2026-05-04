@@ -220,6 +220,9 @@ export interface IAnnualReportFields {
 
   /** Chapters */
   chapters: IAnnualReportChapter[]
+
+  /** Timeline */
+  timeline?: ITimeline | undefined
 }
 
 /** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
