@@ -299,7 +299,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadHeader: m.healthCertificateUploadHeader,
           uploadDescription: m.healthCertificateUploadDescription,
           uploadButtonLabel: m.healthCertificateUploadButtonLabel,
-          maxSize: 10000000,
+          maxSize: 4000000,
           uploadAccept: '.pdf, .jpg, .jpeg, .png',
           condition: needsHealthCertificateCondition(YES),
         }),
