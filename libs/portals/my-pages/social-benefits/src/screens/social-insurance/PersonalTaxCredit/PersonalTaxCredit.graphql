@@ -38,9 +38,7 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
 }
 
 query getPersonalTaxCreditTaxBracket {
-  socialInsurancePersonalTaxCreditTaxBracket {
-    value
-  }
+  socialInsurancePersonalTaxCreditTaxBracket
 }
 
 mutation setSocialInsurancePersonalTaxCreditTaxBracket(

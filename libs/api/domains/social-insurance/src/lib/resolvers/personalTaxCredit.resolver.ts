@@ -15,7 +15,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
-import { PersonalTaxCreditTaxBracket } from '../models/personalTaxCredit/taxBracket.model'
+import { PersonalTaxCreditSpouseInfo } from '../models/personalTaxCredit/spouseInfo.model'
 import { TaxBracketAction } from '../enums/taxBracketAction'
 import { RegisterTaxCardAllowanceInput } from '../dtos/registerTaxCardAllowance.input'
 import { UpdateTaxCardAllowanceInput } from '../dtos/updateTaxCardAllowance.input'
@@ -77,14 +77,14 @@ export class PersonalTaxCreditResolver {
     return true
   }
 
-  @Query(() => PersonalTaxCreditTaxBracket, {
+  @Query(() => TaxBracketAction, {
     name: 'socialInsurancePersonalTaxCreditTaxBracket',
     nullable: true,
   })
   @Audit()
   getPersonalTaxCreditTaxBracket(
     @CurrentUser() user: User,
-  ): Promise<PersonalTaxCreditTaxBracket | null> {
+  ): Promise<TaxBracketAction | null> {
     return this.service.getTaxBracket(user)
   }
 
@@ -99,5 +99,27 @@ export class PersonalTaxCreditResolver {
   ): Promise<boolean> {
     await this.service.setTaxBracket(user, taxBracket)
     return true
+  }
+
+  @Query(() => PersonalTaxCreditSpouseInfo, {
+    name: 'socialInsurancePersonalTaxCreditSpouseInfo',
+    nullable: true,
+  })
+  @Audit()
+  getPersonalTaxCreditSpouseInfo(
+    @CurrentUser() user: User,
+  ): Promise<PersonalTaxCreditSpouseInfo | null> {
+    return this.service.getSpouseInfo(user)
+  }
+
+  @Query(() => TaxBracketAction, {
+    name: 'socialInsurancePersonalTaxCreditTaxBracketAction',
+    nullable: true,
+  })
+  @Audit()
+  getPersonalTaxCreditTaxBracketAction(
+    @CurrentUser() user: User,
+  ): Promise<TaxBracketAction | null> {
+    return this.service.getTaxBracketAction(user)
   }
 }

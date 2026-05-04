@@ -82,7 +82,7 @@ const PersonalTaxCredit = () => {
   } = useGetPersonalTaxCreditTaxBracketQuery({ errorPolicy: 'all' })
 
   const serverTaxBracket =
-    taxBracketData?.socialInsurancePersonalTaxCreditTaxBracket?.value
+    taxBracketData?.socialInsurancePersonalTaxCreditTaxBracket
 
   const [setTaxBracketMutation, { loading: taxBracketSaving }] =
     useSetSocialInsurancePersonalTaxCreditTaxBracketMutation()

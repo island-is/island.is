@@ -46,9 +46,10 @@ import {
   mapChildBenefitInformation,
   mapPaymentTypeOverview,
 } from './mappers/mapPaymentTypesOverview'
+import { parseTaxBracketAction } from './mappers/parseTaxBracketAction'
 import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
 import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
-import { PersonalTaxCreditTaxBracket } from './models/personalTaxCredit/taxBracket.model'
+import { PersonalTaxCreditSpouseInfo } from './models/personalTaxCredit/spouseInfo.model'
 import { TaxBracketAction } from './enums/taxBracketAction'
 
 @Injectable()
@@ -331,19 +332,41 @@ export class SocialInsuranceService {
     return data ? data.map(mapChildBenefitInformation) : null
   }
 
-  async getTaxBracket(user: User): Promise<PersonalTaxCreditTaxBracket | null> {
+  async getTaxBracket(user: User): Promise<TaxBracketAction | null> {
     const data = await this.personalTaxCreditClient
       .getTaxBracket(user)
       .catch(handle404)
-    if (!data || !data.taxBracket) {
+    if (!data?.taxBracket) {
       return null
     }
-    return {
-      value: data.taxBracket as TaxBracketAction,
-    }
+    return data.taxBracket as TaxBracketAction
   }
 
   async setTaxBracket(user: User, taxBracket: TaxBracketAction): Promise<void> {
     return this.personalTaxCreditClient.setTaxBracket(user, taxBracket)
+  }
+
+  async getSpouseInfo(user: User): Promise<PersonalTaxCreditSpouseInfo | null> {
+    const data = await this.personalTaxCreditClient
+      .getSpouseInfo(user)
+      .catch(handle404)
+    if (!data?.nationalId) {
+      return null
+    }
+    return {
+      nationalId: data.nationalId,
+      name: data.name ?? undefined,
+      isDeceased: data.isDeceased ?? undefined,
+    }
+  }
+
+  async getTaxBracketAction(user: User): Promise<TaxBracketAction | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracketActions(user)
+      .catch(handle404)
+    if (data == null) {
+      return null
+    }
+    return parseTaxBracketAction(data)
   }
 }
