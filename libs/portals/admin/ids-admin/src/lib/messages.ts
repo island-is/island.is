@@ -93,6 +93,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
   },
+  noMatchingClients: {
+    id: 'ap.ids-admin:no-matching-clients',
+    defaultMessage: 'No applications match the current filter.',
+  },
   noClients: {
     id: 'ap.ids-admin:no-clients',
     defaultMessage: 'No applications',
@@ -221,6 +225,48 @@ export const m = defineMessages({
   change: {
     id: 'ap.ids-admin:change',
     defaultMessage: 'Change',
+  },
+  restore: {
+    id: 'ap.ids-admin:restore',
+    defaultMessage: 'Restore',
+  },
+  restoreClient: {
+    id: 'ap.ids-admin:restore-client',
+    defaultMessage: 'Restore application',
+  },
+  restoreClientDescription: {
+    id: 'ap.ids-admin:restore-client-description',
+    defaultMessage:
+      'Restore this archived application across all environments.',
+  },
+  restoreClientAlertMessage: {
+    id: 'ap.ids-admin:restore-client-alert-message',
+    defaultMessage:
+      'Restoring this application may re-enable access to systems. Please verify the application settings after restoring.',
+  },
+  successRestoringClient: {
+    id: 'ap.ids-admin:success-restoring-client',
+    defaultMessage: 'Successfully restored application',
+  },
+  archived: {
+    id: 'ap.ids-admin:archived',
+    defaultMessage: 'Archived',
+  },
+  clientStatus: {
+    id: 'ap.ids-admin:client-status',
+    defaultMessage: 'Status',
+  },
+  activeClients: {
+    id: 'ap.ids-admin:active-clients',
+    defaultMessage: 'Active',
+  },
+  archivedClients: {
+    id: 'ap.ids-admin:archived-clients',
+    defaultMessage: 'Archived',
+  },
+  allClients: {
+    id: 'ap.ids-admin:all-clients',
+    defaultMessage: 'All',
   },
   absoluteLifetime: {
     id: 'ap.ids-admin:absolute-lifetime',
