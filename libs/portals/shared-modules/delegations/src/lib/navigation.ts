@@ -32,7 +32,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
   },
   {
     name: m.grantAccessNewTitle,
-    path: DelegationPaths.DelegationsGrantNew,
+    path: DelegationPaths.DelegationsGrant,
     navHide: false,
     breadcrumbHide: false,
   },

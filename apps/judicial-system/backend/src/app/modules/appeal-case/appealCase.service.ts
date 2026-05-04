@@ -10,6 +10,7 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -18,6 +19,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
   AppealCaseTransition,
+  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -32,6 +34,8 @@ import {
 import { nowFactory } from '../../factories'
 import {
   AppealCase,
+  AppealCaseRepositoryService,
+  AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
   UpdateAppealCase,
@@ -43,7 +47,6 @@ import {
   transitionAppealCase,
 } from './state/appealCase.state'
 import { appealCaseModuleConfig } from './appealCase.config'
-import { AppealCaseRepositoryService } from './appealCaseRepository.service'
 
 @Injectable()
 export class AppealCaseService {
@@ -51,10 +54,46 @@ export class AppealCaseService {
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     @Inject(forwardRef(() => CaseRepositoryService))
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private resolveDefencePartyIds(
+    theCase: Case,
+    user: User,
+  ): { defendantId?: string; civilClaimantId?: string } {
+    if (!isIndictmentCase(theCase.type)) {
+      return {}
+    }
+
+    const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+    // Only confirmed defenders / spokespersons can act on behalf of a party —
+    // unconfirmed picks shouldn't be tied to appeal events.
+    const defendant = theCase.defendants?.find(
+      (d) =>
+        d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId &&
+        normalizedId.includes(d.defenderNationalId),
+    )
+    if (defendant) {
+      return { defendantId: defendant.id }
+    }
+
+    const civilClaimant = theCase.civilClaimants?.find(
+      (c) =>
+        c.isSpokespersonConfirmed &&
+        c.spokespersonNationalId &&
+        normalizedId.includes(c.spokespersonNationalId),
+    )
+    if (civilClaimant) {
+      return { civilClaimantId: civilClaimant.id }
+    }
+
+    return {}
+  }
 
   private allAppealRolesAssigned(appealRoles: {
     appealAssistantId?: string
@@ -321,24 +360,11 @@ export class AppealCaseService {
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
-    if (update.prosecutorStatementDate) {
-      data.prosecutorStatementDate = nowFactory()
-    }
-
-    if (update.defendantStatementDate) {
-      data.defendantStatementDate = nowFactory()
-    }
-
     const updatedAppealCase = await this.appealCaseRepositoryService.update(
       appealCase.id,
       data,
       { transaction },
     )
-
-    // Queue messages for statement date changes
-    if (update.prosecutorStatementDate || update.defendantStatementDate) {
-      this.addMessagesForAppealStatementToQueue(theCase, user)
-    }
 
     if (
       update.appealCaseNumber &&
@@ -369,6 +395,49 @@ export class AppealCaseService {
     }
 
     return updatedAppealCase
+  }
+
+  async createEventLog(
+    theCase: Case,
+    appealCase: AppealCase,
+    eventType: AppealEventType,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealCase> {
+    this.logger.debug(
+      `Recording appeal event ${eventType} for appeal case ${appealCase.id} of case ${theCase.id}`,
+    )
+
+    await this.appealEventLogRepositoryService.create(
+      {
+        caseId: theCase.id,
+        appealCaseId: appealCase.id,
+        eventType,
+        userRole: user.role,
+        ...(isDefenceUser(user)
+          ? this.resolveDefencePartyIds(theCase, user)
+          : {}),
+      },
+      { transaction },
+    )
+
+    this.dispatchEventNotifications(eventType, theCase, user)
+
+    return appealCase
+  }
+
+  // Side-effect dispatch keyed on eventType — mirror EventLogService's
+  // eventToNotificationMap pattern.
+  private dispatchEventNotifications(
+    eventType: AppealEventType,
+    theCase: Case,
+    user: User,
+  ): void {
+    switch (eventType) {
+      case AppealEventType.APPEAL_STATEMENT_SENT:
+        this.addMessagesForAppealStatementToQueue(theCase, user)
+        break
+    }
   }
 
   async transition(

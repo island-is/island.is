@@ -975,10 +975,6 @@ export const controlReducer = (
     case 'TOGGLE_DEPENDENCY': {
       const { activeId, itemId, update } = action.payload
 
-      const dependency = form.dependencies?.find(
-        (dep) => dep?.parentProp === activeId,
-      )
-
       let updatedDependencies = form.dependencies ?? []
 
       const fields = form.fields ?? []

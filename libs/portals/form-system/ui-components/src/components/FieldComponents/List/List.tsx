@@ -6,6 +6,8 @@ import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib/reducerTypes'
 import { Controller, useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
+import { countriesAsListItems } from '../../../lib/lists/countries.list'
+import { ListTypesEnum } from '@island.is/form-system/enums'
 
 interface Props {
   item: FormSystemField
@@ -16,7 +18,7 @@ interface Props {
 
 type ListItem = {
   label: string
-  value: string | number
+  value: object
 }
 
 const listTypePlaceholder = {
@@ -34,31 +36,49 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
       ?.filter((item): item is FormSystemListItem => item !== null)
       .map((item) => ({
         label: item.label?.[lang] ?? '',
-        value: item.label?.[lang] ?? '',
+        value: { label: item.label, value: item.value },
       })) ?? []
 
   const value = () => {
-    const listVal = getValue(item, 'listValue', valueIndex)
-    const hasValue = listVal !== undefined && listVal !== null
-    if (hasValue) {
-      return {
-        label: listVal,
-        value: listVal,
-      }
+    const storedLabel = getValue(item, 'label', valueIndex)
+    const storedValue = getValue(item, 'value', valueIndex)
+    const hasValue =
+      storedLabel !== undefined &&
+      storedLabel !== null &&
+      storedValue !== undefined &&
+      storedValue !== null
+
+    if (!hasValue) return undefined
+
+    return {
+      label: storedLabel?.[lang] ?? '',
+      value: { label: storedLabel, value: storedValue },
     }
-    return undefined
   }
 
-  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+  const listByType = () => {
+    switch (item.fieldSettings?.listType) {
+      case ListTypesEnum.COUNTRIES:
+        return countriesAsListItems()
+      default:
+        return item.list ?? []
+    }
+  }
+
+  const resolvedList = listByType()
+
+  const selected = resolvedList?.find(
+    (listItem) => listItem?.isSelected === true,
+  )
 
   useEffect(() => {
     if (selected && dispatch) {
-      if (!getValue(item, 'listValue', valueIndex)) {
+      if (!getValue(item, 'label', valueIndex)) {
         dispatch({
           type: 'SET_LIST_VALUE',
           payload: {
             id: item.id,
-            value: selected.label?.[lang] ?? '',
+            value: { label: selected.label, value: selected.value },
             valueIndex,
           },
         })
@@ -72,7 +92,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
       key={item.id}
       name={item.id}
       control={control}
-      defaultValue={getValue(item, 'listValue', valueIndex) ?? ''}
+      defaultValue={getValue(item, 'label', valueIndex)?.[lang] ?? ''}
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -83,13 +103,13 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
         <Select
           name="list"
           label={item.name?.[lang] ?? ''}
-          options={mapToListItems(item?.list ?? [])}
+          options={mapToListItems(resolvedList)}
           required={item.isRequired ?? false}
           defaultValue={
             selected
               ? {
                   label: selected.label?.[lang] ?? '',
-                  value: selected.label?.[lang] ?? '',
+                  value: { label: selected.label, value: selected.value },
                 }
               : undefined
           }
@@ -105,7 +125,11 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
             if (!dispatch) return
             dispatch({
               type: 'SET_LIST_VALUE',
-              payload: { id: item.id, value: e?.value, valueIndex },
+              payload: {
+                id: item.id,
+                value: e?.value,
+                valueIndex,
+              },
             })
           }}
           value={value()}

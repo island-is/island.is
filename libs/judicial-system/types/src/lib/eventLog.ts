@@ -30,3 +30,9 @@ export enum DefendantEventType {
 }
 
 export const defendantEventTypes = Object.values(DefendantEventType)
+
+export enum AppealEventType {
+  APPEAL_STATEMENT_SENT = 'APPEAL_STATEMENT_SENT',
+}
+
+export const appealEventTypes = Object.values(AppealEventType)

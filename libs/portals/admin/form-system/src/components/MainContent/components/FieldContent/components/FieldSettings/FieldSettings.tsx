@@ -8,6 +8,7 @@ import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
 import { PaymentFieldSettings } from './components/PaymentFieldSettings'
 import { TextFieldSettings } from './components/TextFieldSettings'
 import { FileUploadSettings } from './components/UploadSettings'
+import { NumberSettings } from './components/NumberSettings'
 
 export const FieldSettings = () => {
   const { control } = useContext(ControlContext)
@@ -21,6 +22,7 @@ export const FieldSettings = () => {
       {currentItem.fieldType === FieldTypesEnum.TEXTBOX && (
         <TextFieldSettings />
       )}
+      {currentItem.fieldType === FieldTypesEnum.NUMBERBOX && <NumberSettings />}
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <ListSettings />
       )}

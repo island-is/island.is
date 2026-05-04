@@ -20,6 +20,7 @@ import { EmptyTable } from '../EmptyTable/EmptyTable'
 import { useIsMobile } from '../../hooks/useIsMobile/useIsMobile'
 import * as styles from './Table.css'
 import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
 
 interface TableProps<TData extends object> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,8 +251,15 @@ export const Table = <TData extends object>({
                     header.column.columnDef.header,
                     header.getContext(),
                   )}
-                  {header.column.getIsSorted() && (
-                    <Box marginLeft={1}>
+                  {header.column.getCanSort() && (
+                    <Box
+                      marginLeft={1}
+                      style={{
+                        visibility: header.column.getIsSorted()
+                          ? 'visible'
+                          : 'hidden',
+                      }}
+                    >
                       <Icon
                         color="blue400"
                         icon={
@@ -284,8 +292,13 @@ export const Table = <TData extends object>({
                   i === 0 && renderExpandedRow ? (
                     <T.Data
                       key={cell.id}
-                      style={{ padding: '16px' }}
-                      box={{ background: rowBackground, position: 'relative' }}
+                      style={{ padding: theme.spacing[2] + 'px' }}
+                      box={{
+                        position: 'relative',
+                        background: rowBackground,
+                        borderBottomWidth:
+                          isExpanded || isCollapsing ? undefined : 'standard',
+                      }}
                     >
                       {(isExpanded || isCollapsing) && (
                         <div className={styles.line} />
@@ -317,7 +330,15 @@ export const Table = <TData extends object>({
                   ) : (
                     <T.Data
                       key={cell.id}
-                      style={{ padding: '16px', background: rowBackground }}
+                      style={{
+                        padding: theme.spacing[2] + 'px',
+                        background: rowBackground,
+                      }}
+                      box={{
+                        background: rowBackground,
+                        borderBottomWidth:
+                          isExpanded || isCollapsing ? undefined : 'standard',
+                      }}
                     >
                       <Text variant="medium">
                         {flexRender(
@@ -334,7 +355,11 @@ export const Table = <TData extends object>({
                   <T.Data
                     colSpan={columns.length}
                     style={{ padding: 0 }}
-                    box={{ position: 'relative' }}
+                    box={{
+                      position: 'relative',
+                      background:
+                        isExpanded || isCollapsing ? 'blue100' : undefined,
+                    }}
                   >
                     <AnimateHeight
                       duration={300}
@@ -352,7 +377,9 @@ export const Table = <TData extends object>({
                       {(isExpanded || isCollapsing) && (
                         <>
                           <div className={styles.line} />
-                          {renderExpandedRow(row)}
+                          <Box marginLeft={3} marginBottom={3}>
+                            {renderExpandedRow(row)}
+                          </Box>
                         </>
                       )}
                     </AnimateHeight>
