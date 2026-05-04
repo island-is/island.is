@@ -1084,6 +1084,9 @@ export interface IDelegationScopeTagFields {
 
   /** Slug */
   slug: string
+
+  /** Show as card */
+  showAsCard?: boolean | undefined
 }
 
 /** Tags that can be used to filter available delegations */

@@ -11,6 +11,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
+import { ISLAND_IS_CATEGORY } from '@island.is/auth-api-lib'
 import { CmsContentfulService } from '@island.is/cms'
 
 import { Scope } from './models/scope.model'
@@ -133,7 +134,21 @@ export class ScopeResolver {
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang?: string,
   ): Promise<ScopeCategory[]> {
-    return this.cmsContentfulService.getArticleCategories(lang ?? 'is')
+    const language = lang ?? 'is'
+    const cmsCategories = await this.cmsContentfulService.getArticleCategories(
+      language,
+    )
+
+    return [
+      ...cmsCategories,
+      {
+        id: ISLAND_IS_CATEGORY.id,
+        title: ISLAND_IS_CATEGORY.title[language === 'en' ? 'en' : 'is'],
+        slug: ISLAND_IS_CATEGORY.slug,
+        description:
+          ISLAND_IS_CATEGORY.description[language === 'en' ? 'en' : 'is'],
+      },
+    ]
   }
 
   @Query(() => [ScopeTag], {
