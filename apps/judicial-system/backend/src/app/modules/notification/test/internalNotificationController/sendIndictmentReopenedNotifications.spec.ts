@@ -14,7 +14,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case,EventLog } from '../../../repository'
+import { Case, EventLog } from '../../../repository'
 import { InstitutionContactRepositoryService } from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -68,7 +68,8 @@ describe('InternalNotificationController - Send indictment reopened notification
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockInstitutionContactRepositoryService = institutionContactRepositoryService
+    mockInstitutionContactRepositoryService =
+      institutionContactRepositoryService
 
     givenWhenThen = async (theCase: Case) => {
       const then = {} as Then
