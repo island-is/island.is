@@ -6,6 +6,7 @@ import { Includeable, literal, Op, Transaction } from 'sequelize'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -1834,19 +1835,36 @@ export class CaseService {
       isIndictmentCase(theCase.type) &&
       isCompletedCase(theCase.state)
     ) {
+      if (
+        theCase.appealCase &&
+        theCase.appealCase.appealState !== AppealCaseState.COMPLETED
+      ) {
+        throw new ForbiddenException(
+          'Cannot reopen a case with an active appeal',
+        )
+      }
+
       update.state = CaseState.RECEIVED
       update.indictmentDecision = IndictmentDecision.POSTPONING
       update.postponedIndefinitelyExplanation = 'Mál enduropnað'
+      update.indictmentReviewerId = null
 
       await Promise.all(
-        (theCase.defendants ?? []).map((defendant) =>
+        (theCase.defendants ?? []).flatMap((defendant) => [
           this.defendantService.updateDatabaseDefendant(
             theCase.id,
             defendant.id,
-            { isSentToPrisonAdmin: false },
+            {
+              isSentToPrisonAdmin: false,
+              indictmentReviewDecision: null,
+              publicProsecutorIsRegisteredInPoliceSystem: null,
+            },
             transaction,
           ),
-        ),
+          ...(defendant.verdicts ?? []).map((verdict) =>
+            this.verdictService.resetPublicProsecutorData(verdict, transaction),
+          ),
+        ]),
       )
     }
 

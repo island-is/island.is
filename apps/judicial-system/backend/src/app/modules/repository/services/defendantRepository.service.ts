@@ -74,7 +74,8 @@ interface UpdateDefendant {
   punishmentType?: PunishmentType
   isAlternativeService?: boolean
   alternativeServiceDescription?: string
-  indictmentReviewDecision?: IndictmentCaseReviewDecision
+  indictmentReviewDecision?: IndictmentCaseReviewDecision | null
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
 }
 
 @Injectable()

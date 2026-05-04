@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseState,
   Case,
   CaseType,
   Defendant,
@@ -165,14 +166,18 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 </Text>
               </Box>
             )}
-            <Button
-              variant="text"
-              colorScheme="destructive"
-              size="small"
-              onClick={() => setModalVisible('REOPEN')}
-            >
-              Enduropna mál
-            </Button>
+            {(!workingCase.appealCase ||
+              workingCase.appealCase.appealState ===
+                AppealCaseState.COMPLETED) && (
+              <Button
+                variant="text"
+                colorScheme="destructive"
+                size="small"
+                onClick={() => setModalVisible('REOPEN')}
+              >
+                Enduropna mál
+              </Button>
+            )}
           </Box>
         ) : (
           <ProsecutorAndDefendantsEntries workingCase={workingCase} />

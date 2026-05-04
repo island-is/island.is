@@ -501,7 +501,6 @@ export interface UpdateCase
     | 'creatingProsecutorId'
     | 'requestSharedWithDefender'
     | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
     | 'indictmentDecision'
     | 'courtSessionType'
     | 'mergeCaseId'
@@ -521,6 +520,7 @@ export interface UpdateCase
   courtRecordSignatoryId?: Case['courtRecordSignatoryId'] | null
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
+  indictmentReviewerId?: Case['indictmentReviewerId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
