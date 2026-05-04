@@ -1848,7 +1848,9 @@ export class CaseService {
         )
       }
 
-      const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${user.name} ${lowercase(user.title)}`
+      const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
+        user.name
+      } ${lowercase(user.title)}`
       update.reopenReason = `${header}\n${update.reopenReason}`
       update.state = CaseState.RECEIVED
       update.indictmentDecision = IndictmentDecision.POSTPONING
