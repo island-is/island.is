@@ -142,7 +142,7 @@ export class EmailWorkerService {
           context: {
             small: true,
             preText: isEnglish ? 'In settings on ' : 'Í stillingum á ',
-            linkHref: 'https://www.island.is/minarsidur/min-gogn/stillingar/',
+            linkHref: 'https://island.is/minarsidur/min-gogn/stillingar/',
             linkLabel: 'Ísland.is',
             postText: isEnglish
               ? ', you can decide if you want to be notified or not.'
