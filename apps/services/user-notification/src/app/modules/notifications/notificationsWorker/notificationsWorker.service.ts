@@ -751,10 +751,7 @@ export class NotificationsWorkerService {
   ): Promise<boolean> {
     try {
       const company = await this.companyRegistryService.getCompany(nationalId)
-      return (
-        company !== null &&
-        company.status === INACTIVE_COMPANY_STATUS
-      )
+      return company !== null && company.status === INACTIVE_COMPANY_STATUS
     } catch (error) {
       this.logger.warn(
         'Failed to check company status from company registry, proceeding with notification',
