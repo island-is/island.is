@@ -22,7 +22,7 @@ export class HmsRentalAgreementClientModule {
       parseAs: 'json',
       headers: {
         'X-Road-Client': xRoadConfig.xRoadClient,
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       responseTransformer: async (data: unknown) => {
         if (typeof data === 'string') {

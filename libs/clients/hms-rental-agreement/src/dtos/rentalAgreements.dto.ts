@@ -5,10 +5,7 @@ import {
   type ContractDocumentMetadataDto,
   mapContractDocumentMetadataDto,
 } from './contractDocument'
-import {
-  type ContractPartyDto,
-  mapContractPartyDto,
-} from './contractParty.dto'
+import { type ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
 import {
   type ContractPropertyDto,
   mapContractPropertyDto,
@@ -40,9 +37,8 @@ export const mapRentalAgreementDto = (
       : undefined,
     contractType: mapTemporalType(contract.contract_type_use_code),
     contractParty:
-      contract.contract_party
-        ?.map(mapContractPartyDto)
-        .filter(isDefined) ?? undefined,
+      contract.contract_party?.map(mapContractPartyDto).filter(isDefined) ??
+      undefined,
     contractProperty:
       contract.contract_property
         ?.map(mapContractPropertyDto)

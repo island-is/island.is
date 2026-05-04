@@ -22,7 +22,11 @@ import {
   FinancialIndexationEntry,
   errorMapper,
 } from './utils/utils'
-import { PropertyUnit, OtherCostItem, PartyContact } from '@island.is/clients/hms-rental-agreement'
+import {
+  PropertyUnit,
+  OtherCostItem,
+  PartyContact,
+} from '@island.is/clients/hms-rental-agreement'
 
 const mapDraftParty = (p: {
   email: string

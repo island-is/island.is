@@ -37,8 +37,9 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
         getContractKtByKt({ path: { kt: auth.nationalId } }),
       )
 
-      const contracts = (response.data ?? [])
-        .filter((contract) => contract.contract_status === ContractStatus.STATUSVALID)
+      const contracts = (response.data ?? []).filter(
+        (contract) => contract.contract_status === ContractStatus.STATUSVALID,
+      )
 
       if (
         (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&

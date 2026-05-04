@@ -79,9 +79,7 @@ const mapContractParty = (dto: ContractPartyDto): ContractParty => ({
   email: dto.email,
 })
 
-const mapContractProperty = (
-  dto: ContractPropertyDto,
-): ContractProperty => ({
+const mapContractProperty = (dto: ContractPropertyDto): ContractProperty => ({
   id: dto.id,
   propertyId: dto.propertyId,
   type: PROPERTY_TYPE_MAP[dto.type],
@@ -90,7 +88,9 @@ const mapContractProperty = (
   municipality: dto.municipality,
 })
 
-export const mapToRentalAgreement = (dto: RentalAgreementDto): RentalAgreement => {
+export const mapToRentalAgreement = (
+  dto: RentalAgreementDto,
+): RentalAgreement => {
   const parties = dto.contractParty?.map(mapContractParty)
 
   return {
