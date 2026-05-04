@@ -533,68 +533,58 @@ export class CardPaymentService {
       throw new BadRequestException(CardErrorCode.ApplePayReplayDetected)
     }
 
-    // Apple Pay PassKit signature verification.
-    //
-    // Always runs (so we get production traffic to validate against), but
-    // only *rejects* on failure when the strict-verify feature flag is on.
-    // This lets us soak the verifier in shadow mode — log [APPLEPAY-VERIFY]
-    // result=ok|fail without affecting payments — then flip to enforce in
-    // ConfigCat once the logs show no false negatives. Fail-safe: if the
-    // flag service is unreachable, we default to shadow so a ConfigCat
-    // outage can't silently start rejecting payments.
-    //
-    // See ./applePaySignature.ts for the full algorithm and onTrace events.
-    let enforceVerification = false
+    let enforceVerification = true
     try {
       enforceVerification = await this.featureFlagService.getValue(
         Features.isIslandisApplePayStrictSignatureVerificationEnabled,
-        false,
+        true,
       )
     } catch (e) {
       this.logger.error(
-        `${logPrefix} [APPLEPAY-VERIFY] feature-flag lookup failed; defaulting to shadow`,
+        `${logPrefix} [APPLEPAY-VERIFY] feature-flag lookup failed; fail-safe to enforce`,
         e,
       )
     }
-    const verifyMode = enforceVerification ? 'enforce' : 'shadow'
-    try {
-      verifyApplePaySignature({
-        paymentData: input.paymentData,
-        paymentProcessingKey: applePayPaymentProcessingKey,
-        onTrace: ({ stage, data }) => {
-          this.logger.info(
-            `${logPrefix} [APPLEPAY-VERIFY] trace stage=${stage}`,
-            {
-              paymentFlowId,
-              transactionIdentifier,
-              mode: verifyMode,
-              stage,
-              ...data,
-            },
-          )
-        },
-      })
-      this.logger.info(
-        `${logPrefix} [APPLEPAY-VERIFY] result=ok mode=${verifyMode}`,
+
+    if (!enforceVerification) {
+      this.logger.warn(
+        `${logPrefix} [APPLEPAY-VERIFY] signature verification skipped`,
         {
           paymentFlowId,
           transactionIdentifier,
         },
       )
-    } catch (e) {
-      const message = (e as Error).message
-      const stageMatch = message.match(/\[stage=([^\]]+)\]/)
-      const failureStage = stageMatch?.[1] ?? 'unknown'
-      this.logger.error(
-        `${logPrefix} [APPLEPAY-VERIFY] result=fail mode=${verifyMode}`,
-        {
+    } else {
+      try {
+        verifyApplePaySignature({
+          paymentData: input.paymentData,
+          paymentProcessingKey: applePayPaymentProcessingKey,
+          onTrace: ({ stage, data }) => {
+            this.logger.info(
+              `${logPrefix} [APPLEPAY-VERIFY] trace stage=${stage}`,
+              {
+                paymentFlowId,
+                transactionIdentifier,
+                stage,
+                ...data,
+              },
+            )
+          },
+        })
+        this.logger.info(`${logPrefix} [APPLEPAY-VERIFY] result=ok`, {
+          paymentFlowId,
+          transactionIdentifier,
+        })
+      } catch (e) {
+        const message = (e as Error).message
+        const stageMatch = message.match(/\[stage=([^\]]+)\]/)
+        const failureStage = stageMatch?.[1] ?? 'unknown'
+        this.logger.error(`${logPrefix} [APPLEPAY-VERIFY] result=fail`, {
           paymentFlowId,
           transactionIdentifier,
           failureStage,
           failureReason: message,
-        },
-      )
-      if (enforceVerification) {
+        })
         throw new BadRequestException(
           CardErrorCode.ApplePaySignatureVerificationFailed,
         )
@@ -669,9 +659,6 @@ export class CardPaymentService {
       errorSchema: CardPaymentErrorSchema,
       errorMessage: 'Failed to charge Apple Pay payment',
     })
-
-    // Replay marker is already set pre-fetch; on success there's nothing
-    // more to do here.
 
     this.logger.info(`${logPrefix} Apple Pay charge succeeded`, {
       paymentFlowId,
