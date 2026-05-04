@@ -1,15 +1,27 @@
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { v4 as uuid } from 'uuid'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  CaseType,
+  type User,
+} from '@island.is/judicial-system/types'
 
+import { createDigitalCaseFileMetadataPdf } from '../../../formatters'
+import { AwsS3Service } from '../../aws-s3'
+import { PoliceSystemDigitalCaseFile } from '../../police/models/PoliceSystemDigitalCaseFile.model'
 import { PoliceService } from '../../police/police.service'
-import { PoliceDigitalCaseFileRepositoryService } from '../../repository'
+import {
+  CaseFile,
+  PoliceDigitalCaseFileRepositoryService,
+} from '../../repository'
 import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
 import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
 import { getFilesToCreate } from './getFilesToCreate'
@@ -19,12 +31,67 @@ export class PoliceDigitalCaseFileService {
   constructor(
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     private readonly policeService: PoliceService,
+    private readonly awsS3Service: AwsS3Service,
+    @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  private async createMetadataCaseFile(
+    caseId: string,
+    caseType: CaseType,
+    file: PoliceSystemDigitalCaseFile,
+    transaction: Transaction,
+  ): Promise<void> {
+    const existingFile = await this.caseFileModel.findOne({
+      where: { caseId, policeFileId: file.id },
+    })
+
+    if (existingFile) {
+      return
+    }
+
+    try {
+      const pdfBuffer = await createDigitalCaseFileMetadataPdf({
+        name: file.name,
+        policeDigitalFileId: file.id,
+        policeExternalVendorId: file.policeExternalVendorId,
+        displayDate: file.displayDate,
+      })
+
+      const fileId = uuid()
+      const key = `${caseId}/${fileId}/${file.name}.pdf`
+
+      await this.awsS3Service.putObject(caseType, key, pdfBuffer)
+
+      await this.caseFileModel.create(
+        {
+          id: fileId,
+          caseId,
+          name: `${file.name}.pdf`,
+          type: 'application/pdf',
+          category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+          state: CaseFileState.STORED_IN_RVG,
+          key,
+          size: pdfBuffer.length,
+          policeCaseNumber: file.policeCaseNumber,
+          policeFileId: file.id,
+          displayDate: file.displayDate,
+          userGeneratedFilename: file.name,
+        },
+        { transaction },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Failed to create metadata case file for digital case file ${file.id} in case ${caseId}`,
+        { error },
+      )
+    }
+  }
+
   async syncAndGetPoliceDigitalCaseFiles(
     caseId: string,
+    caseType: CaseType,
     policeCaseNumbers: string[],
     user: User,
   ): Promise<PoliceDigitalCaseFileSyncResult[]> {
@@ -72,6 +139,12 @@ export class PoliceDigitalCaseFileService {
               },
               { transaction },
             ),
+          ),
+        )
+
+        await Promise.all(
+          filesToCreate.map((f) =>
+            this.createMetadataCaseFile(caseId, caseType, f, transaction),
           ),
         )
       })
