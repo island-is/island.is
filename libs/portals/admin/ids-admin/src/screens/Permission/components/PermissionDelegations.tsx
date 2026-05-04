@@ -58,8 +58,10 @@ type Tag = GetScopeTagsQuery['authAdminScopeTags'][number]
 
 export const PermissionDelegations = ({
   isNewPermissionsOptionsEnabled = false,
+  showThirdPartyUrlOptions = false,
 }: {
   isNewPermissionsOptionsEnabled?: boolean
+  showThirdPartyUrlOptions?: boolean
 } = {}) => {
   const { formatMessage, lang } = useLocale()
   const { selectedPermission, permission } = usePermission()
@@ -414,60 +416,66 @@ export const PermissionDelegations = ({
                                 </Stack>
                               )}
                             </Box>
-                            <Divider />
-                            <Stack space={3}>
-                              <Text paddingBottom={1}>
-                                {formatMessage(m.thirdPartyLoginUrl)}
-                              </Text>
-                              <Text variant="small" as="p">
-                                {formatMessage(m.thirdPartyLoginUrlDescription)}
-                              </Text>
-                              <Input
-                                name="originUrl"
-                                value={inputValues.originUrl}
-                                label={formatMessage(m.originUrl)}
-                                size="xs"
-                                onChange={(e) =>
-                                  setInputValues((prev) => ({
-                                    ...prev,
-                                    originUrl: e.target.value,
-                                  }))
-                                }
-                              />
-                              <Input
-                                name="targetLinkUri"
-                                value={inputValues.targetLinkUri}
-                                label={formatMessage(m.targetLinkUri)}
-                                size="xs"
-                                onChange={(e) =>
-                                  setInputValues((prev) => ({
-                                    ...prev,
-                                    targetLinkUri: e.target.value,
-                                  }))
-                                }
-                              />
-                              <Input
-                                name="linkPreview"
-                                label={formatMessage(m.linkPreview)}
-                                size="xs"
-                                readOnly
-                                textarea
-                                rows={3}
-                                value={
-                                  inputValues.originUrl &&
-                                  inputValues.targetLinkUri
-                                    ? `${
-                                        inputValues.originUrl
-                                      }?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(
-                                        inputValues.targetLinkUri,
-                                      )}`
-                                    : ''
-                                }
-                                placeholder={formatMessage(
-                                  m.linkPreviewPlaceholder,
-                                )}
-                              />
-                            </Stack>
+                            {showThirdPartyUrlOptions && (
+                              <>
+                                <Divider />
+                                <Stack space={3}>
+                                  <Text paddingBottom={1}>
+                                    {formatMessage(m.thirdPartyLoginUrl)}
+                                  </Text>
+                                  <Text variant="small" as="p">
+                                    {formatMessage(
+                                      m.thirdPartyLoginUrlDescription,
+                                    )}
+                                  </Text>
+                                  <Input
+                                    name="originUrl"
+                                    value={inputValues.originUrl}
+                                    label={formatMessage(m.originUrl)}
+                                    size="xs"
+                                    onChange={(e) =>
+                                      setInputValues((prev) => ({
+                                        ...prev,
+                                        originUrl: e.target.value,
+                                      }))
+                                    }
+                                  />
+                                  <Input
+                                    name="targetLinkUri"
+                                    value={inputValues.targetLinkUri}
+                                    label={formatMessage(m.targetLinkUri)}
+                                    size="xs"
+                                    onChange={(e) =>
+                                      setInputValues((prev) => ({
+                                        ...prev,
+                                        targetLinkUri: e.target.value,
+                                      }))
+                                    }
+                                  />
+                                  <Input
+                                    name="linkPreview"
+                                    label={formatMessage(m.linkPreview)}
+                                    size="xs"
+                                    readOnly
+                                    textarea
+                                    rows={3}
+                                    value={
+                                      inputValues.originUrl &&
+                                      inputValues.targetLinkUri
+                                        ? `${
+                                            inputValues.originUrl
+                                          }?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(
+                                            inputValues.targetLinkUri,
+                                          )}`
+                                        : ''
+                                    }
+                                    placeholder={formatMessage(
+                                      m.linkPreviewPlaceholder,
+                                    )}
+                                  />
+                                </Stack>
+                              </>
+                            )}
                           </Stack>
                         ) : undefined
                       }

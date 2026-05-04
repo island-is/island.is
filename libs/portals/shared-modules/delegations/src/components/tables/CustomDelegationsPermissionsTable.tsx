@@ -15,11 +15,12 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { m as coreMessages } from '@island.is/portals/core'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Reference, useApolloClient } from '@apollo/client'
 import { ScopeSelection, useDelegationForm } from '../../context'
 import { AuthDelegationScope, AuthDomain } from '@island.is/api/schema'
 import { DeleteAccessModal } from '../modals/DeleteAccessModal'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
 import * as styles from './Tables.css'
 
@@ -39,6 +40,19 @@ export const CustomDelegationsPermissionsTable = ({
   const { formatMessage } = useLocale()
   const client = useApolloClient()
   const scopes = data.scopes
+  const featureFlagClient = useFeatureFlagClient()
+  const [showThirdPartyUrl, setShowThirdPartyUrl] = useState(false)
+
+  useEffect(() => {
+    const checkFlag = async () => {
+      const value = await featureFlagClient.getValue(
+        Features.showThirdPartyUrlOptions,
+        false,
+      )
+      setShowThirdPartyUrl(value)
+    }
+    checkFlag()
+  }, [featureFlagClient])
 
   const [patchDelegation, { loading: patchLoading }] =
     usePatchAuthDelegationMutation()
@@ -145,6 +159,7 @@ export const CustomDelegationsPermissionsTable = ({
           handleDateChange={handleDateChange}
           setScopeToDelete={setScopeToDelete}
           setSelectedScopes={setSelectedScopes}
+          showThirdPartyUrl={showThirdPartyUrl}
         />
       ) : (
         <DesktopCustomDelegationsPermissionsTable
@@ -154,6 +169,7 @@ export const CustomDelegationsPermissionsTable = ({
           handleDateChange={handleDateChange}
           setScopeToDelete={setScopeToDelete}
           setSelectedScopes={setSelectedScopes}
+          showThirdPartyUrl={showThirdPartyUrl}
         />
       )}
       <DeleteAccessModal
@@ -186,6 +202,7 @@ const DesktopCustomDelegationsPermissionsTable = ({
   handleDateChange,
   setScopeToDelete,
   setSelectedScopes,
+  showThirdPartyUrl,
 }: {
   scopes: Scope[]
   subjectId: string | null | undefined
@@ -193,6 +210,7 @@ const DesktopCustomDelegationsPermissionsTable = ({
   handleDateChange: (scope: Scope, newDate: Date) => void
   setScopeToDelete: (scope: Scope) => void
   setSelectedScopes: (scopes: ScopeSelection[]) => void
+  showThirdPartyUrl: boolean
 }) => {
   const { formatMessage } = useLocale()
   const headerArray = [
@@ -201,8 +219,8 @@ const DesktopCustomDelegationsPermissionsTable = ({
     { value: formatMessage(m.headerRegisteredDate) },
     { value: formatMessage(m.headerValidityPeriod) },
     // { value: 'Síðast notað' }, // TODO: Data not available yet
-    { value: '' },
-    { value: '' },
+    ...(showThirdPartyUrl ? [{ value: '' }] : []),
+    { value: '' }, // Delete
   ]
 
   return (
@@ -267,24 +285,29 @@ const DesktopCustomDelegationsPermissionsTable = ({
                     />
                   )}
                 </T.Data>
-                <T.Data style={{ paddingInline: 16 }}>
-                  <Box display="flex" justifyContent="flexEnd">
-                    <Box flexShrink={0}>
-                      {direction === 'incoming' && thirdPartyLoginUrl && (
-                        <Link href={thirdPartyLoginUrl} className={styles.link}>
-                          <Text
-                            variant="small"
-                            color="currentColor"
-                            fontWeight="semiBold"
+                {showThirdPartyUrl && (
+                  <T.Data style={{ paddingInline: 16 }}>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Box flexShrink={0}>
+                        {direction === 'incoming' && thirdPartyLoginUrl && (
+                          <Link
+                            href={thirdPartyLoginUrl}
+                            className={styles.link}
                           >
-                            {formatMessage(m.switch)}
-                          </Text>
-                          <Icon icon="person" type="outline" size="small" />
-                        </Link>
-                      )}
+                            <Text
+                              variant="small"
+                              color="currentColor"
+                              fontWeight="semiBold"
+                            >
+                              {formatMessage(m.switch)}
+                            </Text>
+                            <Icon icon="person" type="outline" size="small" />
+                          </Link>
+                        )}
+                      </Box>
                     </Box>
-                  </Box>
-                </T.Data>
+                  </T.Data>
+                )}
                 <T.Data style={{ paddingInline: 16 }}>
                   <Box display="flex" justifyContent="flexEnd">
                     <Box flexShrink={0}>
@@ -333,6 +356,7 @@ const MobileCustomDelegationsPermissionsTable = ({
   setScopeToDelete,
   setSelectedScopes,
   subjectId,
+  showThirdPartyUrl,
 }: {
   scopes: Scope[]
   direction: 'outgoing' | 'incoming'
@@ -340,6 +364,7 @@ const MobileCustomDelegationsPermissionsTable = ({
   setScopeToDelete: (scope: Scope) => void
   setSelectedScopes: (scopes: ScopeSelection[]) => void
   subjectId: string | null | undefined
+  showThirdPartyUrl: boolean
 }) => {
   const { formatMessage } = useLocale()
   return (
@@ -437,23 +462,25 @@ const MobileCustomDelegationsPermissionsTable = ({
                     )}
                   </Box>
                 </Box>
-                <Box>
-                  {direction === 'incoming' && thirdPartyLoginUrl && (
-                    <Link
-                      href={thirdPartyLoginUrl}
-                      className={styles.linkMobile}
-                    >
-                      <Text
-                        variant="medium"
-                        color="currentColor"
-                        fontWeight="semiBold"
+                {showThirdPartyUrl &&
+                  direction === 'incoming' &&
+                  thirdPartyLoginUrl && (
+                    <Box>
+                      <Link
+                        href={thirdPartyLoginUrl}
+                        className={styles.linkMobile}
                       >
-                        {formatMessage(m.switch)}
-                      </Text>
-                      <Icon icon="person" type="outline" size="small" />
-                    </Link>
+                        <Text
+                          variant="medium"
+                          color="currentColor"
+                          fontWeight="semiBold"
+                        >
+                          {formatMessage(m.switch)}
+                        </Text>
+                        <Icon icon="person" type="outline" size="small" />
+                      </Link>
+                    </Box>
                   )}
-                </Box>
                 <Box display="flex" paddingTop={2}>
                   <Button
                     variant="ghost"
