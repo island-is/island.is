@@ -92,8 +92,7 @@ export const IdpProviderConfirmModal = ({
                     checked={selectedEnvironments.includes(env)}
                     onChange={() => handleEnvironmentChange(env)}
                     disabled={
-                      !isIdpProviderEnv ||
-                      !configuredEnvironments.includes(env)
+                      !isIdpProviderEnv || !configuredEnvironments.includes(env)
                     }
                     large
                   />
@@ -102,10 +101,7 @@ export const IdpProviderConfirmModal = ({
             })}
           </Box>
           {error && (
-            <InputError
-              id="delete-environments-error"
-              errorMessage={error}
-            />
+            <InputError id="delete-environments-error" errorMessage={error} />
           )}
         </Box>
 

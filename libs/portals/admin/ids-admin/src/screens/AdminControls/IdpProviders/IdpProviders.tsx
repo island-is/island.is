@@ -29,9 +29,7 @@ const IdpProviders = () => {
     configuredEnvironments,
   })
 
-  const totalPages = Math.ceil(
-    (data?.idpProviders.totalCount ?? 0) / PAGE_SIZE,
-  )
+  const totalPages = Math.ceil((data?.idpProviders.totalCount ?? 0) / PAGE_SIZE)
 
   return (
     <Box>
