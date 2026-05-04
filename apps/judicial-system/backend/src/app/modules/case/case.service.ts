@@ -1007,6 +1007,7 @@ export class CaseService {
     theCase: Case,
     updatedCase: Case,
     user: TUser,
+    isReopening = false,
   ): void {
     const isIndictment = isIndictmentCase(updatedCase.type)
 
@@ -1021,7 +1022,8 @@ export class CaseService {
       } else if (
         updatedCase.state === CaseState.RECEIVED &&
         theCase.state === CaseState.COMPLETED &&
-        isIndictment
+        isIndictment &&
+        isReopening
       ) {
         this.addMessagesForReopenedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
@@ -2038,7 +2040,12 @@ export class CaseService {
       user,
       transaction,
     )
-    this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+    this.addMessagesForUpdatedCaseToQueue(
+      theCase,
+      updatedCase,
+      user,
+      update.reopenReason !== undefined,
+    )
 
     if (isReceivingCase) {
       this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
