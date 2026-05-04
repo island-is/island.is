@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
+import { ApiScope } from './models/api-scope.model'
 import { ApiScopeUser } from './models/api-scope-user.model'
 import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { ApiScopeUserDTO } from './dto/api-scope-user.dto'
@@ -13,6 +14,8 @@ import { ApiScopeUserAccessDTO } from './dto/api-scope-user-access.dto'
 @Injectable()
 export class ResourceAccessService {
   constructor(
+    @InjectModel(ApiScope)
+    private apiScope: typeof ApiScope,
     @InjectModel(ApiScopeUser)
     private apiScopeUser: typeof ApiScopeUser,
     @InjectModel(ApiScopeUserAccess)
@@ -20,6 +23,21 @@ export class ResourceAccessService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  /** Validates that a scope belongs to the specified tenant */
+  async validateScopeTenant(
+    scopeName: string,
+    tenantId: string,
+  ): Promise<void> {
+    const scope = await this.apiScope.findOne({
+      where: { name: scopeName, domainName: tenantId },
+    })
+    if (!scope) {
+      throw new BadRequestException(
+        `Scope "${scopeName}" does not belong to tenant "${tenantId}"`,
+      )
+    }
+  }
 
   /** Gets the Api Scope User with the nationalId */
   async findOne(nationalId: string): Promise<ApiScopeUser | null> {
@@ -169,6 +187,62 @@ export class ResourceAccessService {
     return response
   }
 
+  /** Gets all Api Scope Users that have access to a specific scope */
+  async findUsersByScope(
+    scopeName: string,
+    tenantId?: string,
+  ): Promise<ApiScopeUser[]> {
+    this.logger.debug(`Finding Api Scope Users for scope - "${scopeName}"`)
+
+    if (tenantId) {
+      await this.validateScopeTenant(scopeName, tenantId)
+    }
+
+    return this.apiScopeUser.findAll({
+      include: [
+        {
+          model: ApiScopeUserAccess,
+          where: { scope: scopeName },
+        },
+      ],
+    })
+  }
+
+  /** Updates the user list for a specific scope by adding/removing access */
+  async updateScopeUsers(
+    scopeName: string,
+    addedNationalIds: string[],
+    removedNationalIds: string[],
+    tenantId?: string,
+  ): Promise<void> {
+    this.logger.debug(
+      `Updating scope users for scope "${scopeName}" - adding: ${addedNationalIds.length}, removing: ${removedNationalIds.length}`,
+    )
+
+    if (tenantId) {
+      await this.validateScopeTenant(scopeName, tenantId)
+    }
+
+    if (removedNationalIds.length > 0) {
+      await this.apiScopeUserAccess.destroy({
+        where: {
+          scope: scopeName,
+          nationalId: { [Op.in]: removedNationalIds },
+        },
+      })
+    }
+
+    if (addedNationalIds.length > 0) {
+      await Promise.all(
+        addedNationalIds.map((nationalId) =>
+          this.apiScopeUserAccess.findOrCreate({
+            where: { nationalId, scope: scopeName },
+          }),
+        ),
+      )
+    }
+  }
+
   /** Creates User Scopes of Api Scope User */
   async createUserScopes(
     scopes: ApiScopeUserAccessDTO[] | undefined,
@@ -177,8 +251,13 @@ export class ResourceAccessService {
 
     this.logger.debug('Insert scopes for Api Scope User: ', scopes)
 
-    return Promise.all(
-      scopes.map((scope) => this.apiScopeUserAccess.create({ ...scope })),
+    const results = await Promise.all(
+      scopes.map((scope) =>
+        this.apiScopeUserAccess.findOrCreate({
+          where: { nationalId: scope.nationalId, scope: scope.scope },
+        }),
+      ),
     )
+    return results.map(([record]) => record)
   }
 }
