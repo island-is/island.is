@@ -1,6 +1,7 @@
-import { ForbiddenException } from '@nestjs/common'
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
+
+import { ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
