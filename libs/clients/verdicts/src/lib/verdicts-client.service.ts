@@ -629,7 +629,7 @@ export class VerdictsClientService {
           court: SUPREME_COURT,
           type: '',
           title: agenda.title ?? '',
-          hearingTime: agenda.hearingTime ?? '',
+          hearingTime: sanitizeHtml(agenda.hearingTime ?? ''),
         })
       }
     } else {
@@ -654,7 +654,7 @@ export class VerdictsClientService {
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
           caseSubType: agenda.caseSubType ?? '',
-          hearingTime: agenda.length ?? '',
+          hearingTime: sanitizeHtml(agenda.length ?? ''),
         })
       }
     } else {
