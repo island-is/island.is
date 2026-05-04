@@ -66,6 +66,8 @@ export enum HealthPaths {
   HealthAppointments = '/heilsa/timabokanir',
   HealthAppointmentDetail = '/heilsa/timabokanir/:id',
 
+  HealthMessages = '/heilsa/skilabod',
+
   // Deprecated paths - kept for redirects
   HealthOverviewOld = `${basicInformation}/yfirlit`,
   HealthBloodtypeOld = '/heilsa/blodflokkur',

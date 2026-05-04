@@ -1,7 +1,9 @@
 import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Tooltip, m } from '@island.is/portals/my-pages/core'
+import cn from 'classnames'
 import React, { MouseEvent } from 'react'
+import { Tooltip } from '../ToolTip/ToolTip'
+import { m } from '../../lib/messages'
 import * as styles from './FavAndStash.css'
 
 type FavAndStashProps = {
@@ -11,6 +13,9 @@ type FavAndStashProps = {
   bookmarked?: boolean
   archived?: boolean
   loading?: boolean
+  stashLabels?: { add: string; remove: string }
+  /** Use 'light' on blue-tinted backgrounds (default), 'negative' on white backgrounds */
+  colorScheme?: 'light' | 'negative'
 }
 
 export const FavAndStash: React.FC<FavAndStashProps> = ({
@@ -20,6 +25,8 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
   bookmarked,
   archived,
   loading,
+  stashLabels,
+  colorScheme = 'light',
 }) => {
   const { formatMessage } = useLocale()
 
@@ -33,14 +40,16 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
 
   return (
     <Box
-      className={styles.filterActionButtons}
+      className={cn(styles.filterActionButtons, {
+        [styles.hoverWhite]: colorScheme === 'light',
+      })}
       display="flex"
       height="full"
       alignItems="center"
     >
       {onStash && (
         <Tooltip
-          text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}
+          text={archived ? (stashLabels?.remove ?? formatMessage(m.removeFromStorage)) : (stashLabels?.add ?? formatMessage(m.addToStorage))}
         >
           <Button
             circle
@@ -48,7 +57,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             iconType={archived ? 'filled' : 'outline'}
             onClick={onStash}
             size="small"
-            colorScheme="light"
+            colorScheme={colorScheme}
           />
         </Tooltip>
       )}
@@ -62,7 +71,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             iconType={bookmarked ? 'filled' : 'outline'}
             onClick={onFav}
             size="small"
-            colorScheme="light"
+            colorScheme={colorScheme}
           />
         </Tooltip>
       )}
@@ -74,7 +83,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             iconType="outline"
             onClick={onRead}
             size="small"
-            colorScheme="light"
+            colorScheme={colorScheme}
           />
         </Tooltip>
       )}

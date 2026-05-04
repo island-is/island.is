@@ -12,6 +12,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FALLBACK_ORG_LOGO_URL,
+  FavAndStash,
   GoBack,
   m,
   ORG_LOGO_PARAMS,
@@ -22,7 +23,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
-import { FavAndStash } from '../../components/FavAndStash/FavAndStash'
 import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 import { pageSize, useDocumentList } from '../../hooks/useDocumentList'
@@ -215,6 +215,10 @@ export const DocumentsOverview = () => {
                       )
                     }
                     archived={activeArchive}
+                    stashLabels={{
+                      add: formatMessage(m.addToStorage),
+                      remove: formatMessage(messages.moveToInbox),
+                    }}
                     onFav={() => submitBatchAction('bookmark', selectedLines)}
                     onRead={() => submitBatchAction('read', selectedLines)}
                   />

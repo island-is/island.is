@@ -9,7 +9,11 @@ import {
 } from '@island.is/api/schema'
 import { Box, Icon, LoadingDots, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ConfirmationModal, m } from '@island.is/portals/my-pages/core'
+import {
+  ConfirmationModal,
+  FavAndStash,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { dateFormat } from '@island.is/shared/constants'
 import {
   matchPath,
@@ -27,7 +31,6 @@ import {
   useGetDocumentInboxLineV3LazyQuery,
 } from '../../queries/Overview.generated'
 import { messages } from '../../utils/messages'
-import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
@@ -418,6 +421,10 @@ export const DocumentLine: FC<Props> = ({
                 !asFrame && (
                   <FavAndStash
                     bookmarked={isBookmarked}
+                    stashLabels={{
+                      add: formatMessage(m.addToStorage),
+                      remove: formatMessage(messages.moveToInbox),
+                    }}
                     onFav={
                       isBookmarked || hasFocusOrHover
                         ? async (e) => {

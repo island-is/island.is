@@ -1878,6 +1878,23 @@ export const messages = defineMessages({
     defaultMessage: 'Upplýsingar um tímabókun',
     id: 'sp.health:appointment-detail',
   },
+  healthMessages: {
+    defaultMessage: 'Skilaboð',
+    id: 'sp.health:health-messages',
+  },
+  healthMessagesIntro: {
+    defaultMessage:
+      'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
+    id: 'sp.health:health-messages-intro',
+  },
+  healthMessagesSearchPlaceholder: {
+    defaultMessage: 'Sía eftir leitarorði',
+    id: 'sp.health:health-messages-search-placeholder',
+  },
+  healthMessagesCreate: {
+    defaultMessage: 'Ný skilaboð',
+    id: 'sp.health:health-messages-create',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',

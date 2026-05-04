@@ -6,6 +6,7 @@ export const filterActionButtons = style({
   gap: '2px',
 })
 
-globalStyle(`${filterActionButtons} button:hover`, {
+export const hoverWhite = style({})
+globalStyle(`${hoverWhite} button:hover`, {
   backgroundColor: theme.color.white,
 })

@@ -15,6 +15,7 @@ import { useMailAction } from '../../hooks/useMailActionV2'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { downloadFile } from '../../utils/downloadDocument'
+import { messages } from '../../utils/messages'
 import * as styles from './DocumentActionBar.css'
 
 export type DocumentActionBarProps = {
@@ -181,7 +182,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             )}
             <Tooltip
               text={formatMessage(
-                isArchived ? m.removeFromStorage : m.addToStorage,
+                isArchived ? messages.moveToInbox : m.addToStorage,
               )}
             >
               <Button
