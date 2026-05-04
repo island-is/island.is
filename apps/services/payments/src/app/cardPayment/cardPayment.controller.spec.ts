@@ -1277,8 +1277,7 @@ describe('CardPaymentController', () => {
           )
         } finally {
           ffs.getValue.mockImplementation(
-            originalImpl ??
-              (() => Promise.resolve(false) as Promise<unknown>),
+            originalImpl ?? (() => Promise.resolve(false) as Promise<unknown>),
           )
           getPaymentFlowDetailsSpy.mockRestore()
           getPaymentFlowChargeDetailsSpy.mockRestore()

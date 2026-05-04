@@ -316,7 +316,10 @@ export const verifyApplePaySignature = ({
       'leaf cert unexpectedly has basicConstraints CA:TRUE',
     )
   }
-  trace('cert-constraints', { intermediateCa: intermediate.ca, leafCa: leaf.ca })
+  trace('cert-constraints', {
+    intermediateCa: intermediate.ca,
+    leafCa: leaf.ca,
+  })
 
   // Walk leaf → intermediate → trusted root. checkIssued() compares Issuer
   // DNs and AKI/SKI; verify(publicKey) checks the actual signature. Both
