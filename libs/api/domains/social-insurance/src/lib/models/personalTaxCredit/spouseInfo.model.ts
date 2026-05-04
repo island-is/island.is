@@ -5,7 +5,10 @@ export class PersonalTaxCreditSpouseInfo {
   @Field(() => String)
   nationalId!: string
 
-  @Field(() => String, { nullable: true, description: "The spouse's full name" })
+  @Field(() => String, {
+    nullable: true,
+    description: "The spouse's full name",
+  })
   name?: string
 
   @Field(() => Boolean, {
