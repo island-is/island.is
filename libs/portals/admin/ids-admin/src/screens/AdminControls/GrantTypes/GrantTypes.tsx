@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData, useNavigation } from 'react-router-dom'
 
 import { Box, Button, FilterInput } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +22,8 @@ const GrantTypes = () => {
     [data?.configuredEnvironments],
   )
 
-  const { localSearch, currentPage, handleSearch, handlePageChange } =
+  const navigation = useNavigation()
+  const { localSearch, currentPage, handleSearch, handlePageChange, clearSearch } =
     useDebouncedSearch()
 
   const modal = useGrantTypeModal({
@@ -64,10 +65,13 @@ const GrantTypes = () => {
         currentPage={currentPage}
         totalPages={totalPages}
         configuredEnvironments={configuredEnvironments}
+        search={localSearch}
+        loading={navigation.state === 'loading'}
         onEdit={modal.openEditModal}
         onDelete={modal.handleDelete}
         onRestore={modal.handleRestore}
         onPageChange={handlePageChange}
+        onClearSearch={clearSearch}
       />
 
       <GrantTypeModal modal={modal} />

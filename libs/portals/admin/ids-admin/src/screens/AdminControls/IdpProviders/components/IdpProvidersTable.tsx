@@ -4,6 +4,7 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   Box,
   Button,
+  LoadingDots,
   Pagination,
   Stack,
   Table as T,
@@ -21,9 +22,12 @@ interface IdpProvidersTableProps {
   currentPage: number
   totalPages: number
   configuredEnvironments: AuthAdminEnvironment[]
+  search?: string
+  loading?: boolean
   onEdit: (idpProvider: IdpProviderRow) => void
   onDelete: (name: string, environments: AuthAdminEnvironment[]) => void
   onPageChange: (page: number) => void
+  onClearSearch?: () => void
 }
 
 export const IdpProvidersTable = ({
@@ -31,9 +35,12 @@ export const IdpProvidersTable = ({
   currentPage,
   totalPages,
   configuredEnvironments,
+  search,
+  loading,
   onEdit,
   onDelete,
   onPageChange,
+  onClearSearch,
 }: IdpProvidersTableProps) => {
   const { formatMessage } = useLocale()
 
@@ -56,11 +63,30 @@ export const IdpProvidersTable = ({
           border="standard"
           borderRadius="large"
         >
-          <Problem
-            type="no_data"
-            title={formatMessage(m.idpProvidersNoResults)}
-            titleSize="h3"
-          />
+          {loading ? (
+            <LoadingDots />
+          ) : (
+            <Problem
+              type="no_data"
+              title={formatMessage(
+                search ? m.noResultsForSearch : m.idpProvidersNoResults,
+              )}
+              message={
+                search && onClearSearch ? (
+                  <Box marginTop={2}>
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      onClick={onClearSearch}
+                    >
+                      {formatMessage(m.clearFilter)}
+                    </Button>
+                  </Box>
+                ) : undefined
+              }
+              titleSize="h3"
+            />
+          )}
         </Box>
       ) : (
         <T.Table>

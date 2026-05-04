@@ -81,6 +81,12 @@ export const useGrantTypeModal = ({
     lastHandledFetcherData.current = fetcher.data
 
     if (!fetcher.data.globalError) {
+      const data = fetcher.data.data as {
+        failedEnvironments?: { environment: string; message: string }[]
+      } | null
+
+      const failedEnvs = data?.failedEnvironments
+
       switch (fetcher.data.intent) {
         case GrantTypeIntent.create:
           toast.success(formatMessage(m.grantTypesCreateSuccess))
@@ -95,6 +101,16 @@ export const useGrantTypeModal = ({
           toast.success(formatMessage(m.grantTypesRestoreSuccess))
           break
       }
+
+      if (failedEnvs && failedEnvs.length > 0) {
+        const envNames = failedEnvs.map((f) => f.environment).join(', ')
+        toast.warning(
+          formatMessage(m.grantTypesPartialFailure, {
+            environments: envNames,
+          }),
+        )
+      }
+
       resetModalState()
     } else {
       toast.error(formatMessage(m.grantTypesError))

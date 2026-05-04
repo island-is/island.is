@@ -37,6 +37,10 @@ mutation CreateGrantType($input: CreateAuthAdminGrantTypeInput!) {
       description
       archived
     }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }
 
@@ -50,13 +54,31 @@ mutation UpdateGrantType($input: UpdateAuthAdminGrantTypeInput!) {
       description
       archived
     }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }
 
 mutation DeleteGrantType($input: DeleteAuthAdminGrantTypeInput!) {
-  deleteAuthAdminGrantType(input: $input)
+  deleteAuthAdminGrantType(input: $input) {
+    success
+    deletedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
 }
 
 mutation RestoreGrantType($input: RestoreAuthAdminGrantTypeInput!) {
-  restoreAuthAdminGrantType(input: $input)
+  restoreAuthAdminGrantType(input: $input) {
+    success
+    deletedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
 }

@@ -25,6 +25,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clear-filter',
     defaultMessage: 'Clear filter',
   },
+  noResultsForSearch: {
+    id: 'ap.ids-admin:no-results-for-search',
+    defaultMessage: 'No results found for your search',
+  },
   clearAllFilters: {
     id: 'ap.ids-admin:clear-all-filters',
     defaultMessage: 'Clear all filters',
@@ -1116,6 +1120,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-environment-required',
     defaultMessage: 'Select at least one environment to delete from',
   },
+  apiScopeUsersPartialFailure: {
+    id: 'ap.ids-admin:api-scope-users-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
   grantTypes: {
     id: 'ap.ids-admin:grant-types',
     defaultMessage: 'Grant Types',
@@ -1264,6 +1272,10 @@ export const m = defineMessages({
   grantTypesRestoreEnvironmentRequired: {
     id: 'ap.ids-admin:grant-types-restore-environment-required',
     defaultMessage: 'Select at least one environment to restore to',
+  },
+  grantTypesPartialFailure: {
+    id: 'ap.ids-admin:grant-types-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',

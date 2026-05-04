@@ -7,6 +7,8 @@ import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { environments } from '../shared/constants/environments'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { ApiScopeUsersPayload } from './dto/api-scope-users.payload'
 import { ApiScopeUsersInput } from './dto/api-scope-users.input'
 import { CreateApiScopeUserInput } from './dto/create-api-scope-user.input'
@@ -79,6 +81,14 @@ interface ApiScopeUsersApi {
     xQueryNationalId: string
   }): Promise<ApiResponse<number>>
 }
+
+const toFailure = (
+  environment: Environment,
+  error: unknown,
+): EnvironmentFailure => ({
+  environment,
+  message: error instanceof Error ? error.message : 'Unknown error',
+})
 
 @Injectable()
 export class ApiScopeUserService extends MultiEnvironmentService {
@@ -227,6 +237,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -262,6 +273,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
           `Failed to create API scope user in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -270,10 +282,11 @@ export class ApiScopeUserService extends MultiEnvironmentService {
         nationalId: input.nationalId,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to create API scope user')
+    throw new Error('Failed to create API scope user in all environments')
   }
 
   async updateApiScopeUser(
@@ -292,6 +305,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -327,6 +341,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
           `Failed to update API scope user in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -335,52 +350,51 @@ export class ApiScopeUserService extends MultiEnvironmentService {
         nationalId: input.nationalId,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to update API scope user')
+    throw new Error('Failed to update API scope user in all environments')
   }
 
   async deleteApiScopeUser(
     user: User,
     nationalId: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToDelete =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const deletedEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToDelete) {
-      let requestMade = false
-
       try {
-        await this.typedRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meApiScopeUsersControllerDeleteRaw({
+        await this.typedRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerDeleteRaw({
             xQueryNationalId: nationalId,
-          })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+          }),
+        )
+        deletedEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to delete API scope user in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (deletedEnvironments.length === 0) {
+      throw new Error('Failed to delete API scope user in all environments')
     }
 
-    throw lastError ?? new Error('Failed to delete API scope user')
+    return {
+      success: failedEnvironments.length === 0,
+      deletedEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 }

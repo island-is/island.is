@@ -136,6 +136,12 @@ export const useApiScopeUserModal = ({
     lastHandledFetcherData.current = fetcher.data
 
     if (!fetcher.data.globalError) {
+      const data = fetcher.data.data as {
+        failedEnvironments?: { environment: string; message: string }[]
+      } | null
+
+      const failedEnvs = data?.failedEnvironments
+
       switch (fetcher.data.intent) {
         case ApiScopeUserIntent.create:
           toast.success(formatMessage(m.apiScopeUsersCreateSuccess))
@@ -147,6 +153,16 @@ export const useApiScopeUserModal = ({
           toast.success(formatMessage(m.apiScopeUsersDeleteSuccess))
           break
       }
+
+      if (failedEnvs && failedEnvs.length > 0) {
+        const envNames = failedEnvs.map((f) => f.environment).join(', ')
+        toast.warning(
+          formatMessage(m.apiScopeUsersPartialFailure, {
+            environments: envNames,
+          }),
+        )
+      }
+
       resetModalState()
     } else {
       toast.error(formatMessage(m.apiScopeUsersError))
