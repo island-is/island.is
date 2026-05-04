@@ -1021,7 +1021,7 @@ export class CaseService {
         this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (
         updatedCase.state === CaseState.RECEIVED &&
-        theCase.state === CaseState.COMPLETED &&
+        isCompletedCase(theCase.state) &&
         isIndictment &&
         isReopening
       ) {
