@@ -55,6 +55,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
       buttonGroup={{
         actions: [
           <Button
+            key="insurance-confirmation"
             variant="utility"
             disabled={displayConfirmationErrorAlert}
             size="small"

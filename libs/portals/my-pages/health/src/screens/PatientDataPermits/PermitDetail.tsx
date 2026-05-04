@@ -126,7 +126,7 @@ const PermitDetail: React.FC = () => {
                   onClick={() =>
                     navigate(
                       HealthPaths.HealthPatientDataPermitsAdd,
-                      isInactive
+                      !permit || isInactive
                         ? undefined
                         : {
                             state: {
@@ -139,7 +139,9 @@ const PermitDetail: React.FC = () => {
                   }
                 >
                   {formatMessage(
-                    isInactive ? messages.activatePermit : messages.editPermit,
+                    !permit || isInactive
+                      ? messages.activatePermit
+                      : messages.editPermit,
                   )}
                 </Button>,
               ],
