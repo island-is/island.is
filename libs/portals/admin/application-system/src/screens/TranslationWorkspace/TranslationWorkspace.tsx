@@ -99,7 +99,7 @@ const TranslationWorkspace = () => {
   const resolvePreviewString = useCallback(
     (messageKey: string, defaultMessage?: string | null) => {
       const draft = editedValues[activeLocale][messageKey]
-      if (draft !== undefined) {
+      if (draft !== undefined && draft !== '') {
         return draft
       }
       const persisted = getPersistedForMessage(messageKey, activeLocale)
