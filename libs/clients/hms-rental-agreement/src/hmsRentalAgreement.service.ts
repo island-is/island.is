@@ -1,90 +1,81 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { HomeApi } from '../gen/fetch'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { isDefined } from '@island.is/shared/utils'
+import { User, withAuthContext } from '@island.is/auth-nest-tools'
+import { dataOr404Null } from '@island.is/clients/middlewares'
 import {
-  mapRentalAgreementDto,
-  RentalAgreementDto,
-} from './dtos/rentalAgreements.dto'
-import { INACTIVE_AGREEMENT_STATUSES } from './constants'
+  getContract,
+  getContractByContractIdWithDocuments,
+  getContractByContractIdDocumentByDocumentId,
+} from '../gen/fetch'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { isDefined } from '@island.is/shared/utils'
+import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import {
-  ContractDocumentItemDto,
+  type RentalAgreementDto,
+  type ContractDocumentItemDto,
+  mapRentalAgreementDto,
+  mapContractWithDocumentsDto,
   mapContractDocumentItemDto,
-} from './dtos/contractDocument'
+} from './dtos'
 
 @Injectable()
 export class HmsRentalAgreementService {
-  constructor(
-    private readonly api: HomeApi,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
-
-  private apiWithAuth = (user: User) =>
-    this.api.withMiddleware(new AuthMiddleware(user as Auth))
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
 
   async getRentalAgreements(
     user: User,
     hideInactiveAgreements = false,
   ): Promise<RentalAgreementDto[]> {
-    const res = await this.apiWithAuth(user).contractKtKtGet({
-      kt: user.nationalId,
-    })
+    const contracts =
+      (await withAuthContext(user, () => dataOr404Null(getContract()))) ?? []
 
-    const data = res.map(mapRentalAgreementDto).filter(isDefined)
+    const dtos = contracts?.map(mapRentalAgreementDto).filter(isDefined)
+
     if (hideInactiveAgreements) {
-      return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))
+      const inactiveSet = new Set<string>(INACTIVE_AGREEMENT_STATUSES)
+      return dtos.filter((dto) => !inactiveSet.has(dto.status))
     }
-    return data
+    return dtos
   }
 
   async getRentalAgreement(
     user: User,
-    id: number,
+    id: string,
   ): Promise<RentalAgreementDto | undefined> {
-    const agreements = await this.getRentalAgreements(user)
-    const agreementToReturn: RentalAgreementDto | undefined = agreements.find(
-      (agreement) => agreement.id === id,
+    const res = await withAuthContext(user, () =>
+      dataOr404Null(
+        getContractByContractIdWithDocuments({ path: { contractId: id } }),
+      ),
     )
 
-    if (!agreementToReturn) {
-      this.logger.warn('Rental agreement not found', {
-        id,
-      })
-      return
+    if (!res?.contract?.contract_id) {
+      this.logger.warn('Rental agreement not found', { id })
+      return undefined
     }
 
-    return agreementToReturn
+    return mapContractWithDocumentsDto(res) ?? undefined
   }
 
   async getRentalAgreementPdf(
     user: User,
-    id: number,
-  ): Promise<Array<ContractDocumentItemDto> | undefined> {
-    const res = await this.apiWithAuth(user).contractKtKtWithDocumentsGet({
-      kt: user.nationalId,
-    })
+    contractId: number,
+    documentId: number,
+  ): Promise<ContractDocumentItemDto | undefined> {
+    const res = await withAuthContext(user, () =>
+      dataOr404Null(
+        getContractByContractIdDocumentByDocumentId({
+          path: { contractId, documentId },
+        }),
+      ),
+    )
 
-    if (!res || res.length === 0) {
-      this.logger.warn('No rental agreements found', {
-        id,
+    if (!res) {
+      this.logger.warn('No rental agreement document found', {
+        contractId,
+        documentId,
       })
       return undefined
     }
 
-    const data = res?.find((res) => res.contract?.contractId === id)
-
-    if (!data) {
-      this.logger.warn('Rental agreement pdf not found', {
-        id,
-      })
-      return undefined
-    }
-
-    const pdfs = data.documents
-      ?.map(mapContractDocumentItemDto)
-      .filter(isDefined)
-
-    return pdfs
+    return mapContractDocumentItemDto(res) ?? undefined
   }
 }

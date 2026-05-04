@@ -42,11 +42,11 @@ export class RentalAgreementsResolver {
     @Args('hideInactiveAgreements', { nullable: true })
     hideInactiveAgreements?: boolean,
   ): Promise<PaginatedRentalAgreementCollection> {
-    const res = await this.service.getRentalAgreements(
+    const dtos = await this.service.getRentalAgreements(
       user,
       hideInactiveAgreements,
     )
-    const data = res.map(mapToRentalAgreement)
+    const data = dtos.map(mapToRentalAgreement)
 
     return {
       data,
@@ -66,19 +66,21 @@ export class RentalAgreementsResolver {
     @CurrentUser() user: User,
     @Args('contractId', { type: () => ID }) contractId: string,
   ): Promise<RentalAgreement | undefined> {
-    const data = await this.service
-      .getRentalAgreement(user, +contractId)
+    const dto = await this.service
+      .getRentalAgreement(user, contractId)
       .catch(handle404)
 
-    const contractData = data ? mapToRentalAgreement(data) : undefined
+    if (!dto) return undefined
 
-    if (!contractData) {
-      return undefined
-    }
+    const mapped = mapToRentalAgreement(dto)
+    const baseUrl = `${this.downloadServiceConfig.baseUrl}/download/v1/rental-agreements/${contractId}`
 
     return {
-      ...contractData,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/rental-agreements/${contractId}`,
+      ...mapped,
+      documents: mapped.documents?.map((doc) => ({
+        ...doc,
+        downloadUrl: `${baseUrl}/${doc.id}`,
+      })),
     }
   }
 }

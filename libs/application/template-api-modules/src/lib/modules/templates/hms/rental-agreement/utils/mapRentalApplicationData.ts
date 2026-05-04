@@ -118,12 +118,12 @@ export const mapRentalApplicationData = (
       zip: searchResults?.postalCode?.toString() ?? null,
       propertyId: propertyId?.toString() ?? null,
       appraisalUnits: appraisalUnits ?? null,
-      part: PropertyPart.Whole, // Whole | Part
+      part: PropertyPart.WHOLE, // Whole | Part
       type: categoryType as PropertyType,
       specialGroup:
         categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS
           ? (categoryClassGroup as SpecialGroup)
-          : SpecialGroup.No,
+          : SpecialGroup.NO,
     },
     lease: {
       description,
@@ -144,8 +144,8 @@ export const mapRentalApplicationData = (
       rent: {
         amount: parseToNumber(amount || '0'),
         index: isIndexConnected?.includes(YesOrNoEnum.YES)
-          ? RentIndex.ConsumerPriceIndex
-          : RentIndex.None,
+          ? RentIndex.CONSUMER_PRICE_INDEX
+          : RentIndex.NONE,
         indexRate:
           isIndexConnected?.includes(YesOrNoEnum.YES) && indexRate
             ? Number(indexRate.replace(',', '.'))
@@ -154,25 +154,25 @@ export const mapRentalApplicationData = (
       payment: {
         method: paymentMethodOptions as PaymentMethod,
         otherMethod:
-          paymentMethodOptions === PaymentMethod.Other
+          paymentMethodOptions === PaymentMethod.OTHER
             ? paymentMethodOther
             : null,
         paymentDay: paymentDateOptions as PaymentDay,
         otherPaymentDay:
-          paymentDateOptions === PaymentDay.Other ? paymentDayOther : null,
+          paymentDateOptions === PaymentDay.OTHER ? paymentDayOther : null,
         bankAccountNumber:
-          paymentMethodOptions === PaymentMethod.BankTransfer
+          paymentMethodOptions === PaymentMethod.BANK_TRANSFER
             ? `${bankAccount?.bankNumber}-${bankAccount?.ledger}-${bankAccount?.accountNumber}`
             : null,
         nationalIdOfAccountOwner:
-          paymentMethodOptions === PaymentMethod.BankTransfer
+          paymentMethodOptions === PaymentMethod.BANK_TRANSFER
             ? paymentMethodNationalId
             : null,
       },
       securityDeposit: {
         type: securityType ? (securityType as SecurityDepositType) : undefined,
         otherType:
-          securityType === SecurityDepositType.Other ? otherInfo : null,
+          securityType === SecurityDepositType.OTHER ? otherInfo : null,
         description: securityType
           ? getSecurityDepositTypeDescription(
               securityType,
@@ -184,14 +184,14 @@ export const mapRentalApplicationData = (
           : null,
         amount: securityDepositAmount as DepositAmount,
         otherAmount:
-          securityDepositAmount === DepositAmount.Other
+          securityDepositAmount === DepositAmount.OTHER
             ? parseToNumber(securityAmountOther || '0')
             : 0,
       },
       otherFees: {
         housingFund: {
           payedBy:
-            housingFundPayee === Payer.Tenant ? Payer.Tenant : Payer.Landlord,
+            housingFundPayee === Payer.TENANT ? Payer.TENANT : Payer.LANDLORD,
           amount:
             housingFundAmount !== undefined && housingFundAmount !== null
               ? Number(housingFundAmount)
@@ -199,9 +199,9 @@ export const mapRentalApplicationData = (
         },
         electricityCost: {
           payedBy:
-            electricityCostPayee === Payer.Tenant
-              ? Payer.Tenant
-              : Payer.Landlord,
+            electricityCostPayee === Payer.TENANT
+              ? Payer.TENANT
+              : Payer.LANDLORD,
           meterNumber: electricityCostMeterNumber || null,
           meterStatus: electricityCostMeterStatus || null,
           meterStatusDate: electricityCostMeterStatusDate
@@ -210,7 +210,7 @@ export const mapRentalApplicationData = (
         },
         heatingCost: {
           payedBy:
-            heatingCostPayee === Payer.Tenant ? Payer.Tenant : Payer.Landlord,
+            heatingCostPayee === Payer.TENANT ? Payer.TENANT : Payer.LANDLORD,
           meterNumber: heatingCostMeterNumber || null,
           meterStatus: heatingCostMeterStatus || null,
           meterStatusDate: heatingCostMeterStatusDate

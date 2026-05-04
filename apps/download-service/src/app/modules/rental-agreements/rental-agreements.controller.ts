@@ -29,44 +29,47 @@ export class RentalAgreementsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/:id')
+  @Post('/:contractId/:documentId')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Get a rental agreement pdf from HMSs',
+    description: 'Get a rental agreement document pdf from HMS',
   })
   async getRentalAgreementPdf(
-    @Param('id') id: string | undefined,
+    @Param('contractId') contractId: string | undefined,
+    @Param('documentId') documentId: string | undefined,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    if (!id) {
-      throw new BadRequestException('Missing id')
+    if (!contractId || !documentId) {
+      throw new BadRequestException('Missing contractId or documentId')
     }
 
-    const documentResponse = await this.service.getRentalAgreementPdf(user, +id)
+    const documentResponse = await this.service.getRentalAgreementPdf(
+      user,
+      +contractId,
+      +documentId,
+    )
 
-    if (documentResponse && documentResponse.length > 0) {
+    if (documentResponse) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
-        resources: id,
+        resources: `${contractId}/${documentId}`,
       })
 
-      //grab the first one
-      const document = documentResponse[0].document
+      const buffer = Buffer.from(documentResponse.document, 'base64')
+      const filename = documentResponse.name.endsWith('.pdf')
+        ? documentResponse.name
+        : `${documentResponse.name}.pdf`
 
-      const buffer = Buffer.from(document, 'base64')
-
-      const filename = `${user.nationalId}-rental-agreement-${id}.pdf`
-
-      res.header('Content-Disposition', `attachment; filename=${filename}`)
+      res.header('Content-Disposition', `attachment; filename="${filename}"`)
       res.header('Pragma', 'no-cache')
-      res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'max-age=0')
+      res.header('Cache-Control', 'no-cache, max-age=0')
       return res.end(buffer)
     }
+
     res.status(404)
-    return res.end('Rental agreement not found')
+    return res.end('Rental agreement document not found')
   }
 }

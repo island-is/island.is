@@ -1,6 +1,6 @@
+import { type ContractParty } from '../../gen/fetch'
+import { type PartyType } from '../types'
 import { AddressDto, mapAddressDto } from './address.dto'
-import { ContractParty as GeneratedContractParty } from '../../gen/fetch'
-import { PartyType } from '../types'
 
 export interface ContractPartyDto {
   id: number
@@ -13,31 +13,27 @@ export interface ContractPartyDto {
 }
 
 export const mapContractPartyDto = (
-  data: GeneratedContractParty,
+  data: ContractParty,
 ): ContractPartyDto | null => {
-  const contractPartyId = data?.contractPartyId ?? undefined
-
-  if (contractPartyId === undefined || !data.partyTypeUseCode || !data.name) {
-    return null
-  }
+  if (!data.contract_party_id || !data.name) return null
   return {
-    id: contractPartyId,
-    type: mapPartyType(data.partyTypeUseCode),
-    name: data.name ?? undefined,
+    id: data.contract_party_id,
+    type: mapPartyType(data.party_type_use_code),
+    name: data.name,
     nationalId: data.kennitala ?? undefined,
     address:
       mapAddressDto(
-        data.address1 ?? undefined,
-        data.town ?? undefined,
-        data.postalCode ?? undefined,
-        data.country ?? undefined,
+        data.address_1,
+        data.town,
+        data.postal_code,
+        data.country,
       ) ?? undefined,
-    phoneNumber: data.phoneNumber ?? undefined,
+    phoneNumber: data.phone_number ?? undefined,
     email: data.email ?? undefined,
   }
 }
 
-const mapPartyType = (type?: string): PartyType => {
+const mapPartyType = (type?: string | null): PartyType => {
   switch (type) {
     case 'OWNER':
       return 'owner'

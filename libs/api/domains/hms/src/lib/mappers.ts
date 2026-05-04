@@ -1,12 +1,11 @@
 import {
-  AddressDto,
-  AgreementStatusType as AgreementStatusClientType,
-  ContractPartyDto,
-  ContractPropertyDto,
-  PartyType as PartyClientType,
-  RentalAgreementDto,
-  TemporalType as TemporalClientType,
-  RentalPropertyType,
+  type RentalAgreementDto,
+  type ContractPartyDto,
+  type ContractPropertyDto,
+  type AgreementStatusType as ClientAgreementStatusType,
+  type PartyType as ClientPartyType,
+  type TemporalType as ClientTemporalType,
+  type RentalPropertyType,
 } from '@island.is/clients/hms-rental-agreement'
 import { LANDLORD_TYPES, TENANT_TYPES } from './constants'
 import { Address } from './models/rentalAgreements/address.model'
@@ -22,131 +21,93 @@ import {
   TemporalType,
 } from './models/rentalAgreements/rentalAgreement.model'
 
-const mapAddress = (addressDto?: AddressDto): Address | undefined => {
-  if (!addressDto) return undefined
+const AGREEMENT_STATUS_MAP: Record<
+  ClientAgreementStatusType,
+  AgreementStatusType
+> = {
+  valid: AgreementStatusType.VALID,
+  invalid: AgreementStatusType.INVALID,
+  expired: AgreementStatusType.EXPIRED,
+  cancelled: AgreementStatusType.CANCELLED,
+  terminated: AgreementStatusType.TERMINATED,
+  cancellationRequested: AgreementStatusType.CANCELLATION_REQUESTED,
+  pendingCancellation: AgreementStatusType.PENDING_CANCELLATION,
+  pendingTermination: AgreementStatusType.PENDING_TERMINATION,
+  unknown: AgreementStatusType.UNKNOWN,
+}
 
+const PARTY_TYPE_MAP: Record<ClientPartyType, PartyType> = {
+  owner: PartyType.OWNER,
+  tenant: PartyType.TENANT,
+  agency: PartyType.AGENCY,
+  agentForOwner: PartyType.AGENT_FOR_OWNER,
+  agentForTenant: PartyType.AGENT_FOR_TENANT,
+  ownerTakeover: PartyType.OWNER_TAKEOVER,
+  unknown: PartyType.UNKNOWN,
+}
+
+const TEMPORAL_TYPE_MAP: Record<ClientTemporalType, TemporalType> = {
+  indefinite: TemporalType.INDEFINITE,
+  temporary: TemporalType.TEMPORARY,
+  unknown: TemporalType.UNKNOWN,
+}
+
+const PROPERTY_TYPE_MAP: Record<RentalPropertyType, PropertyType> = {
+  individualRoom: PropertyType.INDIVIDUAL_ROOM,
+  residential: PropertyType.RESIDENTIAL,
+  nonresidential: PropertyType.NONRESIDENTIAL,
+  unknown: PropertyType.UNKNOWN,
+}
+
+const mapAddress = (dto: ContractPartyDto): Address | undefined => {
+  if (!dto.address) return undefined
   return {
-    streetAddress: addressDto.address,
-    city: addressDto.town,
-    postalCode: addressDto.postalCode,
-    country: addressDto.country,
+    streetAddress: dto.address.address,
+    city: dto.address.town,
+    postalCode: dto.address.postalCode,
+    country: dto.address.country,
   }
 }
 
-const mapContractParty = (partyDto: ContractPartyDto): ContractParty => {
-  return {
-    id: partyDto.id,
-    type: mapPartyType(partyDto.type),
-    name: partyDto.name,
-    nationalId: partyDto.nationalId,
-    address: mapAddress(partyDto.address),
-    phoneNumber: partyDto.phoneNumber,
-    email: partyDto.email,
-  }
-}
+const mapContractParty = (dto: ContractPartyDto): ContractParty => ({
+  id: dto.id,
+  type: PARTY_TYPE_MAP[dto.type],
+  name: dto.name,
+  nationalId: dto.nationalId,
+  address: mapAddress(dto),
+  phoneNumber: dto.phoneNumber,
+  email: dto.email,
+})
 
 const mapContractProperty = (
-  propertyDto: ContractPropertyDto,
-): ContractProperty => {
-  return {
-    id: propertyDto.id,
-    propertyId: propertyDto.propertyId,
-    type: mapPropertyType(propertyDto.type),
-    postalCode: propertyDto.postalCode,
-    streetAndHouseNumber: propertyDto.streetAndHouseNumber,
-    municipality: propertyDto.municipality,
-  }
-}
+  dto: ContractPropertyDto,
+): ContractProperty => ({
+  id: dto.id,
+  propertyId: dto.propertyId,
+  type: PROPERTY_TYPE_MAP[dto.type],
+  postalCode: dto.postalCode,
+  streetAndHouseNumber: dto.streetAndHouseNumber,
+  municipality: dto.municipality,
+})
 
-const mapAgreementStatus = (
-  status: AgreementStatusClientType,
-): AgreementStatusType => {
-  switch (status) {
-    case 'valid':
-      return AgreementStatusType.VALID
-    case 'invalid':
-      return AgreementStatusType.INVALID
-    case 'expired':
-      return AgreementStatusType.EXPIRED
-    case 'cancelled':
-      return AgreementStatusType.CANCELLED
-    case 'terminated':
-      return AgreementStatusType.TERMINATED
-    case 'cancellationRequested':
-      return AgreementStatusType.CANCELLATION_REQUESTED
-    case 'pendingCancellation':
-      return AgreementStatusType.PENDING_CANCELLATION
-    case 'pendingTermination':
-      return AgreementStatusType.PENDING_TERMINATION
-    default:
-      return AgreementStatusType.UNKNOWN
-  }
-}
-
-const mapPartyType = (type: PartyClientType): PartyType => {
-  switch (type) {
-    case 'agency':
-      return PartyType.AGENCY
-    case 'tenant':
-      return PartyType.TENANT
-    case 'owner':
-      return PartyType.OWNER
-    case 'agentForOwner':
-      return PartyType.AGENT_FOR_OWNER
-    case 'agentForTenant':
-      return PartyType.AGENT_FOR_TENANT
-    case 'ownerTakeover':
-      return PartyType.OWNER_TAKEOVER
-    default:
-      return PartyType.UNKNOWN
-  }
-}
-
-const mapPropertyType = (type: RentalPropertyType): PropertyType => {
-  switch (type) {
-    case 'individualRoom':
-      return PropertyType.INDIVIDUAL_ROOM
-    case 'nonresidential':
-      return PropertyType.NONRESIDENTIAL
-    case 'residential':
-      return PropertyType.RESIDENTIAL
-    default:
-      return PropertyType.UNKNOWN
-  }
-}
-
-const mapTemporalType = (type: TemporalClientType): TemporalType => {
-  switch (type) {
-    case 'indefinite':
-      return TemporalType.INDEFINITE
-    case 'temporary':
-      return TemporalType.TEMPORARY
-    default:
-      return TemporalType.UNKNOWN
-  }
-}
-
-export const mapToRentalAgreement = (
-  dto: RentalAgreementDto,
-): RentalAgreement => {
-  const property = dto.contractProperty?.[0]
-    ? mapContractProperty(dto.contractProperty[0])
-    : undefined
-
+export const mapToRentalAgreement = (dto: RentalAgreementDto): RentalAgreement => {
   const parties = dto.contractParty?.map(mapContractParty)
 
   return {
     id: dto.id,
-    status: mapAgreementStatus(dto.status),
-    contractType: mapTemporalType(dto.contractType),
+    status: AGREEMENT_STATUS_MAP[dto.status],
+    contractType: TEMPORAL_TYPE_MAP[dto.contractType],
     dateFrom: dto.dateFrom?.toISOString(),
     dateTo: dto.dateTo?.toISOString(),
-    landlords:
-      parties?.filter((party) => LANDLORD_TYPES.includes(party.type)) ??
-      undefined,
-    tenants:
-      parties?.filter((party) => TENANT_TYPES.includes(party.type)) ??
-      undefined,
-    contractProperty: property,
+    terminationDate: dto.terminationDate?.toISOString(),
+    landlords: parties?.filter((p) => LANDLORD_TYPES.includes(p.type)),
+    tenants: parties?.filter((p) => TENANT_TYPES.includes(p.type)),
+    contractProperty: dto.contractProperty
+      ? mapContractProperty(dto.contractProperty[0])
+      : undefined,
+    documents: dto.documents?.map((d) => ({
+      id: d.id,
+      name: d.name,
+    })),
   }
 }

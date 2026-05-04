@@ -73,7 +73,7 @@ export const parseTerminateContract = (
     terminateOn: new Date(terminateOn),
     reasonUseCode:
       (terminationReason as TerminationReason) ||
-      TerminationReason.OWNERINBUILDING,
+      TerminationReason.OWNER_IN_BUILDING,
     document: files[0].fileContent,
     documentMime: files[0].fileName.split('.').pop() ?? 'pdf',
     documentFilename: truncateMiddle(files[0].fileName, 40),

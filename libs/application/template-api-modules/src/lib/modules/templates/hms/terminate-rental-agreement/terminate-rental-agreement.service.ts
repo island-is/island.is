@@ -2,8 +2,12 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
-import { HomeApi } from '@island.is/clients/hms-rental-agreement'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import {
+  getContractKtByKt,
+  postContractCancel,
+  postContractTerminate,
+} from '@island.is/clients/hms-rental-agreement'
+import { withAuthContext } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -22,31 +26,19 @@ import { mockGetRentalAgreements } from './mockedRentalAgreements'
 export class TerminateRentalAgreementService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly homeApi: HomeApi,
     private readonly attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.TERMINATE_RENTAL_AGREEMENT)
   }
 
-  private homeApiWithAuth(auth: Auth) {
-    return this.homeApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
   async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
     try {
-      const contracts = await this.homeApiWithAuth(auth)
-        .contractKtKtGet({
-          kt: auth.nationalId,
-        })
-        .then((res) => {
-          return res
-            .map((contract) => {
-              if (contract.contractStatus === ContractStatus.STATUSVALID) {
-                return contract
-              }
-            })
-            .filter((contract) => contract !== undefined)
-        })
+      const response = await withAuthContext(auth, () =>
+        getContractKtByKt({ path: { kt: auth.nationalId } }),
+      )
+
+      const contracts = (response.data ?? [])
+        .filter((contract) => contract.contract_status === ContractStatus.STATUSVALID)
 
       if (
         (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
@@ -69,7 +61,6 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
       return contracts
     } catch (e) {
       if (e instanceof TemplateApiError) {
-        // If it's already a TemplateApiError, throw it
         throw e
       }
       this.logger.error('Failed to fetch rental agreements:', e.message)
@@ -97,9 +88,7 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
           throw e
         }
         try {
-          return await this.homeApi.contractCancelPost({
-            cancelContract: parsedApplication,
-          })
+          return (await postContractCancel({ body: parsedApplication })).data
         } catch (e) {
           this.logger.error('Failed to post cancel contract:', e.message)
           throw e
@@ -112,9 +101,7 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
           throw e
         }
         try {
-          return await this.homeApi.contractTerminatePost({
-            terminateContract: parsedApplication,
-          })
+          return (await postContractTerminate({ body: parsedApplication })).data
         } catch (e) {
           this.logger.error('Failed to post terminate contract:', e.message)
           throw e
