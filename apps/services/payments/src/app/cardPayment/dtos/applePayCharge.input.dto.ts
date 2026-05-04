@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsIn,
   IsObject,
+  IsOptional,
   IsString,
   Length,
   Matches,
@@ -34,6 +35,16 @@ class ApplePayPaymentHeader {
     type: String,
   })
   transactionId!: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(8192)
+  @ApiPropertyOptional({
+    description:
+      'Optional merchant-supplied application data (base64). Included in the signed bytes per PassKit spec.',
+    type: String,
+  })
+  applicationData?: string
 }
 
 class ApplePayPaymentData {

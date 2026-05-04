@@ -10,6 +10,9 @@ class ApplePayPaymentHeader {
 
   @Field(() => String)
   transactionId!: string
+
+  @Field(() => String, { nullable: true })
+  applicationData?: string
 }
 
 @InputType('PaymentsApplePayPaymentData')
