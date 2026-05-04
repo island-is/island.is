@@ -687,7 +687,10 @@ export class CardPaymentService {
   }
 
   private applePayReplayCacheKey(transactionIdentifier: string): string {
-    return `applepay:tx:${transactionIdentifier}`
+    // Lowercase before keying so case variants of the same Apple Pay
+    // transaction id (which is hex) cannot bypass replay detection by
+    // hitting different cache slots.
+    return `applepay:tx:${transactionIdentifier.toLowerCase()}`
   }
 
   // REFUND METHODS ------------------------------------------------------------------------------------------------

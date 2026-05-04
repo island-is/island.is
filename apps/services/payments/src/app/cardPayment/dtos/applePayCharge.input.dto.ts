@@ -29,9 +29,10 @@ class ApplePayPaymentHeader {
   publicKeyHash!: string
 
   @IsString()
-  @Matches(/^[a-fA-F0-9]{1,128}$/)
+  @Matches(/^[a-fA-F0-9]{64}$/)
   @ApiProperty({
-    description: 'Apple Pay device transaction id (hex)',
+    description:
+      'Apple Pay device transaction id: exactly 64 hex chars (32 bytes). Apple emits a SHA-256-derived value here. The strict format prevents odd-length truncation in Buffer.from(s, "hex") from producing two distinct strings that decode to the same bytes — which would otherwise weaken digest binding and replay-cache lookups.',
     type: String,
   })
   transactionId!: string
@@ -86,10 +87,10 @@ export class ApplePayChargeInput {
   paymentData!: ApplePayPaymentData
 
   @IsString()
-  @Matches(/^[a-fA-F0-9]{1,128}$/)
+  @Matches(/^[a-fA-F0-9]{64}$/)
   @ApiProperty({
     description:
-      'Apple Pay transaction identifier (hex). Used as a replay-protection cache key.',
+      'Apple Pay transaction identifier: exactly 64 hex chars (32 bytes). Used as a replay-protection cache key. Strict format matches Apple\'s canonical transactionId so two formatting variants can never bypass replay detection.',
     type: String,
   })
   transactionIdentifier!: string

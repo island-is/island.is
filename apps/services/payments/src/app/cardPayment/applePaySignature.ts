@@ -124,6 +124,21 @@ export const verifyApplePaySignature = ({
   }
 
   // ──────────────────────────────────────────────────────────────────
+  // Step 0: only EC_v1 is supported.
+  // Every algorithmic choice below (signed-bytes recipe, SHA-256 digest,
+  // ECDH/AES-GCM in the decrypt path) is specific to EC_v1. If Apple
+  // ever ships a new token format, fail closed here rather than letting
+  // the EC_v1 rules silently misvalidate it.
+  // ──────────────────────────────────────────────────────────────────
+  trace('version', { version: paymentData.version })
+  if (paymentData.version !== 'EC_v1') {
+    throw verifyError(
+      'version',
+      `unsupported token version ${paymentData.version} (only EC_v1 is supported)`,
+    )
+  }
+
+  // ──────────────────────────────────────────────────────────────────
   // Step 1: decode signature and parse the CMS SignedData envelope.
   // The wire format is base64(DER(ContentInfo{ SignedData })). Apple uses
   // a *detached* signature — the signed content (the bytes whose digest
@@ -510,8 +525,16 @@ export const verifyApplePaySignature = ({
   }
   const claimedDigest = Buffer.from(messageDigestAttr.value as string, 'binary')
 
-  if (!/^[0-9a-fA-F]*$/.test(paymentData.header.transactionId)) {
-    throw verifyError('transaction-id', 'transactionId is not hex')
+  // Defense in depth: the DTO already enforces ^[a-fA-F0-9]{64}$, but
+  // re-check here so the verifier is correct on its own. An odd-length
+  // or non-hex string would silently truncate in Buffer.from(s, 'hex'),
+  // letting two distinct header strings hash to the same bytes — fail
+  // closed instead.
+  if (!/^[0-9a-fA-F]{64}$/.test(paymentData.header.transactionId)) {
+    throw verifyError(
+      'transaction-id',
+      'transactionId must be exactly 64 hex characters',
+    )
   }
   const ephemeralPublicKey = Buffer.from(
     paymentData.header.ephemeralPublicKey,

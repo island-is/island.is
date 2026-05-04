@@ -8,7 +8,10 @@ class ApplePayPaymentHeader {
   @Field(() => String)
   publicKeyHash!: string
 
-  @Field(() => String)
+  @Field(() => String, {
+    description:
+      'Apple Pay device transaction id: exactly 64 hex chars (32 bytes).',
+  })
   transactionId!: string
 
   @Field(() => String, { nullable: true })
@@ -38,6 +41,9 @@ export class ApplePayChargeInput {
   @Field(() => ApplePayPaymentData)
   paymentData!: ApplePayPaymentData
 
-  @Field(() => String)
+  @Field(() => String, {
+    description:
+      'Apple Pay transaction identifier: exactly 64 hex chars (32 bytes). Used as a replay-protection cache key.',
+  })
   transactionIdentifier!: string
 }

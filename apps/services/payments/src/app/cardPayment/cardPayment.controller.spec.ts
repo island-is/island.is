@@ -1015,7 +1015,10 @@ describe('CardPaymentController', () => {
     describe('POST /apple-pay/charge', () => {
       // Hex strings to satisfy the @Matches(/^[a-fA-F0-9]{1,128}$/) bound on
       // transactionId and transactionIdentifier introduced in this round.
-      const hexId = () => uuid().replace(/-/g, '')
+      // Apple Pay transactionId is exactly 64 hex chars; concat two
+      // dashless UUIDs (32 hex chars each) to reach the required length.
+      const hexId = () =>
+        uuid().replace(/-/g, '') + uuid().replace(/-/g, '')
       const getApplePayChargeInput = (transactionIdentifier = hexId()) => ({
         paymentFlowId,
         paymentData: {

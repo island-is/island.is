@@ -178,7 +178,8 @@ const buildSyntheticToken = (opts?: {
   const ephemeralPublicKey =
     opts?.ephemeralPublicKey ?? Buffer.from('test-ephemeral-spki-bytes')
   const data = opts?.data ?? Buffer.from('test-encrypted-data')
-  const transactionId = opts?.transactionId ?? crypto.randomBytes(16)
+  // 32 bytes = 64 hex chars, matches Apple's canonical transactionId.
+  const transactionId = opts?.transactionId ?? crypto.randomBytes(32)
   const applicationData = opts?.applicationData ?? Buffer.alloc(0)
 
   const merchantKeyPem = generateRsaKeyPairPem().privateKeyPem
@@ -304,7 +305,7 @@ describe('verifyApplePaySignature', () => {
   it('rejects tampered transactionId', () => {
     const token = buildSyntheticToken()
     token.paymentData.header.transactionId = crypto
-      .randomBytes(16)
+      .randomBytes(32)
       .toString('hex')
     expect(() =>
       verifyApplePaySignature({
@@ -406,5 +407,33 @@ describe('verifyApplePaySignature', () => {
         now: token.signingTimeMs,
       }),
     ).toThrow(/stage=decode-signature/)
+  })
+
+  it('rejects unsupported token versions', () => {
+    const token = buildSyntheticToken()
+    token.paymentData.version = 'RSA_v1'
+    expect(() =>
+      verifyApplePaySignature({
+        paymentData: token.paymentData,
+        paymentProcessingKey: token.paymentProcessingKeyPem,
+        trustedRootPem: token.trustedRootPem,
+        now: token.signingTimeMs,
+      }),
+    ).toThrow(/stage=version/)
+  })
+
+  it('rejects transactionId that is not exactly 64 hex chars', () => {
+    const token = buildSyntheticToken()
+    // Odd length would silently truncate in Buffer.from(s, 'hex'), so
+    // any non-canonical form must fail closed at this stage.
+    token.paymentData.header.transactionId = 'abcdef0123456789'
+    expect(() =>
+      verifyApplePaySignature({
+        paymentData: token.paymentData,
+        paymentProcessingKey: token.paymentProcessingKeyPem,
+        trustedRootPem: token.trustedRootPem,
+        now: token.signingTimeMs,
+      }),
+    ).toThrow(/stage=transaction-id/)
   })
 })
