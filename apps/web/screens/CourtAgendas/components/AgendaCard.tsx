@@ -175,9 +175,12 @@ export const AgendaCard = ({
                 <Text className={styles.preLine}>{title}</Text>
               </Box>
             )}
-            {Boolean(hearingTime) && (
-              <Text variant="small">{`Málflutningstími: ${hearingTime}`}</Text>
-            )}
+            {Boolean(hearingTime) &&
+              (isValidElement(hearingTime) ? (
+                hearingTime
+              ) : (
+                <Text variant="small">{`Málflutningstími: ${hearingTime}`}</Text>
+              ))}
             {renderDetails()}
           </Stack>
         </Hidden>
