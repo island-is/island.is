@@ -29,6 +29,7 @@ import {
   ApplicantGetApplicantInfoRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
+  GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -322,8 +323,9 @@ export class VmstUnemploymentClientService {
     })
   }
 
-  async checkConfirmTravelEligibility(auth: User): Promise<any> {
-    // todo fix any
+  async checkConfirmTravelEligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse> {
     const { applicantId } = await this.resolveApplicant(auth)
 
     if (!applicantId) {
@@ -336,16 +338,9 @@ export class VmstUnemploymentClientService {
       'Applicant API auth failed',
     )
 
-    return {
-      isEligible: true,
-
-      reason: '',
-
-      applicationId: 'test',
-    }
-    // return await api.applicantGetConfirmTravelEligibility({
-    //   id: applicantId,
-    // })
+    return await api.applicantGetForeignTravelEligibility({
+      id: applicantId,
+    })
   }
 
   async submitTravelConfirmation(

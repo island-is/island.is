@@ -18,10 +18,13 @@ export const MainForm = buildForm({
   children: [
     buildMultiField({
       id: 'mainFormMultiField',
+      title: mainForm.title,
+      description: mainForm.description,
       children: [
         buildDescriptionField({
           id: 'dateDescription',
           title: mainForm.dateTitle,
+          titleVariant: 'h5',
         }),
         buildDateField({
           id: 'date.from',

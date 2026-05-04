@@ -17,8 +17,8 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { applicationMessages } from './messages'
-import { getEligability } from '@/dataProviders'
 import { Features } from '@island.is/feature-flags'
+import { getEligability } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -26,7 +26,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL,
-  name: 'confirm-travel template',
+  name: applicationMessages.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
   translationNamespaces:
