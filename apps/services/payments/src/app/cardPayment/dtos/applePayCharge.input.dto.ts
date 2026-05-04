@@ -90,7 +90,7 @@ export class ApplePayChargeInput {
   @Matches(/^[a-fA-F0-9]{64}$/)
   @ApiProperty({
     description:
-      'Apple Pay transaction identifier: exactly 64 hex chars (32 bytes). Used as a replay-protection cache key. Strict format matches Apple\'s canonical transactionId so two formatting variants can never bypass replay detection.',
+      "Apple Pay transaction identifier: exactly 64 hex chars (32 bytes). Used as a replay-protection cache key. Strict format matches Apple's canonical transactionId so two formatting variants can never bypass replay detection.",
     type: String,
   })
   transactionIdentifier!: string
