@@ -513,6 +513,10 @@ export const m = defineMessages({
     id: 'service.portal:open-documents',
     defaultMessage: 'Opna pósthólf',
   },
+  moreCategories: {
+    id: 'service.portal:more-categories',
+    defaultMessage: 'Fleiri flokkar',
+  },
   documentsDescription: {
     id: 'service.portal:documents-description',
     defaultMessage: 'Erindi til þín frá opinberum aðilum',
@@ -560,6 +564,15 @@ export const m = defineMessages({
   inProgressApplications: {
     id: 'service.portal:inProgressApplications',
     defaultMessage: 'Umsóknir í vinnslu',
+  },
+  olderApplications: {
+    id: 'service.portal:older-applications',
+    defaultMessage: 'Eldri umsóknir',
+  },
+  applicationsIntroOlder: {
+    id: 'service.portal:applications-intro-older',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir eldri umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
   },
   myInfo: {
     id: 'service.portal:my-info',
@@ -668,6 +681,14 @@ export const m = defineMessages({
     id: 'service.portal:notifications-view-all',
     defaultMessage: 'Sjá allar tilkynningar',
   },
+  notificationUnread: {
+    id: 'service.portal:notification-unread',
+    defaultMessage: 'Ólesið',
+  },
+  notificationOpensInNewTab: {
+    id: 'service.portal:notification-opens-in-new-tab',
+    defaultMessage: 'Opnast í nýjum glugga',
+  },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
     defaultMessage: 'Skoða nánar',
@@ -742,6 +763,10 @@ export const m = defineMessages({
   educationGraduation: {
     id: 'service.portal:education-graduation',
     defaultMessage: 'Brautskráning',
+  },
+  educationMicroCredentials: {
+    id: 'service.portal:education-micro-credentials',
+    defaultMessage: 'Örnám',
   },
   documentProvider: {
     id: 'service.portal:document-provider',
@@ -1592,6 +1617,10 @@ export const m = defineMessages({
   farmerLands: {
     id: 'service.portal:farmer-lands',
     defaultMessage: 'Jarðabók',
+  },
+  farmerLand: {
+    id: 'service.portal:farmer-land',
+    defaultMessage: 'Jörð',
   },
   farmerLandsIntro: {
     id: 'service.portal:farmer-lands-intro',

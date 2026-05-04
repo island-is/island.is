@@ -1,5 +1,6 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
+import { UniversityCareersStudyType } from '@island.is/api/schema'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
@@ -69,6 +70,7 @@ const PrimarySchoolAssessment = lazy(() =>
 )
 
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
+const MICRO_CREDENTIALS_FLAG = 'UniversityMicroCredentials'
 
 export const educationModule: PortalModule = {
   name: 'Menntun',
@@ -183,13 +185,45 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <UniversityGraduation />,
+      element: (
+        <UniversityGraduation
+          studyType={UniversityCareersStudyType.UNIVERSITY_STUDIES}
+        />
+      ),
     },
     {
       name: 'Brautskráning - nánar ',
       path: EducationPaths.EducationHaskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <UniversityGraduationDetail />,
+      element: (
+        <UniversityGraduationDetail
+          studyType={UniversityCareersStudyType.UNIVERSITY_STUDIES}
+        />
+      ),
+    },
+
+    // Haskoli - Örnám (micro-credentials)
+    {
+      name: 'Örnám',
+      path: EducationPaths.EducationHaskoliMicroCredentials,
+      key: MICRO_CREDENTIALS_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: (
+        <UniversityGraduation
+          studyType={UniversityCareersStudyType.MICRO_CREDENTIALS}
+        />
+      ),
+    },
+    {
+      name: 'Örnám - nánar',
+      path: EducationPaths.EducationHaskoliMicroCredentialsDetail,
+      key: MICRO_CREDENTIALS_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: (
+        <UniversityGraduationDetail
+          studyType={UniversityCareersStudyType.MICRO_CREDENTIALS}
+        />
+      ),
     },
 
     // Driving lessons

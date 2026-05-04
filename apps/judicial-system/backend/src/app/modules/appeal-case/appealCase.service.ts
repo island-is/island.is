@@ -360,51 +360,11 @@ export class AppealCaseService {
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
-    if (update.prosecutorStatementDate) {
-      data.prosecutorStatementDate = nowFactory()
-    }
-
-    if (update.defendantStatementDate) {
-      data.defendantStatementDate = nowFactory()
-    }
-
     const updatedAppealCase = await this.appealCaseRepositoryService.update(
       appealCase.id,
       data,
       { transaction },
     )
-
-    // Dual-write appeal statement events — legacy date columns remain the
-    // source of truth during Phase 2; this row powers the per-party read path.
-    if (update.prosecutorStatementDate) {
-      await this.appealEventLogRepositoryService.create(
-        {
-          caseId: theCase.id,
-          appealCaseId: appealCase.id,
-          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
-          userRole: user.role,
-        },
-        { transaction },
-      )
-    }
-
-    if (update.defendantStatementDate) {
-      await this.appealEventLogRepositoryService.create(
-        {
-          caseId: theCase.id,
-          appealCaseId: appealCase.id,
-          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
-          userRole: user.role,
-          ...this.resolveDefencePartyIds(theCase, user),
-        },
-        { transaction },
-      )
-    }
-
-    // Queue messages for statement date changes
-    if (update.prosecutorStatementDate || update.defendantStatementDate) {
-      this.addMessagesForAppealStatementToQueue(theCase, user)
-    }
 
     if (
       update.appealCaseNumber &&
@@ -435,6 +395,49 @@ export class AppealCaseService {
     }
 
     return updatedAppealCase
+  }
+
+  async createEventLog(
+    theCase: Case,
+    appealCase: AppealCase,
+    eventType: AppealEventType,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealCase> {
+    this.logger.debug(
+      `Recording appeal event ${eventType} for appeal case ${appealCase.id} of case ${theCase.id}`,
+    )
+
+    await this.appealEventLogRepositoryService.create(
+      {
+        caseId: theCase.id,
+        appealCaseId: appealCase.id,
+        eventType,
+        userRole: user.role,
+        ...(isDefenceUser(user)
+          ? this.resolveDefencePartyIds(theCase, user)
+          : {}),
+      },
+      { transaction },
+    )
+
+    this.dispatchEventNotifications(eventType, theCase, user)
+
+    return appealCase
+  }
+
+  // Side-effect dispatch keyed on eventType — mirror EventLogService's
+  // eventToNotificationMap pattern.
+  private dispatchEventNotifications(
+    eventType: AppealEventType,
+    theCase: Case,
+    user: User,
+  ): void {
+    switch (eventType) {
+      case AppealEventType.APPEAL_STATEMENT_SENT:
+        this.addMessagesForAppealStatementToQueue(theCase, user)
+        break
+    }
   }
 
   async transition(

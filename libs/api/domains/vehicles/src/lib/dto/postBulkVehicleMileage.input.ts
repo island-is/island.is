@@ -1,6 +1,6 @@
+import { LocaleEnum } from '@island.is/nest/graphql'
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsInt, IsString } from 'class-validator'
-import { LocaleEnum } from '../vehicles.type'
 
 @InputType()
 export class PostVehicleBulkMileageInput {
@@ -21,11 +21,6 @@ export class PostVehicleBulkMileageSingleInput {
   @IsInt()
   mileage!: number
 }
-
-registerEnumType(LocaleEnum, {
-  name: 'LocaleEnum',
-  description: 'Available locales',
-})
 
 @InputType()
 export class PostVehicleBulkMileageFileInput {

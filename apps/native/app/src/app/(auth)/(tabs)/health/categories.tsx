@@ -169,6 +169,11 @@ export default function HealthCategoriesScreen() {
       url: `${origin}/minarsidur/heilsa/thjalfun`,
     },
     {
+      id: 'waitingLists',
+      titleId: 'health.categories.waitingLists',
+      url: `${origin}/minarsidur/heilsa/bidlistar`,
+    },
+    {
       id: 'medicalRecords',
       titleId: 'health.categories.medicalRecords',
       url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,

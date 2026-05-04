@@ -7,6 +7,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCase,
   AppealCaseTransition,
+  AppealEventType,
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -15,26 +16,21 @@ import {
   CreateAppealCaseMutation,
   useCreateAppealCaseMutation,
 } from './createAppealCase.generated'
+import { useCreateAppealEventLogMutation } from './createAppealEventLog.generated'
 import {
   LimitedAccessCreateAppealCaseMutation,
   useLimitedAccessCreateAppealCaseMutation,
 } from './limitedAccessCreateAppealCase.generated'
+import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCreateAppealEventLog.generated'
 import {
   LimitedAccessTransitionAppealCaseMutation,
   useLimitedAccessTransitionAppealCaseMutation,
 } from './limitedAccessTransitionAppealCase.generated'
 import {
-  LimitedAccessUpdateAppealCaseMutation,
-  useLimitedAccessUpdateAppealCaseMutation,
-} from './limitedAccessUpdateAppealCase.generated'
-import {
   TransitionAppealCaseMutation,
   useTransitionAppealCaseMutation,
 } from './transitionAppealCase.generated'
-import {
-  UpdateAppealCaseMutation,
-  useUpdateAppealCaseMutation,
-} from './updateAppealCase.generated'
+import { useUpdateAppealCaseMutation } from './updateAppealCase.generated'
 
 type UpdateAppealCase = Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>
 
@@ -56,10 +52,12 @@ const useAppealCase = () => {
   ] = useLimitedAccessTransitionAppealCaseMutation()
   const [updateAppealCaseMutation, { loading: isUpdatingAppealCase }] =
     useUpdateAppealCaseMutation()
+  const [createAppealEventLogMutation, { loading: isCreatingAppealEventLog }] =
+    useCreateAppealEventLogMutation()
   const [
-    limitedAccessUpdateAppealCaseMutation,
-    { loading: isLimitedAccessUpdatingAppealCase },
-  ] = useLimitedAccessUpdateAppealCaseMutation()
+    limitedAccessCreateAppealEventLogMutation,
+    { loading: isLimitedAccessCreatingAppealEventLog },
+  ] = useLimitedAccessCreateAppealEventLogMutation()
 
   const createAppealCase = useMemo(
     () =>
@@ -176,38 +174,52 @@ const useAppealCase = () => {
         appealCaseId: string,
         update: UpdateAppealCase,
       ): Promise<AppealCase | undefined> => {
-        const mutation = limitedAccess
-          ? limitedAccessUpdateAppealCaseMutation
-          : updateAppealCaseMutation
-
-        const resultType = limitedAccess
-          ? 'limitedAccessUpdateAppealCase'
-          : 'updateAppealCase'
-
         try {
           if (Object.keys(update).length === 0) {
             return undefined
           }
 
-          const { data } = await mutation({
+          const { data } = await updateAppealCaseMutation({
             variables: {
               input: { caseId, appealCaseId, ...update },
             },
           })
 
-          const res = data as UpdateAppealCaseMutation &
-            LimitedAccessUpdateAppealCaseMutation
-
-          return res?.[resultType] as AppealCase | undefined
+          return data?.updateAppealCase as AppealCase | undefined
         } catch (e) {
           toast.error(formatMessage(errors.updateCase))
           return undefined
         }
       },
+    [updateAppealCaseMutation, formatMessage],
+  )
+
+  const createAppealEventLog = useMemo(
+    () =>
+      async (
+        caseId: string,
+        appealCaseId: string,
+        eventType: AppealEventType,
+      ): Promise<boolean> => {
+        const mutation = limitedAccess
+          ? limitedAccessCreateAppealEventLogMutation
+          : createAppealEventLogMutation
+
+        try {
+          const { data } = await mutation({
+            variables: { input: { caseId, appealCaseId, eventType } },
+          })
+
+          return Boolean(data)
+        } catch (e) {
+          toast.error(formatMessage(errors.updateCase))
+          return false
+        }
+      },
     [
       limitedAccess,
-      limitedAccessUpdateAppealCaseMutation,
-      updateAppealCaseMutation,
+      limitedAccessCreateAppealEventLogMutation,
+      createAppealEventLogMutation,
       formatMessage,
     ],
   )
@@ -220,8 +232,10 @@ const useAppealCase = () => {
     isTransitioningAppealCase:
       isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,
     updateAppealCase,
-    isUpdatingAppealCase:
-      isUpdatingAppealCase || isLimitedAccessUpdatingAppealCase,
+    isUpdatingAppealCase,
+    createAppealEventLog,
+    isCreatingAppealEventLog:
+      isCreatingAppealEventLog || isLimitedAccessCreatingAppealEventLog,
   }
 }
 

@@ -209,20 +209,20 @@ export interface IAnnualReportFields {
   /** Title */
   title: string
 
+  /** Slug */
+  slug: string
+
   /** Intro */
   intro?: string | undefined
-
-  /** Page Identifier */
-  pageIdentifier: string
-
-  /** Organization Page */
-  organizationPage: IOrganizationPage
 
   /** Organization */
   organization: IOrganization
 
   /** Chapters */
   chapters: IAnnualReportChapter[]
+
+  /** Timeline */
+  timeline?: ITimeline | undefined
 }
 
 /** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
@@ -4657,6 +4657,7 @@ export interface ISliceConnectedComponentFields {
     | 'Personuvernd/SearchInput'
     | 'Syslumenn/DrivingInstructorList'
     | 'FSRE/EmployeeList'
+    | 'Lyfjastofnun/Pharmacies'
     | 'NewKilometerFee'
     | 'LatestVerdicts'
     | 'SupremeCourt/Determinations'
