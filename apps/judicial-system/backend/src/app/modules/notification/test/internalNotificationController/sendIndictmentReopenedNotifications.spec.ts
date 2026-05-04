@@ -14,7 +14,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { EventLog, Case } from '../../../repository'
+import { Case,EventLog } from '../../../repository'
 import { InstitutionContactRepositoryService } from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
