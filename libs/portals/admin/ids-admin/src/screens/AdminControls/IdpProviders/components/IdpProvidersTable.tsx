@@ -63,52 +63,56 @@ export const IdpProvidersTable = ({
           />
         </Box>
       ) : (
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData>{formatMessage(m.idpProvidersName)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.idpProvidersDescription)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.idpProvidersLevel)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.idpProvidersEnvironments)}</T.HeadData>
-            <T.HeadData>{/* Actions */}</T.HeadData>
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {rows.map((idpProvider) => (
-            <T.Row key={idpProvider.name}>
-              <T.Data>{idpProvider.name}</T.Data>
-              <T.Data>{idpProvider.description}</T.Data>
-              <T.Data>{idpProvider.level}</T.Data>
-              <T.Data>
-                <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
-                  {idpProvider.availableEnvironments?.map((env) => (
-                    <Tag key={env} variant="blue" outlined disabled>
-                      {env}
-                    </Tag>
-                  ))}
-                </Box>
-              </T.Data>
-              <T.Data>
-                <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    icon="pencil"
-                    onClick={() => onEdit(idpProvider)}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    icon="trash"
-                    colorScheme="destructive"
-                    onClick={() => setDeleteTarget(idpProvider)}
-                  />
-                </Box>
-              </T.Data>
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>{formatMessage(m.idpProvidersName)}</T.HeadData>
+              <T.HeadData>
+                {formatMessage(m.idpProvidersDescription)}
+              </T.HeadData>
+              <T.HeadData>{formatMessage(m.idpProvidersLevel)}</T.HeadData>
+              <T.HeadData>
+                {formatMessage(m.idpProvidersEnvironments)}
+              </T.HeadData>
+              <T.HeadData>{/* Actions */}</T.HeadData>
             </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
+          </T.Head>
+          <T.Body>
+            {rows.map((idpProvider) => (
+              <T.Row key={idpProvider.name}>
+                <T.Data>{idpProvider.name}</T.Data>
+                <T.Data>{idpProvider.description}</T.Data>
+                <T.Data>{idpProvider.level}</T.Data>
+                <T.Data>
+                  <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
+                    {idpProvider.availableEnvironments?.map((env) => (
+                      <Tag key={env} variant="blue" outlined disabled>
+                        {env}
+                      </Tag>
+                    ))}
+                  </Box>
+                </T.Data>
+                <T.Data>
+                  <Box display="flex" columnGap={2} justifyContent="flexEnd">
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      icon="pencil"
+                      onClick={() => onEdit(idpProvider)}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      icon="trash"
+                      colorScheme="destructive"
+                      onClick={() => setDeleteTarget(idpProvider)}
+                    />
+                  </Box>
+                </T.Data>
+              </T.Row>
+            ))}
+          </T.Body>
+        </T.Table>
       )}
 
       {totalPages > 1 && (
