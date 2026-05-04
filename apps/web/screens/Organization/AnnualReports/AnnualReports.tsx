@@ -19,6 +19,7 @@ import {
   HeadWithSocialSharing,
   OrganizationFooter,
   OrganizationHeader,
+  TimelineSlice,
   Webreader,
 } from '@island.is/web/components'
 import {
@@ -27,6 +28,7 @@ import {
   OrganizationPage,
   Query,
   QueryGetAnnualReportsArgs,
+  QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver } from '@island.is/web/hooks'
@@ -39,6 +41,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   GET_ANNUAL_REPORTS_QUERY,
+  GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../../queries'
 import * as styles from './AnnualReports.css'
@@ -46,6 +49,7 @@ import * as styles from './AnnualReports.css'
 export interface AnnualReportsProps {
   organizationPage: OrganizationPage
   annualReports: AnnualReport[]
+  namespace: Record<string, string>
 }
 
 type AnnualReportsScreenContext = ScreenContext & {
@@ -55,6 +59,7 @@ type AnnualReportsScreenContext = ScreenContext & {
 const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
   organizationPage,
   annualReports,
+  namespace,
 }) => {
   useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver('annualreports')
@@ -240,6 +245,17 @@ const AnnualReports: Screen<AnnualReportsProps, AnnualReportsScreenContext> = ({
                         </Stack>
                       </GridColumn>
                     </GridRow>
+
+                    {selectedReport.timeline && (
+                      <GridRow>
+                        <GridColumn span="12/12">
+                          <TimelineSlice
+                            slice={selectedReport.timeline}
+                            namespace={namespace}
+                          />
+                        </GridColumn>
+                      </GridRow>
+                    )}
                   </>
                 )}
               </Stack>
@@ -275,6 +291,7 @@ AnnualReports.getProps = async ({
     {
       data: { getAnnualReports },
     },
+    namespace,
   ] = await Promise.all([
     !organizationPage
       ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -297,6 +314,21 @@ AnnualReports.getProps = async ({
         },
       },
     }),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'OrganizationPages',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables?.data?.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields || '{}')
+          : {},
+      ),
   ])
 
   if (!getOrganizationPage) {
@@ -310,6 +342,7 @@ AnnualReports.getProps = async ({
   return {
     organizationPage: getOrganizationPage,
     annualReports: getAnnualReports,
+    namespace,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
