@@ -127,9 +127,19 @@ export const AccessScopes = () => {
         })
     }
 
+    // Include virtual municipality tag scopes so they remain searchable/filterable
+    const virtualTagScopes =
+      tagsData?.authScopeTags
+        ?.filter((t) => t.id === VIRTUAL_MUNICIPALITY_TAG_ID)
+        .flatMap((t) => t.scopes) ?? []
+
     const seen = new Set<string>()
-    return (categoriesData?.authScopeCategories
-      ?.flatMap((category) => category.scopes)
+    return ([
+      ...virtualTagScopes,
+      ...(categoriesData?.authScopeCategories?.flatMap(
+        (category) => category.scopes,
+      ) ?? []),
+    ]
       .filter((scope) => {
         if (seen.has(scope.name)) return false
 
@@ -156,7 +166,7 @@ export const AccessScopes = () => {
         const matches = matchesSearch && matchesTags && matchesDomains
         if (matches) seen.add(scope.name)
         return matches
-      }) || []) as AuthApiScope[]
+      })) as AuthApiScope[]
   }, [categoriesData, searchQuery, filter, tagsData])
 
   return (

@@ -23,6 +23,8 @@ import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 const VIRTUAL_MUNICIPALITY_TAG_ID = 'virtual-mitt-sveitarfelag'
 const VIRTUAL_MUNICIPALITY_TAG_SLUG = 'mitt-sveitarfelag'
+// Must match the Contentful delegation scope tag slug for "Sveitarfélag"
+const SVEITARFELOG_CMS_SLUG = 'sveitarfelog'
 
 // Virtual categories not backed by CMS. Scopes are assigned via
 // api_scope_category using these IDs, visible to superadmins in the admin portal.
@@ -361,7 +363,9 @@ export class ScopeService {
     // "Sveitarfélag" tag into a virtual "Mitt sveitarfélag" tag.
     // Scopes remain in their original tag as well.
     if (municipalDomainName) {
-      const sveitarfelagTag = result.find((tag) => tag.slug === 'sveitarfelog')
+      const sveitarfelagTag = result.find(
+        (tag) => tag.slug === SVEITARFELOG_CMS_SLUG,
+      )
 
       if (sveitarfelagTag) {
         const municipalScopes = sveitarfelagTag.scopes.filter(

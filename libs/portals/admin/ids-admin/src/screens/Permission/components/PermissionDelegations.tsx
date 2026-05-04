@@ -95,18 +95,22 @@ export const PermissionDelegations = ({
     },
   )
 
+  const allCategories: Option[] = useMemo(
+    () =>
+      categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
+        label: cat.title,
+        value: cat.id,
+        description: cat.description ?? '',
+      })) ?? [],
+    [categoriesData?.authAdminScopeCategories],
+  )
+
   const categories: Option[] = useMemo(
     () =>
-      categoriesData?.authAdminScopeCategories
-        .filter(
-          (cat: Category) => isSuperAdmin || !cat.id.startsWith('virtual-'),
-        )
-        .map((cat: Category) => ({
-          label: cat.title,
-          value: cat.id,
-          description: cat.description ?? '',
-        })) ?? [],
-    [categoriesData?.authAdminScopeCategories, isSuperAdmin],
+      allCategories.filter(
+        (cat) => isSuperAdmin || !cat.value.startsWith('virtual-'),
+      ),
+    [allCategories, isSuperAdmin],
   )
   const tags: Option[] = useMemo(
     () =>
@@ -140,10 +144,10 @@ export const PermissionDelegations = ({
     setSelectedCategories(
       (selectedPermission.categoryIds ?? []).map(
         (id) =>
-          categories.find((c) => c.value === id) ?? {
-            label: `Eytt flokkur (${id})`,
+          allCategories.find((c) => c.value === id) ?? {
+            label: formatMessage(m.deletedCategory, { id }),
             value: id,
-            description: 'Þessi flokkur er ekki lengur til í Contentful',
+            description: formatMessage(m.deletedCategoryDescription),
           },
       ),
     )
@@ -151,9 +155,9 @@ export const PermissionDelegations = ({
       (selectedPermission.tagIds ?? []).map(
         (id) =>
           tags.find((t) => t.value === id) ?? {
-            label: `Eytt merki (${id})`,
+            label: formatMessage(m.deletedTag, { id }),
             value: id,
-            description: 'Þetta merki er ekki lengur til í Contentful',
+            description: formatMessage(m.deletedTagDescription),
           },
       ),
     )
