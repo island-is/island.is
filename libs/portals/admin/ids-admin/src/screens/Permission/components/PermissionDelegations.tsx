@@ -45,7 +45,7 @@ export const PermissionDelegations = ({
   isNewPermissionsOptionsEnabled?: boolean
 } = {}) => {
   const { formatMessage, lang } = useLocale()
-  const { selectedPermission, permission } = usePermission()
+  const { selectedPermission, permission, actionData } = usePermission()
   const { isSuperAdmin } = useSuperAdmin()
   const {
     isAccessControlled,
@@ -95,7 +95,7 @@ export const PermissionDelegations = ({
     },
   )
 
-  const categories: Option[] = useMemo(
+  const allCategories: Option[] = useMemo(
     () =>
       categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
         label: cat.title,
@@ -103,6 +103,14 @@ export const PermissionDelegations = ({
         description: cat.description ?? '',
       })) ?? [],
     [categoriesData?.authAdminScopeCategories],
+  )
+
+  const categories: Option[] = useMemo(
+    () =>
+      allCategories.filter(
+        (cat) => isSuperAdmin || !cat.value.startsWith('virtual-'),
+      ),
+    [allCategories, isSuperAdmin],
   )
   const tags: Option[] = useMemo(
     () =>
@@ -123,24 +131,55 @@ export const PermissionDelegations = ({
   const [categoriesTagsDirty, setCategoriesTagsDirty] =
     useEnvironmentState(false)
 
+  // Baseline IDs only reset on env change, not after saves — keeps sync diffs accurate
+  const [baselineCategoryIds] = useEnvironmentState<string[]>(
+    selectedPermission.categoryIds ?? [],
+  )
+  const [baselineTagIds] = useEnvironmentState<string[]>(
+    selectedPermission.tagIds ?? [],
+  )
+
   useEffect(() => {
-    if (
-      !showCategoriesAndTags ||
-      (tags.length === 0 && categories.length === 0)
-    )
-      return
+    if (!showCategoriesAndTags || categoriesLoading || tagsLoading) return
     setSelectedCategories(
-      (selectedPermission.categoryIds ?? [])
-        .map((id) => categories.find((c) => c.value === id))
-        .filter((c): c is Option => c !== undefined),
+      (selectedPermission.categoryIds ?? []).map(
+        (id) =>
+          allCategories.find((c) => c.value === id) ?? {
+            label: formatMessage(m.deletedCategory, { id }),
+            value: id,
+            description: formatMessage(m.deletedCategoryDescription),
+          },
+      ),
     )
     setSelectedTags(
-      (selectedPermission.tagIds ?? [])
-        .map((id) => tags.find((t) => t.value === id))
-        .filter((t): t is Option => t !== undefined),
+      (selectedPermission.tagIds ?? []).map(
+        (id) =>
+          tags.find((t) => t.value === id) ?? {
+            label: formatMessage(m.deletedTag, { id }),
+            value: id,
+            description: formatMessage(m.deletedTagDescription),
+          },
+      ),
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCategoriesAndTags, tags, categories])
+  }, [
+    showCategoriesAndTags,
+    tags,
+    categories,
+    categoriesLoading,
+    tagsLoading,
+    selectedPermission.environment,
+  ])
+
+  useEffect(() => {
+    if (
+      actionData?.intent === PermissionFormTypes.DELEGATIONS &&
+      actionData?.data
+    ) {
+      setCategoriesTagsDirty(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData])
 
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
@@ -155,6 +194,12 @@ export const PermissionDelegations = ({
       selectedTags,
     ],
   )
+
+  const categoryRequired =
+    showCategoriesAndTags &&
+    !categoriesLoading &&
+    categories.length > 0 &&
+    selectedCategories.length === 0
 
   const loadingCategoriesAndTags = categoriesLoading || tagsLoading
 
@@ -215,22 +260,16 @@ export const PermissionDelegations = ({
     }
   }
 
-  const supportsCustomDelegation =
-    selectedPermission.supportedDelegationTypes?.includes(
-      AuthDelegationType.Custom,
-    ) ?? false
-
   return (
     <FormCard
       title={formatMessage(m.delegations)}
       intent={PermissionFormTypes.DELEGATIONS}
       inSync={checkEnvironmentsSync(permission.environments, [
         'supportedDelegationTypes',
-        ...(supportsCustomDelegation
-          ? (['categoryIds', 'tagIds'] as const)
-          : []),
+        ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
       customValidation={customValidation}
+      submitDisabled={categoryRequired}
     >
       <Stack space={4}>
         {providers.map((provider) =>
@@ -292,9 +331,7 @@ export const PermissionDelegations = ({
                                   <input
                                     type="hidden"
                                     name="originalCategoryIds"
-                                    value={JSON.stringify(
-                                      selectedPermission.categoryIds ?? [],
-                                    )}
+                                    value={JSON.stringify(baselineCategoryIds)}
                                   />
                                   <Select
                                     value={selectedCategories}
@@ -319,6 +356,10 @@ export const PermissionDelegations = ({
                                     }}
                                     placeholder={formatMessage(
                                       m.selectCategoriesPlaceholder,
+                                    )}
+                                    hasError={categoryRequired}
+                                    errorMessage={formatMessage(
+                                      m.categoryRequired,
                                     )}
                                     isMulti
                                     size="sm"
@@ -349,9 +390,7 @@ export const PermissionDelegations = ({
                                   <input
                                     type="hidden"
                                     name="originalTagIds"
-                                    value={JSON.stringify(
-                                      selectedPermission.tagIds ?? [],
-                                    )}
+                                    value={JSON.stringify(baselineTagIds)}
                                   />
                                   <Select
                                     value={selectedTags}

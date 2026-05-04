@@ -14,6 +14,20 @@ import {
   UnemploymentApplicationValidatePaymentPageRequest,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
+  ApplicantInfoApi,
+  GaldurXRoadAPIModelsApplicantInfoResponse,
+  GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
+  ApplicantApi,
+  GaldurDomainModelsBaseViewModel,
+  UnemploymentApplicationWithdrawApplicationRequest,
+  SupportDataApi,
+  GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
+  GaldurXRoadAPIModelsResolveApplicantResponse,
+  GaldurExternalDomainRequestsWithdrawOverviewResponse,
+  ApplicantUpdateApplicantRequest,
+  ApplicantGetApplicantInfoRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -24,7 +38,13 @@ import { VmstUnemploymentClientConfig } from './vmstUnemploymentClient.config'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
-type VmstApis = UnemploymentApplicationApi | ActivationGrantApi | AttachmentApi
+type VmstApis =
+  | UnemploymentApplicationApi
+  | ActivationGrantApi
+  | AttachmentApi
+  | ApplicantInfoApi
+  | ApplicantApi
+  | SupportDataApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -176,6 +196,46 @@ export class VmstUnemploymentClientService {
     )
   }
 
+  async canUserWithdrawUnemploymentApplication(
+    applicantId: string,
+  ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    return await api.applicantGetUnemploymentApplicationsWithdrawOverview({
+      id: applicantId,
+    })
+  }
+
+  async withdrawApplicationSupportData(): Promise<
+    Array<GaldurExternalDomainModelsSupportDataDelistingReasonDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    return await api.supportDataGetDelistingReasons()
+  }
+
+  async withdrawUnemploymentApplication(
+    requestParameter: UnemploymentApplicationWithdrawApplicationRequest,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const api = await this.createApiClient(
+      UnemploymentApplicationApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    return await api.unemploymentApplicationWithdrawApplication(
+      requestParameter,
+    )
+  }
+
   async validateVacationInfoUnemploymentApplication(
     requestParameter: UnemploymentApplicationValidatePaymentPage2Request,
   ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO> {
@@ -190,8 +250,23 @@ export class VmstUnemploymentClientService {
     )
   }
 
-  async submitApplication(
+  async resolveApplicant(
     auth: User,
+  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantResolve({
+      galdurXRoadAPIModelsResolveApplicantRequest: {
+        ssn: auth.nationalId,
+      },
+    })
+  }
+
+  async submitApplication(
     request: UnemploymentApplicationCreateUnemploymentApplicationRequest,
   ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
     const api = await this.createApiClient(
@@ -202,5 +277,78 @@ export class VmstUnemploymentClientService {
     return await api.unemploymentApplicationCreateUnemploymentApplication(
       request,
     )
+  }
+
+  async submitJobSearchConfirmation(
+    auth: User,
+    request: GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
+  ): Promise<void> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+    await api.applicantCreateJobSearchConfirmations({
+      id: applicantId,
+      galdurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest:
+        request,
+    })
+  }
+
+  async checkJobSearchConfirmationEligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Applicant API auth failed',
+    )
+
+    return await api.applicantGetJobSearchConfirmationEligibility({
+      id: applicantId,
+    })
+  }
+
+  async getCurrentApplicationForActions(
+    requestParameters: ApplicantGetApplicantInfoRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantGetApplicantInfo(requestParameters)
+  }
+
+  async getCurrentApplicationSupportDataForActions(): Promise<GaldurXRoadAPIModelsApplicantInfoSupportDataResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantGetApplicantInfoSupportData()
+  }
+
+  async updateCurrentApplicationForActions(
+    requestParameters: ApplicantUpdateApplicantRequest,
+  ): Promise<GaldurXRoadAPIModelsApplicantInfoResponse> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+    return await api.applicantUpdateApplicant(requestParameters)
   }
 }

@@ -9,6 +9,7 @@ import { NotificationsService } from '../notifications.service'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
+import { NotificationDelivery } from '../notification-delivery.model'
 import { CmsService } from '@island.is/clients/cms'
 
 const mockHnippTemplate: HnippTemplate = {
@@ -54,6 +55,10 @@ describe('MessageProcessorService', () => {
         },
         {
           provide: getModelToken(ActorNotification),
+          useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: getModelToken(NotificationDelivery),
           useClass: jest.fn(() => ({})),
         },
         {

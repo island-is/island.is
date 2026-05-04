@@ -1,3 +1,5 @@
+import { isValidElement, type ReactNode } from 'react'
+
 import {
   Box,
   GridColumn,
@@ -18,6 +20,7 @@ type AgendaCardProps = {
   title: string
   date: string
   time: string
+  hearingTime?: ReactNode | string | null
   court: string
   courtRoom: string
   addToCalendarButton: React.ReactNode
@@ -32,6 +35,7 @@ export const AgendaCard = ({
   judgesString,
   date,
   time,
+  hearingTime,
   court,
   courtRoom,
   closedHearingText,
@@ -55,12 +59,6 @@ export const AgendaCard = ({
   if (time) {
     detailLines.push({
       text: time,
-    })
-  }
-
-  if (closedHearingText) {
-    detailLines.push({
-      text: closedHearingText,
     })
   }
 
@@ -102,11 +100,18 @@ export const AgendaCard = ({
                 <Text variant="h5" as="h2">
                   {caseNumber}
                 </Text>
-                {Boolean(type) && (
-                  <Tag variant="blue" disabled>
-                    {type}
-                  </Tag>
-                )}
+                <Inline space={2} alignY="center">
+                  {Boolean(type) && (
+                    <Tag variant="blue" outlined={true} disabled>
+                      {type}
+                    </Tag>
+                  )}
+                  {Boolean(closedHearingText) && (
+                    <Tag variant="red" outlined={true} disabled>
+                      {closedHearingText}
+                    </Tag>
+                  )}
+                </Inline>
               </Inline>
               <Text variant="medium" color="purple400" fontWeight="semiBold">
                 {date}
@@ -128,6 +133,12 @@ export const AgendaCard = ({
                       <Text className={styles.preLine}>{title}</Text>
                     </Box>
                   )}
+                  {Boolean(hearingTime) &&
+                    (isValidElement(hearingTime) ? (
+                      hearingTime
+                    ) : (
+                      <Text variant="small">{hearingTime}</Text>
+                    ))}
                 </Stack>
               </GridColumn>
               <GridColumn span="4/12">{renderDetails()}</GridColumn>
@@ -141,11 +152,18 @@ export const AgendaCard = ({
                 <Text variant="h5" as="h2">
                   {caseNumber}
                 </Text>
-                {Boolean(type) && (
-                  <Tag variant="blue" disabled>
-                    {type}
-                  </Tag>
-                )}
+                <Inline space={2} alignY="center">
+                  {Boolean(type) && (
+                    <Tag variant="blue" outlined={true} disabled>
+                      {type}
+                    </Tag>
+                  )}
+                  {Boolean(closedHearingText) && (
+                    <Tag variant="red" outlined={true} disabled>
+                      {closedHearingText}
+                    </Tag>
+                  )}
+                </Inline>
               </Inline>
               <Text variant="medium" color="purple400" fontWeight="semiBold">
                 {date}
@@ -157,6 +175,12 @@ export const AgendaCard = ({
                 <Text className={styles.preLine}>{title}</Text>
               </Box>
             )}
+            {Boolean(hearingTime) &&
+              (isValidElement(hearingTime) ? (
+                hearingTime
+              ) : (
+                <Text variant="small">{hearingTime}</Text>
+              ))}
             {renderDetails()}
           </Stack>
         </Hidden>

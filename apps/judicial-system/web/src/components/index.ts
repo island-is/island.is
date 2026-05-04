@@ -99,6 +99,7 @@ export {
 export { default as FileNotFoundModal } from './Modals/FileNotFoundModal/FileNotFoundModal'
 export { default as SearchModal } from './Modals/SearchModal/SearchModal'
 
+export { default as AllIndictmentCaseFiles } from './AllIndictmentCaseFiles/AllIndictmentCaseFiles'
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'
@@ -135,3 +136,4 @@ export { LabelValue } from './LabelValue/LabelValue'
 export { default as IconButton } from './IconButton/IconButton'
 export { LawyerRegistryContext } from './LawyerRegistryProvider/LawyerRegistryProvider'
 export { default as ArraignmentAlert } from './ArraignmentAlert/ArraignmentAlert'
+export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'

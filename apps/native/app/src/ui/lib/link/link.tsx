@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
-import { Alert, Linking } from 'react-native'
 import styled from 'styled-components/native'
 import { Typography } from '../typography/typography'
+import { useBrowser } from '../../../hooks/use-browser'
 
 const Host = styled.TouchableOpacity``
 
@@ -11,15 +11,10 @@ interface LinkProps {
 }
 
 export function Link({ url, children }: LinkProps) {
-  const handlePress = useCallback(async () => {
-    const supported = await Linking.canOpenURL(url)
-
-    if (supported) {
-      await Linking.openURL(url)
-    } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`)
-    }
-  }, [url])
+  const browser = useBrowser()
+  const handlePress = useCallback(() => {
+    browser.openBrowser(url)
+  }, [url, browser])
 
   return (
     <Host onPress={handlePress}>

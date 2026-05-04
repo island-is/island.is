@@ -20,6 +20,8 @@ import {
 
 import { CaseContextMiddleware, RequestContextMiddleware } from './middleware'
 import {
+  AppealCaseModule,
+  appealCaseModuleConfig,
   awsS3ModuleConfig,
   CaseModule,
   caseModuleConfig,
@@ -57,6 +59,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     SharedAuthModule,
+    AppealCaseModule,
     CaseModule,
     CourtSessionModule,
     DefendantModule,
@@ -86,6 +89,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         emailModuleConfig,
         courtClientModuleConfig,
         messageModuleConfig,
+        appealCaseModuleConfig,
         caseModuleConfig,
         fileModuleConfig,
         notificationModuleConfig,

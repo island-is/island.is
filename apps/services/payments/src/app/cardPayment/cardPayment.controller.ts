@@ -43,6 +43,7 @@ import {
   ApplePayChargeInput,
   ApplePayChargeResponse,
   ApplePaySessionResponse,
+  ValidateApplePayMerchantInput,
   ChargeCardInput,
   ChargeCardResponse,
   GetVerificationStatus,
@@ -300,6 +301,7 @@ export class CardPaymentController {
     @Body() chargeCardInput: ApplePayChargeInput,
   ): Promise<ApplePayChargeResponse> {
     const paymentFlowId = chargeCardInput.paymentFlowId
+    this.logger.info(`[${paymentFlowId}] Apple Pay charge endpoint called`)
 
     const context = createApplePayPaymentContext(paymentFlowId, chargeCardInput)
     const saga = createApplePayPaymentSaga(
@@ -314,12 +316,19 @@ export class CardPaymentController {
     >(this.logger, this.paymentFlowService)
 
     try {
-      // execute the payment flow
       const result = await orchestrator.execute(saga, context)
 
       const { paymentResult } = requireStepResult(
         result.context,
         'CHARGE_APPLE_PAY',
+      )
+
+      this.logger.info(
+        `[${paymentFlowId}] Apple Pay charge endpoint completed`,
+        {
+          paymentFlowId,
+          isSuccess: paymentResult.isSuccess,
+        },
       )
 
       return { ...paymentResult, correlationId: paymentResult.correlationID }
@@ -370,16 +379,34 @@ export class CardPaymentController {
 
   @UseGuards(FeatureFlagGuard)
   @FeatureFlag(Features.isIslandisApplePayPaymentEnabled)
-  @Get('/apple-pay/session')
+  @Post('/apple-pay/validate-merchant')
   @ApiOkResponse({
     type: ApplePaySessionResponse,
   })
-  async getApplePaySession() {
+  async validateApplePayMerchant(
+    @Body() input: ValidateApplePayMerchantInput,
+  ): Promise<ApplePaySessionResponse> {
+    this.logger.info('Apple Pay validate-merchant endpoint called', {
+      validationURL: input.validationURL,
+    })
+
     try {
-      const { session } = await this.cardPaymentService.getApplePaySession()
+      const { session } =
+        await this.cardPaymentService.validateApplePayMerchant(
+          input.validationURL,
+        )
+
+      this.logger.info('Apple Pay validate-merchant endpoint completed', {
+        sessionLength: session.length,
+      })
 
       return { session }
     } catch (e) {
+      this.logger.error('Apple Pay validate-merchant endpoint failed', {
+        error: e.message,
+        validationURL: input.validationURL,
+      })
+
       throw new BadRequestException(
         onlyReturnKnownErrorCode(
           e.message,

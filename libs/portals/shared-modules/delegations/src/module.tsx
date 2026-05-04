@@ -7,11 +7,10 @@ import {
 } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
-import { accessControlLoader } from './screens/AccessControl.loader'
 import { Features } from '@island.is/react/feature-flags'
-import { isCompany } from '@island.is/shared/utils'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
+import { Navigate } from 'react-router-dom'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() =>
@@ -54,9 +53,13 @@ export const delegationsModule: PortalModule = {
     )
     const commonProps = {
       name: coreMessages.accessControlDelegations,
-      navHide: !hasAccess,
+      navHide: !hasAccess || useNewRoutes,
       enabled: hasAccess,
-      element: <AccessControl />,
+      element: useNewRoutes ? (
+        <Navigate to={DelegationPaths.DelegationsNew} replace />
+      ) : (
+        <AccessControl />
+      ),
     }
 
     const newRoutes: PortalRoute[] = [
@@ -72,7 +75,6 @@ export const delegationsModule: PortalModule = {
             enabled: hasAccess,
             path: DelegationPaths.DelegationsNew,
             element: <AccessControlNew />,
-            loader: accessControlLoader('umbod')(props),
           },
           {
             name: m.grantAccessNewTitle,
@@ -80,7 +82,6 @@ export const delegationsModule: PortalModule = {
             navHide: true,
             enabled: hasAccess,
             element: <GrantAccessNew />,
-            loader: accessControlLoader('umbod/veita')(props),
           },
           {
             name: m.editAccessTitle,
@@ -88,7 +89,6 @@ export const delegationsModule: PortalModule = {
             navHide: true,
             enabled: hasAccess,
             element: <EditAccess />,
-            loader: accessControlLoader('umbod/breyta')(props),
           },
           {
             name: m.serviceCategories,
@@ -96,7 +96,6 @@ export const delegationsModule: PortalModule = {
             navHide: true,
             enabled: hasAccess,
             element: <ServiceCategories />,
-            loader: accessControlLoader('umbod/thjonustuflokkar')(props),
           },
           {
             name: m.categoryDetails,
@@ -104,7 +103,6 @@ export const delegationsModule: PortalModule = {
             navHide: true,
             enabled: hasAccess,
             element: <CategoryDetails />,
-            loader: accessControlLoader('umbod/thjonustuflokkar/:slug')(props),
           },
           {
             name: m.faq,
@@ -112,9 +110,6 @@ export const delegationsModule: PortalModule = {
             navHide: true,
             enabled: hasAccess,
             element: <Faq />,
-            loader: accessControlLoader(
-              isCompany(userInfo) ? 'umbod/faq-company' : 'umbod/faq',
-            )(props),
           },
         ],
       },
@@ -132,15 +127,25 @@ export const delegationsModule: PortalModule = {
       {
         name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
-        element: <GrantAccess />,
+        navHide: useNewRoutes,
+        element: useNewRoutes ? (
+          <Navigate to={DelegationPaths.DelegationsGrantNew} replace />
+        ) : (
+          <GrantAccess />
+        ),
       },
       {
         name: coreMessages.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
-        element: <AccessOutgoing />,
+        navHide: useNewRoutes,
+        element: useNewRoutes ? (
+          <Navigate to={DelegationPaths.DelegationsNew} replace />
+        ) : (
+          <AccessOutgoing />
+        ),
       },
     ]
 
-    return useNewRoutes ? newRoutes : oldRoutes
+    return useNewRoutes ? [...newRoutes, ...oldRoutes] : oldRoutes
   },
 }

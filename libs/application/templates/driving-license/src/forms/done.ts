@@ -21,6 +21,10 @@ export const done: Form = buildForm({
           ? m.applicationDoneAlertMessage65Renewal
           : m.applicationDoneAlertMessageBFull,
       expandableHeader: m.nextStepsTitle,
+      expandableIntro: ({ answers }) =>
+        answers.applicationFor === BE
+          ? m.nextStepsIntroBE
+          : m.nextStepsIntroDefault,
       expandableDescription: ({ answers, externalData }) =>
         answers.applicationFor === B_TEMP
           ? m.nextStepsDescription

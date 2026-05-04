@@ -240,6 +240,16 @@ export const Finance = new XroadConf({
   },
 })
 
+export const Farmers = new XroadConf({
+  env: {
+    XROAD_FARMERS_PATH: {
+      dev: 'IS-DEV/GOV/10094/Afurd-Private/baendur',
+      staging: 'IS-TEST/GOV/7108120120/Afurd-Private/baendur',
+      prod: 'IS/GOV/7108120120/Afurd-Private/baendur',
+    },
+  },
+})
+
 export const FireCompensation = new XroadConf({
   env: {
     XROAD_HMS_APPLICATION_SYSTEM_PATH: {
@@ -1093,6 +1103,16 @@ export const SecondarySchool = new XroadConf({
   },
 })
 
+export const MmsPrimarySchool = new XroadConf({
+  env: {
+    XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      prod: 'IS/GOV/6601241280/MMS-Protected/data-gateway-backend-internal',
+    },
+  },
+})
+
 export const LSH = new XroadConf({
   env: {
     XROAD_LSH_PATH: {
@@ -1126,6 +1146,17 @@ export const GoProVerdicts = new XroadConf({
       dev: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is',
       staging: 'IS-TEST/GOV/10019/Domstolasyslan-Client/Island-is',
       prod: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is',
+    },
+  },
+})
+
+export const RecyclingFund = new XroadConf({
+  env: {
+    XROAD_RECYCLING_FUND_PATH: {
+      dev: 'IS-DEV/GOV/10099/Urvinnslusjodur-Protected/skilavottord-api',
+      staging:
+        'IS-TEST/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
+      prod: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
     },
   },
 })

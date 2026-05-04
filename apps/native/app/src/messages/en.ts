@@ -33,11 +33,12 @@ export const en: TranslatedMessages = {
   'applock.attempt': 'attempt left',
 
   // onboarding
-  'onboarding.notifications.title':
-    'Receive notifications of new documents as soon as they are received.',
+  'onboarding.notifications.title': 'Allow notifications',
+  'onboarding.notifications.body':
+    'Get notifications about new documents or other important things.',
   'onboarding.notifications.allowNotificationsButtonText':
     'Allow notifications',
-  'onboarding.notifications.decideLaterButtonText': 'Decide later',
+  'onboarding.notifications.decideLaterButtonText': 'Skip for now',
   'onboarding.appLock.title':
     'Screen lock ensures that no one can open the app except you.',
   'onboarding.appLock.choosePinButtonText': 'Choose PIN',
@@ -46,7 +47,8 @@ export const en: TranslatedMessages = {
   'onboarding.pinCode.goBackButtonText': 'Go back',
   'onboarding.pinCode.cancelButtonText': 'Cancel',
   'onboarding.pinCode.nonMatchingPinCodes': 'The numbers did not match',
-  'onboarding.biometrics.title':
+  'onboarding.biometrics.title': 'Allow biometrics',
+  'onboarding.biometrics.body':
     'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
@@ -62,6 +64,12 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
+  'onboarding.privacy.title': 'Privacy',
+  'onboarding.privacy.body':
+    "You can read Digital Iceland's policy on the handling of personal data on Ísland.is",
+  'onboarding.privacy.linkText': 'Privacy policy of Ísland.is',
+  'onboarding.privacy.continueButtonText': 'Continue',
+  'pinCode.updated': 'PIN code updated',
 
   // personal info screen
   'personalInfo.screenTitle': 'Personal info',
@@ -138,6 +146,8 @@ export const en: TranslatedMessages = {
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',
+  'user.natreg.description':
+    'Below is data about you retrieved from Registers Iceland',
   'user.natreg.displayName': 'Full name',
   'user.natreg.nationalId': 'Social ID',
   'user.natreg.birthPlace': 'Birthplace',
@@ -179,14 +189,6 @@ export const en: TranslatedMessages = {
   'home.allApplications': 'Digital applications',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
-  'home.onboardingModule.card1':
-    'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
-  'home.onboardingModule.card2':
-    'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
-  'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
-  'home.onboardingModule.card4':
-    'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
@@ -203,6 +205,7 @@ export const en: TranslatedMessages = {
   'homeOptions.applications': 'Applications',
   'homeOptions.vehicles': 'Vehicles',
   'homeOptions.airDiscount': 'Air discount scheme',
+  'homeOptions.appointments': 'Doctor appointments',
 
   // inbox
   'inbox.screenTitle': 'Inbox',
@@ -292,6 +295,7 @@ export const en: TranslatedMessages = {
   // wallet
   'wallet.screenTitle': 'Wallet',
   'wallet.bottomTabText': 'Wallet',
+  'wallet.scanButton': 'Scan',
   'wallet.alertMessage':
     'To use certificates as valid credentials, you need to transfer them to Apple Wallet.',
   'wallet.emptyListTitle': 'There are currently no documents',
@@ -415,7 +419,7 @@ export const en: TranslatedMessages = {
   'profile.screenTitle': 'More',
   'profile.bottomTabText': 'More',
   'profile.seeInfo': 'See info',
-  'profile.family': 'Family',
+  'profile.myData': 'My information',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
@@ -462,6 +466,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
   'vehicleDetail.noInfo': 'No information received',
+  'vehicleDetail.moreOptions': 'More options',
 
   // vehicle mileage
   'vehicle.mileage.errorTitle': 'Error',
@@ -488,7 +493,7 @@ export const en: TranslatedMessages = {
   // vehicle links
   'vehicle.links.ownerLookup': 'Vehicle registry lookup',
   'vehicle.links.vehicleHistory': 'Vehicle history',
-  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.reportOwnerChange': 'Report ownership change',
   'vehicle.links.returnCertificate': 'Return certificate',
   'vehicle.links.nameConfidentiality':
     'Name confidentiality in vehicle registry',
@@ -758,7 +763,7 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
-  'health.overview.medicine': 'Medicine',
+  'health.overview.medicine': 'My medicine',
   'health.overview.seeAllCategories': 'See all categories',
 
   // health: categories
@@ -920,7 +925,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.xMonths': '{months} months',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.screenTitle': 'My medicine',
   'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
   'health.prescriptionsAndCertificates.expired': 'Expired',
   'health.prescriptionsAndCertificates.rejected': 'Rejected',

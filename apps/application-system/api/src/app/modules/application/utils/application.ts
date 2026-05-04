@@ -12,6 +12,8 @@ import {
   ApplicationStatus,
   ApplicationTemplate,
   ApplicationTypes,
+  ApplicationWithAttachments,
+  ScheduledNotificationConfig,
 } from '@island.is/application/types'
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
@@ -22,6 +24,8 @@ import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
 import { IdentityClientService } from '@island.is/clients/identity'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
+import { ApplicationService } from '@island.is/application/api/core'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -353,4 +357,91 @@ export const getAdminDataForAdminPortal = async (
         }
       }),
   )
+}
+
+export const handleScheduledNotifications = async (
+  applicationService: ApplicationService,
+  application: ApplicationWithAttachments,
+  template: Unwrap<typeof getApplicationTemplateByTypeId>,
+  newState: string,
+) => {
+  // 1. Clean up any existing scheduled notifications
+  await applicationService.cancelScheduledNotifications(application.id)
+
+  // 2. Fetch the metadata for the incoming state
+  const newStateMeta = new ApplicationTemplateHelper(
+    application,
+    template,
+  ).getApplicationStateInformation(newState)
+
+  const configs = newStateMeta?.scheduledNotifications
+
+  if (!configs) {
+    return
+  }
+
+  // 3. Prepare the new schedules with robustness
+  const notificationsToSchedule = []
+  const configArray = Array.isArray(configs) ? configs : [configs]
+
+  for (const configItem of configArray) {
+    let config: ScheduledNotificationConfig
+    try {
+      if (typeof configItem === 'function') {
+        config = configItem(application)
+      } else {
+        config = configItem
+      }
+    } catch (error) {
+      console.error(
+        `Failed to evaluate schedule configuration for application ${application.id} in state ${newState}`,
+        error,
+      )
+      continue
+    }
+    try {
+      let time: Date
+
+      if ('delayInMs' in config) {
+        const delay =
+          typeof config.delayInMs === 'function'
+            ? config.delayInMs(application)
+            : config.delayInMs
+
+        if (typeof delay !== 'number' || isNaN(delay)) {
+          throw new Error('delayInMs did not resolve to a valid number')
+        }
+        time = addMilliseconds(new Date(), delay)
+      } else {
+        time =
+          typeof config.date === 'function'
+            ? config.date(application)
+            : config.date
+
+        if (!(time instanceof Date) || isNaN(time.getTime())) {
+          throw new Error('date did not resolve to a valid Date object')
+        }
+      }
+
+      notificationsToSchedule.push({
+        template: config.template,
+        schedule_time: time,
+        args: config.args,
+      })
+    } catch (error) {
+      console.error(
+        `Failed to evaluate schedule configuration for template ${config.template} in state ${newState} for application ${application.id}`,
+        error,
+      )
+    }
+  }
+
+  // 4. Save to the database
+  if (notificationsToSchedule.length > 0) {
+    await applicationService.createScheduledNotifications(
+      application.id,
+      newState,
+      notificationsToSchedule,
+    )
+  }
 }

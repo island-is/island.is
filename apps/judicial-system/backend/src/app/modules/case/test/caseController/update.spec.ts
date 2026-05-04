@@ -6,13 +6,16 @@ import {
   CaseDecision,
   CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseType,
   DateType,
+  DefendantEventType,
   EventType,
   indictmentCases,
+  IndictmentDecision,
   InstitutionType,
   investigationCases,
   restrictionCases,
@@ -32,6 +35,7 @@ import {
   CaseRepositoryService,
   CaseString,
   DateLog,
+  DefendantEventLogRepositoryService,
 } from '../../../repository'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
@@ -78,6 +82,7 @@ describe('CaseController - Update', () => {
   let mockFileService: FileService
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
@@ -90,6 +95,7 @@ describe('CaseController - Update', () => {
       fileService,
       sequelize,
       caseRepositoryService,
+      defendantEventLogRepositoryService,
       dateLogModel,
       caseStringModel,
       caseController,
@@ -100,6 +106,7 @@ describe('CaseController - Update', () => {
     mockUserService = userService
     mockFileService = fileService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel
 
@@ -167,6 +174,91 @@ describe('CaseController - Update', () => {
 
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
+    })
+  })
+
+  describe('indictment completed for some defendants', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+        {
+          defendantId: defendantId2,
+          rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+        },
+      ],
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should not persist defendant event log decisions on the case', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME },
+        { transaction },
+      )
+    })
+
+    it('should create defendant event logs from the transient decisions', () => {
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        1,
+        DefendantEventType.INDICTMENT_DISMISSED,
+        caseId,
+        defendantId1,
+        user,
+        transaction,
+      )
+
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        2,
+        DefendantEventType.INDICTMENT_CANCELLED,
+        caseId,
+        defendantId2,
+        user,
+        transaction,
+      )
+    })
+  })
+
+  describe('indictment completed for some defendants with invalid defendant id', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME,
+      defendantEventLogDecisions: [
+        {
+          defendantId: uuid(),
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+      ],
+    } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should reject updates for defendants that do not belong to the case', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toContain('does not belong to case')
     })
   })
 
@@ -544,325 +636,13 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe.each(restrictionCases)(
-    'prosecutor statement date is updated for %s case',
-    (type) => {
-      const statementId = uuid()
-      const fileId = uuid()
-      const caseFiles = [
-        {
-          id: statementId,
-          key: uuid(),
-          isKeyAccessible: true,
-          state: CaseFileState.STORED_IN_RVG,
-          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-        },
-        {
-          id: fileId,
-          key: uuid(),
-          isKeyAccessible: true,
-          state: CaseFileState.STORED_IN_RVG,
-          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-        },
-      ]
-      const originalCase = { ...theCase, type, caseFiles } as Case
-      const caseToUdate = { prosecutorStatementDate: new Date() }
-      const updatedCase = {
-        ...theCase,
-        type,
-        appealCase: { prosecutorStatementDate: date },
-        caseFiles,
-      }
-      let then: Then
-
-      beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
-
-        then = await givenWhenThen(caseId, user, originalCase, caseToUdate)
-      })
-
-      it('should update the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-          caseId,
-          { prosecutorStatementDate: date },
-          { transaction },
-        )
-      })
-
-      it('should queue messages', () => {
-        expect(mockQueuedMessages).toEqual([
-          {
-            type: MessageType.NOTIFICATION,
-            user,
-            caseId,
-            body: { type: CaseNotificationType.APPEAL_STATEMENT },
-          },
-        ])
-      })
-
-      it('should return the updated case', () => {
-        expect(then.result).toEqual(updatedCase)
-      })
-    },
-  )
-
-  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation nor prosecutorStatementDate updated', () => {
+  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, {})
     })
 
     it('should not post to queue', () => {
       expect(mockQueuedMessages).toEqual([])
-    })
-  })
-
-  describe('appeal case number updated', () => {
-    const appealCaseNumber = uuid()
-    const caseToUpdate = { appealCaseNumber }
-    const updatedCase = {
-      ...theCase,
-      type: CaseType.TRAVEL_BAN,
-      appealCase: { appealCaseNumber },
-    }
-
-    beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
-
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
-    })
-
-    it('should post to queue', () => {
-      expect(mockQueuedMessages).toEqual([
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
-          user,
-          caseId,
-        },
-      ])
-    })
-  })
-
-  describe('assigned appeal roles updated', () => {
-    const appealCaseNumber = uuid()
-    const appealAssistantId = uuid()
-    const appealJudge1Id = uuid()
-    const appealJudge2Id = uuid()
-    const appealJudge3Id = uuid()
-    const caseToUpdate = { appealCaseNumber }
-    const updatedCase = {
-      ...theCase,
-      type: CaseType.SEARCH_WARRANT,
-      appealCase: {
-        appealCaseNumber,
-        appealAssistantId,
-        appealJudge1Id,
-        appealJudge2Id,
-        appealJudge3Id,
-      },
-    }
-
-    beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
-
-      await givenWhenThen(
-        caseId,
-        user,
-        { ...theCase, appealCase: { appealCaseNumber } } as Case,
-        caseToUpdate,
-      )
-    })
-
-    it('should post to queue', () => {
-      expect(mockQueuedMessages).toEqual([
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
-          user,
-          caseId,
-        },
-      ])
-    })
-  })
-
-  describe('appeal case number updated with assigned appeal roles', () => {
-    const appealCaseNumber = uuid()
-    const appealAssistantId = uuid()
-    const appealJudge1Id = uuid()
-    const appealJudge2Id = uuid()
-    const appealJudge3Id = uuid()
-    const caseToUpdate = { appealCaseNumber }
-    const updatedCase = {
-      ...theCase,
-      type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-      appealCase: {
-        appealCaseNumber,
-        appealAssistantId,
-        appealJudge1Id,
-        appealJudge2Id,
-        appealJudge3Id,
-      },
-    }
-
-    beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
-
-      await givenWhenThen(
-        caseId,
-        user,
-        {
-          ...theCase,
-          appealCase: {
-            appealCaseNumber: uuid(),
-            appealAssistantId,
-            appealJudge1Id,
-            appealJudge2Id,
-            appealJudge3Id,
-          },
-        } as Case,
-        caseToUpdate,
-      )
-    })
-
-    it('should post to queue', () => {
-      expect(mockQueuedMessages).toEqual([
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
-          user,
-          caseId,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
-          user,
-          caseId,
-        },
-      ])
-    })
-  })
-
-  describe('appeal case number updated with appeal files', () => {
-    const appealCaseNumber = uuid()
-    const caseToUpdate = { appealCaseNumber }
-    const caseFile1Id = uuid()
-    const caseFile2Id = uuid()
-    const caseFile3Id = uuid()
-    const caseFile4Id = uuid()
-    const caseFile5Id = uuid()
-    const caseFile6Id = uuid()
-    const caseFiles = [
-      caseFile,
-      {
-        id: caseFile1Id,
-        caseId,
-        category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-        key: uuid(),
-        isKeyAccessible: true,
-      },
-      {
-        id: caseFile2Id,
-        caseId,
-        category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-        key: uuid(),
-        isKeyAccessible: true,
-      },
-      {
-        id: caseFile3Id,
-        caseId,
-        category: CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-        key: uuid(),
-        isKeyAccessible: true,
-      },
-      {
-        id: caseFile4Id,
-        caseId,
-        category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-        key: uuid(),
-        isKeyAccessible: true,
-      },
-      {
-        id: caseFile5Id,
-        caseId,
-        category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-        key: uuid(),
-        isKeyAccessible: true,
-      },
-      {
-        id: caseFile6Id,
-        caseId,
-        category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-        key: uuid(),
-        isKeyAccessible: true,
-      },
-    ]
-    const updatedCase = {
-      ...theCase,
-      type: CaseType.RESTRAINING_ORDER,
-      appealCase: { appealCaseNumber },
-      caseFiles,
-    }
-
-    beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
-
-      await givenWhenThen(
-        caseId,
-        user,
-        {
-          ...theCase,
-          appealCase: { appealCaseNumber: uuid() },
-          caseFiles,
-        } as Case,
-        caseToUpdate,
-      )
-    })
-
-    it('should post to queue', () => {
-      expect(mockQueuedMessages).toEqual([
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId,
-          elementId: caseFile1Id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId,
-          elementId: caseFile2Id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId,
-          elementId: caseFile3Id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId,
-          elementId: caseFile4Id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId,
-          elementId: caseFile5Id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId,
-          elementId: caseFile6Id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
-          user,
-          caseId,
-        },
-      ])
     })
   })
 

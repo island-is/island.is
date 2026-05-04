@@ -28,12 +28,14 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Form } from '../forms/models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { Organization } from '../organizations/models/organization.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
 import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
@@ -48,12 +50,16 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
+import {
+  ApplicationXroadFieldDto,
+  ApplicationXroadValueDto,
+} from './models/dto/application.xroad.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { NotificationResponseDto } from './models/dto/validation.response.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
 
@@ -270,20 +276,13 @@ export class ApplicationsService {
     return form.slug
   }
 
-  async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
+  async submit(id: string): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
       include: [{ model: Value, as: 'values' }],
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
-    }
-
-    const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new ForbiddenException(
-        `User does not have permission to submit application '${id}'`,
-      )
     }
 
     const form = await this.formModel.findByPk(application.formId)
@@ -1089,10 +1088,22 @@ export class ApplicationsService {
 
     notificationDto.nationalId = nationalId
 
-    if (!notificationDto.screen) {
+    if (!notificationDto.screenDto) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
+    }
+
+    const screen = notificationDto.screenDto
+
+    if (
+      notificationDto.command !== NotificationCommands.SUBMIT &&
+      notificationDto.screenDto
+    ) {
+      notificationDto.fields = this.mapScreenToNotificationFields(
+        notificationDto.screenDto,
+      )
+      notificationDto.screenDto = undefined
     }
 
     const response = await this.notifyService.sendNotification(
@@ -1100,39 +1111,129 @@ export class ApplicationsService {
       submissionUrl,
     )
 
+    screen.fields = this.mergeMissing(response.fields, screen.fields)
+    response.screen = screen
+
+    response.screen.screenError = {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
+    }
+
     if (!response.operationSuccessful) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'Please try again later or send an email to island@island.is',
-          },
-        }
+        response.screen.screenError = this.getDefaultScreenErrorValidate()
       } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-            en: 'Please try to refresh the page or send an email to island@island.is',
-          },
-        }
+        response.screen.screenError = this.getDefaultScreenErrorPopulate()
       }
-      response.screen = notificationDto.screen
+    } else if (response.screenError?.hasError) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorValidate()
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorPopulate()
+      }
+    }
+
+    if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
       )
     }
 
     return response
+  }
+
+  private mergeMissing(
+    responseFields: ApplicationXroadFieldDto[] | undefined,
+    screenFields: FieldDto[] | undefined,
+  ): FieldDto[] | undefined {
+    if (!screenFields?.length) return screenFields
+    if (!responseFields?.length) return screenFields
+
+    const byIdentifier = new Map(responseFields.map((f) => [f.identifier, f]))
+
+    return screenFields.map((field) => {
+      const override = byIdentifier.get(field.identifier)
+      if (!override) return field
+
+      const existingValueIdByOrder = new Map(
+        (field.values ?? []).map((v: any) => [v.order, v.id]),
+      )
+
+      const merged: any = { ...field, ...override }
+
+      if (Array.isArray(override.values)) {
+        merged.values = override.values.map((v: any) => ({
+          ...v,
+          id:
+            typeof v.id === 'string' && v.id.length > 0
+              ? v.id
+              : existingValueIdByOrder.get(v.order),
+        }))
+      }
+
+      // id is required for list items but is not used for populated lists
+      if (Array.isArray(override.list)) {
+        merged.list = override.list.map((li: any) => ({
+          ...li,
+          id: '1',
+        }))
+      }
+
+      return merged
+    })
+  }
+
+  private getDefaultScreenErrorValidate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að tengjast ytri þjónustu',
+        en: 'Could not connect to external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+        en: 'Please try again later or send an email to island@island.is',
+      },
+    }
+  }
+
+  private getDefaultScreenErrorPopulate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að sækja gögn frá ytri þjónustu',
+        en: 'Could not fetch data from external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
+        en: 'Please try to refresh the page or send an email to island@island.is',
+      },
+    }
+  }
+
+  private mapScreenToNotificationFields(
+    screen: ScreenDto,
+  ): ApplicationXroadFieldDto[] {
+    return (screen.fields ?? []).map((field) => {
+      const xroadField = new ApplicationXroadFieldDto()
+      xroadField.identifier = field.identifier
+      xroadField.screenIdentifier = screen.identifier
+      xroadField.fieldType = field.fieldType
+      xroadField.values = (field.values ?? []).map((value) => {
+        const xroadValue = new ApplicationXroadValueDto()
+        xroadValue.order = value.order
+        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+        return xroadValue
+      })
+      return xroadField
+    })
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

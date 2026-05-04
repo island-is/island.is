@@ -59,7 +59,9 @@ const IDSAdmin = () => {
     navigate(IDSAdminPaths.IDSAdmin)
   }
 
-  const showBackButton = location.pathname !== IDSAdminPaths.IDSAdmin
+  const showBackButton =
+    location.pathname !== IDSAdminPaths.IDSAdmin &&
+    !location.pathname.startsWith(`${IDSAdminPaths.IDSAdminControls}/`)
 
   return (
     <DelegationProvidersProvider>

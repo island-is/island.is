@@ -220,6 +220,22 @@ export class PaymentFlow extends Model<
   })
   redirectToReturnUrlOnSuccess?: boolean
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'invoice_return_url',
+  })
+  invoiceReturnUrl?: string
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    field: 'redirect_on_invoice_creation',
+  })
+  redirectOnInvoiceCreation?: boolean
+
   @ApiPropertyOptional({
     description:
       'Define key-value pairs of extra data, e.g., car license plate, house address, etc.',

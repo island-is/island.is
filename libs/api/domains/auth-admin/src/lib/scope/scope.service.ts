@@ -3,11 +3,17 @@ import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
 
+import { Environment } from '@island.is/shared/types'
+
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
+import { CreateScopeUserInput } from './dto/create-scope-user.input'
+import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
 import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
+import { ScopeClient } from './models/scope-client.model'
+import { ScopeUser } from './models/scope-user.model'
 import { ScopesPayload } from './dto/scopes.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
@@ -182,6 +188,7 @@ export class ScopeService extends MultiEnvironmentService {
     const scopeModels: Scope[] = Object.entries(groupedScopes)
       .map(([scopeName, scopes]) => ({
         scopeName,
+        modified: scopes[0].modified,
         environments: scopes,
       }))
       .sort((a, b) => a.scopeName.localeCompare(b.scopeName))
@@ -198,7 +205,7 @@ export class ScopeService extends MultiEnvironmentService {
   /**
    * Gets a specific scope by scope name for all available environments
    */
-  async getScope(user: User, input: ScopeInput): Promise<Scope> {
+  async getScope(user: User, input: ScopeInput): Promise<Scope | null> {
     const scopeSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
@@ -220,9 +227,133 @@ export class ScopeService extends MultiEnvironmentService {
       },
     )
 
+    if (environmentsScopes.length === 0) return null
+
     return {
       scopeName: input.scopeName,
+      modified: environmentsScopes[0].modified,
       environments: environmentsScopes,
     }
+  }
+
+  async getScopeClients(
+    user: User,
+    input: ScopeInput,
+    environment: Environment,
+  ): Promise<ScopeClient[]> {
+    const clients = await this.makeRequest(user, environment, (api) =>
+      api.meScopeClientsControllerFindAllRaw({
+        tenantId: input.tenantId,
+        scopeName: input.scopeName,
+      }),
+    )
+
+    return (clients ?? []).map((client) => ({
+      clientId: client.clientId,
+      clientType: client.clientType,
+      displayName: client.displayName,
+    }))
+  }
+
+  /**
+   * Gets all users with access to a specific scope in a given environment
+   */
+  async getScopeUsers(
+    user: User,
+    tenantId: string,
+    scopeName: string,
+    environment: Environment,
+  ): Promise<ScopeUser[]> {
+    const result = await this.makeRequest(user, environment, (api) =>
+      api.meScopeUsersControllerFindUsersByScopeRaw({
+        tenantId,
+        scopeName,
+      }),
+    )
+
+    return (result ?? []).map((u) => ({
+      nationalId: u.nationalId,
+      name: u.name ?? undefined,
+      email: u.email,
+    }))
+  }
+
+  /**
+   * Creates a new user with access to a specific scope in the given environments
+   */
+  async createScopeUser(
+    user: User,
+    input: CreateScopeUserInput,
+  ): Promise<ScopeUser> {
+    let createdUser: ScopeUser | null = null
+
+    for (const environment of input.environments) {
+      try {
+        const result = await this.makeRequest(user, environment, (api) =>
+          api.meScopeUsersControllerCreateRaw({
+            tenantId: input.tenantId,
+            scopeName: input.scopeName,
+            apiScopeUserDTO: {
+              nationalId: input.nationalId,
+              name: input.name,
+              email: input.email,
+            },
+          }),
+        )
+
+        if (result && !createdUser) {
+          createdUser = {
+            nationalId: result.nationalId,
+            name: result.name ?? undefined,
+            email: result.email,
+          }
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to create scope user in ${environment}`,
+          error as Error,
+        )
+      }
+    }
+
+    if (!createdUser) {
+      throw new Error('Failed to create scope user')
+    }
+
+    return createdUser
+  }
+
+  /**
+   * Updates the user access list for a scope by adding/removing users
+   */
+  async updateScopeUsers(
+    user: User,
+    input: UpdateScopeUsersInput,
+  ): Promise<boolean> {
+    const targetEnvironments = input.environments
+    let anySuccess = false
+
+    for (const environment of targetEnvironments) {
+      try {
+        await this.makeRequest(user, environment, (api) =>
+          api.meScopeUsersControllerUpdateScopeUsersRaw({
+            tenantId: input.tenantId,
+            scopeName: input.scopeName,
+            updateScopeUsersDto: {
+              addedNationalIds: input.addedNationalIds,
+              removedNationalIds: input.removedNationalIds,
+            },
+          }),
+        )
+        anySuccess = true
+      } catch (error) {
+        this.logger.error(
+          `Failed to update scope users in ${environment}`,
+          error as Error,
+        )
+      }
+    }
+
+    return anySuccess
   }
 }

@@ -19,11 +19,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á takka fyrir skref til að hlaða upp gögnum.',
   },
-  returnIndictmentButtonText: {
-    id: 'judicial.system.core:indictment_overview.return_indictment_button_text',
-    defaultMessage: 'Endursenda',
-    description: 'Notaður sem texti á takka til að endursenda ákæru.',
-  },
   submitCourtFilesButtonText: {
     id: 'judicial.system.core:indictment_overview.send_court_files_button_text',
     defaultMessage: 'Senda gögn',

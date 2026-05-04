@@ -10,6 +10,9 @@ export class FieldSettingsInput {
   @Field(() => Int, { nullable: true })
   maxValue?: number
 
+  @Field(() => Boolean, { nullable: true })
+  isDecimal?: boolean
+
   @Field(() => Int, { nullable: true })
   minLength?: number
 
@@ -97,14 +100,8 @@ export class FieldSettingsInput {
   @Field(() => String, { nullable: true })
   performingOrgID?: string
 
-  @Field(() => String, { nullable: true })
-  quantityProviderId?: string
-
   @Field(() => Int, { nullable: true })
   priceAmount?: number
-
-  @Field(() => Boolean, { nullable: true })
-  chooseQuantity?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isDropdown?: boolean

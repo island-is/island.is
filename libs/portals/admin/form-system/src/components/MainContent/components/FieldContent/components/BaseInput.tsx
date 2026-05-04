@@ -28,7 +28,7 @@ export const BaseInput = () => {
     getTranslation,
     selectStatus,
   } = useContext(ControlContext)
-  const { activeItem, form, isPublished } = control
+  const { activeItem, form, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
   const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
@@ -60,10 +60,33 @@ export const BaseInput = () => {
     return false
   }
 
+  const listItemIds =
+    currentItem.list
+      ?.map((item) => item?.id)
+      .filter((id): id is string => Boolean(id)) ?? []
+
+  const isDependencyParent = (form.dependencies ?? []).some((dep) => {
+    const parent = dep?.parentProp
+    if (!parent) return false
+
+    if (currentItem.fieldType === FieldTypesEnum.CHECKBOX) {
+      return parent === currentItem.id
+    }
+
+    if (
+      currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST
+    ) {
+      return listItemIds.includes(parent)
+    }
+
+    return false
+  })
+
   return (
     <Stack space={2}>
       <Row>
-        <Column span="5/10">
+        <Column span={['10/10', '5/10']}>
           <Select
             label={formatMessage(m.type)}
             name="fieldTypeSelect"
@@ -73,7 +96,7 @@ export const BaseInput = () => {
             isSearchable
             value={defaultOption}
             isDisabled={
-              selectStatus === NavbarSelectStatus.NORMAL || isPublished
+              selectStatus === NavbarSelectStatus.NORMAL || isReadOnly
             }
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
@@ -97,7 +120,7 @@ export const BaseInput = () => {
             name="name"
             value={currentItem?.name?.is ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -119,7 +142,7 @@ export const BaseInput = () => {
             name="nameEn"
             value={currentItem?.name?.en ?? ''}
             backgroundColor="blue"
-            readOnly={isPublished}
+            readOnly={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -159,7 +182,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.is ?? ''}
                 textarea
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 onChange={(e) =>
@@ -182,7 +205,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.en ?? ''}
                 textarea
                 backgroundColor="blue"
-                readOnly={isPublished}
+                readOnly={isReadOnly}
                 onFocus={async (e) => {
                   if (
                     !currentItem?.description?.en &&
@@ -226,7 +249,12 @@ export const BaseInput = () => {
               <Checkbox
                 label={formatMessage(m.isPartOfMulti)}
                 checked={currentItem.isPartOfMultiset ?? false}
-                disabled={isPublished}
+                disabled={isReadOnly || isDependencyParent}
+                tooltip={
+                  isDependencyParent
+                    ? 'Þetta stýrir tengingum og getur því ekki verið hluti af fjölmengi'
+                    : undefined
+                }
                 onChange={() =>
                   controlDispatch({
                     type: 'CHANGE_IS_PART_OF_MULTI',
@@ -245,7 +273,7 @@ export const BaseInput = () => {
             <Checkbox
               label={formatMessage(m.required)}
               checked={currentItem.isRequired ?? false}
-              disabled={isPublished}
+              disabled={isReadOnly}
               onChange={() =>
                 controlDispatch({
                   type: 'CHANGE_IS_REQUIRED',

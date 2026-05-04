@@ -7,8 +7,10 @@ import {
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
+  ChargeFjsV2,
   Client,
   NationalRegistryB2C,
+  Payment,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
@@ -87,6 +89,8 @@ export const serviceSetup = (services: {
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NTI_USERNAME: '/k8s/form-system/NTI_USERNAME',
+      NTI_PASSWORD: '/k8s/form-system/NTI_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
@@ -94,7 +98,7 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, ChargeFjsV2, Payment)
     .ingress({
       primary: {
         host: {
@@ -109,6 +113,7 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces(
+      'services-payments',
       'islandis',
       'nginx-ingress-external',
       'nginx-ingress-internal',

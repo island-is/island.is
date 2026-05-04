@@ -18,6 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CaseFile } from './caseFile.model'
 import { CourtDocument } from './courtDocument.model'
 import { CourtSessionString } from './courtSessionString.model'
 import { User } from './user.model'
@@ -101,6 +102,15 @@ export class CourtSession extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   ruling?: string
+
+  @ForeignKey(() => CaseFile)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  rulingFileId?: string
+
+  @BelongsTo(() => CaseFile, 'rulingFileId')
+  @ApiPropertyOptional({ type: () => CaseFile })
+  rulingFile?: CaseFile
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

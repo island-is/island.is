@@ -16,7 +16,6 @@ import { useDelegationForm } from '../../context/DelegationFormContext'
 import add from 'date-fns/add'
 import { useEffect, useState } from 'react'
 import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipients'
-import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { FlowStep, FlowStepper } from '@island.is/island-ui/core'
 import { useForm } from 'react-hook-form'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
@@ -29,7 +28,6 @@ export const CategoryDetails = () => {
   const { formatMessage } = useLocale()
   const [showFlow, setShowFlow] = useState(false)
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false)
-  const [activeStep, setActiveStep] = useState(1)
 
   const {
     data: categoriesData,
@@ -82,14 +80,6 @@ export const CategoryDetails = () => {
 
   const steps: FlowStep[] = [
     {
-      id: 'select-permissions',
-      name: formatMessage(m.choosePermissionsLabel),
-      content: <AccessScopes />,
-      continueButtonDisabled: selectedScopes.length === 0,
-      continueButtonLabel: formatMessage(m.chooseRecipientsButtonLabel),
-      continueButtonIcon: 'arrowForward',
-    },
-    {
       id: 'access-recipients',
       name: formatMessage(m.chooseRecipientsLabel),
       content: <AccessRecipients methods={methods} />,
@@ -131,6 +121,7 @@ export const CategoryDetails = () => {
               <ScopesTable
                 scopes={data?.scopes as AuthApiScope[]}
                 showCheckbox
+                showSelectAll
                 onSelectScope={onSelectScope}
               />
               {loading && (
@@ -154,8 +145,6 @@ export const CategoryDetails = () => {
             steps={steps}
             cancelButtonLabel={formatMessage(coreMessages.buttonCancel)}
             onCancel={() => setShowFlow(false)}
-            activeStep={activeStep}
-            onStepChange={setActiveStep}
             backButtonLabel={formatMessage(m.backButton)}
           />
         )}
