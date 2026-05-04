@@ -293,7 +293,11 @@ export class PaymentService {
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
-    const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
+    const {
+      returnUrl,
+      cancelUrl,
+      invoiceUrl: invoiceReturnUrl,
+    } = await this.getReturnUrls(applicationId)
 
     const resolvedPayerNationalId =
       payerNationalId && payerNationalId.trim().length > 0
@@ -321,7 +325,9 @@ export class PaymentService {
           },
           returnUrl,
           cancelUrl,
+          invoiceReturnUrl,
           redirectToReturnUrlOnSuccess: true,
+          redirectOnInvoiceCreation: true,
           extraData,
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
         },
@@ -524,14 +530,14 @@ export class PaymentService {
       )
     }
 
-    const returnUrl = new URL(this.config.clientLocationOrigin)
-    returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    returnUrl.search = 'done'
+    const baseUrl = new URL(this.config.clientLocationOrigin)
+    baseUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
+    const baseUrlString = baseUrl.toString()
 
-    const cancelUrl = new URL(this.config.clientLocationOrigin)
-    cancelUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    cancelUrl.search = 'cancelled'
-
-    return { returnUrl: returnUrl.toString(), cancelUrl: cancelUrl.toString() }
+    return {
+      returnUrl: `${baseUrlString}?done`,
+      cancelUrl: `${baseUrlString}?cancelled`,
+      invoiceUrl: `${baseUrlString}?invoice`,
+    }
   }
 }

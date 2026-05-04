@@ -1562,11 +1562,16 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                     }
                     time={time}
                     hearingTime={
-                      agenda.hearingTime
-                        ? formatMessage(m.listPage.hearingTime, {
-                            hearingTime: agenda.hearingTime,
-                          })
-                        : undefined
+                      agenda.hearingTime ? (
+                        <Text variant="small">
+                          {formatMessage(m.listPage.hearingTimePrefix)}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: agenda.hearingTime,
+                            }}
+                          />
+                        </Text>
+                      ) : undefined
                     }
                     court={agenda.court}
                     courtRoom={agenda.courtRoom}

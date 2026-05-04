@@ -179,8 +179,7 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT,
+          s.sectionType !== SectionTypes.SUMMARY,
       )
       .map((s) => (
         <Box key={s.id}>

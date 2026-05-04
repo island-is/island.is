@@ -17,8 +17,8 @@ import { type User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { AppealCase } from './dto/appealCase.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
+import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
 import { TransitionAppealCaseInput } from './dto/transitionAppealCase.input'
-import { UpdateAppealCaseInput } from './dto/updateAppealCase.input'
 
 @UseGuards(new JwtGraphQlAuthUserGuard(true))
 @Resolver(() => AppealCase)
@@ -50,28 +50,22 @@ export class LimitedAccessAppealCaseResolver {
   }
 
   @Mutation(() => AppealCase, { nullable: true })
-  limitedAccessUpdateAppealCase(
-    @Args('input', { type: () => UpdateAppealCaseInput })
-    input: UpdateAppealCaseInput,
-    @CurrentGraphQlUser() user: User,
+  limitedAccessCreateAppealEventLog(
+    @Args('input', { type: () => CreateAppealEventLogInput })
+    input: CreateAppealEventLogInput,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
-    const { caseId, appealCaseId, ...updateAppealCase } = input
+    const { caseId, appealCaseId, eventType } = input
 
     this.logger.debug(
-      `Updating limited access appeal case ${appealCaseId} of case ${caseId}`,
+      `Creating appeal event log ${eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.UPDATE_APPEAL_CASE,
-      backendService.limitedAccessUpdateAppealCase(
-        caseId,
-        appealCaseId,
-        updateAppealCase,
-      ),
+    return backendService.limitedAccessCreateAppealEventLog(
       caseId,
+      appealCaseId,
+      eventType,
     )
   }
 

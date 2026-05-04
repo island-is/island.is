@@ -16,6 +16,7 @@ import {
 import { AppealCase } from '../models/appealCase.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
 import { Case } from '../models/case.model'
+import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
 import { CivilClaimant } from '../models/civilClaimant.model'
@@ -144,6 +145,12 @@ export const caseInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -188,6 +195,11 @@ export const caseInclude: Includeable[] = [
         as: 'attestingWitness',
         required: false,
         include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CaseFile,
+        as: 'rulingFile',
+        required: false,
       },
       {
         model: CourtDocument,
@@ -529,8 +541,6 @@ export interface UpdateAppealCase
     AppealCase,
     | 'appealCaseNumber'
     | 'appealReceivedByCourtDate'
-    | 'prosecutorStatementDate'
-    | 'defendantStatementDate'
     | 'appealAssistantId'
     | 'appealJudge1Id'
     | 'appealJudge2Id'

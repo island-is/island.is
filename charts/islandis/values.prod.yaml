@@ -446,6 +446,7 @@ api:
     XROAD_PRACTICAL_EXAMS_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '35000'
+    XROAD_RECYCLING_FUND_PATH: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api'
     XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
@@ -797,6 +798,7 @@ application-system-api:
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1'
     XROAD_PRACTICAL_EXAMS_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
+    XROAD_RECYCLING_FUND_PATH: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api'
     XROAD_RSK_RENTAL_RATE_PATH: 'IS/GOV/5402696029/Skatturinn/rentaldayrate-v1'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
@@ -3054,7 +3056,7 @@ services-bff-portals-admin:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/stjornbord"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/stjornbord","https://www.island.is/stjornbord"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://island.is/stjornbord/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/stjornbord'
@@ -3156,7 +3158,7 @@ services-bff-portals-my-pages:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/minarsidur","https://island.is/umsoknir","https://island.is/form"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/minarsidur","https://island.is/umsoknir","https://island.is/form","https://www.island.is/minarsidur","https://www.island.is/umsoknir","https://www.island.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://island.is/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/minarsidur'
@@ -3782,6 +3784,10 @@ services-payments:
       cpu: '100m'
       memory: '128Mi'
   secrets:
+    APPLE_PAY_MERCHANT_IDENTIFIER: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTIFIER'
+    APPLE_PAY_MERCHANT_IDENTITY_CERT: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_CERT'
+    APPLE_PAY_MERCHANT_IDENTITY_KEY: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY'
+    APPLE_PAY_PAYMENT_PROCESSING_KEY: '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
@@ -5091,7 +5097,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'prod'
     LOG_LEVEL: 'info'
-    MATOMO_DOMAIN: 'https://matomo.island.is'
+    MATOMO_DOMAIN: 'https://cdn.matomo.cloud/islandis.matomo.cloud'
     MATOMO_ENABLED: 'true'
     MATOMO_SITE_ID: '2'
     NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'

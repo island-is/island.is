@@ -8,7 +8,10 @@ import {
   Inline,
   Text,
 } from '@island.is/island-ui/core'
-import { oldAgePensionFormMessage } from '../../lib/messages'
+import {
+  oldAgePensionFormMessage,
+  validatorErrorMessages,
+} from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
@@ -16,6 +19,11 @@ import { EmployersTable } from '../components/EmployersTable'
 import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
 import { Employer } from '../../utils/types'
 import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { ApplicationType } from '../../utils/constants'
+import {
+  markEmployersOverviewAutoExpanded,
+  shouldAutoExpandEmployersOverview,
+} from './utils'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
@@ -24,7 +32,9 @@ const EmployersOverview: FC<RepeaterProps> = ({
   setRepeaterItems,
   setBeforeSubmitCallback,
 }) => {
-  const { employers } = getApplicationAnswers(application.answers)
+  const { employers, rawEmployers, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
 
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -42,19 +52,27 @@ const EmployersOverview: FC<RepeaterProps> = ({
   }
 
   useEffect(() => {
-    if (employers.length === 0) {
+    if (
+      shouldAutoExpandEmployersOverview(application.id, rawEmployers, employers)
+    ) {
+      markEmployersOverviewAutoExpanded(application.id)
       expandRepeater()
     }
-  }, [
-    application,
-    expandRepeater,
-    formatMessage,
-    locale,
-    employers,
-    setBeforeSubmitCallback,
-    setRepeaterItems,
-    updateApplication,
-  ])
+  }, [application.id, expandRepeater, employers, rawEmployers])
+
+  setBeforeSubmitCallback?.(async () => {
+    if (
+      applicationType === ApplicationType.HALF_OLD_AGE_PENSION &&
+      employers.length === 0
+    ) {
+      return [
+        false,
+        formatMessage(validatorErrorMessages.employerRequiredForHalfPension),
+      ]
+    }
+
+    return [true, null]
+  })
 
   const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter((e) => e.email !== email)
