@@ -118,7 +118,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
 
             return {
               id: item.id,
-              medicine: item?.name + ' ' + item?.strength,
+              medicine: [item?.name, item?.strength].filter(Boolean).join(' '),
               usedFor: item?.indication ?? '',
               process: item?.amountRemaining ?? '',
               validTo: isExpired ? (
@@ -196,10 +196,16 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                             href: item?.url ?? '',
                             type: 'link',
                           },
-                          {
-                            title: formatMessage(messages.medicineStrength),
-                            value: item?.strength ?? '',
-                          },
+                          ...(item?.strength
+                            ? [
+                                {
+                                  title: formatMessage(
+                                    messages.medicineStrength,
+                                  ),
+                                  value: item?.strength ?? '',
+                                },
+                              ]
+                            : []),
                           {
                             title: formatMessage(messages.usedFor),
                             value: item?.indication ?? '',
