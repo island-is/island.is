@@ -56,7 +56,7 @@ export const PermissionContent = () => {
       id: langKey,
       label: formatMessage(langKey === Languages.IS ? m.icelandic : m.english),
       content: (
-        <Box display="flex" flexDirection="column" rowGap={5}>
+        <Box display="flex" flexDirection="column" rowGap={5} marginTop={2}>
           <Stack space={1}>
             <Input
               backgroundColor="blue"
