@@ -812,7 +812,12 @@ describe('CaseController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, completedIndictmentCase, caseToUpdate)
+      then = await givenWhenThen(
+        caseId,
+        user,
+        completedIndictmentCase,
+        caseToUpdate,
+      )
     })
 
     it('should throw ForbiddenException', () => {
@@ -839,7 +844,12 @@ describe('CaseController - Update', () => {
         mockDefendantService.updateDatabaseDefendant as jest.Mock
       mockUpdateDatabaseDefendant.mockResolvedValue({})
 
-      then = await givenWhenThen(caseId, user, completedIndictmentCase, caseToUpdate)
+      then = await givenWhenThen(
+        caseId,
+        user,
+        completedIndictmentCase,
+        caseToUpdate,
+      )
     })
 
     it('should not throw', () => {
