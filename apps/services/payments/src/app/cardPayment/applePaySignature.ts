@@ -298,6 +298,26 @@ export const verifyApplePaySignature = ({
     }
   }
 
+  // Defense in depth: the intermediate must actually be a CA (basicConstraints
+  // CA:TRUE). If it isn't, the chain math could still verify by coincidence
+  // but the cert wasn't issued for issuing other certs — fail closed.
+  if (!intermediate.ca) {
+    throw verifyError(
+      'cert-constraints',
+      'intermediate cert does not have basicConstraints CA:TRUE',
+    )
+  }
+  // The leaf must NOT be a CA. Apple's leaf is a signing cert only; if the
+  // basicConstraints flag is flipped that's a strong signal the chain is
+  // malformed or attacker-supplied.
+  if (leaf.ca) {
+    throw verifyError(
+      'cert-constraints',
+      'leaf cert unexpectedly has basicConstraints CA:TRUE',
+    )
+  }
+  trace('cert-constraints', { intermediateCa: intermediate.ca, leafCa: leaf.ca })
+
   // Walk leaf → intermediate → trusted root. checkIssued() compares Issuer
   // DNs and AKI/SKI; verify(publicKey) checks the actual signature. Both
   // must hold at each link or the chain is broken.

@@ -111,6 +111,7 @@ interface ChainFixtures {
 const buildChain = (overrides?: {
   leafExtensionOid?: string | null
   intermediateExtensionOid?: string | null
+  leafNotAfter?: Date
 }): ChainFixtures => {
   const root = generateRsaKeyPairPem()
   const intermediate = generateRsaKeyPairPem()
@@ -146,6 +147,7 @@ const buildChain = (overrides?: {
       overrides?.leafExtensionOid === null
         ? undefined
         : overrides?.leafExtensionOid ?? APPLE_PAY_LEAF_OID,
+    notAfter: overrides?.leafNotAfter,
   })
 
   return {
@@ -173,6 +175,7 @@ const buildSyntheticToken = (opts?: {
   transactionId?: Buffer
   publicKeyHashOverride?: Buffer
   signedMessageOverride?: Buffer
+  digestAlgorithmOid?: string
 }): SyntheticToken => {
   const chain = opts?.chain ?? buildChain()
   const ephemeralPublicKey =
@@ -203,7 +206,7 @@ const buildSyntheticToken = (opts?: {
   p7.addSigner({
     key: chain.leafKeyPem,
     certificate: chain.leafCert,
-    digestAlgorithm: forge.pki.oids.sha256,
+    digestAlgorithm: opts?.digestAlgorithmOid ?? forge.pki.oids.sha256,
     authenticatedAttributes: [
       { type: forge.pki.oids.contentType, value: forge.pki.oids.data },
       { type: forge.pki.oids.messageDigest },
@@ -435,5 +438,32 @@ describe('verifyApplePaySignature', () => {
         now: token.signingTimeMs,
       }),
     ).toThrow(/stage=transaction-id/)
+  })
+
+  it('rejects when the leaf cert has expired', () => {
+    const chain = buildChain({ leafNotAfter: new Date(Date.now() - 60_000) })
+    const token = buildSyntheticToken({ chain })
+    expect(() =>
+      verifyApplePaySignature({
+        paymentData: token.paymentData,
+        paymentProcessingKey: token.paymentProcessingKeyPem,
+        trustedRootPem: token.trustedRootPem,
+        now: token.signingTimeMs,
+      }),
+    ).toThrow(/stage=cert-validity/)
+  })
+
+  it('rejects unsupported digest algorithms (e.g. SHA-1, SHA-512)', () => {
+    const token = buildSyntheticToken({
+      digestAlgorithmOid: forge.pki.oids.sha512,
+    })
+    expect(() =>
+      verifyApplePaySignature({
+        paymentData: token.paymentData,
+        paymentProcessingKey: token.paymentProcessingKeyPem,
+        trustedRootPem: token.trustedRootPem,
+        now: token.signingTimeMs,
+      }),
+    ).toThrow(/stage=digest-algo/)
   })
 })
