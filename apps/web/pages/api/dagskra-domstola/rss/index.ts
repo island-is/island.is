@@ -20,7 +20,6 @@ interface Item {
 const generateItemString = (item: Item) => {
   return `<item>
   <title>${escape(item.title)}</title>
-  <link>${escape(item.fullUrl)}</link>
   ${
     item.description
       ? `<description>${escape(item.description)}</description>`
