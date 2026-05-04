@@ -7,6 +7,7 @@ export class ApiScopeUserUpdateDTO {
   @IsString()
   @ApiProperty({
     example: 'Jane Doe',
+    required: false,
   })
   name?: string
 
@@ -14,12 +15,15 @@ export class ApiScopeUserUpdateDTO {
   @IsString()
   @ApiProperty({
     example: 'something@gmail.com',
+    required: false,
   })
   email?: string
 
   @IsOptional()
   @ApiProperty({
+    type: [ApiScopeUserAccessDTO],
     example: [{ nationalId: '0123456789', scope: 'scope_name' }],
+    required: false,
   })
   userAccess?: ApiScopeUserAccessDTO[]
 }

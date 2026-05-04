@@ -1,3 +1,5 @@
+import { isValidElement, type ReactNode } from 'react'
+
 import {
   Box,
   GridColumn,
@@ -18,7 +20,7 @@ type AgendaCardProps = {
   title: string
   date: string
   time: string
-  hearingTime?: string | null
+  hearingTime?: ReactNode | string | null
   court: string
   courtRoom: string
   addToCalendarButton: React.ReactNode
@@ -131,9 +133,12 @@ export const AgendaCard = ({
                       <Text className={styles.preLine}>{title}</Text>
                     </Box>
                   )}
-                  {Boolean(hearingTime) && (
-                    <Text variant="small">{hearingTime}</Text>
-                  )}
+                  {Boolean(hearingTime) &&
+                    (isValidElement(hearingTime) ? (
+                      hearingTime
+                    ) : (
+                      <Text variant="small">{hearingTime}</Text>
+                    ))}
                 </Stack>
               </GridColumn>
               <GridColumn span="4/12">{renderDetails()}</GridColumn>
@@ -170,9 +175,12 @@ export const AgendaCard = ({
                 <Text className={styles.preLine}>{title}</Text>
               </Box>
             )}
-            {Boolean(hearingTime) && (
-              <Text variant="small">{`Málflutningstími: ${hearingTime}`}</Text>
-            )}
+            {Boolean(hearingTime) &&
+              (isValidElement(hearingTime) ? (
+                hearingTime
+              ) : (
+                <Text variant="small">{hearingTime}</Text>
+              ))}
             {renderDetails()}
           </Stack>
         </Hidden>
