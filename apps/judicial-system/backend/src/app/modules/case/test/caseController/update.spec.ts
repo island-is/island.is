@@ -868,5 +868,50 @@ describe('CaseController - Update', () => {
         transaction,
       )
     })
+
+    it('should store reopenReason with header prepended', () => {
+      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
+        {
+          caseId,
+          stringType: StringType.REOPEN_REASON,
+          value: expect.stringContaining(caseToUpdate.reopenReason as string),
+        },
+        {
+          conflictFields: ['case_id', 'string_type'],
+          transaction,
+        },
+      )
+    })
+  })
+
+  describe('reopen indictment case - queues INDICTMENT_REOPENED notification', () => {
+    const reopeningCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    beforeEach(async () => {
+      const mockUpdateDatabaseDefendant =
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      mockUpdateDatabaseDefendant.mockResolvedValue({})
+      ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce({
+        ...reopeningCase,
+        state: CaseState.RECEIVED,
+      })
+
+      await givenWhenThen(caseId, user, reopeningCase, caseToUpdate)
+    })
+
+    it('should queue INDICTMENT_REOPENED notification', () => {
+      expect(mockQueuedMessages).toContainEqual({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId,
+        body: { type: CaseNotificationType.INDICTMENT_REOPENED },
+      })
+    })
   })
 })
