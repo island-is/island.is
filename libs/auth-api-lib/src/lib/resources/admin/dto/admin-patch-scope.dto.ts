@@ -3,6 +3,8 @@ import {
   IsArray,
   IsBoolean,
   IsOptional,
+  IsUrl,
+  MaxLength,
   ValidateNested,
   IsString,
 } from 'class-validator'
@@ -179,6 +181,11 @@ export class AdminPatchScopeDto {
 
   @IsString()
   @IsOptional()
+  @IsUrl(
+    { protocols: ['https'], require_protocol: true },
+    { message: 'thirdPartyLoginUrl must be an HTTPS URL' },
+  )
+  @MaxLength(2000)
   @ApiPropertyOptional({
     example:
       'https://example.com/bff/login?login_hint={{subjectId}}&target_link_uri=https://example.com/minarsidur',

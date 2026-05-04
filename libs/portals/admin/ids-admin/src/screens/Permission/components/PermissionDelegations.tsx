@@ -46,7 +46,9 @@ const parseThirdPartyLoginUrl = (
   if (idx === -1) return { originUrl: '', targetLinkUri: '' }
   return {
     originUrl: url.substring(0, idx),
-    targetLinkUri: url.substring(idx + THIRD_PARTY_URL_SEPARATOR.length),
+    targetLinkUri: decodeURIComponent(
+      url.substring(idx + THIRD_PARTY_URL_SEPARATOR.length),
+    ),
   }
 }
 
@@ -454,7 +456,7 @@ export const PermissionDelegations = ({
                                 value={
                                   inputValues.originUrl &&
                                   inputValues.targetLinkUri
-                                    ? `${inputValues.originUrl}?login_hint={{subjectId}}&target_link_uri=${inputValues.targetLinkUri}`
+                                    ? `${inputValues.originUrl}?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(inputValues.targetLinkUri)}`
                                     : ''
                                 }
                                 placeholder={formatMessage(

@@ -402,25 +402,7 @@ const MobileCustomDelegationsPermissionsTable = ({
                     </Text>
                   </Box>
                 </Box>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box
-                    width="half"
-                    display="flex"
-                    alignItems="center"
-                    paddingY={1}
-                  >
-                    <Text fontWeight="semiBold" variant="medium">
-                      {formatMessage(m.headerValidityPeriod)}
-                    </Text>
-                  </Box>
-                  <Box width="half">
-                    <Text variant="medium">
-                      {scope.validFrom
-                        ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
-                        : '-'}
-                    </Text>
-                  </Box>
-                </Box>
+
                 <Box display="flex" flexDirection="row" alignItems="center">
                   <Box
                     width="half"

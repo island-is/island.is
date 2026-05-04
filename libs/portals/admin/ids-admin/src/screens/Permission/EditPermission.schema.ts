@@ -147,7 +147,7 @@ const delegationsSchema = z
 
       const thirdPartyLoginUrl =
         originUrl && targetLinkUri
-          ? `${originUrl}?login_hint={{subjectId}}&target_link_uri=${targetLinkUri}`
+          ? `${originUrl}?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(targetLinkUri)}`
           : originUrl || targetLinkUri
           ? undefined
           : ''

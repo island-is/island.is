@@ -481,6 +481,23 @@ const patchTestCases: Record<string, PatchTestCase> = {
       },
     },
   },
+  'should persist and return thirdPartyLoginUrl when patching a scope': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      ...inputPatch,
+      thirdPartyLoginUrl: 'https://example.com/callback',
+    },
+    expected: {
+      status: 200,
+      body: {
+        ...patchExpectedOutput,
+        thirdPartyLoginUrl: 'https://example.com/callback',
+        modified: expect.any(String),
+      },
+    },
+  },
   'should return a bad request because of invalid input': {
     user: superUser,
     tenantId: TENANT_ID,
