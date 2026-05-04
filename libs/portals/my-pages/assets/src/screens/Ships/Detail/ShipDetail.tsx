@@ -50,11 +50,12 @@ export const ShipDetail = () => {
 
       {(ship || loading) && (
         <Stack space={2}>
-          <Box>
+          <Box marginBottom={3}>
             <InfoLineStack space={1} marginBottom={0}>
               <InfoLine
                 loading={loading}
                 label={formatMessage(shipsMessages.seaworthinessTitle)}
+                labelColumnSpan={'5/12'}
                 content={
                   <Tag outlined variant={ship?.isSeaworthy ? 'mint' : 'red'}>
                     {!ship?.isSeaworthy
@@ -70,6 +71,7 @@ export const ShipDetail = () => {
               <InfoLine
                 loading={loading}
                 label={formatMessage(shipsMessages.registrationNumber)}
+                labelColumnSpan={'5/12'}
                 content={ship?.registrationNumber?.toString() ?? '-'}
               />
               <InfoLine
@@ -77,6 +79,7 @@ export const ShipDetail = () => {
                 label={
                   ship?.region?.label ?? formatMessage(shipsMessages.region)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.region?.value ?? undefined}
               />
               <InfoLine
@@ -85,6 +88,7 @@ export const ShipDetail = () => {
                   ship?.usageType?.label ??
                   formatMessage(shipsMessages.shipType)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.usageType?.value ?? undefined}
               />
               <InfoLine
@@ -93,6 +97,7 @@ export const ShipDetail = () => {
                   ship?.imoNumber?.label ??
                   formatMessage(shipsMessages.imoNumber)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.imoNumber?.value ?? undefined}
               />
               <InfoLine
@@ -101,6 +106,7 @@ export const ShipDetail = () => {
                   ship?.phoneOnBoard?.label ??
                   formatMessage(shipsMessages.phoneOnBoard)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.phoneOnBoard?.value ?? undefined}
               />
             </InfoLineStack>
