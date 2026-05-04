@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
-import { AdminApi } from '@island.is/clients/auth/admin-api'
-import { ApiResponse } from '@island.is/clients/middlewares'
+import { GeneratedIdpProvider } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
@@ -14,56 +13,8 @@ import { UpdateIdpProviderInput } from './dto/update-idp-provider.input'
 import { IdpProvider } from './models/idp-provider.model'
 import { IdpProviderEnvironmentData } from './models/idp-provider-environment-data.model'
 
-interface IdpProviderResponse {
-  name: string
-  description: string
-  helptext: string
-  level: number
-  created: Date
-  modified: Date
-}
-
-interface PagedIdpProvidersResponse {
-  rows: IdpProviderResponse[]
-  count: number
-}
-
-interface IdpProvidersApi {
-  meIdpProvidersControllerFindAndCountAllRaw(params: {
-    searchString?: string
-    page: number
-    count: number
-  }): Promise<ApiResponse<PagedIdpProvidersResponse>>
-
-  meIdpProvidersControllerFindOneRaw(params: {
-    name: string
-  }): Promise<ApiResponse<IdpProviderResponse>>
-
-  meIdpProvidersControllerCreateRaw(params: {
-    idpProviderDTO: {
-      name: string
-      description: string
-      helptext: string
-      level: number
-    }
-  }): Promise<ApiResponse<IdpProviderResponse>>
-
-  meIdpProvidersControllerUpdateRaw(params: {
-    name: string
-    updateIdpProviderDto: {
-      description: string
-      helptext: string
-      level: number
-    }
-  }): Promise<ApiResponse<IdpProviderResponse>>
-
-  meIdpProvidersControllerDeleteRaw(params: {
-    name: string
-  }): Promise<ApiResponse<void>>
-}
-
 const mapIdpProvider = (
-  idp: IdpProviderResponse,
+  idp: GeneratedIdpProvider,
   environment: Environment,
 ): IdpProviderEnvironmentData => ({
   name: idp.name,
@@ -75,18 +26,6 @@ const mapIdpProvider = (
 
 @Injectable()
 export class IdpProviderService extends MultiEnvironmentService {
-  private typedRequest<T>(
-    user: User,
-    environment: typeof environments[number],
-    request: (api: IdpProvidersApi) => Promise<ApiResponse<T>>,
-  ) {
-    return this.makeRequest(
-      user,
-      environment,
-      request as unknown as (api: AdminApi) => Promise<ApiResponse<T>>,
-    )
-  }
-
   getAvailableEnvironments(): Environment[] {
     return this.getConfiguredEnvironments()
   }
@@ -97,7 +36,7 @@ export class IdpProviderService extends MultiEnvironmentService {
   ): Promise<IdpProvidersPayload> {
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meIdpProvidersControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
             page: input.page,
@@ -126,7 +65,7 @@ export class IdpProviderService extends MultiEnvironmentService {
       if (result.status === 'fulfilled' && result.value) {
         const { data } = result.value
         return {
-          rows: data.rows.map((row: IdpProviderResponse) => ({
+          rows: data.rows.map((row: GeneratedIdpProvider) => ({
             name: row.name,
             availableEnvironments: envMap.get(row.name) ?? [],
             description: row.description,
@@ -149,15 +88,13 @@ export class IdpProviderService extends MultiEnvironmentService {
     const environmentsData: IdpProviderEnvironmentData[] = []
 
     for (const environment of environments) {
-      const result = await this.typedRequest(user, environment, (api) =>
+      const result = await this.makeRequest(user, environment, (api) =>
         api.meIdpProvidersControllerFindOneRaw({ name }),
       )
 
       if (result) {
         availableEnvironments.push(environment)
-        environmentsData.push({
-          ...mapIdpProvider(result, environment),
-        })
+        environmentsData.push(mapIdpProvider(result, environment))
       }
     }
 
@@ -187,7 +124,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
     for (const environment of targetEnvironments) {
       try {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meIdpProvidersControllerCreateRaw({
             idpProviderDTO: {
               name: input.name,
@@ -200,9 +137,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
         if (result) {
           availableEnvironments.push(environment)
-          environmentsData.push({
-            ...mapIdpProvider(result, environment),
-          })
+          environmentsData.push(mapIdpProvider(result, environment))
         }
       } catch (error) {
         this.logger.error(
@@ -243,7 +178,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
     for (const environment of targetEnvironments) {
       try {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meIdpProvidersControllerUpdateRaw({
             name: input.name,
             updateIdpProviderDto: {
@@ -256,9 +191,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
         if (result) {
           availableEnvironments.push(environment)
-          environmentsData.push({
-            ...mapIdpProvider(result, environment),
-          })
+          environmentsData.push(mapIdpProvider(result, environment))
         }
       } catch (error) {
         this.logger.error(
@@ -297,7 +230,7 @@ export class IdpProviderService extends MultiEnvironmentService {
       let requestMade = false
 
       try {
-        await this.typedRequest(user, environment, (api) => {
+        await this.makeRequest(user, environment, (api) => {
           requestMade = true
           return api.meIdpProvidersControllerDeleteRaw({ name })
         })
