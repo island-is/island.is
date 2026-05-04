@@ -166,7 +166,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     rulingDate
     rulingSignatureDate
     reopenReason
-    reopenReasonCreated
     registrar {
       id
       name

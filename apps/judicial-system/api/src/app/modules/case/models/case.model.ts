@@ -455,9 +455,6 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly reopenReason?: string
 
-  @Field(() => String, { nullable: true })
-  readonly reopenReasonCreated?: string
-
   @Field(() => Case, { nullable: true })
   readonly splitCase?: Case
 

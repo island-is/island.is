@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRulingOrDismissalCase,
@@ -170,15 +170,7 @@ const IndictmentOverview: FC = () => {
             <Box marginBottom={2}>
               <AlertMessage
                 title="Mál enduropnað"
-                message={`${capitalize(
-                  formatDate(workingCase.reopenReasonCreated, 'PPPP')?.replace(
-                    ',',
-                    '',
-                  ),
-                )} kl. ${formatDate(
-                  workingCase.reopenReasonCreated,
-                  constants.TIME_FORMAT,
-                )} - ${workingCase.reopenReason}`}
+                message={workingCase.reopenReason}
                 type="info"
               />
             </Box>

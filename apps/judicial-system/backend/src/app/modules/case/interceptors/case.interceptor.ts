@@ -336,7 +336,6 @@ const transformCase = (
         ? CaseString.penalties(theCase.caseStrings)
         : null,
     reopenReason: CaseString.reopenReason(theCase.caseStrings),
-    reopenReasonCreated: CaseString.reopenReasonCreated(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,

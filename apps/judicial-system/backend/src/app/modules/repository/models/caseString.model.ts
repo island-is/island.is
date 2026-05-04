@@ -44,12 +44,6 @@ export class CaseString extends Model {
     )?.value
   }
 
-  static reopenReasonCreated(caseStrings?: CaseString[]) {
-    return caseStrings?.find(
-      (caseString) => caseString.stringType === StringType.REOPEN_REASON,
-    )?.created
-  }
-
   @Column({
     type: DataType.UUID,
     primaryKey: true,

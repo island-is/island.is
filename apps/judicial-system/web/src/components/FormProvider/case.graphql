@@ -197,7 +197,6 @@ query Case($input: CaseQueryInput!) {
     rulingDate
     rulingSignatureDate
     reopenReason
-    reopenReasonCreated
     judge {
       id
       name

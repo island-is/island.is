@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -64,15 +63,7 @@ const OverviewBody = ({
           {workingCase.reopenReason && (
             <AlertMessage
               title="Mál enduropnað"
-              message={`${capitalize(
-                formatDate(workingCase.reopenReasonCreated, 'PPPP')?.replace(
-                  ',',
-                  '',
-                ),
-              )} kl. ${formatDate(
-                workingCase.reopenReasonCreated,
-                constants.TIME_FORMAT,
-              )} - ${workingCase.reopenReason}`}
+              message={workingCase.reopenReason}
               type="info"
             />
           )}
