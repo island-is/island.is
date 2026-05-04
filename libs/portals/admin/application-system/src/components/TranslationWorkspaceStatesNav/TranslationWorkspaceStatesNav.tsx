@@ -1,11 +1,4 @@
-import {
-  Box,
-  Text,
-  Button,
-  AccordionItem,
-  Accordion,
-} from '@island.is/island-ui/core'
-import type { FormatMessage } from '@island.is/localization'
+import { Box, Text, AccordionItem, Accordion } from '@island.is/island-ui/core'
 import type {
   ScreenIntrospection,
   SidebarNavLocation,
@@ -17,75 +10,38 @@ import {
   buildSubSectionNavigationScreen,
   getRoleFormAccordionLabel,
 } from '../../utils/translationWorkspaceNavigation'
-import { m } from '../../lib/messages'
 
 export interface TranslationWorkspaceStatesNavProps {
   states: TemplateStateNav[]
-  statesNavOpen: boolean
-  onToggleNavOpen: () => void
   selectedScreenId: string | undefined
   onNavClick: (nav: ScreenIntrospection, location: SidebarNavLocation) => void
-  formatMessage: FormatMessage
 }
 
 export const TranslationWorkspaceStatesNav = ({
   states,
-  statesNavOpen,
-  onToggleNavOpen,
   selectedScreenId,
   onNavClick,
-  formatMessage,
 }: TranslationWorkspaceStatesNavProps) => (
-  <Box
-    background="white"
-    borderRadius="large"
-    padding={statesNavOpen ? 2 : 1}
-    style={{ maxHeight: '75vh', overflow: 'auto' }}
-  >
-    <Box
-      display="flex"
-      justifyContent={statesNavOpen ? 'spaceBetween' : 'center'}
-      alignItems="center"
-      marginTop={2}
-      marginBottom={statesNavOpen ? 2 : 1}
-    >
-      {statesNavOpen && (
-        <Text variant="h3" marginBottom={0}>
-          States
-        </Text>
-      )}
-      <Button
-        variant="ghost"
-        size="small"
-        icon={statesNavOpen ? 'chevronBack' : 'chevronForward'}
-        aria-label={
-          statesNavOpen
-            ? formatMessage(m.translationStatesNavHide)
-            : formatMessage(m.translationStatesNavShow)
-        }
-        onClick={onToggleNavOpen}
-      />
-    </Box>
-    {statesNavOpen && (
-      <Accordion singleExpand={false}>
-        {states.map((state) => (
-          <AccordionItem
-            key={state.stateKey}
-            id={state.stateKey}
-            label={`${state.stateName}`}
-          >
-            <Box paddingLeft={2}>
-              <Accordion singleExpand={false}>
-                {state.roles.map((role) => (
-                  <AccordionItem
-                    key={`${state.stateKey}-${role.roleId}`}
-                    id={`${state.stateKey}-${role.roleId}`}
-                    label={getRoleFormAccordionLabel(role.roleId)}
-                    labelVariant="medium"
-                    labelUse="div"
-                    iconVariant="small"
-                  >
-                    {role.form?.sections.map((section) => {
+  <Box width="full" style={{ minWidth: 0 }}>
+    <Accordion singleExpand={false}>
+      {states.map((state) => (
+        <AccordionItem
+          key={state.stateKey}
+          id={state.stateKey}
+          label={`${state.stateName}`}
+        >
+          <Box paddingLeft={2}>
+            <Accordion singleExpand={false}>
+              {state.roles.map((role) => (
+                <AccordionItem
+                  key={`${state.stateKey}-${role.roleId}`}
+                  id={`${state.stateKey}-${role.roleId}`}
+                  label={getRoleFormAccordionLabel(role.roleId)}
+                  labelVariant="medium"
+                  labelUse="div"
+                  iconVariant="small"
+                >
+                  {role.form?.sections.map((section) => {
                       const screens = section.screens as ScreenIntrospection[]
                       const { subSections } = section
 
@@ -187,13 +143,12 @@ export const TranslationWorkspaceStatesNav = ({
                         </Box>
                       )
                     })}
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </Box>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    )}
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Box>
+        </AccordionItem>
+      ))}
+    </Accordion>
   </Box>
 )

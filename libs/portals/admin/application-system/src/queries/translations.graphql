@@ -145,6 +145,7 @@ query getApplicationTemplateIntrospection($typeId: String!) {
         form {
           id
           title
+          logoKey
           sections {
             id
             title

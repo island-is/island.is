@@ -32,6 +32,7 @@ import {
   noop,
   PLACEHOLDER_TYPES,
   TEXT_DISPLAY_TYPES,
+  TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN,
 } from '../../utils/translationWorkspaceFieldConstants'
 import {
   fieldPreviewLayoutProps,
@@ -436,24 +437,31 @@ const RadioFieldLeafPreview = ({
       )}
       <Box paddingTop={2}>
         <GridRow>
-          {options.map((opt, index) => (
-            <GridColumn
-              key={`${key}-${opt.value}-${index}`}
-              span={['1/1', split]}
-              paddingBottom={2}
-              paddingTop={0}
-            >
-              <RadioButton
-                large={large}
-                backgroundColor={bgColor}
-                name={key}
-                label={resolveOptionLabel(opt)}
-                value={opt.value}
-                checked={opt.value === selected}
-                onChange={({ target }) => setSelected(String(target.value))}
-              />
-            </GridColumn>
-          ))}
+          {options.map((opt, index) => {
+            const optionLabel = resolveOptionLabel(opt)
+            return (
+              <GridColumn
+                key={`${key}-${opt.value}-${index}`}
+                span={['1/1', split]}
+                paddingBottom={2}
+                paddingTop={0}
+              >
+                <RadioButton
+                  large={large}
+                  backgroundColor={bgColor}
+                  name={key}
+                  label={
+                    <Markdown>
+                      {optionLabel.trim() === '' ? '\u00a0' : optionLabel}
+                    </Markdown>
+                  }
+                  value={opt.value}
+                  checked={opt.value === selected}
+                  onChange={({ target }) => setSelected(String(target.value))}
+                />
+              </GridColumn>
+            )
+          })}
         </GridRow>
       </Box>
     </Box>
@@ -971,6 +979,13 @@ const TableRepeaterFieldPreview = ({
   )
 }
 
+const previewStringUsesMarkdown = (
+  screenType: string,
+  messageId: string,
+): boolean =>
+  isMarkdownMessageId(messageId) ||
+  TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN.has(screenType)
+
 const TextDisplayPreviewNodes = ({
   screen,
   resolvePreviewString,
@@ -990,7 +1005,7 @@ const TextDisplayPreviewNodes = ({
       return (
         <Box>
           {resolvedParts.map((p, i) =>
-            isMarkdownMessageId(p.id) ? (
+            previewStringUsesMarkdown(screen.type, p.id) ? (
               <Box key={p.id} marginTop={i > 0 ? 2 : 0}>
                 <Markdown>{p.text}</Markdown>
               </Box>
@@ -1324,14 +1339,14 @@ export const TranslationWorkspaceFieldPreview = ({
     return (
       <Box key={screen.id}>
         {screen.description && (
-          <Box marginBottom={3}>
-            <Text color="dark400">
+          <Box marginBottom={3} component="div">
+            <Markdown>
               {resolveTranslatableStaticText(
                 screen.description,
                 screen.messageDescriptors,
                 resolvePreviewString,
               )}
-            </Text>
+            </Markdown>
           </Box>
         )}
         <Box width="full" marginTop={screen.description ? 3 : 4} />

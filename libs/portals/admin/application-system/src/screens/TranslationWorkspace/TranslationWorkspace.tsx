@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { GridContainer, GridRow, GridColumn, toast } from '@island.is/island-ui/core'
+import { useParams } from 'react-router-dom'
+import {
+  Box,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ApplicationSystemPaths } from '../../lib/paths'
 import {
   useGetApplicationTemplateIntrospectionQuery,
   useGetApplicationTranslationsQuery,
@@ -21,19 +23,23 @@ import {
   getTranslationSaveErrorDetail,
   shortenForToast,
 } from '../../utils/translationWorkspaceErrors'
+import {
+  buildSectionNavigationScreen,
+  buildSubSectionNavigationScreen,
+} from '../../utils/translationWorkspaceNavigation'
+import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
 import { TranslationWorkspacePageHeader } from '../../components/TranslationWorkspacePageHeader/TranslationWorkspacePageHeader'
 import { TranslationWorkspacePreviewArea } from '../../components/TranslationWorkspacePreviewArea/TranslationWorkspacePreviewArea'
-import { TranslationWorkspaceStatesNav } from '../../components/TranslationWorkspaceStatesNav/TranslationWorkspaceStatesNav'
-import { TranslationWorkspaceStringsDrawer } from '../../components/TranslationWorkspaceStringsDrawer/TranslationWorkspaceStringsDrawer'
+import { TranslationWorkspaceStatesNavPanel } from '../../components/TranslationWorkspaceStatesNavPanel/TranslationWorkspaceStatesNavPanel'
 import {
   TranslationWorkspaceError,
   TranslationWorkspaceLoading,
   TranslationWorkspaceNotFound,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
+import * as workspaceStyles from './TranslationWorkspace.css'
 
 const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
-  const navigate = useNavigate()
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetApplicationTemplateIntrospectionQuery({
@@ -71,45 +77,40 @@ const TranslationWorkspace = () => {
     useState<ScreenIntrospection | null>(null)
   const [selectedLocation, setSelectedLocation] =
     useState<SidebarNavLocation | null>(null)
-  const [editedValues, setEditedValues] = useState<EditedTranslations>({})
-  const [stringsDrawerOpen, setStringsDrawerOpen] = useState(true)
-  const [statesNavOpen, setStatesNavOpen] = useState(true)
+  const [editedValues, setEditedValues] = useState<EditedTranslations>({
+    is: {},
+    en: {},
+  })
 
-  const getPersistedForLocale = useCallback(
-    (messageKey: string) => {
+  const getPersistedForMessage = useCallback(
+    (messageKey: string, locale: 'is' | 'en') => {
       const row = persistedByKey[messageKey]
       if (!row) return ''
-      return activeLocale === 'en' ? row.valueEn ?? '' : row.valueIs
+      return locale === 'en' ? row.valueEn ?? '' : row.valueIs
     },
-    [persistedByKey, activeLocale],
+    [persistedByKey],
+  )
+
+  const getPersistedForLocale = useCallback(
+    (messageKey: string) => getPersistedForMessage(messageKey, activeLocale),
+    [getPersistedForMessage, activeLocale],
   )
 
   const resolvePreviewString = useCallback(
     (messageKey: string, defaultMessage?: string | null) => {
-      if (editedValues[messageKey] !== undefined) {
-        return editedValues[messageKey]
+      const draft = editedValues[activeLocale][messageKey]
+      if (draft !== undefined) {
+        return draft
       }
-      const persisted = getPersistedForLocale(messageKey)
+      const persisted = getPersistedForMessage(messageKey, activeLocale)
       if (persisted !== '') {
         return persisted
       }
       return defaultMessage ?? ''
     },
-    [editedValues, getPersistedForLocale],
+    [editedValues, activeLocale, getPersistedForMessage],
   )
 
-  /** Drop pending edits when switching locale so EN/IS drafts do not mix in one field. */
-  useEffect(() => {
-    setEditedValues({})
-  }, [activeLocale])
-
-  useEffect(() => {
-    if (selectedScreen) {
-      setStringsDrawerOpen(true)
-    }
-    // Only re-open the drawer when navigating to a different screen id.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedScreen?.id])
 
   useEffect(() => {
     if (!introspection) return
@@ -197,9 +198,7 @@ const TranslationWorkspace = () => {
     }
     return [
       ...(section.screens as ScreenIntrospection[]),
-      ...section.subSections.flatMap(
-        (s) => s.screens as ScreenIntrospection[],
-      ),
+      ...section.subSections.flatMap((s) => s.screens as ScreenIntrospection[]),
     ]
   }, [selectedLocation, introspection])
 
@@ -216,23 +215,40 @@ const TranslationWorkspace = () => {
     return introspection?.allMessageDescriptors ?? []
   }, [selectedScreen, introspection])
 
-  const handleValueChange = useCallback((messageKey: string, value: string) => {
-    setEditedValues((prev) => ({ ...prev, [messageKey]: value }))
-  }, [])
+  const handleValueChange = useCallback(
+    (messageKey: string, value: string) => {
+      setEditedValues((prev) => ({
+        ...prev,
+        [activeLocale]: { ...prev[activeLocale], [messageKey]: value },
+      }))
+    },
+    [activeLocale],
+  )
 
   const handleSaveAll = useCallback(async () => {
-    const dirtyEntries = Object.entries(editedValues).filter(
-      ([messageKey, value]) => value !== getPersistedForLocale(messageKey),
-    )
-    if (dirtyEntries.length === 0) return
+    const dirtyByKey = new Map<string, { valueIs?: string; valueEn?: string }>()
 
-    try {
-      const translationsToSave = dirtyEntries.map(([messageKey, value]) => ({
+    for (const locale of ['is', 'en'] as const) {
+      for (const [messageKey, value] of Object.entries(editedValues[locale])) {
+        if (value === getPersistedForMessage(messageKey, locale)) continue
+        const merged = dirtyByKey.get(messageKey) ?? {}
+        if (locale === 'is') merged.valueIs = value
+        else merged.valueEn = value
+        dirtyByKey.set(messageKey, merged)
+      }
+    }
+
+    const translationsToSave = Array.from(dirtyByKey.entries()).map(
+      ([messageKey, fields]) => ({
         namespace,
         messageKey,
-        ...(activeLocale === 'en' ? { valueEn: value } : { valueIs: value }),
-      }))
+        ...fields,
+      }),
+    )
 
+    if (translationsToSave.length === 0) return
+
+    try {
       const { data: mutationData } = await bulkUpdate({
         variables: { input: { translations: translationsToSave } },
       })
@@ -242,7 +258,7 @@ const TranslationWorkspace = () => {
         mutationData.bulkUpdateApplicationTranslations.length > 0
       ) {
         await refetchTranslations()
-        setEditedValues({})
+        setEditedValues({ is: {}, en: {} })
         toast.success(formatMessage(m.translationSave))
       } else {
         toast.error(
@@ -258,20 +274,21 @@ const TranslationWorkspace = () => {
     }
   }, [
     editedValues,
-    activeLocale,
     namespace,
     formatMessage,
     bulkUpdate,
-    getPersistedForLocale,
+    getPersistedForMessage,
     refetchTranslations,
   ])
 
   const hasUnsavedChanges = useMemo(
     () =>
-      Object.entries(editedValues).some(
-        ([k, v]) => v !== getPersistedForLocale(k),
+      (['is', 'en'] as const).some((locale) =>
+        Object.entries(editedValues[locale]).some(
+          ([k, v]) => v !== getPersistedForMessage(k, locale),
+        ),
       ),
-    [editedValues, getPersistedForLocale],
+    [editedValues, getPersistedForMessage],
   )
 
   const handleSidebarNavClick = useCallback(
@@ -321,13 +338,90 @@ const TranslationWorkspace = () => {
     [introspection, typeId, fetchRoleForm],
   )
 
-  const unsavedCount = useMemo(
-    () =>
-      Object.entries(editedValues).filter(
-        ([k, v]) => v !== getPersistedForLocale(k),
-      ).length,
-    [editedValues, getPersistedForLocale],
-  )
+  useEffect(() => {
+    if (!introspection || selectedScreen) return
+
+    for (const state of introspection.states) {
+      for (const role of state.roles) {
+        if (!role.form) continue
+        for (const section of role.form.sections) {
+          const subs = section.subSections as Array<{
+            id: string
+            title?: string | null
+            screens: ScreenIntrospection[]
+          }>
+          if (subs.length > 0) {
+            const firstSub = subs.find(
+              (s) => (s.screens as ScreenIntrospection[]).length > 0,
+            )
+            if (firstSub) {
+              const screens = firstSub.screens as ScreenIntrospection[]
+              const nav = buildSubSectionNavigationScreen(
+                firstSub.id,
+                firstSub.title,
+                screens,
+              )
+              handleSidebarNavClick(nav, {
+                stateKey: state.stateKey,
+                stateName: state.stateName,
+                roleId: role.roleId,
+                sectionId: section.id,
+                sectionTitle: section.title,
+                subsectionId: firstSub.id,
+                subsectionTitle: firstSub.title,
+              })
+              return
+            }
+          }
+          const screens = section.screens as ScreenIntrospection[]
+          if (screens.length > 0) {
+            const nav = buildSectionNavigationScreen(
+              section.id,
+              section.title,
+              screens,
+            )
+            handleSidebarNavClick(nav, {
+              stateKey: state.stateKey,
+              stateName: state.stateName,
+              roleId: role.roleId,
+              sectionId: section.id,
+              sectionTitle: section.title,
+            })
+            return
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [introspection, handleSidebarNavClick])
+
+  const unsavedCount = useMemo(() => {
+    const keysWithPending = new Set<string>()
+    for (const locale of ['is', 'en'] as const) {
+      for (const [messageKey, value] of Object.entries(editedValues[locale])) {
+        if (value !== getPersistedForMessage(messageKey, locale)) {
+          keysWithPending.add(messageKey)
+        }
+      }
+    }
+    return keysWithPending.size
+  }, [editedValues, getPersistedForMessage])
+
+  const isWorkspaceReady =
+    Boolean(introspection) &&
+    !(loading || Boolean(introspection && translationsLoading)) &&
+    !(error ?? translationsError)
+
+  useRegisterTranslationWorkspaceHeaderChrome({
+    activeLocale,
+    onLocaleChange: setActiveLocale,
+    hasUnsavedChanges,
+    unsavedCount,
+    saving,
+    onSaveAll: handleSaveAll,
+    formatMessage,
+    isReady: isWorkspaceReady,
+  })
 
   if (loading || (introspection && translationsLoading)) {
     return <TranslationWorkspaceLoading />
@@ -343,39 +437,11 @@ const TranslationWorkspace = () => {
   }
 
   return (
-    <GridContainer>
-      <TranslationWorkspacePageHeader
-        templateName={introspection.name}
-        templateSlug={introspection.slug}
-        formatMessage={formatMessage}
-        onNavigateToTranslations={() =>
-          navigate(`/stjornbord${ApplicationSystemPaths.Translations}`)
-        }
-        activeLocale={activeLocale}
-        onLocaleChange={setActiveLocale}
-        hasUnsavedChanges={hasUnsavedChanges}
-        unsavedCount={unsavedCount}
-        saving={saving}
-        onSaveAll={handleSaveAll}
-        selectedScreen={Boolean(selectedScreen)}
-        stringsDrawerOpen={stringsDrawerOpen}
-        onOpenStringsDrawer={() => setStringsDrawerOpen(true)}
-        currentDescriptorCount={currentDescriptors.length}
-      />
+    <Box className={workspaceStyles.workspaceShell}>
+      <TranslationWorkspacePageHeader />
 
-      <GridRow>
-        <GridColumn span={statesNavOpen ? '3/12' : '1/12'}>
-          <TranslationWorkspaceStatesNav
-            states={introspection.states as unknown as TemplateStateNav[]}
-            statesNavOpen={statesNavOpen}
-            onToggleNavOpen={() => setStatesNavOpen((open) => !open)}
-            selectedScreenId={selectedScreen?.id}
-            onNavClick={handleSidebarNavClick}
-            formatMessage={formatMessage}
-          />
-        </GridColumn>
-
-        <GridColumn span={statesNavOpen ? '9/12' : '11/12'}>
+      <div className={workspaceStyles.workspaceMainRow}>
+        <div className={workspaceStyles.workspacePreviewAside}>
           <TranslationWorkspacePreviewArea
             previewScreens={previewScreens}
             resolvePreviewString={resolvePreviewString}
@@ -387,24 +453,27 @@ const TranslationWorkspace = () => {
             activeStateKey={activeStateKey}
             activeStateName={activeStateName}
             activeRoleId={activeRoleId}
+            formLogoKey={activeForm?.logoKey}
             onSidebarNavClick={handleSidebarNavClick}
           />
-        </GridColumn>
-      </GridRow>
+        </div>
+        <div className={workspaceStyles.workspaceNavAside}>
+          <TranslationWorkspaceStatesNavPanel
+            states={introspection.states as unknown as TemplateStateNav[]}
+            selectedScreenId={selectedScreen?.id}
+            onNavClick={handleSidebarNavClick}
+            formatMessage={formatMessage}
+            selectedScreen={selectedScreen}
+            currentDescriptors={currentDescriptors}
+            editedValues={editedValues}
+            activeLocale={activeLocale}
+            getPersistedForLocale={getPersistedForLocale}
+            onValueChange={handleValueChange}
+          />
+        </div>
+      </div>
 
-      {selectedScreen && (
-        <TranslationWorkspaceStringsDrawer
-          selectedScreen={selectedScreen}
-          stringsDrawerOpen={stringsDrawerOpen}
-          onStringsDrawerVisibilityChange={setStringsDrawerOpen}
-          currentDescriptors={currentDescriptors}
-          editedValues={editedValues}
-          getPersistedForLocale={getPersistedForLocale}
-          onValueChange={handleValueChange}
-          formatMessage={formatMessage}
-        />
-      )}
-    </GridContainer>
+    </Box>
   )
 }
 

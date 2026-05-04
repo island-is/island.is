@@ -75,7 +75,11 @@ export interface SidebarNavLocation {
   leafSourceScreenId?: string
 }
 
-export type EditedTranslations = Record<string, string>
+/** Draft overrides per message key, split by preview locale so switching IS/EN does not drop work. */
+export type EditedTranslations = {
+  is: Record<string, string>
+  en: Record<string, string>
+}
 
 export type ResolvePreviewString = (
   messageKey: string,
@@ -104,6 +108,9 @@ export interface TemplateStateNav {
   stateName: string
   roles: Array<{
     roleId: string
-    form?: { sections: TemplateSectionNav[] } | null
+    form?: {
+      logoKey?: string | null
+      sections: TemplateSectionNav[]
+    } | null
   }>
 }

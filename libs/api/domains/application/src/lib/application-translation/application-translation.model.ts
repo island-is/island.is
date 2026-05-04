@@ -270,6 +270,9 @@ export class FormIntrospectionGql {
   @Field(() => String, { nullable: true })
   title?: string | null
 
+  @Field(() => String, { nullable: true })
+  logoKey?: string | null
+
   @Field(() => [SectionIntrospectionGql])
   sections!: SectionIntrospectionGql[]
 }

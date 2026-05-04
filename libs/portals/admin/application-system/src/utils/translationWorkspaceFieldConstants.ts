@@ -24,6 +24,17 @@ export const TEXT_DISPLAY_TYPES = new Set([
   'ACCORDION',
 ])
 
+/**
+ * These field types always pass copy through `<Markdown>` in `@island.is/application/ui-fields`.
+ * Preview must do the same — message ids are not required to end with `#markdown`.
+ */
+export const TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN = new Set([
+  'ALERT_MESSAGE',
+  'EXPANDABLE_DESCRIPTION',
+  'INFORMATION_CARD',
+  'ACCORDION',
+])
+
 export const PLACEHOLDER_TYPES = new Set([
   'KEY_VALUE',
   'PAGINATED_SEARCHABLE_TABLE',

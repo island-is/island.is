@@ -201,14 +201,6 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationSaveAll',
     defaultMessage: 'Vista allt',
   },
-  translationStringsDrawerAriaLabel: {
-    id: 'admin-portal.application-system:translationStringsDrawerAriaLabel',
-    defaultMessage: 'Þýðingastrengir',
-  },
-  translationStringsOpenButton: {
-    id: 'admin-portal.application-system:translationStringsOpenButton',
-    defaultMessage: 'Þýðingastrengir ({count})',
-  },
   translationStatesNavHide: {
     id: 'admin-portal.application-system:translationStatesNavHide',
     defaultMessage: 'Fela vallista yfir stöður',
@@ -217,13 +209,9 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationStatesNavShow',
     defaultMessage: 'Sýna vallista yfir stöður',
   },
-  translationStringsDrawerShow: {
-    id: 'admin-portal.application-system:translationStringsDrawerShow',
-    defaultMessage: 'Sýna þýðingastrengi',
-  },
-  translationStringsDrawerCollapse: {
-    id: 'admin-portal.application-system:translationStringsDrawerCollapse',
-    defaultMessage: 'Fela þýðingastrengi',
+  translationStatesNavDrawerAriaLabel: {
+    id: 'admin-portal.application-system:translationStatesNavDrawerAriaLabel',
+    defaultMessage: 'Yfirlit yfir stöður og skjái',
   },
   translationSaveFailed: {
     id: 'admin-portal.application-system:translationSaveFailed',

@@ -42,6 +42,10 @@ interface DrawerProps {
    * Extra classes for the modal panel (e.g. responsive width overrides).
    */
   panelClassName?: string
+  /**
+   * Classes for the scrollable inner container. When set, default overflow is omitted so you can e.g. use overflow-x: hidden with overflow-y: auto.
+   */
+  contentClassName?: string
 }
 
 export const Drawer = ({
@@ -58,6 +62,7 @@ export const Drawer = ({
   backdropDark,
   backdropTransparent,
   panelClassName,
+  contentClassName,
   children,
 }: PropsWithChildren<DrawerProps>) => {
   return (
@@ -86,7 +91,8 @@ export const Drawer = ({
             paddingY={[3, 6, 8]}
             paddingX={[3, 6, 8]}
             height="full"
-            overflow="auto"
+            overflow={contentClassName ? undefined : 'auto'}
+            className={contentClassName}
           >
             <Box className={styles.closeButton}>
               <Button

@@ -53,6 +53,12 @@ export interface RoleIntrospection {
 export interface FormIntrospection {
   id: string
   title: string | null
+  /**
+   * Resolved name of a static `form.logo` component (e.g. `HmsLogo`) for admin preview.
+   * `null` when there is no logo, when `logo` is an application-dependent factory (`fn.length > 0`),
+   * or when the function has no usable `name` / `displayName`.
+   */
+  logoKey: string | null
   sections: SectionIntrospection[]
 }
 
@@ -1202,6 +1208,22 @@ function walkSubSection(subSection: SubSection): SubSectionIntrospection {
   }
 }
 
+function extractFormLogoKey(logo: Form['logo'] | undefined): string | null {
+  if (!logo || typeof logo !== 'function') {
+    return null
+  }
+  const fn = logo as (Function & { displayName?: string })
+  // Application-dependent logo: `(application) => …`
+  if (fn.length > 0) {
+    return null
+  }
+  const key = (fn.displayName || fn.name || '').trim()
+  if (!key || key === 'anonymous') {
+    return null
+  }
+  return key
+}
+
 function walkForm(form: Form): FormIntrospection {
   const sections: SectionIntrospection[] = []
 
@@ -1214,6 +1236,7 @@ function walkForm(form: Form): FormIntrospection {
   return {
     id: form.id,
     title: extractStaticText(form.title),
+    logoKey: extractFormLogoKey(form.logo),
     sections,
   }
 }

@@ -2,8 +2,6 @@ import {
   Box,
   Text,
   Button,
-  GridRow,
-  GridColumn,
   FormStepperV2,
   Section,
 } from '@island.is/island-ui/core'
@@ -22,6 +20,8 @@ import {
 } from '../../utils/translationWorkspaceNavigation'
 import { resolveTranslatableStaticText } from '../../utils/translationWorkspaceStaticText'
 import { TranslationWorkspaceFieldPreview } from '../TranslationWorkspaceFieldPreview/TranslationWorkspaceFieldPreview'
+import { TranslationWorkspaceFormLogo } from '../TranslationWorkspaceFormLogo/TranslationWorkspaceFormLogo'
+import * as styles from './TranslationWorkspacePreviewArea.css'
 
 export interface TranslationWorkspacePreviewAreaProps {
   previewScreens: ScreenIntrospection[]
@@ -34,6 +34,8 @@ export interface TranslationWorkspacePreviewAreaProps {
   activeStateKey: string
   activeStateName: string
   activeRoleId: string
+  /** Static `form.logo` component name from introspection, when available. */
+  formLogoKey: string | null | undefined
   onSidebarNavClick: (
     nav: ScreenIntrospection,
     location: SidebarNavLocation,
@@ -51,6 +53,7 @@ export const TranslationWorkspacePreviewArea = ({
   activeStateKey,
   activeStateName,
   activeRoleId,
+  formLogoKey,
   onSidebarNavClick,
 }: TranslationWorkspacePreviewAreaProps) => {
   if (previewScreens.length === 0) {
@@ -62,20 +65,21 @@ export const TranslationWorkspacePreviewArea = ({
         padding={[3, 5, 8]}
       >
         <Text color="dark300">
-          Select a section from the sidebar to preview.
+          Select a section from the states panel to preview.
         </Text>
       </Box>
     )
   }
 
   return (
-    <GridRow>
-      <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+    <div className={styles.previewWrapper}>
+      <div className={styles.previewFormColumn}>
         <Box
           paddingTop={[3, 6, 10]}
           height="full"
           borderRadius="large"
           background="white"
+          className={styles.previewShell}
         >
           <Box
             display="flex"
@@ -83,10 +87,7 @@ export const TranslationWorkspacePreviewArea = ({
             justifyContent="spaceBetween"
             height="full"
           >
-            <GridColumn
-              span={['12/12', '12/12', '10/12', '7/9']}
-              offset={['0', '0', '1/12', '1/9']}
-            >
+            <Box paddingX={[3, 5, 8]}>
               <Text variant="h2" as="h2" marginBottom={1}>
                 {previewScreens[0]
                   ? resolveTranslatableStaticText(
@@ -104,12 +105,13 @@ export const TranslationWorkspacePreviewArea = ({
                   formatMessage={formatMessage as PreviewFormatMessage}
                 />
               ))}
-            </GridColumn>
+            </Box>
 
             <Box
-              paddingX={[3, 5, 12]}
-              paddingBottom={5}
-              paddingTop={3}
+              marginTop={7}
+              className={styles.previewFooter}
+              paddingX={[3, 5, 8]}
+              paddingTop={[1, 4]}
               display="flex"
               flexDirection="rowReverse"
               alignItems="center"
@@ -132,16 +134,15 @@ export const TranslationWorkspacePreviewArea = ({
             </Box>
           </Box>
         </Box>
-      </GridColumn>
+      </div>
 
-      <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
+      <div className={styles.previewStepperColumn}>
         <Box
           display="flex"
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
           paddingTop={[0, 0, 8]}
-          paddingLeft={[0, 0, 0, 4]}
         >
           <FormStepperV2
             sections={[
@@ -248,8 +249,18 @@ export const TranslationWorkspacePreviewArea = ({
               )),
             ]}
           />
+          {formLogoKey ? (
+            <Box
+              display={['none', 'none', 'flex']}
+              alignItems="center"
+              justifyContent="center"
+              paddingBottom={4}
+            >
+              <TranslationWorkspaceFormLogo logoKey={formLogoKey} />
+            </Box>
+          ) : null}
         </Box>
-      </GridColumn>
-    </GridRow>
+      </div>
+    </div>
   )
 }
