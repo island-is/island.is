@@ -952,6 +952,34 @@ export const m = defineMessages({
     defaultMessage:
       'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
+  scopeUsersLabel: {
+    id: 'ap.ids-admin:scope-users-label',
+    defaultMessage: 'Users with access',
+  },
+  scopeUsersPlaceholder: {
+    id: 'ap.ids-admin:scope-users-placeholder',
+    defaultMessage: 'Choose from the list or create a new user',
+  },
+  scopeUsersLoading: {
+    id: 'ap.ids-admin:scope-users-loading',
+    defaultMessage: 'Loading users...',
+  },
+  addScopeUser: {
+    id: 'ap.ids-admin:add-scope-user',
+    defaultMessage: 'Create new user',
+  },
+  createScopeUserTitle: {
+    id: 'ap.ids-admin:create-scope-user-title',
+    defaultMessage: 'Create user',
+  },
+  createScopeUserSuccess: {
+    id: 'ap.ids-admin:create-scope-user-success',
+    defaultMessage: 'User created successfully',
+  },
+  createScopeUserError: {
+    id: 'ap.ids-admin:create-scope-user-error',
+    defaultMessage: 'Failed to create user',
+  },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
     defaultMessage: 'Authenticated user',
