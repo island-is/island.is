@@ -80,10 +80,7 @@ export class IdpProviderService extends MultiEnvironmentService {
     return { rows: [], totalCount: 0 }
   }
 
-  async getIdpProvider(
-    user: User,
-    name: string,
-  ): Promise<IdpProvider | null> {
+  async getIdpProvider(user: User, name: string): Promise<IdpProvider | null> {
     const availableEnvironments: Environment[] = []
     const environmentsData: IdpProviderEnvironmentData[] = []
 

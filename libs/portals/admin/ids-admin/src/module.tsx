@@ -53,8 +53,8 @@ const ApiScopeUsers = lazy(() =>
 const GrantTypes = lazy(() =>
   import('./screens/AdminControls/GrantTypes/GrantTypes'),
 )
-const IdpProviders = lazy(
-  () => import('./screens/AdminControls/IdpProviders/IdpProviders'),
+const IdpProviders = lazy(() =>
+  import('./screens/AdminControls/IdpProviders/IdpProviders'),
 )
 
 const allowedScopes: string[] = [
