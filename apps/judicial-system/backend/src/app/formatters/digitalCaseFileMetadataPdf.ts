@@ -54,13 +54,9 @@ export const createDigitalCaseFileMetadataPdf = async (
       newLine: false,
       position: { x: bulletIndent },
     })
-    .addText(
-      formatDate(file.displayDate?.toISOString()) ?? '',
-      textFontSize,
-      {
-        position: { x: valueIndent },
-      },
-    )
+    .addText(formatDate(file.displayDate?.toISOString()) ?? '', textFontSize, {
+      position: { x: valueIndent },
+    })
 
   return pdfDocument.getContents()
 }
