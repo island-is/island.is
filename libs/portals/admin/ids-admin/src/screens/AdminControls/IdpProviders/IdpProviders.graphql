@@ -40,6 +40,10 @@ mutation CreateIdpProvider($input: CreateAuthAdminIdpProviderInput!) {
       helptext
       level
     }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }
 
@@ -54,9 +58,20 @@ mutation UpdateIdpProvider($input: UpdateAuthAdminIdpProviderInput!) {
       helptext
       level
     }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }
 
 mutation DeleteIdpProvider($input: DeleteAuthAdminIdpProviderInput!) {
-  deleteAuthAdminIdpProvider(input: $input)
+  deleteAuthAdminIdpProvider(input: $input) {
+    success
+    deletedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
 }

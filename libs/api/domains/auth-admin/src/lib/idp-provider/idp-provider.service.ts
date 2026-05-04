@@ -6,6 +6,8 @@ import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { environments } from '../shared/constants/environments'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { IdpProvidersPayload } from './dto/idp-providers.payload'
 import { IdpProvidersInput } from './dto/idp-providers.input'
 import { CreateIdpProviderInput } from './dto/create-idp-provider.input'
@@ -22,6 +24,14 @@ const mapIdpProvider = (
   helptext: idp.helptext,
   level: idp.level,
   environment: environment,
+})
+
+const toFailure = (
+  environment: Environment,
+  error: unknown,
+): EnvironmentFailure => ({
+  environment,
+  message: error instanceof Error ? error.message : 'Unknown error',
 })
 
 @Injectable()
@@ -60,35 +70,23 @@ export class IdpProviderService extends MultiEnvironmentService {
       }
     }
 
-    // Build a lookup of provider name -> representative row data
-    const providerData = new Map<string, GeneratedIdpProvider>()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { data } = result.value
-        for (const row of data.rows) {
-          if (!providerData.has(row.name)) {
-            providerData.set(row.name, row)
-          }
+        return {
+          rows: data.rows.map((row: GeneratedIdpProvider) => ({
+            name: row.name,
+            availableEnvironments: envMap.get(row.name) ?? [],
+            description: row.description,
+            helptext: row.helptext,
+            level: row.level,
+          })),
+          totalCount: data.count,
         }
       }
     }
 
-    // Merge providers from all environments
-    const rows = [...envMap.keys()]
-      .map((name) => {
-        const row = providerData.get(name)
-        if (!row) return null
-        return {
-          name: row.name,
-          availableEnvironments: envMap.get(row.name) ?? [],
-          description: row.description,
-          helptext: row.helptext,
-          level: row.level,
-        }
-      })
-      .filter((r): r is NonNullable<typeof r> => r !== null)
-
-    return { rows, totalCount: rows.length }
+    return { rows: [], totalCount: 0 }
   }
 
   async getIdpProvider(user: User, name: string): Promise<IdpProvider | null> {
@@ -129,6 +127,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: IdpProviderEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -152,6 +151,7 @@ export class IdpProviderService extends MultiEnvironmentService {
           `Failed to create IDP provider in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -161,10 +161,11 @@ export class IdpProviderService extends MultiEnvironmentService {
         name: first.name,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to create IDP provider')
+    throw new Error('Failed to create IDP provider in all environments')
   }
 
   async updateIdpProvider(
@@ -181,6 +182,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: IdpProviderEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -204,6 +206,7 @@ export class IdpProviderService extends MultiEnvironmentService {
           `Failed to update IDP provider in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -213,55 +216,54 @@ export class IdpProviderService extends MultiEnvironmentService {
         name: first.name,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to update IDP provider')
+    throw new Error('Failed to update IDP provider in all environments')
   }
 
   async deleteIdpProvider(
     user: User,
     name: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToDelete =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const deletedEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToDelete) {
-      let requestMade = false
-
       try {
-        await this.makeRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meIdpProvidersControllerDeleteRaw({
+        await this.makeRequest(user, environment, (api) =>
+          api.meIdpProvidersControllerDeleteRaw({
             name,
             deleteIdpProviderDto: {
               environments: targetEnvironments,
             },
-          })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+          }),
+        )
+        deletedEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to delete IDP provider in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (deletedEnvironments.length === 0) {
+      throw new Error('Failed to delete IDP provider in all environments')
     }
 
-    throw lastError ?? new Error('Failed to delete IDP provider')
+    return {
+      success: failedEnvironments.length === 0,
+      deletedEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 }

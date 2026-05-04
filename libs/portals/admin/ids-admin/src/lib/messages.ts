@@ -118,6 +118,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
   },
+  edit: {
+    id: 'ap.ids-admin:edit',
+    defaultMessage: 'Edit',
+  },
   displayName: {
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Name',
@@ -1020,6 +1024,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-button',
     defaultMessage: 'Delete',
   },
+  /** @deprecated Use m.edit instead */
   apiScopeUserEditButton: {
     id: 'ap.ids-admin:api-scope-user-edit',
     defaultMessage: 'Edit',
@@ -1388,6 +1393,10 @@ export const m = defineMessages({
   idpProvidersDeleteEnvironmentRequired: {
     id: 'ap.ids-admin:idp-providers-delete-environment-required',
     defaultMessage: 'Select at least one environment to delete from',
+  },
+  idpProvidersPartialFailure: {
+    id: 'ap.ids-admin:idp-providers-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',

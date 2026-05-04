@@ -165,7 +165,7 @@ export class MeIdpProvidersController {
         alsoLog: true,
         meta: { environments: input.environments },
       },
-      this.idpProviderService.delete(name),
+      this.idpProviderService.delete(name, input.environments),
     )
   }
 }

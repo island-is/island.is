@@ -11,6 +11,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Environment } from '@island.is/shared/types'
 
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { IdpProvider } from './models/idp-provider.model'
 import { IdpProvidersPayload } from './dto/idp-providers.payload'
 import { IdpProvidersInput } from './dto/idp-providers.input'
@@ -69,12 +70,14 @@ export class IdpProviderResolver {
     return this.idpProviderService.updateIdpProvider(user, input)
   }
 
-  @Mutation(() => Boolean, { name: 'deleteAuthAdminIdpProvider' })
+  @Mutation(() => DeleteEnvironmentResult, {
+    name: 'deleteAuthAdminIdpProvider',
+  })
   deleteIdpProvider(
     @CurrentUser() user: User,
     @Args('input', { type: () => DeleteIdpProviderInput })
     input: DeleteIdpProviderInput,
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     return this.idpProviderService.deleteIdpProvider(
       user,
       input.name,

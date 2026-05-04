@@ -81,6 +81,12 @@ export const useIdpProviderModal = ({
     lastHandledFetcherData.current = fetcher.data
 
     if (!fetcher.data.globalError) {
+      const data = fetcher.data.data as {
+        failedEnvironments?: { environment: string; message: string }[]
+      } | null
+
+      const failedEnvs = data?.failedEnvironments
+
       switch (fetcher.data.intent) {
         case IdpProviderIntent.create:
           toast.success(formatMessage(m.idpProvidersCreateSuccess))
@@ -92,6 +98,16 @@ export const useIdpProviderModal = ({
           toast.success(formatMessage(m.idpProvidersDeleteSuccess))
           break
       }
+
+      if (failedEnvs && failedEnvs.length > 0) {
+        const envNames = failedEnvs.map((f) => f.environment).join(', ')
+        toast.warning(
+          formatMessage(m.idpProvidersPartialFailure, {
+            environments: envNames,
+          }),
+        )
+      }
+
       resetModalState()
     } else {
       toast.error(formatMessage(m.idpProvidersError))
