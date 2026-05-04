@@ -60,25 +60,28 @@ export class ScopeService {
    * a matching domain by comparing against Domain.displayName.
    */
   private async getUserMunicipalDomain(user: User): Promise<string | null> {
+    let sveitarfelag: string | undefined
+
     try {
       const address = await this.nationalRegistryService.getAddress(
         user.nationalId,
       )
-      const sveitarfelag = address?.sveitarfelag?.trim()
-      if (!sveitarfelag) return null
-
-      const domain = await this.domainModel.findOne({
-        attributes: ['name'],
-        where: { displayName: sveitarfelag },
-      })
-
-      return domain?.name ?? null
-    } catch (error) {
+      sveitarfelag = address?.sveitarfelag?.trim()
+    } catch {
       this.logger.warn(
         'Failed to fetch municipality, falling back to normal categories',
       )
       return null
     }
+
+    if (!sveitarfelag) return null
+
+    const domain = await this.domainModel.findOne({
+      attributes: ['name'],
+      where: { displayName: sveitarfelag },
+    })
+
+    return domain?.name ?? null
   }
 
   async findScopeTree(
@@ -274,8 +277,8 @@ export class ScopeService {
     lang: string,
     direction?: DelegationDirection,
   ): Promise<ScopeTagDTO[]> {
-    // Fetch tags, scopes, and user municipality in parallel
-    const [cmsTags, scopes, municipalDomainName] = await Promise.all([
+    // Fetch tags and scopes in parallel
+    const [cmsTags, scopes] = await Promise.all([
       this.cmsContentfulService.getDelegationScopeTags(lang),
       this.delegationResourcesService.findScopesInternal({
         user,
@@ -298,7 +301,6 @@ export class ScopeService {
           },
         ],
       }),
-      this.getUserMunicipalDomain(user),
     ])
 
     // Group scopes by tag
@@ -359,15 +361,17 @@ export class ScopeService {
       })
     }
 
-    // If the user has a municipal domain, extract matching scopes from the
-    // "Sveitarfélag" tag into a virtual "Mitt sveitarfélag" tag.
+    // If the "Sveitarfélag" tag exists with scopes, look up the user's
+    // municipality and extract matching scopes into a virtual tag.
     // Scopes remain in their original tag as well.
-    if (municipalDomainName) {
-      const sveitarfelagTag = result.find(
-        (tag) => tag.slug === SVEITARFELOG_CMS_SLUG,
-      )
+    const sveitarfelagTag = result.find(
+      (tag) => tag.slug === SVEITARFELOG_CMS_SLUG,
+    )
 
-      if (sveitarfelagTag) {
+    if (sveitarfelagTag && sveitarfelagTag.scopes.length > 0) {
+      const municipalDomainName = await this.getUserMunicipalDomain(user)
+
+      if (municipalDomainName) {
         const municipalScopes = sveitarfelagTag.scopes.filter(
           (scope) => scope.domainName === municipalDomainName,
         )
