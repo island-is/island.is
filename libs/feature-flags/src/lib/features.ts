@@ -39,9 +39,11 @@ export enum Features {
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
   RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
+  editUnemploymentInformation = 'isEditUnemploymentInformationEnabled',
   estateReviewEnabled = 'isEstateReviewEnabled',
   inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
   isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
+  isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -181,6 +183,9 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
+
+  // Car recycling
+  isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
 }
 
 export enum ServerSideFeature {

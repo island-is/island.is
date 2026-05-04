@@ -506,6 +506,16 @@ export const institutionMapper = {
     slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
   },
+  [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
