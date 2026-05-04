@@ -20,8 +20,8 @@ query FarmerLandDetail($id: ID!) {
     }
     landRegistry {
       id
-      name
-      nationalId
+      ownerName
+      ownerNationalId
       properties {
         ownershipType
         usage

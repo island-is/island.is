@@ -54,6 +54,47 @@ export const idsAdminNav: PortalNavigationItem = {
   ],
 }
 
+export const idsAdminControlsNav: PortalNavigationItem = {
+  name: m.idsAdmin,
+  path: IDSAdminPaths.IDSAdmin,
+  description: m.idsAdmin,
+  activeIfExact: true,
+  children: [
+    {
+      name: m.domains,
+      path: IDSAdminPaths.IDSAdmin,
+      description: m.idsAdmin,
+      activeIfExact: true,
+    },
+    {
+      name: m.adminControls,
+      path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+      description: m.idsAdmin,
+      activeIfExact: true,
+      children: [
+        {
+          name: m.apiScopeUsers,
+          path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.grantTypes,
+          path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.idpProviders,
+          path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+      ],
+    },
+  ],
+}
+
 export const idsAdminNavigation: PortalNavigationItem = {
   name: m.idsAdmin,
   path: IDSAdminPaths.IDSAdmin,
@@ -61,5 +102,5 @@ export const idsAdminNavigation: PortalNavigationItem = {
     icon: 'settings',
   },
   description: m.idsAdmin,
-  children: [idsAdminNav],
+  children: [idsAdminNav, idsAdminControlsNav],
 }
