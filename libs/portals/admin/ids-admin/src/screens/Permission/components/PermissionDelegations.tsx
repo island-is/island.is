@@ -456,7 +456,11 @@ export const PermissionDelegations = ({
                                 value={
                                   inputValues.originUrl &&
                                   inputValues.targetLinkUri
-                                    ? `${inputValues.originUrl}?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(inputValues.targetLinkUri)}`
+                                    ? `${
+                                        inputValues.originUrl
+                                      }?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(
+                                        inputValues.targetLinkUri,
+                                      )}`
                                     : ''
                                 }
                                 placeholder={formatMessage(
