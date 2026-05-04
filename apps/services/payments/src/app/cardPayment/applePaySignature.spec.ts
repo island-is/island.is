@@ -26,7 +26,12 @@ const generateRsaKeyPairPem = (bits = 2048): KeyPairPem => {
 const buildExtNullValue = (): string =>
   forge.asn1
     .toDer(
-      forge.asn1.create(forge.asn1.Class.UNIVERSAL, forge.asn1.Type.NULL, false, ''),
+      forge.asn1.create(
+        forge.asn1.Class.UNIVERSAL,
+        forge.asn1.Type.NULL,
+        false,
+        '',
+      ),
     )
     .getBytes()
 
@@ -55,7 +60,8 @@ const createCert = ({
   cert.publicKey = forge.pki.publicKeyFromPem(subjectPublicKeyPem)
   cert.serialNumber = crypto.randomBytes(8).toString('hex')
   cert.validity.notBefore = notBefore ?? new Date(Date.now() - 60_000)
-  cert.validity.notAfter = notAfter ?? new Date(Date.now() + 365 * 24 * 60 * 60_000)
+  cert.validity.notAfter =
+    notAfter ?? new Date(Date.now() + 365 * 24 * 60 * 60_000)
   const subjectAttrs = [{ shortName: 'CN', value: subjectCN }]
   cert.setSubject(subjectAttrs)
   cert.setIssuer(issuerCert ? issuerCert.subject.attributes : subjectAttrs)
@@ -71,7 +77,11 @@ const createCert = ({
   if (isCa) {
     extensions.push({ name: 'keyUsage', keyCertSign: true, critical: true })
   } else {
-    extensions.push({ name: 'keyUsage', digitalSignature: true, critical: true })
+    extensions.push({
+      name: 'keyUsage',
+      digitalSignature: true,
+      critical: true,
+    })
   }
   if (customExtensionOid) {
     extensions.push({
@@ -81,7 +91,10 @@ const createCert = ({
     })
   }
   cert.setExtensions(extensions as forge.pki.CertificateExtension[])
-  cert.sign(forge.pki.privateKeyFromPem(issuerPrivateKeyPem), forge.md.sha256.create())
+  cert.sign(
+    forge.pki.privateKeyFromPem(issuerPrivateKeyPem),
+    forge.md.sha256.create(),
+  )
   // suppress unused warning
   void subjectPrivateKeyPem
   return cert
@@ -180,12 +193,7 @@ const buildSyntheticToken = (opts?: {
 
   const messageBuffer =
     opts?.signedMessageOverride ??
-    Buffer.concat([
-      ephemeralPublicKey,
-      data,
-      transactionId,
-      applicationData,
-    ])
+    Buffer.concat([ephemeralPublicKey, data, transactionId, applicationData])
 
   const p7 = forge.pkcs7.createSignedData()
   p7.content = forge.util.createBuffer(messageBuffer.toString('binary'))
@@ -281,9 +289,8 @@ describe('verifyApplePaySignature', () => {
 
   it('rejects tampered ephemeralPublicKey', () => {
     const token = buildSyntheticToken()
-    token.paymentData.header.ephemeralPublicKey = Buffer.from('tampered').toString(
-      'base64',
-    )
+    token.paymentData.header.ephemeralPublicKey =
+      Buffer.from('tampered').toString('base64')
     expect(() =>
       verifyApplePaySignature({
         paymentData: token.paymentData,

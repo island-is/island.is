@@ -508,10 +508,7 @@ export const verifyApplePaySignature = ({
   ) {
     throw verifyError('message-digest', 'missing or malformed messageDigest')
   }
-  const claimedDigest = Buffer.from(
-    messageDigestAttr.value as string,
-    'binary',
-  )
+  const claimedDigest = Buffer.from(messageDigestAttr.value as string, 'binary')
 
   if (!/^[0-9a-fA-F]*$/.test(paymentData.header.transactionId)) {
     throw verifyError('transaction-id', 'transactionId is not hex')
