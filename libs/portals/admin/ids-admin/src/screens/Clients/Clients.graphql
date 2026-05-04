@@ -4,6 +4,7 @@ query GetClients($input: AuthAdminClientsInput!) {
     data {
       clientId
       clientType
+      archived
       availableEnvironments
       defaultEnvironment {
         id
