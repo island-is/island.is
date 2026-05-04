@@ -168,6 +168,19 @@ export const focusable = style({
   },
 })
 
+/** Mint focus styling only when :focus-visible (e.g. keyboard); opt-in via Tag prop. */
+export const focusableVisibleOnly = style({
+  ':focus-visible': {
+    backgroundColor: theme.color.mint400,
+    color: theme.color.dark400,
+  },
+  ':hover': {
+    textDecoration: 'none',
+    backgroundColor: theme.color.blue400,
+    color: theme.color.white,
+  },
+})
+
 export const disabled = style({
   cursor: 'default',
 })
