@@ -60,24 +60,35 @@ export class IdpProviderService extends MultiEnvironmentService {
       }
     }
 
-    // Use the first successful environment as the primary result for pagination
+    // Build a lookup of provider name -> representative row data
+    const providerData = new Map<string, GeneratedIdpProvider>()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { data } = result.value
-        return {
-          rows: data.rows.map((row: GeneratedIdpProvider) => ({
-            name: row.name,
-            availableEnvironments: envMap.get(row.name) ?? [],
-            description: row.description,
-            helptext: row.helptext,
-            level: row.level,
-          })),
-          totalCount: data.count,
+        for (const row of data.rows) {
+          if (!providerData.has(row.name)) {
+            providerData.set(row.name, row)
+          }
         }
       }
     }
 
-    return { rows: [], totalCount: 0 }
+    // Merge providers from all environments
+    const rows = [...envMap.keys()]
+      .map((name) => {
+        const row = providerData.get(name)
+        if (!row) return null
+        return {
+          name: row.name,
+          availableEnvironments: envMap.get(row.name) ?? [],
+          description: row.description,
+          helptext: row.helptext,
+          level: row.level,
+        }
+      })
+      .filter((r): r is NonNullable<typeof r> => r !== null)
+
+    return { rows, totalCount: rows.length }
   }
 
   async getIdpProvider(user: User, name: string): Promise<IdpProvider | null> {
@@ -162,12 +173,10 @@ export class IdpProviderService extends MultiEnvironmentService {
   ): Promise<IdpProvider> {
     const targetEnvironments = input.environments
 
-    if (!targetEnvironments) {
-      const existing = await this.getIdpProvider(user, input.name)
-      if (!existing) {
-        throw new Error('IDP provider not found')
-      }
-      return existing
+    if (!targetEnvironments || targetEnvironments.length === 0) {
+      throw new Error(
+        'Environments must be specified when updating an IDP provider',
+      )
     }
 
     const availableEnvironments: Environment[] = []
@@ -229,7 +238,12 @@ export class IdpProviderService extends MultiEnvironmentService {
       try {
         await this.makeRequest(user, environment, (api) => {
           requestMade = true
-          return api.meIdpProvidersControllerDeleteRaw({ name })
+          return api.meIdpProvidersControllerDeleteRaw({
+            name,
+            deleteIdpProviderDto: {
+              environments: targetEnvironments,
+            },
+          })
         })
 
         if (requestMade) {

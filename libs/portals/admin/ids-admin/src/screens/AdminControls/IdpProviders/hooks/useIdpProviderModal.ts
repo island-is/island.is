@@ -152,7 +152,7 @@ export const useIdpProviderModal = ({
       formatMessage,
     })
 
-    if (!isEditing) {
+    if (!isEditing && !hasErrors(errors)) {
       try {
         const { data } = await fetchIdpProvider({
           variables: { name: formData.name },
@@ -162,8 +162,6 @@ export const useIdpProviderModal = ({
         }
       } catch {
         errors.name = formatMessage(m.idpProvidersErrorNameCheckFailed)
-        setFormErrors(errors)
-        return
       }
     }
 

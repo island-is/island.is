@@ -47,25 +47,22 @@ export const IdpProvidersTable = ({
     setDeleteTarget(null)
   }
 
-  if (rows.length === 0) {
-    return (
-      <Box
-        padding={4}
-        textAlign="center"
-        border="standard"
-        borderRadius="large"
-      >
-        <Problem
-          type="no_data"
-          title={formatMessage(m.idpProvidersNoResults)}
-          titleSize="h3"
-        />
-      </Box>
-    )
-  }
-
   return (
     <Stack space={3}>
+      {rows.length === 0 ? (
+        <Box
+          padding={4}
+          textAlign="center"
+          border="standard"
+          borderRadius="large"
+        >
+          <Problem
+            type="no_data"
+            title={formatMessage(m.idpProvidersNoResults)}
+            titleSize="h3"
+          />
+        </Box>
+      ) : (
       <T.Table>
         <T.Head>
           <T.Row>
@@ -112,6 +109,7 @@ export const IdpProvidersTable = ({
           ))}
         </T.Body>
       </T.Table>
+      )}
 
       {totalPages > 1 && (
         <Box display="flex" justifyContent="center">

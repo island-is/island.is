@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -33,6 +34,7 @@ import { NoContentException } from '@island.is/nest/problem'
 
 import { PagedIdpProvidersDto } from './dto/paged-idp-providers.dto'
 import { UpdateIdpProviderDto } from './dto/update-idp-provider.dto'
+import { DeleteIdpProviderDto } from './dto/delete-idp-provider.dto'
 
 const namespace = '@island.is/auth/admin-api/v2/idp-providers'
 
@@ -75,6 +77,10 @@ export class MeIdpProvidersController {
     @Query('page', ParseIntPipe) page: number,
     @Query('count', ParseIntPipe) count: number,
   ): Promise<PagedRowsDto<IdpProvider>> {
+    if (page < 1 || count < 1) {
+      throw new BadRequestException('page and count must be positive integers')
+    }
+
     return this.idpProviderService.search(searchString, page, count)
   }
 
@@ -148,6 +154,7 @@ export class MeIdpProvidersController {
   async delete(
     @CurrentUser() user: User,
     @Param('name') name: string,
+    @Body() input: DeleteIdpProviderDto,
   ): Promise<void> {
     await this.auditService.auditPromise(
       {
@@ -156,6 +163,7 @@ export class MeIdpProvidersController {
         action: 'delete',
         resources: name,
         alsoLog: true,
+        meta: { environments: input.environments },
       },
       this.idpProviderService.delete(name),
     )

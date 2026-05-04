@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateIdpProviderDto {
   @IsString()
@@ -22,4 +22,12 @@ export class UpdateIdpProviderDto {
     example: 2,
   })
   readonly level!: number
+
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['Development', 'Staging'],
+  })
+  readonly environments?: string[]
 }

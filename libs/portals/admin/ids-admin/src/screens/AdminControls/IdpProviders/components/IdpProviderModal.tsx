@@ -7,6 +7,7 @@ import {
   Checkbox,
   Input,
   InputError,
+  LoadingDots,
   Select,
   SkeletonLoader,
   Stack,
@@ -82,55 +83,70 @@ export const IdpProviderModal = ({ modal }: IdpProviderModalProps) => {
 
         <Box marginBottom={3}>
           <Stack space={3}>
-            <Input
-              name="name"
-              label={formatMessage(m.idpProvidersName)}
-              value={modal.formData.name}
-              onChange={(e) => modal.setFormField('name', e.target.value)}
-              disabled={modal.isEditing}
-              size="sm"
-              backgroundColor="blue"
-              hasError={!!modal.formErrors.name}
-              errorMessage={modal.formErrors.name}
-            />
-            <Input
-              name="description"
-              label={formatMessage(m.idpProvidersDescription)}
-              value={modal.formData.description}
-              onChange={(e) =>
-                modal.setFormField('description', e.target.value)
-              }
-              size="sm"
-              backgroundColor="blue"
-              hasError={!!modal.formErrors.description}
-              errorMessage={modal.formErrors.description}
-            />
-            <Input
-              name="helptext"
-              label={formatMessage(m.idpProvidersHelptext)}
-              value={modal.formData.helptext}
-              onChange={(e) => modal.setFormField('helptext', e.target.value)}
-              size="sm"
-              backgroundColor="blue"
-              hasError={!!modal.formErrors.helptext}
-              errorMessage={modal.formErrors.helptext}
-            />
-            <Input
-              name="level"
-              label={formatMessage(m.idpProvidersLevel)}
-              value={String(modal.formData.level)}
-              onChange={(e) => {
-                const val = parseInt(e.target.value, 10)
-                if (!isNaN(val)) {
-                  modal.setFormField('level', val)
-                }
-              }}
-              type="number"
-              size="sm"
-              backgroundColor="blue"
-              hasError={!!modal.formErrors.level}
-              errorMessage={modal.formErrors.level}
-            />
+            {modal.isEditing && modal.loadingIdpProvider ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                paddingTop={4}
+              >
+                <LoadingDots size="medium" />
+              </Box>
+            ) : (
+              <>
+                <Input
+                  name="name"
+                  label={formatMessage(m.idpProvidersName)}
+                  value={modal.formData.name}
+                  onChange={(e) => modal.setFormField('name', e.target.value)}
+                  disabled={modal.isEditing}
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!modal.formErrors.name}
+                  errorMessage={modal.formErrors.name}
+                />
+                <Input
+                  name="description"
+                  label={formatMessage(m.idpProvidersDescription)}
+                  value={modal.formData.description}
+                  onChange={(e) =>
+                    modal.setFormField('description', e.target.value)
+                  }
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!modal.formErrors.description}
+                  errorMessage={modal.formErrors.description}
+                />
+                <Input
+                  name="helptext"
+                  label={formatMessage(m.idpProvidersHelptext)}
+                  value={modal.formData.helptext}
+                  onChange={(e) =>
+                    modal.setFormField('helptext', e.target.value)
+                  }
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!modal.formErrors.helptext}
+                  errorMessage={modal.formErrors.helptext}
+                />
+                <Input
+                  name="level"
+                  label={formatMessage(m.idpProvidersLevel)}
+                  value={String(modal.formData.level)}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10)
+                    if (!isNaN(val)) {
+                      modal.setFormField('level', val)
+                    }
+                  }}
+                  type="number"
+                  size="sm"
+                  backgroundColor="blue"
+                  hasError={!!modal.formErrors.level}
+                  errorMessage={modal.formErrors.level}
+                />
+              </>
+            )}
 
             {!modal.isEditing && (
               <Box marginTop={3}>

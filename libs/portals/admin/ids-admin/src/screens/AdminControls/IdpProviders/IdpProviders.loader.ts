@@ -15,7 +15,8 @@ export interface IdpProvidersLoaderData {
 export const idpProvidersLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ request }): Promise<IdpProvidersLoaderData> => {
     const url = new URL(request.url)
-    const page = Number(url.searchParams.get('page') ?? 1)
+    const rawPage = parseInt(url.searchParams.get('page') ?? '1', 10)
+    const page = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage
     const search = url.searchParams.get('search') ?? ''
 
     const [idpProvidersResult, envsResult] = await Promise.all([
