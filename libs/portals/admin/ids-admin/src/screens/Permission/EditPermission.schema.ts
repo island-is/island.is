@@ -107,6 +107,14 @@ const accessControlSchema = z
     isAccessControlled: booleanCheckbox,
     grantToAuthenticatedUser: booleanCheckbox,
     automaticDelegationGrant: booleanCheckbox,
+    addedScopeUserNationalIds: z
+      .string()
+      .optional()
+      .transform(safeParseStringArray),
+    removedScopeUserNationalIds: z
+      .string()
+      .optional()
+      .transform(safeParseStringArray),
   })
   .merge(defaultEnvironmentSchema)
 
