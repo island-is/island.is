@@ -54,6 +54,10 @@ const nextConfig = {
         source: '/rss/dagskra-domstola.xml',
         destination: '/api/dagskra-domstola/rss',
       },
+      {
+        source: '/rss/afryjud-mal-haestarettar',
+        destination: '/api/afryjud-mal-haestarettar/rss',
+      },
     ]
   },
   async redirects() {
