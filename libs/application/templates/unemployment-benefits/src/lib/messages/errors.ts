@@ -71,7 +71,8 @@ export const serviceErrors = defineMessages({
   },
   minimumJobCount: {
     id: 'vmst.ub.application:minimumJobCount',
-    defaultMessage: 'Vinsamlegast veldu að minnsta kosti tvö störf',
+    defaultMessage:
+      'Vinsamlegast veldu að minnsta kosti tvö störf og ekki fleiri en tíu',
     description: 'Error message when minimum job count is not met',
   },
 })

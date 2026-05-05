@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { CmsModule } from '@island.is/cms'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
@@ -34,6 +35,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
 @Module({
   imports: [
     CmsModule,
+    NationalRegistryV3ClientModule,
     TranslationModule,
     SequelizeModule.forFeature([
       Domain,
