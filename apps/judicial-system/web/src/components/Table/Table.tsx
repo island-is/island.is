@@ -6,7 +6,10 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
