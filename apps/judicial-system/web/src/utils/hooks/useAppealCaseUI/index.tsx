@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -20,7 +19,6 @@ import {
 import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
-  FeatureContext,
   FormContext,
   Modal,
   UserContext,
@@ -122,20 +120,22 @@ const useAppealCaseUI = () => {
 
   const {
     appealCase,
-    statementDeadline,
     hasBeenAppealed,
     canBeAppealed,
     appealDeadline,
     isAppealDeadlineExpired,
-    isStatementDeadlineExpired,
     sharedWithProsecutorsOffice,
   } = workingCase
   const {
     appealState,
     prosecutorStatementDate,
     defendantStatementDate,
+    defendantStatementDates,
+    civilClaimantStatementDates,
     appealReceivedByCourtDate,
     appealRulingDecision,
+    statementDeadline,
+    isStatementDeadlineExpired,
   } = appealCase ?? {}
 
   const isSharedWithProsecutor =
@@ -143,23 +143,22 @@ const useAppealCaseUI = () => {
     user?.institution?.id === sharedWithProsecutorsOffice?.id
 
   // For indictment cases each defender / civil claimant spokesperson sends
-  // their own statement, so resolve the per-party date by national-id match
-  // against confirmed parties only. Request cases have a single defender,
-  // so the aggregated appealCase.defendantStatementDate is the right answer.
+  // their own statement, so resolve the per-party date from the per-appeal
+  // lists by id. Request cases have a single defender, so the aggregated
+  // appealCase.defendantStatementDate is the right answer.
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
     user,
   )
-  const currentDefenceStatementDate = defendantId
-    ? workingCase.defendants?.find((d) => d.id === defendantId)
-        ?.appealStatementDate
-    : civilClaimantId
-    ? workingCase.civilClaimants?.find((c) => c.id === civilClaimantId)
-        ?.appealStatementDate
-    : isIndictmentCase(workingCase.type)
-    ? // Indictment defence user whose pick isn't confirmed: no per-party
-      // statement is attributable to them.
-      undefined
+  const currentDefenceStatementDate = isIndictmentCase(workingCase.type)
+    ? defendantId
+      ? defendantStatementDates?.find((d) => d.defendantId === defendantId)
+          ?.statementDate
+      : civilClaimantId
+      ? civilClaimantStatementDates?.find(
+          (c) => c.civilClaimantId === civilClaimantId,
+        )?.statementDate
+      : undefined
     : defendantStatementDate
 
   const currentUserStatementDate = isProsecutionUser(user)
@@ -347,13 +346,8 @@ const useAppealCaseUI = () => {
     </>
   )
 
-  const { features } = useContext(FeatureContext)
-
   const appealBanner =
-    isLoadingWorkingCase ||
-    (!title && !description) ||
-    (isIndictmentCase(workingCase.type) &&
-      !features.includes(Feature.INDICTMENT_APPEAL_RULING)) ? null : (
+    isLoadingWorkingCase || (!title && !description) ? null : (
       <AlertBanner variant="warning" title={title} description={description}>
         {child}
       </AlertBanner>

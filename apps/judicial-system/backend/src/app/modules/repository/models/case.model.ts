@@ -1011,6 +1011,7 @@ export class Case extends Model {
    **********/
   @HasOne(() => AppealCase, {
     foreignKey: 'caseId',
+    as: 'appealCase',
     scope: { rulingFileId: null },
   })
   @ApiPropertyOptional({ type: () => AppealCase })
@@ -1022,6 +1023,7 @@ export class Case extends Model {
    **********/
   @HasMany(() => AppealCase, {
     foreignKey: 'caseId',
+    as: 'rulingOrderAppealCases',
     scope: { rulingFileId: { [Op.not]: null } },
   })
   @ApiPropertyOptional({ type: () => AppealCase, isArray: true })

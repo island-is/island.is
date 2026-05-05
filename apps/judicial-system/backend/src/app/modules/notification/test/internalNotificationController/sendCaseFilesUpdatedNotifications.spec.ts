@@ -77,6 +77,7 @@ describe('InternalNotificationController - Send case files updated notifications
                 spokespersonNationalId: spokesperson.nationalId,
                 spokespersonName: spokesperson.name,
                 spokespersonEmail: spokesperson.email,
+                isSpokespersonConfirmed: true,
               },
             ],
           } as Case,

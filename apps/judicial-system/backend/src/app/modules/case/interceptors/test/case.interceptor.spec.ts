@@ -9,7 +9,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { DefendantEventLog } from '../../../repository'
+import { Defendant, DefendantEventLog } from '../../../repository'
 import { CaseInterceptor, transformDefendants } from '../case.interceptor'
 
 const nationalId = '0101010101'
@@ -59,7 +59,7 @@ describe('transformDefendants - indictmentCancelledOrDismissedState', () => {
   describe('when defendant has no dismissal or cancellation event', () => {
     it('is undefined', () => {
       const result = transformDefendants({
-        defendants: [makeDefendant(nationalId, [])] as any,
+        defendants: [makeDefendant(nationalId, [])] as unknown as Defendant[],
       })
 
       expect(result?.[0].indictmentCancelledOrDismissedState).toBeUndefined()
@@ -73,7 +73,7 @@ describe('transformDefendants - indictmentCancelledOrDismissedState', () => {
           makeDefendant(nationalId, [
             makeEventLog(DefendantEventType.INDICTMENT_DISMISSED, dismissedAt),
           ]),
-        ] as any,
+        ] as unknown as Defendant[],
       })
 
       expect(result?.[0].indictmentCancelledOrDismissedState).toEqual({
@@ -90,7 +90,7 @@ describe('transformDefendants - indictmentCancelledOrDismissedState', () => {
           makeDefendant(nationalId, [
             makeEventLog(DefendantEventType.INDICTMENT_CANCELLED, cancelledAt),
           ]),
-        ] as any,
+        ] as unknown as Defendant[],
       })
 
       expect(result?.[0].indictmentCancelledOrDismissedState).toEqual({
@@ -115,7 +115,7 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
-    givenWhenThen = async (theCase): Promise<Then> => {
+    givenWhenThen = async (): Promise<Then> => {
       const interceptor = new CaseInterceptor()
       const then = {} as Then
 
