@@ -237,6 +237,17 @@ export const m = {
     },
   }),
   verdictPage: defineMessages({
+    docxPreviewUnavailableTitle: {
+      id: 'web.verdicts:verdictPage.docxPreviewUnavailableTitle',
+      defaultMessage: 'Ekki tókst að birta .docx skjal í vafra',
+      description: 'Titill á síðu dóms sem ekki er til staðar í vafra',
+    },
+    docxPreviewUnavailableDescription: {
+      id: 'web.verdicts:verdictPage.docxPreviewUnavailableDescription',
+      defaultMessage:
+        'Villa kom upp þegar það var reynt að birta .docx skjal í vafra',
+      description: 'Lýsing á síðu dóms sem ekki er til staðar í vafra',
+    },
     resolutionLink: {
       id: 'web.verdicts:verdictPage.resolutionLink',
       defaultMessage: 'Úrlausn Landsréttar / Héraðsdóms',

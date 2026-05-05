@@ -8,6 +8,7 @@ import { BLOCKS } from '@contentful/rich-text-types'
 
 import type { SliceType } from '@island.is/island-ui/contentful'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -311,6 +312,32 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
                 >
                   <div ref={docxContainerRef} />
                 </div>
+              </Box>
+            </Box>
+          </GridContainer>
+        </Box>
+      )}
+      {isDocxSource && docxRenderFailed && Boolean(item.pdfString) && (
+        <Box paddingY={5} background="overlayDefault">
+          <GridContainer>
+            <Box
+              display="flex"
+              justifyContent="center"
+              className={cn(styles.pdfContainer, 'rs_read')}
+              height="full"
+              overflow="auto"
+              boxShadow="subtle"
+            >
+              <Box width="full" padding={4}>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(
+                    m.verdictPage.docxPreviewUnavailableTitle,
+                  )}
+                  message={formatMessage(
+                    m.verdictPage.docxPreviewUnavailableDescription,
+                  )}
+                />
               </Box>
             </Box>
           </GridContainer>
