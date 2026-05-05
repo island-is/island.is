@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { capitalize, formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
@@ -857,24 +858,32 @@ describe('CaseController - Update', () => {
     })
 
     it('should reset defendant fields', () => {
+      const resetPayload = {
+        isSentToPrisonAdmin: false,
+        indictmentReviewDecision: null,
+        publicProsecutorIsRegisteredInPoliceSystem: null,
+      }
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId1,
-        {
-          isSentToPrisonAdmin: false,
-          indictmentReviewDecision: null,
-          publicProsecutorIsRegisteredInPoliceSystem: null,
-        },
+        resetPayload,
+        transaction,
+      )
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
+        caseId,
+        defendantId2,
+        resetPayload,
         transaction,
       )
     })
 
     it('should store reopenReason with header prepended', () => {
+      const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${user.name} ${lowercase(user.title)}`
       expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           caseId,
           stringType: StringType.REOPEN_REASON,
-          value: expect.stringContaining(caseToUpdate.reopenReason as string),
+          value: `${expectedHeader}\n${caseToUpdate.reopenReason}`,
         },
         {
           conflictFields: ['case_id', 'string_type'],
@@ -898,6 +907,10 @@ describe('CaseController - Update', () => {
         mockDefendantService.updateDatabaseDefendant as jest.Mock
       mockUpdateDatabaseDefendant.mockResolvedValue({})
       ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce({
+        ...reopeningCase,
+        state: CaseState.RECEIVED,
+      })
+      ;(mockCaseRepositoryService.findOne as jest.Mock).mockResolvedValueOnce({
         ...reopeningCase,
         state: CaseState.RECEIVED,
       })
