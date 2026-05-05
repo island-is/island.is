@@ -66,56 +66,50 @@ export class AppealEventLog extends Model {
     )
   }
 
-  static getEarliestDateByRole(
+  static groupLatestByDefendant(
     eventType: AppealEventType,
-    userRole: UserRole | UserRole[],
     eventLogs: AppealEventLog[] | undefined,
-  ): Date | undefined {
+  ): { defendantId: string; statementDate: Date }[] {
     if (!eventLogs) {
-      return undefined
+      return []
     }
 
-    const roles = Array.isArray(userRole) ? userRole : [userRole]
-    const relevantLogs = eventLogs
-      .filter(
-        (eventLog) =>
-          eventLog.eventType === eventType && roles.includes(eventLog.userRole),
-      )
-      .sort((a, b) => a.created.getTime() - b.created.getTime())
+    const latest = new Map<string, Date>()
+    for (const log of eventLogs) {
+      if (log.eventType !== eventType || !log.defendantId) continue
+      const current = latest.get(log.defendantId)
+      if (!current || log.created > current) {
+        latest.set(log.defendantId, log.created)
+      }
+    }
 
-    return relevantLogs[0]?.created
+    return Array.from(latest, ([defendantId, statementDate]) => ({
+      defendantId,
+      statementDate,
+    }))
   }
 
-  static getDateForDefendant(
+  static groupLatestByCivilClaimant(
     eventType: AppealEventType,
-    defendantId: string,
     eventLogs: AppealEventLog[] | undefined,
-  ): Date | undefined {
+  ): { civilClaimantId: string; statementDate: Date }[] {
     if (!eventLogs) {
-      return undefined
+      return []
     }
 
-    return AppealEventLog.getEventLogDateByEventType(
-      eventType,
-      eventLogs.filter((eventLog) => eventLog.defendantId === defendantId),
-    )
-  }
-
-  static getDateForCivilClaimant(
-    eventType: AppealEventType,
-    civilClaimantId: string,
-    eventLogs: AppealEventLog[] | undefined,
-  ): Date | undefined {
-    if (!eventLogs) {
-      return undefined
+    const latest = new Map<string, Date>()
+    for (const log of eventLogs) {
+      if (log.eventType !== eventType || !log.civilClaimantId) continue
+      const current = latest.get(log.civilClaimantId)
+      if (!current || log.created > current) {
+        latest.set(log.civilClaimantId, log.created)
+      }
     }
 
-    return AppealEventLog.getEventLogDateByEventType(
-      eventType,
-      eventLogs.filter(
-        (eventLog) => eventLog.civilClaimantId === civilClaimantId,
-      ),
-    )
+    return Array.from(latest, ([civilClaimantId, statementDate]) => ({
+      civilClaimantId,
+      statementDate,
+    }))
   }
 
   @Column({

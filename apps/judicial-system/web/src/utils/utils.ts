@@ -265,14 +265,14 @@ export const getAppealActorText = (workingCase: Case): string => {
     workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
 
   if (appealedInCourt) {
-    return workingCase.appealedByRole === UserRole.PROSECUTOR
+    return workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR
       ? 'Sækjandi kærði í þinghaldi'
       : 'Varnaraðili kærði í þinghaldi'
   }
 
-  const dateStr = formatDate(workingCase.appealedDate, 'PPPp')
+  const dateStr = formatDate(workingCase.appealCase?.appealedDate, 'PPPp')
 
-  if (workingCase.appealedByRole === UserRole.PROSECUTOR) {
+  if (workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR) {
     return `Kært af sækjanda ${dateStr}`
   }
 

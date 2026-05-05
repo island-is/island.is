@@ -77,6 +77,7 @@ export enum Features {
   isIDSAdminStepUpAuthEnabled = 'isIDSAdminStepUpAuthEnabled',
   isNewPermissionsOptionsEnabled = 'isNewPermissionsOptionsEnabled',
   showIdsAdminControls = 'showIdsAdminControls',
+  showThirdPartyUrlOptions = 'showThirdPartyUrlOptions',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
