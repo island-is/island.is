@@ -142,19 +142,35 @@ export const useGrantTypeModal = ({
         variables: { name: grantType.name },
       })
       const gtData = result.data?.authAdminGrantType
-      if (gtData?.availableEnvironments) {
-        setUserAvailableEnvironments(gtData.availableEnvironments)
-      }
-      // Update description from fetched data if available
-      const fetchedFirstEnv = gtData?.environments?.[0]
-      if (fetchedFirstEnv) {
-        setFormData((prev) => ({
-          ...prev,
-          description: fetchedFirstEnv.description,
-        }))
+      const availableEnvironments = gtData?.availableEnvironments
+      if (availableEnvironments) {
+        setUserAvailableEnvironments(availableEnvironments)
+        // Select environment: prefer current selection if available,
+        // otherwise pick the highest available (Production > Staging > Dev)
+        const currentEnv = selectedEnvResult.environment
+        const bestEnv = availableEnvironments.includes(currentEnv)
+          ? currentEnv
+          : [...authAdminEnvironments]
+              .reverse()
+              .find((env) => availableEnvironments.includes(env))
+
+        if (bestEnv) {
+          updateEnvironment(bestEnv)
+        }
+
+        // Load form data from the selected environment
+        const targetEnvData = gtData.environments?.find(
+          (e) => e.environment === (bestEnv ?? currentEnv),
+        )
+        if (targetEnvData) {
+          setFormData((prev) => ({
+            ...prev,
+            description: targetEnvData.description,
+          }))
+        }
       }
     } catch {
-      setModalVisible(false)
+      toast.error(formatMessage(m.grantTypesError))
     } finally {
       setLoadingGrantType(false)
     }

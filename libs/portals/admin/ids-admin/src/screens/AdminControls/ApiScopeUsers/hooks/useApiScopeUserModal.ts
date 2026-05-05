@@ -224,27 +224,40 @@ export const useApiScopeUserModal = ({
       }
       setEnvironmentsData(envData)
 
-      if (envData.length > 0) {
-        const first = envData[0]
-        setFormData({
-          nationalId: user.nationalId,
-          name: first.name,
-          email: first.email,
-        })
-        setActiveScopes(first.scopes)
-        setEditEnvironment(first.environment)
-        updateEnvironment(first.environment)
-      }
-
       if (userData?.availableEnvironments) {
         setUserAvailableEnvironments(userData.availableEnvironments)
       }
 
-      const firstEnv = envData[0]?.environment
-      if (firstEnv) {
+      if (envData.length > 0) {
+        // Select environment: prefer current selection if available,
+        // otherwise pick the highest available (Production > Staging > Dev)
+        const currentEnv = selectedEnvResult.environment
+        const available = envData.map((e) => e.environment)
+        const bestEnv = available.includes(currentEnv)
+          ? currentEnv
+          : [...authAdminEnvironments]
+              .reverse()
+              .find((env) => available.includes(env)) ?? available[0]
+
+        const targetData =
+          envData.find((e) => e.environment === bestEnv) ?? envData[0]
+        setFormData({
+          nationalId: user.nationalId,
+          name: targetData.name,
+          email: targetData.email,
+        })
+        setActiveScopes(targetData.scopes)
+        setEditEnvironment(targetData.environment)
+        updateEnvironment(targetData.environment)
+      }
+
+      const selectedEnv =
+        envData.find((e) => e.environment === selectedEnvResult.environment)
+          ?.environment ?? envData[0]?.environment
+      if (selectedEnv) {
         setLoadingScopes(true)
         const scopesResult = await fetchScopes({
-          variables: { environment: firstEnv },
+          variables: { environment: selectedEnv },
         })
 
         if (requestId !== openEditRequestId.current) return
