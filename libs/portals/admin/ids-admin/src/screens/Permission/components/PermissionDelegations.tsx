@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
 import { MultiValue } from 'react-select'
@@ -7,7 +7,9 @@ import { useLocale } from '@island.is/localization'
 import {
   Box,
   Checkbox,
+  Divider,
   Hidden,
+  Input,
   Select,
   Stack,
   Text,
@@ -20,7 +22,10 @@ import {
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { m } from '../../../lib/messages'
-import { PermissionFormTypes } from '../EditPermission.schema'
+import {
+  PermissionFormTypes,
+  buildThirdPartyLoginUrl,
+} from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
@@ -34,6 +39,21 @@ import {
 } from './PermissionCategoriesAndTags.generated'
 
 const FIELD_PREFIX = 'field-'
+const THIRD_PARTY_URL_SEPARATOR = '?login_hint={{subjectId}}&target_link_uri='
+
+const parseThirdPartyLoginUrl = (
+  url?: string,
+): { originUrl: string; targetLinkUri: string } => {
+  if (!url) return { originUrl: '', targetLinkUri: '' }
+  const idx = url.indexOf(THIRD_PARTY_URL_SEPARATOR)
+  if (idx === -1) return { originUrl: '', targetLinkUri: '' }
+  return {
+    originUrl: url.substring(0, idx),
+    targetLinkUri: decodeURIComponent(
+      url.substring(idx + THIRD_PARTY_URL_SEPARATOR.length),
+    ),
+  }
+}
 
 type Option = { label: string; value: string; description: string }
 type Category = GetScopeCategoriesQuery['authAdminScopeCategories'][number]
@@ -41,8 +61,10 @@ type Tag = GetScopeTagsQuery['authAdminScopeTags'][number]
 
 export const PermissionDelegations = ({
   isNewPermissionsOptionsEnabled = false,
+  showThirdPartyUrlOptions = false,
 }: {
   isNewPermissionsOptionsEnabled?: boolean
+  showThirdPartyUrlOptions?: boolean
 } = {}) => {
   const { formatMessage, lang } = useLocale()
   const { selectedPermission, permission, actionData } = usePermission()
@@ -62,18 +84,26 @@ export const PermissionDelegations = ({
     getDelegationProviderTranslations('apiScopeDelegation', formatMessage),
   )
 
+  const parsedUrl = parseThirdPartyLoginUrl(
+    (selectedPermission as { thirdPartyLoginUrl?: string }).thirdPartyLoginUrl,
+  )
+
   const [inputValues, setInputValues] = useEnvironmentState<{
     isAccessControlled: boolean
     grantToAuthenticatedUser: boolean
     supportedDelegationTypes: string[]
     addedDelegationTypes: string[]
     removedDelegationTypes: string[]
+    originUrl: string
+    targetLinkUri: string
   }>({
     isAccessControlled,
     grantToAuthenticatedUser,
     supportedDelegationTypes,
     addedDelegationTypes: [],
     removedDelegationTypes: [],
+    originUrl: parsedUrl.originUrl,
+    targetLinkUri: parsedUrl.targetLinkUri,
   })
 
   const showCategoriesAndTags =
@@ -171,6 +201,8 @@ export const PermissionDelegations = ({
     selectedPermission.environment,
   ])
 
+  const [urlFieldBlurred, setUrlFieldBlurred] = useState(false)
+
   useEffect(() => {
     if (
       actionData?.intent === PermissionFormTypes.DELEGATIONS &&
@@ -181,8 +213,21 @@ export const PermissionDelegations = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData])
 
+  const urlDirty =
+    showThirdPartyUrlOptions &&
+    (inputValues.originUrl !== parsedUrl.originUrl ||
+      inputValues.targetLinkUri !== parsedUrl.targetLinkUri)
+
+  const urlPartiallyFilled =
+    showThirdPartyUrlOptions &&
+    ((!!inputValues.originUrl && !inputValues.targetLinkUri) ||
+      (!inputValues.originUrl && !!inputValues.targetLinkUri))
+
+  const showUrlErrors = urlFieldBlurred && urlPartiallyFilled
+
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
+      if (urlDirty) return true
       if (!showCategoriesAndTags) return false
       return categoriesTagsDirty
     },
@@ -192,6 +237,7 @@ export const PermissionDelegations = ({
       categoriesTagsDirty,
       selectedCategories,
       selectedTags,
+      urlDirty,
     ],
   )
 
@@ -269,7 +315,7 @@ export const PermissionDelegations = ({
         ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
       customValidation={customValidation}
-      submitDisabled={categoryRequired}
+      submitDisabled={categoryRequired || urlPartiallyFilled}
     >
       <Stack space={4}>
         {providers.map((provider) =>
@@ -424,6 +470,80 @@ export const PermissionDelegations = ({
                                 </Stack>
                               )}
                             </Box>
+                            {showThirdPartyUrlOptions && (
+                              <>
+                                <Divider />
+                                <Stack space={3}>
+                                  <Text paddingBottom={1}>
+                                    {formatMessage(m.thirdPartyLoginUrl)}
+                                  </Text>
+                                  <Text variant="small" as="p">
+                                    {formatMessage(
+                                      m.thirdPartyLoginUrlDescription,
+                                    )}
+                                  </Text>
+                                  <Input
+                                    name="originUrl"
+                                    value={inputValues.originUrl}
+                                    label={formatMessage(m.originUrl)}
+                                    size="xs"
+                                    hasError={
+                                      showUrlErrors && !inputValues.originUrl
+                                    }
+                                    errorMessage={formatMessage(
+                                      m.originUrlRequired,
+                                    )}
+                                    onBlur={() => setUrlFieldBlurred(true)}
+                                    onChange={(e) =>
+                                      setInputValues((prev) => ({
+                                        ...prev,
+                                        originUrl: e.target.value,
+                                      }))
+                                    }
+                                  />
+                                  <Input
+                                    name="targetLinkUri"
+                                    value={inputValues.targetLinkUri}
+                                    label={formatMessage(m.targetLinkUri)}
+                                    size="xs"
+                                    hasError={
+                                      showUrlErrors &&
+                                      !inputValues.targetLinkUri
+                                    }
+                                    errorMessage={formatMessage(
+                                      m.targetLinkUriRequired,
+                                    )}
+                                    onBlur={() => setUrlFieldBlurred(true)}
+                                    onChange={(e) =>
+                                      setInputValues((prev) => ({
+                                        ...prev,
+                                        targetLinkUri: e.target.value,
+                                      }))
+                                    }
+                                  />
+                                  <Input
+                                    name="linkPreview"
+                                    label={formatMessage(m.linkPreview)}
+                                    size="xs"
+                                    readOnly
+                                    textarea
+                                    rows={3}
+                                    value={
+                                      inputValues.originUrl &&
+                                      inputValues.targetLinkUri
+                                        ? buildThirdPartyLoginUrl(
+                                            inputValues.originUrl,
+                                            inputValues.targetLinkUri,
+                                          )
+                                        : ''
+                                    }
+                                    placeholder={formatMessage(
+                                      m.linkPreviewPlaceholder,
+                                    )}
+                                  />
+                                </Stack>
+                              </>
+                            )}
                           </Stack>
                         ) : undefined
                       }

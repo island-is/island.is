@@ -88,4 +88,10 @@ export class AdminPatchScopeInput {
       'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
   })
   requiresConfirmation?: boolean
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'URL to redirect to for third party delegation login',
+  })
+  thirdPartyLoginUrl?: string
 }
