@@ -155,16 +155,12 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   }, [tenantScopes, removedScopes])
 
   const groupedOptions = useMemo<GroupBase<ScopeOption>[]>(() => {
-    const excluded = new Set<string>([
-      ...permissions.map((p) => p.name),
-      ...addedScopes.map((s) => s.name),
-    ])
+    const excluded = new Set<string>(permissions.map((p) => p.name))
 
     const groupMap = new Map<
       string,
       { label: string; scopes: Map<string, AuthAdminClientAllowedScope> }
     >()
-    console.log('tenantScopes', tenantScopes)
 
     for (const group of tenantScopes) {
       const scopeMap = new Map<string, AuthAdminClientAllowedScope>()
@@ -177,11 +173,18 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
       })
     }
 
+    const OTHER_GROUP_KEY = '__other__'
     for (const scope of removedScopes) {
-      const tenantId = scope.domainName ?? ''
+      const tenantId = scope.domainName || OTHER_GROUP_KEY
       let entry = groupMap.get(tenantId)
       if (!entry) {
-        entry = { label: tenantId, scopes: new Map() }
+        entry = {
+          label:
+            tenantId === OTHER_GROUP_KEY
+              ? formatMessage(m.permissionsOtherTenantGroup)
+              : tenantId,
+          scopes: new Map(),
+        }
         groupMap.set(tenantId, entry)
       }
       if (!entry.scopes.has(scope.name)) {
@@ -214,7 +217,7 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
           .map((scope) => toOption(scope, group.label)),
       }))
       .filter((group) => group.options.length > 0)
-  }, [tenantScopes, permissions, addedScopes, removedScopes, locale, tenant])
+  }, [tenantScopes, permissions, removedScopes, locale, tenant, formatMessage])
 
   const handleRemovedPermission = (
     removedPermission: AuthAdminClientAllowedScope,

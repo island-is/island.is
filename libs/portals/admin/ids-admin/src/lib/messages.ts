@@ -651,18 +651,13 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-button-label-remove',
     defaultMessage: 'Remove',
   },
-  permissionsModalTitle: {
-    id: 'ap.ids-admin:permissions-modal-title',
-    defaultMessage: 'Add permissions',
-  },
-  permissionsModalDescription: {
-    id: 'ap.ids-admin:permissions-modal-description',
-    defaultMessage:
-      'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
-  },
   permissionsModalNoScopes: {
     id: 'ap.ids-admin:permission-modal-no-scopes',
     defaultMessage: 'No scopes available',
+  },
+  permissionsOtherTenantGroup: {
+    id: 'ap.ids-admin:permissions-other-tenant-group',
+    defaultMessage: 'Other',
   },
   permissionApplicationsDescription: {
     id: 'ap.ids-admin:permission-applications-description',
