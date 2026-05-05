@@ -17,7 +17,7 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-export const dataSchema = z.object({
+const baseSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   delivery: z
@@ -84,4 +84,28 @@ export const dataSchema = z.object({
       { path: ['drivingLicenseDeprivedOrRestrictedInOtherCountry'] },
     ),
   hasHealthRemarks: z.enum([YES, NO]),
+  is65RenewalRedesignEnabled: z.boolean().optional(),
 })
+
+// When the redesigned 65+ flow is active, healthCertificate must be a
+// non-empty array. The field-level refine inside baseSchema only validates
+// the shape of files when present; this enforces "must upload" at the form
+// level. Treat missing flag as false so legacy 65+ drafts continue to pass.
+// Cast back to the base ZodObject type — the application framework's Schema
+// type is `ZodObject<any>`, but `.superRefine` returns `ZodEffects`. At
+// runtime both expose `.parse` / `.safeParse`, so the framework works
+// correctly; the cast just satisfies the static type.
+export const dataSchema = (baseSchema.superRefine((data, ctx) => {
+  const isRedesigned65 =
+    data.applicationFor === B_FULL_RENEWAL_65 &&
+    data.is65RenewalRedesignEnabled === true
+  if (!isRedesigned65) return
+  const files = data.healthCertificate
+  if (!files || files.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['healthCertificate'],
+      params: m.healthCertificateRequired,
+    })
+  }
+}) as unknown) as typeof baseSchema
