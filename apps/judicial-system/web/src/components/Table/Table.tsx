@@ -166,13 +166,15 @@ const Table: FC<TableProps> = (props) => {
                 defendant.indictmentCancelledOrDismissedState !== undefined,
             )
 
-          const visibleDefendants = allDefenderDefendantsAreCancelledOrDismissed
-            ? defenderDefendants
-            : defenderDefendants?.filter(
-                (defendant) =>
-                  defendant.indictmentCancelledOrDismissedState === null ||
-                  defendant.indictmentCancelledOrDismissedState === undefined,
-              )
+          const visibleDefendants = entry.defendants?.filter((defendant) => {
+            if (allDefenderDefendantsAreCancelledOrDismissed) {
+              return defenderDefendants?.some((d) => d.id === defendant.id)
+            }
+            return (
+              defendant.indictmentCancelledOrDismissedState === null ||
+              defendant.indictmentCancelledOrDismissedState === undefined
+            )
+          })
 
           return visibleDefendants?.[0]?.name ?? ''
         }

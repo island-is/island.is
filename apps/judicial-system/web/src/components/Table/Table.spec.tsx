@@ -157,6 +157,7 @@ describe('Table', () => {
           {
             id: '',
             defenderNationalId: '1234567890',
+            isDefenderChoiceConfirmed: true,
             nationalId: 'string',
             name: 'My Dismissed Defendant',
             indictmentCancelledOrDismissedState: {

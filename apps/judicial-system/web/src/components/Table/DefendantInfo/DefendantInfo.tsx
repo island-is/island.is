@@ -35,13 +35,15 @@ const DefendantInfo: FC<Props> = ({ defendants }) => {
         d.indictmentCancelledOrDismissedState !== undefined,
     )
 
-  const visibleDefendants = allDefenderDefendantsAreCancelledOrDismissed
-    ? defenderDefendants
-    : defenderDefendants?.filter(
-        (d) =>
-          d.indictmentCancelledOrDismissedState === null ||
-          d.indictmentCancelledOrDismissedState === undefined,
-      )
+  const visibleDefendants = defendants?.filter((defendant) => {
+    if (allDefenderDefendantsAreCancelledOrDismissed) {
+      return defenderDefendants?.some((d) => d.id === defendant.id)
+    }
+    return (
+      defendant.indictmentCancelledOrDismissedState === null ||
+      defendant.indictmentCancelledOrDismissedState === undefined
+    )
+  })
 
   return visibleDefendants && visibleDefendants.length > 0 ? (
     <>
