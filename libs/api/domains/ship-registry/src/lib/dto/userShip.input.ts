@@ -1,5 +1,5 @@
+import { LocaleEnum } from '@island.is/nest/graphql'
 import { Field, InputType } from '@nestjs/graphql'
-import { LocaleEnum } from '../models/enums'
 
 @InputType('ShipRegistryUserShipInput')
 export class UserShipInput {

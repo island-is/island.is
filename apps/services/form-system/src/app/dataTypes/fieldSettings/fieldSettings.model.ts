@@ -23,6 +23,11 @@ export class FieldSettings {
   maxValue?: number
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDecimal?: boolean
+
+  @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
   minLength?: number

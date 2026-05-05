@@ -46,12 +46,12 @@ export const is = {
   'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
   'onboarding.biometrics.title': 'Leyfa lífkenni',
   'onboarding.biometrics.body':
-    'Þú getur einnig notað lífkenni til að opna appið án þess að slá inn PIN.',
+    'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.noAuthenticationTypes':
     'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
-  'onboarding.biometrics.useBiometricsButtonText': 'Leyfa lífkenni',
+  'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'lífkenni',
@@ -294,7 +294,7 @@ export const is = {
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.family': 'Fjölskylda',
+  'profile.myData': 'Mín gögn',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
@@ -761,7 +761,7 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
-  'health.overview.medicine': 'Lyf',
+  'health.overview.medicine': 'Lyfin mín',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
 
   // health: categories
@@ -770,7 +770,7 @@ export const is = {
   'health.categories.moreOnMyPages': 'Meira á mínum síðum',
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
-  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires
@@ -920,7 +920,7 @@ export const is = {
   'health.medicineDelegation.form.xMonths': '{months} mán',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyfin mín',
   'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
   'health.prescriptionsAndCertificates.expired': 'Útrunnið',
   'health.prescriptionsAndCertificates.rejected': 'Hafnað',

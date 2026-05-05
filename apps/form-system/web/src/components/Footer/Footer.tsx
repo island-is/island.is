@@ -169,7 +169,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                   }
                 }
                 chargeItems.push({
-                  performingOrgID: '6509142520',
+                  performingOrgID:
+                    state.application.organizationNationalId ?? '',
                   chargeType: field.fieldSettings.chargeType || 'default',
                   chargeItemCode: code,
                   chargeItemName:
@@ -186,13 +187,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID: '6509142520',
+              performingOrganizationID:
+                state.application.organizationNationalId ?? '',
               chargeItems,
             },
           },
         },
       })
-      console.log(data)
       if (data?.createFormSystemPayment?.paymentUrl) {
         window.location.href = data.createFormSystemPayment.paymentUrl
       }
@@ -336,7 +337,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading || notifyLoading}
+                disabled={submitLoading || notifyLoading || paymentLoading}
               >
                 {formatMessage(m.back)}
               </Button>

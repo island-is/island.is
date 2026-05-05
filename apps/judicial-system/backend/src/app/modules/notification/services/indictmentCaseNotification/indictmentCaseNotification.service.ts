@@ -288,7 +288,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return calendarInvite
   }
 
-  private sendArraignmentDateEmailNotification({
+  private async sendArraignmentDateEmailNotification({
     theCase,
     user,
     arraignmentDateLog,
@@ -354,11 +354,13 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     }
 
     // DEFENDER(s)
-    // get only confirmed defenders on defendants
+    // get only confirmed defenders of defendants
     const defenders = _uniqBy(
-      theCase.defendants ?? [],
-      (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
+      ({ defenderEmail }) => defenderEmail,
+    )
 
     defenders.forEach(({ defenderName, defenderEmail }) => {
       if (defenderName && defenderEmail) {
@@ -369,6 +371,30 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
             arraignmentDateLog: arraignmentDate,
             recipientName: defenderName,
             recipientEmail: defenderEmail,
+          }),
+        )
+      }
+    })
+
+    // CIVIL CLAIMANT(s)
+    // get only confirmed spokespersons of civil claimants
+    const spokespersons = _uniqBy(
+      theCase.civilClaimants?.filter(
+        ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+          hasSpokesperson && isSpokespersonConfirmed,
+      ) ?? [],
+      ({ spokespersonEmail }) => spokespersonEmail,
+    )
+
+    spokespersons.forEach(({ spokespersonName, spokespersonEmail }) => {
+      if (spokespersonName && spokespersonEmail) {
+        promises.push(
+          this.sendArraignmentDateEmailNotification({
+            theCase,
+            user,
+            arraignmentDateLog: arraignmentDate,
+            recipientName: spokespersonName,
+            recipientEmail: spokespersonEmail,
           }),
         )
       }
@@ -436,9 +462,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     // DEFENDER(s)
     // get only confirmed defenders on defendants
     const defenders = _uniqBy(
-      theCase.defendants ?? [],
-      (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
+      ({ defenderEmail }) => defenderEmail,
+    )
 
     defenders.forEach(({ defenderName, defenderEmail, defenderNationalId }) => {
       if (defenderEmail) {
@@ -460,6 +488,39 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         )
       }
     })
+
+    // CIVIL CLAIMANT(s)
+    // get only confirmed spokespersons on civil claimants
+    const spokespersons = _uniqBy(
+      theCase.civilClaimants?.filter(
+        ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+          hasSpokesperson && isSpokespersonConfirmed,
+      ) ?? [],
+      ({ spokespersonEmail }) => spokespersonEmail,
+    )
+
+    spokespersons.forEach(
+      ({ spokespersonName, spokespersonEmail, spokespersonNationalId }) => {
+        if (spokespersonEmail) {
+          promises.push(
+            this.sendPostponedCourtDateEmailNotification(
+              theCase,
+              user,
+              courtDate,
+              calendarInvite,
+              spokespersonNationalId &&
+                formatDefenderRoute(
+                  this.config.clientUrl,
+                  theCase.type,
+                  theCase.id,
+                ),
+              spokespersonEmail,
+              spokespersonName,
+            ),
+          )
+        }
+      },
+    )
 
     return promises
   }
@@ -534,9 +595,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const promises: Promise<Recipient>[] = []
 
     const defenders = _uniqBy(
-      theCase.defendants ?? [],
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
       (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+    )
 
     if (theCase.prosecutor) {
       const recipientEmail = theCase.prosecutor.email

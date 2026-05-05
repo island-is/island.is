@@ -285,10 +285,15 @@ export const Screen = () => {
 
         {currentSectionType === SectionTypes.SUMMARY &&
           !!state.application.hasSummaryScreen &&
+          !state.submitted &&
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
-        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
-        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
+        {(currentSectionType === SectionTypes.COMPLETED || state.submitted) && (
+          <Completed />
+        )}
+        {currentSectionType === SectionTypes.PAYMENT && !state.submitted && (
+          <Payment />
+        )}
         {multiSetContent}
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
