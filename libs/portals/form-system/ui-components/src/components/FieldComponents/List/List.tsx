@@ -25,10 +25,22 @@ type ListItem = {
 }
 
 const listTypePlaceholder = {
-  [ListTypesEnum.COUNTRIES]: 'Veldu land',
-  [ListTypesEnum.MUNICIPALITIES]: 'Veldu sveitarfélag',
-  [ListTypesEnum.POSTAL_CODES]: 'Veldu póstnúmer',
-  [ListTypesEnum.CURRENCIES]: 'Veldu gjaldmiðil',
+  [ListTypesEnum.COUNTRIES]: {
+    is: 'Veldu land',
+    en: 'Select country',
+  },
+  [ListTypesEnum.MUNICIPALITIES]: {
+    is: 'Veldu sveitarfélag',
+    en: 'Select municipality',
+  },
+  [ListTypesEnum.POSTAL_CODES]: {
+    is: 'Veldu póstnúmer',
+    en: 'Select postal code',
+  },
+  [ListTypesEnum.CURRENCIES]: {
+    is: 'Veldu gjaldmiðil',
+    en: 'Select currency',
+  },
 } as const
 
 export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
@@ -97,13 +109,10 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const placeholder =
-    item.fieldSettings?.listType &&
-    item.fieldSettings.listType in listTypePlaceholder
-      ? listTypePlaceholder[
-          item.fieldSettings.listType as keyof typeof listTypePlaceholder
-        ]
-      : formatMessage(m.select)
+  const placeholder = item.fieldSettings?.listType
+    ? listTypePlaceholder[item.fieldSettings.listType]?.[lang] ??
+      formatMessage(m.select)
+    : formatMessage(m.select)
 
   return (
     <Controller
