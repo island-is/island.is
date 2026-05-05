@@ -80,7 +80,9 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 
   return (
     <Entry
-      label={capitalize(getDefendantLabel(formatMessage, activeDefendants, type))}
+      label={capitalize(
+        getDefendantLabel(formatMessage, activeDefendants, type),
+      )}
       value={enumerate(
         flatMap(activeDefendants, (d) => (d.name ? [d.name] : [])),
         formatMessage(core.and),
