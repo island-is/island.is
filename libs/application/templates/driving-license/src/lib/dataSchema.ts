@@ -104,19 +104,17 @@ const baseSchema = z.object({
 //      returns `ZodEffects`. We cast back to the base type to satisfy the
 //      static type; at runtime both expose `.parse` / `.safeParse`, and the
 //      framework dispatches correctly via its `instanceof ZodEffects` check.
-export const dataSchema = baseSchema
-  .partial()
-  .superRefine((data, ctx) => {
-    const isRedesigned65 =
-      data.applicationFor === B_FULL_RENEWAL_65 &&
-      data.is65RenewalRedesignEnabled === true
-    if (!isRedesigned65) return
-    const files = data.healthCertificate
-    if (!files || files.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['healthCertificate'],
-        params: m.healthCertificateRequired,
-      })
-    }
-  }) as unknown as typeof baseSchema
+export const dataSchema = baseSchema.partial().superRefine((data, ctx) => {
+  const isRedesigned65 =
+    data.applicationFor === B_FULL_RENEWAL_65 &&
+    data.is65RenewalRedesignEnabled === true
+  if (!isRedesigned65) return
+  const files = data.healthCertificate
+  if (!files || files.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['healthCertificate'],
+      params: m.healthCertificateRequired,
+    })
+  }
+}) as unknown as typeof baseSchema
