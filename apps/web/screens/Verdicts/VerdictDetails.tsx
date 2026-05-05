@@ -305,7 +305,10 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
               boxShadow="subtle"
             >
               <Box className="rs_read">
-                <div style={{ zoom: docxScale }}>
+                <div
+                  className={styles.docxScaleWrapper}
+                  style={{ ['--docx-scale' as string]: docxScale }}
+                >
                   <div ref={docxContainerRef} />
                 </div>
               </Box>

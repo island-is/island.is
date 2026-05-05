@@ -24,6 +24,15 @@ export const hiddenOnScreen = style({
   },
 })
 
+export const docxScaleWrapper = style({
+  zoom: 'var(--docx-scale)',
+  '@media': {
+    print: {
+      zoom: '1',
+    },
+  },
+})
+
 export const textMaxWidth = style({
   maxWidth: '876px',
 })
