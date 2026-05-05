@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsUrl,
   MaxLength,
+  ValidateIf,
   ValidateNested,
   IsString,
 } from 'class-validator'
@@ -181,6 +182,7 @@ export class AdminPatchScopeDto {
 
   @IsString()
   @IsOptional()
+  @ValidateIf((o) => !!o.thirdPartyLoginUrl)
   @IsUrl(
     { protocols: ['https'], require_protocol: true },
     { message: 'thirdPartyLoginUrl must be an HTTPS URL' },

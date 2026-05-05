@@ -948,6 +948,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:link-preview-placeholder',
     defaultMessage: 'Fill in the above fields to see a preview of the link',
   },
+  originUrlRequired: {
+    id: 'ap.ids-admin:origin-url-required',
+    defaultMessage: 'URL origin is required when target link URI is provided',
+  },
+  targetLinkUriRequired: {
+    id: 'ap.ids-admin:target-link-uri-required',
+    defaultMessage: 'Target link URI is required when URL origin is provided',
+  },
   noTags: {
     id: 'ap.ids-admin:no-tags',
     defaultMessage: 'No tags available',

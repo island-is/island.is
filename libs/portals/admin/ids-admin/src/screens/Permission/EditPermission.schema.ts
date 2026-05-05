@@ -18,6 +18,22 @@ const safeParseStringArray = (val: string | undefined): string[] => {
   }
 }
 
+const SUBJECT_ID_PLACEHOLDER = '{{subjectId}}'
+
+export const buildThirdPartyLoginUrl = (
+  originUrl: string,
+  targetLinkUri: string,
+): string => {
+  try {
+    const url = new URL(originUrl)
+    url.searchParams.set('target_link_uri', targetLinkUri)
+    url.search = `login_hint=${SUBJECT_ID_PLACEHOLDER}&${url.searchParams.toString()}`
+    return url.toString()
+  } catch {
+    return ''
+  }
+}
+
 export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
   SECURITY_AND_CAPABILITIES = 'SECURITY_AND_CAPABILITIES',
@@ -126,7 +142,9 @@ const delegationsSchema = z
     tagIds: z.string().optional().transform(safeParseStringArray),
     originalCategoryIds: z.string().optional().transform(safeParseStringArray),
     originalTagIds: z.string().optional().transform(safeParseStringArray),
-    originUrl: z.string().optional(),
+    originUrl: z
+      .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
+      .optional(),
     targetLinkUri: z.string().optional(),
   })
   .merge(defaultEnvironmentSchema)
@@ -155,9 +173,7 @@ const delegationsSchema = z
 
       const thirdPartyLoginUrl =
         originUrl && targetLinkUri
-          ? `${originUrl}?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(
-              targetLinkUri,
-            )}`
+          ? buildThirdPartyLoginUrl(originUrl, targetLinkUri)
           : originUrl || targetLinkUri
           ? undefined
           : ''

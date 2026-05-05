@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
 import { MultiValue } from 'react-select'
@@ -22,7 +22,10 @@ import {
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { m } from '../../../lib/messages'
-import { PermissionFormTypes } from '../EditPermission.schema'
+import {
+  PermissionFormTypes,
+  buildThirdPartyLoginUrl,
+} from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
@@ -198,6 +201,8 @@ export const PermissionDelegations = ({
     selectedPermission.environment,
   ])
 
+  const [urlFieldBlurred, setUrlFieldBlurred] = useState(false)
+
   useEffect(() => {
     if (
       actionData?.intent === PermissionFormTypes.DELEGATIONS &&
@@ -208,8 +213,21 @@ export const PermissionDelegations = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData])
 
+  const urlDirty =
+    showThirdPartyUrlOptions &&
+    (inputValues.originUrl !== parsedUrl.originUrl ||
+      inputValues.targetLinkUri !== parsedUrl.targetLinkUri)
+
+  const urlPartiallyFilled =
+    showThirdPartyUrlOptions &&
+    ((!!inputValues.originUrl && !inputValues.targetLinkUri) ||
+      (!inputValues.originUrl && !!inputValues.targetLinkUri))
+
+  const showUrlErrors = urlFieldBlurred && urlPartiallyFilled
+
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
+      if (urlDirty) return true
       if (!showCategoriesAndTags) return false
       return categoriesTagsDirty
     },
@@ -219,6 +237,7 @@ export const PermissionDelegations = ({
       categoriesTagsDirty,
       selectedCategories,
       selectedTags,
+      urlDirty,
     ],
   )
 
@@ -296,7 +315,7 @@ export const PermissionDelegations = ({
         ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
       customValidation={customValidation}
-      submitDisabled={categoryRequired}
+      submitDisabled={categoryRequired || urlPartiallyFilled}
     >
       <Stack space={4}>
         {providers.map((provider) =>
@@ -468,6 +487,13 @@ export const PermissionDelegations = ({
                                     value={inputValues.originUrl}
                                     label={formatMessage(m.originUrl)}
                                     size="xs"
+                                    hasError={
+                                      showUrlErrors && !inputValues.originUrl
+                                    }
+                                    errorMessage={formatMessage(
+                                      m.originUrlRequired,
+                                    )}
+                                    onBlur={() => setUrlFieldBlurred(true)}
                                     onChange={(e) =>
                                       setInputValues((prev) => ({
                                         ...prev,
@@ -480,6 +506,14 @@ export const PermissionDelegations = ({
                                     value={inputValues.targetLinkUri}
                                     label={formatMessage(m.targetLinkUri)}
                                     size="xs"
+                                    hasError={
+                                      showUrlErrors &&
+                                      !inputValues.targetLinkUri
+                                    }
+                                    errorMessage={formatMessage(
+                                      m.targetLinkUriRequired,
+                                    )}
+                                    onBlur={() => setUrlFieldBlurred(true)}
                                     onChange={(e) =>
                                       setInputValues((prev) => ({
                                         ...prev,
@@ -497,11 +531,10 @@ export const PermissionDelegations = ({
                                     value={
                                       inputValues.originUrl &&
                                       inputValues.targetLinkUri
-                                        ? `${
-                                            inputValues.originUrl
-                                          }?login_hint={{subjectId}}&target_link_uri=${encodeURIComponent(
+                                        ? buildThirdPartyLoginUrl(
+                                            inputValues.originUrl,
                                             inputValues.targetLinkUri,
-                                          )}`
+                                          )
                                         : ''
                                     }
                                     placeholder={formatMessage(
