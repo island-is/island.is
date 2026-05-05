@@ -141,17 +141,35 @@ export const useIdpProviderModal = ({
         variables: { name: idpProvider.name },
       })
       const idpData = result.data?.authAdminIdpProvider
-      if (idpData?.availableEnvironments) {
-        setUserAvailableEnvironments(idpData.availableEnvironments)
-      }
-      const fetchedFirstEnv = idpData?.environments?.[0]
-      if (fetchedFirstEnv) {
-        setFormData((prev) => ({
-          ...prev,
-          description: fetchedFirstEnv.description,
-          helptext: fetchedFirstEnv.helptext,
-          level: fetchedFirstEnv.level,
-        }))
+      const availableEnvironments = idpData?.availableEnvironments
+      if (availableEnvironments) {
+        setUserAvailableEnvironments(availableEnvironments)
+
+        // Select environment: prefer current selection if available,
+        // otherwise pick the highest available (Production > Staging > Dev)
+        const currentEnv = selectedEnvResult.environment
+        const bestEnv = availableEnvironments.includes(currentEnv)
+          ? currentEnv
+          : [...authAdminEnvironments]
+              .reverse()
+              .find((env) => availableEnvironments.includes(env))
+
+        if (bestEnv) {
+          updateEnvironment(bestEnv)
+        }
+
+        // Load form data from the selected environment
+        const targetEnvData = idpData.environments?.find(
+          (e) => e.environment === (bestEnv ?? currentEnv),
+        )
+        if (targetEnvData) {
+          setFormData((prev) => ({
+            ...prev,
+            description: targetEnvData.description,
+            helptext: targetEnvData.helptext,
+            level: targetEnvData.level,
+          }))
+        }
       }
     } catch {
       toast.error(formatMessage(m.idpProvidersError))
