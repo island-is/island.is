@@ -42,8 +42,7 @@ export const ServiceCategories = () => {
     variables: { lang },
   })
 
-  // const categories = data?.authScopeCategories || []
-  const tags = tagsData?.authScopeTags || []
+  const tags = (tagsData?.authScopeTags || []).filter((tag) => tag.showAsCard)
   const categories = categoriesData?.authScopeCategories || []
 
   const loading = categoriesLoading || tagsLoading
