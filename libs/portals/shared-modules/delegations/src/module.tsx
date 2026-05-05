@@ -53,7 +53,7 @@ export const delegationsModule: PortalModule = {
     )
     const commonProps = {
       name: coreMessages.accessControlDelegations,
-      navHide: !hasAccess,
+      navHide: !hasAccess || useNewRoutes,
       enabled: hasAccess,
       element: useNewRoutes ? (
         <Navigate to={DelegationPaths.DelegationsNew} replace />
@@ -127,6 +127,7 @@ export const delegationsModule: PortalModule = {
       {
         name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
+        navHide: useNewRoutes,
         element: useNewRoutes ? (
           <Navigate to={DelegationPaths.DelegationsGrantNew} replace />
         ) : (
@@ -136,6 +137,7 @@ export const delegationsModule: PortalModule = {
       {
         name: coreMessages.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
+        navHide: useNewRoutes,
         element: useNewRoutes ? (
           <Navigate to={DelegationPaths.DelegationsNew} replace />
         ) : (

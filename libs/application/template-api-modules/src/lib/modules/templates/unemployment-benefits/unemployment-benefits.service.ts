@@ -393,6 +393,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             unemploymentApplication: {
               applicationInformation: {
                 applicationLanguage: currentUserLocale === 'is' ? 'IS' : 'EN',
+                myPagesApplicationId: application.id,
               },
               personalInformation: personalInformation,
               otherInformation: otherInformation,

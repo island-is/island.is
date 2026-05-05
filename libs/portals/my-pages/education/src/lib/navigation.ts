@@ -117,6 +117,18 @@ export const educationNavigation: PortalNavigationItem = {
             },
           ],
         },
+        {
+          name: m.educationMicroCredentials,
+          searchHide: true,
+          path: EducationPaths.EducationHaskoliMicroCredentials,
+          children: [
+            {
+              name: m.overview,
+              navHide: true,
+              path: EducationPaths.EducationHaskoliMicroCredentialsDetail,
+            },
+          ],
+        },
       ],
     },
     {

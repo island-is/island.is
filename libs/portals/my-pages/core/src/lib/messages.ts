@@ -764,6 +764,10 @@ export const m = defineMessages({
     id: 'service.portal:education-graduation',
     defaultMessage: 'Brautskráning',
   },
+  educationMicroCredentials: {
+    id: 'service.portal:education-micro-credentials',
+    defaultMessage: 'Örnám',
+  },
   documentProvider: {
     id: 'service.portal:document-provider',
     defaultMessage: 'Skjalaveitur',

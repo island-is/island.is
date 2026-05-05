@@ -93,6 +93,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
   },
+  noMatchingClients: {
+    id: 'ap.ids-admin:no-matching-clients',
+    defaultMessage: 'No applications match the current filter.',
+  },
   noClients: {
     id: 'ap.ids-admin:no-clients',
     defaultMessage: 'No applications',
@@ -221,6 +225,48 @@ export const m = defineMessages({
   change: {
     id: 'ap.ids-admin:change',
     defaultMessage: 'Change',
+  },
+  restore: {
+    id: 'ap.ids-admin:restore',
+    defaultMessage: 'Restore',
+  },
+  restoreClient: {
+    id: 'ap.ids-admin:restore-client',
+    defaultMessage: 'Restore application',
+  },
+  restoreClientDescription: {
+    id: 'ap.ids-admin:restore-client-description',
+    defaultMessage:
+      'Restore this archived application across all environments.',
+  },
+  restoreClientAlertMessage: {
+    id: 'ap.ids-admin:restore-client-alert-message',
+    defaultMessage:
+      'Restoring this application may re-enable access to systems. Please verify the application settings after restoring.',
+  },
+  successRestoringClient: {
+    id: 'ap.ids-admin:success-restoring-client',
+    defaultMessage: 'Successfully restored application',
+  },
+  archived: {
+    id: 'ap.ids-admin:archived',
+    defaultMessage: 'Archived',
+  },
+  clientStatus: {
+    id: 'ap.ids-admin:client-status',
+    defaultMessage: 'Status',
+  },
+  activeClients: {
+    id: 'ap.ids-admin:active-clients',
+    defaultMessage: 'Active',
+  },
+  archivedClients: {
+    id: 'ap.ids-admin:archived-clients',
+    defaultMessage: 'Archived',
+  },
+  allClients: {
+    id: 'ap.ids-admin:all-clients',
+    defaultMessage: 'All',
   },
   absoluteLifetime: {
     id: 'ap.ids-admin:absolute-lifetime',
@@ -906,6 +952,34 @@ export const m = defineMessages({
     defaultMessage:
       'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
+  scopeUsersLabel: {
+    id: 'ap.ids-admin:scope-users-label',
+    defaultMessage: 'Users with access',
+  },
+  scopeUsersPlaceholder: {
+    id: 'ap.ids-admin:scope-users-placeholder',
+    defaultMessage: 'Choose from the list or create a new user',
+  },
+  scopeUsersLoading: {
+    id: 'ap.ids-admin:scope-users-loading',
+    defaultMessage: 'Loading users...',
+  },
+  addScopeUser: {
+    id: 'ap.ids-admin:add-scope-user',
+    defaultMessage: 'Create new user',
+  },
+  createScopeUserTitle: {
+    id: 'ap.ids-admin:create-scope-user-title',
+    defaultMessage: 'Create user',
+  },
+  createScopeUserSuccess: {
+    id: 'ap.ids-admin:create-scope-user-success',
+    defaultMessage: 'User created successfully',
+  },
+  createScopeUserError: {
+    id: 'ap.ids-admin:create-scope-user-error',
+    defaultMessage: 'Failed to create user',
+  },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
     defaultMessage: 'Authenticated user',
@@ -1464,5 +1538,21 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
       'Should legal representative automatically get this permission for their clients.',
+  },
+  deletedCategory: {
+    id: 'ap.ids-admin:deleted-category',
+    defaultMessage: 'Þessum flokki hefur verið eytt ({id})',
+  },
+  deletedCategoryDescription: {
+    id: 'ap.ids-admin:deleted-category-description',
+    defaultMessage: 'Þessi flokkur er ekki lengur til í Contentful',
+  },
+  deletedTag: {
+    id: 'ap.ids-admin:deleted-tag',
+    defaultMessage: 'Þessu merki hefur verið eytt ({id})',
+  },
+  deletedTagDescription: {
+    id: 'ap.ids-admin:deleted-tag-description',
+    defaultMessage: 'Þetta merki er ekki lengur til í Contentful',
   },
 })
