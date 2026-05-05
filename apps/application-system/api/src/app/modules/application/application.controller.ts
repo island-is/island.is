@@ -849,7 +849,7 @@ export class ApplicationController {
         return updatedApplication
       }
 
-      return existingApplication
+      return updatedApplication
     })
   }
 

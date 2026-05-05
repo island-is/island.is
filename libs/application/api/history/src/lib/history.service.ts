@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Transaction } from 'sequelize'
 import { History } from './history.model'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -10,11 +11,15 @@ export class HistoryService {
     private historyModel: typeof History,
   ) {}
 
-  async getStateHistory(applicationIds: string[]): Promise<History[]> {
+  async getStateHistory(
+    applicationIds: string[],
+    transaction?: Transaction,
+  ): Promise<History[]> {
     return this.historyModel.findAll({
       where: {
         application_id: applicationIds,
       },
+      transaction,
     })
   }
 
@@ -23,15 +28,16 @@ export class HistoryService {
     newStateKey: string,
     auth: User,
     exitEvent?: string,
+    transaction?: Transaction,
   ): Promise<History> {
     //Do we have a current state to move from. Look for a state that has not been exited.
-    const lastState = (await this.getStateHistory([applicationId])).find(
-      (x) => x.exitTimestamp === null,
-    )
+    const lastState = (
+      await this.getStateHistory([applicationId], transaction)
+    ).find((x) => x.exitTimestamp === null)
 
     if (lastState) {
       //update with a new exit timestamp.
-      this.historyModel.update(
+      await this.historyModel.update(
         {
           ...lastState,
           exitTimestamp: new Date(),
@@ -41,16 +47,19 @@ export class HistoryService {
             ? auth.actor.nationalId
             : auth.nationalId,
         },
-        { where: { id: lastState.id } },
+        { where: { id: lastState.id }, transaction },
       )
     }
 
-    return this.historyModel.create({
-      application_id: applicationId,
-      stateKey: newStateKey,
-      entryTimestamp: new Date(),
-      previousState: lastState ? lastState.id : null,
-    })
+    return this.historyModel.create(
+      {
+        application_id: applicationId,
+        stateKey: newStateKey,
+        entryTimestamp: new Date(),
+        previousState: lastState ? lastState.id : null,
+      },
+      { transaction },
+    )
   }
 
   async postPruneHistoryByApplicationId(applicationId: string): Promise<void> {

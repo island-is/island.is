@@ -26,6 +26,7 @@ import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { ApplicationService } from '@island.is/application/api/core'
+import { Transaction } from 'sequelize'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -364,9 +365,13 @@ export const handleScheduledNotifications = async (
   application: ApplicationWithAttachments,
   template: Unwrap<typeof getApplicationTemplateByTypeId>,
   newState: string,
+  transaction?: Transaction,
 ) => {
   // 1. Clean up any existing scheduled notifications
-  await applicationService.cancelScheduledNotifications(application.id)
+  await applicationService.cancelScheduledNotifications(
+    application.id,
+    transaction,
+  )
 
   // 2. Fetch the metadata for the incoming state
   const newStateMeta = new ApplicationTemplateHelper(
@@ -442,6 +447,7 @@ export const handleScheduledNotifications = async (
       application.id,
       newState,
       notificationsToSchedule,
+      transaction,
     )
   }
 }

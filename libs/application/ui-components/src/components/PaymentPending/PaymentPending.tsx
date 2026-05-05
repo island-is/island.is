@@ -17,6 +17,48 @@ import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, isComingFromRedirect } from './util'
 import { useSearchParams } from 'react-router-dom'
 
+const SUBMISSION_RESERVATION_TTL = 15 * 60 * 1000
+
+const getSubmissionReservationKey = (
+  applicationId: string,
+  event: DefaultEvents,
+) => `application-payment-pending-submit:${applicationId}:${event}`
+
+const reserveSubmission = (key: string): boolean => {
+  if (typeof window === 'undefined') {
+    return true
+  }
+
+  try {
+    const reservedAt = Number(window.localStorage.getItem(key))
+
+    if (
+      reservedAt &&
+      Number.isFinite(reservedAt) &&
+      Date.now() - reservedAt < SUBMISSION_RESERVATION_TTL
+    ) {
+      return false
+    }
+
+    window.localStorage.setItem(key, String(Date.now()))
+    return true
+  } catch {
+    return true
+  }
+}
+
+const clearSubmissionReservation = (key: string) => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  try {
+    window.localStorage.removeItem(key)
+  } catch {
+    // Ignore browsers that disallow storage access.
+  }
+}
+
 export interface PaymentPendingProps {
   application: Application
   targetEvent: DefaultEvents
@@ -30,7 +72,7 @@ export const PaymentPending: FC<
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
   const isInvoice = getRedirectStatus() === 'invoice'
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
@@ -41,12 +83,11 @@ export const PaymentPending: FC<
     event: targetEvent,
   })
 
-  const [submitCancelApplication, { error: submitCancelError }] =
-    useSubmitApplication({
-      application,
-      refetch,
-      event: DefaultEvents.ABORT,
-    })
+  const [submitCancelApplication] = useSubmitApplication({
+    application,
+    refetch,
+    event: DefaultEvents.ABORT,
+  })
   const hasSubmitted = useRef(false)
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
@@ -59,12 +100,33 @@ export const PaymentPending: FC<
 
     if (hasSubmitted.current) return
     if (getRedirectStatus() === 'cancelled') {
+      const reservationKey = getSubmissionReservationKey(
+        application.id,
+        DefaultEvents.ABORT,
+      )
+
+      if (!reserveSubmission(reservationKey)) {
+        refetch?.()
+        return
+      }
+
       stopPolling()
-      submitCancelApplication().then(() => {
-        removeCancelledFromURL()
-      })
       hasSubmitted.current = true
+      submitCancelApplication()
+        .then(() => {
+          removeCancelledFromURL()
+        })
+        .catch(() => {
+          hasSubmitted.current = false
+          clearSubmissionReservation(reservationKey)
+        })
+      return
     }
+
+    const reservationKey = getSubmissionReservationKey(
+      application.id,
+      targetEvent,
+    )
 
     if (!paymentStatus.fulfilled) {
       if (shouldRedirect) {
@@ -72,10 +134,22 @@ export const PaymentPending: FC<
       }
       return
     }
+
+    if (!reserveSubmission(reservationKey)) {
+      refetch?.()
+      return
+    }
+
     stopPolling()
-    submitApplication()
     hasSubmitted.current = true
+    submitApplication().catch(() => {
+      hasSubmitted.current = false
+      clearSubmissionReservation(reservationKey)
+    })
   }, [
+    application.id,
+    targetEvent,
+    refetch,
     submitCancelApplication,
     submitApplication,
     paymentStatus,

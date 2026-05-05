@@ -15,6 +15,7 @@ import {
   isTranslationObject,
 } from '@island.is/application/core'
 import type { Locale } from '@island.is/shared/types'
+import { Transaction } from 'sequelize'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -42,6 +43,7 @@ export class TemplateApiActionRunner {
     auth: User,
     currentUserLocale: Locale,
     formatMessage: FormatMessage,
+    transaction?: Transaction,
   ): Promise<ApplicationWithAttachments> {
     const oldExternalData = application.externalData
 
@@ -64,6 +66,7 @@ export class TemplateApiActionRunner {
       application.id,
       oldExternalData,
       newExternalData,
+      transaction,
     )
     return application
   }
@@ -238,6 +241,7 @@ export class TemplateApiActionRunner {
     applicationId: string,
     oldExternalData: ExternalData,
     newExternalData: { data: ExternalData },
+    transaction?: Transaction,
   ): Promise<void> {
     api.map((api) => {
       if (api.shouldPersistToExternalData === false) {
@@ -249,6 +253,7 @@ export class TemplateApiActionRunner {
       applicationId,
       oldExternalData,
       newExternalData.data,
+      transaction,
     )
   }
 }

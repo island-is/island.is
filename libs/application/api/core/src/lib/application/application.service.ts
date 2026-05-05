@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, QueryTypes, WhereOptions } from 'sequelize'
+import { Op, QueryTypes, Transaction, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
   ApplicationLifecycle,
@@ -67,6 +67,30 @@ export class ApplicationService {
   ): Promise<Application | null> {
     return this.applicationModel.findOne({
       where: applicationByNationalId(id, nationalId),
+    })
+  }
+
+  async withApplicationLock<T>(
+    id: string,
+    callback: (
+      application: Application,
+      transaction: Transaction,
+    ) => Promise<T>,
+  ): Promise<T> {
+    return this.sequelize.transaction(async (transaction) => {
+      const application = await this.applicationModel.findOne({
+        where: { id },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!application) {
+        throw new NotFoundException(
+          `An application with the id ${id} does not exist`,
+        )
+      }
+
+      return callback(application, transaction)
     })
   }
 
@@ -530,13 +554,13 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
-  async clearNonces(id: string) {
+  async clearNonces(id: string, transaction?: Transaction) {
     const [numberOfAffectedRows, [updatedApplication]] =
       await this.applicationModel.update(
         {
           assignNonces: [],
         },
-        { where: { id: id }, returning: true },
+        { where: { id: id }, returning: true, transaction },
       )
     return { numberOfAffectedRows, updatedApplication }
   }
@@ -552,7 +576,10 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
-  async cancelScheduledNotifications(applicationId: string) {
+  async cancelScheduledNotifications(
+    applicationId: string,
+    transaction?: Transaction,
+  ) {
     return this.scheduledNotificationModel.update(
       { schedule_status: NotificationStatus.CANCELED },
       {
@@ -560,6 +587,7 @@ export class ApplicationService {
           application_id: applicationId,
           schedule_status: NotificationStatus.PENDING,
         },
+        transaction,
       },
     )
   }
@@ -603,6 +631,7 @@ export class ApplicationService {
       schedule_time: Date
       args?: Record<string, unknown>
     }[],
+    transaction?: Transaction,
   ) {
     if (!notifications.length) return
     const records = notifications.map((n) => ({
@@ -612,7 +641,7 @@ export class ApplicationService {
       schedule_time: n.schedule_time,
       args: n.args,
     }))
-    return this.scheduledNotificationModel.bulkCreate(records)
+    return this.scheduledNotificationModel.bulkCreate(records, { transaction })
   }
 
   async updateApplicationState(
@@ -622,6 +651,7 @@ export class ApplicationService {
     assignees: string[],
     status: ApplicationStatus,
     lifecycle: ApplicationLifecycle,
+    transaction?: Transaction,
   ) {
     const [numberOfAffectedRows, [updatedApplication]] =
       await this.applicationModel.update(
@@ -629,6 +659,7 @@ export class ApplicationService {
         {
           where: { id },
           returning: true,
+          transaction,
         },
       )
 
@@ -639,13 +670,14 @@ export class ApplicationService {
     id: string,
     oldExternalData: ExternalData,
     externalData: ExternalData,
+    transaction?: Transaction,
   ) {
     const [numberOfAffectedRows, [updatedApplication]] =
       await this.applicationModel.update(
         {
           externalData: { ...oldExternalData, ...externalData },
         },
-        { where: { id }, returning: true },
+        { where: { id }, returning: true, transaction },
       )
 
     return { numberOfAffectedRows, updatedApplication }
