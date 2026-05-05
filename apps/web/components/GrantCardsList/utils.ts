@@ -9,7 +9,6 @@ import { OPEN_GRANT_STATUSES, TranslationKeys } from './types'
 
 export const getTranslationString = (
   key: keyof TranslationKeys,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   namespace: Record<string, string>,
   argToInterpolate?: string,
 ) =>
