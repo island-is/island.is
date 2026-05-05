@@ -23,9 +23,6 @@ interface IndictmentInfoParams {
 }
 
 const transformRequestCase = (theCase: Case): Case => {
-  // Appeal-info fields (hasBeenAppealed, canBeAppealed, appealDeadline,
-  // isAppealDeadlineExpired, etc., plus per-appeal fields on case.appealCase)
-  // are now computed in the backend's CaseInterceptor and arrive populated.
   return {
     ...theCase,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
