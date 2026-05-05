@@ -36,6 +36,7 @@ import {
   FileService,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenderVisiblePoliceCaseNumbers,
 } from '../file'
 import {
   AppealCase,
@@ -837,7 +838,18 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      )
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        : theCase.policeCaseNumbers
+
+      policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),
