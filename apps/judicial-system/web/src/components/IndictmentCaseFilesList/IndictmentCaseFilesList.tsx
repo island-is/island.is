@@ -9,7 +9,10 @@ import {
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
@@ -48,6 +51,41 @@ import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFil
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
+
+const getDefenderVisiblePoliceCaseNumbers = (
+  userNationalId: string | undefined,
+  defendants: Case['defendants'] | undefined | null,
+  allPoliceCaseNumbers: string[] | null | undefined,
+) => {
+  if (!userNationalId || !allPoliceCaseNumbers) {
+    return allPoliceCaseNumbers ?? []
+  }
+
+  const allAssigned = new Set(
+    (defendants ?? []).flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+  )
+
+  if (allAssigned.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  const normalizedUserNationalId = normalizeAndFormatNationalId(userNationalId)
+  const myDefendants = (defendants ?? []).filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizedUserNationalId.includes(defendant.defenderNationalId),
+  )
+
+  const assignedToMe = new Set(
+    myDefendants.flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+  )
+
+  return allPoliceCaseNumbers.filter(
+    (policeCaseNumber) =>
+      assignedToMe.has(policeCaseNumber) || !allAssigned.has(policeCaseNumber),
+  )
+}
 
 interface Props {
   workingCase: Case
@@ -286,6 +324,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const visiblePoliceCaseNumbers = useMemo(
+    () =>
+      isDefenceUser(user)
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user?.nationalId ?? undefined,
+            workingCase.defendants,
+            workingCase.policeCaseNumbers,
+          )
+        : workingCase.policeCaseNumbers ?? [],
+    [user, workingCase.defendants, workingCase.policeCaseNumbers],
+  )
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
@@ -359,7 +408,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+            {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
               const caseFilesRecordFileName = formatMessage(
                 strings.caseFileButtonText,
                 {
