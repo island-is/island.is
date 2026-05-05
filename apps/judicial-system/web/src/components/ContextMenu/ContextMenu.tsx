@@ -24,7 +24,6 @@ export interface ContextMenuItem {
   onClick?: () => void
   title: string
   icon?: IconMapIcon
-  disabled?: boolean
 }
 
 export type MenuItems = ContextMenuItem[]
@@ -152,11 +151,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
                       menuItemBoxStyle,
                       menuItemTextStyle,
                       styles.menuItem,
-                      {
-                        [styles.menuItemDisabled]: item.disabled,
-                      },
                     )}
-                    disabled={item.disabled}
                   >
                     {item.icon && (
                       <Box display="flex" marginRight={2}>

@@ -3,6 +3,7 @@ fragment AuthApiScopeIncoming on AuthApiScope {
   displayName
   description
   allowsWrite
+  thirdPartyLoginUrl
 }
 
 query AuthDelegationsGroupedByIdentityIncoming($lang: String) {
@@ -10,6 +11,7 @@ query AuthDelegationsGroupedByIdentityIncoming($lang: String) {
     nationalId
     name
     type
+    subjectId
     totalScopeCount
     scopes {
       id
