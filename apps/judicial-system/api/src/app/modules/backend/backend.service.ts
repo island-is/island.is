@@ -311,8 +311,11 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  createAppealCase(caseId: string): Promise<AppealCase> {
-    return this.post(`case/${caseId}/appealCase`)
+  createAppealCase(
+    caseId: string,
+    createAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase`, createAppealCase)
   }
 
   updateAppealCase(
@@ -823,8 +826,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  limitedAccessCreateAppealCase(caseId: string): Promise<AppealCase> {
-    return this.post(`case/${caseId}/limitedAccess/appealCase`)
+  limitedAccessCreateAppealCase(
+    caseId: string,
+    createAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.post(
+      `case/${caseId}/limitedAccess/appealCase`,
+      createAppealCase,
+    )
   }
 
   limitedAccessTransitionAppealCase(

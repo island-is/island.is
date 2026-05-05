@@ -201,7 +201,7 @@ const AnnualReportChapter: Screen<
                       marginTop={10}
                       paddingLeft={4}
                     >
-                      <Sticky>
+                      <Sticky constantSticky>
                         <AnchorNavigation
                           title={
                             activeLocale === 'is'

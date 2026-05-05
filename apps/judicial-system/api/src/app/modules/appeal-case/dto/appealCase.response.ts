@@ -6,6 +6,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../../file'
 import { User } from '../../user'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
@@ -72,4 +73,10 @@ export class AppealCase {
 
   @Field(() => String, { nullable: true })
   readonly appealedByNationalId?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly rulingFileId?: string
+
+  @Field(() => CaseFile, { nullable: true })
+  readonly rulingFile?: CaseFile
 }
