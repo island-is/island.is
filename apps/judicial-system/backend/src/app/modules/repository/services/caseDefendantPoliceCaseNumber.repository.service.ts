@@ -187,9 +187,9 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   async assignDefendantPoliceCaseNumbers(
     caseId: string,
     links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
-  ): Promise<void> {
+  ): Promise<string[]> {
     if (links.length === 0) {
-      return
+      return []
     }
 
     const sequelize = this.model.sequelize
@@ -198,6 +198,11 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
 
     try {
+      const existingMap = await this.findDistinctPoliceCaseNumbersByCaseIds([
+        caseId,
+      ])
+      const existingNumbers = new Set(existingMap.get(caseId) ?? [])
+
       await sequelize.transaction(async (transaction) => {
         await this.model.bulkCreate(
           links.map(({ defendantId, policeCaseNumber }) => ({
@@ -222,9 +227,18 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
         })
       })
 
+      const newPoliceCaseNumbers = [
+        ...new Set(links.map((l) => l.policeCaseNumber)),
+      ].filter((pcn) => !existingNumbers.has(pcn))
+
       this.logger.debug(
-        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
+        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}` +
+          (newPoliceCaseNumbers.length > 0
+            ? ` (${newPoliceCaseNumbers.length} new)`
+            : ''),
       )
+
+      return newPoliceCaseNumbers
     } catch (error) {
       this.logger.error(
         `Error assigning defendant-linked police case number rows for case ${caseId}`,

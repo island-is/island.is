@@ -34,6 +34,7 @@ import {
   CaseType,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
+  isIndictmentCase,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -43,6 +44,7 @@ import {
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
+import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -260,6 +262,8 @@ export class PoliceService {
     private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CaseDefendantPoliceCaseNumberRepositoryService))
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -1050,6 +1054,7 @@ export class PoliceService {
     caseId: string,
     user: User,
     defendants: { id: string; nationalId: string }[] = [],
+    caseType?: CaseType,
   ): Promise<PoliceCaseInfo[]> {
     try {
       const nationalIdsToUse =
@@ -1076,10 +1081,20 @@ export class PoliceService {
         )
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-          caseId,
-          defendantPoliceCaseNumberLinks,
-        )
+        const newPoliceCaseNumbers =
+          await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+            caseId,
+            defendantPoliceCaseNumberLinks,
+          )
+
+        if (caseType && isIndictmentCase(caseType)) {
+          for (const policeCaseNumber of newPoliceCaseNumbers) {
+            await this.indictmentCountService.createWithPoliceCaseNumber(
+              caseId,
+              policeCaseNumber,
+            )
+          }
+        }
       }
 
       return cases

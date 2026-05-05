@@ -61,11 +61,11 @@ export class IndictmentCountService {
   async createWithPoliceCaseNumber(
     caseId: string,
     policeCaseNumber: string,
-    transaction: Transaction,
+    transaction?: Transaction,
   ): Promise<IndictmentCount> {
     return this.indictmentCountModel.create(
       { caseId, policeCaseNumber },
-      { transaction },
+      transaction ? { transaction } : undefined,
     )
   }
 

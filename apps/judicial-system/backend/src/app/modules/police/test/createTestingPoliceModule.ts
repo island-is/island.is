@@ -13,6 +13,7 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import { IndictmentCountService } from '../../indictment-count/indictmentCount.service'
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
   IndictmentSubtype,
@@ -63,7 +64,13 @@ export const createTestingPoliceModule = async () => {
         useValue: {
           assignDefendantPoliceCaseNumbers: jest
             .fn()
-            .mockResolvedValue(undefined),
+            .mockResolvedValue([]),
+        },
+      },
+      {
+        provide: IndictmentCountService,
+        useValue: {
+          createWithPoliceCaseNumber: jest.fn().mockResolvedValue({}),
         },
       },
     ],
@@ -84,6 +91,9 @@ export const createTestingPoliceModule = async () => {
       CaseDefendantPoliceCaseNumberRepositoryService,
     )
 
+  const indictmentCountService =
+    policeModule.get<IndictmentCountService>(IndictmentCountService)
+
   policeModule.close()
 
   return {
@@ -92,5 +102,6 @@ export const createTestingPoliceModule = async () => {
     policeService,
     policeController,
     caseDefendantPoliceCaseNumberRepositoryService,
+    indictmentCountService,
   }
 }
