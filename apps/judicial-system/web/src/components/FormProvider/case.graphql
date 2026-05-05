@@ -196,7 +196,6 @@ query Case($input: CaseQueryInput!) {
     prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
-    reopenReason
     judge {
       id
       name
