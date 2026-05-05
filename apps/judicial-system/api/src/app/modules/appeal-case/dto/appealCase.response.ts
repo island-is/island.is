@@ -74,6 +74,18 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly appealedByNationalId?: string
 
+  @Field(() => UserRole, { nullable: true })
+  readonly appealedByRole?: UserRole
+
+  @Field(() => String, { nullable: true })
+  readonly appealedDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly statementDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isStatementDeadlineExpired?: boolean
+
   @Field(() => ID, { nullable: true })
   readonly rulingFileId?: string
 

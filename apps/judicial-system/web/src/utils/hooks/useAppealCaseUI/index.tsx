@@ -120,12 +120,10 @@ const useAppealCaseUI = () => {
 
   const {
     appealCase,
-    statementDeadline,
     hasBeenAppealed,
     canBeAppealed,
     appealDeadline,
     isAppealDeadlineExpired,
-    isStatementDeadlineExpired,
     sharedWithProsecutorsOffice,
   } = workingCase
   const {
@@ -134,6 +132,8 @@ const useAppealCaseUI = () => {
     defendantStatementDate,
     appealReceivedByCourtDate,
     appealRulingDecision,
+    statementDeadline,
+    isStatementDeadlineExpired,
   } = appealCase ?? {}
 
   const isSharedWithProsecutor =
