@@ -185,6 +185,41 @@ export const include: Includeable[] = [
       },
     ],
   },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
   {
