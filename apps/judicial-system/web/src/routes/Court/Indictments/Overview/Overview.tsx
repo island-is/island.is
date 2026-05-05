@@ -2,7 +2,13 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -63,7 +69,11 @@ const OverviewBody = ({
           {workingCase.reopenReason && (
             <AlertMessage
               title="Mál enduropnað"
-              message={workingCase.reopenReason}
+              message={
+                <Text variant="small" whiteSpace="preWrap">
+                  {workingCase.reopenReason}
+                </Text>
+              }
               type="info"
             />
           )}

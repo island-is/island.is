@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   RadioButton,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -194,7 +195,11 @@ const Overview: FC = () => {
           <Box marginBottom={2}>
             <AlertMessage
               title="Mál enduropnað"
-              message={workingCase.reopenReason}
+              message={
+                <Text variant="small" whiteSpace="preWrap">
+                  {workingCase.reopenReason}
+                </Text>
+              }
               type="info"
             />
           </Box>
