@@ -282,7 +282,7 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     return {
       success: failedEnvironments.length === 0,
-      deletedEnvironments,
+      affectedEnvironments: deletedEnvironments,
       ...(failedEnvironments.length > 0 && { failedEnvironments }),
     }
   }
@@ -321,7 +321,7 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     return {
       success: failedEnvironments.length === 0,
-      deletedEnvironments: restoredEnvironments,
+      affectedEnvironments: restoredEnvironments,
       ...(failedEnvironments.length > 0 && { failedEnvironments }),
     }
   }

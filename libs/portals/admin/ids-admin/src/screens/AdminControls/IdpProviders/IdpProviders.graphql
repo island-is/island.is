@@ -68,7 +68,7 @@ mutation UpdateIdpProvider($input: UpdateAuthAdminIdpProviderInput!) {
 mutation DeleteIdpProvider($input: DeleteAuthAdminIdpProviderInput!) {
   deleteAuthAdminIdpProvider(input: $input) {
     success
-    deletedEnvironments
+    affectedEnvironments
     failedEnvironments {
       environment
       message

@@ -154,7 +154,7 @@ export const useIdpProviderModal = ({
         }))
       }
     } catch {
-      setModalVisible(false)
+      toast.error(formatMessage(m.idpProvidersError))
     } finally {
       setLoadingIdpProvider(false)
     }

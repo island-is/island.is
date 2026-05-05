@@ -4,13 +4,13 @@ import { Environment } from '@island.is/shared/types'
 
 import { EnvironmentFailure } from './multi-environment-result.model'
 
-@ObjectType('AuthAdminDeleteEnvironmentResult')
+@ObjectType('AuthAdminEnvironmentResult')
 export class DeleteEnvironmentResult {
   @Field(() => Boolean)
   success!: boolean
 
   @Field(() => [Environment], { nullable: true })
-  deletedEnvironments?: Environment[]
+  affectedEnvironments?: Environment[]
 
   @Field(() => [EnvironmentFailure], { nullable: true })
   failedEnvironments?: EnvironmentFailure[]

@@ -303,7 +303,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     return {
       success: failedEnvironments.length === 0,
-      deletedEnvironments,
+      affectedEnvironments: deletedEnvironments,
       ...(failedEnvironments.length > 0 && { failedEnvironments }),
     }
   }

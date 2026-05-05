@@ -64,7 +64,7 @@ mutation UpdateGrantType($input: UpdateAuthAdminGrantTypeInput!) {
 mutation DeleteGrantType($input: DeleteAuthAdminGrantTypeInput!) {
   deleteAuthAdminGrantType(input: $input) {
     success
-    deletedEnvironments
+    affectedEnvironments
     failedEnvironments {
       environment
       message
@@ -75,7 +75,7 @@ mutation DeleteGrantType($input: DeleteAuthAdminGrantTypeInput!) {
 mutation RestoreGrantType($input: RestoreAuthAdminGrantTypeInput!) {
   restoreAuthAdminGrantType(input: $input) {
     success
-    deletedEnvironments
+    affectedEnvironments
     failedEnvironments {
       environment
       message

@@ -242,7 +242,7 @@ export class IdpProviderService extends MultiEnvironmentService {
           api.meIdpProvidersControllerDeleteRaw({
             name,
             deleteIdpProviderDto: {
-              environments: targetEnvironments,
+              environments: [environment],
             },
           }),
         )
@@ -262,7 +262,7 @@ export class IdpProviderService extends MultiEnvironmentService {
 
     return {
       success: failedEnvironments.length === 0,
-      deletedEnvironments,
+      affectedEnvironments: deletedEnvironments,
       ...(failedEnvironments.length > 0 && { failedEnvironments }),
     }
   }

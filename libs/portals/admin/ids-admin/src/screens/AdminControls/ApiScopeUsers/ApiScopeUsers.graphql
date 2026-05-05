@@ -84,7 +84,7 @@ mutation UpdateApiScopeUser($input: UpdateAuthAdminApiScopeUserInput!) {
 mutation DeleteApiScopeUser($input: DeleteAuthAdminApiScopeUserInput!) {
   deleteAuthAdminApiScopeUser(input: $input) {
     success
-    deletedEnvironments
+    affectedEnvironments
     failedEnvironments {
       environment
       message
