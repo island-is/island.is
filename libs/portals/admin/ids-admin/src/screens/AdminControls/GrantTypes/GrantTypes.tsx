@@ -23,8 +23,13 @@ const GrantTypes = () => {
   )
 
   const navigation = useNavigation()
-  const { localSearch, currentPage, handleSearch, handlePageChange, clearSearch } =
-    useDebouncedSearch()
+  const {
+    localSearch,
+    currentPage,
+    handleSearch,
+    handlePageChange,
+    clearSearch,
+  } = useDebouncedSearch()
 
   const modal = useGrantTypeModal({
     configuredEnvironments,
