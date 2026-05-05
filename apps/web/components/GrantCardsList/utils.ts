@@ -11,10 +11,10 @@ export const getTranslationString = (
   key: keyof TranslationKeys,
   namespace: Record<string, string>,
   argToInterpolate?: string,
-) =>
-  argToInterpolate
-    ? namespace[key].replace('{arg}', argToInterpolate)
-    : namespace[key]
+) => {
+  const template = namespace[key] ?? String(key)
+  return argToInterpolate ? template.replace('{arg}', argToInterpolate) : template
+}
 
 export const formatDate = (
   date: Date,
@@ -56,7 +56,7 @@ export const parseGrantStatus = (
         : undefined
       return date
         ? translationFunction(
-            containsTimePart(date)
+            grant.dateTo && containsTimePart(grant.dateTo)
               ? 'applicationWasOpenToAndWith'
               : 'applicationWasOpenTo',
             date,

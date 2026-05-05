@@ -900,7 +900,7 @@ export class CmsElasticsearchService {
       ]
     } else {
       sortRules = [
-        { dateUpdated: { order: SortDirection.ASC } },
+        { dateUpdated: { order: SortDirection.DESC } },
         { 'title.sort': { order: SortDirection.ASC } },
       ]
     }

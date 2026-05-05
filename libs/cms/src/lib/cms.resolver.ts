@@ -1054,7 +1054,7 @@ export class LastCallsForGrantsResolver {
 
   @ResolveField(() => GrantList)
   async resolvedGrantsList(
-    @Parent() grantList: GrantCardsList,
+    @Parent() grantList: LastCallsForGrants,
   ): Promise<GrantList> {
     const { resolvedGrantsList: input, maxNumberOfCards } = grantList
     if (!input || input?.size === 0 || maxNumberOfCards === 0) {
@@ -1072,13 +1072,13 @@ export class LastCallsForGrantsResolver {
     )
   }
   @ResolveField(() => GraphQLJSONObject)
-  async namespace(@Parent() { resolvedGrantsList: input }: GrantCardsList) {
+  async namespace(@Parent() { resolvedGrantsList: input }: LastCallsForGrants) {
     try {
-      const respones = await this.cmsContentfulService.getNamespace(
+      const response = await this.cmsContentfulService.getNamespace(
         'GrantsPlaza',
         input?.lang ?? 'is',
       )
-      return JSON.parse(respones?.fields || '{}')
+      return JSON.parse(response?.fields || '{}')
     } catch {
       // Fallback to empty object in case something goes wrong when fetching or parsing namespace
       return {}

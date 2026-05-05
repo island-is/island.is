@@ -7,7 +7,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
 import { TranslationKeys } from './types'
-import { getTranslationString, parseGrantStatus } from './utils'
+import { getTranslationString, isGrantOpen, parseGrantStatus } from './utils'
 
 interface SliceProps {
   slice: LastCallsForGrantsSchema
@@ -35,17 +35,18 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
         cardsBorder="blue200"
         cards={grantItems.map((grant) => {
           const status = parseGrantStatus(grant, activeLocale, getTranslation)
+          const grantIsOpen = isGrantOpen(grant) === 'open'
           return {
             id: grant.id,
             title: grant.name,
             eyebrow: grant.fund?.title ?? grant.name ?? '',
-            subEyebrow: grant.fund?.parentOrganization.title,
+            subEyebrow: grant.fund?.parentOrganization?.title,
             description: '',
             tags: status
               ? [
                   {
                     label: status,
-                    variant: status === 'open' ? 'mint' : 'rose',
+                    variant: grantIsOpen ? 'mint' : 'rose',
                   },
                 ]
               : undefined,
