@@ -1834,11 +1834,13 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    if (
-      update.reopenReason !== undefined &&
-      isIndictmentCase(theCase.type) &&
-      isCompletedCase(theCase.state)
-    ) {
+    if (update.reopenReason !== undefined) {
+      if (!isIndictmentCase(theCase.type) || !isCompletedCase(theCase.state)) {
+        throw new ForbiddenException(
+          'Cannot set reopenReason on a non-completed indictment case',
+        )
+      }
+
       if (
         theCase.appealCase &&
         theCase.appealCase.appealState !== AppealCaseState.COMPLETED

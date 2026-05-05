@@ -802,6 +802,51 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('reopenReason on non-indictment case', () => {
+    const nonIndictmentCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, nonIndictmentCase, caseToUpdate)
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+
+  describe('reopenReason on non-completed indictment case', () => {
+    const receivedIndictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseId,
+        user,
+        receivedIndictmentCase,
+        caseToUpdate,
+      )
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+
   describe('reopen indictment case with active appeal', () => {
     const completedIndictmentCase = {
       ...theCase,
