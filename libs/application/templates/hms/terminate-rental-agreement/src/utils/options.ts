@@ -14,24 +14,23 @@ export const rentalContractOptions = (application: Application) => {
   }
 
   return contracts.map((contract) => {
-    const renters = contract.contract_party
-      ?.filter((party) => party.party_type_use_code === 'TENANT')
+    const renters = contract.contractParty
+      ?.filter((party) => party.partyTypeUseCode === 'TENANT')
       .map((party) => party.name)
-    const landlords = contract.contract_party
-      ?.filter((party) => party.party_type_use_code === 'OWNER')
+    const landlords = contract.contractParty
+      ?.filter((party) => party.partyTypeUseCode === 'OWNER')
       .map((party) => party.name)
     return {
-      value: contract.contract_id?.toString() ?? '',
+      value: contract.contractId?.toString() ?? '',
       label: {
-        ...(contract.contract_type_use_code === 'INDEFINETEAGREEMENT'
+        ...(contract.contractTypeUseCode === 'INDEFINETEAGREEMENT'
           ? m.chooseContractMessages.optionUnboundTerm
           : m.chooseContractMessages.optionFixedTerm),
         values: {
-          contractId: contract.contract_id,
-          address:
-            contract?.contract_property?.[0]?.street_and_house_number ?? '',
-          apartmentNumber: contract?.contract_property?.[0]?.apartment
-            ? ` - Íbúð: ${contract.contract_property?.[0].apartment}`
+          contractId: contract.contractId,
+          address: contract?.contractProperty?.[0]?.streetAndHouseNumber ?? '',
+          apartmentNumber: contract?.contractProperty?.[0]?.apartment
+            ? ` - Íbúð: ${contract.contractProperty?.[0].apartment}`
             : '',
           renters: renters?.join(', '),
           landlords: landlords?.join(', '),

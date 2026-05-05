@@ -71,21 +71,21 @@ export const getSecurityDepositTypeDescription = (
   mutualFundInfo: string | undefined,
 ) => {
   if (
-    type === SecurityDepositType.CAPITAL ||
-    type === SecurityDepositType.OTHER ||
+    type === SecurityDepositType.Capital ||
+    type === SecurityDepositType.Other ||
     type === undefined
   ) {
     return null
   }
 
   switch (type) {
-    case SecurityDepositType.BANK_GUARANTEE:
+    case SecurityDepositType.BankGuarantee:
       return bankGuaranteeInfo
-    case SecurityDepositType.THIRD_PARTY_GUARANTEE:
+    case SecurityDepositType.ThirdPartyGuarantee:
       return thirdPartyGuaranteeInfo
-    case SecurityDepositType.INSURANCE_COMPANY:
+    case SecurityDepositType.InsuranceCompany:
       return insuranceCompanyInfo
-    case SecurityDepositType.LANDLORD_MUTUAL_FUND:
+    case SecurityDepositType.LandlordMutualFund:
       return mutualFundInfo
     default:
       return null
