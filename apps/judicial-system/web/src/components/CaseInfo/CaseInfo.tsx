@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 import { AnimatePresence } from 'motion/react'
@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -26,6 +27,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import Modal from '../Modals/Modal/Modal'
+import { UserContext } from '../UserProvider/UserProvider'
 import { strings } from './CaseInfo.strings'
 
 const PoliceCaseNumbersTags: FC<{
@@ -135,6 +137,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const router = useRouter()
+  const { user } = useContext(UserContext)
 
   const [modalVisible, setModalVisible] = useState<'REOPEN'>()
   const [reopenReason, setReopenReason] = useState<string>('')
@@ -167,18 +170,19 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 </Text>
               </Box>
             )}
-            {(!workingCase.appealCase ||
-              workingCase.appealCase.appealState ===
-                AppealCaseState.COMPLETED) && (
-              <Button
-                variant="text"
-                colorScheme="destructive"
-                size="small"
-                onClick={() => setModalVisible('REOPEN')}
-              >
-                Enduropna mál
-              </Button>
-            )}
+            {isDistrictCourtUser(user) &&
+              (!workingCase.appealCase ||
+                workingCase.appealCase.appealState ===
+                  AppealCaseState.COMPLETED) && (
+                <Button
+                  variant="text"
+                  colorScheme="destructive"
+                  size="small"
+                  onClick={() => setModalVisible('REOPEN')}
+                >
+                  Enduropna mál
+                </Button>
+              )}
           </Box>
         ) : (
           <ProsecutorAndDefendantsEntries workingCase={workingCase} />
