@@ -104,7 +104,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         type
         time
       }
-      appealStatementDate
       policeCaseNumbers
       subpoenas {
         id
@@ -218,6 +217,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealReceivedByCourtDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -471,7 +478,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
-      appealStatementDate
     }
     victims {
       id

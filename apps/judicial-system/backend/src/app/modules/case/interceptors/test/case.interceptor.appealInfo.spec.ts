@@ -2,6 +2,7 @@ import each from 'jest-each'
 
 import {
   AppealCaseState,
+  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -10,9 +11,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, Case, CaseFile } from '../../../repository'
+import { AppealCase, AppealEventLog, Case, CaseFile } from '../../../repository'
 import {
   getAppealCaseInfo,
+  getAppealCaseStatementDates,
   getIndictmentCaseLevelAppealInfo,
   getRequestCaseLevelAppealInfo,
   getRulingOrderAppealInfo,
@@ -387,5 +389,202 @@ describe('getRulingOrderAppealInfo', () => {
 
     expect(info.isAppealDeadlineExpired).toBe(true)
     expect(info.canBeAppealed).toBe(true)
+  })
+})
+
+describe('getAppealCaseStatementDates', () => {
+  const earlier = new Date('2026-04-01T12:00:00.000Z')
+  const later = new Date('2026-04-03T12:00:00.000Z')
+
+  describe('request cases', () => {
+    it('returns the latest prosecutor and defender statement dates', () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.PROSECUTOR,
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.PROSECUTOR,
+            created: later,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            created: later,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.CUSTODY } as Case
+
+      expect(getAppealCaseStatementDates(appealCase, theCase)).toEqual({
+        prosecutorStatementDate: later,
+        defendantStatementDate: later,
+      })
+    })
+
+    it('omits the indictment-only list fields', () => {
+      const appealCase = { appealEventLogs: [] } as unknown as AppealCase
+      const theCase = { type: CaseType.CUSTODY } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates).not.toHaveProperty('defendantStatementDates')
+      expect(dates).not.toHaveProperty('civilClaimantStatementDates')
+    })
+
+    it('returns undefined dates when there are no events', () => {
+      const appealCase = { appealEventLogs: [] } as unknown as AppealCase
+      const theCase = { type: CaseType.CUSTODY } as Case
+
+      expect(getAppealCaseStatementDates(appealCase, theCase)).toEqual({
+        prosecutorStatementDate: undefined,
+        defendantStatementDate: undefined,
+      })
+    })
+  })
+
+  describe('indictment cases', () => {
+    it('groups defendant statements by defendantId, keeping the latest event per defendant', () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            defendantId: 'defendant-1',
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            defendantId: 'defendant-1',
+            created: later,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            defendantId: 'defendant-2',
+            created: earlier,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates.defendantStatementDates).toEqual(
+        expect.arrayContaining([
+          { defendantId: 'defendant-1', statementDate: later },
+          { defendantId: 'defendant-2', statementDate: earlier },
+        ]),
+      )
+      expect(dates.defendantStatementDates).toHaveLength(2)
+    })
+
+    it('groups civil-claimant statements by civilClaimantId, keeping the latest event per claimant', () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            civilClaimantId: 'claimant-1',
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            civilClaimantId: 'claimant-1',
+            created: later,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      expect(
+        getAppealCaseStatementDates(appealCase, theCase)
+          .civilClaimantStatementDates,
+      ).toEqual([{ civilClaimantId: 'claimant-1', statementDate: later }])
+    })
+
+    it('drops events without a defendantId or civilClaimantId from the lists', () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            created: earlier,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates.defendantStatementDates).toEqual([])
+      expect(dates.civilClaimantStatementDates).toEqual([])
+    })
+
+    it('returns the latest prosecutor statement date across prosecution roles', () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.PROSECUTOR,
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.PROSECUTOR_REPRESENTATIVE,
+            created: later,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      expect(
+        getAppealCaseStatementDates(appealCase, theCase)
+          .prosecutorStatementDate,
+      ).toEqual(later)
+    })
+
+    it('omits the singular defendantStatementDate', () => {
+      const appealCase = { appealEventLogs: [] } as unknown as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates).not.toHaveProperty('defendantStatementDate')
+    })
+  })
+
+  describe('per-appeal scoping', () => {
+    it("only reads from the appeal-case row's own event logs", () => {
+      const appealA = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            defendantId: 'defendant-1',
+            created: later,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const appealB = { appealEventLogs: [] } as unknown as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      expect(
+        getAppealCaseStatementDates(appealA, theCase).defendantStatementDates,
+      ).toEqual([{ defendantId: 'defendant-1', statementDate: later }])
+      expect(
+        getAppealCaseStatementDates(appealB, theCase).defendantStatementDates,
+      ).toEqual([])
+    })
   })
 })
