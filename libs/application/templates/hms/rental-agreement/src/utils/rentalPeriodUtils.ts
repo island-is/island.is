@@ -263,10 +263,11 @@ export const getIndexRateForConsumerIndexDate = (
 
   const typedArray: ConsumerIndexItem[] = consumerIndexArray
   const selectedIndex = typedArray.find((item) => item.month === indexDate)
+  const indexRate = selectedIndex?.value
 
-  if (selectedIndex?.value === undefined || selectedIndex.value === null) {
+  if (indexRate === undefined || indexRate === null) {
     return undefined
   }
 
-  return String(selectedIndex.value)
+  return `${indexRate}`
 }
