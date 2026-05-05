@@ -64,8 +64,8 @@ describe('fetchFinancialIndexationForMonths', () => {
     ])
 
     expect(result).toEqual([
-      { month: new Date(2026, 4, 1), value: 678.3 },
-      { month: new Date(2026, 5, 1), value: 683.8 },
+      { month: new Date(2026, 4, 1), value: '678.3' },
+      { month: new Date(2026, 5, 1), value: '683.8' },
     ])
 
     const postOptions = fetchMock.mock.calls[1][1]
