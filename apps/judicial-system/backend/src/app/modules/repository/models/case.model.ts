@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import {
   BelongsTo,
   Column,
@@ -1004,9 +1005,25 @@ export class Case extends Model {
   policeDefendantNationalId?: string
 
   /**********
-   * The case's appeal record
+   * The case's case-level appeal record (the appeal of the case as a whole).
+   * Scoped to rows with no ruling_file_id so ruling-order appeals don't
+   * collide with the HasOne cardinality.
    **********/
-  @HasOne(() => AppealCase, 'caseId')
+  @HasOne(() => AppealCase, {
+    foreignKey: 'caseId',
+    scope: { rulingFileId: null },
+  })
   @ApiPropertyOptional({ type: () => AppealCase })
   appealCase?: AppealCase
+
+  /**********
+   * Appeals of specific ruling orders (Úrskurður undir rekstri máls) filed
+   * against this case. Distinct from the case-level appeal above.
+   **********/
+  @HasMany(() => AppealCase, {
+    foreignKey: 'caseId',
+    scope: { rulingFileId: { [Op.not]: null } },
+  })
+  @ApiPropertyOptional({ type: () => AppealCase, isArray: true })
+  rulingOrderAppealCases?: AppealCase[]
 }
