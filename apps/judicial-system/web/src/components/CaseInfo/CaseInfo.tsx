@@ -137,7 +137,8 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const router = useRouter()
 
   const [modalVisible, setModalVisible] = useState<'REOPEN'>()
-  const [reopenReason, setReopenReason] = useState<string>()
+  const [reopenReason, setReopenReason] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   return (
     <>
@@ -208,12 +209,24 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
             primaryButton={{
               text: 'Halda áfram',
               colorScheme: 'destructive',
-              isDisabled: !reopenReason,
+              isDisabled: !reopenReason.trim() || isSubmitting,
               onClick: async () => {
-                await updateCase(workingCase.id, { reopenReason })
-                router.push(
-                  `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-                )
+                if (!reopenReason.trim()) {
+                  return
+                }
+                setIsSubmitting(true)
+                try {
+                  const updated = await updateCase(workingCase.id, {
+                    reopenReason,
+                  })
+                  if (updated) {
+                    router.push(
+                      `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                } finally {
+                  setIsSubmitting(false)
+                }
               },
             }}
           >
