@@ -168,7 +168,7 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
                         label: '',
                       },
                       title: item.caseNumber,
-                      subDescription: item.keywords.join(', '),
+                      subDescription: item.keywords.join('. '),
                       borderColor: 'blue200',
                       detailLines: [],
                     }

@@ -1564,4 +1564,20 @@ export const m = defineMessages({
     defaultMessage:
       'Should legal representative automatically get this permission for their clients.',
   },
+  deletedCategory: {
+    id: 'ap.ids-admin:deleted-category',
+    defaultMessage: 'Þessum flokki hefur verið eytt ({id})',
+  },
+  deletedCategoryDescription: {
+    id: 'ap.ids-admin:deleted-category-description',
+    defaultMessage: 'Þessi flokkur er ekki lengur til í Contentful',
+  },
+  deletedTag: {
+    id: 'ap.ids-admin:deleted-tag',
+    defaultMessage: 'Þessu merki hefur verið eytt ({id})',
+  },
+  deletedTagDescription: {
+    id: 'ap.ids-admin:deleted-tag-description',
+    defaultMessage: 'Þetta merki er ekki lengur til í Contentful',
+  },
 })
