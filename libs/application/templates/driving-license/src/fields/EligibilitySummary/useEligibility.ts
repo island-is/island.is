@@ -53,7 +53,11 @@ export const useEligibility = (
       B_FULL,
     ) ?? B_FULL
 
-  const { data = {}, error, loading } = useQuery(QUERY, {
+  const {
+    data = {},
+    error,
+    loading,
+  } = useQuery(QUERY, {
     skip: usingFakeData,
     variables: {
       input: {

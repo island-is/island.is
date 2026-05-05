@@ -95,7 +95,7 @@ const baseSchema = z.object({
 // type is `ZodObject<any>`, but `.superRefine` returns `ZodEffects`. At
 // runtime both expose `.parse` / `.safeParse`, so the framework works
 // correctly; the cast just satisfies the static type.
-export const dataSchema = (baseSchema.superRefine((data, ctx) => {
+export const dataSchema = baseSchema.superRefine((data, ctx) => {
   const isRedesigned65 =
     data.applicationFor === B_FULL_RENEWAL_65 &&
     data.is65RenewalRedesignEnabled === true
@@ -108,4 +108,4 @@ export const dataSchema = (baseSchema.superRefine((data, ctx) => {
       params: m.healthCertificateRequired,
     })
   }
-}) as unknown) as typeof baseSchema
+}) as unknown as typeof baseSchema
