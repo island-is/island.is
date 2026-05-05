@@ -463,4 +463,7 @@ export class Case {
 
   @Field(() => AppealCase, { nullable: true })
   readonly appealCase?: AppealCase
+
+  @Field(() => [AppealCase], { nullable: true })
+  readonly rulingOrderAppealCases?: AppealCase[]
 }

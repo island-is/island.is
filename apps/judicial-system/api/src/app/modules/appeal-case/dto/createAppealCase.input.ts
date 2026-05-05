@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional, IsUUID } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
@@ -7,4 +7,10 @@ export class CreateAppealCaseInput {
   @Allow()
   @Field(() => ID)
   readonly caseId!: string
+
+  @Allow()
+  @IsOptional()
+  @IsUUID()
+  @Field(() => String, { nullable: true })
+  readonly rulingFileId?: string
 }

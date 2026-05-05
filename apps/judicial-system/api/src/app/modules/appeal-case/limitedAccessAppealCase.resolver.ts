@@ -37,15 +37,15 @@ export class LimitedAccessAppealCaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
-    this.logger.debug(
-      `Creating limited access appeal case for case ${input.caseId}`,
-    )
+    const { caseId, ...body } = input
+
+    this.logger.debug(`Creating limited access appeal case for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.limitedAccessCreateAppealCase(input.caseId),
-      input.caseId,
+      backendService.limitedAccessCreateAppealCase(caseId, body),
+      caseId,
     )
   }
 
