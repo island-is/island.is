@@ -62,7 +62,9 @@ const getDefenderVisiblePoliceCaseNumbers = (
   }
 
   const allAssigned = new Set(
-    (defendants ?? []).flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+    (defendants ?? []).flatMap(
+      (defendant) => defendant.policeCaseNumbers ?? [],
+    ),
   )
 
   if (allAssigned.size === 0) {
