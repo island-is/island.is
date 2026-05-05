@@ -372,7 +372,7 @@ export class FileService {
     user: User,
     transaction: Transaction,
   ): Promise<CaseFile> {
-    const { key } = createFile
+    const { key, rulingFileId } = createFile
 
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
@@ -380,6 +380,22 @@ export class FileService {
       throw new BadRequestException(
         `${key} is not a valid key for case ${theCase.id}`,
       )
+    }
+
+    if (rulingFileId) {
+      const rulingFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
+      if (!rulingFile) {
+        throw new BadRequestException(
+          `Ruling file ${rulingFileId} does not belong to case ${theCase.id}`,
+        )
+      }
+      if (
+        rulingFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+      ) {
+        throw new BadRequestException(
+          `Ruling file ${rulingFileId} is not a court indictment ruling order`,
+        )
+      }
     }
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)

@@ -38,13 +38,15 @@ export class AppealCaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
-    this.logger.debug(`Creating appeal case for case ${input.caseId}`)
+    const { caseId, ...body } = input
+
+    this.logger.debug(`Creating appeal case for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.createAppealCase(input.caseId),
-      input.caseId,
+      backendService.createAppealCase(caseId, body),
+      caseId,
     )
   }
 
