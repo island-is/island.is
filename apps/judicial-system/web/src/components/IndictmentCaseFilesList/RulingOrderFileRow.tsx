@@ -203,7 +203,10 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       currentUserStatementDate,
       'PPPp',
     )}`
-  } else if (isProsecution || isDefence) {
+  } else if (
+    (isProsecution || isDefence) &&
+    appealCase.appealState === AppealCaseState.RECEIVED
+  ) {
     statusText = `Frestur til að skila greinargerð ${
       appealCase.isStatementDeadlineExpired ? 'rann' : 'rennur'
     } út ${formatDate(appealCase.statementDeadline, 'PPPp')}`
