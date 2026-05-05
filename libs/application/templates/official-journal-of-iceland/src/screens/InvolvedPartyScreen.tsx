@@ -85,6 +85,28 @@ export const InvolvedPartyScreen = ({
 
       if (involvedParties.length === 1) {
         const involvedParty = involvedParties[0]
+
+        // When the regulations feature is disabled, this screen has no
+        // ministry-specific UI, so a single involved party should auto-submit
+        // straight through — same as the original pre-regulation-flow flow.
+        if (!regulationsEnabled) {
+          setValue(InputFields.advert.involvedPartyId, involvedParty.id)
+
+          const currentAnswers = structuredClone(application.answers)
+          set(
+            currentAnswers,
+            InputFields.advert.involvedPartyId,
+            involvedParty.id,
+          )
+
+          updateApplication(currentAnswers, () => {
+            submitApplication(DefaultEvents.SUBMIT, () => {
+              refetch && refetch()
+            })
+          })
+          return
+        }
+
         const isMinistry = involvedParty.title
           .toLowerCase()
           .includes('ráðuneyti')
@@ -210,6 +232,14 @@ export const InvolvedPartyScreen = ({
           defaultValue={defaultValue}
           placeholder={involvedParty.inputs.select.placeholder}
           onChange={(selectedId) => {
+            // When the regulations feature is disabled, the OJOISelectController
+            // already persists involvedPartyId — there is no ministry-specific
+            // bookkeeping to do, so just enable the submit button.
+            if (!regulationsEnabled) {
+              setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+              return
+            }
+
             // Also persist the party title so downstream screens
             // can check whether the party is a ministry.
             const party = involvedParties?.find((p) => p.id === selectedId)
