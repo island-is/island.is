@@ -885,11 +885,14 @@ describe('CaseController - Update', () => {
       } as AppealCase,
     } as Case
 
-    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
-
+    let caseToUpdate: UpdateCaseDto
+    let originalReopenReason: string
     let then: Then
 
     beforeEach(async () => {
+      originalReopenReason = uuid()
+      caseToUpdate = { reopenReason: originalReopenReason } as UpdateCaseDto
+
       const mockUpdateDatabaseDefendant =
         mockDefendantService.updateDatabaseDefendant as jest.Mock
       mockUpdateDatabaseDefendant.mockResolvedValue({})
@@ -934,7 +937,7 @@ describe('CaseController - Update', () => {
         {
           caseId,
           stringType: StringType.REOPEN_REASON,
-          value: `${expectedHeader}\n${caseToUpdate.reopenReason}`,
+          value: `${expectedHeader}\n${originalReopenReason}`,
         },
         {
           conflictFields: ['case_id', 'string_type'],
