@@ -169,7 +169,7 @@ export interface RentalPeriodSection {
 
 export interface ConsumerIndexItem {
   month: string
-  value: string
+  value: string | number
 }
 
 export interface BankAccount {

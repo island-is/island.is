@@ -148,7 +148,7 @@ export const mapRentalApplicationData = (
           : RentIndex.None,
         indexRate:
           isIndexConnected?.includes(YesOrNoEnum.YES) && indexRate
-            ? Number(indexRate.replace(',', '.'))
+            ? Number(String(indexRate).replace(',', '.'))
             : null,
       },
       payment: {
