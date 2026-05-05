@@ -58,15 +58,15 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   const [permissions, setPermissions] = useEnvironmentState<
     AuthAdminClientAllowedScope[]
   >(allowedScopes ?? [])
-  const [addedScopes, setAddedScopes] = useState<AuthAdminClientAllowedScope[]>(
-    [],
-  )
-  const [removedScopes, setRemovedScopes] = useState<
+  const [addedScopes, setAddedScopes] = useEnvironmentState<
     AuthAdminClientAllowedScope[]
   >([])
-  const [pendingScopes, setPendingScopes] = useState<MultiValue<ScopeOption>>(
-    [],
-  )
+  const [removedScopes, setRemovedScopes] = useEnvironmentState<
+    AuthAdminClientAllowedScope[]
+  >([])
+  const [pendingScopes, setPendingScopes] = useEnvironmentState<
+    MultiValue<ScopeOption>
+  >([])
   const [tenantScopes, setTenantScopes] = useState<TenantScopes[]>([])
   const [scopesLoading, setScopesLoading] = useState(false)
 
@@ -80,7 +80,7 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
       setAddedScopes([])
       setRemovedScopes([])
     }
-  }, [actionData])
+  }, [actionData, setAddedScopes, setRemovedScopes])
 
   const availableTenants = useMemo(() => {
     const tenants = tenantsData?.authAdminTenants?.data ?? []
@@ -90,13 +90,14 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   useEffect(() => {
     if (availableTenants.length === 0) {
       setTenantScopes([])
+      setScopesLoading(false)
       return
     }
 
     let cancelled = false
     setScopesLoading(true)
 
-    Promise.all(
+    Promise.allSettled(
       availableTenants.map((t) =>
         apolloClient
           .query<GetAvailableScopesQuery, GetAvailableScopesQueryVariables>({
@@ -106,25 +107,28 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
           .then((result) => ({ tenant: t, result })),
       ),
     )
-      .then((results) => {
+      .then((settled) => {
         if (cancelled) return
 
-        const next: TenantScopes[] = results.map(({ tenant: t, result }) => {
+        const next: TenantScopes[] = []
+        for (const s of settled) {
+          if (s.status !== 'fulfilled') continue
+          const { tenant: t, result } = s.value
           const scopes = (result.data?.authAdminScopes?.data ?? [])
             .map((scope) =>
               scope.environments.find((e) => e.environment === environment),
             )
             .filter(isDefined) as AuthAdminClientAllowedScope[]
 
-          return {
+          next.push({
             tenantId: t.id,
             tenantLabel: getTranslatedValue(
               t.defaultEnvironment.displayName,
               locale,
             ),
             scopes,
-          }
-        })
+          })
+        }
 
         setTenantScopes(next)
       })
@@ -315,7 +319,9 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
           disabled={pendingScopes.length === 0}
           dataTestId="add-permissions-button"
         >
-          {formatMessage(m.permissionsAdd)}
+          <span style={{ whiteSpace: 'nowrap' }}>
+            {formatMessage(m.permissionsAdd)}
+          </span>
         </Button>
       </Box>
       {hasData && (
