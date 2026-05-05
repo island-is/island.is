@@ -58,7 +58,7 @@ const getDefenderVisiblePoliceCaseNumbers = (
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
-    return allPoliceCaseNumbers ?? []
+    return []
   }
 
   const allAssigned = new Set(
