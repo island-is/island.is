@@ -201,7 +201,10 @@ const ProjectPage: Screen<PageProps> = ({
                   {`${n(
                     'contentLastReviewedLabel',
                     activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
-                  )}: ${format(new Date(subpage.contentLastReviewed), 'do MMMM yyyy')}`}
+                  )}: ${format(
+                    new Date(subpage.contentLastReviewed),
+                    'do MMMM yyyy',
+                  )}`}
                 </Text>
               </Box>
             )}

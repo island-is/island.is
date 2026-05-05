@@ -571,7 +571,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   {`${n(
                     'contentLastReviewedLabel',
                     activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
-                  )}: ${format(new Date(article.contentLastReviewed), 'do MMMM yyyy')}`}
+                  )}: ${format(
+                    new Date(article.contentLastReviewed),
+                    'do MMMM yyyy',
+                  )}`}
                 </Text>
               </Box>
             )}
