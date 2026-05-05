@@ -199,17 +199,15 @@ export const SubPageContent = ({
                   subpage.contentLastReviewed && (
                     <Box paddingTop={2}>
                       <Text variant="small">
-                        {n(
+                        {`${n(
                           'contentLastReviewedLabel',
                           activeLocale === 'is'
                             ? 'Síðast uppfært'
                             : 'Last updated',
-                        )}
-                        {': '}
-                        {format(
+                        )}: ${format(
                           new Date(subpage.contentLastReviewed),
                           'do MMMM yyyy',
-                        )}
+                        )}`}
                       </Text>
                     </Box>
                   )}
