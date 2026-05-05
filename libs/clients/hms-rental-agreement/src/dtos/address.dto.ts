@@ -6,12 +6,15 @@ export interface AddressDto {
 }
 
 export const mapAddressDto = (
-  address?: string | null,
-  town?: string | null,
-  postalCode?: number | null,
-  country?: string | null,
+  address?: string,
+  town?: string,
+  postalCode?: number,
+  country?: string,
 ): AddressDto | null => {
-  if (!address) return null
+  if (!address) {
+    return null
+  }
+
   return {
     address,
     town: town ?? undefined,

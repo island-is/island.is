@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\"  http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
@@ -29,7 +29,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-ts -f libs/clients/hms-rental-agreement/src/openapi-ts.config.ts"
+        "command": "yarn openapi-generator -o libs/clients/hms-rental-agreement/gen/fetch -i libs/clients/hms-rental-agreement/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

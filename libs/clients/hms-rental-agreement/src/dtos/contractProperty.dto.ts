@@ -1,5 +1,5 @@
-import { type ContractProperty } from '../../gen/fetch'
-import { type RentalPropertyType } from '../types'
+import { ContractProperty as GeneratedContractProperty } from '../../gen/fetch'
+import { RentalPropertyType } from '../types'
 
 export interface ContractPropertyDto {
   id: number
@@ -11,20 +11,26 @@ export interface ContractPropertyDto {
 }
 
 export const mapContractPropertyDto = (
-  data: ContractProperty,
+  data: GeneratedContractProperty,
 ): ContractPropertyDto | null => {
-  if (!data.contract_property_id || !data.property_id) return null
+  const contractPropertyId = data?.contractPropertyId ?? undefined
+  const propertyId = data?.propertyId ?? undefined
+
+  if (contractPropertyId === undefined || propertyId === undefined) {
+    return null
+  }
+
   return {
-    id: data.contract_property_id,
-    propertyId: data.property_id,
-    type: mapPropertyType(data.special_type_code),
-    postalCode: data.postal_code ?? undefined,
-    streetAndHouseNumber: data.street_and_house_number ?? undefined,
+    id: contractPropertyId,
+    propertyId: propertyId,
+    type: mapPropertyType(data.specialTypeCode ?? undefined),
+    postalCode: data.postalCode ?? undefined,
+    streetAndHouseNumber: data.streetAndHouseNumber ?? undefined,
     municipality: data.municipality ?? undefined,
   }
 }
 
-const mapPropertyType = (type?: string | null): RentalPropertyType => {
+const mapPropertyType = (type?: string): RentalPropertyType => {
   switch (type) {
     case 'TM_SPECIAL_TYPE_INDIVIDUAL_ROOMS':
       return 'individualRoom'

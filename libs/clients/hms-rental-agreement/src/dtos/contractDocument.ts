@@ -1,13 +1,4 @@
-import {
-  type ContractDocumentItem,
-  type ContractDocumentMetadata,
-} from '../../gen/fetch'
-
-export interface ContractDocumentMetadataDto {
-  id: number
-  mime: string
-  name: string
-}
+import { type ContractDocumentItem } from '../../gen/fetch'
 
 export interface ContractDocumentItemDto {
   id: number
@@ -16,27 +7,14 @@ export interface ContractDocumentItemDto {
   document: string
 }
 
-export const mapContractDocumentMetadataDto = (
-  data: ContractDocumentMetadata | ContractDocumentItem,
-): ContractDocumentMetadataDto | null => {
-  if (!data.contract_document_id || !data.document_mime) return null
-  return {
-    id: data.contract_document_id,
-    mime: data.document_mime,
-    name: data.document_filename ?? `document-${data.contract_document_id}`,
-  }
-}
-
 export const mapContractDocumentItemDto = (
   data: ContractDocumentItem,
 ): ContractDocumentItemDto | null => {
-  if (!data.contract_document_id || !data.document_mime || !data.document) {
-    return null
-  }
+  if (!data.document) return null
   return {
-    id: data.contract_document_id,
-    mime: data.document_mime,
-    name: data.document_filename ?? `document-${data.contract_document_id}`,
+    id: data.contractDocumentId ?? 0,
+    mime: data.documentMime ?? 'application/pdf',
+    name: data.documentFilename ?? 'document.pdf',
     document: data.document,
   }
 }

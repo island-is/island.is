@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  xRoadClientHeader: z.string(),
   authClientId: z.string(),
   authClientSecret: z.string(),
   authTokenEndpoint: z.string(),
@@ -22,10 +21,6 @@ export const HmsRentalAgreementClientConfig = defineConfig({
       xRoadServicePath: env.required(
         'XROAD_HMS_RENTAL_SERVICE_PATH',
         'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
-      ),
-      xRoadClientHeader: env.required(
-        'XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER',
-        'IS-DEV/GOV/10000/island-is-client',
       ),
       authClientId: env.required('HMS_CONTRACTS_AUTH_CLIENT_ID', ''),
       authClientSecret: env.required('HMS_CONTRACTS_AUTH_CLIENT_SECRET', ''),

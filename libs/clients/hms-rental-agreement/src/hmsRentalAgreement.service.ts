@@ -1,58 +1,64 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { User, withAuthContext } from '@island.is/auth-nest-tools'
-import { dataOr404Null } from '@island.is/clients/middlewares'
-import {
-  getContract,
-  getContractByContractIdWithDocuments,
-  getContractByContractIdDocumentByDocumentId,
-} from '../gen/fetch'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { HomeApi } from '../gen/fetch'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
-import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import {
-  type RentalAgreementDto,
-  type ContractDocumentItemDto,
   mapRentalAgreementDto,
-  mapContractWithDocumentsDto,
+  RentalAgreementDto,
+} from './dtos/rentalAgreements.dto'
+import { INACTIVE_AGREEMENT_STATUSES } from './constants'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  ContractDocumentItemDto,
   mapContractDocumentItemDto,
-} from './dtos'
+} from './dtos/contractDocument'
 
 @Injectable()
 export class HmsRentalAgreementService {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(
+    private readonly api: HomeApi,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
+
+  private apiWithAuth = (user: User) =>
+    this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getRentalAgreements(
     user: User,
     hideInactiveAgreements = false,
   ): Promise<RentalAgreementDto[]> {
-    const contracts =
-      (await withAuthContext(user, () => dataOr404Null(getContract()))) ?? []
+    const res = await this.apiWithAuth(user).contractGet()
 
-    const dtos = contracts?.map(mapRentalAgreementDto).filter(isDefined)
+    const data = res
+      .map(mapRentalAgreementDto)
+      .filter(isDefined)
+      .sort(
+        (a, b) =>
+          Number(INACTIVE_AGREEMENT_STATUSES.includes(a.status)) -
+          Number(INACTIVE_AGREEMENT_STATUSES.includes(b.status)),
+      )
 
     if (hideInactiveAgreements) {
-      const inactiveSet = new Set<string>(INACTIVE_AGREEMENT_STATUSES)
-      return dtos.filter((dto) => !inactiveSet.has(dto.status))
+      return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))
     }
-    return dtos
+    return data
   }
 
   async getRentalAgreement(
     user: User,
     id: string,
   ): Promise<RentalAgreementDto | undefined> {
-    const res = await withAuthContext(user, () =>
-      dataOr404Null(
-        getContractByContractIdWithDocuments({ path: { contractId: id } }),
-      ),
-    )
+    const res = await this.apiWithAuth(user)
+      .contractContractIdGet({ contractId: id })
+      .catch(handle404)
 
-    if (!res?.contract?.contract_id) {
+    if (!res?.contractId) {
       this.logger.warn('Rental agreement not found', { id })
       return undefined
     }
 
-    return mapContractWithDocumentsDto(res) ?? undefined
+    return mapRentalAgreementDto(res) ?? undefined
   }
 
   async getRentalAgreementPdf(
@@ -60,13 +66,9 @@ export class HmsRentalAgreementService {
     contractId: number,
     documentId: number,
   ): Promise<ContractDocumentItemDto | undefined> {
-    const res = await withAuthContext(user, () =>
-      dataOr404Null(
-        getContractByContractIdDocumentByDocumentId({
-          path: { contractId, documentId },
-        }),
-      ),
-    )
+    const res = await this.apiWithAuth(user)
+      .contractContractIdDocumentDocumentIdGet({ contractId, documentId })
+      .catch(handle404)
 
     if (!res) {
       this.logger.warn('No rental agreement document found', {

@@ -1,10 +1,10 @@
-import { type Contract, type ContractWithDocuments } from '../../gen/fetch'
+import { type Contract } from '../../gen/fetch'
 import { type AgreementStatusType, type TemporalType } from '../types'
 import { isDefined } from '@island.is/shared/utils'
 import {
   type ContractDocumentMetadataDto,
   mapContractDocumentMetadataDto,
-} from './contractDocument'
+} from './contractDocumentMetadata.dto'
 import { type ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
 import {
   type ContractPropertyDto,
@@ -26,41 +26,38 @@ export interface RentalAgreementDto {
 export const mapRentalAgreementDto = (
   contract: Contract,
 ): RentalAgreementDto | null => {
-  if (!contract.contract_id) return null
+  if (!contract.contractId) return null
   return {
-    id: contract.contract_id,
-    status: mapAgreementStatus(contract.contract_status),
-    dateFrom: contract.date_from ? new Date(contract.date_from) : undefined,
-    dateTo: contract.date_to ? new Date(contract.date_to) : undefined,
-    terminationDate: contract.date_manual_end
-      ? new Date(contract.date_manual_end)
+    id: contract.contractId,
+    status: mapAgreementStatus(contract.contractStatus),
+    dateFrom: contract.dateFrom ? new Date(contract.dateFrom) : undefined,
+    dateTo: contract.dateTo ? new Date(contract.dateTo) : undefined,
+    terminationDate: contract.dateManualEnd
+      ? new Date(contract.dateManualEnd)
       : undefined,
-    contractType: mapTemporalType(contract.contract_type_use_code),
+    contractType: mapTemporalType(contract.contractTypeUseCode),
     contractParty:
-      contract.contract_party?.map(mapContractPartyDto).filter(isDefined) ??
+      contract.contractParty?.map(mapContractPartyDto).filter(isDefined) ??
       undefined,
     contractProperty:
-      contract.contract_property
+      contract.contractProperty
         ?.map(mapContractPropertyDto)
         .filter(isDefined) ?? undefined,
     documents:
-      contract.contract_document
+      contract.contractDocument
         ?.map(mapContractDocumentMetadataDto)
         .filter(isDefined) ?? undefined,
   }
 }
 
-export const mapContractWithDocumentsDto = (
-  data: ContractWithDocuments,
-): RentalAgreementDto | null => {
-  if (!data.contract) return null
-  const base = mapRentalAgreementDto(data.contract)
-  if (!base) return null
-  return {
-    ...base,
-    documents:
-      data.documents?.map(mapContractDocumentMetadataDto).filter(isDefined) ??
-      base.documents,
+const mapTemporalType = (code?: string | null): TemporalType => {
+  switch (code) {
+    case 'TEMPORARYAGREEMENT':
+      return 'temporary'
+    case 'INDEFINETEAGREEMENT':
+      return 'indefinite'
+    default:
+      return 'unknown'
   }
 }
 
@@ -82,17 +79,6 @@ const mapAgreementStatus = (status?: string | null): AgreementStatusType => {
       return 'pendingCancellation'
     case 'PENDINGTERMINATION':
       return 'pendingTermination'
-    default:
-      return 'unknown'
-  }
-}
-
-const mapTemporalType = (typeCode?: string | null): TemporalType => {
-  switch (typeCode) {
-    case 'INDEFINETEAGREEMENT':
-      return 'indefinite'
-    case 'TEMPORARYAGREEMENT':
-      return 'temporary'
     default:
       return 'unknown'
   }
