@@ -80,7 +80,10 @@ const reserveSubmission = (key: string, force = false): boolean => {
   }
 
   try {
-    if (!force && isActiveSubmissionReservation(getSubmissionReservation(key))) {
+    if (
+      !force &&
+      isActiveSubmissionReservation(getSubmissionReservation(key))
+    ) {
       return false
     }
 

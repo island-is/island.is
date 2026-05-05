@@ -284,7 +284,9 @@ describe('ApplicationActionService', () => {
         },
       )
 
-      expect(mockApplicationService.updateApplicationState).toHaveBeenCalledWith(
+      expect(
+        mockApplicationService.updateApplicationState,
+      ).toHaveBeenCalledWith(
         'application-id',
         expect.any(String),
         {
