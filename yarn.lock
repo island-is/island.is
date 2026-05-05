@@ -27840,6 +27840,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"docx-preview@npm:0.3.7":
+  version: 0.3.7
+  resolution: "docx-preview@npm:0.3.7"
+  dependencies:
+    jszip: "npm:>=3.0.0"
+  checksum: 10/f642f4c6d8232517795fa8441e12ad63a9b418c51459eac6065970446769a729d44ff26e38aaf3359914529217aa1bd63e6d6dcc586ba4dc90a667071ee90f50
+  languageName: node
+  linkType: hard
+
 "dogapi@npm:2.8.4":
   version: 2.8.4
   resolution: "dogapi@npm:2.8.4"
@@ -35368,6 +35377,7 @@ __metadata:
     datebook: "npm:7.0.8"
     dd-trace: "npm:5.14.1"
     deepmerge: "npm:4.2.2"
+    docx-preview: "npm:0.3.7"
     dotenv: "npm:16.3.1"
     downshift: "npm:5.4.3"
     entropy-string: "npm:4.2.0"
@@ -37095,7 +37105,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jszip@npm:^3.10.1, jszip@npm:^3.7.1":
+"jszip@npm:>=3.0.0, jszip@npm:^3.10.1, jszip@npm:^3.7.1":
   version: 3.10.1
   resolution: "jszip@npm:3.10.1"
   dependencies:

@@ -8,6 +8,11 @@ globalStyle(`${pdfContainer} .react-pdf__Page`, {
   marginBottom: '32px',
 })
 
+globalStyle(`${pdfContainer} .docx-wrapper`, {
+  backgroundColor: theme.color.blue100,
+  padding: 0,
+})
+
 export const hiddenOnScreen = style({
   '@media': {
     screen: {

@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
+import { renderAsync } from 'docx-preview'
 import capitalize from 'lodash/capitalize'
 import { BLOCKS } from '@contentful/rich-text-types'
 
@@ -45,6 +46,13 @@ const calculatePdfScale = (width: number) => {
   return 0.63
 }
 
+const docxPageWidth = 816
+const calculateDocxScale = (width: number): number => {
+  const padding = 48
+  if (width >= docxPageWidth + padding) return 1
+  return Math.max(0.45, (width - padding) / docxPageWidth)
+}
+
 const getPdfBlob = (base64String: string) => {
   // Convert Base64 to binary data
   const byteCharacters = atob(base64String)
@@ -57,6 +65,17 @@ const getPdfBlob = (base64String: string) => {
   const byteArray = new Uint8Array(byteNumbers)
 
   return new Blob([byteArray], { type: 'application/pdf' })
+}
+
+const base64ToUint8Array = (base64String: string) => {
+  const byteCharacters = atob(base64String)
+  const byteNumbers = new Array(byteCharacters.length)
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i)
+  }
+
+  return new Uint8Array(byteNumbers)
 }
 
 const downloadPdf = (base64String: string, filename = 'download.pdf') => {
@@ -114,6 +133,59 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
   const { width } = useWindowSize()
   const { formatMessage } = useIntl()
 
+  const [pdfBase64, setPdfBase64] = useState<string | null>(null)
+  const [docxRenderFailed, setDocxRenderFailed] = useState(false)
+  const isDocxSource = Boolean(item.pdfString?.startsWith('UEsDB'))
+  const docxContainerRef = useRef<HTMLDivElement | null>(null)
+  const docxScale = isDocxSource ? calculateDocxScale(width) : 1
+
+  useEffect(() => {
+    const docxContainer = docxContainerRef.current
+
+    const renderDocx = async () => {
+      if (!item.pdfString) return
+
+      if (!isDocxSource) {
+        setPdfBase64(item.pdfString)
+        setDocxRenderFailed(false)
+        return
+      }
+
+      setPdfBase64(null)
+
+      if (!docxContainer) return
+
+      docxContainer.innerHTML = ''
+
+      try {
+        await renderAsync(
+          base64ToUint8Array(item.pdfString).buffer,
+          docxContainer,
+          undefined,
+          {
+            className: 'docx',
+            inWrapper: true,
+            breakPages: true,
+            useBase64URL: true,
+          },
+        )
+        setDocxRenderFailed(false)
+      } catch (error) {
+        console.error('Failed to render DOCX in browser', error)
+        setDocxRenderFailed(true)
+      }
+    }
+
+    if (isDocxSource) renderDocx()
+    else
+      setPdfBase64(
+        item.pdfString ?? 'test', // Fallback to 'test' since that'll render an error message in the PDF viewer
+      )
+
+    return () => {
+      docxContainer?.replaceChildren()
+    }
+  }, [isDocxSource, item.pdfString])
   return (
     <>
       <HeadWithSocialSharing title="Dómur" />
@@ -145,7 +217,7 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
               )}
               <Inline alignY="center" justifyContent="spaceBetween" space={3}>
                 <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
-                {Boolean(item.pdfString) && (
+                {Boolean(pdfBase64) && (
                   <Hidden print={true}>
                     <Inline alignY="center" space={2}>
                       <Button
@@ -153,7 +225,7 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
                         iconType="outline"
                         size="small"
                         onClick={() => {
-                          downloadPdf(item.pdfString as string)
+                          downloadPdf(pdfBase64 as string)
                         }}
                       >
                         PDF
@@ -163,7 +235,23 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
                         iconType="outline"
                         size="small"
                         onClick={() => {
-                          printPdf(item.pdfString as string)
+                          printPdf(pdfBase64 as string)
+                        }}
+                      >
+                        {formatMessage(m.verdictPage.print)}
+                      </Button>
+                    </Inline>
+                  </Hidden>
+                )}
+                {isDocxSource && !docxRenderFailed && (
+                  <Hidden print={true}>
+                    <Inline alignY="center" space={2}>
+                      <Button
+                        icon="print"
+                        iconType="outline"
+                        size="small"
+                        onClick={() => {
+                          window.print()
                         }}
                       >
                         {formatMessage(m.verdictPage.print)}
@@ -176,7 +264,7 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
           </GridRow>
         </GridContainer>
       </Box>
-      {Boolean(item.pdfString) && (
+      {Boolean(pdfBase64) && (
         <Box paddingY={5} background="overlayDefault">
           <GridContainer>
             <Box
@@ -189,17 +277,37 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
             >
               <Box printHidden={true} className="rs_read">
                 <PdfViewer
-                  file={`data:application/pdf;base64,${item.pdfString}`}
+                  file={`data:application/pdf;base64,${pdfBase64}`}
                   showAllPages={true}
                   scale={calculatePdfScale(width)}
                 />
               </Box>
               <Box className={styles.hiddenOnScreen}>
                 <PdfViewer
-                  file={`data:application/pdf;base64,${item.pdfString}`}
+                  file={`data:application/pdf;base64,${pdfBase64}`}
                   showAllPages={true}
                   scale={1}
                 />
+              </Box>
+            </Box>
+          </GridContainer>
+        </Box>
+      )}
+      {isDocxSource && !docxRenderFailed && (
+        <Box paddingY={5} background="overlayDefault">
+          <GridContainer>
+            <Box
+              display="flex"
+              justifyContent="center"
+              className={styles.pdfContainer}
+              height="full"
+              overflow="auto"
+              boxShadow="subtle"
+            >
+              <Box className="rs_read">
+                <div style={{ zoom: docxScale }}>
+                  <div ref={docxContainerRef} />
+                </div>
               </Box>
             </Box>
           </GridContainer>
