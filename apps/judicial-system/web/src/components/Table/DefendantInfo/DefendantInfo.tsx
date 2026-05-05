@@ -17,28 +17,31 @@ interface Props {
 const DefendantInfo: FC<Props> = ({ defendants }) => {
   const { user } = useContext(UserContext)
 
-  const visibleDefendants = defendants?.filter((defendant) => {
-    const defenderDefendants = defendants.filter(
+  const defenderDefendants = defendants?.filter(
+    (d) =>
+      d.defenderNationalId &&
+      d.isDefenderChoiceConfirmed &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        d.defenderNationalId,
+      ),
+  )
+
+  const allDefenderDefendantsAreCancelledOrDismissed =
+    defenderDefendants &&
+    defenderDefendants.length > 0 &&
+    defenderDefendants.every(
       (d) =>
-        d.defenderNationalId &&
-        d.isDefenderChoiceConfirmed &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          d.defenderNationalId,
-        ),
+        d.indictmentCancelledOrDismissedState !== null &&
+        d.indictmentCancelledOrDismissedState !== undefined,
     )
 
-    const allDefenderDefendantsAreCancelledOrDismissed =
-      defenderDefendants.length > 0 &&
-      defenderDefendants.every(
-        (d) => d.indictmentCancelledOrDismissedState != null,
+  const visibleDefendants = allDefenderDefendantsAreCancelledOrDismissed
+    ? defenderDefendants
+    : defenderDefendants?.filter(
+        (d) =>
+          d.indictmentCancelledOrDismissedState === null ||
+          d.indictmentCancelledOrDismissedState === undefined,
       )
-
-    if (allDefenderDefendantsAreCancelledOrDismissed) {
-      return defenderDefendants.some((d) => d.id === defendant.id)
-    }
-
-    return defendant.indictmentCancelledOrDismissedState == null
-  })
 
   return visibleDefendants && visibleDefendants.length > 0 ? (
     <>
