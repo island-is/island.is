@@ -4,7 +4,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   ResponsiveProp,
   SkeletonLoader,
   Stack,
