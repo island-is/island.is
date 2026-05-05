@@ -30,6 +30,12 @@
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
+      "files": ["migrations/*.js"],
+      "rules": {
+        "eqeqeq": "off"
+      }
+    },
+    {
       "files": ["*.spec.ts"],
       "rules": {
         "simple-import-sort/imports": [

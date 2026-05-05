@@ -232,7 +232,7 @@ const Table: FC<TableProps> = (props) => {
     if (sortConfig) {
       data.sort(getSortFn(sortConfig, sortConfig.sortFn))
     }
-  }, [data, formatMessage, sortConfig])
+  }, [data, formatMessage, sortConfig, user?.nationalId])
 
   return width < theme.breakpoints.lg ? (
     <>

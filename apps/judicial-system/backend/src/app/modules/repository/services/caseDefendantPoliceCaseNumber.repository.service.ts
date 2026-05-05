@@ -95,7 +95,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     )
 
     const unassigned = rows
-      .filter((row) => row.defendantId == null)
+      .filter((row) => row.defendantId === null || row.defendantId === undefined)
       .map((row) => normalize(row.policeCaseNumber))
       .filter(
         (policeCaseNumber) =>

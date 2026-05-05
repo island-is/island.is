@@ -66,7 +66,9 @@ export const Cases: FC = () => {
       return (
         defenderDefendants.length > 0 &&
         defenderDefendants.every(
-          (defendant) => defendant.indictmentCancelledOrDismissedState != null,
+          (defendant) =>
+            defendant.indictmentCancelledOrDismissedState !== null &&
+            defendant.indictmentCancelledOrDismissedState !== undefined,
         )
       )
     }
