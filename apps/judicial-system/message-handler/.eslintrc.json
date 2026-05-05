@@ -2,6 +2,7 @@
   "extends": "../../../.eslintrc.json",
   "ignorePatterns": ["!**/*"],
   "rules": {
+    "eqeqeq": ["error", "always"],
     "simple-import-sort/imports": [
       "error",
       {

@@ -1,6 +1,7 @@
 {
   "extends": "../../../.eslintrc.json",
   "rules": {
+    "eqeqeq": ["error", "always"],
     "simple-import-sort/imports": [
       "error",
       {
@@ -28,6 +29,12 @@
   "plugins": ["simple-import-sort"],
   "ignorePatterns": ["!**/*"],
   "overrides": [
+    {
+      "files": ["migrations/*.js"],
+      "rules": {
+        "eqeqeq": "off"
+      }
+    },
     {
       "files": ["*.spec.ts"],
       "rules": {
