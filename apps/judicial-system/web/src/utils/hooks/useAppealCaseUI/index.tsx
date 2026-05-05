@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -20,7 +19,6 @@ import {
 import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
-  FeatureContext,
   FormContext,
   Modal,
   UserContext,
@@ -122,12 +120,10 @@ const useAppealCaseUI = () => {
 
   const {
     appealCase,
-    statementDeadline,
     hasBeenAppealed,
     canBeAppealed,
     appealDeadline,
     isAppealDeadlineExpired,
-    isStatementDeadlineExpired,
     sharedWithProsecutorsOffice,
   } = workingCase
   const {
@@ -136,6 +132,8 @@ const useAppealCaseUI = () => {
     defendantStatementDate,
     appealReceivedByCourtDate,
     appealRulingDecision,
+    statementDeadline,
+    isStatementDeadlineExpired,
   } = appealCase ?? {}
 
   const isSharedWithProsecutor =
@@ -347,13 +345,8 @@ const useAppealCaseUI = () => {
     </>
   )
 
-  const { features } = useContext(FeatureContext)
-
   const appealBanner =
-    isLoadingWorkingCase ||
-    (!title && !description) ||
-    (isIndictmentCase(workingCase.type) &&
-      !features.includes(Feature.INDICTMENT_APPEAL_RULING)) ? null : (
+    isLoadingWorkingCase || (!title && !description) ? null : (
       <AlertBanner variant="warning" title={title} description={description}>
         {child}
       </AlertBanner>

@@ -41,6 +41,7 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
     }
     splitCase {
@@ -277,6 +278,7 @@ query Case($input: CaseQueryInput!) {
       isKeyAccessible
       defendantId
       civilClaimantId
+      rulingFileId
     }
     isAppealDeadlineExpired
     caseModifiedExplanation
@@ -389,18 +391,18 @@ query Case($input: CaseQueryInput!) {
       generatedPdfUri
     }
     requestDriversLicenseSuspension
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     canProsecutorAppeal
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
       id
       appealState
       appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
@@ -587,6 +589,7 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
       policeCaseNumbers
       indictmentSubtypes
