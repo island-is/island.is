@@ -135,8 +135,7 @@ export class ApplicationActionService {
     return this.applicationService.withApplicationLock(
       application.id,
       async (lockedApplication, transaction) => {
-        const currentApplication =
-          lockedApplication.toJSON() as BaseApplication
+        const currentApplication = lockedApplication.toJSON() as BaseApplication
 
         if (currentApplication.state !== application.state) {
           this.logger.info(
