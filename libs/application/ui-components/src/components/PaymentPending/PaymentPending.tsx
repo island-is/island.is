@@ -24,27 +24,101 @@ const getSubmissionReservationKey = (
   event: DefaultEvents,
 ) => `application-payment-pending-submit:${applicationId}:${event}`
 
-const reserveSubmission = (key: string): boolean => {
+type SubmissionReservation = {
+  ts: number
+  token: string
+}
+
+const getSubmissionReservation = (
+  key: string,
+): SubmissionReservation | undefined => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  try {
+    const reservation = window.localStorage.getItem(key)
+
+    if (!reservation) {
+      return
+    }
+
+    const reservedAt = Number(reservation)
+
+    if (Number.isFinite(reservedAt)) {
+      return { ts: reservedAt, token: '' }
+    }
+
+    const parsedReservation = JSON.parse(reservation) as SubmissionReservation
+
+    if (
+      !Number.isFinite(parsedReservation.ts) ||
+      typeof parsedReservation.token !== 'string'
+    ) {
+      return
+    }
+
+    return parsedReservation
+  } catch {
+    return
+  }
+}
+
+const isActiveSubmissionReservation = (
+  reservation?: SubmissionReservation,
+): boolean =>
+  !!reservation &&
+  Number.isFinite(reservation.ts) &&
+  Number(Date.now()) - reservation.ts < SUBMISSION_RESERVATION_TTL
+
+const createSubmissionReservationToken = () =>
+  `${Number(Date.now())}-${Math.random().toString(36).slice(2)}`
+
+const reserveSubmission = (key: string, force = false): boolean => {
   if (typeof window === 'undefined') {
     return true
   }
 
   try {
-    const reservedAt = Number(window.localStorage.getItem(key))
-
-    if (
-      reservedAt &&
-      Number.isFinite(reservedAt) &&
-      Date.now() - reservedAt < SUBMISSION_RESERVATION_TTL
-    ) {
+    if (!force && isActiveSubmissionReservation(getSubmissionReservation(key))) {
       return false
     }
 
-    window.localStorage.setItem(key, String(Date.now()))
-    return true
+    const reservation = {
+      ts: Number(Date.now()),
+      token: createSubmissionReservationToken(),
+    }
+
+    window.localStorage.setItem(key, JSON.stringify(reservation))
+
+    const storedReservation = getSubmissionReservation(key)
+
+    return (
+      storedReservation?.token === reservation.token &&
+      isActiveSubmissionReservation(storedReservation)
+    )
   } catch {
     return true
   }
+}
+
+const claimSubmissionReservation = (
+  key: string,
+  refetch: FieldBaseProps['refetch'],
+): boolean => {
+  if (reserveSubmission(key)) {
+    return true
+  }
+
+  if (
+    !isActiveSubmissionReservation(getSubmissionReservation(key)) &&
+    reserveSubmission(key, true)
+  ) {
+    return true
+  }
+
+  refetch?.()
+  return false
 }
 
 const clearSubmissionReservation = (key: string) => {
@@ -105,8 +179,7 @@ export const PaymentPending: FC<
         DefaultEvents.ABORT,
       )
 
-      if (!reserveSubmission(reservationKey)) {
-        refetch?.()
+      if (!claimSubmissionReservation(reservationKey, refetch)) {
         return
       }
 
@@ -135,8 +208,7 @@ export const PaymentPending: FC<
       return
     }
 
-    if (!reserveSubmission(reservationKey)) {
-      refetch?.()
+    if (!claimSubmissionReservation(reservationKey, refetch)) {
       return
     }
 

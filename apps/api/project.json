@@ -16,6 +16,7 @@
         "showCircularDependencies": false,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
+        "external": ["jsdom"],
         "format": ["cjs"]
       },
       "configurations": {

@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/template-loader'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  mergeAnswers,
+} from '@island.is/application/core'
 import {
   ApplicationWithAttachments as BaseApplication,
   TemplateApi,
@@ -24,6 +27,18 @@ import { StateChangeResult, TemplateAPIModuleActionResult } from './types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Transaction } from 'sequelize'
+
+type StateChangeApplicationUpdates = Partial<
+  Pick<BaseApplication, 'answers' | 'assignees' | 'attachments'>
+>
+
+type StateChangeApplicationUpdateResolver = (
+  application: BaseApplication,
+  transaction: Transaction,
+) =>
+  | StateChangeApplicationUpdates
+  | Promise<StateChangeApplicationUpdates | undefined>
+  | undefined
 
 @Injectable()
 export class ApplicationActionService {
@@ -113,6 +128,9 @@ export class ApplicationActionService {
     event: string,
     auth: User,
     locale: Locale,
+    applicationUpdates?:
+      | StateChangeApplicationUpdates
+      | StateChangeApplicationUpdateResolver,
   ): Promise<StateChangeResult> {
     return this.applicationService.withApplicationLock(
       application.id,
@@ -132,13 +150,16 @@ export class ApplicationActionService {
           }
         }
 
+        const resolvedApplicationUpdates =
+          typeof applicationUpdates === 'function'
+            ? await applicationUpdates(currentApplication, transaction)
+            : applicationUpdates
+
         return this.changeLockedApplicationState(
-          {
-            ...currentApplication,
-            answers: application.answers,
-            assignees: application.assignees,
-            attachments: application.attachments,
-          },
+          this.mergeApplicationUpdates(
+            currentApplication,
+            resolvedApplicationUpdates,
+          ),
           template,
           event,
           auth,
@@ -147,6 +168,39 @@ export class ApplicationActionService {
         )
       },
     )
+  }
+
+  private mergeApplicationUpdates(
+    application: BaseApplication,
+    applicationUpdates?: StateChangeApplicationUpdates,
+  ): BaseApplication {
+    if (!applicationUpdates) {
+      return application
+    }
+
+    return {
+      ...application,
+      answers:
+        applicationUpdates.answers !== undefined
+          ? mergeAnswers(application.answers, applicationUpdates.answers)
+          : application.answers,
+      assignees:
+        applicationUpdates.assignees !== undefined
+          ? Array.from(
+              new Set([
+                ...application.assignees,
+                ...applicationUpdates.assignees,
+              ]),
+            )
+          : application.assignees,
+      attachments:
+        applicationUpdates.attachments !== undefined
+          ? {
+              ...application.attachments,
+              ...applicationUpdates.attachments,
+            }
+          : application.attachments,
+    }
   }
 
   private async changeLockedApplicationState(
@@ -258,8 +312,7 @@ export class ApplicationActionService {
 
       updatedApplication = update.updatedApplication as BaseApplication
 
-      // Wait for both promises in parallel, no fail fast
-      await Promise.allSettled([
+      await Promise.all([
         this.historyService.saveStateTransition(
           application.id,
           newState,
