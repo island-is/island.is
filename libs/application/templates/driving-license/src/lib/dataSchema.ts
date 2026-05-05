@@ -91,21 +91,32 @@ const baseSchema = z.object({
 // non-empty array. The field-level refine inside baseSchema only validates
 // the shape of files when present; this enforces "must upload" at the form
 // level. Treat missing flag as false so legacy 65+ drafts continue to pass.
-// Cast back to the base ZodObject type — the application framework's Schema
-// type is `ZodObject<any>`, but `.superRefine` returns `ZodEffects`. At
-// runtime both expose `.parse` / `.safeParse`, so the framework works
-// correctly; the cast just satisfies the static type.
-export const dataSchema = baseSchema.superRefine((data, ctx) => {
-  const isRedesigned65 =
-    data.applicationFor === B_FULL_RENEWAL_65 &&
-    data.is65RenewalRedesignEnabled === true
-  if (!isRedesigned65) return
-  const files = data.healthCertificate
-  if (!files || files.length === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['healthCertificate'],
-      params: m.healthCertificateRequired,
-    })
-  }
-}) as unknown as typeof baseSchema
+//
+// Two important details:
+//   1. We chain `.partial()` BEFORE `.superRefine` so every field becomes
+//      optional in the schema itself. The application framework detects
+//      ZodEffects schemas (via `instanceof`) and calls `.parse(answers)`
+//      directly — WITHOUT applying its own `.partial()` wrap. So if the
+//      base were not partial here, every required field would fail
+//      validation before the user has filled them in. Field-level refines
+//      still fire on values that ARE present.
+//   2. The framework's `Schema` type is `ZodObject<any>`, but `.superRefine`
+//      returns `ZodEffects`. We cast back to the base type to satisfy the
+//      static type; at runtime both expose `.parse` / `.safeParse`, and the
+//      framework dispatches correctly via its `instanceof ZodEffects` check.
+export const dataSchema = baseSchema
+  .partial()
+  .superRefine((data, ctx) => {
+    const isRedesigned65 =
+      data.applicationFor === B_FULL_RENEWAL_65 &&
+      data.is65RenewalRedesignEnabled === true
+    if (!isRedesigned65) return
+    const files = data.healthCertificate
+    if (!files || files.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['healthCertificate'],
+        params: m.healthCertificateRequired,
+      })
+    }
+  }) as unknown as typeof baseSchema

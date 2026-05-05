@@ -94,4 +94,18 @@ describe('dataSchema — 65+ redesign cert requirement', () => {
     })
     expect(certIssue(result)).toBe(false)
   })
+
+  // Reproduces the bug that surfaced during local QA: when the framework
+  // submits incremental answers (only fields the user has touched so far),
+  // the schema must not fail on missing required fields. We rely on
+  // `.partial()` baked into the schema for this; without it, the framework's
+  // `instanceof ZodEffects` branch calls `.parse` directly and every required
+  // field comes back as "Ógilt gildi" before the user has reached them.
+  it('does not fail when most fields are missing (incremental fake-data screen)', () => {
+    const result = dataSchema.safeParse({
+      fakeData: { useFakeData: 'yes' },
+    })
+    // Should succeed, or at most flag fields the user has actually touched.
+    expect(result.success).toBe(true)
+  })
 })
