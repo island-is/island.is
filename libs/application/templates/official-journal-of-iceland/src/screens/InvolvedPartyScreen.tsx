@@ -103,11 +103,7 @@ export const InvolvedPartyScreen = ({
       setValue('applicationType', ApplicationTypes.AD)
 
       const currentAnswers = structuredClone(application.answers)
-      set(
-        currentAnswers,
-        InputFields.advert.involvedPartyId,
-        involvedParty.id,
-      )
+      set(currentAnswers, InputFields.advert.involvedPartyId, involvedParty.id)
       set(currentAnswers, 'applicationType', ApplicationTypes.AD)
 
       updateApplication(currentAnswers, () => {
@@ -118,9 +114,7 @@ export const InvolvedPartyScreen = ({
       return
     }
 
-    const isMinistry = involvedParty.title
-      .toLowerCase()
-      .includes('ráðuneyti')
+    const isMinistry = involvedParty.title.toLowerCase().includes('ráðuneyti')
 
     setIsCurrentPartyMinistry(isMinistry)
 
