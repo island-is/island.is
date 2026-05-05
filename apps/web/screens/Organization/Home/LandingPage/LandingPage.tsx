@@ -16,7 +16,6 @@ import {
   FeaturedArticlesSlice,
   HeadWithSocialSharing,
   IconTitleCard,
-  OrganizationFooter,
 } from '@island.is/web/components'
 import {
   Article,
@@ -203,9 +202,6 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
             </GridColumn>
           </GridRow>
         </GridContainer>
-        {organization && (
-          <OrganizationFooter organizations={[organization]} force={true} />
-        )}
       </Stack>
     </>
   )
