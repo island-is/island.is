@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../../lib/messages'
 import { useEnvironmentQuery } from '../../../../hooks/useEnvironmentQuery'
-import { authAdminEnvironments } from '../../../../utils/environments'
+import {
+  authAdminEnvironments,
+  pickBestEnvironment,
+} from '../../../../utils/environments'
 import {
   ApiScopeUserIntent,
   type ApiScopeUsersActionResult,
@@ -229,15 +232,10 @@ export const useApiScopeUserModal = ({
       }
 
       if (envData.length > 0) {
-        // Select environment: prefer current selection if available,
-        // otherwise pick the highest available (Production > Staging > Dev)
-        const currentEnv = selectedEnvResult.environment
         const available = envData.map((e) => e.environment)
-        const bestEnv = available.includes(currentEnv)
-          ? currentEnv
-          : [...authAdminEnvironments]
-              .reverse()
-              .find((env) => available.includes(env)) ?? available[0]
+        const bestEnv =
+          pickBestEnvironment(selectedEnvResult.environment, available) ??
+          available[0]
 
         const targetData =
           envData.find((e) => e.environment === bestEnv) ?? envData[0]

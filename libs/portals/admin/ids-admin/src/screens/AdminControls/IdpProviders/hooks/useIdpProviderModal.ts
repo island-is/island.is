@@ -8,7 +8,10 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../../lib/messages'
 import { useEnvironmentQuery } from '../../../../hooks/useEnvironmentQuery'
-import { authAdminEnvironments } from '../../../../utils/environments'
+import {
+  authAdminEnvironments,
+  pickBestEnvironment,
+} from '../../../../utils/environments'
 import {
   IdpProviderIntent,
   type IdpProvidersActionResult,
@@ -145,14 +148,10 @@ export const useIdpProviderModal = ({
       if (availableEnvironments) {
         setUserAvailableEnvironments(availableEnvironments)
 
-        // Select environment: prefer current selection if available,
-        // otherwise pick the highest available (Production > Staging > Dev)
-        const currentEnv = selectedEnvResult.environment
-        const bestEnv = availableEnvironments.includes(currentEnv)
-          ? currentEnv
-          : [...authAdminEnvironments]
-              .reverse()
-              .find((env) => availableEnvironments.includes(env))
+        const bestEnv = pickBestEnvironment(
+          selectedEnvResult.environment,
+          availableEnvironments,
+        )
 
         if (bestEnv) {
           updateEnvironment(bestEnv)
@@ -160,7 +159,7 @@ export const useIdpProviderModal = ({
 
         // Load form data from the selected environment
         const targetEnvData = idpData.environments?.find(
-          (e) => e.environment === (bestEnv ?? currentEnv),
+          (e) => e.environment === bestEnv,
         )
         if (targetEnvData) {
           setFormData((prev) => ({
