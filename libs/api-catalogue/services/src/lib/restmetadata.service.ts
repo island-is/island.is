@@ -105,7 +105,7 @@ export class RestMetadataService {
             })
           }
         } else {
-          logger.error(
+          logger.warn(
             `OpenAPI not found or is invalid for service code ${sorted[i].memberCode}/${sorted[i].subsystemCode}/${sorted[i].serviceCode}`,
           )
         }
@@ -210,7 +210,7 @@ export class RestMetadataService {
 
   private validateSpec(spec: OpenApi): boolean {
     if (!spec.info.title) {
-      logger.error('OpenApi Specification is missing info.title')
+      logger.warn('OpenApi Specification is missing info.title')
       return false
     }
 
@@ -221,7 +221,7 @@ export class RestMetadataService {
       // required and contains only valid values
       for (const item of spec.info['x-category']) {
         if (!Object.values(DataCategory).includes(item as DataCategory)) {
-          logger.error(`${item} is not valid value for DataCategory`)
+          logger.warn(`${item} is not valid value for DataCategory`)
           return false
         }
       }
@@ -234,7 +234,7 @@ export class RestMetadataService {
       // required and contains only valid values
       for (const item of spec.info['x-pricing']) {
         if (!Object.values(PricingCategory).includes(item as PricingCategory)) {
-          logger.error(`${item} is not valid value for PricingCategory`)
+          logger.warn(`${item} is not valid value for PricingCategory`)
           return false
         }
       }
