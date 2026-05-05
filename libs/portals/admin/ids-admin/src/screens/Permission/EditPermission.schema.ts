@@ -145,7 +145,9 @@ const delegationsSchema = z
     originUrl: z
       .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
       .optional(),
-    targetLinkUri: z.string().optional(),
+    targetLinkUri: z
+      .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
+      .optional(),
   })
   .merge(defaultEnvironmentSchema)
   .transform(
