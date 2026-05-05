@@ -260,7 +260,9 @@ const Statement = () => {
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
           nextIsDisabled={
-            appealStatementFiles.length === 0 || isCreatingAppealEventLog
+            !targetAppealCaseId ||
+            appealStatementFiles.length === 0 ||
+            isCreatingAppealEventLog
           }
           nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
           nextButtonIcon={undefined}
