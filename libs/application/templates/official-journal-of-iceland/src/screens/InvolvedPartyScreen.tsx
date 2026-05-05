@@ -120,7 +120,6 @@ export const InvolvedPartyScreen = ({
 
     setValue(InputFields.advert.involvedPartyId, involvedParty.id)
     setValue(InputFields.advert.involvedPartyTitle, involvedParty.title)
-    setValue(InputFields.requirements.additionalParties, [])
 
     const currentAnswers = structuredClone(application.answers)
 
@@ -130,12 +129,16 @@ export const InvolvedPartyScreen = ({
       InputFields.advert.involvedPartyTitle,
       involvedParty.title,
     )
-    set(currentAnswers, InputFields.requirements.additionalParties, [])
 
     // Pre-set applicationType for non-ministry parties so the
-    // TypeSelection screen can be skipped entirely.
+    // TypeSelection screen can be skipped entirely. additionalParties is
+    // also cleared here — it's only meaningful for ministries, and a
+    // ministry returning to this screen must keep its previously selected
+    // parties intact.
     if (!isMinistry) {
+      setValue(InputFields.requirements.additionalParties, [])
       setValue('applicationType', ApplicationTypes.AD)
+      set(currentAnswers, InputFields.requirements.additionalParties, [])
       set(currentAnswers, 'applicationType', ApplicationTypes.AD)
 
       updateApplication(currentAnswers, () => {
