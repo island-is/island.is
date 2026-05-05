@@ -4,7 +4,7 @@ mutation TransitionCase($input: TransitionCaseInput!) {
     appealCase {
       appealState
       appealReceivedByCourtDate
+      statementDeadline
     }
-    statementDeadline
   }
 }

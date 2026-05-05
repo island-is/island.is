@@ -83,7 +83,6 @@ query Case($input: CaseQueryInput!) {
       alternativeServiceDescription
       indictmentReviewDecision
       isDrivingLicenseSuspended
-      appealStatementDate
       policeCaseNumbers
       indictmentCancelledOrDismissedState {
         type
@@ -391,22 +390,30 @@ query Case($input: CaseQueryInput!) {
       generatedPdfUri
     }
     requestDriversLicenseSuspension
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     canProsecutorAppeal
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
       id
       appealState
       appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -608,7 +615,6 @@ query Case($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
-      appealStatementDate
     }
     victims {
       id

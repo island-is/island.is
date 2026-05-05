@@ -87,9 +87,9 @@ const CaseOverviewHeader: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const wasAppealedAfterDeadline =
-    workingCase.appealedDate &&
+    workingCase.appealCase?.appealedDate &&
     workingCase.appealDeadline &&
-    workingCase.appealedDate > workingCase.appealDeadline
+    workingCase.appealCase.appealedDate > workingCase.appealDeadline
 
   return (
     <div className={grid({ gap: 5 })}>

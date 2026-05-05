@@ -160,7 +160,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
               })}
             </Text>
-            {workingCase.appealedDate && (
+            {workingCase.appealCase?.appealedDate && (
               <Box marginBottom={1}>
                 <Text as="h5" variant="h5">
                   {getAppealActorText(workingCase)}
