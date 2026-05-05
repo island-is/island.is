@@ -3,6 +3,9 @@ import {
   IsArray,
   IsBoolean,
   IsOptional,
+  IsUrl,
+  MaxLength,
+  ValidateIf,
   ValidateNested,
   IsString,
 } from 'class-validator'
@@ -176,6 +179,21 @@ export class AdminPatchScopeDto {
       'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
   })
   requiresConfirmation?: boolean
+
+  @IsString()
+  @IsOptional()
+  @ValidateIf((o) => !!o.thirdPartyLoginUrl)
+  @IsUrl(
+    { protocols: ['https'], require_protocol: true },
+    { message: 'thirdPartyLoginUrl must be an HTTPS URL' },
+  )
+  @MaxLength(2000)
+  @ApiPropertyOptional({
+    example:
+      'https://example.com/bff/login?login_hint={{subjectId}}&target_link_uri=https://example.com/minarsidur',
+    description: 'URL to redirect to for third party delegation login',
+  })
+  thirdPartyLoginUrl?: string
 }
 
 /**
