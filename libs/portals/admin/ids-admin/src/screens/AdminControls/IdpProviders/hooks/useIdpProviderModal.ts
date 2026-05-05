@@ -13,52 +13,52 @@ import {
   pickBestEnvironment,
 } from '../../../../utils/environments'
 import {
-  GrantTypeIntent,
-  type GrantTypesActionResult,
-} from '../GrantTypes.action'
+  IdpProviderIntent,
+  type IdpProvidersActionResult,
+} from '../IdpProviders.action'
 import {
-  GetGrantTypeDocument,
-  type GetGrantTypeQuery,
-  type GetGrantTypeQueryVariables,
-  useCreateGrantTypeMutation,
-} from '../GrantTypes.generated'
+  GetIdpProviderDocument,
+  type GetIdpProviderQuery,
+  type GetIdpProviderQueryVariables,
+  useCreateIdpProviderMutation,
+} from '../IdpProviders.generated'
 import {
   emptyForm,
-  type GrantTypeFormData,
-  type GrantTypeRow,
+  type IdpProviderFormData,
+  type IdpProviderRow,
   type FormErrors,
-} from '../GrantTypes.types'
-import { validateGrantTypeForm, hasErrors } from '../GrantTypes.utils'
+} from '../IdpProviders.types'
+import { validateIdpProviderForm, hasErrors } from '../IdpProviders.utils'
 
-interface UseGrantTypeModalParams {
+interface UseIdpProviderModalParams {
   configuredEnvironments: AuthAdminEnvironment[]
 }
 
-export const useGrantTypeModal = ({
+export const useIdpProviderModal = ({
   configuredEnvironments,
-}: UseGrantTypeModalParams) => {
+}: UseIdpProviderModalParams) => {
   const { formatMessage } = useLocale()
-  const fetcher = useFetcher<GrantTypesActionResult>()
+  const fetcher = useFetcher<IdpProvidersActionResult>()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState<GrantTypeFormData>(emptyForm)
+  const [formData, setFormData] = useState<IdpProviderFormData>(emptyForm)
   const [selectedEnvironments, setSelectedEnvironments] = useState<
     AuthAdminEnvironment[]
   >([])
   const [userAvailableEnvironments, setUserAvailableEnvironments] = useState<
     AuthAdminEnvironment[]
   >([])
-  const [loadingGrantType, setLoadingGrantType] = useState(false)
+  const [loadingIdpProvider, setLoadingIdpProvider] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
-  const lastHandledFetcherData = useRef<GrantTypesActionResult | null>(null)
+  const lastHandledFetcherData = useRef<IdpProvidersActionResult | null>(null)
 
-  const [fetchGrantType] = useLazyQuery<
-    GetGrantTypeQuery,
-    GetGrantTypeQueryVariables
-  >(GetGrantTypeDocument, { fetchPolicy: 'network-only' })
+  const [fetchIdpProvider] = useLazyQuery<
+    GetIdpProviderQuery,
+    GetIdpProviderQueryVariables
+  >(GetIdpProviderDocument, { fetchPolicy: 'network-only' })
   const [publishToEnvironment, { loading: isPublishing }] =
-    useCreateGrantTypeMutation()
+    useCreateIdpProviderMutation()
 
   const environmentWrappers = useMemo(() => {
     const envs = configuredEnvironments.map((env) => ({ environment: env }))
@@ -91,24 +91,21 @@ export const useGrantTypeModal = ({
       const failedEnvs = data?.failedEnvironments
 
       switch (fetcher.data.intent) {
-        case GrantTypeIntent.create:
-          toast.success(formatMessage(m.grantTypesCreateSuccess))
+        case IdpProviderIntent.create:
+          toast.success(formatMessage(m.idpProvidersCreateSuccess))
           break
-        case GrantTypeIntent.update:
-          toast.success(formatMessage(m.grantTypesUpdateSuccess))
+        case IdpProviderIntent.update:
+          toast.success(formatMessage(m.idpProvidersUpdateSuccess))
           break
-        case GrantTypeIntent.delete:
-          toast.success(formatMessage(m.grantTypesDeleteSuccess))
-          break
-        case GrantTypeIntent.restore:
-          toast.success(formatMessage(m.grantTypesRestoreSuccess))
+        case IdpProviderIntent.delete:
+          toast.success(formatMessage(m.idpProvidersDeleteSuccess))
           break
       }
 
       if (failedEnvs && failedEnvs.length > 0) {
         const envNames = failedEnvs.map((f) => f.environment).join(', ')
         toast.warning(
-          formatMessage(m.grantTypesPartialFailure, {
+          formatMessage(m.idpProvidersPartialFailure, {
             environments: envNames,
           }),
         )
@@ -116,7 +113,7 @@ export const useGrantTypeModal = ({
 
       resetModalState()
     } else {
-      toast.error(formatMessage(m.grantTypesError))
+      toast.error(formatMessage(m.idpProvidersError))
     }
   }, [fetcher.data, formatMessage, resetModalState])
 
@@ -129,25 +126,28 @@ export const useGrantTypeModal = ({
     setModalVisible(true)
   }
 
-  const openEditModal = async (grantType: GrantTypeRow) => {
+  const openEditModal = async (idpProvider: IdpProviderRow) => {
     setIsEditing(true)
     setFormData({
-      name: grantType.name,
-      description: grantType.description,
+      name: idpProvider.name,
+      description: idpProvider.description,
+      helptext: idpProvider.helptext,
+      level: idpProvider.level,
     })
     setUserAvailableEnvironments([])
     setFormErrors({})
-    setLoadingGrantType(true)
+    setLoadingIdpProvider(true)
     setModalVisible(true)
 
     try {
-      const result = await fetchGrantType({
-        variables: { name: grantType.name },
+      const result = await fetchIdpProvider({
+        variables: { name: idpProvider.name },
       })
-      const gtData = result.data?.authAdminGrantType
-      const availableEnvironments = gtData?.availableEnvironments
+      const idpData = result.data?.authAdminIdpProvider
+      const availableEnvironments = idpData?.availableEnvironments
       if (availableEnvironments) {
         setUserAvailableEnvironments(availableEnvironments)
+
         const bestEnv = pickBestEnvironment(
           selectedEnvResult.environment,
           availableEnvironments,
@@ -158,43 +158,43 @@ export const useGrantTypeModal = ({
         }
 
         // Load form data from the selected environment
-        const targetEnvData = gtData.environments?.find(
+        const targetEnvData = idpData.environments?.find(
           (e) => e.environment === bestEnv,
         )
         if (targetEnvData) {
           setFormData((prev) => ({
             ...prev,
             description: targetEnvData.description,
+            helptext: targetEnvData.helptext,
+            level: targetEnvData.level,
           }))
         }
       }
     } catch {
-      toast.error(formatMessage(m.grantTypesError))
+      toast.error(formatMessage(m.idpProvidersError))
     } finally {
-      setLoadingGrantType(false)
+      setLoadingIdpProvider(false)
     }
   }
 
   const handleSubmit = async () => {
-    const errors = validateGrantTypeForm({
+    const errors = validateIdpProviderForm({
       formData,
       isEditing,
       selectedEnvironments,
       formatMessage,
     })
 
-    if (!isEditing) {
+    if (!isEditing && !hasErrors(errors)) {
       try {
-        const { data } = await fetchGrantType({
+        const { data } = await fetchIdpProvider({
           variables: { name: formData.name },
         })
-        if (data?.authAdminGrantType) {
-          errors.name = formatMessage(m.grantTypesErrorNameExists)
+        if (data?.authAdminIdpProvider) {
+          errors.name = formatMessage(m.idpProvidersErrorNameExists)
         }
       } catch {
-        errors.name = formatMessage(m.grantTypesErrorNameCheckFailed)
-        setFormErrors(errors)
-        return
+        errors.name = formatMessage(m.idpProvidersErrorNameCheckFailed)
       }
     }
 
@@ -204,12 +204,16 @@ export const useGrantTypeModal = ({
       return
     }
 
-    const intent = isEditing ? GrantTypeIntent.update : GrantTypeIntent.create
+    const intent = isEditing
+      ? IdpProviderIntent.update
+      : IdpProviderIntent.create
 
     const submitData = new FormData()
     submitData.set('intent', intent)
     submitData.set('name', formData.name)
     submitData.set('description', formData.description)
+    submitData.set('helptext', formData.helptext)
+    submitData.set('level', String(formData.level))
 
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
@@ -227,6 +231,8 @@ export const useGrantTypeModal = ({
           input: {
             name: formData.name,
             description: formData.description,
+            helptext: formData.helptext,
+            level: formData.level,
             environments: [targetEnvironment],
           },
         },
@@ -235,12 +241,12 @@ export const useGrantTypeModal = ({
       setUserAvailableEnvironments((prev) => [...prev, targetEnvironment])
       updateEnvironment(targetEnvironment)
       toast.success(
-        formatMessage(m.grantTypesPublishSuccess, {
+        formatMessage(m.idpProvidersPublishSuccess, {
           environment: targetEnvironment,
         }),
       )
     } catch {
-      toast.error(formatMessage(m.grantTypesError))
+      toast.error(formatMessage(m.idpProvidersError))
     }
   }
 
@@ -263,19 +269,7 @@ export const useGrantTypeModal = ({
 
   const handleDelete = (name: string, environments: AuthAdminEnvironment[]) => {
     const submitData = new FormData()
-    submitData.set('intent', GrantTypeIntent.delete)
-    submitData.set('name', name)
-    submitData.set('environments', JSON.stringify(environments))
-
-    fetcher.submit(submitData, { method: 'post' })
-  }
-
-  const handleRestore = (
-    name: string,
-    environments: AuthAdminEnvironment[],
-  ) => {
-    const submitData = new FormData()
-    submitData.set('intent', GrantTypeIntent.restore)
+    submitData.set('intent', IdpProviderIntent.delete)
     submitData.set('name', name)
     submitData.set('environments', JSON.stringify(environments))
 
@@ -298,7 +292,10 @@ export const useGrantTypeModal = ({
     [userAvailableEnvironments, configuredEnvironments, formatMessage],
   )
 
-  const setFormField = (field: keyof GrantTypeFormData, value: string) => {
+  const setFormField = (
+    field: keyof IdpProviderFormData,
+    value: string | number,
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     if (formErrors[field]) {
       setFormErrors((prev) => ({ ...prev, [field]: undefined }))
@@ -311,7 +308,7 @@ export const useGrantTypeModal = ({
     formData,
     formErrors,
     selectedEnvironments,
-    loadingGrantType,
+    loadingIdpProvider,
     isSubmitting: fetcher.state !== 'idle',
     isPublishing,
     environmentOptions,
@@ -322,11 +319,10 @@ export const useGrantTypeModal = ({
     resetModalState,
     handleSubmit,
     handleDelete,
-    handleRestore,
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,
   }
 }
 
-export type GrantTypeModalState = ReturnType<typeof useGrantTypeModal>
+export type IdpProviderModalState = ReturnType<typeof useIdpProviderModal>

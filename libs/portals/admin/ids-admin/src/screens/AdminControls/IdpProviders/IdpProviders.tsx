@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useLoaderData, useNavigation } from 'react-router-dom'
 
 import { Box, Button, FilterInput } from '@island.is/island-ui/core'
@@ -6,21 +6,17 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 
 import { m } from '../../../lib/messages'
-import type { ApiScopeUsersLoaderData } from './ApiScopeUsers.loader'
-import { PAGE_SIZE } from './ApiScopeUsers.utils'
-import { useDebouncedSearch } from './hooks/useDebouncedSearch'
-import { useApiScopeUserModal } from './hooks/useApiScopeUserModal'
-import { ApiScopeUsersTable } from './components/ApiScopeUsersTable'
-import { ApiScopeUserModal } from './components/ApiScopeUserModal'
+import type { IdpProvidersLoaderData } from './IdpProviders.loader'
+import { PAGE_SIZE } from './IdpProviders.utils'
+import { useDebouncedSearch } from '../ApiScopeUsers/hooks/useDebouncedSearch'
+import { useIdpProviderModal } from './hooks/useIdpProviderModal'
+import { IdpProvidersTable } from './components/IdpProvidersTable'
+import { IdpProviderModal } from './components/IdpProviderModal'
 
-const ApiScopeUsers = () => {
+const IdpProviders = () => {
   const { formatMessage } = useLocale()
-  const data = useLoaderData() as ApiScopeUsersLoaderData
+  const data = useLoaderData() as IdpProvidersLoaderData
 
-  const accessControlledScopes = useMemo(
-    () => data?.accessControlledScopes ?? [],
-    [data?.accessControlledScopes],
-  )
   const configuredEnvironments = useMemo(
     () => data?.configuredEnvironments ?? [],
     [data?.configuredEnvironments],
@@ -35,18 +31,17 @@ const ApiScopeUsers = () => {
     clearSearch,
   } = useDebouncedSearch()
 
-  const modal = useApiScopeUserModal({
-    accessControlledScopes,
+  const modal = useIdpProviderModal({
     configuredEnvironments,
   })
 
-  const totalPages = Math.ceil((data?.users.totalCount ?? 0) / PAGE_SIZE)
+  const totalPages = Math.ceil((data?.idpProviders.totalCount ?? 0) / PAGE_SIZE)
 
   return (
     <Box>
       <IntroHeader
-        title={formatMessage(m.apiScopeUsers)}
-        intro={formatMessage(m.apiScopeUsersDescription)}
+        title={formatMessage(m.idpProviders)}
+        intro={formatMessage(m.idpProvidersIntro)}
       />
 
       <Box
@@ -58,20 +53,20 @@ const ApiScopeUsers = () => {
       >
         <Box flexGrow={1} style={{ maxWidth: 400 }}>
           <FilterInput
-            placeholder={formatMessage(m.apiScopeUsersSearchPlaceholder)}
-            name="api-scope-users-search"
+            placeholder={formatMessage(m.idpProvidersSearchPlaceholder)}
+            name="idp-providers-search"
             value={localSearch}
             onChange={handleSearch}
             backgroundColor="blue"
           />
         </Box>
         <Button size="small" onClick={modal.openCreateModal}>
-          {formatMessage(m.apiScopeUsersCreateNew)}
+          {formatMessage(m.idpProvidersCreateNew)}
         </Button>
       </Box>
 
-      <ApiScopeUsersTable
-        rows={data.users.rows}
+      <IdpProvidersTable
+        rows={data.idpProviders.rows}
         currentPage={currentPage}
         totalPages={totalPages}
         configuredEnvironments={configuredEnvironments}
@@ -83,9 +78,9 @@ const ApiScopeUsers = () => {
         onClearSearch={clearSearch}
       />
 
-      <ApiScopeUserModal modal={modal} />
+      <IdpProviderModal modal={modal} />
     </Box>
   )
 }
 
-export default ApiScopeUsers
+export default IdpProviders
