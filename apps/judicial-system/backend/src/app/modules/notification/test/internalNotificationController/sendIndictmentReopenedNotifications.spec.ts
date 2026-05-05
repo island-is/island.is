@@ -197,7 +197,7 @@ describe('InternalNotificationController - Send indictment reopened notification
   })
 
   describe('sends to public prosecutor when case was sent to public prosecutor', () => {
-    const publicProsecutorEmail = `publicProsecutor-${uuid()}@test.is`
+    const publicProsecutorEmail = `publicProsecutor-${uuid()}@omnitrix.is`
 
     const caseWithPublicProsecutorEventLog = {
       ...baseCase,

@@ -1974,6 +1974,7 @@ export class CaseNotificationService extends BaseNotificationService {
               html: body,
               recipientName: 'Fangelsismálastofnun',
               recipientEmail: this.config.email.prisonAdminEmail,
+              skipTail: true,
             }),
           ]
         : []),
@@ -1984,6 +1985,7 @@ export class CaseNotificationService extends BaseNotificationService {
               html: body,
               recipientName: 'Ríkissaksóknari',
               recipientEmail: publicProsecutorEmail,
+              skipTail: true,
             }),
           ]
         : []),
