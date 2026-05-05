@@ -4,6 +4,7 @@ query getUnemploymentApplicationOverview($locale: String) {
     unemploymentApplicationId
     applicationStatusId
     applicationStatusName
+    applicationStatusColor
     dataRequested
     availableActions {
       canContact

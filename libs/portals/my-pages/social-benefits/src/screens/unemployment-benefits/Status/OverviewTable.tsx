@@ -1,19 +1,14 @@
-import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
-import { GetUnemploymentApplicationOverviewQuery } from './Status.generated'
+import { Box, Divider, Stack, Tag, TagVariant } from '@island.is/island-ui/core'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
-import { applicationStatusColorMap } from '../../../lib/utils/vmstApplicationStatusColorMap'
-
-type OverviewItem = NonNullable<
-  GetUnemploymentApplicationOverviewQuery['vmstApplicationsUnemploymentApplicationOverview']['overviewItems']
->[number]
+import { VmstOverviewItem } from '@island.is/portals/my-pages/graphql'
 
 interface OverviewTableProps {
-  overviewItems: OverviewItem[]
+  overviewItems: VmstOverviewItem[]
   applicationStatusName?: string | null
-  applicationStatusId?: string | null
+  applicationStatusColor?: TagVariant | null
   dataRequested?: boolean | null
 }
 
@@ -34,17 +29,14 @@ const getJobSearchConfirmationDateRange = (locale: Locale): string => {
 const getRowTag = (
   key: string | null | undefined,
   applicationStatusName?: string | null,
-  applicationStatusId?: string | null,
+  applicationStatusColor?: TagVariant | null,
   dateRangeLabel?: string,
 ): (() => React.ReactNode) | undefined => {
   switch (key) {
     case 'application-status': {
       if (!applicationStatusName) return undefined
-      const tagVariant =
-        applicationStatusColorMap[applicationStatusId?.toUpperCase() ?? ''] ??
-        'warn'
       return () => (
-        <Tag variant={tagVariant} outlined disabled>
+        <Tag variant={applicationStatusColor ?? 'warn'} outlined disabled>
           {applicationStatusName}
         </Tag>
       )
@@ -63,7 +55,7 @@ const getRowTag = (
 export const OverviewTable = ({
   overviewItems,
   applicationStatusName,
-  applicationStatusId,
+  applicationStatusColor,
   dataRequested,
 }: OverviewTableProps) => {
   const { formatMessage, lang } = useLocale()
@@ -77,7 +69,7 @@ export const OverviewTable = ({
           const tag = getRowTag(
             item.key,
             applicationStatusName,
-            applicationStatusId,
+            applicationStatusColor,
             dateRangeLabel,
           )
           return (

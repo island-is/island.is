@@ -31,7 +31,7 @@ export const unemploymentBenefitsMessages = defineMessages({
   },
   statusSubmitDocumentsUrl: {
     id: 'sp.social-benefits-unemployment:statusSubmitDocumentsUrl',
-    defaultMessage: 'https://island.is/test',
+    defaultMessage: 'https://island.is/skila-gognum-vmst',
   },
   statusReportIncome: {
     id: 'sp.social-benefits-unemployment:statusReportIncome',
@@ -47,7 +47,7 @@ export const unemploymentBenefitsMessages = defineMessages({
   },
   statusReportTravelUrl: {
     id: 'sp.social-benefits-unemployment:statusReportTravelUrl',
-    defaultMessage: 'https://island.is/umsoknir/tilkynna-utanlandsford',
+    defaultMessage: 'https://island.is/umsoknir/tilkynna-utanlandsferd',
   },
   statusUnsubscribe: {
     id: 'sp.social-benefits-unemployment:statusUnsubscribe',
@@ -55,7 +55,7 @@ export const unemploymentBenefitsMessages = defineMessages({
   },
   statusUnsubscribeUrl: {
     id: 'sp.social-benefits-unemployment:statusUnsubscribeUrl',
-    defaultMessage: 'https://island.is/umsoknir/afskra-af-botum',
+    defaultMessage: 'https://island.is/umsoknir/afskraning-atvinnuleysisbota',
   },
   statusMoreActions: {
     id: 'sp.social-benefits-unemployment:statusMoreActions',

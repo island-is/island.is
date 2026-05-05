@@ -7,7 +7,7 @@ import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import {
   ValidationUnemploymentApplication,
-  UnemploymentApplicationOverview,
+  VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsOverview,
   VmstApplicantOverview,
   VmstApplicantRequestedAttachment,
@@ -70,7 +70,7 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
   }
 
-  @Query(() => UnemploymentApplicationOverview, {
+  @Query(() => VmstApplicationsUnemploymentApplicationOverview, {
     name: 'vmstApplicationsUnemploymentApplicationOverview',
   })
   @Audit()
@@ -78,7 +78,7 @@ export class VMSTApplicationsResolver {
     @CurrentUser() auth: User,
     @Args('locale', { type: () => String, nullable: true })
     locale?: Locale,
-  ) {
+  ): Promise<VmstApplicationsUnemploymentApplicationOverview | undefined> {
     return this.vmstApplicationsService.getApplicationOverview(auth, locale)
   }
 

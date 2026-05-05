@@ -66,7 +66,6 @@ export class VmstUnemploymentClientService {
   async createApiClient<T extends VmstApis>(
     ApiClass: ApiConstructor<T>,
     fetchName: string,
-    errorMessage: string,
   ): Promise<T> {
     const authApi = new AuthApi(
       new Configuration({
@@ -84,7 +83,9 @@ export class VmstUnemploymentClientService {
     })
 
     if (!authToken) {
-      throw new Error(errorMessage)
+      throw new Error(
+        `Creating ${ApiClass.name} client failed, no auth token returned`,
+      )
     }
 
     const api = new ApiClass(
@@ -109,7 +110,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
-      'Unemployment API auth failed',
     )
 
     const response =
@@ -125,7 +125,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ActivationGrantApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     const response =
@@ -139,7 +138,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       AttachmentApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
     return await api.attachmentAttachmentTypes({ onlyVisible: false })
   }
@@ -150,7 +148,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       AttachmentApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     const response = await api.attachmentCreateAttachment(requestParameter)
@@ -164,7 +161,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ActivationGrantApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     const response = await api.activationGrantCreateActivationGrant(
@@ -179,7 +175,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ActivationGrantApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     const response = await api.activationGrantValidateBankInformation(
@@ -196,7 +191,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     return await api.unemploymentApplicationValidatePaymentPage(
@@ -210,7 +204,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     return await api.applicantGetUnemploymentApplicationsWithdrawOverview({
@@ -224,7 +217,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       SupportDataApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     return await api.supportDataGetDelistingReasons()
@@ -236,7 +228,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     return await api.unemploymentApplicationWithdrawApplication(
@@ -250,7 +241,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
-      'Activation Grant API auth failed',
     )
 
     return await api.unemploymentApplicationValidatePaymentPage2(
@@ -268,7 +258,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
-      'Unemployment API auth failed',
     )
 
     const lang = language ? language.toUpperCase() : null
@@ -284,7 +273,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
-      'Unemployment API auth failed',
     )
     return await api.unemploymentApplicationCreateUnemploymentApplication(
       request,
@@ -297,7 +285,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Applicant API auth failed',
     )
 
     return await api.applicantResolve({
@@ -317,7 +304,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicationApi,
       'clients-vmst-unemployment',
-      'Application API auth failed',
     )
 
     const lang = language ? language.toUpperCase() : null
@@ -340,7 +326,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Applicant API auth failed',
     )
 
     const lang = language ? language.toUpperCase() : null
@@ -360,7 +345,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Applicant API auth failed',
     )
 
     return await api.applicantGetApplicantRequestedAttachments({
@@ -377,7 +361,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Applicant API auth failed',
     )
 
     return await api.applicantGetActions({
@@ -398,7 +381,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Applicant API auth failed',
     )
     await api.applicantCreateJobSearchConfirmations({
       id: applicantId,
@@ -419,7 +401,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Applicant API auth failed',
     )
 
     return await api.applicantGetJobSearchConfirmationEligibility({
@@ -433,7 +414,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Unemployment API auth failed',
     )
     return await api.applicantGetApplicantInfo(requestParameters)
   }
@@ -442,7 +422,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Unemployment API auth failed',
     )
     return await api.applicantGetApplicantInfoSupportData()
   }
@@ -453,7 +432,6 @@ export class VmstUnemploymentClientService {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
-      'Unemployment API auth failed',
     )
     return await api.applicantUpdateApplicant(requestParameters)
   }

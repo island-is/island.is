@@ -8,7 +8,7 @@ import {
 import { sharedMessages } from '../../lib/messages/shared'
 import {
   unemploymentBenefitsMessages as um,
-  activationGrantMessages as am,
+  // activationGrantMessages as am,
 } from '../../lib/messages/'
 import { AlertMessage, Stack, TagVariant } from '@island.is/island-ui/core'
 import {
@@ -16,17 +16,13 @@ import {
   UnemploymentBenefitsPaths,
 } from '../../lib/paths'
 import { useGetApplicationsOverviewQuery } from './SocialBenefitsOverview.generated'
-import { applicationStatusColorMap } from '../../lib/utils/vmstApplicationStatusColorMap'
-
-const VMST_LOGO_URL =
-  'https://images.ctfassets.net/8k0h54kbe6bj/1Dx3m4dQ0fY4H5qFKeefZI/324a13f875fd5cc7b460373d8edf6abc/Vinnumalastofnun-Logo.svg'
 
 const getStatusTag = (
   statusName?: string | null,
-  statusId?: string | null,
+  statusColor?: string | null,
 ): { label: string; variant: TagVariant } => ({
   label: statusName || '',
-  variant: applicationStatusColorMap[statusId?.toUpperCase() ?? ''] ?? 'warn',
+  variant: (statusColor as TagVariant) ?? 'warn',
 })
 
 const SocialBenefitsOverview = () => {
@@ -63,7 +59,7 @@ const SocialBenefitsOverview = () => {
             image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
             tag={getStatusTag(
               overview.unemploymentApplication.statusName,
-              overview.unemploymentApplication.statusId,
+              overview.unemploymentApplication.statusColor,
             )}
           />
         )}

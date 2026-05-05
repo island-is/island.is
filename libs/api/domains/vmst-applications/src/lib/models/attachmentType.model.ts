@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('VmstAttachmentType')
 export class VmstAttachmentType {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field()
+  id!: string
 
   @Field(() => String, { nullable: true })
   name?: string | null
@@ -14,7 +14,7 @@ export class VmstAttachmentType {
 
 @ObjectType('VmstAttachmentTypeList')
 export class VmstAttachmentTypeList {
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   success?: boolean
 
   @Field(() => String, { nullable: true })

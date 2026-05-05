@@ -4,12 +4,14 @@ query GetApplicationsOverview {
       applicationId
       statusId
       statusName
+      statusColor
       isVisible
     }
     activationGrant {
       applicationId
       statusId
       statusName
+      statusColor
       isVisible
     }
   }

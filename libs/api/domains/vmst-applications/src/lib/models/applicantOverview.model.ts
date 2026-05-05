@@ -14,8 +14,8 @@ export class VmstApplicantOverview {
   @Field(() => String, { nullable: true })
   passCode?: string | null
 
-  @Field(() => [String], { nullable: true })
-  preferredJobs?: string[]
+  @Field(() => [String])
+  preferredJobs!: string[]
 
   @Field(() => String, { nullable: true })
   bankAccount?: string | null
@@ -32,24 +32,31 @@ export class VmstApplicantOverview {
   @Field(() => Int, { nullable: true })
   numberOfChildren?: number | null
 
-  @Field(() => [String], { nullable: true })
-  employmentHistory?: string[]
+  @Field(() => [String])
+  employmentHistory!: string[]
 
-  @Field(() => [String], { nullable: true })
-  educationHistory?: string[]
+  @Field(() => [String])
+  educationHistory!: string[]
 
-  @Field(() => [String], { nullable: true })
-  drivingLicenses?: string[]
+  @Field(() => [String])
+  drivingLicenses!: string[]
 
-  @Field(() => [VmstApplicantLanguageOverview], { nullable: true })
-  languageAbilities?: VmstApplicantLanguageOverview[]
+  @Field(() => [VmstApplicantLanguageOverview])
+  languageAbilities!: VmstApplicantLanguageOverview[]
 
   @Field(() => String, { nullable: true })
   serviceArea?: string | null
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    description: 'Is current place of stay different from legal domicile',
+  })
   currentAddressDifferent?: boolean | null
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'Whether the applicant profile has been saved to EURES (European Employment Services), the EU job mobility portal.',
+  })
   savedToEures?: boolean | null
 }

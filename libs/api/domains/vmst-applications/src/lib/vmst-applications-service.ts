@@ -3,9 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
-  GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
   GaldurXRoadAPIModelsResolveApplicantResponse,
-  GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurXRoadAPIModelsAvailableActions,
@@ -13,6 +11,8 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import { VmstApplicationsUnemploymentApplicationOverview } from './models'
+import { resolveStatusColor } from './statusColorMap'
 import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
@@ -98,8 +98,16 @@ export class VMSTApplicationsService {
   async getApplicationOverview(
     auth: User,
     locale?: Locale,
-  ): Promise<GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse> {
-    return this.vmstUnemploymentService.getApplicationOverview(auth, locale)
+  ): Promise<VmstApplicationsUnemploymentApplicationOverview> {
+    const response = await this.vmstUnemploymentService.getApplicationOverview(
+      auth,
+      locale,
+    )
+
+    return {
+      ...response,
+      applicationStatusColor: resolveStatusColor(response.applicationStatusId),
+    }
   }
 
   async resolveApplicant(
@@ -108,10 +116,19 @@ export class VMSTApplicationsService {
     return this.vmstUnemploymentService.resolveApplicant(auth)
   }
 
-  async getApplicationsOverview(
-    applicantId: string,
-  ): Promise<GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse> {
-    return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
+  async getApplicationsOverview(applicantId: string) {
+    const response = await this.vmstUnemploymentService.getApplicationsOverview(
+      applicantId,
+    )
+
+    const enrich = (item?: { statusId?: string | null } | null) =>
+      item ? { ...item, statusColor: resolveStatusColor(item.statusId) } : item
+
+    return {
+      ...response,
+      unemploymentApplication: enrich(response.unemploymentApplication),
+      activationGrant: enrich(response.activationGrant),
+    }
   }
 
   async getApplicantOverview(

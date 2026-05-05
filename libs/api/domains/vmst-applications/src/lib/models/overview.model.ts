@@ -1,41 +1,52 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+export enum VmstApplicationStatusColor {
+  mint = 'mint',
+  purple = 'purple',
+  red = 'red',
+  warn = 'warn',
+}
+
+registerEnumType(VmstApplicationStatusColor, {
+  name: 'VmstApplicationStatusColor',
+})
 
 @ObjectType('VmstOverviewItem')
 export class VmstOverviewItem {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   key?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   value?: string
 }
 
 @ObjectType('VmstAvailableActions')
 export class VmstAvailableActions {
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   canContact?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   canSubmitDocuments?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   canReportWork?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   canReportTravel?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   canUnregister?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   canConfirmJobSearch?: boolean
 }
 
-@ObjectType('UnemploymentApplicationOverview')
-export class UnemploymentApplicationOverview {
-  @Field(() => String, { nullable: true })
+@ObjectType('VmstApplicationsUnemploymentApplicationOverview')
+export class VmstApplicationsUnemploymentApplicationOverview {
+  @Field({ nullable: true })
   applicantId?: string
 
   @Field(() => String, { nullable: true })
@@ -47,7 +58,10 @@ export class UnemploymentApplicationOverview {
   @Field(() => String, { nullable: true })
   applicationStatusName?: string | null
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => VmstApplicationStatusColor, { nullable: true })
+  applicationStatusColor?: VmstApplicationStatusColor
+
+  @Field({ nullable: true })
   dataRequested?: boolean
 
   @Field(() => VmstAvailableActions, { nullable: true })

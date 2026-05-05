@@ -7,6 +7,7 @@ import {
   Box,
   SkeletonLoader,
   Tabs,
+  TagVariant,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { OverviewTable } from './OverviewTable'
@@ -36,7 +37,10 @@ const Status = () => {
       }}
       loading={loading}
     >
-      <ActionButtons availableActions={availableActions} loading={loading} />
+      <ActionButtons
+        availableActions={availableActions ?? undefined}
+        loading={loading}
+      />
       {!loading && availableActions?.canConfirmJobSearch === true && (
         <Box marginBottom={4}>
           <ActionCard
@@ -83,7 +87,7 @@ const Status = () => {
               <OverviewTable
                 overviewItems={overview?.overviewItems ?? []}
                 applicationStatusName={overview?.applicationStatusName}
-                applicationStatusId={overview?.applicationStatusId}
+                applicationStatusColor={overview?.applicationStatusColor}
                 dataRequested={overview?.dataRequested}
               />
             ),

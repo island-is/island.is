@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { VmstApplicationStatusColor } from './overview.model'
 
 @ObjectType('VmstApplicationOverviewItem')
 export class VmstApplicationOverviewItem {
@@ -11,7 +12,10 @@ export class VmstApplicationOverviewItem {
   @Field(() => String, { nullable: true })
   statusName?: string | null
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => VmstApplicationStatusColor, { nullable: true })
+  statusColor?: VmstApplicationStatusColor
+
+  @Field({ nullable: true })
   isVisible?: boolean
 }
 

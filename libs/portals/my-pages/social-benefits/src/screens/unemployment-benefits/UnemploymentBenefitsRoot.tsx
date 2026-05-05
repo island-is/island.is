@@ -13,7 +13,9 @@ import { unemploymentBenefitsMessages as um } from '../../lib/messages/unemploym
 
 export const UnemploymentBenefitsRoot = () => {
   const { formatMessage } = useLocale()
-  const { data, loading } = useQuery(GET_VMST_APPLICATIONS_OVERVIEW_QUERY)
+  const { data, loading, error } = useQuery(
+    GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
+  )
 
   const hasApplication =
     data?.vmstApplicationsOverview?.unemploymentApplication?.isVisible
@@ -22,6 +24,14 @@ export const UnemploymentBenefitsRoot = () => {
     return (
       <IntroWrapperV2 title={formatMessage(um.unemploymentBenefits)}>
         <SkeletonLoader height={300} borderRadius="large" />
+      </IntroWrapperV2>
+    )
+  }
+
+  if (error) {
+    return (
+      <IntroWrapperV2 title={formatMessage(um.unemploymentBenefits)}>
+        <Problem error={error} noBorder={false} />
       </IntroWrapperV2>
     )
   }

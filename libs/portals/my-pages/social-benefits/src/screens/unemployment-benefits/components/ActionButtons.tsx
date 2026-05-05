@@ -1,13 +1,11 @@
-import { Box, Button, DropdownMenu } from '@island.is/island-ui/core'
+import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
-import { GetUnemploymentApplicationOverviewQuery } from '../Status/Status.generated'
-
-type AvailableActions =
-  GetUnemploymentApplicationOverviewQuery['vmstApplicationsUnemploymentApplicationOverview']['availableActions']
+import { VmstAvailableActions } from '@island.is/portals/my-pages/graphql'
+import { LinkButton } from '@island.is/portals/my-pages/core'
 
 interface ActionButtonsProps {
-  availableActions?: AvailableActions
+  availableActions?: VmstAvailableActions
   loading?: boolean
 }
 
@@ -48,22 +46,12 @@ export const ActionButtons = ({
   return (
     <Box display="flex" columnGap={2} alignItems="center" marginBottom={4}>
       {showContactButton && (
-        <a
-          href={formatMessage(um.statusContactUsUrl)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Button
-            as="span"
-            unfocusable
-            variant="utility"
-            size="small"
-            icon="open"
-            iconType="outline"
-          >
-            {formatMessage(um.statusContactUs)}
-          </Button>
-        </a>
+        <LinkButton
+          to={formatMessage(um.statusContactUsUrl)}
+          text={formatMessage(um.statusContactUs)}
+          variant="utility"
+          size="small"
+        />
       )}
       {dropdownActions.length > 0 && (
         <DropdownMenu
