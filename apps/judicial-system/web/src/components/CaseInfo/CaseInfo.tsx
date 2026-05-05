@@ -72,11 +72,17 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 
   if (!defendants) return null
 
+  const activeDefendants = defendants.filter(
+    (d) => !d.indictmentCancelledOrDismissedState,
+  )
+
+  if (activeDefendants.length === 0) return null
+
   return (
     <Entry
-      label={capitalize(getDefendantLabel(formatMessage, defendants, type))}
+      label={capitalize(getDefendantLabel(formatMessage, activeDefendants, type))}
       value={enumerate(
-        flatMap(defendants, (d) => (d.name ? [d.name] : [])),
+        flatMap(activeDefendants, (d) => (d.name ? [d.name] : [])),
         formatMessage(core.and),
       )}
     />
