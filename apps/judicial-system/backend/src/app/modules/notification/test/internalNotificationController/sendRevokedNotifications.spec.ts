@@ -51,6 +51,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
         defenderNationalId: defender.nationalId,
         defenderName: defender.name,
         defenderEmail: defender.email,
+        isDefenderChoiceConfirmed: true,
       },
     ],
     creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
