@@ -2,7 +2,6 @@ import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
-  GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
@@ -11,7 +10,10 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
-import { VmstApplicationsUnemploymentApplicationOverview } from './models'
+import {
+  VmstApplicationsUnemploymentApplicationOverview,
+  ValidationUnemploymentApplication,
+} from './models'
 import { resolveStatusColor } from './statusColorMap'
 import type { Locale } from '@island.is/shared/types'
 
@@ -38,7 +40,7 @@ export class VMSTApplicationsService {
   async validateBankInformationUnemploymentApplication(
     auth: User,
     input: VmstApplicationsBankInformationInput,
-  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO> {
+  ): Promise<ValidationUnemploymentApplication> {
     const payload = {
       galdurApplicationApplicationsUnemploymentApplicationsCommandsValidateUnemploymentApplicationPaymentPageValidateUnemploymentApplicationPaymentPageCommand:
         {
@@ -63,15 +65,17 @@ export class VMSTApplicationsService {
           },
         },
     }
-    return this.vmstUnemploymentService.validateBankInfoUnemploymentApplication(
-      payload,
-    )
+    const response =
+      await this.vmstUnemploymentService.validateBankInfoUnemploymentApplication(
+        payload,
+      )
+    return { ...response, isValid: response.isValid ?? false }
   }
 
   async validateVacationDays(
     auth: User,
     input: VmstApplicationsVacationValidationInput,
-  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO> {
+  ): Promise<ValidationUnemploymentApplication> {
     const payload = {
       galdurApplicationApplicationsUnemploymentApplicationsCommandsValidateUnemploymentApplicationUnpaidVacationValidateUnemploymentApplicationUnpaidVacationCommand:
         {
@@ -90,9 +94,11 @@ export class VMSTApplicationsService {
         },
     }
 
-    return this.vmstUnemploymentService.validateVacationInfoUnemploymentApplication(
-      payload,
-    )
+    const response =
+      await this.vmstUnemploymentService.validateVacationInfoUnemploymentApplication(
+        payload,
+      )
+    return { ...response, isValid: response.isValid ?? false }
   }
 
   async getApplicationOverview(
