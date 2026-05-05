@@ -1,16 +1,12 @@
 import {
   CaseState,
   completedRequestCaseStates,
-  getMillisecondsFromDays,
   isRequestCase,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import {
-  getIndictmentDismissalAppealInfo,
-  getIndictmentInfo,
-} from './case.transformer'
+import { getIndictmentInfo } from './case.transformer'
 
 const RequestSharedWithDefenderAllowedStates: {
   [key in RequestSharedWithDefender]: CaseState[]
@@ -57,8 +53,8 @@ const transformRequestCase = (theCase: Case): Case => {
 const transformIndictmentCase = (theCase: Case): Case => {
   const { indictmentRulingDecision, rulingDate, defendants } = theCase
 
-  const dismissalAppealInfo = getIndictmentDismissalAppealInfo(theCase)
-
+  // Verdict-appeal info is computed here. Case-level dismissal-appeal info is
+  // computed in the backend's CaseInterceptor and arrives pre-populated.
   return {
     ...theCase,
     ...getIndictmentInfo({
@@ -66,21 +62,6 @@ const transformIndictmentCase = (theCase: Case): Case => {
       rulingDate,
       defendants,
     }),
-    ...dismissalAppealInfo,
-    isAppealDeadlineExpired: dismissalAppealInfo.appealDeadline
-      ? Date.now() >= new Date(dismissalAppealInfo.appealDeadline).getTime()
-      : false,
-    isStatementDeadlineExpired: theCase.appealCase?.appealReceivedByCourtDate
-      ? Date.now() >=
-        new Date(theCase.appealCase.appealReceivedByCourtDate).getTime() +
-          getMillisecondsFromDays(1)
-      : false,
-    accusedPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
-      ? theCase.accusedPostponedAppealDate
-      : undefined,
-    prosecutorPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
-      ? theCase.prosecutorPostponedAppealDate
-      : undefined,
   }
 }
 

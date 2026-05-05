@@ -112,6 +112,12 @@ const AppealCaseFilesOverview = () => {
   const canDeleteFile = (file: CaseFile) =>
     isMatchingAppealCaseFile(workingCase, deleteCategories, file, user)
 
+  const hasAnyDefendantStatement = Boolean(
+    workingCase.appealCase?.defendantStatementDate ||
+      workingCase.appealCase?.defendantStatementDates?.length ||
+      workingCase.appealCase?.civilClaimantStatementDates?.length,
+  )
+
   useEffect(() => {
     if (workingCase.caseFiles) {
       setAllFiles(
@@ -133,7 +139,7 @@ const AppealCaseFilesOverview = () => {
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
                 ].includes(caseFile.category)) ||
-              (workingCase.appealCase?.defendantStatementDate &&
+              (hasAnyDefendantStatement &&
                 [
                   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
                   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
@@ -160,7 +166,7 @@ const AppealCaseFilesOverview = () => {
     workingCase.accusedPostponedAppealDate,
     workingCase.appealCase?.appealState,
     workingCase.caseFiles,
-    workingCase.appealCase?.defendantStatementDate,
+    hasAnyDefendantStatement,
     workingCase.prosecutorPostponedAppealDate,
     workingCase.appealCase?.prosecutorStatementDate,
   ])

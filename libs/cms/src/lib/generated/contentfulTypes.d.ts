@@ -220,6 +220,9 @@ export interface IAnnualReportFields {
 
   /** Chapters */
   chapters: IAnnualReportChapter[]
+
+  /** Timeline */
+  timeline?: ITimeline | undefined
 }
 
 /** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
@@ -1090,6 +1093,9 @@ export interface IDelegationScopeTagFields {
 
   /** Slug */
   slug: string
+
+  /** Show as card */
+  showAsCard?: boolean | undefined
 }
 
 /** Tags that can be used to filter available delegations */
