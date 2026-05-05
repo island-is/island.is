@@ -931,6 +931,39 @@ export const m = defineMessages({
     id: 'ap.ids-admin:select-categories-placeholder',
     defaultMessage: 'Select categories',
   },
+  thirdPartyLoginUrl: {
+    id: 'ap.ids-admin:third-party-login-url',
+    defaultMessage: 'Third party login URL',
+  },
+  thirdPartyLoginUrlDescription: {
+    id: 'ap.ids-admin:third-party-login-url-description',
+    defaultMessage:
+      'URL that can be used to login to the application using third party delegation.',
+  },
+  originUrl: {
+    id: 'ap.ids-admin:origin-url',
+    defaultMessage: 'URL origin',
+  },
+  targetLinkUri: {
+    id: 'ap.ids-admin:target-link-uri',
+    defaultMessage: 'Target link URI',
+  },
+  linkPreview: {
+    id: 'ap.ids-admin:link-preview',
+    defaultMessage: 'Link Preview',
+  },
+  linkPreviewPlaceholder: {
+    id: 'ap.ids-admin:link-preview-placeholder',
+    defaultMessage: 'Fill in the above fields to see a preview of the link',
+  },
+  originUrlRequired: {
+    id: 'ap.ids-admin:origin-url-required',
+    defaultMessage: 'URL origin is required when target link URI is provided',
+  },
+  targetLinkUriRequired: {
+    id: 'ap.ids-admin:target-link-uri-required',
+    defaultMessage: 'Target link URI is required when URL origin is provided',
+  },
   noTags: {
     id: 'ap.ids-admin:no-tags',
     defaultMessage: 'No tags available',
