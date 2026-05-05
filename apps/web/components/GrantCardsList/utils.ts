@@ -13,7 +13,9 @@ export const getTranslationString = (
   argToInterpolate?: string,
 ) => {
   const template = namespace[key] ?? String(key)
-  return argToInterpolate ? template.replace('{arg}', argToInterpolate) : template
+  return argToInterpolate
+    ? template.replace('{arg}', argToInterpolate)
+    : template
 }
 
 export const formatDate = (
