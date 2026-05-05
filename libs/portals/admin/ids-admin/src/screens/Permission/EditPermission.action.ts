@@ -10,6 +10,11 @@ import {
   PatchAuthAdminScopeMutation,
   PatchAuthAdminScopeMutationVariables,
 } from './EditPermission.generated'
+import {
+  UpdateScopeUsersDocument,
+  UpdateScopeUsersMutation,
+  UpdateScopeUsersMutationVariables,
+} from './components/PermissionAccessControl.generated'
 import { authAdminEnvironments } from '../../utils/environments'
 import { getIntent } from '../../utils/getIntent'
 import {
@@ -52,7 +57,14 @@ export const editPermissionAction: WrappedActionFn =
       }
     }
 
-    const { syncEnvironments, environment, ...data } = result.data
+    const { syncEnvironments, environment, ...rawData } = result.data
+
+    // Extract scope user fields if present (only in ACCESS_CONTROL intent)
+    const { addedScopeUserNationalIds, removedScopeUserNationalIds, ...data } =
+      rawData as typeof rawData & {
+        addedScopeUserNationalIds?: string[]
+        removedScopeUserNationalIds?: string[]
+      }
 
     const environments: AuthAdminEnvironment[] = []
 
@@ -93,6 +105,29 @@ export const editPermissionAction: WrappedActionFn =
 
       if (patchScopeResult.errors?.length) {
         return globalErrorResponse
+      }
+
+      // Update scope users if there are changes
+      const hasUserChanges =
+        (addedScopeUserNationalIds && addedScopeUserNationalIds.length > 0) ||
+        (removedScopeUserNationalIds && removedScopeUserNationalIds.length > 0)
+
+      if (intent === PermissionFormTypes.ACCESS_CONTROL && hasUserChanges) {
+        await client.mutate<
+          UpdateScopeUsersMutation,
+          UpdateScopeUsersMutationVariables
+        >({
+          mutation: UpdateScopeUsersDocument,
+          variables: {
+            input: {
+              tenantId,
+              scopeName,
+              addedNationalIds: addedScopeUserNationalIds ?? [],
+              removedNationalIds: removedScopeUserNationalIds ?? [],
+              environments,
+            },
+          },
+        })
       }
 
       return {
