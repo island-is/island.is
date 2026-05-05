@@ -3,7 +3,11 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { capitalize, formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
@@ -878,7 +882,9 @@ describe('CaseController - Update', () => {
     })
 
     it('should store reopenReason with header prepended', () => {
-      const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${user.name} ${lowercase(user.title)}`
+      const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${
+        user.name
+      } ${lowercase(user.title)}`
       expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           caseId,
