@@ -20,7 +20,7 @@ import { m } from '../../lib/messages'
 import FootNote from '../FootNote/FootNote'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 
-type IntroWrapperV2BaseProps = {
+type IntroWrapperBaseProps = {
   title: MessageDescriptor | string
   loading?: boolean
   children?: React.ReactNode
@@ -36,7 +36,7 @@ type IntroWrapperV2BaseProps = {
   }
 }
 
-export type IntroWrapperProps = IntroWrapperV2BaseProps &
+export type IntroWrapperProps = IntroWrapperBaseProps &
   (
     | { intro?: MessageDescriptor | string; introComponent?: never }
     | { introComponent?: React.ReactNode; intro?: never }
