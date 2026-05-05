@@ -21,6 +21,7 @@ const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
           new Configuration({
             fetchApi: createEnhancedFetch({
               name: 'clients-xroad-metaservices',
+              circuitBreaker: false,
             }),
             basePath: XROAD_BASE_PATH,
             headers: {
@@ -36,6 +37,7 @@ const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
           new RestConfiguration({
             fetchApi: createEnhancedFetch({
               name: 'clients-xroad-rest-metaservices',
+              circuitBreaker: false,
             }),
             basePath: XROAD_BASE_PATH + '/r1',
             headers: {
