@@ -314,6 +314,7 @@ export const transformDefendants = ({
 
     return {
       ...defendant.toJSON(),
+      policeCaseNumbers: defendant.policeCaseNumbers,
       ...(verdict
         ? {
             verdict: {
