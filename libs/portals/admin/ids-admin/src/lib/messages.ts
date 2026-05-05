@@ -952,6 +952,34 @@ export const m = defineMessages({
     defaultMessage:
       'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
+  scopeUsersLabel: {
+    id: 'ap.ids-admin:scope-users-label',
+    defaultMessage: 'Users with access',
+  },
+  scopeUsersPlaceholder: {
+    id: 'ap.ids-admin:scope-users-placeholder',
+    defaultMessage: 'Choose from the list or create a new user',
+  },
+  scopeUsersLoading: {
+    id: 'ap.ids-admin:scope-users-loading',
+    defaultMessage: 'Loading users...',
+  },
+  addScopeUser: {
+    id: 'ap.ids-admin:add-scope-user',
+    defaultMessage: 'Create new user',
+  },
+  createScopeUserTitle: {
+    id: 'ap.ids-admin:create-scope-user-title',
+    defaultMessage: 'Create user',
+  },
+  createScopeUserSuccess: {
+    id: 'ap.ids-admin:create-scope-user-success',
+    defaultMessage: 'User created successfully',
+  },
+  createScopeUserError: {
+    id: 'ap.ids-admin:create-scope-user-error',
+    defaultMessage: 'Failed to create user',
+  },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
     defaultMessage: 'Authenticated user',
@@ -1510,5 +1538,21 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
       'Should legal representative automatically get this permission for their clients.',
+  },
+  deletedCategory: {
+    id: 'ap.ids-admin:deleted-category',
+    defaultMessage: 'Þessum flokki hefur verið eytt ({id})',
+  },
+  deletedCategoryDescription: {
+    id: 'ap.ids-admin:deleted-category-description',
+    defaultMessage: 'Þessi flokkur er ekki lengur til í Contentful',
+  },
+  deletedTag: {
+    id: 'ap.ids-admin:deleted-tag',
+    defaultMessage: 'Þessu merki hefur verið eytt ({id})',
+  },
+  deletedTagDescription: {
+    id: 'ap.ids-admin:deleted-tag-description',
+    defaultMessage: 'Þetta merki er ekki lengur til í Contentful',
   },
 })
