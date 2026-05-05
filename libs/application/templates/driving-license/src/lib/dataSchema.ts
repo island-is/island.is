@@ -17,7 +17,7 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const baseSchema = z.object({
+export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   delivery: z
@@ -84,37 +84,14 @@ const baseSchema = z.object({
       { path: ['drivingLicenseDeprivedOrRestrictedInOtherCountry'] },
     ),
   hasHealthRemarks: z.enum([YES, NO]),
+  // Captured into answers via a hidden input during prerequisites so
+  // subsection conditions in the draft form can branch on the redesign flag.
+  // Required-ness of `healthCertificate` for the redesigned 65+ flow is
+  // enforced at the field level (`.refine((files) => files.length > 0)` on
+  // `healthCertificate` above) — when the user reaches the upload screen the
+  // field is rendered as an empty array, the field-level refine fires, and
+  // the user can't advance without uploading. A cross-field `superRefine` was
+  // tried first but fired prematurely at the prerequisites→draft transition,
+  // before the user had reached the upload screen, blocking advance.
   is65RenewalRedesignEnabled: z.boolean().optional(),
 })
-
-// When the redesigned 65+ flow is active, healthCertificate must be a
-// non-empty array. The field-level refine inside baseSchema only validates
-// the shape of files when present; this enforces "must upload" at the form
-// level. Treat missing flag as false so legacy 65+ drafts continue to pass.
-//
-// Two important details:
-//   1. We chain `.partial()` BEFORE `.superRefine` so every field becomes
-//      optional in the schema itself. The application framework detects
-//      ZodEffects schemas (via `instanceof`) and calls `.parse(answers)`
-//      directly — WITHOUT applying its own `.partial()` wrap. So if the
-//      base were not partial here, every required field would fail
-//      validation before the user has filled them in. Field-level refines
-//      still fire on values that ARE present.
-//   2. The framework's `Schema` type is `ZodObject<any>`, but `.superRefine`
-//      returns `ZodEffects`. We cast back to the base type to satisfy the
-//      static type; at runtime both expose `.parse` / `.safeParse`, and the
-//      framework dispatches correctly via its `instanceof ZodEffects` check.
-export const dataSchema = baseSchema.partial().superRefine((data, ctx) => {
-  const isRedesigned65 =
-    data.applicationFor === B_FULL_RENEWAL_65 &&
-    data.is65RenewalRedesignEnabled === true
-  if (!isRedesigned65) return
-  const files = data.healthCertificate
-  if (!files || files.length === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['healthCertificate'],
-      params: m.healthCertificateRequired,
-    })
-  }
-}) as unknown as typeof baseSchema
