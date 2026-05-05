@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
-import { withAuthContext } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   ContractDraftRequest,
-  postContractSendDraft,
-  postContract,
+  HomeApi,
 } from '@island.is/clients/hms-rental-agreement'
 import {
   applicationAnswers,
@@ -92,8 +91,12 @@ const mapDraftToContractDraftRequest = (
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
-  constructor() {
+  constructor(private readonly homeApi: HomeApi) {
     super(ApplicationTypes.RENTAL_AGREEMENT)
+  }
+
+  private homeApiWithAuth(auth: Auth) {
+    return this.homeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
@@ -116,11 +119,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
       currentUserLocale,
     )
 
-    return await withAuthContext(auth, () =>
-      postContractSendDraft({
-        body: mapDraftToContractDraftRequest(draftRequest),
-      }),
-    )
+    return await this.homeApiWithAuth(auth).contractSendDraftPost({
+      contractDraftRequest: mapDraftToContractDraftRequest(draftRequest),
+    })
   }
 
   async submitApplicationToHmsRentalService({
@@ -137,15 +138,15 @@ export class RentalAgreementService extends BaseTemplateApiService {
       mappedAnswers,
     )
 
-    return await withAuthContext(auth, () =>
-      postContract({ body: leaseApplication }),
-    ).catch((error) => {
-      const errorMessage = `Error sending application ${id} to HMS Rental Service`
-      console.error(errorMessage, error)
+    return await this.homeApiWithAuth(auth)
+      .contractPost({ leaseApplication })
+      .catch((error) => {
+        const errorMessage = `Error sending application ${id} to HMS Rental Service`
+        console.error(errorMessage, error)
 
-      const mappedError = errorMapper(error)
+        const mappedError = errorMapper(error)
 
-      throw mappedError
-    })
+        throw mappedError
+      })
   }
 }
