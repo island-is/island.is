@@ -23,7 +23,6 @@ export const InstitutionPanel = ({
   img,
   institutionTitle,
   institution,
-  locale,
   linkProps,
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
@@ -54,9 +53,7 @@ export const InstitutionPanel = ({
             {institutionTitle}
           </Text>
           <Text variant="h4" as="h3" color="purple600" lineHeight="sm">
-            <Hyphen minRight={5} locale={locale}>
-              {institution}
-            </Hyphen>
+            <Hyphen minRight={5}>{institution}</Hyphen>
           </Text>
         </Box>
       </Box>
