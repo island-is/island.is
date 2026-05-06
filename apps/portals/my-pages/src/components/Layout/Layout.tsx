@@ -116,7 +116,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
             activeParent={activeParent}
             height={totalBannerOffset}
             pathname={pathname}
-            isDashboardV2={useHeroBackground}
           >
             {children}
           </NarrowLayout>
@@ -126,7 +125,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
             activeParent={activeParent}
             height={totalBannerOffset}
             pathname={pathname}
-            isDashboardV2={useHeroBackground}
           >
             {children}
           </FullWidthLayout>

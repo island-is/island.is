@@ -25,7 +25,6 @@ interface NarrowLayoutProps {
   pathname: string
   height: number
   children: ReactNode
-  isDashboardV2?: boolean
 }
 
 export type SubNavItemType = NavigationItem & { enabled?: boolean }
@@ -35,7 +34,6 @@ export const NarrowLayout = ({
   pathname,
   height,
   activeParent,
-  isDashboardV2,
 }: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
@@ -121,7 +119,6 @@ export const NarrowLayout = ({
         as="main"
         paddingBottom={9}
         component="main"
-        className={isDashboardV2 ? 'my-pages-hero-bg' : undefined}
         style={{ marginTop: height }}
       >
         <ContentBreadcrumbs />

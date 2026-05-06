@@ -5,7 +5,7 @@ globalStyle('body.my-pages-hero-bg', {
   backgroundColor: '#F2F7FF',
 })
 
-globalStyle('main.my-pages-hero-bg', {
+globalStyle('body.my-pages-hero-bg main', {
   vars: {
     '--my-pages-hero-blue-height': '380px',
   },
