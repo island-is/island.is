@@ -8,6 +8,7 @@ import {
   GetTranslationConfiguredEnvironmentsDocument,
   GetTranslationConfiguredEnvironmentsQuery,
 } from './Translations.generated'
+import { PAGE_SIZE } from './Translations.utils'
 
 export interface TranslationsLoaderData {
   translations: GetTranslationsQuery['authAdminTranslations']
@@ -22,8 +23,8 @@ export const translationsLoader: WrappedLoaderFn = ({ client }) => {
     const page = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage
     const search = url.searchParams.get('search') ?? ''
 
-    const [translationsResult, languagesResult, envsResult] = await Promise.all(
-      [
+    const [translationsSettled, languagesSettled, envsSettled] =
+      await Promise.allSettled([
         client.query<GetTranslationsQuery>({
           query: GetTranslationsDocument,
           fetchPolicy: 'network-only',
@@ -31,7 +32,7 @@ export const translationsLoader: WrappedLoaderFn = ({ client }) => {
             input: {
               searchString: search,
               page,
-              count: 20,
+              count: PAGE_SIZE,
             },
           },
         }),
@@ -43,32 +44,56 @@ export const translationsLoader: WrappedLoaderFn = ({ client }) => {
           query: GetTranslationConfiguredEnvironmentsDocument,
           fetchPolicy: 'network-only',
         }),
-      ],
-    )
+      ])
 
-    if (translationsResult.error) {
-      throw translationsResult.error
+    // Translations is the load-bearing query — propagate its failure.
+    if (translationsSettled.status === 'rejected') {
+      throw translationsSettled.reason
+    }
+    if (translationsSettled.value.error) {
+      throw translationsSettled.value.error
     }
 
-    if (languagesResult.error) {
+    // Languages and configured environments are nice-to-have UI data; log and
+    // fall back so a transient failure on either doesn't take down the page.
+    if (languagesSettled.status === 'rejected') {
       console.error(
         'Failed to fetch translation languages',
-        languagesResult.error,
+        languagesSettled.reason,
+      )
+    } else if (languagesSettled.value.error) {
+      console.error(
+        'Failed to fetch translation languages',
+        languagesSettled.value.error,
       )
     }
 
-    if (envsResult.error) {
-      console.error('Failed to fetch configured environments', envsResult.error)
+    if (envsSettled.status === 'rejected') {
+      console.error(
+        'Failed to fetch configured environments',
+        envsSettled.reason,
+      )
+    } else if (envsSettled.value.error) {
+      console.error(
+        'Failed to fetch configured environments',
+        envsSettled.value.error,
+      )
     }
 
     return {
-      translations: translationsResult.data?.authAdminTranslations ?? {
+      translations: translationsSettled.value.data?.authAdminTranslations ?? {
         rows: [],
         totalCount: 0,
       },
-      languages: languagesResult.data?.authAdminTranslationLanguages ?? [],
+      languages:
+        (languagesSettled.status === 'fulfilled' &&
+          languagesSettled.value.data?.authAdminTranslationLanguages) ||
+        [],
       configuredEnvironments:
-        envsResult.data?.authAdminTranslationConfiguredEnvironments ?? [],
+        (envsSettled.status === 'fulfilled' &&
+          envsSettled.value.data
+            ?.authAdminTranslationConfiguredEnvironments) ||
+        [],
     }
   }
 }

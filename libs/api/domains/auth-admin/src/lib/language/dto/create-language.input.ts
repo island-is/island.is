@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator'
 
 import { Environment } from '@island.is/shared/types'
 
@@ -8,6 +8,9 @@ export class CreateLanguageInput {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
+  @Matches(/^[a-z]{2,5}$/, {
+    message: 'isoKey must be 2-5 lowercase letters',
+  })
   isoKey!: string
 
   @Field(() => String)

@@ -37,6 +37,7 @@ import { UpdateLanguageDto } from './dto/update-language.dto'
 import { DeleteLanguageDto } from './dto/delete-language.dto'
 
 const namespace = '@island.is/auth/admin-api/v2/languages'
+const MAX_COUNT = 10000
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.idsAdminSuperUser)
@@ -79,6 +80,9 @@ export class MeLanguagesController {
   ): Promise<PagedRowsDto<Language>> {
     if (page < 1 || count < 1) {
       throw new BadRequestException('page and count must be positive integers')
+    }
+    if (count > MAX_COUNT) {
+      throw new BadRequestException(`count must be between 1 and ${MAX_COUNT}`)
     }
 
     return this.translationService.searchLanguages(searchString, page, count)

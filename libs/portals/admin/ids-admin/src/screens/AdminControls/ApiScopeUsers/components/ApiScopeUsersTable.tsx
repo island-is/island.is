@@ -259,10 +259,10 @@ export const ApiScopeUsersTable = ({
               columnGap={2}
             >
               <Button variant="ghost" onClick={closeDeleteModal}>
-                {formatMessage(m.apiScopeUsersCancelButton)}
+                {formatMessage(m.cancel)}
               </Button>
               <Button colorScheme="destructive" onClick={handleDeleteConfirm}>
-                {formatMessage(m.apiScopeUsersDeleteButton)}
+                {formatMessage(m.delete)}
               </Button>
             </Box>
           </Box>

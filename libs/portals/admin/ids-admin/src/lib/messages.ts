@@ -1494,7 +1494,7 @@ export const m = defineMessages({
     defaultMessage: 'Operation failed on: {environments}',
   },
   translationsTitle: {
-    id: 'ap.ids-admin:translations',
+    id: 'ap.ids-admin:translations-title',
     defaultMessage: 'Translations',
   },
   translationsIntro: {

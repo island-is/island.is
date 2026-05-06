@@ -6,6 +6,7 @@ import {
   GetLanguageConfiguredEnvironmentsDocument,
   GetLanguageConfiguredEnvironmentsQuery,
 } from './Languages.generated'
+import { PAGE_SIZE } from './Languages.utils'
 
 export interface LanguagesLoaderData {
   languages: GetLanguagesQuery['authAdminLanguages']
@@ -19,7 +20,7 @@ export const languagesLoader: WrappedLoaderFn = ({ client }) => {
     const page = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage
     const search = url.searchParams.get('search') ?? ''
 
-    const [languagesResult, envsResult] = await Promise.all([
+    const [languagesSettled, envsSettled] = await Promise.allSettled([
       client.query<GetLanguagesQuery>({
         query: GetLanguagesDocument,
         fetchPolicy: 'network-only',
@@ -27,7 +28,7 @@ export const languagesLoader: WrappedLoaderFn = ({ client }) => {
           input: {
             searchString: search,
             page,
-            count: 20,
+            count: PAGE_SIZE,
           },
         },
       }),
@@ -37,21 +38,37 @@ export const languagesLoader: WrappedLoaderFn = ({ client }) => {
       }),
     ])
 
-    if (languagesResult.error) {
-      throw languagesResult.error
+    // Languages is the load-bearing query — propagate its failure.
+    if (languagesSettled.status === 'rejected') {
+      throw languagesSettled.reason
+    }
+    if (languagesSettled.value.error) {
+      throw languagesSettled.value.error
     }
 
-    if (envsResult.error) {
-      console.error('Failed to fetch configured environments', envsResult.error)
+    // Configured environments is nice-to-have; log and fall back so a transient
+    // failure doesn't take down the page.
+    if (envsSettled.status === 'rejected') {
+      console.error(
+        'Failed to fetch configured environments',
+        envsSettled.reason,
+      )
+    } else if (envsSettled.value.error) {
+      console.error(
+        'Failed to fetch configured environments',
+        envsSettled.value.error,
+      )
     }
 
     return {
-      languages: languagesResult.data?.authAdminLanguages ?? {
+      languages: languagesSettled.value.data?.authAdminLanguages ?? {
         rows: [],
         totalCount: 0,
       },
       configuredEnvironments:
-        envsResult.data?.authAdminLanguageConfiguredEnvironments ?? [],
+        (envsSettled.status === 'fulfilled' &&
+          envsSettled.value.data?.authAdminLanguageConfiguredEnvironments) ||
+        [],
     }
   }
 }

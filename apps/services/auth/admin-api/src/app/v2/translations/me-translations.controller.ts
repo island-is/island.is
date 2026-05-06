@@ -38,6 +38,8 @@ import { DeleteTranslationDto } from './dto/delete-translation.dto'
 
 const namespace = '@island.is/auth/admin-api/v2/translations'
 
+const MAX_COUNT = 10000
+
 const translationResource = (
   translation: Pick<Translation, 'language' | 'className' | 'property' | 'key'>,
 ) =>
@@ -84,6 +86,9 @@ export class MeTranslationsController {
   ): Promise<PagedRowsDto<Translation>> {
     if (page < 1 || count < 1) {
       throw new BadRequestException('page and count must be positive integers')
+    }
+    if (count > MAX_COUNT) {
+      throw new BadRequestException(`count must be between 1 and ${MAX_COUNT}`)
     }
 
     return this.translationService.searchTranslations(searchString, page, count)

@@ -216,7 +216,11 @@ export const TranslationModal = ({ modal }: TranslationModalProps) => {
               <Button variant="ghost" onClick={modal.resetModalState}>
                 {formatMessage(m.cancel)}
               </Button>
-              <Button onClick={modal.handleSubmit} loading={modal.isSubmitting}>
+              <Button
+                onClick={modal.handleSubmit}
+                loading={modal.isSubmitting}
+                disabled={modal.loadingTranslation}
+              >
                 {modal.isEditing
                   ? formatMessage(m.save)
                   : formatMessage(m.create)}

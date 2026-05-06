@@ -32,7 +32,11 @@ export const LanguageConfirmModal = ({
 
   const [selectedEnvironments, setSelectedEnvironments] = useState<
     AuthAdminEnvironment[]
-  >(target.availableEnvironments ?? [])
+  >(
+    (target.availableEnvironments ?? []).filter((env) =>
+      configuredEnvironments.includes(env),
+    ),
+  )
   const [error, setError] = useState<string | undefined>(undefined)
 
   const handleEnvironmentChange = (env: AuthAdminEnvironment) => {

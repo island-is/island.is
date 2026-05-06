@@ -169,7 +169,7 @@ export const useTranslationModal = ({
           updateEnvironment(bestEnv)
         }
 
-        const targetEnvData = data.environments?.find(
+        const targetEnvData = data?.environments?.find(
           (e) => e.environment === bestEnv,
         )
         if (targetEnvData) {
@@ -217,6 +217,11 @@ export const useTranslationModal = ({
     setFormErrors(errors)
 
     if (hasErrors(errors)) {
+      return
+    }
+
+    if (isEditing && userAvailableEnvironments.length === 0) {
+      toast.error(formatMessage(m.translationsError))
       return
     }
 
