@@ -39,8 +39,9 @@ export const ListSettings = () => {
     ...(form?.submissionServiceUrl !== 'zendesk'
       ? [{ label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL }]
       : []),
-    // { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
-    // { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
+    { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
+    { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
+    { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
   ]
 
   const selectedPredetermined =

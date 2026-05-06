@@ -9,7 +9,6 @@ import {
 import { useContext, useEffect } from 'react'
 import { ControlContext } from '../../../../../../context/ControlContext'
 
-const SYSLUMENNID = '6509142520' // Example organization ID, replace with actual ID as needed
 export const PaymentField = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
@@ -18,7 +17,7 @@ export const PaymentField = () => {
   const { data, loading, error } = useQuery(GET_PAYMENT_CATALOG, {
     variables: {
       input: {
-        performingOrganizationID: SYSLUMENNID,
+        performingOrganizationID: control.organizationNationalId,
       },
     },
   })

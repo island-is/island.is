@@ -29,7 +29,7 @@ import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseUI } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import InfoCard from '../../../components/InfoCard/InfoCard'
 import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
@@ -40,7 +40,7 @@ export const CaseOverview = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { appealBanner, appealModals } = useAppealCaseUI()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
   const {
     defendants,
     policeCaseNumbers,

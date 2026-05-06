@@ -103,6 +103,7 @@ const CaseFile = () => {
                     subtypes={workingCase.indictmentSubtypes}
                     crimeScenes={workingCase.crimeScenes}
                     setEditCount={setEditCount}
+                    defendants={workingCase.defendants}
                   />
                 )
               })}

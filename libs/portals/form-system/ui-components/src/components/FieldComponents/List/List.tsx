@@ -1,13 +1,16 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
+import { ListTypesEnum } from '@island.is/form-system/enums'
 import { Box, Text, Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useState } from 'react'
-import { getValue } from '../../../lib/getValue'
-import { Action } from '../../../lib/reducerTypes'
 import { Controller, useFormContext } from 'react-hook-form'
-import { m } from '../../../lib/messages'
+import { getValue } from '../../../lib/getValue'
 import { countriesAsListItems } from '../../../lib/lists/countries.list'
-import { ListTypesEnum } from '@island.is/form-system/enums'
+import { getCurrenciesList } from '../../../lib/lists/currencies.list'
+import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
+import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
+import { m } from '../../../lib/messages'
+import { Action } from '../../../lib/reducerTypes'
 import { DATA_FROM_URL, removeTypename } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 
@@ -27,10 +30,23 @@ type ListItem = {
 }
 
 const listTypePlaceholder = {
-  lond: 'Veldu land',
-  sveitarfelog: 'Veldu sveitarfélag',
-  postnumer: 'Veldu póstnúmer',
-}
+  [ListTypesEnum.COUNTRIES]: {
+    is: 'Veldu land',
+    en: 'Select country',
+  },
+  [ListTypesEnum.MUNICIPALITIES]: {
+    is: 'Veldu sveitarfélag',
+    en: 'Select municipality',
+  },
+  [ListTypesEnum.POSTAL_CODES]: {
+    is: 'Veldu póstnúmer',
+    en: 'Select postal code',
+  },
+  [ListTypesEnum.CURRENCIES]: {
+    is: 'Veldu gjaldmiðil',
+    en: 'Select currency',
+  },
+} as const
 
 export const List = ({
   item,
@@ -148,6 +164,12 @@ export const List = ({
         return countriesAsListItems()
       case ListTypesEnum.LIST_FROM_URL:
         return listFromUrl()
+      case ListTypesEnum.MUNICIPALITIES:
+        return getMunicipalitiesList()
+      case ListTypesEnum.POSTAL_CODES:
+        return getPostalCodesList()
+      case ListTypesEnum.CURRENCIES:
+        return getCurrenciesList()
       default:
         return item.list ?? []
     }
@@ -181,6 +203,11 @@ export const List = ({
   useEffect(() => {
     if (shouldFetch) trigger(item.id)
   }, [isLoading, shouldFetch, trigger, item.id])
+
+  const placeholder = item.fieldSettings?.listType
+    ? listTypePlaceholder[item.fieldSettings.listType]?.[lang] ??
+      formatMessage(m.select)
+    : formatMessage(m.select)
 
   return (
     <Controller

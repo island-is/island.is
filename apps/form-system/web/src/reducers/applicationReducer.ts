@@ -15,6 +15,7 @@ import {
 import { hasScreens } from '../utils/reducerHelpers'
 import {
   decrement,
+  getCompletedSectionAndScreen,
   getDecrementVariables,
   getIncrementVariables,
   incrementWithoutScreens,
@@ -191,9 +192,24 @@ export const applicationReducer = (
 
     case 'SUBMITTED': {
       const { submitted, screenError } = action.payload
+
+      if (!submitted) {
+        return {
+          ...state,
+          submitted,
+          screenError,
+        }
+      }
+
+      const { currentSection, currentScreen } = getCompletedSectionAndScreen(
+        state.sections,
+      )
+
       return {
         ...state,
         submitted,
+        currentSection,
+        currentScreen,
         screenError,
       }
     }

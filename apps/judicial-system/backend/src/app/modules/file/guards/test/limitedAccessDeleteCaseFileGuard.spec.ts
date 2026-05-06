@@ -44,7 +44,9 @@ describe('LimitedAccess Delete Case File Guard', () => {
     'for request case type %s',
     (type) => {
       const allowedCaseFileCategories = [
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ]
@@ -97,7 +99,9 @@ describe('LimitedAccess Delete Case File Guard', () => {
 
   describe.each(indictmentCases)('for indictment case type %s', (type) => {
     const allowedCaseFileCategories = [
+      CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
       CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
       CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
       CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
     ]

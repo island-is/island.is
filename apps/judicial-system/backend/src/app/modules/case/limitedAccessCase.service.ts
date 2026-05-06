@@ -36,11 +36,13 @@ import {
   FileService,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenderVisiblePoliceCaseNumbers,
 } from '../file'
 import {
   AppealCase,
   AppealEventLog,
   Case,
+  CaseDefendantPoliceCaseNumber,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -185,6 +187,41 @@ export const include: Includeable[] = [
       },
     ],
   },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
   {
@@ -212,6 +249,12 @@ export const include: Includeable[] = [
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
+        separate: true,
+      },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
         separate: true,
       },
     ],
@@ -519,41 +562,6 @@ export class LimitedAccessCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private resolveDefencePartyIds(
-    theCase: Case,
-    user: TUser,
-  ): { defendantId?: string; civilClaimantId?: string } {
-    if (!isIndictmentCase(theCase.type)) {
-      return {}
-    }
-
-    const normalizedId = normalizeAndFormatNationalId(user.nationalId)
-
-    // Only confirmed defenders / spokespersons can act on behalf of a party —
-    // unconfirmed picks shouldn't be tied to appeal events.
-    const defendant = theCase.defendants?.find(
-      (d) =>
-        d.isDefenderChoiceConfirmed &&
-        d.defenderNationalId &&
-        normalizedId.includes(d.defenderNationalId),
-    )
-    if (defendant) {
-      return { defendantId: defendant.id }
-    }
-
-    const civilClaimant = theCase.civilClaimants?.find(
-      (c) =>
-        c.isSpokespersonConfirmed &&
-        c.spokespersonNationalId &&
-        normalizedId.includes(c.spokespersonNationalId),
-    )
-    if (civilClaimant) {
-      return { civilClaimantId: civilClaimant.id }
-    }
-
-    return {}
-  }
-
   async findById(
     caseId: string,
     options?: { transaction?: Transaction },
@@ -837,7 +845,18 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      )
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        : theCase.policeCaseNumbers
+
+      policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),

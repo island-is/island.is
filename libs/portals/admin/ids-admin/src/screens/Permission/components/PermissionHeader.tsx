@@ -20,17 +20,19 @@ export const PermissionHeader = () => {
         selectedEnvironment={selectedPermission.environment}
         availableEnvironments={permission.availableEnvironments}
         onChange={onEnvironmentChange}
+        postHeader={
+          selectedPermission.modified && (
+            <Text variant="small">
+              {formatMessage(m.modified, {
+                date: format(
+                  new Date(selectedPermission.modified),
+                  'dd.MM.yyyy HH:mm',
+                ),
+              })}
+            </Text>
+          )
+        }
       />
-      {selectedPermission.modified && (
-        <Text variant="small">
-          {formatMessage(m.modified, {
-            date: format(
-              new Date(selectedPermission.modified),
-              'dd.MM.yyyy HH:mm',
-            ),
-          })}
-        </Text>
-      )}
     </div>
   )
 }

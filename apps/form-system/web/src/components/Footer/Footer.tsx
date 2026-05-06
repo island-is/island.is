@@ -188,7 +188,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             applicationId: state.application.id,
             createChargeRequestDto: {
               performingOrganizationID:
-                state.application.organizationNationalId,
+                state.application.organizationNationalId ?? '',
               chargeItems,
             },
           },
@@ -332,7 +332,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading || notifyLoading}
+                disabled={submitLoading || notifyLoading || paymentLoading}
               >
                 {formatMessage(m.back)}
               </Button>

@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from 'react'
+import { FC, PropsWithChildren, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -9,8 +9,12 @@ import {
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import {
+  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -23,6 +27,7 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
+  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -44,10 +49,48 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
+import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
+
+const getDefenderVisiblePoliceCaseNumbers = (
+  userNationalId: string | undefined,
+  defendants: Case['defendants'] | undefined | null,
+  allPoliceCaseNumbers: string[] | null | undefined,
+) => {
+  if (!userNationalId || !allPoliceCaseNumbers) {
+    return []
+  }
+
+  const allAssigned = new Set(
+    (defendants ?? []).flatMap(
+      (defendant) => defendant.policeCaseNumbers ?? [],
+    ),
+  )
+
+  if (allAssigned.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  const normalizedUserNationalId = normalizeAndFormatNationalId(userNationalId)
+  const myDefendants = (defendants ?? []).filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizedUserNationalId.includes(defendant.defenderNationalId),
+  )
+
+  const assignedToMe = new Set(
+    myDefendants.flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+  )
+
+  return allPoliceCaseNumbers.filter(
+    (policeCaseNumber) =>
+      assignedToMe.has(policeCaseNumber) || !allAssigned.has(policeCaseNumber),
+  )
+}
 
 interface Props {
   workingCase: Case
@@ -102,7 +145,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
-const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
+const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
   const { title, files, onOpenFile, shouldRender = true, children } = props
 
   if ((files.length === 0 && !children) || !shouldRender) {
@@ -239,7 +282,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-
+  const { features } = useContext(FeatureContext)
+  const showRulingOrderAppealMenu = features.includes(
+    Feature.APPEAL_RULING_ORDER,
+  )
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -286,6 +332,34 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const visiblePoliceCaseNumbers = useMemo(
+    () =>
+      isDefenceUser(user)
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user?.nationalId ?? undefined,
+            workingCase.defendants,
+            workingCase.policeCaseNumbers,
+          )
+        : workingCase.policeCaseNumbers ?? [],
+    [user, workingCase.defendants, workingCase.policeCaseNumbers],
+  )
+
+  const defendantsForCurrentDefender = isDefenceUser(user)
+    ? workingCase.defendants?.filter(
+        (d) =>
+          d.defenderNationalId === user?.nationalId &&
+          d.isDefenderChoiceConfirmed,
+      )
+    : undefined
+
+  const hideCourtRecord =
+    isDefenceUser(user) &&
+    Boolean(
+      defendantsForCurrentDefender?.length &&
+        defendantsForCurrentDefender.every(
+          (d) => d.indictmentCancelledOrDismissedState !== null,
+        ),
+    )
 
   const { pdfTitle, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
@@ -359,7 +433,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+            {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
               const caseFilesRecordFileName = formatMessage(
                 strings.caseFileButtonText,
                 {
@@ -541,30 +615,49 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   heading="h4"
                   variant="h4"
                 />
-                {hasGeneratedCourtRecord && (
-                  <PdfButton
-                    caseId={workingCase.id}
-                    connectedCaseParentId={connectedCaseParentId}
-                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                    pdfType="courtRecord"
-                    renderAs="row"
-                    elementId="Þingbók"
+                {hideCourtRecord ? (
+                  <AlertMessage
+                    type="info"
+                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
                   />
+                ) : (
+                  <>
+                    {hasGeneratedCourtRecord && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        connectedCaseParentId={connectedCaseParentId}
+                        title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                        pdfType="courtRecord"
+                        renderAs="row"
+                        elementId="Þingbók"
+                      />
+                    )}
+                    <RenderFiles
+                      caseFiles={filteredFiles.courtRecords}
+                      onOpenFile={onOpen}
+                    />
+                  </>
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.courtRecords}
-                  onOpenFile={onOpen}
-                />
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}
                     onOpenFile={onOpen}
                   />
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.rulingOrders}
-                  onOpenFile={onOpen}
-                />
+                {showRulingOrderAppealMenu ? (
+                  filteredFiles.rulingOrders.map((file) => (
+                    <RulingOrderFileRow
+                      key={file.id}
+                      file={file}
+                      onOpenFile={onOpen}
+                    />
+                  ))
+                ) : (
+                  <RenderFiles
+                    caseFiles={filteredFiles.rulingOrders}
+                    onOpenFile={onOpen}
+                  />
+                )}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (

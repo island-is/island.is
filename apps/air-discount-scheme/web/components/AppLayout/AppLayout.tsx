@@ -19,7 +19,6 @@ import {
   QueryGetMenuArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
-import { useI18n } from '../../i18n'
 
 interface AppLayoutProps {
   children?: React.ReactNode
@@ -49,12 +48,6 @@ export const AppLayout: NextComponentType<
   localeKey,
 }) => {
   const [user, setUser] = useState(null)
-  const { toRoute, activeLocale, switchLanguage } = useI18n()
-  const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
-  const languageRoute: FooterLinkProps = {
-    title: nextLanguage === 'en' ? 'English' : 'Íslenska',
-    href: toRoute(routeKey, nextLanguage),
-  }
 
   const islandHref = 'https://island.is'
   const noEmptyOrHash = ({ href }) => href && href !== '#'
@@ -122,15 +115,10 @@ export const AppLayout: NextComponentType<
       </Box>
       <Footer
         topLinks={footerUpperMenuFiltered}
-        topLinksContact={[]}
-        bottomLinks={footerLowerMenuFiltered}
         middleLinks={footerMiddleMenuFiltered}
         middleLinksTitle={namespace.footerMiddleLabel}
         showMiddleLinks={footerMiddleMenuFiltered.length > 0}
-        languageSwitchLink={languageRoute}
-        languageSwitchOnClick={() => {
-          switchLanguage(null, nextLanguage)
-        }}
+        bottomBarLinks={footerLowerMenuFiltered}
       />
       <style jsx global>{`
         @font-face {

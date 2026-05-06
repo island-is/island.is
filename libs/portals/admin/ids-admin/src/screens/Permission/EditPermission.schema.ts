@@ -18,6 +18,22 @@ const safeParseStringArray = (val: string | undefined): string[] => {
   }
 }
 
+const SUBJECT_ID_PLACEHOLDER = '{{subjectId}}'
+
+export const buildThirdPartyLoginUrl = (
+  originUrl: string,
+  targetLinkUri: string,
+): string => {
+  try {
+    const url = new URL(originUrl)
+    url.searchParams.set('target_link_uri', targetLinkUri)
+    url.search = `login_hint=${SUBJECT_ID_PLACEHOLDER}&${url.searchParams.toString()}`
+    return url.toString()
+  } catch {
+    return ''
+  }
+}
+
 export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
   SECURITY_AND_CAPABILITIES = 'SECURITY_AND_CAPABILITIES',
@@ -107,6 +123,14 @@ const accessControlSchema = z
     isAccessControlled: booleanCheckbox,
     grantToAuthenticatedUser: booleanCheckbox,
     automaticDelegationGrant: booleanCheckbox,
+    addedScopeUserNationalIds: z
+      .string()
+      .optional()
+      .transform(safeParseStringArray),
+    removedScopeUserNationalIds: z
+      .string()
+      .optional()
+      .transform(safeParseStringArray),
   })
   .merge(defaultEnvironmentSchema)
 
@@ -118,6 +142,12 @@ const delegationsSchema = z
     tagIds: z.string().optional().transform(safeParseStringArray),
     originalCategoryIds: z.string().optional().transform(safeParseStringArray),
     originalTagIds: z.string().optional().transform(safeParseStringArray),
+    originUrl: z
+      .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
+      .optional(),
+    targetLinkUri: z
+      .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
+      .optional(),
   })
   .merge(defaultEnvironmentSchema)
   .transform(
@@ -126,6 +156,8 @@ const delegationsSchema = z
       tagIds = [],
       originalCategoryIds = [],
       originalTagIds = [],
+      originUrl,
+      targetLinkUri,
       ...rest
     }) => {
       const addedCategoryIds = categoryIds.filter(
@@ -140,6 +172,14 @@ const delegationsSchema = z
       const removedTagIds = originalTagIds.filter(
         (id: string) => !tagIds.includes(id),
       )
+
+      const thirdPartyLoginUrl =
+        originUrl && targetLinkUri
+          ? buildThirdPartyLoginUrl(originUrl, targetLinkUri)
+          : originUrl || targetLinkUri
+          ? undefined
+          : ''
+
       return {
         ...rest,
         addedCategoryIds:
@@ -148,6 +188,7 @@ const delegationsSchema = z
           removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
         addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
         removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
+        ...(thirdPartyLoginUrl !== undefined && { thirdPartyLoginUrl }),
       }
     },
   )

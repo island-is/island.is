@@ -6,11 +6,14 @@ export class LandRegistryEntry {
   @Field()
   id!: string
 
-  @Field()
-  name!: string
+  @Field({ nullable: true })
+  name?: string
 
   @Field({ nullable: true })
-  nationalId?: string
+  ownerName?: string
+
+  @Field({ nullable: true })
+  ownerNationalId?: string
 
   @Field(() => [LandRegistryEntryProperty], { nullable: true })
   properties?: LandRegistryEntryProperty[]

@@ -528,3 +528,27 @@ export const setError = (
     : errorArray.filter((id) => id !== fieldId)
   return { ...state, errors: filteredArray }
 }
+
+export const getCompletedSectionAndScreen = (sections: FormSystemSection[]) => {
+  const completedSectionIndex = sections.findIndex(
+    (section) => section.sectionType === SectionTypes.COMPLETED,
+  )
+
+  if (completedSectionIndex === -1) {
+    return {
+      currentSection: {
+        data: sections[sections.length - 1],
+        index: sections.length - 1,
+      },
+      currentScreen: undefined,
+    }
+  }
+
+  return {
+    currentSection: {
+      data: sections[completedSectionIndex],
+      index: completedSectionIndex,
+    },
+    currentScreen: undefined,
+  }
+}

@@ -48,22 +48,26 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
       marginBottom={5}
       title={formatMessage(messages.paymentsAndRights)}
       intro={formatMessage(messages.paymentsIntro)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      childrenWidthFull
-      buttonGroup={[
-        <Button
-          variant="utility"
-          disabled={displayConfirmationErrorAlert}
-          size="small"
-          icon="fileTrayFull"
-          loading={confirmationLoading}
-          iconType="outline"
-          onClick={() => getInsuranceConfirmation()}
-        >
-          {formatMessage(messages.healthInsuranceConfirmation)}
-        </Button>,
-      ]}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <Button
+            key="insurance-confirmation"
+            variant="utility"
+            disabled={displayConfirmationErrorAlert}
+            size="small"
+            icon="fileTrayFull"
+            loading={confirmationLoading}
+            iconType="outline"
+            onClick={() => getInsuranceConfirmation()}
+          >
+            {formatMessage(messages.healthInsuranceConfirmation)}
+          </Button>,
+        ],
+      }}
     >
       {displayConfirmationErrorAlert && (
         <Box marginBottom={4}>

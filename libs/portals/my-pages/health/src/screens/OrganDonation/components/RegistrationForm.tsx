@@ -109,6 +109,7 @@ export const OrganRegistrationForm = () => {
     <IntroWrapper
       title={formatMessage(messages.organDonation)}
       intro={formatMessage(messages.organDonationDescription)}
+      desktopContentSpan="10/12"
     >
       <Text variant="eyebrow" color="purple400" marginBottom={1}>
         {formatMessage(messages.changeTake)}

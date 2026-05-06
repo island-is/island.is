@@ -462,6 +462,52 @@
         ]
       }
     },
+    "/api/applicants/{id}/actions": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir aðgerðir sem umsækjandi getur framkvæmt",
+        "operationId": "Applicant_GetActions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_AvailableActions"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applicants/profile/supportData": {
       "get": {
         "tags": ["Applicant"],
@@ -1027,6 +1073,271 @@
         ]
       }
     },
+    "/api/applicants/{applicantId}/attachments": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir viðhengi umsækjanda",
+        "operationId": "Applicant_GetApplicantAttachments",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/attachments/requests": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir tegundir viðhengja sem umsækjanda vantar",
+        "operationId": "Applicant_GetApplicantRequestedAttachments",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentRequestDTO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/attachments/requests/{requestId}": {
+      "post": {
+        "tags": ["Applicant"],
+        "summary": "Skrá umbeðið fylgiskjal",
+        "operationId": "Applicant_CreateApplicantRequestedAttachment",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni gangaöflunar.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_CreateAttachmentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/external/rvk": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Gets applicant info for Reykjavikurborg",
+        "operationId": "Applicant_GetApplicantInfoForRVK",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantInfo_ApplicantInfoForRVKViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/external/sjukratryggingar": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Gets applicant info for Sjukratryggingar islands",
+        "operationId": "Applicant_GetApplicantInfoForSI",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantInfo_ApplicantInfoForSIViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/external/sjukratryggingar/status": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Nær í stöðu umsækjanda hjá VMST - er til virk umsókn í mánuði, er til umsókn í vinnslu, dags. umsóknar",
+        "operationId": "Applicant_GetApplicantStatusForSI",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantInfo_ApplicantStatusForSIViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
         "tags": ["ApplicantInfo"],
@@ -1056,6 +1367,7 @@
             }
           }
         },
+        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -1092,6 +1404,7 @@
             }
           }
         },
+        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -1136,6 +1449,7 @@
             }
           }
         },
+        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -5757,6 +6071,30 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_AvailableActions": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "canContact": {
+            "type": "boolean"
+          },
+          "canSubmitDocuments": {
+            "type": "boolean"
+          },
+          "canReportWork": {
+            "type": "boolean"
+          },
+          "canReportTravel": {
+            "type": "boolean"
+          },
+          "canUnregister": {
+            "type": "boolean"
+          },
+          "canConfirmJobSearch": {
+            "type": "boolean"
+          }
+        }
+      },
       "Galdur_XRoad_API_Models_ApplicantInfoSupportDataResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -6332,30 +6670,6 @@
           }
         }
       },
-      "Galdur_XRoad_API_Models_AvailableActions": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "canContact": {
-            "type": "boolean"
-          },
-          "canSubmitDocuments": {
-            "type": "boolean"
-          },
-          "canReportWork": {
-            "type": "boolean"
-          },
-          "canReportTravel": {
-            "type": "boolean"
-          },
-          "canUnregister": {
-            "type": "boolean"
-          },
-          "canConfirmJobSearch": {
-            "type": "boolean"
-          }
-        }
-      },
       "Galdur_XRoad_API_Models_OverviewItem": {
         "type": "object",
         "additionalProperties": false,
@@ -6385,6 +6699,259 @@
           "applicationId": {
             "type": "string",
             "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Attachment_AttachmentListItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "typeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": ""
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Attachment_AttachmentRequestDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dataRequestId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "attachmentId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "attachmentTypeId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "Galdur_Domain_Models_Attachments_CreateAttachmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileType": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "attachmentTypeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applicants_ApplicantInfo_ApplicantInfoForRVKViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasApplication": {
+            "type": "boolean"
+          },
+          "applicationStatusId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataMissing": {
+            "type": "boolean"
+          },
+          "dataMissingReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "compensationPeriodDate": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "compensationPeriodLength": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "compensationPeriodRemainder": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "submissionDate": {
+            "type": "string",
+            "format": ""
+          },
+          "canStartDate": {
+            "type": "string",
+            "format": ""
+          },
+          "delistingDate": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applicants_ApplicantInfo_ApplicantInfoForSIViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasApplication": {
+            "type": "boolean"
+          },
+          "applications": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_ApplicationInfoForSIDTO"
+            }
+          },
+          "uncompensatedPeriods": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_UncompensatedPeriods_UncompensatedPeriodSimpleDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_ApplicationInfoForSIDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "statusId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "submissionDate": {
+            "type": "string",
+            "format": ""
+          },
+          "canStartDate": {
+            "type": "string",
+            "format": ""
+          },
+          "delistReasonId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "delistReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "delistingDate": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "compensationRatio": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "compensationRatioWithWork": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_UncompensatedPeriods_UncompensatedPeriodSimpleDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": ""
+          },
+          "dateTo": {
+            "type": "string",
+            "format": ""
+          },
+          "typeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "typeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applicants_ApplicantInfo_ApplicantStatusForSIViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "applicationInProcess": {
+            "type": "boolean"
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "",
             "nullable": true
           }
         }
@@ -6466,30 +7033,6 @@
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypeCategories_AttachmentTypeCategoryDTO"
             }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Attachments_CreateAttachmentRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileType": {
-            "type": "string",
-            "nullable": true
-          },
-          "data": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "attachmentTypeId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
           }
         }
       },
@@ -7732,6 +8275,31 @@
                   "type": "string",
                   "format": "guid"
                 }
+              },
+              "maxRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "minRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "monthsWithMaxRepayment": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "monthsBetweenChangesOnRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "decreaseRepaymentRatio": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
               }
             }
           }
