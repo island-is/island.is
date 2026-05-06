@@ -162,14 +162,14 @@ export const List = ({
     switch (item.fieldSettings?.listType) {
       case ListTypesEnum.COUNTRIES:
         return countriesAsListItems()
-      case ListTypesEnum.LIST_FROM_URL:
-        return listFromUrl()
       case ListTypesEnum.MUNICIPALITIES:
         return getMunicipalitiesList()
       case ListTypesEnum.POSTAL_CODES:
         return getPostalCodesList()
       case ListTypesEnum.CURRENCIES:
         return getCurrenciesList()
+      case ListTypesEnum.LIST_FROM_URL:
+        return listFromUrl()
       default:
         return item.list ?? []
     }
@@ -223,7 +223,7 @@ export const List = ({
         validate: () => {
           if (shouldFetch && isLoading) return formatMessage(m.listIsLoading)
           if (shouldFetch && dataFromUrlHasError)
-            return formatMessage(m.listFetchFailed) // add this message
+            return formatMessage(m.listFetchFailed)
           return true
         },
       }}
@@ -249,11 +249,7 @@ export const List = ({
                   }
                 : undefined
             }
-            placeholder={
-              listTypePlaceholder[
-                item.fieldSettings?.listType as keyof typeof listTypePlaceholder
-              ] ?? formatMessage(m.select)
-            }
+            placeholder={placeholder}
             backgroundColor="blue"
             onChange={(e) => {
               field.onChange(e)
