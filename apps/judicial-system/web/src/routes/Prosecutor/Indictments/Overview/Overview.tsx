@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
@@ -191,7 +192,7 @@ const Overview: FC = () => {
             />
           </Box>
         )}
-        {workingCase.reopenReason && (
+        {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
           <Box marginBottom={2}>
             <AlertMessage
               title="Mál enduropnað"

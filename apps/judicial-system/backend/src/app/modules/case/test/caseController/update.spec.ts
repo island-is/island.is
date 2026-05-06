@@ -932,7 +932,7 @@ describe('CaseController - Update', () => {
     it('should store reopenReason with header prepended', () => {
       const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${
         user.name
-      } ${lowercase(user.title)}`
+      } ${lowercase(user.title)}.`
       expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           caseId,

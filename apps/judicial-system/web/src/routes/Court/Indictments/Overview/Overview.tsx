@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -66,7 +67,7 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
-          {workingCase.reopenReason && (
+          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <AlertMessage
               title="Mál enduropnað"
               message={

@@ -167,7 +167,7 @@ const IndictmentOverview: FC = () => {
               }
             />
           )}
-          {workingCase.reopenReason && (
+          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <Box marginBottom={2}>
               <AlertMessage
                 title="Mál enduropnað"
