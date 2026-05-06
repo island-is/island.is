@@ -7,7 +7,10 @@ import {
   mapRentalAgreementDto,
   RentalAgreementDto,
 } from './dtos/rentalAgreements.dto'
-import { INACTIVE_AGREEMENT_STATUSES } from './constants'
+import {
+  AGREEMENT_STATUS_ORDER,
+  INACTIVE_AGREEMENT_STATUSES,
+} from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ContractDocumentItemDto,
@@ -35,8 +38,8 @@ export class HmsRentalAgreementService {
       .filter(isDefined)
       .sort(
         (a, b) =>
-          Number(INACTIVE_AGREEMENT_STATUSES.includes(a.status)) -
-          Number(INACTIVE_AGREEMENT_STATUSES.includes(b.status)),
+          AGREEMENT_STATUS_ORDER.indexOf(a.status) -
+          AGREEMENT_STATUS_ORDER.indexOf(b.status),
       )
 
     if (hideInactiveAgreements) {
