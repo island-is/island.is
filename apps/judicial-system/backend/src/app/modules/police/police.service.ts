@@ -168,6 +168,8 @@ export class PoliceService {
   private policeDigitalCaseFileStructure = z.object({
     id: z.string(),
     rvMalID: z.number(),
+    evidenceType: z.string().nullish(),
+    fullName: z.string().nullish(),
     externalVendorFileName: z.string(),
     externalVendorID: z.string(),
     registeredAt: z.string().nullish(),
@@ -204,6 +206,18 @@ export class PoliceService {
       gogn: z.optional(z.array(this.policeDigitalCaseFileStructure)),
     }),
   )
+
+  private buildDigitalCaseFileName(
+    file: z.infer<typeof this.policeDigitalCaseFileStructure>,
+  ): string {
+    return [
+      file.evidenceType?.trim(),
+      file.fullName?.trim(),
+      file.externalVendorFileName.trim(),
+    ]
+      .filter((part): part is string => Boolean(part))
+      .join(', ')
+  }
 
   private subpoenaStructure = z.object({
     acknowledged: z.boolean().nullish(),
@@ -492,6 +506,12 @@ export class PoliceService {
       const response: z.infer<typeof this.digitalCaseFilesStructure> =
         await res.json()
 
+      this.logger.info('Raw GetRVRafraengogn response', {
+        caseId,
+        source,
+        response,
+      })
+
       this.digitalCaseFilesStructure.parse(response)
 
       return response
@@ -667,7 +687,7 @@ export class PoliceService {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
           id: file.id.toString(),
-          name: file.externalVendorFileName,
+          name: this.buildDigitalCaseFileName(file),
           policeCaseNumber: filesPerCaseNumber.malsnumer,
           policeExternalVendorId: file.externalVendorID,
           displayDate: file.registeredAt
