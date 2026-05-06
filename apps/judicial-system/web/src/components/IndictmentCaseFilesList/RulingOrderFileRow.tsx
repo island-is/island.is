@@ -91,9 +91,6 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     (a) => a.rulingFileId === file.id,
   )
 
-  // Per-rulingFileId routes — reuse existing case-level routes and pass the
-  // ruling file id as a query param. Step 6e wires the menu; the route
-  // components themselves will be taught to honour the param later.
   const appealRoute = isDefence ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
   const statementRoute = isDefence ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
   const appealFilesRoute = isDefence

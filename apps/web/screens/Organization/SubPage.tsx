@@ -40,6 +40,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
@@ -76,6 +77,7 @@ export const SubPageContent = ({
 }) => {
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
   const content = (
     <>
       {subpage?.showTableOfContents && (
@@ -193,6 +195,22 @@ export const SubPageContent = ({
                   </GridColumn>
                 </GridRow>
                 {content}
+                {subpage?.showDateOfTheMostRecentReview &&
+                  subpage.contentLastReviewed && (
+                    <Box paddingTop={2}>
+                      <Text variant="small">
+                        {`${n(
+                          'contentLastReviewedLabel',
+                          activeLocale === 'is'
+                            ? 'Síðast uppfært'
+                            : 'Last updated',
+                        )}: ${format(
+                          new Date(subpage.contentLastReviewed),
+                          'do MMMM yyyy',
+                        )}`}
+                      </Text>
+                    </Box>
+                  )}
               </GridContainer>
             </GridColumn>
           </GridRow>
