@@ -119,7 +119,11 @@ export const SearchInput = ({
   if (hideInput) {
     return (
       <Box className={styles.wrapper} {...box}>
-        <LinkResolver href={SearchPaths.Search} className={styles.searchButton} callback={onButtonClick}>
+        <LinkResolver
+          href={SearchPaths.Search}
+          className={styles.searchButton}
+          callback={onButtonClick}
+        >
           <Button
             aria-label={buttonAriaLabel}
             icon="search"
