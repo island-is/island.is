@@ -1,4 +1,4 @@
-import type { AnswerValidator } from '@island.is/application/types'
+import type { AnswerValidator } from '@island.is/application/core'
 
 import { RentalHousingCategoryClass } from '../utils/constants'
 import { propertyInfo as propertyInfoMsgs } from './messages'

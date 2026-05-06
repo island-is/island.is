@@ -4,6 +4,21 @@ import type {
   DataTableRow,
   DynamicCheck,
 } from '@island.is/application/types'
+import {
+  calculateRentalPropertySize,
+  EmergencyExitOptions,
+  getSelectedRentalUnits,
+  hasRentalUnitSizeChanged,
+  mapRentalPropertyInfo,
+  mapRentalPropertyInfoToRows,
+  RentalHousingCategoryClassGroup,
+  shouldShowFireExtinguisherAlert as shouldShowRentalFireExtinguisherAlert,
+  shouldShowSmokeDetectorAlert as shouldShowRentalSmokeDetectorAlert,
+} from '@island.is/application/templates/hms/rental-agreement'
+import type {
+  RentalPropertyInfo,
+  RentalPropertyUnitAnswer,
+} from '@island.is/application/templates/hms/rental-agreement'
 
 import { GetPropertyInfoApi, SearchAddressesApi } from '../../dataProviders'
 import { dataSchema } from '../../lib/dataSchema'
@@ -29,76 +44,8 @@ type AddressOption = {
   value: string
 }
 
-type PropertyUnit = {
-  propertyCode?: number
-  propertyUsageDescription?: string
-  size?: number
-  sizeUnit?: string
-  unitCode?: string
-}
-
-type AppraisalUnit = {
-  unitCode?: string
-  propertyUsageDescription?: string
-  units?: PropertyUnit[]
-}
-
-type PropertyInfo = {
-  propertyCode?: number
-  propertyUsageDescription?: string
-  size?: number
-  sizeUnit?: string
-  unitCode?: string
-  appraisalUnits?: AppraisalUnit[]
-}
-
-type PropertyUnitAnswer = PropertyUnit & {
-  checked?: boolean
-  changedSize?: number
-  numOfRooms?: number
-}
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
-
-const toNumber = (value: unknown): number | undefined =>
-  typeof value === 'number' ? value : undefined
-
-const toString = (value: unknown): string | undefined =>
-  typeof value === 'string' ? value : undefined
-
-const mapUnit = (value: unknown): PropertyUnit | null => {
-  if (!isRecord(value)) return null
-  return {
-    propertyCode: toNumber(value.propertyCode),
-    propertyUsageDescription: toString(value.propertyUsageDescription),
-    size: toNumber(value.size),
-    sizeUnit: toString(value.sizeUnit),
-    unitCode: toString(value.unitCode),
-  }
-}
-
-const mapPropertyInfo = (value: unknown): PropertyInfo | null => {
-  if (!isRecord(value)) return null
-  const appraisalUnits = Array.isArray(value.appraisalUnits)
-    ? value.appraisalUnits.filter(isRecord).map((unit) => ({
-        unitCode: toString(unit.unitCode),
-        propertyUsageDescription: toString(unit.propertyUsageDescription),
-        units: Array.isArray(unit.units)
-          ? unit.units.map(mapUnit).filter((u): u is PropertyUnit => u !== null)
-          : [],
-      }))
-    : []
-
-  return {
-    propertyCode: toNumber(value.propertyCode),
-    propertyUsageDescription: toString(value.propertyUsageDescription),
-    size: toNumber(value.size),
-    sizeUnit: toString(value.sizeUnit),
-    unitCode: toString(value.unitCode),
-    appraisalUnits,
-  }
-}
 
 const getExternalDataRecord = (
   app: RentalAgreementSdfApplication,
@@ -121,7 +68,7 @@ const getAddressOptions = (
 
 const getPropertyInfos = (
   app: RentalAgreementSdfApplication,
-): PropertyInfo[] => {
+): RentalPropertyInfo[] => {
   const propertyInfoData = getExternalDataRecord(
     app,
     GetPropertyInfoApi.action,
@@ -136,118 +83,48 @@ const getPropertyInfos = (
     ? searchData
     : []
   return properties
-    .map(mapPropertyInfo)
-    .filter((property): property is PropertyInfo => property !== null)
-}
-
-const unitKey = (propertyCode?: number, unitCode?: string): string =>
-  `${propertyCode ?? 'property'}_${unitCode ?? 'unit'}`
-
-const mapSelectedUnitAnswer = (value: unknown): PropertyUnitAnswer | null => {
-  const unit = mapUnit(value)
-  if (!unit || !isRecord(value)) return null
-  return {
-    ...unit,
-    checked: value.checked === true,
-    changedSize: toNumber(value.changedSize),
-    numOfRooms: toNumber(value.numOfRooms),
-  }
+    .map(mapRentalPropertyInfo)
+    .filter((property): property is RentalPropertyInfo => property !== null)
 }
 
 const getSelectedUnits = (
   app: RentalAgreementSdfApplication,
-): PropertyUnitAnswer[] => {
+): RentalPropertyUnitAnswer[] => {
   const propertyInfoTable = isRecord(app.answers.propertyInfoTable)
     ? app.answers.propertyInfoTable
     : {}
-  const units = propertyInfoTable.units
-  if (!Array.isArray(units)) return []
-  return units
-    .map(mapSelectedUnitAnswer)
-    .filter((unit): unit is PropertyUnitAnswer => unit?.checked === true)
+  return getSelectedRentalUnits(propertyInfoTable.units)
 }
 
 const getPropertySize = (app: RentalAgreementSdfApplication): number =>
-  getSelectedUnits(app).reduce((sum, unit) => {
-    const changedSize = Number(unit.changedSize)
-    return sum + (Number.isFinite(changedSize) ? changedSize : unit.size ?? 0)
-  }, 0)
+  calculateRentalPropertySize(getSelectedUnits(app))
 
 const mapPropertyInfoToRows = (
   app: RentalAgreementSdfApplication,
 ): DataTableRow[] =>
-  getPropertyInfos(app).map((property) => ({
-    id: String(property.propertyCode ?? property.unitCode ?? 'property'),
-    cells: [
-      String(property.propertyCode ?? ''),
-      property.unitCode ?? '',
-      property.size ? `${property.size} ${property.sizeUnit ?? 'm²'}` : '',
-      '',
-    ],
-    expandable: {
-      rows: (property.appraisalUnits ?? []).flatMap((appraisalUnit) =>
-        (appraisalUnit.units ?? []).map((unit) => {
-          const key = unitKey(
-            unit.propertyCode ?? property.propertyCode,
-            unit.unitCode,
-          )
-          return {
-            id: key,
-            label:
-              unit.propertyUsageDescription ?? appraisalUnit.unitCode ?? '',
-            cells: [unit.unitCode ?? ''],
-            hasCheckbox: true,
-            checkboxKey: 'checked',
-            payload: {
-              ...unit,
-              propertyCode: unit.propertyCode ?? property.propertyCode,
-            },
-            defaultValues: {
-              changedSize: unit.size ?? 0,
-              numOfRooms: 0,
-            },
-            inputs: [
-              {
-                key: 'changedSize',
-                label: propertySearch.tableHeaderSize,
-                type: 'number' as const,
-                min: 0,
-                suffix: unit.sizeUnit ?? 'm²',
-              },
-              {
-                key: 'numOfRooms',
-                label: propertySearch.tableHeaderRooms,
-                type: 'number' as const,
-                min: 0,
-              },
-            ],
-          }
-        }),
-      ),
-    },
-  }))
+  mapRentalPropertyInfoToRows(getPropertyInfos(app), {
+    sizeLabel: propertySearch.tableHeaderSize,
+    roomsLabel: propertySearch.tableHeaderRooms,
+  })
 
 const hasChangedSize: DynamicCheck = (answers) => {
   const app = { answers, externalData: {} } as RentalAgreementSdfApplication
-  return getSelectedUnits(app).some((unit) => {
-    if (typeof unit.changedSize !== 'number') return false
-    return unit.size === undefined || unit.changedSize !== unit.size
-  })
+  return hasRentalUnitSizeChanged(getSelectedUnits(app))
 }
 
 const shouldShowSmokeDetectorAlert: DynamicCheck = (answers) => {
   const app = { answers, externalData: {} } as RentalAgreementSdfApplication
   const size = getPropertySize(app)
-  const smokeDetectors = Number(answers['fireProtections.smokeDetectors'])
-  return (
-    size > 0 &&
-    (!Number.isFinite(smokeDetectors) || smokeDetectors < Math.ceil(size / 80))
+  return shouldShowRentalSmokeDetectorAlert(
+    size,
+    answers['fireProtections.smokeDetectors'],
   )
 }
 
 const shouldShowFireExtinguisherAlert: DynamicCheck = (answers) => {
-  const fireExtinguisher = Number(answers['fireProtections.fireExtinguisher'])
-  return !Number.isFinite(fireExtinguisher) || fireExtinguisher < 1
+  return shouldShowRentalFireExtinguisherAlert(
+    answers['fireProtections.fireExtinguisher'],
+  )
 }
 
 const propertyTypeOptions = [
@@ -268,8 +145,8 @@ const propertyClassOptions = [
 ]
 
 const yesNoOptions = [
-  { label: misc.yes, value: 'yes' },
-  { label: misc.no, value: 'no' },
+  { label: misc.yes, value: EmergencyExitOptions.YES },
+  { label: misc.no, value: EmergencyExitOptions.NO },
 ]
 
 export const MainForm = new FormBuilder<typeof dataSchema>(
@@ -371,9 +248,27 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
               propertyInfo.categoryClassGroupLabel,
               {
                 options: [
-                  { label: 'Námsmenn', value: 'students' },
-                  { label: 'Eldri borgarar', value: 'seniors' },
-                  { label: 'Tekjulægri hópar', value: 'lowIncome' },
+                  {
+                    label: 'Námsmenn',
+                    value: RentalHousingCategoryClassGroup.STUDENT_HOUSING,
+                  },
+                  {
+                    label: 'Eldri borgarar',
+                    value:
+                      RentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
+                  },
+                  {
+                    label: 'Búsetuúrræði fyrir fatlað fólk',
+                    value: RentalHousingCategoryClassGroup.COMMUNE,
+                  },
+                  {
+                    label: 'Áfangaheimili',
+                    value: RentalHousingCategoryClassGroup.HALFWAY_HOUSE,
+                  },
+                  {
+                    label: 'Tekjulægri hópar',
+                    value: RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
+                  },
                 ],
                 placeholder: propertyInfo.categoryClassGroupPlaceholder,
                 showWhen: {

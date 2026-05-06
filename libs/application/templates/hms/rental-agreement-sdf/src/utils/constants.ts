@@ -15,9 +15,9 @@ export enum Roles {
 }
 
 export enum RentalHousingCategoryTypes {
-  ENTIRE_HOME = 'entireHome',
-  ROOM = 'room',
-  COMMERCIAL = 'commercial',
+  ENTIRE_HOME = 'House_Apartment',
+  ROOM = 'Room',
+  COMMERCIAL = 'Commercial',
 }
 
 export enum RentalHousingCategoryClass {
@@ -25,7 +25,20 @@ export enum RentalHousingCategoryClass {
   SPECIAL_GROUPS = 'specialGroups',
 }
 
+export enum RentalHousingCategoryClassGroup {
+  STUDENT_HOUSING = 'Student',
+  SENIOR_CITIZEN_HOUSING = 'Elderly',
+  COMMUNE = 'Disabled',
+  HALFWAY_HOUSE = 'HalfwayHouse',
+  INCOME_BASED_HOUSING = 'IncomeRestricted',
+}
+
 export enum RentalHousingConditionInspector {
-  CONTRACT_PARTIES = 'contractParties',
-  INDEPENDENT_PARTY = 'independentParty',
+  CONTRACT_PARTIES = 'ContractParties',
+  INDEPENDENT_PARTY = 'Indipendant',
+}
+
+export enum EmergencyExitOptions {
+  YES = '1',
+  NO = '0',
 }

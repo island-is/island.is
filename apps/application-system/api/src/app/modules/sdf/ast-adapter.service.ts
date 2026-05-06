@@ -12,12 +12,13 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import {
   Application,
   ApplicationWithAttachments,
-  DefaultEvents,
   ExternalData,
   FieldTypes,
+  Form,
   FormItemTypes,
   FormValue,
   RoleInState,
+  TemplateApi,
 } from '@island.is/application/types'
 import {
   convertFormToScreens,
@@ -30,7 +31,7 @@ import {
   getFormNodeFieldIds,
 } from '@island.is/application/screen-compiler'
 import type { User } from '@island.is/auth-nest-tools'
-import type { Locale } from '@island.is/shared/types'
+import type { BffUser, Locale } from '@island.is/shared/types'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApplicationActionService } from '../application/application-action.service'
@@ -45,6 +46,7 @@ import {
   ValidationErrorDto,
   ValidateResponseDto,
 } from './dto/screen.dto'
+import { SdfActionType } from './dto/action.dto'
 
 // Vanilla-extract CSS files (.css.ts) import `style()` which requires a
 // build-tool-managed "file scope". On the server there is no build tool running,
@@ -60,6 +62,44 @@ try {
 
 interface AdapterOptions {
   ephemeral?: boolean
+  application?: ApplicationWithAttachments
+}
+
+type ApplicationTemplate = Awaited<
+  ReturnType<typeof getApplicationTemplateByTypeId>
+>
+
+type SdfBffUser = BffUser & {
+  nationalId: string
+}
+
+type ScreenWithDescription = FormScreen & {
+  description?: Parameters<FormTextResolver['resolve']>[0]
+}
+
+interface ScreenRenderContext {
+  application: ApplicationWithAttachments
+  template: ApplicationTemplate
+  roleInState: RoleInState
+  form: Form
+  filteredAnswers: FormValue
+  filteredExternalData: ExternalData
+  bffUser: SdfBffUser
+  screens: FormScreen[]
+}
+
+type ApplicationSnapshotInput = Partial<ApplicationWithAttachments> & {
+  toJSON?: () => Partial<ApplicationWithAttachments>
+}
+
+const toApplicationSnapshot = (
+  application: ApplicationSnapshotInput,
+): Partial<ApplicationWithAttachments> => {
+  if (typeof application.toJSON === 'function') {
+    return application.toJSON()
+  }
+
+  return { ...application }
 }
 
 @Injectable()
@@ -98,97 +138,32 @@ export class AstAdapterService {
   ): Promise<ScreenDto> {
     const startTime = Date.now()
 
-    // Step 1: Load Application
-    const application = await this.requireApplicationForUser(
+    const context = await this.resolveScreenRenderContext(
       applicationId,
+      locale,
       user,
+      options,
+      startTime,
     )
-    this.logTiming('Step 1: Load Application', startTime)
-
-    // Step 2: Load Template
-    const step2Start = Date.now()
-    const template = await getApplicationTemplateByTypeId(
-      application.typeId,
-    )
-    this.logTiming('Step 2: Load Template', step2Start)
-
-    // Step 3: Resolve Role & Form
-    const step3Start = Date.now()
-    const role = template.mapUserToRole(
-      user.nationalId,
-      application as Application,
-    )
-    if (!role) {
-      throw new ForbiddenException('Access denied')
-    }
-
-    const helper = new ApplicationTemplateHelper(
-      application as Application,
-      template,
-    )
-    const stateInfo = helper.getApplicationStateInformation(application.state)
-    if (!stateInfo) {
-      throw new Error(
-        `No state information for state ${application.state}`,
-      )
-    }
-
-    const roleInState = stateInfo.roles?.find((r) => r.id === role)
-    if (!roleInState) {
-      throw new Error(
-        `Role ${role} not found in state ${application.state}`,
-      )
-    }
-
-    const form = await this.loadForm(roleInState, application)
-    this.logTiming('Step 3: Resolve Role & Form', step3Start)
-
-    // Step 3.5: Apply Role-Based Data Filtering (SECURITY-CRITICAL)
-    const step35Start = Date.now()
-    const { answers: filteredAnswers, externalData: filteredExternalData } =
-      this.filterDataByRole(application as Application, roleInState)
-    this.logTiming('Step 3.5: Role-Based Data Filtering', step35Start)
-
-    // Step 4: Compile Form to Screens
-    const step4Start = Date.now()
-    const bffUser = {
-      nationalId: user.nationalId,
-      profile: { nationalId: user.nationalId, name: '', locale },
-    }
-    const screens = convertFormToScreens(
+    const {
+      application,
       form,
       filteredAnswers,
       filteredExternalData,
-      bffUser as any,
-    )
-    this.logTiming('Step 4: Compile Form to Screens', step4Start)
+      bffUser,
+      screens,
+    } = context
 
     // Step 5: Resolve Current Screen
-    // Priority: explicit override > persisted DB value > answer-based inference
     const step5Start = Date.now()
-    let resolvedIndex: number
-    if (pageIndexOverride !== undefined && pageIndexOverride >= 0) {
-      resolvedIndex = moveToScreen(screens, pageIndexOverride, true)
-      if ((application as any).pageIndex !== pageIndexOverride) {
-        await this.applicationService.update(applicationId, {
-          pageIndex: resolvedIndex,
-        })
-      }
-    } else {
-      const persistedPageIndex: number = (application as any).pageIndex ?? 0
-      const hasAnswers =
-        Object.keys(application.answers ?? {}).length > 0
-      if (persistedPageIndex === 0 && hasAnswers) {
-        // Migration fallback: existing app with no persisted page index.
-        // Infer from answers and persist so this only runs once.
-        resolvedIndex = findCurrentScreen(screens, filteredAnswers)
-        await this.applicationService.update(applicationId, {
-          pageIndex: resolvedIndex,
-        })
-      } else {
-        resolvedIndex = moveToScreen(screens, persistedPageIndex, true)
-      }
-    }
+    const resolvedIndex = await this.resolvePageIndex(
+      applicationId,
+      application,
+      screens,
+      filteredAnswers,
+      pageIndexOverride,
+      Boolean(options.ephemeral),
+    )
     const currentScreen = screens[resolvedIndex]
     this.logTiming('Step 5: Resolve Current Screen', step5Start)
 
@@ -202,7 +177,7 @@ export class AstAdapterService {
       form,
       filteredAnswers,
       filteredExternalData,
-      bffUser as any,
+      bffUser,
     )
     const stepper = buildStepper(
       navigableSections,
@@ -224,57 +199,19 @@ export class AstAdapterService {
 
     // Step 8: Build Footer
     const step8Start = Date.now()
-    const isLastScreen = !screens
-      .slice(resolvedIndex + 1)
-      .some((s) => s.isNavigable)
-
-    let footerButtons: ReturnType<typeof buildFooterButtons>
-    if (isLastScreen) {
-      footerButtons = buildFooterButtons(
-        roleInState.actions,
-        filteredAnswers,
-        filteredExternalData,
-        bffUser as any,
-        resolver,
-      )
-    } else {
-      footerButtons = [
-        {
-          id: 'next',
-          text: resolver.resolve(
-            currentScreen?.nextButtonText ?? 'Halda áfram',
-          ),
-          variant: 'PRIMARY',
-          actionType: 'NEXT_PAGE',
-        },
-      ]
-    }
-    const footer = {
-      buttons: footerButtons,
-      canGoBack: canGoBack(screens, resolvedIndex),
-    }
+    const footer = this.buildFooter(
+      context,
+      currentScreen,
+      resolvedIndex,
+      resolver,
+    )
     this.logTiming('Step 8: Build Footer', step8Start)
 
     // Step 9: Build Header
-    const header = {
-      title: resolver.resolve(
-        currentScreen?.title || form.title,
-      ),
-      description: (currentScreen as any)?.description
-        ? resolver.resolve((currentScreen as any).description)
-        : undefined,
-      applicationName: resolver.resolve(form.title),
-      institutionName: (application as any).institution ?? undefined,
-    }
+    const header = this.buildHeader(context, currentScreen, resolver)
 
     // Step 10: Extract persisted answers for current page fields
-    const pageFieldIds = getFormNodeFieldIds(currentScreen as any)
-    const pageAnswers: Record<string, unknown> = {}
-    for (const fid of pageFieldIds) {
-      if (fid in (application.answers ?? {})) {
-        pageAnswers[fid] = (application.answers as Record<string, unknown>)[fid]
-      }
-    }
+    const pageAnswers = this.extractPageAnswers(currentScreen, application)
 
     // Step 11: Assemble & Return Screen
     this.logTiming('Total pipeline', startTime)
@@ -290,8 +227,213 @@ export class AstAdapterService {
     }
   }
 
+  private async resolveScreenRenderContext(
+    applicationId: string,
+    locale: Locale,
+    user: User,
+    options: AdapterOptions,
+    pipelineStartTime: number,
+  ): Promise<ScreenRenderContext> {
+    // Step 1: Load Application
+    const application =
+      options.application ??
+      (await this.requireApplicationForUser(applicationId, user))
+    this.logTiming('Step 1: Load Application', pipelineStartTime)
+
+    // Step 2: Load Template
+    const step2Start = Date.now()
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    this.logTiming('Step 2: Load Template', step2Start)
+
+    // Step 3: Resolve Role & Form
+    const step3Start = Date.now()
+    const roleInState = this.resolveRoleInState(application, template, user)
+    const form = await this.loadForm(roleInState, application)
+    this.logTiming('Step 3: Resolve Role & Form', step3Start)
+
+    // Step 3.5: Apply Role-Based Data Filtering (SECURITY-CRITICAL)
+    const step35Start = Date.now()
+    const { answers: filteredAnswers, externalData: filteredExternalData } =
+      this.filterDataByRole(application, roleInState)
+    this.logTiming('Step 3.5: Role-Based Data Filtering', step35Start)
+
+    // Step 4: Compile Form to Screens
+    const step4Start = Date.now()
+    const bffUser = this.buildBffUser(user, locale)
+    const screens = convertFormToScreens(
+      form,
+      filteredAnswers,
+      filteredExternalData,
+      bffUser,
+    )
+    this.logTiming('Step 4: Compile Form to Screens', step4Start)
+
+    return {
+      application,
+      template,
+      roleInState,
+      form,
+      filteredAnswers,
+      filteredExternalData,
+      bffUser,
+      screens,
+    }
+  }
+
+  private resolveRoleInState(
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    user: User,
+  ): RoleInState {
+    const role = template.mapUserToRole(user.nationalId, application)
+    if (!role) {
+      throw new ForbiddenException('Access denied')
+    }
+
+    const helper = new ApplicationTemplateHelper(application, template)
+
+    const stateInfo = helper.getApplicationStateInformation(application.state)
+    if (!stateInfo) {
+      throw new Error(`No state information for state ${application.state}`)
+    }
+
+    const roleInState = stateInfo.roles?.find((r) => r.id === role)
+    if (!roleInState) {
+      throw new Error(`Role ${role} not found in state ${application.state}`)
+    }
+
+    return roleInState
+  }
+
+  private buildBffUser(user: User, locale: Locale): SdfBffUser {
+    return {
+      nationalId: user.nationalId,
+      scopes: [],
+      profile: {
+        sid: '',
+        nationalId: user.nationalId,
+        name: '',
+        idp: '',
+        subjectType: 'person',
+        locale,
+        iss: '',
+      },
+    }
+  }
+
+  private async resolvePageIndex(
+    applicationId: string,
+    application: ApplicationWithAttachments,
+    screens: FormScreen[],
+    filteredAnswers: FormValue,
+    pageIndexOverride: number | undefined,
+    ephemeral: boolean,
+  ): Promise<number> {
+    // Priority: explicit override > persisted DB value > answer-based inference.
+    if (pageIndexOverride !== undefined && pageIndexOverride >= 0) {
+      const resolvedIndex = moveToScreen(screens, pageIndexOverride, true)
+      if (!ephemeral && application.pageIndex !== pageIndexOverride) {
+        await this.applicationService.update(applicationId, {
+          pageIndex: resolvedIndex,
+        })
+      }
+
+      return resolvedIndex
+    }
+
+    const persistedPageIndex = application.pageIndex ?? 0
+    const hasAnswers = Object.keys(application.answers ?? {}).length > 0
+    if (persistedPageIndex === 0 && hasAnswers) {
+      // Migration fallback: existing app with no persisted page index.
+      // Infer from answers and persist so this only runs once.
+      const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
+      if (!ephemeral) {
+        await this.applicationService.update(applicationId, {
+          pageIndex: resolvedIndex,
+        })
+      }
+
+      return resolvedIndex
+    }
+
+    return moveToScreen(screens, persistedPageIndex, true)
+  }
+
+  private buildFooter(
+    context: ScreenRenderContext,
+    currentScreen: FormScreen,
+    resolvedIndex: number,
+    resolver: FormTextResolver,
+  ): ScreenDto['footer'] {
+    const isLastScreen = !context.screens
+      .slice(resolvedIndex + 1)
+      .some((screen) => screen.isNavigable)
+
+    const buttons = isLastScreen
+      ? buildFooterButtons(
+          context.roleInState.actions,
+          context.filteredAnswers,
+          context.filteredExternalData,
+          context.bffUser,
+          resolver,
+        )
+      : [
+          {
+            id: 'next',
+            text: resolver.resolve(
+              currentScreen?.nextButtonText ?? 'Halda áfram',
+            ),
+            variant: 'PRIMARY',
+            actionType: 'NEXT_PAGE',
+          },
+        ]
+
+    return {
+      buttons,
+      canGoBack: canGoBack(context.screens, resolvedIndex),
+    }
+  }
+
+  private buildHeader(
+    context: ScreenRenderContext,
+    currentScreen: FormScreen,
+    resolver: FormTextResolver,
+  ): ScreenDto['header'] {
+    const screen = currentScreen as ScreenWithDescription
+    const description = screen.description
+      ? resolver.resolve(screen.description)
+      : undefined
+
+    return {
+      title: resolver.resolve(currentScreen?.title || context.form.title),
+      description,
+      applicationName: resolver.resolve(context.form.title),
+      institutionName: context.application.institution ?? undefined,
+    }
+  }
+
+  private extractPageAnswers(
+    currentScreen: FormScreen,
+    application: ApplicationWithAttachments,
+  ): Record<string, unknown> {
+    const pageFieldIds = getFormNodeFieldIds(currentScreen)
+    const pageAnswers: Record<string, unknown> = {}
+
+    for (const fieldId of pageFieldIds) {
+      if (fieldId in (application.answers ?? {})) {
+        pageAnswers[fieldId] = application.answers[fieldId]
+      }
+    }
+
+    return pageAnswers
+  }
+
   /**
-   * Persists answer deltas, optionally runs allowed template APIs, then returns the current screen.
+   * Recomputes the current screen against an in-memory answer snapshot.
+   *
+   * REFETCH must not persist answers, page index, or external data. Template APIs
+   * requested here run through the ephemeral action path, which mutates only the
+   * in-memory application object used to render the response.
    */
   async handleRefetch(
     applicationId: string,
@@ -300,35 +442,29 @@ export class AstAdapterService {
     locale: Locale,
     user: User,
   ): Promise<ScreenDto> {
-    let workingApplication = await this.requireApplicationForUser(
+    const application = await this.requireApplicationForUser(
       applicationId,
       user,
     )
 
-    const template = await getApplicationTemplateByTypeId(
-      workingApplication.typeId,
-    )
+    const template = await getApplicationTemplateByTypeId(application.typeId)
     const role = template.mapUserToRole(
       user.nationalId,
-      workingApplication as Application,
+      application as Application,
     )
     if (!role) {
       throw new ForbiddenException('Access denied')
     }
 
     const mergedAnswers = {
-      ...(workingApplication.answers ?? {}),
+      ...(application.answers ?? {}),
       ...(answers ?? {}),
     } as FormValue
 
-    await this.applicationService.update(applicationId, {
+    let workingApplication = {
+      ...toApplicationSnapshot(application),
       answers: mergedAnswers,
-    })
-
-    workingApplication = await this.requireApplicationForUser(
-      applicationId,
-      user,
-    )
+    } as ApplicationWithAttachments
 
     const helper = new ApplicationTemplateHelper(
       workingApplication as Application,
@@ -343,13 +479,13 @@ export class AstAdapterService {
       )
       if (apisToRun.length > 0) {
         const result =
-          await this.applicationActionService.performActionOnApplication(
+          await this.applicationActionService.performEphemeralActionOnApplication(
             workingApplication,
             template,
             user,
             apisToRun,
             locale,
-            DefaultEvents.SUBMIT,
+            SdfActionType.REFETCH,
           )
         if (result.hasError) {
           throw new Error(
@@ -358,11 +494,38 @@ export class AstAdapterService {
               : 'Template API failed during REFETCH',
           )
         }
-        workingApplication = result.updatedApplication as ApplicationWithAttachments
+        const updatedApplication = toApplicationSnapshot(
+          result.updatedApplication,
+        )
+        workingApplication = {
+          ...workingApplication,
+          ...updatedApplication,
+          id: updatedApplication.id ?? workingApplication.id,
+          typeId: updatedApplication.typeId ?? workingApplication.typeId,
+          applicant:
+            updatedApplication.applicant ?? workingApplication.applicant,
+          assignees:
+            updatedApplication.assignees ?? workingApplication.assignees,
+          applicantActors:
+            updatedApplication.applicantActors ??
+            workingApplication.applicantActors,
+          state: updatedApplication.state ?? workingApplication.state,
+          status: updatedApplication.status ?? workingApplication.status,
+          answers: updatedApplication.answers ?? workingApplication.answers,
+          externalData:
+            updatedApplication.externalData ?? workingApplication.externalData,
+          attachments:
+            updatedApplication.attachments ?? workingApplication.attachments,
+          created: updatedApplication.created ?? workingApplication.created,
+          modified: updatedApplication.modified ?? workingApplication.modified,
+        }
       }
     }
 
-    return this.getScreen(applicationId, undefined, locale, user)
+    return this.getScreen(applicationId, undefined, locale, user, {
+      ephemeral: true,
+      application: workingApplication,
+    })
   }
 
   async validateFields(
@@ -377,9 +540,7 @@ export class AstAdapterService {
       user,
     )
 
-    const template = await getApplicationTemplateByTypeId(
-      application.typeId,
-    )
+    const template = await getApplicationTemplateByTypeId(application.typeId)
 
     const role = template.mapUserToRole(
       user.nationalId,
@@ -483,7 +644,10 @@ export class AstAdapterService {
         user,
       )
     } catch (e) {
-      this.logger.debug('computeDisplayValues: failed to resolve current screen', e)
+      this.logger.debug(
+        'computeDisplayValues: failed to resolve current screen',
+        e,
+      )
       return results
     }
 
@@ -491,7 +655,10 @@ export class AstAdapterService {
 
     const displayFields: Array<Record<string, unknown>> = []
     const maybeScreen = currentScreen as unknown as Record<string, unknown>
-    if ('type' in maybeScreen && maybeScreen.type === FormItemTypes.MULTI_FIELD) {
+    if (
+      'type' in maybeScreen &&
+      maybeScreen.type === FormItemTypes.MULTI_FIELD
+    ) {
       const children = (maybeScreen.children ?? []) as Array<
         Record<string, unknown>
       >
@@ -514,10 +681,9 @@ export class AstAdapterService {
       const valueFn = field.value
       if (typeof valueFn !== 'function') continue
       try {
-        const computed = (valueFn as (
-          answers: unknown,
-          externalData: unknown,
-        ) => unknown)(mergedAnswers, externalData)
+        const computed = (
+          valueFn as (answers: unknown, externalData: unknown) => unknown
+        )(mergedAnswers, externalData)
         const resolved = resolver.resolve(computed as any)
         if (resolved != null) {
           results[id] = String(resolved)
@@ -545,7 +711,7 @@ export class AstAdapterService {
       user,
     )
 
-    const currentPageIndex: number = (application as any).pageIndex ?? 0
+    const currentPageIndex: number = application.pageIndex ?? 0
 
     if (lastKnownPageIndex !== undefined) {
       if (currentPageIndex !== lastKnownPageIndex) {
@@ -573,8 +739,8 @@ export class AstAdapterService {
       currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
     ) {
       const edpScreen = currentScreen as ExternalDataProviderScreen
-      const dataProviders = (edpScreen as any).dataProviders ?? []
-      const relevantProviders = dataProviders.filter((p: any) => p.action)
+      const dataProviders = edpScreen.dataProviders ?? []
+      const relevantProviders = dataProviders.filter((p) => p.action)
 
       if (relevantProviders.length > 0) {
         const role = template.mapUserToRole(
@@ -585,12 +751,10 @@ export class AstAdapterService {
           application as Application,
           template,
         )
-        const apisFromRole = role
-          ? helper.getApisFromRoleInState(role)
-          : []
+        const apisFromRole = role ? helper.getApisFromRoleInState(role) : []
 
         const templateApis = relevantProviders
-          .map((p: any) => apisFromRole.find((a) => a.actionId === p.action))
+          .map((p) => apisFromRole.find((a) => a.actionId === p.action))
           .filter(Boolean)
 
         if (templateApis.length > 0) {
@@ -599,7 +763,7 @@ export class AstAdapterService {
               application,
               template,
               user,
-              templateApis,
+              templateApis as TemplateApi[],
               locale,
               'SUBMIT',
             )
@@ -805,14 +969,9 @@ export class AstAdapterService {
     locale: Locale,
     user: User,
   ): Promise<ScreenDto> {
-    let application = await this.requireApplicationForUser(
-      applicationId,
-      user,
-    )
+    let application = await this.requireApplicationForUser(applicationId, user)
 
-    const template = await getApplicationTemplateByTypeId(
-      application.typeId,
-    )
+    const template = await getApplicationTemplateByTypeId(application.typeId)
 
     const role = template.mapUserToRole(
       user.nationalId,
@@ -827,10 +986,7 @@ export class AstAdapterService {
       await this.applicationService.update(applicationId, {
         answers: mergedAnswers,
       })
-      application = await this.requireApplicationForUser(
-        applicationId,
-        user,
-      )
+      application = await this.requireApplicationForUser(applicationId, user)
     }
 
     const helper = new ApplicationTemplateHelper(
@@ -894,7 +1050,9 @@ export class AstAdapterService {
     if (!form.children) {
       throw new Error(
         `Form loaded for role "${roleInState.id}" has no children array. ` +
-          `Expected a Form object with children, got: ${JSON.stringify(Object.keys(form))}`,
+          `Expected a Form object with children, got: ${JSON.stringify(
+            Object.keys(form),
+          )}`,
       )
     }
 

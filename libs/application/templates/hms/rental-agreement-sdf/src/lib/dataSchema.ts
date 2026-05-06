@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import {
+  EmergencyExitOptions,
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -31,21 +32,30 @@ const isEnumMember = <T extends Record<string, string>>(
   typeof value === 'string' &&
   (Object.values(enumObj) as string[]).includes(value)
 
-/** Treat invalid / empty values as missing so Zod emits locale messages. */
-const coerceCategoryType = z.preprocess(
-  (v: unknown) => (isEnumMember(RentalHousingCategoryTypes, v) ? v : undefined),
-  z.nativeEnum(RentalHousingCategoryTypes, {
-    required_error: propertyInfoMsgs.categoryTypeRequiredError,
-    invalid_type_error: propertyInfoMsgs.categoryTypeRequiredError,
-  }),
+const enumField = <T extends Record<string, string>>(
+  enumObj: T,
+  message: string,
+) =>
+  z
+    .unknown()
+    .superRefine((value, ctx) => {
+      if (!isEnumMember(enumObj, value)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message,
+        })
+      }
+    })
+    .transform((value) => value as T[keyof T])
+
+const coerceCategoryType = enumField(
+  RentalHousingCategoryTypes,
+  propertyInfoMsgs.categoryTypeRequiredError,
 )
 
-const coerceCategoryClass = z.preprocess(
-  (v: unknown) => (isEnumMember(RentalHousingCategoryClass, v) ? v : undefined),
-  z.nativeEnum(RentalHousingCategoryClass, {
-    required_error: propertyInfoMsgs.categoryClassRequiredError,
-    invalid_type_error: propertyInfoMsgs.categoryClassRequiredError,
-  }),
+const coerceCategoryClass = enumField(
+  RentalHousingCategoryClass,
+  propertyInfoMsgs.categoryClassRequiredError,
 )
 
 export const dataSchema = z.object({
@@ -62,15 +72,19 @@ export const dataSchema = z.object({
   'specialProvisions.descriptionInput': z.string().optional(),
   'specialProvisions.rulesInput': z.string().optional(),
   'specialProvisions.propertySearchUnits': z.unknown().optional(),
-  'condition.inspector': z.nativeEnum(RentalHousingConditionInspector).optional(),
+  'condition.inspector': z
+    .nativeEnum(RentalHousingConditionInspector)
+    .optional(),
   'condition.inspectorName': z.string().optional(),
   'condition.resultsDescription': z.string().optional(),
   'condition.resultsFiles': z.array(z.unknown()).optional(),
   'fireProtections.smokeDetectors': z.string().optional(),
   'fireProtections.fireExtinguisher': z.string().optional(),
-  'fireProtections.fireBlanket': z.enum(['yes', 'no']).optional(),
-  'fireProtections.emergencyExits': z.enum(['yes', 'no']).optional(),
+  'fireProtections.fireBlanket': z.nativeEnum(EmergencyExitOptions).optional(),
+  'fireProtections.emergencyExits': z
+    .nativeEnum(EmergencyExitOptions)
+    .optional(),
   'fireProtections.propertySize': z.unknown().optional(),
-  })
+})
 
 export type RentalAgreementSdfAnswers = z.TypeOf<typeof dataSchema>

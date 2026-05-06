@@ -11,9 +11,9 @@ import {
 
 type ClientCondition = SingleClientConditionDto | MultiClientConditionDto
 
-export function extractClientCondition(
+export const extractClientCondition = (
   condition?: Condition,
-): ClientCondition | null {
+): ClientCondition | null => {
   if (!condition) return null
   if (typeof condition === 'function') return null
 
@@ -29,11 +29,12 @@ export function extractClientCondition(
   return staticCheckToHint(condition as StaticCheck)
 }
 
-function staticCheckToHint(check: StaticCheck): SingleClientConditionDto {
+const staticCheckToHint = (check: StaticCheck): SingleClientConditionDto => {
   return {
     questionId:
       check.questionId ?? check.externalDataId ?? check.userPropId ?? '',
-    comparator: SdfComparators[check.comparator as Comparators] ?? check.comparator,
+    comparator:
+      SdfComparators[check.comparator as Comparators] ?? check.comparator,
     value: String(check.value),
   }
 }

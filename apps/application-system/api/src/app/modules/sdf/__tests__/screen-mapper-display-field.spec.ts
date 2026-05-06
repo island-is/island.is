@@ -150,4 +150,44 @@ describe('mapScreenToComponents — display field parity props', () => {
       'Önnur upphæð',
     )
   })
+
+  it('passes external data to display field value callbacks', () => {
+    const screen = {
+      type: FormItemTypes.MULTI_FIELD,
+      id: 'page1',
+      title: 'Display Fields',
+      sectionIndex: 0,
+      subSectionIndex: 0,
+      isNavigable: true,
+      children: [
+        makeDisplayChild('displayField', {
+          value: (
+            _answers: Record<string, unknown>,
+            externalData: Record<string, unknown>,
+          ) => {
+            const payment = externalData.payment as
+              | { data?: { total?: number } }
+              | undefined
+
+            return String(payment?.data?.total ?? 0)
+          },
+        }),
+      ],
+    } as unknown as MultiFieldScreen
+
+    const app = {
+      answers: {},
+      externalData: {
+        payment: {
+          data: {
+            total: 1234,
+          },
+        },
+      },
+    } as unknown as Application
+
+    const components = mapScreenToComponents(screen, stubResolver, app)
+
+    expect(components.find((c) => c.id === 'displayField')?.value).toBe('1234')
+  })
 })

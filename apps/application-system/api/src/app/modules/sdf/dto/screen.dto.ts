@@ -59,34 +59,66 @@ export class ValidationErrorDto {
   message!: string
 }
 
-//TODO:Define a base plus one DTO per component kind, e.g. TextComponentDto,
-// SliderComponentDto, … with a shared type (or kind) discriminator.
+/**
+ * Generic REST component DTO.
+ *
+ * The GraphQL gateway exposes this as a typed component union. The REST layer
+ * intentionally keeps one documented transport DTO because it mirrors the
+ * legacy form AST where field props vary by `type`.
+ */
 export class ComponentDto {
-  @ApiProperty()
+  @ApiProperty({
+    description:
+      'Component id. This matches the application answer key for input fields.',
+    example: 'propertyInfo.categoryType',
+  })
   id!: string
 
-  @ApiProperty()
+  @ApiProperty({
+    description:
+      'SDF component discriminator. The GraphQL gateway maps this to Sdf*Field typenames.',
+    example: 'SELECT',
+  })
   type!: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Resolved, locale-specific component label.',
+    example: 'Tegund leiguhúsnæðis',
+  })
   label?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Resolved, locale-specific placeholder text.',
+    example: 'Veldu tegund',
+  })
   placeholder?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Whether the component must be answered before continuing.',
+  })
   required?: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description:
+      'Whether the component is read-only for the current role/state.',
+  })
   disabled?: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Default value emitted by the template field definition.',
+  })
   defaultValue?: unknown
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Design-system width hint.',
+    enum: ['FULL', 'HALF'],
+  })
   width?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description:
+      'Client-evaluable condition hint. Dynamic server-only conditions are omitted.',
+  })
   clientCondition?: SingleClientConditionDto | MultiClientConditionDto | null
 
   @ApiPropertyOptional()

@@ -2,17 +2,16 @@ import {
   Section,
   SubSection,
   FormItemTypes,
-  SectionChildren,
 } from '@island.is/application/types'
 import { StepperDto, StepperSectionDto } from './dto/screen.dto'
 import { FormTextResolver } from './i18n-resolver.service'
 
-export function buildStepper(
+export const buildStepper = (
   sections: Section[],
   activeSectionIndex: number,
   activeSubSectionIndex: number,
   resolver: FormTextResolver,
-): StepperDto {
+): StepperDto => {
   const stepperSections: StepperSectionDto[] = sections.map(
     (section, index) => {
       const subSections = (section.children ?? []).filter(

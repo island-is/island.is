@@ -15,6 +15,9 @@ import {
   ApiParam,
   ApiQuery,
   ApiBearerAuth,
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiOperation,
 } from '@nestjs/swagger'
 import {
   IdsUserGuard,
@@ -29,6 +32,7 @@ import type { Locale } from '@island.is/shared/types'
 import { AstAdapterService } from './ast-adapter.service'
 import { ExecuteActionDto, SdfActionType } from './dto/action.dto'
 import { ScreenDto, ValidateResponseDto } from './dto/screen.dto'
+import { createSdfProblem, SdfProblemDetailsDto } from './problem-details'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('sdf')
@@ -39,10 +43,25 @@ export class SdfController {
 
   @Scopes(ApplicationScope.read)
   @Get(':applicationId/screen')
+  @ApiOperation({
+    summary: 'Get an SDF screen',
+    description:
+      'Compiles the current application state and form AST into a server-driven screen payload.',
+  })
   @ApiParam({ name: 'applicationId', type: String })
-  @ApiQuery({ name: 'step', required: false, type: Number, description: 'Optional override for deep-linking. Omit to use the persisted page index.' })
+  @ApiQuery({
+    name: 'step',
+    required: false,
+    type: Number,
+    description:
+      'Optional override for deep-linking. Omit to use the persisted page index.',
+  })
   @ApiQuery({ name: 'locale', required: false, type: String })
   @ApiOkResponse({ type: ScreenDto })
+  @ApiBadRequestResponse({
+    description: 'Invalid screen request.',
+    type: SdfProblemDetailsDto,
+  })
   async getScreen(
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Query('step') step?: string,
@@ -53,7 +72,15 @@ export class SdfController {
     if (step !== undefined) {
       const n = parseInt(step, 10)
       if (!Number.isFinite(n) || n < 0) {
-        throw new BadRequestException('step must be a non-negative integer')
+        throw new BadRequestException(
+          createSdfProblem({
+            type: 'https://island.is/problems/application-system/sdf/bad-request',
+            title: 'Bad request',
+            status: 400,
+            detail: 'step must be a non-negative integer',
+            instance: `/sdf/${applicationId}/screen`,
+          }),
+        )
       }
       pageIndexOverride = n
     }
@@ -67,8 +94,21 @@ export class SdfController {
 
   @Scopes(ApplicationScope.write)
   @Post(':applicationId/action')
+  @ApiOperation({
+    summary: 'Execute an SDF action',
+    description:
+      'Executes navigation, validation, submit, or side-effect-free refetch actions for an SDF application.',
+  })
   @ApiParam({ name: 'applicationId', type: String })
   @ApiOkResponse({ type: ScreenDto })
+  @ApiBadRequestResponse({
+    description: 'Invalid action request.',
+    type: SdfProblemDetailsDto,
+  })
+  @ApiConflictResponse({
+    description: 'The client page index is stale for a write action.',
+    type: SdfProblemDetailsDto,
+  })
   async executeAction(
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() dto: ExecuteActionDto,
@@ -99,11 +139,7 @@ export class SdfController {
         )
 
       case SdfActionType.PREV_PAGE:
-        return this.astAdapter.goToPreviousPage(
-          applicationId,
-          locale,
-          user!,
-        )
+        return this.astAdapter.goToPreviousPage(applicationId, locale, user!)
 
       case SdfActionType.REFETCH:
         return this.astAdapter.handleRefetch(
@@ -125,7 +161,13 @@ export class SdfController {
 
       default:
         throw new BadRequestException(
-          `Unknown actionType: ${dto.actionType}`,
+          createSdfProblem({
+            type: 'https://island.is/problems/application-system/sdf/unknown-action',
+            title: 'Unknown action type',
+            status: 400,
+            detail: `Unknown actionType: ${dto.actionType}`,
+            instance: `/sdf/${applicationId}/action`,
+          }),
         )
     }
   }

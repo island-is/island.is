@@ -1,3 +1,5 @@
+import type { SdfComparatorValue } from '@island.is/application/sdf-types'
+
 /**
  * Server-side GraphQL client for fetching SDF screens.
  *
@@ -5,10 +7,9 @@
  * so requests never leave the cluster. The BFF proxy handles auth tokens.
  */
 
-const SERVER_GRAPHQL_ENDPOINT =
-  process.env.INTERNAL_API_URL
-    ? `${process.env.INTERNAL_API_URL}/api/graphql`
-    : 'http://localhost:4444/api/graphql'
+const SERVER_GRAPHQL_ENDPOINT = process.env.INTERNAL_API_URL
+  ? `${process.env.INTERNAL_API_URL}/api/graphql`
+  : 'http://localhost:4444/api/graphql'
 
 const CLIENT_GRAPHQL_ENDPOINT = '/bff/api/graphql'
 const LOCAL_BFF_GRAPHQL_ENDPOINT = process.env.BFF_PROXY_TARGET
@@ -84,7 +85,7 @@ export interface SdfFooterButton {
 
 export interface SingleClientCondition {
   questionId: string
-  comparator: string
+  comparator: SdfComparatorValue | string
   value: string
 }
 
@@ -743,7 +744,7 @@ export const EXECUTE_ACTION_MUTATION = `
 
 export const normalizeAliasedComponentValues = (
   components: SdfComponentData[],
-) : SdfComponentData[] => {
+): SdfComponentData[] => {
   return components.map((component) => {
     let normalized = component
 
@@ -759,7 +760,10 @@ export const normalizeAliasedComponentValues = (
       normalized.__typename === 'SdfExpandableDescriptionField' &&
       normalized.expandableDescription !== undefined
     ) {
-      normalized = { ...normalized, description: normalized.expandableDescription }
+      normalized = {
+        ...normalized,
+        description: normalized.expandableDescription,
+      }
     }
 
     if (
@@ -792,9 +796,7 @@ export const buildGraphqlHeaders = (
 ): Record<string, string> => {
   return {
     'Content-Type': 'application/json',
-    ...(forwardedHeaders?.cookie
-      ? { cookie: forwardedHeaders.cookie }
-      : {}),
+    ...(forwardedHeaders?.cookie ? { cookie: forwardedHeaders.cookie } : {}),
     ...(forwardedHeaders?.authorization
       ? { authorization: forwardedHeaders.authorization }
       : {}),
@@ -894,10 +896,7 @@ export const fetchScreen = async (
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
   }
-  const screen = extractOperationResult<SdfScreen>(
-    json,
-    'applicationSdfScreen',
-  )
+  const screen = extractOperationResult<SdfScreen>(json, 'applicationSdfScreen')
   if (!screen) {
     throw new Error(
       `Malformed GraphQL response: missing applicationSdfScreen. Payload keys: ${Object.keys(
