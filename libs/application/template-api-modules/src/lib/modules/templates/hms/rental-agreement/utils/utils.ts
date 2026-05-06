@@ -111,7 +111,7 @@ interface ApiMetadataResponse {
 
 export interface FinancialIndexationEntry {
   month: Date
-  value: number
+  value: string
 }
 
 const FINANCIAL_INDEXATION_URL =
@@ -245,7 +245,7 @@ export const fetchFinancialIndexationForMonths = async (months: string[]) => {
   return json.data.map(
     (item): FinancialIndexationEntry => ({
       month: parsePXMonth(item.key[0]),
-      value: Number(item.values[0]),
+      value: String(item.values[0]),
     }),
   )
 }
