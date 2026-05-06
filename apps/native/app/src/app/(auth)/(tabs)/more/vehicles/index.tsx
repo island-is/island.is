@@ -134,7 +134,7 @@ export default function VehiclesScreen() {
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         ListEmptyComponent={
-          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+          <View style={{ marginTop: 16, paddingHorizontal: 16, marginBottom: 64 }}>
             <EmptyList
               title={<FormattedMessage id="vehicles.emptyListTitle" />}
               description={
