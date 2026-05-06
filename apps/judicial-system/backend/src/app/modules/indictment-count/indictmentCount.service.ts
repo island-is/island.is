@@ -69,6 +69,18 @@ export class IndictmentCountService {
     )
   }
 
+  async existsForCaseAndPoliceCaseNumber(
+    caseId: string,
+    policeCaseNumber: string,
+  ): Promise<boolean> {
+    const indictmentCount = await this.indictmentCountModel.findOne({
+      where: { caseId, policeCaseNumber },
+      attributes: ['id'],
+    })
+
+    return Boolean(indictmentCount)
+  }
+
   async update(
     caseId: string,
     indictmentCountId: string,

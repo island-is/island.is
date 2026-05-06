@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from 'react'
+import { FC, useContext, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
@@ -25,7 +25,8 @@ export const PoliceCaseInfo: FC<Props> = ({
   onAddPoliceCaseInfo,
 }) => {
   const { formatMessage } = useIntl()
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
+  const hasTriggeredRefreshRef = useRef(false)
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: { input: { caseId: workingCase.id } },
@@ -35,6 +36,17 @@ export const PoliceCaseInfo: FC<Props> = ({
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
         return
+      }
+
+      const hasUnselectedPoliceCaseNumbers = data.policeCaseInfo.some(
+        (caseInfo) =>
+          !workingCase.policeCaseNumbers?.includes(caseInfo.policeCaseNumber),
+      )
+
+      // Keep local case state in sync with backend auto-selection side effects.
+      if (hasUnselectedPoliceCaseNumbers && !hasTriggeredRefreshRef.current) {
+        hasTriggeredRefreshRef.current = true
+        refreshCase()
       }
 
       onPoliceCaseInfoLoaded(data.policeCaseInfo)

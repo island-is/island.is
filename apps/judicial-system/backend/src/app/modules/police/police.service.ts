@@ -24,20 +24,21 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type {
-  SubpoenaPoliceDocumentInfo,
-  User,
-  VerdictPoliceDocumentInfo,
-} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  type CrimeSceneMap,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
+  IndictmentSubtype as IndictmentSubtypeEnum,
+  type IndictmentSubtypeMap,
   isIndictmentCase,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  type SubpoenaPoliceDocumentInfo,
+  type User,
+  type VerdictPoliceDocumentInfo,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -48,6 +49,7 @@ import { IndictmentCountService } from '../indictment-count/indictmentCount.serv
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseRepositoryService,
   DateLog,
   Defendant,
   IndictmentSubtype,
@@ -262,6 +264,8 @@ export class PoliceService {
     private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CaseDefendantPoliceCaseNumberRepositoryService))
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    @Inject(forwardRef(() => CaseRepositoryService))
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IndictmentCountService))
     private readonly indictmentCountService: IndictmentCountService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -1050,6 +1054,64 @@ export class PoliceService {
     return links
   }
 
+  private buildMissingAutoFillUpdates(
+    cases: PoliceCaseInfo[],
+    newPoliceCaseNumbers: string[],
+    existingCrimeScenes?: CrimeSceneMap,
+    existingIndictmentSubtypes?: IndictmentSubtypeMap,
+  ): {
+    crimeScenes?: CrimeSceneMap
+    indictmentSubtypes?: IndictmentSubtypeMap
+  } {
+    if (newPoliceCaseNumbers.length === 0) {
+      return {}
+    }
+
+    const caseInfoByPoliceCaseNumber = new Map(
+      cases.map((c) => [c.policeCaseNumber, c]),
+    )
+
+    const mergedCrimeScenes: CrimeSceneMap = { ...(existingCrimeScenes ?? {}) }
+    const mergedIndictmentSubtypes: IndictmentSubtypeMap = {
+      ...(existingIndictmentSubtypes ?? {}),
+    }
+
+    let hasNewCrimeScenes = false
+    let hasNewIndictmentSubtypes = false
+
+    for (const policeCaseNumber of newPoliceCaseNumbers) {
+      const caseInfo = caseInfoByPoliceCaseNumber.get(policeCaseNumber)
+      if (!caseInfo) {
+        continue
+      }
+
+      if (!mergedCrimeScenes[policeCaseNumber]) {
+        mergedCrimeScenes[policeCaseNumber] = {
+          place: caseInfo.place,
+          date: caseInfo.date,
+        }
+        hasNewCrimeScenes = true
+      }
+
+      if (
+        !mergedIndictmentSubtypes[policeCaseNumber] &&
+        caseInfo.subtypes &&
+        caseInfo.subtypes.length > 0
+      ) {
+        mergedIndictmentSubtypes[policeCaseNumber] =
+          caseInfo.subtypes as IndictmentSubtypeEnum[]
+        hasNewIndictmentSubtypes = true
+      }
+    }
+
+    return {
+      crimeScenes: hasNewCrimeScenes ? mergedCrimeScenes : undefined,
+      indictmentSubtypes: hasNewIndictmentSubtypes
+        ? mergedIndictmentSubtypes
+        : undefined,
+    }
+  }
+
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
@@ -1089,10 +1151,41 @@ export class PoliceService {
 
         if (caseType && isIndictmentCase(caseType)) {
           for (const policeCaseNumber of newPoliceCaseNumbers) {
-            await this.indictmentCountService.createWithPoliceCaseNumber(
-              caseId,
-              policeCaseNumber,
+            const alreadyExists =
+              await this.indictmentCountService.existsForCaseAndPoliceCaseNumber(
+                caseId,
+                policeCaseNumber,
+              )
+
+            if (!alreadyExists) {
+              await this.indictmentCountService.createWithPoliceCaseNumber(
+                caseId,
+                policeCaseNumber,
+              )
+            }
+          }
+
+          const theCase = await this.caseRepositoryService.findById(caseId)
+          if (theCase) {
+            const updates = this.buildMissingAutoFillUpdates(
+              cases,
+              newPoliceCaseNumbers,
+              theCase.crimeScenes,
+              theCase.indictmentSubtypes,
             )
+
+            if (
+              updates.crimeScenes !== undefined ||
+              updates.indictmentSubtypes !== undefined
+            ) {
+              await this.indictmentSubtypeModel.sequelize?.transaction(
+                async (transaction) => {
+                  await this.caseRepositoryService.update(caseId, updates, {
+                    transaction,
+                  })
+                },
+              )
+            }
           }
         }
       }
@@ -1121,7 +1214,6 @@ export class PoliceService {
       )
     }
   }
-
   async uploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,

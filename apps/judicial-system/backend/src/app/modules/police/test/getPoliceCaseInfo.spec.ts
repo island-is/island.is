@@ -8,7 +8,7 @@ import { CaseType, User } from '@island.is/judicial-system/types'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { IndictmentCountService } from '../../indictment-count/indictmentCount.service'
-import { Case } from '../../repository'
+import { Case, CaseRepositoryService } from '../../repository'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
 
 jest.mock('isomorphic-fetch')
@@ -28,6 +28,7 @@ describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
   let assignDefendantPoliceCaseNumbers: jest.Mock
   let mockIndictmentCountService: IndictmentCountService
+  let mockCaseRepositoryService: CaseRepositoryService
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
@@ -36,11 +37,13 @@ describe('PoliceController - Get police case info', () => {
       policeController,
       caseDefendantPoliceCaseNumberRepositoryService,
       indictmentCountService,
+      caseRepositoryService,
     } = await createTestingPoliceModule()
 
     assignDefendantPoliceCaseNumbers =
       caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
     mockIndictmentCountService = indictmentCountService
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -230,6 +233,12 @@ describe('PoliceController - Get police case info', () => {
 
     it('should create indictment counts for newly discovered police case numbers', () => {
       expect(
+        mockIndictmentCountService.existsForCaseAndPoliceCaseNumber,
+      ).toHaveBeenCalledWith(caseId, '007-2020-000103')
+      expect(
+        mockIndictmentCountService.existsForCaseAndPoliceCaseNumber,
+      ).toHaveBeenCalledWith(caseId, '007-2020-000057')
+      expect(
         mockIndictmentCountService.createWithPoliceCaseNumber,
       ).toHaveBeenCalledTimes(2)
       expect(
@@ -238,6 +247,26 @@ describe('PoliceController - Get police case info', () => {
       expect(
         mockIndictmentCountService.createWithPoliceCaseNumber,
       ).toHaveBeenCalledWith(caseId, '007-2020-000057')
+    })
+
+    it('should auto-fill missing inferred crime scenes and subtypes', () => {
+      expect(mockCaseRepositoryService.findById).toHaveBeenCalledWith(caseId)
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({
+          crimeScenes: expect.objectContaining({
+            '007-2020-000103': {
+              place: '',
+              date: new Date('2021-02-23T13:17:00'),
+            },
+            '007-2020-000057': {
+              place: '',
+              date: new Date('2021-02-23T13:17:00'),
+            },
+          }),
+        }),
+        expect.objectContaining({ transaction: undefined }),
+      )
     })
 
     it('should still return police case info', () => {

@@ -16,6 +16,7 @@ import { EventService } from '../../event'
 import { IndictmentCountService } from '../../indictment-count/indictmentCount.service'
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseRepositoryService,
   IndictmentSubtype,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
@@ -57,6 +58,11 @@ export const createTestingPoliceModule = async () => {
         provide: getModelToken(IndictmentSubtype),
         useValue: {
           findOne: jest.fn(),
+          sequelize: {
+            transaction: jest.fn(async (fn: () => Promise<void>) => {
+              await fn()
+            }),
+          },
         },
       },
       {
@@ -69,6 +75,14 @@ export const createTestingPoliceModule = async () => {
         provide: IndictmentCountService,
         useValue: {
           createWithPoliceCaseNumber: jest.fn().mockResolvedValue({}),
+          existsForCaseAndPoliceCaseNumber: jest.fn().mockResolvedValue(false),
+        },
+      },
+      {
+        provide: CaseRepositoryService,
+        useValue: {
+          findById: jest.fn().mockResolvedValue({}),
+          update: jest.fn().mockResolvedValue({}),
         },
       },
     ],
@@ -92,6 +106,9 @@ export const createTestingPoliceModule = async () => {
   const indictmentCountService = policeModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
+  const caseRepositoryService = policeModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
 
   policeModule.close()
 
@@ -102,5 +119,6 @@ export const createTestingPoliceModule = async () => {
     policeController,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,
+    caseRepositoryService,
   }
 }
