@@ -34,10 +34,7 @@ export const PermissionSecurityAndCapabilities = () => {
           Features.isNewPermissionsOptionsEnabled,
           false,
         ),
-        featureFlagClient.getValue(
-          Features.isIDSAdminStepUpAuthEnabled,
-          false,
-        ),
+        featureFlagClient.getValue(Features.isIDSAdminStepUpAuthEnabled, false),
       ])
       setCapabilitiesEnabled(capabilitiesEnabled)
       setStepUpAuthEnabled(stepUpAuthEnabled)

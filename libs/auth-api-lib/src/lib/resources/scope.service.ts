@@ -193,9 +193,7 @@ export class ScopeService {
         },
       ],
     })
-    const scopes = allScopes.filter(
-      (s) => s.domainName !== '@admin.island.is',
-    )
+    const scopes = allScopes.filter((s) => s.domainName !== '@admin.island.is')
 
     // Group scopes by category. Scopes with no category go into a
     // special __none__ bucket so they surface in the uncategorized group.
