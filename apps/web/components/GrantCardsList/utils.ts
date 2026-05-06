@@ -1,9 +1,7 @@
-import format from 'date-fns/format'
-import localeEN from 'date-fns/locale/en-GB'
-import localeIS from 'date-fns/locale/is'
-
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
+import { containsTimePart } from '@island.is/web/utils/containsTimePart'
+import { formatDate } from '@island.is/web/utils/formatDate'
 
 import { OPEN_GRANT_STATUSES, TranslationKeys } from './types'
 
@@ -18,22 +16,6 @@ export const getTranslationString = (
     : template
 }
 
-export const formatDate = (
-  date: Date,
-  locale: Locale,
-  stringFormat = 'dd. MMMM yyyy',
-): string | undefined => {
-  try {
-    return format(date, stringFormat, {
-      locale: locale === 'is' ? localeIS : localeEN,
-    })
-  } catch (e) {
-    console.warn('Error formatting date')
-    return
-  }
-}
-
-export const containsTimePart = (date: string) => date.includes('T')
 
 export const isGrantOpen = (grant: Grant): 'open' | 'closed' | 'unknown' => {
   if (!grant.status) {
