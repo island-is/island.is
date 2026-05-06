@@ -19,6 +19,7 @@ import { useUserContractQuery } from './UserContract.generated'
 import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
+import { isDefined } from '@island.is/shared/utils'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
@@ -71,11 +72,16 @@ const UserContract = () => {
             iconType="outline"
             disabled={!!error || loading || documents.length === 0}
             items={documents
-              .filter((doc) => !!doc.downloadUrl)
-              .map((doc) => ({
-                title: doc.name,
-                onClick: () => formSubmit(doc.downloadUrl!),
-              }))}
+              .map(({ name, downloadUrl }) => {
+                if (downloadUrl) {
+                  return {
+                    title: name,
+                    onClick: () => formSubmit(downloadUrl),
+                  }
+                }
+                return null
+              })
+              .filter(isDefined)}
           />,
           ...(contract?.status === HmsRentalAgreementStatusType.VALID
             ? [
