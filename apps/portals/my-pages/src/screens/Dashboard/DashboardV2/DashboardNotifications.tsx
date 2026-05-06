@@ -6,6 +6,7 @@ import {
   InformationPaths,
   resolveLink,
   useGetUserNotificationsOverviewQuery,
+  useMarkUserNotificationAsReadMutation,
 } from '@island.is/portals/my-pages/information'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
@@ -18,6 +19,8 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
   const { formatMessage, lang } = useLocale()
   const userInfo = useUserInfo()
   const hasDelegationAccess = hasNotificationScopes(userInfo?.scopes)
+
+  const [markAsRead] = useMarkUserNotificationAsReadMutation()
 
   const { data, loading, error } = useGetUserNotificationsOverviewQuery({
     variables: {
@@ -201,6 +204,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                   m.notificationOpensInNewTab,
                 )}`}
                 className={styles.notificationLink}
+                onClick={() => markAsRead({ variables: { id: item.id } })}
               >
                 {content}
               </a>
@@ -212,6 +216,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               key={item.notificationId}
               to={href}
               className={styles.notificationLink}
+              onClick={() => markAsRead({ variables: { id: item.id } })}
             >
               {content}
             </Link>
