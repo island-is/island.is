@@ -524,6 +524,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
     slug: 'atvinnuleysisbaetur-stadfesting-ferda',
-    translation: ['vmst.uct.application', 'uiForms.application'],
+    translation: ['vmst.ct.application', 'uiForms.application'],
   },
 }
