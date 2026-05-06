@@ -23,6 +23,7 @@ export type TranslationsActionResult = {
   intent: TranslationIntent
   data?: unknown
   globalError?: boolean
+  errorMessage?: string
 }
 
 const parseEnvironments = (
@@ -60,7 +61,11 @@ export const translationsAction: WrappedActionFn =
           })
 
           if (response.errors?.length) {
-            return { intent, globalError: true }
+            return {
+              intent,
+              globalError: true,
+              errorMessage: response.errors[0].message,
+            }
           }
 
           return { intent, data: response.data?.createAuthAdminTranslation }
@@ -85,7 +90,11 @@ export const translationsAction: WrappedActionFn =
           })
 
           if (response.errors?.length) {
-            return { intent, globalError: true }
+            return {
+              intent,
+              globalError: true,
+              errorMessage: response.errors[0].message,
+            }
           }
 
           return { intent, data: response.data?.updateAuthAdminTranslation }
@@ -109,7 +118,11 @@ export const translationsAction: WrappedActionFn =
           })
 
           if (response.errors?.length) {
-            return { intent, globalError: true }
+            return {
+              intent,
+              globalError: true,
+              errorMessage: response.errors[0].message,
+            }
           }
 
           return { intent, data: response.data?.deleteAuthAdminTranslation }
@@ -118,7 +131,11 @@ export const translationsAction: WrappedActionFn =
         default:
           return { intent, globalError: true }
       }
-    } catch {
-      return { intent, globalError: true }
+    } catch (error) {
+      return {
+        intent,
+        globalError: true,
+        errorMessage: error instanceof Error ? error.message : undefined,
+      }
     }
   }

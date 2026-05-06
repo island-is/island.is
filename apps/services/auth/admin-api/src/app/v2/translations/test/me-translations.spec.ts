@@ -232,6 +232,27 @@ describe('MeTranslationsController', () => {
 
         expect(response.status).toEqual(400)
       })
+
+      it.each([
+        ['language', { language: 'en/uk' }],
+        ['className', { className: 'client/extra' }],
+        ['property', { property: 'display/Name' }],
+        ['key', { key: 'island.is/1' }],
+      ])(
+        'rejects a slash in %s — would make the row unreachable via path-param routes',
+        async (_field, override) => {
+          const response = await server.post('/v2/me/translations').send({
+            language: 'en',
+            className: 'client',
+            property: 'displayName',
+            key: 'no-slash-key',
+            value: 'value',
+            ...override,
+          })
+
+          expect(response.status).toEqual(400)
+        },
+      )
     })
 
     describe('PATCH /v2/me/translations/:language/:className/:property/:key', () => {

@@ -76,8 +76,7 @@ export class TranslationService {
 
     const trimmed = searchString.trim()
     const wildcard = `%${trimmed}%`
-    page--
-    const offset = page * count
+    const offset = (page - 1) * count
 
     return this.translationModel.findAndCountAll({
       where: {
@@ -109,8 +108,7 @@ export class TranslationService {
 
     const trimmed = searchString.trim()
     const wildcard = `%${trimmed}%`
-    page--
-    const offset = page * count
+    const offset = (page - 1) * count
 
     return this.languageModel.findAndCountAll({
       where: {

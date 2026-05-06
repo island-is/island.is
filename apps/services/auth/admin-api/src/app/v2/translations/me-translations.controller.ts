@@ -17,7 +17,6 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
   PagedRowsDto,
   Translation,
-  TranslationDTO,
   TranslationService,
 } from '@island.is/auth-api-lib'
 import {
@@ -32,6 +31,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 import { NoContentException } from '@island.is/nest/problem'
 
+import { CreateTranslationDto } from './dto/create-translation.dto'
 import { PagedTranslationsDto } from './dto/paged-translations.dto'
 import { UpdateTranslationDto } from './dto/update-translation.dto'
 import { DeleteTranslationDto } from './dto/delete-translation.dto'
@@ -125,7 +125,7 @@ export class MeTranslationsController {
     resources: translationResource,
     alsoLog: true,
   })
-  create(@Body() input: TranslationDTO): Promise<Translation> {
+  create(@Body() input: CreateTranslationDto): Promise<Translation> {
     return this.translationService.upsertTranslation(input)
   }
 

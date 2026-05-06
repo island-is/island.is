@@ -23,6 +23,7 @@ export type LanguagesActionResult = {
   intent: LanguageIntent
   data?: unknown
   globalError?: boolean
+  errorMessage?: string
 }
 
 const parseEnvironments = (
@@ -60,7 +61,11 @@ export const languagesAction: WrappedActionFn =
           })
 
           if (response.errors?.length) {
-            return { intent, globalError: true }
+            return {
+              intent,
+              globalError: true,
+              errorMessage: response.errors[0].message,
+            }
           }
 
           return { intent, data: response.data?.createAuthAdminLanguage }
@@ -85,7 +90,11 @@ export const languagesAction: WrappedActionFn =
           })
 
           if (response.errors?.length) {
-            return { intent, globalError: true }
+            return {
+              intent,
+              globalError: true,
+              errorMessage: response.errors[0].message,
+            }
           }
 
           return { intent, data: response.data?.updateAuthAdminLanguage }
@@ -106,7 +115,11 @@ export const languagesAction: WrappedActionFn =
           })
 
           if (response.errors?.length) {
-            return { intent, globalError: true }
+            return {
+              intent,
+              globalError: true,
+              errorMessage: response.errors[0].message,
+            }
           }
 
           return { intent, data: response.data?.deleteAuthAdminLanguage }
@@ -115,7 +128,11 @@ export const languagesAction: WrappedActionFn =
         default:
           return { intent, globalError: true }
       }
-    } catch {
-      return { intent, globalError: true }
+    } catch (error) {
+      return {
+        intent,
+        globalError: true,
+        errorMessage: error instanceof Error ? error.message : undefined,
+      }
     }
   }

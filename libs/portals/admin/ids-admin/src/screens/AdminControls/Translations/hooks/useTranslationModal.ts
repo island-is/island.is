@@ -115,7 +115,9 @@ export const useTranslationModal = ({
 
       resetModalState()
     } else {
-      toast.error(formatMessage(m.translationsError))
+      toast.error(
+        fetcher.data.errorMessage ?? formatMessage(m.translationsError),
+      )
     }
   }, [fetcher.data, formatMessage, resetModalState])
 
