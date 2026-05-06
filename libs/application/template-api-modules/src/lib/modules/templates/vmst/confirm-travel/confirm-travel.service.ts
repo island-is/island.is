@@ -28,9 +28,7 @@ export class ConfirmTravelService extends BaseTemplateApiService {
         await this.vmstUnemploymentClientService.checkConfirmTravelEligibility(
           auth,
         )
-      console.log('result', result)
     } catch (e) {
-      console.log('e', e)
       if (e instanceof FetchError && e.status === 404) {
         this.logger.warn(
           '[VMST-Travel-confirmation] - No active application found (404)',

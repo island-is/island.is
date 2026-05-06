@@ -157,4 +157,10 @@ export const errorMessages = {
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
   },
+  dateMustBeGreater: {
+    id: 'vmst.ct.application:errorMessages.dateMustBeGreater',
+    defaultMessage:
+      'Dagsetning "Til" verður að vera seinna en dagsetning "Frá"',
+    description: 'Error message when date range is wrong',
+  },
 }

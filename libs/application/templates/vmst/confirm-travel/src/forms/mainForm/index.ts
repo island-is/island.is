@@ -4,6 +4,7 @@ import {
   buildForm,
   buildMultiField,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
@@ -39,6 +40,13 @@ export const MainForm = buildForm({
           placeholder: mainForm.datePlaceholder,
           width: 'half',
           required: true,
+          minDate: (application) => {
+            const fromDate = getValueViaPath<string>(
+              application.answers,
+              'date.from',
+            )
+            return fromDate ? new Date(fromDate) : undefined
+          },
         }),
         buildSubmitField({
           id: 'submit',

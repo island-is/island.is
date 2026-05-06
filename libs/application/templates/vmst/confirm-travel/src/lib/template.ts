@@ -8,6 +8,7 @@ import {
   DefaultEvents,
   FormModes,
   ApplicationConfigurations,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -15,6 +16,7 @@ import { ConfirmTravelUnemploymentBenefitsSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { applicationMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
@@ -70,7 +72,10 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(2),
+          onExit: defineTemplateApi({
+            action: 'submitApplication',
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
