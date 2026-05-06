@@ -31,6 +31,11 @@ const icelandic = {
   description: 'Íslenska',
   englishDescription: 'Icelandic',
 }
+const stagingOnly = {
+  isoKey: 'pl',
+  description: 'Polski',
+  englishDescription: 'Polish',
+}
 
 const createMockAdminApi = (languages: typeof englishDev[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
@@ -67,7 +72,7 @@ const createMockAdminApi = (languages: typeof englishDev[]) => ({
 })
 
 const mockAdminDevApi = createMockAdminApi([englishDev, icelandic])
-const mockAdminStagingApi = createMockAdminApi([englishStaging])
+const mockAdminStagingApi = createMockAdminApi([englishStaging, stagingOnly])
 const mockAdminProdApi = createMockAdminApi([englishProd])
 
 @Module({
@@ -125,12 +130,16 @@ describe('LanguageService', () => {
       await app.cleanUp()
     })
 
-    it('getLanguages populates availableEnvironments per isoKey', async () => {
+    it('getLanguages merges rows across environments and tags availableEnvironments', async () => {
       const result = await languageService.getLanguages(currentUser, {
         searchString: '',
         page: 1,
         count: 10,
       })
+
+      // 3 unique isoKeys: en (3 envs), is (dev only), pl (staging only).
+      expect(result.totalCount).toEqual(3)
+      expect(result.rows).toHaveLength(3)
 
       const enRow = result.rows.find((r) => r.isoKey === 'en')
       expect(enRow?.availableEnvironments).toEqual([
@@ -141,6 +150,33 @@ describe('LanguageService', () => {
 
       const isRow = result.rows.find((r) => r.isoKey === 'is')
       expect(isRow?.availableEnvironments).toEqual([Environment.Development])
+
+      const plRow = result.rows.find((r) => r.isoKey === 'pl')
+      expect(plRow).toBeDefined()
+      expect(plRow?.availableEnvironments).toEqual([Environment.Staging])
+    })
+
+    it('getLanguages paginates deterministically over the merged set', async () => {
+      const page1 = await languageService.getLanguages(currentUser, {
+        searchString: '',
+        page: 1,
+        count: 2,
+      })
+      const page2 = await languageService.getLanguages(currentUser, {
+        searchString: '',
+        page: 2,
+        count: 2,
+      })
+
+      expect(page1.totalCount).toEqual(3)
+      expect(page2.totalCount).toEqual(3)
+      expect(page1.rows).toHaveLength(2)
+      expect(page2.rows).toHaveLength(1)
+
+      const onPage1 = new Set(page1.rows.map((r) => r.isoKey))
+      for (const r of page2.rows) {
+        expect(onPage1.has(r.isoKey)).toBe(false)
+      }
     })
 
     it('getLanguage returns environments[] with one entry per env that has it', async () => {

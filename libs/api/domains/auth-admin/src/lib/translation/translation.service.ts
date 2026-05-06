@@ -54,50 +54,63 @@ export class TranslationService extends MultiEnvironmentService {
     user: User,
     input: TranslationsInput,
   ): Promise<TranslationsPayload> {
+    const FETCH_LIMIT = 10000
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meTranslationsControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
-            page: input.page,
-            count: input.count,
+            page: 1,
+            count: FETCH_LIMIT,
           }),
         )
         return result ? { environment, data: result } : null
       }),
     )
 
-    const envMap = new Map<string, Environment[]>()
+    const rowMap = new Map<
+      string,
+      { row: GeneratedTranslation; envs: Environment[] }
+    >()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
+        if (data.count > FETCH_LIMIT) {
+          this.logger.warn(
+            `Translation count in ${environment} (${data.count}) exceeds fetch limit (${FETCH_LIMIT}); some rows will be missing from the merged list`,
+          )
+        }
         for (const row of data.rows) {
-          const key = compositeKey(row)
-          const existing = envMap.get(key) ?? []
-          existing.push(environment)
-          envMap.set(key, existing)
+          const k = compositeKey(row)
+          const existing = rowMap.get(k)
+          if (existing) {
+            existing.envs.push(environment)
+          } else {
+            rowMap.set(k, { row, envs: [environment] })
+          }
         }
       }
     }
 
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        const { data } = result.value
-        return {
-          rows: data.rows.map((row) => ({
-            language: row.language,
-            className: row.className,
-            property: row.property,
-            key: row.key,
-            value: row.value ?? undefined,
-            availableEnvironments: envMap.get(compositeKey(row)) ?? [],
-          })),
-          totalCount: data.count,
-        }
-      }
-    }
+    const allRows = Array.from(rowMap.values()).sort((a, b) =>
+      compositeKey(a.row).localeCompare(compositeKey(b.row)),
+    )
 
-    return { rows: [], totalCount: 0 }
+    const offset = Math.max(0, (input.page - 1) * input.count)
+    const pageRows = allRows.slice(offset, offset + input.count)
+
+    return {
+      rows: pageRows.map(({ row, envs }) => ({
+        language: row.language,
+        className: row.className,
+        property: row.property,
+        key: row.key,
+        value: row.value ?? undefined,
+        availableEnvironments: envs,
+      })),
+      totalCount: allRows.length,
+    }
   }
 
   async getTranslation(

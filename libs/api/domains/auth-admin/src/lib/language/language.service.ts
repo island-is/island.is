@@ -43,47 +43,60 @@ export class LanguageService extends MultiEnvironmentService {
     user: User,
     input: LanguagesInput,
   ): Promise<LanguagesPayload> {
+    const FETCH_LIMIT = 10000
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meLanguagesControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
-            page: input.page,
-            count: input.count,
+            page: 1,
+            count: FETCH_LIMIT,
           }),
         )
         return result ? { environment, data: result } : null
       }),
     )
 
-    const envMap = new Map<string, Environment[]>()
+    const rowMap = new Map<
+      string,
+      { row: GeneratedLanguage; envs: Environment[] }
+    >()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
+        if (data.count > FETCH_LIMIT) {
+          this.logger.warn(
+            `Language count in ${environment} (${data.count}) exceeds fetch limit (${FETCH_LIMIT}); some rows will be missing from the merged list`,
+          )
+        }
         for (const row of data.rows) {
-          const existing = envMap.get(row.isoKey) ?? []
-          existing.push(environment)
-          envMap.set(row.isoKey, existing)
+          const existing = rowMap.get(row.isoKey)
+          if (existing) {
+            existing.envs.push(environment)
+          } else {
+            rowMap.set(row.isoKey, { row, envs: [environment] })
+          }
         }
       }
     }
 
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        const { data } = result.value
-        return {
-          rows: data.rows.map((row: GeneratedLanguage) => ({
-            isoKey: row.isoKey,
-            description: row.description,
-            englishDescription: row.englishDescription,
-            availableEnvironments: envMap.get(row.isoKey) ?? [],
-          })),
-          totalCount: data.count,
-        }
-      }
-    }
+    const allRows = Array.from(rowMap.values()).sort((a, b) =>
+      a.row.isoKey.localeCompare(b.row.isoKey),
+    )
 
-    return { rows: [], totalCount: 0 }
+    const offset = Math.max(0, (input.page - 1) * input.count)
+    const pageRows = allRows.slice(offset, offset + input.count)
+
+    return {
+      rows: pageRows.map(({ row, envs }) => ({
+        isoKey: row.isoKey,
+        description: row.description,
+        englishDescription: row.englishDescription,
+        availableEnvironments: envs,
+      })),
+      totalCount: allRows.length,
+    }
   }
 
   async getLanguage(user: User, isoKey: string): Promise<Language | null> {

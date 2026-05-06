@@ -37,6 +37,14 @@ const otherTranslation = {
   value: 'Notandasnið',
 }
 
+const stagingOnlyTranslation = {
+  language: 'en',
+  className: 'scope',
+  property: 'description',
+  key: 'staging-only-key',
+  value: 'Only in staging',
+}
+
 const createMockAdminApi = (translations: typeof translationDev[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
   meTranslationsControllerFindAndCountAllRaw: jest
@@ -87,7 +95,10 @@ const createMockAdminApi = (translations: typeof translationDev[]) => ({
 })
 
 const mockAdminDevApi = createMockAdminApi([translationDev, otherTranslation])
-const mockAdminStagingApi = createMockAdminApi([translationStaging])
+const mockAdminStagingApi = createMockAdminApi([
+  translationStaging,
+  stagingOnlyTranslation,
+])
 const mockAdminProdApi = createMockAdminApi([translationProd])
 
 @Module({
@@ -145,7 +156,7 @@ describe('TranslationService', () => {
       await app.cleanUp()
     })
 
-    it('getTranslations populates availableEnvironments per composite key', async () => {
+    it('getTranslations merges rows across environments and tags availableEnvironments', async () => {
       const result = await translationService.getTranslations(currentUser, {
         searchString: '',
         page: 1,
@@ -162,6 +173,11 @@ describe('TranslationService', () => {
         mockAdminProdApi.meTranslationsControllerFindAndCountAllRaw,
       ).toHaveBeenCalledTimes(1)
 
+      // 3 unique composite keys: client/displayName/island.is-1 (3 envs),
+      // scope/displayName/profile (dev only), scope/description/staging-only-key (staging only).
+      expect(result.totalCount).toEqual(3)
+      expect(result.rows).toHaveLength(3)
+
       const sharedRow = result.rows.find(
         (r) => r.key === translationDev.key && r.className === 'client',
       )
@@ -171,10 +187,49 @@ describe('TranslationService', () => {
         Environment.Production,
       ])
 
-      const devOnlyRow = result.rows.find((r) => r.className === 'scope')
+      const devOnlyRow = result.rows.find(
+        (r) => r.key === otherTranslation.key,
+      )
       expect(devOnlyRow?.availableEnvironments).toEqual([
         Environment.Development,
       ])
+
+      const stagingOnlyRow = result.rows.find(
+        (r) => r.key === stagingOnlyTranslation.key,
+      )
+      expect(stagingOnlyRow).toBeDefined()
+      expect(stagingOnlyRow?.availableEnvironments).toEqual([
+        Environment.Staging,
+      ])
+    })
+
+    it('getTranslations paginates deterministically over the merged set', async () => {
+      const page1 = await translationService.getTranslations(currentUser, {
+        searchString: '',
+        page: 1,
+        count: 2,
+      })
+      const page2 = await translationService.getTranslations(currentUser, {
+        searchString: '',
+        page: 2,
+        count: 2,
+      })
+
+      expect(page1.totalCount).toEqual(3)
+      expect(page2.totalCount).toEqual(3)
+      expect(page1.rows).toHaveLength(2)
+      expect(page2.rows).toHaveLength(1)
+
+      // No row should appear on both pages.
+      const onPage1 = new Set(
+        page1.rows.map(
+          (r) => `${r.language}|${r.className}|${r.property}|${r.key}`,
+        ),
+      )
+      for (const r of page2.rows) {
+        const k = `${r.language}|${r.className}|${r.property}|${r.key}`
+        expect(onPage1.has(k)).toBe(false)
+      }
     })
 
     it('getTranslation returns one environments[] entry per env that has the row', async () => {
