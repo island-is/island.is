@@ -223,8 +223,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
       statusText = 'Afturkallað'
     } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
-      // No notification template for ruling-order appeal completion yet
-      // (open question #8). Use the row's modified timestamp as the proxy
+      // No notification template for ruling-order appeal completion yet.
+      // Use the row's modified timestamp as the proxy
       // for "completion date" — the last write was the COMPLETE_APPEAL
       // transition.
       statusText = `Niðurstaða Landsréttar ${formatDate(
