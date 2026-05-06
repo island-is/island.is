@@ -16,7 +16,6 @@ export const getTranslationString = (
     : template
 }
 
-
 export const isGrantOpen = (grant: Grant): 'open' | 'closed' | 'unknown' => {
   if (!grant.status) {
     return 'unknown'
