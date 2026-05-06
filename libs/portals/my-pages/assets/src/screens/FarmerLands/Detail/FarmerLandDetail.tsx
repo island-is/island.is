@@ -2,7 +2,7 @@ import { Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  IntroWrapperV2,
+  IntroWrapper,
   ATVINNUVEGARADUNEYTID_SLUG,
   m as cm,
 } from '@island.is/portals/my-pages/core'
@@ -54,7 +54,7 @@ export const FarmerLandDetail = () => {
   ]
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={land?.name ?? formatMessage(cm.farmerLands)}
       intro={
         land?.id
@@ -87,7 +87,7 @@ export const FarmerLandDetail = () => {
           size="xs"
         />
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

@@ -1,7 +1,7 @@
 import {
   CardLoader,
   formatNationalId,
-  IntroWrapperV2,
+  IntroWrapper,
   m,
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -36,7 +36,7 @@ export const PrimarySchool = () => {
   const students = data?.primarySchoolStudents ?? []
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={psm.schoolLabel}
       intro={psm.studentListIntro}
       serviceProvider={{
@@ -95,7 +95,7 @@ export const PrimarySchool = () => {
           />
         ))}
       </Stack>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 
