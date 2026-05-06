@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   InputError,
+  LoadingDots,
   Pagination,
   Stack,
   Table as T,
@@ -26,9 +27,12 @@ interface ApiScopeUsersTableProps {
   currentPage: number
   totalPages: number
   configuredEnvironments: AuthAdminEnvironment[]
+  search?: string
+  loading?: boolean
   onEdit: (user: ApiScopeUserRow) => void
   onDelete: (nationalId: string, environments: AuthAdminEnvironment[]) => void
   onPageChange: (page: number) => void
+  onClearSearch?: () => void
 }
 
 export const ApiScopeUsersTable = ({
@@ -36,9 +40,12 @@ export const ApiScopeUsersTable = ({
   currentPage,
   totalPages,
   configuredEnvironments,
+  search,
+  loading,
   onEdit,
   onDelete,
   onPageChange,
+  onClearSearch,
 }: ApiScopeUsersTableProps) => {
   const { formatMessage } = useLocale()
 
@@ -91,11 +98,26 @@ export const ApiScopeUsersTable = ({
         border="standard"
         borderRadius="large"
       >
-        <Problem
-          type="no_data"
-          title={formatMessage(m.apiScopeUsersNoResults)}
-          titleSize="h3"
-        />
+        {loading ? (
+          <LoadingDots />
+        ) : (
+          <Problem
+            type="no_data"
+            title={formatMessage(
+              search ? m.noResultsForSearch : m.apiScopeUsersNoResults,
+            )}
+            message={
+              search && onClearSearch ? (
+                <Box marginTop={2}>
+                  <Button variant="ghost" size="small" onClick={onClearSearch}>
+                    {formatMessage(m.clearFilter)}
+                  </Button>
+                </Box>
+              ) : undefined
+            }
+            titleSize="h3"
+          />
+        )}
       </Box>
     )
   }

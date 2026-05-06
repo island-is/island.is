@@ -21,9 +21,12 @@ export class AppealCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing appeal case id')
     }
 
-    const appealCase = theCase.appealCase
+    const appealCase =
+      theCase.appealCase?.id === appealCaseId
+        ? theCase.appealCase
+        : theCase.rulingOrderAppealCases?.find((a) => a.id === appealCaseId)
 
-    if (!appealCase || appealCase.id !== appealCaseId) {
+    if (!appealCase) {
       throw new NotFoundException(
         `Appeal case ${appealCaseId} not found for case ${theCase.id}`,
       )

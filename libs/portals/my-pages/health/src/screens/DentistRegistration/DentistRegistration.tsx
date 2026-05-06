@@ -135,6 +135,7 @@ export const DentistRegistration = () => {
     <IntroWrapper
       title={formatMessage(messages.dentistRegisterationPageTitle)}
       intro={formatMessage(messages.dentistRegisterationPageDescription)}
+      desktopContentSpan="10/12"
     >
       {errorTransfering && (
         <Box paddingBottom={4} ref={errorBoxRef}>

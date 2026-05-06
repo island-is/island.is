@@ -28,6 +28,9 @@ export class CaseFile {
   @Field(() => ID, { nullable: true })
   readonly civilClaimantId?: string
 
+  @Field(() => ID, { nullable: true })
+  readonly rulingFileId?: string
+
   @Field(() => String, { nullable: true })
   readonly name?: string
 
@@ -77,4 +80,19 @@ export class CaseFile {
 
   @Field(() => Boolean, { nullable: true })
   readonly isKeyAccessible?: boolean
+
+  // Ruling-order appeal info — populated only for files with category
+  // COURT_INDICTMENT_RULING_ORDER. Soft deadline; does not gate canBeAppealed.
+
+  @Field(() => Boolean, { nullable: true })
+  readonly hasBeenAppealed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canBeAppealed?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly appealDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDeadlineExpired?: boolean
 }
