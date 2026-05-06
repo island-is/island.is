@@ -16,8 +16,14 @@ import { ControlContext } from '../../../../../../../context/ControlContext'
 import { ListFromUrl } from './ListFromUrl'
 
 export const ListSettings = () => {
-  const { control, setInListBuilder, controlDispatch, updateActiveItem } =
-    useContext(ControlContext)
+  const {
+    control,
+    setInListBuilder,
+    controlDispatch,
+    setFocus,
+    focus,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const { activeItem, isReadOnly, form } = control
   const currentItem = activeItem.data as FormSystemField
   const [isCustom, setIsCustom] = useState(
@@ -133,6 +139,8 @@ export const ListSettings = () => {
                       },
                     })
                   }
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 />
               </Column>
             )}

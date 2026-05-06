@@ -9,6 +9,7 @@ import {
   ApplicationsControllerDeleteApplicationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerGetDataFromUrlRequest,
   ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
@@ -27,6 +28,8 @@ import {
 } from '../../models/applications.model'
 import { NotificationResponse } from '../../models/screen.model'
 import { NotificationInput } from '../../dto/notification.input'
+import { DataFromUrl } from '../../models/dataFromUrl.model'
+import { DataFromUrlInput } from '../../dto/dataFromUrlReq.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -138,6 +141,19 @@ export class ApplicationsService {
         handle4xx(e, this.handleError, 'failed to notify external system'),
       )
     return response as NotificationResponse
+  }
+
+  async getDataFromUrl(
+    auth: User,
+    input: DataFromUrlInput,
+  ): Promise<DataFromUrl> {
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerGetDataFromUrl({
+      dataFromUrlReqDto: input,
+    } as ApplicationsControllerGetDataFromUrlRequest)
+
+    return response as DataFromUrl
   }
 
   async deleteApplication(auth: User, input: string): Promise<void> {

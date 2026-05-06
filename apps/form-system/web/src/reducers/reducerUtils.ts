@@ -15,6 +15,7 @@ import {
   prevVisibleScreenInSection,
   prevVisibleSectionIndex,
 } from '../utils/reducerHelpers'
+import { removeTypename } from '@island.is/form-system/graphql'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -90,7 +91,7 @@ export const incrementWithScreens = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: true,
-          sections: state.sections,
+          sections: removeTypename(state.sections),
         },
       },
     },
@@ -168,7 +169,7 @@ export const incrementWithoutScreens = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: true,
-          sections: state.sections,
+          sections: removeTypename(state.sections),
         },
       },
     },
@@ -246,7 +247,7 @@ export const decrement = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: false,
-          sections: state.sections,
+          sections: removeTypename(state.sections),
         },
       },
     },

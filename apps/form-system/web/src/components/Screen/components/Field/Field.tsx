@@ -59,6 +59,11 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
     dispatch,
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
     ...(field.fieldType === FieldTypesEnum.FILE && { state }),
+    ...(field.fieldType === FieldTypesEnum.DROPDOWN_LIST && {
+      slug: state.application.slug,
+      isTest: state.application.isTest,
+      orgNationalId: state.application.organizationNationalId,
+    }),
   }
 
   const FieldComponent =

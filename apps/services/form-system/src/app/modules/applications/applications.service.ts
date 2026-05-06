@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
+  ListTypesEnum,
   NotificationCommands,
   SectionTypes,
 } from '@island.is/form-system/shared'
@@ -62,6 +63,8 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
+import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
+import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -76,6 +79,8 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
@@ -1047,6 +1052,61 @@ export class ApplicationsService {
     })
   }
 
+  async getDataFromUrl(
+    dataFromUrlRequestDto: DataFromUrlReqDto,
+    user: User,
+  ): Promise<DataFromUrlResDto> {
+    const field = await this.fieldModel.findByPk(dataFromUrlRequestDto.fieldId)
+
+    if (!field) {
+      throw new NotFoundException(
+        `Field with id '${dataFromUrlRequestDto.fieldId}' not found`,
+      )
+    }
+
+    const fieldSettings = field.fieldSettings
+
+    if (!fieldSettings) {
+      throw new NotFoundException(
+        `Field settings for field with id '${dataFromUrlRequestDto.fieldId}' not found`,
+      )
+    }
+    const fieldType = field.fieldType
+    let response = new DataFromUrlResDto()
+
+    if (
+      fieldType === FieldTypesEnum.DROPDOWN_LIST &&
+      fieldSettings.listType &&
+      fieldSettings.listType === ListTypesEnum.ZENDESK_LIST
+    ) {
+      response = await this.serviceManager.getListFromZendesk(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    } else {
+      dataFromUrlRequestDto.loggedInUserNationalId =
+        user.actor?.nationalId || user.nationalId
+
+      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
+        ? user.nationalId
+        : undefined
+
+      dataFromUrlRequestDto.fieldType = fieldType
+      dataFromUrlRequestDto.identifier = field.identifier
+      dataFromUrlRequestDto.fieldId = undefined
+      dataFromUrlRequestDto.orgNationalId = undefined
+
+      response = await this.serviceManager.getDataFromUrl(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    return response
+  }
+
   async notifyExternalService(
     notificationDto: NotificationDto,
     user: User,
@@ -1123,8 +1183,6 @@ export class ApplicationsService {
     if (!response.operationSuccessful) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
         response.screen.screenError = this.getDefaultScreenErrorValidate()
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        response.screen.screenError = this.getDefaultScreenErrorPopulate()
       }
     } else if (response.screenError?.hasError) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
@@ -1132,11 +1190,6 @@ export class ApplicationsService {
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        response.screen.screenError =
-          response.screenError.title?.is || response.screenError.message?.is
-            ? response.screenError
-            : this.getDefaultScreenErrorPopulate()
       }
     }
 

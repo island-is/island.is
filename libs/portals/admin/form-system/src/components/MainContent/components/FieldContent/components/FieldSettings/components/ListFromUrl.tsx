@@ -1,17 +1,13 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { m } from '@island.is/form-system/ui'
 import {
-  Button,
   GridColumn as Column,
   GridRow as Row,
   Input,
-  RadioButton,
-  Select,
   Stack,
   Blockquote,
   Text,
 } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
@@ -22,12 +18,12 @@ export const ListFromUrl = () => {
   const currentItem = activeItem.data as FormSystemField
   const userInfo = useUserInfo()
 
-  console.log('UserInfo', userInfo)
   const exampleRequest = {
     slug: form.slug,
     identifier: currentItem.identifier,
-    loggedInUser: userInfo?.profile?.actor?.nationalId ?? '0000000000',
-    applicant: userInfo?.profile?.nationalId ?? '0000000000',
+    loggedInUserNationalId:
+      userInfo?.profile?.actor?.nationalId ?? '0000000000',
+    applicantNationalId: userInfo?.profile?.nationalId ?? '0000000000',
     isTest: !form.beenPublished,
     fieldType: currentItem.fieldType,
   }
@@ -37,8 +33,8 @@ export const ListFromUrl = () => {
     list: [
       {
         label: {
-          is: 'Galdrakarlinn í Oz 1',
-          en: 'The Wizard of Oz 1',
+          is: 'Listaval 1',
+          en: 'List selection 1',
         },
         value: '',
         isSelected: false,
@@ -49,7 +45,7 @@ export const ListFromUrl = () => {
 
   // TODO Bæta við dropdownlista sem birtir öll fields frá fyrsta skjá fram að currentScreen
   // og leyfa að bæta við í request body. þar verður listi af identifierum fyrir þau field sem eru valin.
-  // svo þeagr við gerum request úr umsókn þá sendum við með þau gildi hvers identifiers
+  // svo þegar við gerum request úr umsókn þá sendum við með þau gildi hvers identifiers
   // dropdown listinn ætti hafa svona línur
   // Section | Screen | Field name (Identifier)
 
