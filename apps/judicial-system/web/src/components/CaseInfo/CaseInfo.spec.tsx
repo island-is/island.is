@@ -131,4 +131,17 @@ describe('CourtCaseInfo - reopen button visibility', () => {
       screen.getByRole('button', { name: 'Enduropna mál' }),
     ).toBeInTheDocument()
   })
+
+  it('shows the reopen button when the appeal is withdrawn', () => {
+    const caseWithWithdrawnAppeal = {
+      ...completedIndictmentCase,
+      appealCase: { id: 'appeal_id', appealState: AppealCaseState.WITHDRAWN },
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, caseWithWithdrawnAppeal)
+
+    expect(
+      screen.getByRole('button', { name: 'Enduropna mál' }),
+    ).toBeInTheDocument()
+  })
 })

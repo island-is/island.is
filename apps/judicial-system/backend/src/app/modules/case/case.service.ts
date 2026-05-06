@@ -1843,7 +1843,8 @@ export class CaseService {
 
       if (
         theCase.appealCase &&
-        theCase.appealCase.appealState !== AppealCaseState.COMPLETED
+        (theCase.appealCase.appealState === AppealCaseState.APPEALED ||
+          theCase.appealCase.appealState === AppealCaseState.RECEIVED)
       ) {
         throw new ForbiddenException(
           'Cannot reopen a case with an active appeal',

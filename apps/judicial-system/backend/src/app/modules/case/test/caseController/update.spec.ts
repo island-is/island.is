@@ -875,6 +875,33 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('reopen indictment case with withdrawn appeal', () => {
+    const completedIndictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      appealCase: {
+        appealState: AppealCaseState.WITHDRAWN,
+      } as AppealCase,
+    } as Case
+
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdateDatabaseDefendant =
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      mockUpdateDatabaseDefendant.mockResolvedValue({})
+
+      then = await givenWhenThen(caseId, user, completedIndictmentCase, {
+        reopenReason: uuid(),
+      } as UpdateCaseDto)
+    })
+
+    it('should not throw', () => {
+      expect(then.error).toBeUndefined()
+    })
+  })
+
   describe('reopen indictment case with completed appeal', () => {
     const completedIndictmentCase = {
       ...theCase,

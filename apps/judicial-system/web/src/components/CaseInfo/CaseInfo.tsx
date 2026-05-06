@@ -173,7 +173,9 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
             {isDistrictCourtUser(user) &&
               (!workingCase.appealCase ||
                 workingCase.appealCase.appealState ===
-                  AppealCaseState.COMPLETED) && (
+                  AppealCaseState.COMPLETED ||
+                workingCase.appealCase.appealState ===
+                  AppealCaseState.WITHDRAWN) && (
                 <Button
                   variant="text"
                   colorScheme="destructive"
