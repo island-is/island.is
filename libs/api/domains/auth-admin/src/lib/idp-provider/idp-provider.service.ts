@@ -44,49 +44,64 @@ export class IdpProviderService extends MultiEnvironmentService {
     user: User,
     input: IdpProvidersInput,
   ): Promise<IdpProvidersPayload> {
+    // Pull every matching row from each environment so we can merge by name.
+    // Per-env pagination would silently drop rows that only exist in one
+    // environment.
+    const FETCH_LIMIT = 10000
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meIdpProvidersControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
-            page: input.page,
-            count: input.count,
+            page: 1,
+            count: FETCH_LIMIT,
           }),
         )
         return result ? { environment, data: result } : null
       }),
     )
 
-    // Build map of idp provider name -> environments
-    const envMap = new Map<string, Environment[]>()
+    const rowMap = new Map<
+      string,
+      { row: GeneratedIdpProvider; envs: Environment[] }
+    >()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
+        if (data.count > FETCH_LIMIT) {
+          this.logger.warn(
+            `IDP provider count in ${environment} (${data.count}) exceeds fetch limit (${FETCH_LIMIT}); some rows will be missing from the merged list`,
+          )
+        }
         for (const row of data.rows) {
-          const existing = envMap.get(row.name) ?? []
-          existing.push(environment)
-          envMap.set(row.name, existing)
+          const existing = rowMap.get(row.name)
+          if (existing) {
+            existing.envs.push(environment)
+          } else {
+            rowMap.set(row.name, { row, envs: [environment] })
+          }
         }
       }
     }
 
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        const { data } = result.value
-        return {
-          rows: data.rows.map((row: GeneratedIdpProvider) => ({
-            name: row.name,
-            availableEnvironments: envMap.get(row.name) ?? [],
-            description: row.description,
-            helptext: row.helptext,
-            level: row.level,
-          })),
-          totalCount: data.count,
-        }
-      }
-    }
+    const allRows = Array.from(rowMap.values()).sort((a, b) =>
+      a.row.name.localeCompare(b.row.name),
+    )
 
-    return { rows: [], totalCount: 0 }
+    const offset = Math.max(0, (input.page - 1) * input.count)
+    const pageRows = allRows.slice(offset, offset + input.count)
+
+    return {
+      rows: pageRows.map(({ row, envs }) => ({
+        name: row.name,
+        availableEnvironments: envs,
+        description: row.description,
+        helptext: row.helptext,
+        level: row.level,
+      })),
+      totalCount: allRows.length,
+    }
   }
 
   async getIdpProvider(user: User, name: string): Promise<IdpProvider | null> {
