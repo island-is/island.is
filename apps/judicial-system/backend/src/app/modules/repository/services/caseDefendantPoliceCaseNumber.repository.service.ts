@@ -200,20 +200,21 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }
 
     try {
-      const existingMap = await this.findDistinctPoliceCaseNumbersByCaseIds([
-        caseId,
-      ])
-      const existingNumbers = new Set(existingMap.get(caseId) ?? [])
+      let newPoliceCaseNumbers: string[] = []
 
       await sequelize.transaction(async (transaction) => {
-        await this.model.bulkCreate(
+        const insertedLinks = await this.model.bulkCreate(
           links.map(({ defendantId, policeCaseNumber }) => ({
             caseId,
             defendantId,
             policeCaseNumber,
           })),
-          { transaction, ignoreDuplicates: true },
+          { transaction, ignoreDuplicates: true, returning: true },
         )
+
+        newPoliceCaseNumbers = [
+          ...new Set(insertedLinks.map((link) => link.policeCaseNumber)),
+        ]
 
         const policeCaseNumbers = [
           ...new Set(links.map((l) => l.policeCaseNumber)),
@@ -228,10 +229,6 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
           transaction,
         })
       })
-
-      const newPoliceCaseNumbers = [
-        ...new Set(links.map((l) => l.policeCaseNumber)),
-      ].filter((pcn) => !existingNumbers.has(pcn))
 
       this.logger.debug(
         `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}` +

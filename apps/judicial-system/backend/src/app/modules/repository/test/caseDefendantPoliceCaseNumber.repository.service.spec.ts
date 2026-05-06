@@ -211,19 +211,25 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
   })
 
   describe('assignDefendantPoliceCaseNumbers', () => {
-    it('bulk-creates links and removes matching unassigned rows', async () => {
-      await service.assignDefendantPoliceCaseNumbers('case-1', [
+    it('bulk-creates links, returns newly inserted police case numbers, and removes matching unassigned rows', async () => {
+      mockModel.bulkCreate.mockResolvedValue([
+        { policeCaseNumber: '007-1' },
+        { policeCaseNumber: '007-2' },
+      ])
+
+      const result = await service.assignDefendantPoliceCaseNumbers('case-1', [
         { defendantId: 'def-a', policeCaseNumber: '007-1' },
         { defendantId: 'def-b', policeCaseNumber: '007-2' },
       ])
 
+      expect(result).toEqual(['007-1', '007-2'])
       expect(mockModel.sequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockModel.bulkCreate).toHaveBeenCalledWith(
         [
           { caseId: 'case-1', defendantId: 'def-a', policeCaseNumber: '007-1' },
           { caseId: 'case-1', defendantId: 'def-b', policeCaseNumber: '007-2' },
         ],
-        { transaction, ignoreDuplicates: true },
+        { transaction, ignoreDuplicates: true, returning: true },
       )
 
       expect(mockModel.destroy).toHaveBeenCalledWith({
@@ -237,8 +243,9 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     })
 
     it('does nothing when links array is empty', async () => {
-      await service.assignDefendantPoliceCaseNumbers('case-1', [])
+      const result = await service.assignDefendantPoliceCaseNumbers('case-1', [])
 
+      expect(result).toEqual([])
       expect(mockModel.sequelize.transaction).not.toHaveBeenCalled()
       expect(mockModel.bulkCreate).not.toHaveBeenCalled()
       expect(mockModel.destroy).not.toHaveBeenCalled()
