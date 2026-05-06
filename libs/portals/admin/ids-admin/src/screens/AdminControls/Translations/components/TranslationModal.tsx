@@ -219,7 +219,7 @@ export const TranslationModal = ({ modal }: TranslationModalProps) => {
               <Button
                 onClick={modal.handleSubmit}
                 loading={modal.isSubmitting}
-                disabled={modal.loadingTranslation}
+                disabled={modal.loadingTranslation || modal.isPublishing}
               >
                 {modal.isEditing
                   ? formatMessage(m.save)

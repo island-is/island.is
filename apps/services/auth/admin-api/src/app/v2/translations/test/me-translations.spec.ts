@@ -147,12 +147,11 @@ describe('MeTranslationsController', () => {
         )
         expect(byKey.body.count).toEqual(2)
 
-        // Match by property
+        // Match by property — only one seeded row has property='description'
         const byProperty = await server.get(
           '/v2/me/translations?page=1&count=10&searchString=description',
         )
-        // value "A friendly greeting" doesn't match, but property 'description' does
-        expect(byProperty.body.count).toBeGreaterThanOrEqual(1)
+        expect(byProperty.body.count).toEqual(1)
       })
 
       it('rejects non-positive page or count', async () => {
@@ -269,6 +268,24 @@ describe('MeTranslationsController', () => {
           },
         })
         expect(row?.value).toEqual('Updated value')
+      })
+
+      it('returns 204 when the translation does not exist (strict update)', async () => {
+        const response = await server
+          .patch('/v2/me/translations/en/client/displayName/missing-key')
+          .send({ value: 'Anything' })
+
+        expect(response.status).toEqual(204)
+
+        const row = await translationModel.findOne({
+          where: {
+            language: 'en',
+            className: 'client',
+            property: 'displayName',
+            key: 'missing-key',
+          },
+        })
+        expect(row).toBeNull()
       })
     })
 

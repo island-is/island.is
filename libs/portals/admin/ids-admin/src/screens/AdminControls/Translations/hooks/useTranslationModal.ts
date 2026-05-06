@@ -122,11 +122,8 @@ export const useTranslationModal = ({
   }, [fetcher.data, formatMessage, resetModalState])
 
   const openCreateModal = () => {
+    resetModalState()
     setIsEditing(false)
-    setFormData(emptyForm)
-    setSelectedEnvironments([])
-    setUserAvailableEnvironments([])
-    setFormErrors({})
     setModalVisible(true)
   }
 

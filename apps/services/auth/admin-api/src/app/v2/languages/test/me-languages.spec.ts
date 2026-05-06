@@ -72,16 +72,24 @@ describe('MeLanguagesController', () => {
       })
 
       it('searches across isoKey, description and englishDescription', async () => {
-        await languageModel.bulkCreate(seedLanguages)
+        // Seed an extra language with a unique isoKey that does NOT appear in
+        // any other field, so we can isolate isoKey-only matching.
+        await languageModel.bulkCreate([
+          ...seedLanguages,
+          {
+            isoKey: 'xq',
+            description: 'Madeup',
+            englishDescription: 'Madeup',
+          },
+        ])
 
-        // Match by isoKey
+        // Match by isoKey only
         const byIsoKey = await server.get(
-          '/v2/me/languages?page=1&count=10&searchString=en',
+          '/v2/me/languages?page=1&count=10&searchString=xq',
         )
         expect(byIsoKey.status).toEqual(200)
-        expect(
-          byIsoKey.body.rows.find((l: Language) => l.isoKey === 'en'),
-        ).toBeDefined()
+        expect(byIsoKey.body.count).toEqual(1)
+        expect(byIsoKey.body.rows[0].isoKey).toEqual('xq')
 
         // Match by englishDescription
         const byEnglish = await server.get(
@@ -96,6 +104,32 @@ describe('MeLanguagesController', () => {
         )
         expect(byNative.body.count).toEqual(1)
         expect(byNative.body.rows[0].isoKey).toEqual('pl')
+      })
+
+      it('paginates deterministically across pages', async () => {
+        // Seed enough languages to span multiple pages; isoKey ordering is
+        // alphabetic so we know what page 2 should look like.
+        const many = Array.from({ length: 15 }, (_, i) => ({
+          isoKey: `l${String(i).padStart(2, '0')}`,
+          description: `lang-${i}`,
+          englishDescription: `lang-${i}`,
+        }))
+        await languageModel.bulkCreate(many)
+
+        const page1 = await server.get('/v2/me/languages?page=1&count=10')
+        const page2 = await server.get('/v2/me/languages?page=2&count=10')
+
+        expect(page1.body.count).toEqual(15)
+        expect(page2.body.count).toEqual(15)
+        expect(page1.body.rows).toHaveLength(10)
+        expect(page2.body.rows).toHaveLength(5)
+
+        // Verify deterministic ordering across the page boundary.
+        const allKeys = [
+          ...page1.body.rows.map((l: Language) => l.isoKey),
+          ...page2.body.rows.map((l: Language) => l.isoKey),
+        ]
+        expect(allKeys).toEqual([...allKeys].sort())
       })
 
       it('rejects non-positive page or count', async () => {
@@ -205,8 +239,18 @@ describe('MeLanguagesController', () => {
       await app.cleanUp()
     })
 
-    it('returns 403 for regular users', async () => {
+    it('returns 403 for regular users on GET', async () => {
       const response = await server.get('/v2/me/languages?page=1&count=10')
+
+      expect(response.status).toEqual(403)
+    })
+
+    it('returns 403 for regular users on POST', async () => {
+      const response = await server.post('/v2/me/languages').send({
+        isoKey: 'fr',
+        description: 'Français',
+        englishDescription: 'French',
+      })
 
       expect(response.status).toEqual(403)
     })

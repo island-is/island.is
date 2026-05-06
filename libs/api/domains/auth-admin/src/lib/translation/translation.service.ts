@@ -117,7 +117,7 @@ export class TranslationService extends MultiEnvironmentService {
     user: User,
     input: TranslationKeyInput,
   ): Promise<Translation | null> {
-    const results = await Promise.all(
+    const settled = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
           api.meTranslationsControllerFindOneRaw({
@@ -132,7 +132,15 @@ export class TranslationService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: TranslationEnvironmentData[] = []
-    for (const { environment, result } of results) {
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error(
+          'Failed to fetch translation in one environment',
+          entry.reason as Error,
+        )
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push(mapTranslation(result, environment))
@@ -155,16 +163,23 @@ export class TranslationService extends MultiEnvironmentService {
 
   async getLanguagesForDropdown(user: User): Promise<TranslationLanguage[]> {
     for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meLanguagesControllerFindAllRaw(),
-      )
+      try {
+        const result = await this.makeRequest(user, environment, (api) =>
+          api.meLanguagesControllerFindAllRaw(),
+        )
 
-      if (result) {
-        return result.map((language: GeneratedLanguage) => ({
-          isoKey: language.isoKey,
-          description: language.description,
-          englishDescription: language.englishDescription,
-        }))
+        if (result) {
+          return result.map((language: GeneratedLanguage) => ({
+            isoKey: language.isoKey,
+            description: language.description,
+            englishDescription: language.englishDescription,
+          }))
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to fetch languages from ${environment} for dropdown; falling through to next env`,
+          error as Error,
+        )
       }
     }
 

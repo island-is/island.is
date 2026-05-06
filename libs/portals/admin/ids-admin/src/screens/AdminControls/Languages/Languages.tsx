@@ -18,8 +18,8 @@ const Languages = () => {
   const data = useLoaderData() as LanguagesLoaderData
 
   const configuredEnvironments = useMemo(
-    () => data?.configuredEnvironments ?? [],
-    [data?.configuredEnvironments],
+    () => data.configuredEnvironments,
+    [data.configuredEnvironments],
   )
 
   const navigation = useNavigation()
@@ -35,7 +35,7 @@ const Languages = () => {
     configuredEnvironments,
   })
 
-  const totalPages = Math.ceil((data?.languages.totalCount ?? 0) / PAGE_SIZE)
+  const totalPages = Math.ceil(data.languages.totalCount / PAGE_SIZE)
 
   return (
     <Box>

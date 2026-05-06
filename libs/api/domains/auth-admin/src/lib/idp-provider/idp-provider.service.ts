@@ -105,7 +105,7 @@ export class IdpProviderService extends MultiEnvironmentService {
   }
 
   async getIdpProvider(user: User, name: string): Promise<IdpProvider | null> {
-    const results = await Promise.all(
+    const settled = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
           api.meIdpProvidersControllerFindOneRaw({ name }),
@@ -115,7 +115,15 @@ export class IdpProviderService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: IdpProviderEnvironmentData[] = []
-    for (const { environment, result } of results) {
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error(
+          'Failed to fetch IDP provider in one environment',
+          entry.reason as Error,
+        )
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push(mapIdpProvider(result, environment))

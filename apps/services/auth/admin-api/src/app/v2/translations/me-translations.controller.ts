@@ -157,7 +157,7 @@ export class MeTranslationsController {
         alsoLog: true,
         meta: { fields: ['value'] },
       },
-      this.translationService.upsertTranslation({
+      this.translationService.updateTranslation({
         language,
         className,
         property,

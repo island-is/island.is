@@ -121,7 +121,7 @@ export class GrantTypeService extends MultiEnvironmentService {
   }
 
   async getGrantType(user: User, name: string): Promise<GrantType | null> {
-    const results = await Promise.all(
+    const settled = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
           api.meGrantTypesControllerFindOneRaw({ name }),
@@ -131,7 +131,15 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
-    for (const { environment, result } of results) {
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error(
+          'Failed to fetch grant type in one environment',
+          entry.reason as Error,
+        )
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push({

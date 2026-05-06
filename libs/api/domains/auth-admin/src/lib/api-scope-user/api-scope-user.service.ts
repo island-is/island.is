@@ -60,7 +60,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
-    const results = await Promise.all(
+    const settled = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
           api.meApiScopeUsersControllerFindOneRaw({
@@ -72,7 +72,15 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
-    for (const { environment, result } of results) {
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error(
+          'Failed to fetch API scope user in one environment',
+          entry.reason as Error,
+        )
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
 

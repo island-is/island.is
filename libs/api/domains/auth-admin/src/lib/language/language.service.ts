@@ -100,7 +100,7 @@ export class LanguageService extends MultiEnvironmentService {
   }
 
   async getLanguage(user: User, isoKey: string): Promise<Language | null> {
-    const results = await Promise.all(
+    const settled = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
           api.meLanguagesControllerFindOneRaw({ isoKey }),
@@ -110,7 +110,15 @@ export class LanguageService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: LanguageEnvironmentData[] = []
-    for (const { environment, result } of results) {
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error(
+          'Failed to fetch language in one environment',
+          entry.reason as Error,
+        )
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push(mapLanguage(result, environment))
