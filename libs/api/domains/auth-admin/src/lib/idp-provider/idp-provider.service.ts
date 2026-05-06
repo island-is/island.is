@@ -105,14 +105,17 @@ export class IdpProviderService extends MultiEnvironmentService {
   }
 
   async getIdpProvider(user: User, name: string): Promise<IdpProvider | null> {
+    const results = await Promise.all(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meIdpProvidersControllerFindOneRaw({ name }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: IdpProviderEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meIdpProvidersControllerFindOneRaw({ name }),
-      )
-
+    for (const { environment, result } of results) {
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push(mapIdpProvider(result, environment))

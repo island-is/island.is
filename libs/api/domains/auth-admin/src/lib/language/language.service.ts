@@ -100,14 +100,17 @@ export class LanguageService extends MultiEnvironmentService {
   }
 
   async getLanguage(user: User, isoKey: string): Promise<Language | null> {
+    const results = await Promise.all(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meLanguagesControllerFindOneRaw({ isoKey }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: LanguageEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meLanguagesControllerFindOneRaw({ isoKey }),
-      )
-
+    for (const { environment, result } of results) {
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push(mapLanguage(result, environment))

@@ -117,19 +117,22 @@ export class TranslationService extends MultiEnvironmentService {
     user: User,
     input: TranslationKeyInput,
   ): Promise<Translation | null> {
+    const results = await Promise.all(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meTranslationsControllerFindOneRaw({
+            language: input.language,
+            className: input.className,
+            property: input.property,
+            key: input.key,
+          }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: TranslationEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meTranslationsControllerFindOneRaw({
-          language: input.language,
-          className: input.className,
-          property: input.property,
-          key: input.key,
-        }),
-      )
-
+    for (const { environment, result } of results) {
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push(mapTranslation(result, environment))

@@ -121,14 +121,17 @@ export class GrantTypeService extends MultiEnvironmentService {
   }
 
   async getGrantType(user: User, name: string): Promise<GrantType | null> {
+    const results = await Promise.all(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meGrantTypesControllerFindOneRaw({ name }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meGrantTypesControllerFindOneRaw({ name }),
-      )
-
+    for (const { environment, result } of results) {
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push({

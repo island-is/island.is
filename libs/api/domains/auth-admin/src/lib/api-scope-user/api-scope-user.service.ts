@@ -60,16 +60,19 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
+    const results = await Promise.all(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerFindOneRaw({
+            xQueryNationalId: nationalId,
+          }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerFindOneRaw({
-          xQueryNationalId: nationalId,
-        }),
-      )
-
+    for (const { environment, result } of results) {
       if (result) {
         availableEnvironments.push(environment)
 
