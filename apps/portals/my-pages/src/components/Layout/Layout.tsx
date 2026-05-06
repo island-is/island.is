@@ -28,7 +28,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const { pathname } = useLocation()
   const user = useUserInfo()
   const isDelegation = checkDelegation(user)
-  const featureFlagClient = useFeatureFlagClient()
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children
@@ -53,6 +52,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
 
+  const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
