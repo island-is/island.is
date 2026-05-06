@@ -1,11 +1,11 @@
 import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
-import { VmstAvailableActions } from '@island.is/portals/my-pages/graphql'
+import { VmstApplicationsAvailableActions } from '@island.is/portals/my-pages/graphql'
 import { LinkButton } from '@island.is/portals/my-pages/core'
 
 interface ActionButtonsProps {
-  availableActions?: VmstAvailableActions
+  availableActions?: VmstApplicationsAvailableActions
   loading?: boolean
 }
 

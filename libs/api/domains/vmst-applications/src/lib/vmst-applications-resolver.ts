@@ -11,7 +11,7 @@ import {
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
-  VmstAvailableActions,
+  VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
@@ -127,7 +127,7 @@ export class VMSTApplicationsResolver {
     )
   }
 
-  @Query(() => VmstAvailableActions, {
+  @Query(() => VmstApplicationsAvailableActions, {
     name: 'vmstApplicantAvailableActions',
   })
   @Audit()

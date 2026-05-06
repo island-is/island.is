@@ -4,11 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { VmstApplicationStatus } from '@island.is/api/schema'
-import { VmstOverviewItem } from '@island.is/portals/my-pages/graphql'
+import { VmstApplicationOverviewItem } from '@island.is/portals/my-pages/graphql'
 import { resolveStatusTagVariant } from '../../../lib/statusTagVariant'
 
 interface OverviewTableProps {
-  overviewItems: VmstOverviewItem[]
+  overviewItems: VmstApplicationOverviewItem[]
   applicationStatusName?: string | null
   applicationStatus?: VmstApplicationStatus | null
   dataRequested?: boolean | null

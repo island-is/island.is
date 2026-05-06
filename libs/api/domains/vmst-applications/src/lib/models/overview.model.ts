@@ -7,8 +7,8 @@ registerEnumType(VmstApplicationStatus, {
   name: 'VmstApplicationStatus',
 })
 
-@ObjectType('VmstOverviewItem')
-export class VmstOverviewItem {
+@ObjectType('VmstApplicationOverviewItem')
+export class VmstApplicationOverviewItem {
   @Field({ nullable: true })
   key?: string
 
@@ -19,8 +19,8 @@ export class VmstOverviewItem {
   value?: string
 }
 
-@ObjectType('VmstAvailableActions')
-export class VmstAvailableActions {
+@ObjectType('VmstApplicationsAvailableActions')
+export class VmstApplicationsAvailableActions {
   @Field({ nullable: true })
   canContact?: boolean
 
@@ -60,9 +60,9 @@ export class VmstApplicationsUnemploymentApplicationOverview {
   @Field({ nullable: true })
   dataRequested?: boolean
 
-  @Field(() => VmstAvailableActions, { nullable: true })
-  availableActions?: VmstAvailableActions
+  @Field(() => VmstApplicationsAvailableActions, { nullable: true })
+  availableActions?: VmstApplicationsAvailableActions
 
-  @Field(() => [VmstOverviewItem], { nullable: true })
-  overviewItems?: VmstOverviewItem[]
+  @Field(() => [VmstApplicationOverviewItem], { nullable: true })
+  overviewItems?: VmstApplicationOverviewItem[]
 }
