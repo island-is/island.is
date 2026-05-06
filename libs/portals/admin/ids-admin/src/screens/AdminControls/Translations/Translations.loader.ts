@@ -51,7 +51,10 @@ export const translationsLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     if (languagesResult.error) {
-      console.error('Failed to fetch translation languages', languagesResult.error)
+      console.error(
+        'Failed to fetch translation languages',
+        languagesResult.error,
+      )
     }
 
     if (envsResult.error) {
