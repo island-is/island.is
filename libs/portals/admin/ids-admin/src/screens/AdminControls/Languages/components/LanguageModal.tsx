@@ -179,7 +179,7 @@ export const LanguageModal = ({ modal }: LanguageModalProps) => {
               </Button>
               <Button onClick={modal.handleSubmit} loading={modal.isSubmitting}>
                 {modal.isEditing
-                  ? formatMessage(m.languagesSaveButton)
+                  ? formatMessage(m.save)
                   : formatMessage(m.create)}
               </Button>
             </Box>
