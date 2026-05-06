@@ -6,6 +6,7 @@
   ],
   "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
   "rules": {
+    "eqeqeq": ["error", "always"],
     "@nx/enforce-module-boundaries": [
       "error",
       {

@@ -10,9 +10,3 @@ export const tagHide = style({
   opacity: 0,
   height: 0,
 })
-
-export const editHeaderContainer = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: spacing[1],
-})

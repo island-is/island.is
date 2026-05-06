@@ -64,10 +64,20 @@ export const useDebouncedSearch = (delay = 500) => {
     [setSearchParams],
   )
 
+  const clearSearch = useCallback(() => {
+    setLocalSearch('')
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current)
+      debounceTimer.current = null
+    }
+    commitSearch('')
+  }, [commitSearch])
+
   return {
     localSearch,
     currentPage,
     handleSearch,
     handlePageChange,
+    clearSearch,
   }
 }

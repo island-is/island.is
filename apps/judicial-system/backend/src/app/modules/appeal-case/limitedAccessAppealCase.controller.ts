@@ -36,6 +36,7 @@ import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from '../case/guards/limitedAccessCaseExists.guard'
 import { EventService } from '../event'
 import { AppealCase, Case } from '../repository'
+import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
 import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
 import { CurrentAppealCase } from './guards/appealCase.decorator'
@@ -75,11 +76,17 @@ export class LimitedAccessAppealCaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Body() dto: CreateAppealCaseDto,
   ): Promise<AppealCase> {
     this.logger.debug(`Creating limited access appeal case for case ${caseId}`)
 
     const appealCase = await this.sequelize.transaction((transaction) =>
-      this.appealCaseService.create(theCase, user, transaction),
+      this.appealCaseService.create(
+        theCase,
+        user,
+        dto.rulingFileId,
+        transaction,
+      ),
     )
 
     this.eventService.postEvent('CREATE_APPEAL', theCase)
@@ -145,6 +152,7 @@ export class LimitedAccessAppealCaseController {
     @Param('appealCaseId') appealCaseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() dto: TransitionAppealCaseDto,
   ): Promise<AppealCase> {
     this.logger.debug(
@@ -153,8 +161,8 @@ export class LimitedAccessAppealCaseController {
 
     const result = await this.sequelize.transaction((transaction) =>
       this.appealCaseService.transition(
-        appealCaseId,
         theCase,
+        appealCase,
         dto.transition,
         user,
         transaction,

@@ -2,7 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   m,
-  IntroWrapperV2,
+  IntroWrapper,
   ATVINNUVEGARADUNEYTID_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
@@ -33,7 +33,7 @@ export const FarmerLandsOverview = () => {
   )
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={m.farmerLands}
       intro={m.farmerLandsIntro}
       serviceProvider={{
@@ -108,7 +108,7 @@ export const FarmerLandsOverview = () => {
             )
           })}
       </Stack>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 
