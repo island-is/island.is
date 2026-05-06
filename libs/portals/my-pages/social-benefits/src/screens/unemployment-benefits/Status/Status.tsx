@@ -1,4 +1,4 @@
-import { IntroWrapperV2, useIsMobile } from '@island.is/portals/my-pages/core'
+import { IntroWrapper, useIsMobile } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { useGetUnemploymentApplicationOverviewQuery } from './Status.generated'
 
@@ -27,7 +27,7 @@ const Status = () => {
   const availableActions = overview?.availableActions
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={formatMessage(um.title)}
       intro={formatMessage(um.intro)}
       serviceProvider={{
@@ -100,7 +100,7 @@ const Status = () => {
           },
         ]}
       />
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

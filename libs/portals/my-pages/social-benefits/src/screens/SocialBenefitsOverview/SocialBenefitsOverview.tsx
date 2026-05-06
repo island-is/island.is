@@ -2,7 +2,7 @@ import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
   ActionCardLoader,
-  IntroWrapperV2,
+  IntroWrapper,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { sharedMessages } from '../../lib/messages/shared'
@@ -31,7 +31,7 @@ const SocialBenefitsOverview = () => {
   const vmstReady = !loading && !error
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={formatMessage(sharedMessages.overviewTitle)}
       intro={formatMessage(sharedMessages.overviewIntro)}
     >
@@ -74,7 +74,7 @@ const SocialBenefitsOverview = () => {
           image={{ type: 'logo', url: './assets/images/tr.svg' }}
         />
       </Stack>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

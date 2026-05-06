@@ -1,4 +1,4 @@
-import { IntroWrapperV2, UserInfoLine } from '@island.is/portals/my-pages/core'
+import { IntroWrapper, UserInfoLine } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import {
   useGetApplicantAvailableActionsQuery,
@@ -61,7 +61,7 @@ const MyData = () => {
   }
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={formatMessage(um.myDataTitle)}
       intro={formatMessage(um.myDataIntro)}
       serviceProvider={{
@@ -131,7 +131,7 @@ const MyData = () => {
           </Stack>
         </Box>
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 
