@@ -329,12 +329,6 @@ const GrantAccess = () => {
             </Box>
           </form>
         </FormProvider>
-
-        {faqList && faqList.questions.length > 0 && (
-          <Box paddingTop={8}>
-            <FaqList {...(faqList as unknown as FaqListProps)} />
-          </Box>
-        )}
       </div>
     </>
   )
