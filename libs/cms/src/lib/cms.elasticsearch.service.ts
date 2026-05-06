@@ -894,10 +894,20 @@ export class CmsElasticsearchService {
         { dateUpdated: { order: SortDirection.DESC } },
       ]
     } else if (sort === GrantsSortBy.DEADLINE) {
-      sortRules = [
-        { dateCreated: { order: SortDirection.ASC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-      ]
+      if (!filterOutDateToPassed) {
+        // dateCreated = dateTo ?? entry.sys.createdAt (grants.service.ts:151)
+        // DEADLINE sort is only valid when past-deadline entries are filtered out;
+        // without that filter, grants with no dateTo sort by createdAt and appear first.
+        sortRules = [
+          { dateUpdated: { order: SortDirection.DESC } },
+          { 'title.sort': { order: SortDirection.ASC } },
+        ]
+      } else {
+        sortRules = [
+          { dateCreated: { order: SortDirection.ASC } },
+          { 'title.sort': { order: SortDirection.ASC } },
+        ]
+      }
     } else {
       sortRules = [
         { dateUpdated: { order: SortDirection.DESC } },
