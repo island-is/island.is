@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { useLoaderData } from 'react-router-dom'
+import { useMemo } from 'react'
+import { useLoaderData, useNavigation } from 'react-router-dom'
 
 import { Box, Button, FilterInput } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -26,8 +26,14 @@ const ApiScopeUsers = () => {
     [data?.configuredEnvironments],
   )
 
-  const { localSearch, currentPage, handleSearch, handlePageChange } =
-    useDebouncedSearch()
+  const navigation = useNavigation()
+  const {
+    localSearch,
+    currentPage,
+    handleSearch,
+    handlePageChange,
+    clearSearch,
+  } = useDebouncedSearch()
 
   const modal = useApiScopeUserModal({
     accessControlledScopes,
@@ -69,9 +75,12 @@ const ApiScopeUsers = () => {
         currentPage={currentPage}
         totalPages={totalPages}
         configuredEnvironments={configuredEnvironments}
+        search={localSearch}
+        loading={navigation.state === 'loading'}
         onEdit={modal.openEditModal}
         onDelete={modal.handleDelete}
         onPageChange={handlePageChange}
+        onClearSearch={clearSearch}
       />
 
       <ApiScopeUserModal modal={modal} />

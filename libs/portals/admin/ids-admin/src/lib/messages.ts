@@ -25,6 +25,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clear-filter',
     defaultMessage: 'Clear filter',
   },
+  noResultsForSearch: {
+    id: 'ap.ids-admin:no-results-for-search',
+    defaultMessage: 'No results found for your search',
+  },
   clearAllFilters: {
     id: 'ap.ids-admin:clear-all-filters',
     defaultMessage: 'Clear all filters',
@@ -121,6 +125,10 @@ export const m = defineMessages({
   create: {
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
+  },
+  edit: {
+    id: 'ap.ids-admin:edit',
+    defaultMessage: 'Edit',
   },
   displayName: {
     id: 'ap.ids-admin:display-name',
@@ -1122,6 +1130,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-button',
     defaultMessage: 'Delete',
   },
+  /** @deprecated Use m.edit instead */
   apiScopeUserEditButton: {
     id: 'ap.ids-admin:api-scope-user-edit',
     defaultMessage: 'Edit',
@@ -1212,6 +1221,10 @@ export const m = defineMessages({
   apiScopeUsersDeleteEnvironmentRequired: {
     id: 'ap.ids-admin:api-scope-users-delete-environment-required',
     defaultMessage: 'Select at least one environment to delete from',
+  },
+  apiScopeUsersPartialFailure: {
+    id: 'ap.ids-admin:api-scope-users-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   grantTypes: {
     id: 'ap.ids-admin:grant-types',
@@ -1362,9 +1375,142 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-restore-environment-required',
     defaultMessage: 'Select at least one environment to restore to',
   },
+  grantTypesPartialFailure: {
+    id: 'ap.ids-admin:grant-types-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
     defaultMessage: 'IDP Providers',
+  },
+  idpProvidersIntro: {
+    id: 'ap.ids-admin:idp-providers-intro',
+    defaultMessage: 'Manage identity providers',
+  },
+  idpProvidersSearchPlaceholder: {
+    id: 'ap.ids-admin:idp-providers-search-placeholder',
+    defaultMessage: 'Search by name or description',
+  },
+  idpProvidersCreateNew: {
+    id: 'ap.ids-admin:idp-providers-create-new',
+    defaultMessage: 'Create IDP Provider',
+  },
+  idpProvidersCreateTitle: {
+    id: 'ap.ids-admin:idp-providers-create-title',
+    defaultMessage: 'Create IDP Provider',
+  },
+  idpProvidersEditTitle: {
+    id: 'ap.ids-admin:idp-providers-edit-title',
+    defaultMessage: 'Edit IDP Provider',
+  },
+  idpProvidersName: {
+    id: 'ap.ids-admin:idp-providers-name',
+    defaultMessage: 'Name',
+  },
+  idpProvidersDescription: {
+    id: 'ap.ids-admin:idp-providers-description',
+    defaultMessage: 'Description',
+  },
+  idpProvidersHelptext: {
+    id: 'ap.ids-admin:idp-providers-helptext',
+    defaultMessage: 'Help text',
+  },
+  idpProvidersLevel: {
+    id: 'ap.ids-admin:idp-providers-level',
+    defaultMessage: 'Level',
+  },
+  idpProvidersEnvironments: {
+    id: 'ap.ids-admin:idp-providers-environments',
+    defaultMessage: 'Environments',
+  },
+  idpProvidersSaveButton: {
+    id: 'ap.ids-admin:idp-providers-save-button',
+    defaultMessage: 'Save',
+  },
+  idpProvidersDeleteButton: {
+    id: 'ap.ids-admin:idp-providers-delete-button',
+    defaultMessage: 'Delete',
+  },
+  idpProvidersDeleteConfirmTitle: {
+    id: 'ap.ids-admin:idp-providers-delete-confirm-title',
+    defaultMessage: 'Delete IDP Provider',
+  },
+  idpProvidersDeleteConfirmMessage: {
+    id: 'ap.ids-admin:idp-providers-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this IDP provider?',
+  },
+  idpProvidersCreateSuccess: {
+    id: 'ap.ids-admin:idp-providers-create-success',
+    defaultMessage: 'IDP provider created successfully',
+  },
+  idpProvidersUpdateSuccess: {
+    id: 'ap.ids-admin:idp-providers-update-success',
+    defaultMessage: 'IDP provider updated successfully',
+  },
+  idpProvidersDeleteSuccess: {
+    id: 'ap.ids-admin:idp-providers-delete-success',
+    defaultMessage: 'IDP provider deleted successfully',
+  },
+  idpProvidersPublishSuccess: {
+    id: 'ap.ids-admin:idp-providers-publish-success',
+    defaultMessage: 'IDP provider published to {environment}',
+  },
+  idpProvidersError: {
+    id: 'ap.ids-admin:idp-providers-error',
+    defaultMessage: 'An error occurred',
+  },
+  idpProvidersNoResults: {
+    id: 'ap.ids-admin:idp-providers-no-results',
+    defaultMessage: 'No IDP providers found',
+  },
+  idpProvidersErrorNameRequired: {
+    id: 'ap.ids-admin:idp-providers-error-name-required',
+    defaultMessage: 'Name is required',
+  },
+  idpProvidersErrorNamePattern: {
+    id: 'ap.ids-admin:idp-providers-error-name-pattern',
+    defaultMessage:
+      'Name must start with a letter and contain only letters, numbers, underscores, dots, and hyphens',
+  },
+  idpProvidersErrorNameExists: {
+    id: 'ap.ids-admin:idp-providers-error-name-exists',
+    defaultMessage: 'An IDP provider with this name already exists',
+  },
+  idpProvidersErrorNameCheckFailed: {
+    id: 'ap.ids-admin:idp-providers-error-name-check-failed',
+    defaultMessage: 'Could not verify IDP provider name',
+  },
+  idpProvidersErrorDescriptionRequired: {
+    id: 'ap.ids-admin:idp-providers-error-description-required',
+    defaultMessage: 'Description is required',
+  },
+  idpProvidersErrorDescriptionChars: {
+    id: 'ap.ids-admin:idp-providers-error-description-chars',
+    defaultMessage: 'Description must not contain < > % $ characters',
+  },
+  idpProvidersErrorHelptextRequired: {
+    id: 'ap.ids-admin:idp-providers-error-helptext-required',
+    defaultMessage: 'Help text is required',
+  },
+  idpProvidersErrorLevelRange: {
+    id: 'ap.ids-admin:idp-providers-error-level-range',
+    defaultMessage: 'Level must be between 1 and 4',
+  },
+  idpProvidersErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:idp-providers-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  idpProvidersDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:idp-providers-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  idpProvidersDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:idp-providers-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
+  idpProvidersPartialFailure: {
+    id: 'ap.ids-admin:idp-providers-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',

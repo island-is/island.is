@@ -20,6 +20,8 @@ import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers/ApiSc
 import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.action'
 import { grantTypesLoader } from './screens/AdminControls/GrantTypes/GrantTypes.loader'
 import { grantTypesAction } from './screens/AdminControls/GrantTypes/GrantTypes.action'
+import { idpProvidersLoader } from './screens/AdminControls/IdpProviders/IdpProviders.loader'
+import { idpProvidersAction } from './screens/AdminControls/IdpProviders/IdpProviders.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -51,7 +53,9 @@ const ApiScopeUsers = lazy(() =>
 const GrantTypes = lazy(() =>
   import('./screens/AdminControls/GrantTypes/GrantTypes'),
 )
-const IdpProviders = lazy(() => import('./screens/AdminControls/IdpProviders'))
+const IdpProviders = lazy(() =>
+  import('./screens/AdminControls/IdpProviders/IdpProviders'),
+)
 
 const allowedScopes: string[] = [
   AdminPortalScope.idsAdmin,
@@ -127,14 +131,16 @@ export const idsAdminModule: PortalModule = {
                         backPath: IDSAdminPaths.IDSAdmin,
                       },
                     },
-                    // {
-                    //   name: m.idpProviders,
-                    //   path: IDSAdminPaths.IDSAdminControlsIdpProviders,
-                    //   element: <IdpProviders />,
-                    //   handle: {
-                    //     backPath: IDSAdminPaths.IDSAdmin,
-                    //   },
-                    // },
+                    {
+                      name: m.idpProviders,
+                      path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+                      element: <IdpProviders />,
+                      loader: idpProvidersLoader(props),
+                      action: idpProvidersAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
                   ],
                 },
               ]
