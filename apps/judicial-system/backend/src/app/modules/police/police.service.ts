@@ -506,12 +506,6 @@ export class PoliceService {
       const response: z.infer<typeof this.digitalCaseFilesStructure> =
         await res.json()
 
-      this.logger.info('Raw GetRVRafraengogn response', {
-        caseId,
-        source,
-        response,
-      })
-
       this.digitalCaseFilesStructure.parse(response)
 
       return response

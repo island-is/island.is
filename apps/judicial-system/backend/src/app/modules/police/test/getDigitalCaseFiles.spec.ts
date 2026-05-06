@@ -73,11 +73,11 @@ describe('PoliceController - Get digital case files', () => {
       then = await givenWhenThen(uuid(), theUser, theCase)
     })
 
-    it('should prepend all available metadata to the filename', () => {
+    it('should prepend all supported metadata to the filename', () => {
       expect(then.result).toEqual([
         {
           id: '1723e662-6514-4aab-9b03-6b7778939a47',
-          name: '766, Video, John Doe, Recording 1',
+          name: 'Video, John Doe, Recording 1',
           policeCaseNumber: '007-2026-000007',
           policeExternalVendorId: '2359',
           displayDate: new Date('2026-04-17T12:19:21.537'),
@@ -127,14 +127,14 @@ describe('PoliceController - Get digital case files', () => {
       expect(then.result).toEqual([
         {
           id: '6cab5177-bfa7-4998-8c09-b4884fca0ae6',
-          name: '766, Recording 2',
+          name: 'Recording 2',
           policeCaseNumber: '007-2026-000007',
           policeExternalVendorId: '2360',
           displayDate: new Date('2026-04-17T12:19:22.130'),
         },
         {
           id: 'ea4ccb3d-9670-4e3c-81f8-b63fb69c51e6',
-          name: '766, Recording 3',
+          name: 'Recording 3',
           policeCaseNumber: '007-2026-000007',
           policeExternalVendorId: '2361',
           displayDate: undefined,
@@ -177,7 +177,7 @@ describe('PoliceController - Get digital case files', () => {
       expect(then.result).toEqual([
         {
           id: '4bdc60ee-8d39-49b1-a0bc-dad2feb4c490',
-          name: '766, Recording 4',
+          name: 'Recording 4',
           policeCaseNumber: '007-2026-000007',
           policeExternalVendorId: '2362',
           displayDate: new Date('2026-04-17T12:19:20.787'),
