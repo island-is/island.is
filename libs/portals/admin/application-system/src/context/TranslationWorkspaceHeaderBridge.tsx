@@ -13,7 +13,7 @@ import {
 } from 'react'
 
 import type { FormatMessage } from '@island.is/localization'
-import { Box, Button, Tabs } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Tabs, Text } from '@island.is/island-ui/core'
 
 import { m } from '../lib/messages'
 
@@ -29,6 +29,11 @@ export type TranslationWorkspaceHeaderChrome = {
   formatMessage: FormatMessage
   showValidationErrors: boolean
   onToggleValidationErrors: () => void
+  hasDraftChanges: boolean
+  publishing: boolean
+  onPublish: () => void
+  onOpenHistory: () => void
+  lastAutosaveTime: string | null
 }
 
 type TranslationWorkspaceHeaderBridgeContextValue = {
@@ -77,7 +82,7 @@ export const useTranslationWorkspaceHeaderBridgeOptional =
     useContext(TranslationWorkspaceHeaderBridgeContext)
 
 /**
- * Registers translation workspace chrome (language tabs + save) in the shell header.
+ * Registers translation workspace chrome (language tabs + save + publish) in the shell header.
  * When `isReady` is false, the shell clears (loading / error / locked route).
  */
 export const useRegisterTranslationWorkspaceHeaderChrome = ({
@@ -90,18 +95,21 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   formatMessage,
   showValidationErrors,
   onToggleValidationErrors,
+  hasDraftChanges,
+  publishing,
+  onPublish,
+  onOpenHistory,
+  lastAutosaveTime,
   isReady,
 }: TranslationWorkspaceHeaderChrome & { isReady: boolean }) => {
   const { setWorkspaceChrome } = useTranslationWorkspaceHeaderBridge()
 
-  // These callbacks are often created inline in the page component and therefore
-  // change identity on every render. Storing them in refs prevents an effect loop
-  // where updating the header causes a rerender, which recreates callbacks, which
-  // triggers the header registration effect again.
   const onLocaleChangeRef = useRef(onLocaleChange)
   const onSaveAllRef = useRef(onSaveAll)
   const onToggleValidationErrorsRef = useRef(onToggleValidationErrors)
   const formatMessageRef = useRef(formatMessage)
+  const onPublishRef = useRef(onPublish)
+  const onOpenHistoryRef = useRef(onOpenHistory)
 
   useEffect(() => {
     onLocaleChangeRef.current = onLocaleChange
@@ -119,6 +127,14 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
     formatMessageRef.current = formatMessage
   }, [formatMessage])
 
+  useEffect(() => {
+    onPublishRef.current = onPublish
+  }, [onPublish])
+
+  useEffect(() => {
+    onOpenHistoryRef.current = onOpenHistory
+  }, [onOpenHistory])
+
   const stableOnLocaleChange = useCallback(
     (locale: TranslationWorkspacePreviewLocale) =>
       onLocaleChangeRef.current(locale),
@@ -132,8 +148,16 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
     [],
   )
 
-  const stableFormatMessage: FormatMessage = useCallback(
-    (...args) => formatMessageRef.current(...args),
+  const stableFormatMessage = useCallback<FormatMessage>(
+    ((descriptor: any, values?: any) =>
+      formatMessageRef.current(descriptor, values)) as FormatMessage,
+    [],
+  )
+
+  const stableOnPublish = useCallback(() => onPublishRef.current(), [])
+
+  const stableOnOpenHistory = useCallback(
+    () => onOpenHistoryRef.current(),
     [],
   )
 
@@ -148,6 +172,11 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       formatMessage: stableFormatMessage,
       showValidationErrors,
       onToggleValidationErrors: stableOnToggleValidationErrors,
+      hasDraftChanges,
+      publishing,
+      onPublish: stableOnPublish,
+      onOpenHistory: stableOnOpenHistory,
+      lastAutosaveTime,
     }),
     [
       activeLocale,
@@ -159,10 +188,14 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       stableFormatMessage,
       showValidationErrors,
       stableOnToggleValidationErrors,
+      hasDraftChanges,
+      publishing,
+      stableOnPublish,
+      stableOnOpenHistory,
+      lastAutosaveTime,
     ],
   )
 
-  // Clear chrome on unmount (route change).
   useEffect(() => {
     return () => {
       setWorkspaceChrome(null)
@@ -208,14 +241,55 @@ export const TranslationWorkspaceHeaderSaveButton = () => {
   const ctx = useTranslationWorkspaceHeaderBridgeOptional()
   const chrome = ctx?.workspaceChrome
 
-  if (!chrome?.hasUnsavedChanges) {
+  if (!chrome) {
     return null
   }
 
   return (
-    <Button size="small" loading={chrome.saving} onClick={chrome.onSaveAll}>
-      {chrome.formatMessage(m.translationSaveAll)} ({chrome.unsavedCount})
-    </Button>
+    <Inline space={2} alignY="center">
+      {chrome.lastAutosaveTime && (
+        <Text variant="small" color="dark300">
+          {chrome.formatMessage(m.translationAutosaved, {
+            time: chrome.lastAutosaveTime,
+          })}
+        </Text>
+      )}
+      {chrome.hasUnsavedChanges && (
+        <Button size="small" variant="ghost" loading={chrome.saving} onClick={chrome.onSaveAll}>
+          {chrome.formatMessage(m.translationSaveDraft)} ({chrome.unsavedCount})
+        </Button>
+      )}
+    </Inline>
+  )
+}
+
+export const TranslationWorkspaceHeaderPublishButton = () => {
+  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
+  const chrome = ctx?.workspaceChrome
+
+  if (!chrome) {
+    return null
+  }
+
+  return (
+    <Inline space={2} alignY="center">
+      <Button
+        size="small"
+        variant="ghost"
+        onClick={chrome.onOpenHistory}
+      >
+        {chrome.formatMessage(m.translationPublishHistory)}
+      </Button>
+      {(chrome.hasDraftChanges || chrome.hasUnsavedChanges) && (
+        <Button
+          size="small"
+          loading={chrome.publishing}
+          onClick={chrome.onPublish}
+        >
+          {chrome.formatMessage(m.translationPublish)}
+        </Button>
+      )}
+    </Inline>
   )
 }
 

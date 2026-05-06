@@ -88,6 +88,20 @@ export class ApplicationTranslation extends Model {
   @ApiPropertyOptional()
   reviewedBy?: string
 
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  draftValueIs?: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  draftValueEn?: string
+
   @CreatedAt
   @ApiProperty()
   created!: Date

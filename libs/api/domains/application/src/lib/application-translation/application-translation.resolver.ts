@@ -16,11 +16,14 @@ import {
   AiTranslationResultGql,
   TemplateIntrospectionGql,
   TemplateListItemGql,
+  TranslationPublishGql,
 } from './application-translation.model'
 import { ApplicationTranslationApiService } from './application-translation.service'
 import {
   UpdateApplicationTranslationInput,
   BulkUpdateApplicationTranslationsInput,
+  PublishTranslationsInput,
+  RollbackTranslationsInput,
 } from './dto/application-translation.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -132,6 +135,50 @@ export class ApplicationTranslationResolver {
       sourceLocale,
       targetLocale,
     })
+  }
+
+  @Mutation(() => TranslationPublishGql)
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  async publishApplicationTranslations(
+    @CurrentUser() user: User,
+    @Args('input') input: PublishTranslationsInput,
+  ): Promise<TranslationPublishGql> {
+    return this.translationService.publishTranslations(
+      user,
+      input.namespace,
+      input.note ?? undefined,
+    )
+  }
+
+  @Query(() => [TranslationPublishGql], { nullable: true })
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  async applicationTranslationPublishHistory(
+    @CurrentUser() user: User,
+    @Args('namespace') namespace: string,
+  ): Promise<TranslationPublishGql[]> {
+    return this.translationService.getPublishHistory(user, namespace)
+  }
+
+  @Mutation(() => TranslationPublishGql)
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  async rollbackApplicationTranslations(
+    @CurrentUser() user: User,
+    @Args('input') input: RollbackTranslationsInput,
+  ): Promise<TranslationPublishGql> {
+    return this.translationService.rollbackTranslations(
+      user,
+      input.namespace,
+      input.publishId,
+    )
   }
 
   @Query(() => [TemplateListItemGql], { nullable: true })

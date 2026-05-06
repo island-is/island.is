@@ -11,6 +11,7 @@ import {
 import {
   TranslationWorkspaceHeaderLanguageTabs,
   TranslationWorkspaceHeaderSaveButton,
+  TranslationWorkspaceHeaderPublishButton,
 } from '@island.is/portals/admin/application-system'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { UserMenu } from '@island.is/shared/components'
@@ -58,6 +59,7 @@ export const Header = () => {
                     marginRight={[1, 1, 2]}
                   >
                     <TranslationWorkspaceHeaderSaveButton />
+                    <TranslationWorkspaceHeaderPublishButton />
                     <TranslationWorkspaceHeaderLanguageTabs />
                   </Box>
                 </Hidden>

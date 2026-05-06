@@ -368,4 +368,70 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:noData',
     defaultMessage: 'Engin gögn fundust á tímabilinu...',
   },
+
+  // Translation workspace: draft / publish
+  translationSaveDraft: {
+    id: 'admin-portal.application-system:translationSaveDraft',
+    defaultMessage: 'Vista drög',
+  },
+  translationAutosaved: {
+    id: 'admin-portal.application-system:translationAutosaved',
+    defaultMessage: 'Sjálfvirk vistun kl. {time}',
+  },
+  translationPublish: {
+    id: 'admin-portal.application-system:translationPublish',
+    defaultMessage: 'Birta',
+  },
+  translationPublishConfirm: {
+    id: 'admin-portal.application-system:translationPublishConfirm',
+    defaultMessage: 'Ertu viss um að þú viljir birta þessar þýðingar? Þær verða sýnilegar notendum.',
+  },
+  translationPublishCancel: {
+    id: 'admin-portal.application-system:translationPublishCancel',
+    defaultMessage: 'Hætta við',
+  },
+  translationPublishSuccess: {
+    id: 'admin-portal.application-system:translationPublishSuccess',
+    defaultMessage: 'Þýðingar hafa verið birtar.',
+  },
+  translationPublishFailed: {
+    id: 'admin-portal.application-system:translationPublishFailed',
+    defaultMessage: 'Ekki tókst að birta þýðingar. {detail}',
+  },
+  translationPublishHistory: {
+    id: 'admin-portal.application-system:translationPublishHistory',
+    defaultMessage: 'Útgáfusaga',
+  },
+  translationRollback: {
+    id: 'admin-portal.application-system:translationRollback',
+    defaultMessage: 'Endurheimta',
+  },
+  translationRollbackConfirm: {
+    id: 'admin-portal.application-system:translationRollbackConfirm',
+    defaultMessage: 'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi birtar þýðingar verða yfirskrifaðar.',
+  },
+  translationRollbackSuccess: {
+    id: 'admin-portal.application-system:translationRollbackSuccess',
+    defaultMessage: 'Þýðingar hafa verið endurheimtar.',
+  },
+  translationRollbackFailed: {
+    id: 'admin-portal.application-system:translationRollbackFailed',
+    defaultMessage: 'Ekki tókst að endurheimta þýðingar. {detail}',
+  },
+  translationDraft: {
+    id: 'admin-portal.application-system:translationDraft',
+    defaultMessage: 'Drög',
+  },
+  translationPublished: {
+    id: 'admin-portal.application-system:translationPublished',
+    defaultMessage: 'Birt',
+  },
+  translationNoPublishHistory: {
+    id: 'admin-portal.application-system:translationNoPublishHistory',
+    defaultMessage: 'Engin útgáfusaga.',
+  },
+  translationCurrentVersion: {
+    id: 'admin-portal.application-system:translationCurrentVersion',
+    defaultMessage: 'Núverandi',
+  },
 })

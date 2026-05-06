@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Box,
+  Button,
+  ModalBase,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -11,6 +14,7 @@ import {
   useGetApplicationTranslationsQuery,
   useBulkUpdateApplicationTranslationsMutation,
   useGetApplicationTemplateRoleFormLazyQuery,
+  usePublishApplicationTranslationsMutation,
 } from '../../queries/translations.generated'
 import type {
   EditedTranslations,
@@ -39,7 +43,10 @@ import {
   TranslationWorkspaceLoading,
   TranslationWorkspaceNotFound,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
+import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
 import * as workspaceStyles from './TranslationWorkspace.css'
+
+const AUTOSAVE_INTERVAL_MS = 60_000
 
 const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
@@ -64,15 +71,29 @@ const TranslationWorkspace = () => {
     skip: !typeId || !introspection,
   })
 
+  /**
+   * persistedByKey uses draft values when available so the admin workspace
+   * always shows the latest draft. Published values are only used as fallback.
+   */
   const persistedByKey = useMemo(() => {
     const map: Record<string, { valueIs: string; valueEn?: string | null }> = {}
     for (const row of translationsData?.applicationTranslations ?? []) {
       map[row.messageKey] = {
-        valueIs: row.valueIs,
-        valueEn: row.valueEn,
+        valueIs: row.draftValueIs ?? row.valueIs,
+        valueEn: row.draftValueEn ?? row.valueEn,
       }
     }
     return map
+  }, [translationsData])
+
+  /**
+   * hasDraftChanges is true when any row in the namespace has non-null draft values,
+   * meaning there are unpublished changes stored in the DB.
+   */
+  const hasDraftChanges = useMemo(() => {
+    return (translationsData?.applicationTranslations ?? []).some(
+      (row) => row.draftValueIs != null || row.draftValueEn != null,
+    )
   }, [translationsData])
 
   const [activeLocale, setActiveLocale] = useState<'is' | 'en'>('en')
@@ -93,6 +114,9 @@ const TranslationWorkspace = () => {
   const [previewFieldValues, setPreviewFieldValues] = useState<
     Record<string, string>
   >({})
+  const [lastAutosaveTime, setLastAutosaveTime] = useState<string | null>(null)
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
 
   const getPersistedForMessage = useCallback(
     (messageKey: string, locale: 'is' | 'en') => {
@@ -164,6 +188,9 @@ const TranslationWorkspace = () => {
 
   const [bulkUpdate, { loading: saving }] =
     useBulkUpdateApplicationTranslationsMutation()
+
+  const [publishMutation, { loading: publishing }] =
+    usePublishApplicationTranslationsMutation()
 
   const [fetchRoleForm] = useGetApplicationTemplateRoleFormLazyQuery()
 
@@ -352,6 +379,76 @@ const TranslationWorkspace = () => {
     [editedValues, getPersistedForMessage],
   )
 
+  // --- Autosave every 60 seconds ---
+  const handleSaveAllRef = useRef(handleSaveAll)
+  useEffect(() => {
+    handleSaveAllRef.current = handleSaveAll
+  }, [handleSaveAll])
+
+  const hasUnsavedChangesRef = useRef(hasUnsavedChanges)
+  useEffect(() => {
+    hasUnsavedChangesRef.current = hasUnsavedChanges
+  }, [hasUnsavedChanges])
+
+  const savingRef = useRef(saving)
+  useEffect(() => {
+    savingRef.current = saving
+  }, [saving])
+
+  useEffect(() => {
+    const id = setInterval(async () => {
+      if (hasUnsavedChangesRef.current && !savingRef.current) {
+        await handleSaveAllRef.current()
+        const now = new Date()
+        setLastAutosaveTime(
+          `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+        )
+      }
+    }, AUTOSAVE_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [])
+
+  // --- Publish ---
+  const handlePublish = useCallback(async () => {
+    if (!namespace) return
+
+    if (hasUnsavedChanges) {
+      await handleSaveAll()
+    }
+
+    setPublishConfirmVisible(true)
+  }, [namespace, hasUnsavedChanges, handleSaveAll])
+
+  const handlePublishConfirm = useCallback(async () => {
+    setPublishConfirmVisible(false)
+
+    try {
+      await publishMutation({
+        variables: { input: { namespace } },
+      })
+      await refetchTranslations()
+      toast.success(formatMessage(m.translationPublishSuccess))
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : 'Unknown error'
+      console.error('publishApplicationTranslations failed', err)
+      toast.error(formatMessage(m.translationPublishFailed, { detail }))
+    }
+  }, [namespace, publishMutation, refetchTranslations, formatMessage])
+
+  const handleOpenHistory = useCallback(() => {
+    setHistoryOpen(true)
+  }, [])
+
+  const handleCloseHistory = useCallback(() => {
+    setHistoryOpen(false)
+  }, [])
+
+  const handleRollbackComplete = useCallback(async () => {
+    await refetchTranslations()
+    setEditedValues({ is: {}, en: {} })
+    setHistoryOpen(false)
+  }, [refetchTranslations])
+
   const handleSidebarNavClick = useCallback(
     (nav: ScreenIntrospection, location: SidebarNavLocation) => {
       if (!introspection) return
@@ -486,6 +583,11 @@ const TranslationWorkspace = () => {
     formatMessage,
     showValidationErrors,
     onToggleValidationErrors: handleToggleValidationErrors,
+    hasDraftChanges,
+    publishing,
+    onPublish: handlePublish,
+    onOpenHistory: handleOpenHistory,
+    lastAutosaveTime,
     isReady: isWorkspaceReady,
   })
 
@@ -556,6 +658,55 @@ const TranslationWorkspace = () => {
         </div>
       </div>
 
+      <TranslationPublishHistory
+        namespace={namespace}
+        isOpen={historyOpen}
+        onClose={handleCloseHistory}
+        onRollbackComplete={handleRollbackComplete}
+        formatMessage={formatMessage}
+      />
+
+      <ModalBase
+        baseId="publishConfirmModal"
+        className={workspaceStyles.publishConfirmModal}
+        isVisible={publishConfirmVisible}
+        hideOnClickOutside
+        onVisibilityChange={(visible) => {
+          if (!visible) setPublishConfirmVisible(false)
+        }}
+      >
+        {({ closeModal }: { closeModal: () => void }) => (
+          <Box background="white" paddingY={[3, 6, 12]} paddingX={[3, 6, 12]}>
+            <Text variant="h2" as="h2" marginBottom={1}>
+              {formatMessage(m.translationPublish)}
+            </Text>
+            <Text paddingTop={2}>
+              {formatMessage(m.translationPublishConfirm)}
+            </Text>
+            <Box
+              marginTop={4}
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+            >
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={closeModal}
+              >
+                {formatMessage(m.translationPublishCancel)}
+              </Button>
+              <Button
+                size="small"
+                onClick={handlePublishConfirm}
+                loading={publishing}
+              >
+                {formatMessage(m.translationPublish)}
+              </Button>
+            </Box>
+          </Box>
+        )}
+      </ModalBase>
     </Box>
   )
 }

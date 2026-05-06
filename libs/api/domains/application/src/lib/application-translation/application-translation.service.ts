@@ -4,6 +4,7 @@ import type {
   ApplicationTranslationGql,
   ApplicationTranslationStatus,
   TemplateIntrospectionGql,
+  TranslationPublishGql,
 } from './application-translation.model'
 
 export const TRANSLATION_API_CONFIG = 'TRANSLATION_API_CONFIG'
@@ -204,6 +205,45 @@ export class ApplicationTranslationApiService {
     return this.request<unknown>(
       user,
       `/templates/${encodeURIComponent(typeId)}/form?${params.toString()}`,
+    )
+  }
+
+  async publishTranslations(
+    user: User,
+    namespace: string,
+    note?: string,
+  ): Promise<TranslationPublishGql> {
+    return this.request<TranslationPublishGql>(
+      user,
+      `/${encodeURIComponent(namespace)}/publish`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ note }),
+      },
+    )
+  }
+
+  async getPublishHistory(
+    user: User,
+    namespace: string,
+  ): Promise<TranslationPublishGql[]> {
+    return this.request<TranslationPublishGql[]>(
+      user,
+      `/${encodeURIComponent(namespace)}/publish-history`,
+    )
+  }
+
+  async rollbackTranslations(
+    user: User,
+    namespace: string,
+    publishId: string,
+  ): Promise<TranslationPublishGql> {
+    return this.request<TranslationPublishGql>(
+      user,
+      `/${encodeURIComponent(namespace)}/rollback/${encodeURIComponent(publishId)}`,
+      {
+        method: 'POST',
+      },
     )
   }
 }

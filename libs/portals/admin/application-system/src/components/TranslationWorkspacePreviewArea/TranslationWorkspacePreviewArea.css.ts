@@ -16,7 +16,7 @@ export const previewWrapper = style({
 
 export const previewFormColumn = style({
   flex: '1 1 0%',
-  maxWidth: '720px',
+  maxWidth: '920px',
   minWidth: 0,
 })
 

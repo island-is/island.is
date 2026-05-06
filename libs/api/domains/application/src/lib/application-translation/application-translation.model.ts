@@ -21,6 +21,12 @@ export class ApplicationTranslationGql {
   @Field(() => String, { nullable: true })
   defaultMessage?: string | null
 
+  @Field(() => String, { nullable: true })
+  draftValueIs?: string | null
+
+  @Field(() => String, { nullable: true })
+  draftValueEn?: string | null
+
   @Field()
   isReviewed!: boolean
 
@@ -365,4 +371,22 @@ export class TemplateListItemGql {
 
   @Field(() => [String])
   translationNamespaces!: string[]
+}
+
+@ObjectType()
+export class TranslationPublishGql {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  namespace!: string
+
+  @Field(() => String, { nullable: true })
+  publishedBy?: string | null
+
+  @Field()
+  publishedAt!: string
+
+  @Field(() => String, { nullable: true })
+  note?: string | null
 }

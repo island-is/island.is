@@ -111,6 +111,8 @@ query getApplicationTranslations($namespace: String!) {
     messageKey
     valueIs
     valueEn
+    draftValueIs
+    draftValueEn
     defaultMessage
     isReviewed
     translatedBy
@@ -253,5 +255,39 @@ query aiTranslateStrings(
     targetLocale: $targetLocale
   ) {
     translations
+  }
+}
+
+mutation publishApplicationTranslations(
+  $input: PublishTranslationsInput!
+) {
+  publishApplicationTranslations(input: $input) {
+    id
+    namespace
+    publishedBy
+    publishedAt
+    note
+  }
+}
+
+query getApplicationTranslationPublishHistory($namespace: String!) {
+  applicationTranslationPublishHistory(namespace: $namespace) {
+    id
+    namespace
+    publishedBy
+    publishedAt
+    note
+  }
+}
+
+mutation rollbackApplicationTranslations(
+  $input: RollbackTranslationsInput!
+) {
+  rollbackApplicationTranslations(input: $input) {
+    id
+    namespace
+    publishedBy
+    publishedAt
+    note
   }
 }

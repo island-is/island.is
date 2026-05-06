@@ -5,6 +5,8 @@ import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/cms-translations'
 
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
+import { ApplicationTranslationPublish } from './application-translation-publish.model'
+import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
 import { ApplicationTranslationService } from './application-translation.service'
 import { ApplicationTranslationProviderImpl } from './application-translation.provider'
 
@@ -16,7 +18,12 @@ import { ApplicationTranslationProviderImpl } from './application-translation.pr
 @Global()
 @Module({
   imports: [
-    SequelizeModule.forFeature([ApplicationTranslation, ApplicationTranslationLog]),
+    SequelizeModule.forFeature([
+      ApplicationTranslation,
+      ApplicationTranslationLog,
+      ApplicationTranslationPublish,
+      ApplicationTranslationPublishSnapshot,
+    ]),
   ],
   providers: [
     ApplicationTranslationService,

@@ -35,3 +35,21 @@ export class BulkUpdateApplicationTranslationsInput {
   @Field(() => [TranslationItemInput])
   translations!: TranslationItemInput[]
 }
+
+@InputType()
+export class PublishTranslationsInput {
+  @Field()
+  namespace!: string
+
+  @Field(() => String, { nullable: true })
+  note?: string
+}
+
+@InputType()
+export class RollbackTranslationsInput {
+  @Field()
+  namespace!: string
+
+  @Field()
+  publishId!: string
+}

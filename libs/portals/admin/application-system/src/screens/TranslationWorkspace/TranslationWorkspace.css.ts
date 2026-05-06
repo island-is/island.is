@@ -1,5 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 /**
  * Locks workspace height to fill the viewport below the header so both the
@@ -31,7 +31,7 @@ export const workspaceShell = style({
           top: 0,
           bottom: 0,
           right: 0,
-          width: '400px',
+          width: '30vw',
           backgroundColor: theme.color.white,
           zIndex: 0,
           pointerEvents: 'none',
@@ -72,12 +72,29 @@ export const workspacePreviewAside = style({
   },
 })
 
+export const publishConfirmModal = style({
+  position: 'relative',
+  maxWidth: `calc(100% - ${theme.spacing[6]}px)`,
+  maxHeight: `calc(100% - ${theme.spacing[6]}px)`,
+  margin: 'auto',
+  marginTop: '25vh',
+  borderRadius: theme.border.radius.large,
+  overflowY: 'auto',
+  boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 600,
+    },
+  }),
+})
+
 export const workspaceNavAside = style({
   position: 'relative',
   zIndex: 1,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      flex: '0 0 800px',
+      flex: '0 0 30vw',
+      maxWidth: '30vw',
       height: '100%',
       minHeight: 0,
       display: 'flex',

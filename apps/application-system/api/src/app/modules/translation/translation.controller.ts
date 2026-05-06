@@ -29,6 +29,7 @@ import type { Locale } from '@island.is/shared/types'
 import {
   UpdateTranslationDto,
   BulkUpdateTranslationsDto,
+  PublishTranslationsDto,
 } from './dto/translation.dto'
 import { AiTranslateDto } from './dto/ai-translate.dto'
 
@@ -130,6 +131,49 @@ export class TranslationController {
     @CurrentUser() user: User,
   ) {
     return this.translationService.markAsReviewed(id, user.nationalId)
+  }
+
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  @Post(':namespace/publish')
+  async publishTranslations(
+    @Param('namespace') namespace: string,
+    @Body() body: PublishTranslationsDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.translationService.publishTranslations(
+      namespace,
+      user.nationalId,
+      body.note,
+    )
+  }
+
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  @Get(':namespace/publish-history')
+  async getPublishHistory(@Param('namespace') namespace: string) {
+    return this.translationService.getPublishHistory(namespace)
+  }
+
+  @Scopes(
+    AdminPortalScope.applicationTranslation,
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  @Post(':namespace/rollback/:publishId')
+  async rollbackTranslations(
+    @Param('namespace') namespace: string,
+    @Param('publishId') publishId: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.translationService.rollbackToPublish(
+      publishId,
+      namespace,
+      user.nationalId,
+    )
   }
 
   @Scopes(

@@ -4,6 +4,8 @@ import { Op } from 'sequelize'
 import { Locale } from '@island.is/shared/types'
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
+import { ApplicationTranslationPublish } from './application-translation-publish.model'
+import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
 
 export interface TranslationStatus {
   namespace: string
@@ -18,6 +20,14 @@ export interface UpsertTranslationInput {
   messageKey: string
   valueIs?: string
   valueEn?: string
+}
+
+export interface PublishHistoryItem {
+  id: string
+  namespace: string
+  publishedBy?: string
+  publishedAt: Date
+  note?: string
 }
 
 /** Columns translated_by, reviewed_by, changed_by are VARCHAR(20) in the DB. */
@@ -37,8 +47,16 @@ export class ApplicationTranslationService {
     private readonly translationModel: typeof ApplicationTranslation,
     @InjectModel(ApplicationTranslationLog)
     private readonly logModel: typeof ApplicationTranslationLog,
+    @InjectModel(ApplicationTranslationPublish)
+    private readonly publishModel: typeof ApplicationTranslationPublish,
+    @InjectModel(ApplicationTranslationPublishSnapshot)
+    private readonly snapshotModel: typeof ApplicationTranslationPublishSnapshot,
   ) {}
 
+  /**
+   * Runtime read path -- returns published values only.
+   * Draft columns are intentionally excluded.
+   */
   async getTranslationsForNamespace(
     namespace: string,
     locale: Locale,
@@ -81,6 +99,9 @@ export class ApplicationTranslationService {
     return result
   }
 
+  /**
+   * Admin read path -- returns all columns including draft values.
+   */
   async getTranslationsByNamespace(
     namespace: string,
   ): Promise<ApplicationTranslation[]> {
@@ -90,6 +111,9 @@ export class ApplicationTranslationService {
     })
   }
 
+  /**
+   * Saves to **draft** columns. Published values are untouched.
+   */
   async upsertTranslation(
     input: UpsertTranslationInput,
     translatedBy?: string,
@@ -108,15 +132,15 @@ export class ApplicationTranslationService {
       let logOldValue: string | undefined
       let logNewValue: string | undefined
 
-      if (input.valueIs !== undefined && input.valueIs !== existing.valueIs) {
-        logOldValue = existing.valueIs
+      if (input.valueIs !== undefined && input.valueIs !== existing.draftValueIs) {
+        logOldValue = existing.draftValueIs ?? existing.valueIs
         logNewValue = input.valueIs
-        updates.valueIs = input.valueIs
+        updates.draftValueIs = input.valueIs
       }
-      if (input.valueEn !== undefined && input.valueEn !== existing.valueEn) {
-        logOldValue = existing.valueEn ?? undefined
+      if (input.valueEn !== undefined && input.valueEn !== existing.draftValueEn) {
+        logOldValue = existing.draftValueEn ?? existing.valueEn ?? undefined
         logNewValue = input.valueEn
-        updates.valueEn = input.valueEn
+        updates.draftValueEn = input.valueEn
       }
 
       if (Object.keys(updates).length > 0) {
@@ -131,7 +155,7 @@ export class ApplicationTranslationService {
           oldValue: logOldValue,
           newValue: logNewValue,
           changedBy: actor,
-          action: 'update',
+          action: 'draft',
         })
       }
 
@@ -142,7 +166,8 @@ export class ApplicationTranslationService {
       namespace: input.namespace,
       messageKey: input.messageKey,
       valueIs: input.valueIs ?? '',
-      valueEn: input.valueEn,
+      draftValueIs: input.valueIs,
+      draftValueEn: input.valueEn,
       translatedBy: actor,
       isReviewed: false,
     })
@@ -192,6 +217,160 @@ export class ApplicationTranslationService {
     })
 
     return translation
+  }
+
+  /**
+   * Publish: copy draft values into published columns, snapshot current published
+   * state, then clear drafts.
+   */
+  async publishTranslations(
+    namespace: string,
+    publishedBy?: string,
+    note?: string,
+  ): Promise<ApplicationTranslationPublish> {
+    const actor = truncateActorId(publishedBy)
+
+    const rows = await this.translationModel.findAll({
+      where: { namespace },
+    })
+
+    const publish = await this.publishModel.create({
+      namespace,
+      publishedBy: actor,
+      note,
+    })
+
+    // Snapshot current published state before overwriting
+    const snapshotRows = rows.map((r) => ({
+      publishId: publish.id,
+      messageKey: r.messageKey,
+      valueIs: r.valueIs,
+      valueEn: r.valueEn,
+    }))
+    if (snapshotRows.length > 0) {
+      await this.snapshotModel.bulkCreate(snapshotRows)
+    }
+
+    // Copy drafts into published columns, then clear drafts
+    for (const row of rows) {
+      const updates: Partial<ApplicationTranslation> = {}
+      let changed = false
+
+      if (row.draftValueIs != null) {
+        updates.valueIs = row.draftValueIs
+        changed = true
+      }
+      if (row.draftValueEn != null) {
+        updates.valueEn = row.draftValueEn
+        changed = true
+      }
+
+      updates.draftValueIs = undefined as unknown as string
+      updates.draftValueEn = undefined as unknown as string
+
+      if (changed) {
+        await row.update(updates)
+        await this.logModel.create({
+          translationId: row.id,
+          oldValue: row.valueIs,
+          newValue: updates.valueIs ?? row.valueIs,
+          changedBy: actor,
+          action: 'publish',
+        })
+      } else {
+        // Still clear drafts even if they match published
+        await row.update({
+          draftValueIs: null as unknown as string,
+          draftValueEn: null as unknown as string,
+        })
+      }
+    }
+
+    return publish
+  }
+
+  async getPublishHistory(
+    namespace: string,
+  ): Promise<PublishHistoryItem[]> {
+    const publishes = await this.publishModel.findAll({
+      where: { namespace },
+      order: [['publishedAt', 'DESC']],
+    })
+
+    return publishes.map((p) => ({
+      id: p.id,
+      namespace: p.namespace,
+      publishedBy: p.publishedBy,
+      publishedAt: p.publishedAt,
+      note: p.note,
+    }))
+  }
+
+  /**
+   * Rollback: restore published values from a snapshot, clear drafts.
+   */
+  async rollbackToPublish(
+    publishId: string,
+    namespace: string,
+    rolledBackBy?: string,
+  ): Promise<ApplicationTranslationPublish | null> {
+    const actor = truncateActorId(rolledBackBy)
+
+    const publish = await this.publishModel.findByPk(publishId, {
+      include: [ApplicationTranslationPublishSnapshot],
+    })
+
+    if (!publish || publish.namespace !== namespace) {
+      return null
+    }
+
+    const snapshots = publish.snapshots ?? []
+    const snapshotByKey = new Map(snapshots.map((s) => [s.messageKey, s]))
+
+    const currentRows = await this.translationModel.findAll({
+      where: { namespace },
+    })
+
+    // Create a rollback publish record for the history
+    const rollbackPublish = await this.publishModel.create({
+      namespace,
+      publishedBy: actor,
+      note: `Rollback to version from ${publish.publishedAt.toISOString()}`,
+    })
+
+    // Snapshot current state before rollback
+    const preRollbackSnapshots = currentRows.map((r) => ({
+      publishId: rollbackPublish.id,
+      messageKey: r.messageKey,
+      valueIs: r.valueIs,
+      valueEn: r.valueEn,
+    }))
+    if (preRollbackSnapshots.length > 0) {
+      await this.snapshotModel.bulkCreate(preRollbackSnapshots)
+    }
+
+    // Restore published values from snapshot
+    for (const row of currentRows) {
+      const snapshot = snapshotByKey.get(row.messageKey)
+      if (snapshot) {
+        await row.update({
+          valueIs: snapshot.valueIs,
+          valueEn: snapshot.valueEn,
+          draftValueIs: null as unknown as string,
+          draftValueEn: null as unknown as string,
+        })
+
+        await this.logModel.create({
+          translationId: row.id,
+          oldValue: row.valueIs,
+          newValue: snapshot.valueIs,
+          changedBy: actor,
+          action: 'rollback',
+        })
+      }
+    }
+
+    return rollbackPublish
   }
 
   async getTranslationStatus(namespace: string): Promise<TranslationStatus> {
