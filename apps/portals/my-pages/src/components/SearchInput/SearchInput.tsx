@@ -24,6 +24,8 @@ interface Props {
   buttonAriaLabel?: string
   hideInput?: boolean
   whiteMenuBackground?: boolean
+  onButtonClick?: () => void
+  onInputInitialized?: () => void
 }
 
 export const SearchInput = ({
@@ -34,6 +36,8 @@ export const SearchInput = ({
   buttonAriaLabel,
   hideInput,
   whiteMenuBackground,
+  onButtonClick,
+  onInputInitialized,
 }: Props) => {
   const [query, setQuery] = useState<string>()
   const search = usePortalModulesSearch()
@@ -41,6 +45,7 @@ export const SearchInput = ({
   const navigate = useNavigate()
 
   const ref = useRef<HTMLInputElement>(null)
+  const inputInitializedRef = useRef(false)
   const [searchParams] = useSearchParams()
 
   const searchQuery = searchParams.get('query')
@@ -114,7 +119,7 @@ export const SearchInput = ({
   if (hideInput) {
     return (
       <Box className={styles.wrapper} {...box}>
-        <LinkResolver href={SearchPaths.Search} className={styles.searchButton}>
+        <LinkResolver href={SearchPaths.Search} className={styles.searchButton} callback={onButtonClick}>
           <Button
             aria-label={buttonAriaLabel}
             icon="search"
@@ -163,6 +168,10 @@ export const SearchInput = ({
           onInputValueChange={(value) => {
             if (value !== query) {
               setQuery(value)
+            }
+            if (!inputInitializedRef.current && value) {
+              onInputInitialized?.()
+              inputInitializedRef.current = true
             }
           }}
           onChange={(value) => {

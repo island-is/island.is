@@ -19,6 +19,24 @@ type OutboundTypes = {
   outboundUrl?: string
 }
 
+const myPagesHeaderEvent =
+  (eventName: string) =>
+  (params: Pick<ParamType, 'url' | 'location'>) =>
+    plausibleCustomEvent({
+      eventName,
+      featureName: 'My Pages Header',
+      params: { location: params.location },
+      url: params.url,
+    })
+
+export const myPagesHeaderDocumentsClick = myPagesHeaderEvent('Documents Click')
+export const myPagesHeaderNotificationsClick = myPagesHeaderEvent('Notifications Click')
+export const myPagesHeaderLanguageSwitchClick = myPagesHeaderEvent('Language Switch Click')
+export const myPagesHeaderOverviewClick = myPagesHeaderEvent('Overview Click')
+export const myPagesHeaderUserMenuClick = myPagesHeaderEvent('User Menu Click')
+export const myPagesHeaderSearchIconClick = myPagesHeaderEvent('Search Icon Click')
+export const myPagesHeaderSearchInputInitialized = myPagesHeaderEvent('Search Input Initialized')
+
 // Event sent when the search feature of documents is interacted with by the user
 export const documentsSearchDocumentsInitialized = (params: ParamType) => {
   const event: BaseEvent = {
