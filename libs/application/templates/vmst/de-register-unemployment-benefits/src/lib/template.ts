@@ -17,6 +17,7 @@ import {
   coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { applicationMessages } from './messages'
@@ -35,6 +36,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
     ApplicationConfigurations.DeregisterUnemploymentBenefits.translation,
   dataSchema: DeregisterUnemploymentBenefitsSchema,
   featureFlag: Features.isDeregisterUnemploymentBenefitsEnabled,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -83,7 +85,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(2),
           actionCard: {
             tag: {
               label: applicationMessages.actionCardDraft,

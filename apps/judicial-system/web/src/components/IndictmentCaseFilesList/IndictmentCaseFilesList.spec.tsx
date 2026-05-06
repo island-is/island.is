@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import {
   CaseFileCategory,
   CaseType,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
@@ -13,6 +14,7 @@ import {
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
+import { UserContext } from '../UserProvider/UserProvider'
 import IndictmentCaseFilesList from './IndictmentCaseFilesList'
 
 describe('IndictmentCaseFilesList', () => {
@@ -31,5 +33,51 @@ describe('IndictmentCaseFilesList', () => {
     )
 
     expect(screen.queryByTestId('PDFButton')).not.toBeNull()
+  })
+
+  it('should only show defender-visible case file records', () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={{
+              user: {
+                id: 'defender-user-id',
+                role: UserRole.DEFENDER,
+                nationalId: '1234567890',
+                name: 'Defender',
+              },
+            }}
+          >
+            <IndictmentCaseFilesList
+              workingCase={{
+                ...mockCase(CaseType.INDICTMENT),
+                policeCaseNumbers: ['007-2026-1', '007-2026-2', '007-2026-3'],
+                defendants: [
+                  {
+                    id: 'defendant-1',
+                    isDefenderChoiceConfirmed: true,
+                    defenderNationalId: '1234567890',
+                    policeCaseNumbers: ['007-2026-1'],
+                  },
+                  {
+                    id: 'defendant-2',
+                    isDefenderChoiceConfirmed: true,
+                    defenderNationalId: '0987654321',
+                    policeCaseNumbers: ['007-2026-2'],
+                  },
+                ],
+              }}
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    expect(screen.queryByText(/Skjalaskrá 007-2026-1\.pdf/)).toBeInTheDocument()
+    expect(screen.queryByText(/Skjalaskrá 007-2026-3\.pdf/)).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/),
+    ).not.toBeInTheDocument()
   })
 })

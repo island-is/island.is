@@ -2,8 +2,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   StudentTrackDto,
+  StudyType as ClientStudyType,
   UniversityCareersClientService,
   UniversityId,
+  UniversityIdMap,
 } from '@island.is/clients/university-careers'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -15,7 +17,19 @@ import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackHistory } from './models/studentTrackHistory.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { StudentTrackTranscriptError } from './models/studentTrackTranscriptError.model'
-import { UniversityIdMap } from '@island.is/clients/university-careers'
+import { StudyType } from './universityCareers.types'
+import { LocaleEnum } from '@island.is/nest/graphql'
+
+const mapStudyType = (studyType?: StudyType): ClientStudyType | undefined => {
+  switch (studyType) {
+    case StudyType.UNIVERSITY_STUDIES:
+      return 'haskolanam'
+    case StudyType.MICRO_CREDENTIALS:
+      return 'ornam'
+    default:
+      return undefined
+  }
+}
 
 const LOG_CATEGORY = 'university-careers-api'
 const FEATURE_FLAGS: Record<Exclude<UniversityId, 'hi'>, Features> = {
@@ -36,10 +50,16 @@ export class UniversityCareersService {
 
   async getStudentTrackHistory(
     user: User,
-    locale: Locale,
+    locale: LocaleEnum,
+    studyType?: StudyType,
   ): Promise<StudentTrackHistory | null> {
     const promises = Object.values(UniversityId).map(async (uni) => {
-      return this.getStudentTrackHistoryByUniversity(user, uni, locale)
+      return this.getStudentTrackHistoryByUniversity(
+        user,
+        uni,
+        locale,
+        studyType,
+      )
     })
 
     const transcripts: Array<StudentTrackTranscript> = []
@@ -66,6 +86,7 @@ export class UniversityCareersService {
     user: User,
     university: UniversityId,
     locale: Locale,
+    studyType?: StudyType,
   ): Promise<
     Array<StudentTrackTranscript> | StudentTrackTranscriptError | null
   > {
@@ -82,7 +103,12 @@ export class UniversityCareersService {
     }
     const data: Array<StudentTrackDto> | StudentTrackTranscriptError | null =
       await this.universityCareers
-        .getStudentTrackHistory(user, university, locale)
+        .getStudentTrackHistory(
+          user,
+          university,
+          locale,
+          mapStudyType(studyType),
+        )
         .catch((e: Error | FetchError) => {
           this.logger.warn('Student track history fetch failed', {
             university,
@@ -114,30 +140,34 @@ export class UniversityCareersService {
 
   async getStudentTrack(
     user: User,
-    university: UniversityId,
     trackNumber: number,
-    locale: Locale,
+    universityId: UniversityId,
+    locale: LocaleEnum,
   ): Promise<StudentTrack | null> {
     const data = await this.universityCareers.getStudentTrack(
       user,
       trackNumber,
-      university,
+      universityId,
       locale,
     )
 
     if (!data?.transcript) {
       this.logger.info('No transcript data found', {
         category: LOG_CATEGORY,
-        university,
+        university: universityId,
       })
       return null
     }
 
     return (
-      mapToStudentTrackModel(data, {
-        id: university,
-        shortId: UniversityIdMap[university],
-      }) ?? null
+      mapToStudentTrackModel(
+        data,
+        {
+          id: universityId,
+          shortId: UniversityIdMap[universityId],
+        },
+        locale,
+      ) ?? null
     )
   }
 }

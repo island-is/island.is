@@ -29,7 +29,7 @@ export const serviceSetup = (services: {
         dev: 'https://matomo-dev.dev01.devland.is',
         // MATOMO is not on staging on purpose!
         staging: '',
-        prod: 'https://matomo.island.is',
+        prod: 'https://islandis.matomo.cloud',
       },
       MATOMO_SITE_ID: { dev: '2', staging: '2', prod: '2' },
       DISABLE_API_CATALOGUE: { dev: 'false', staging: 'false', prod: 'false' },

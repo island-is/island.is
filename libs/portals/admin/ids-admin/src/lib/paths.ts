@@ -8,6 +8,11 @@ export enum IDSAdminPaths {
   IDSAdminClients = '/innskraningarkerfi/:tenant/forrit',
   IDSAdminClient = '/innskraningarkerfi/:tenant/forrit/:client',
   IDSAdminClientCreate = '/innskraningarkerfi/:tenant/forrit/stofna',
+  // Admin Controls
+  IDSAdminControls = '/innskraningarkerfi/admin-controls',
+  IDSAdminControlsApiScopeUsers = '/innskraningarkerfi/admin-controls/api-scope-users',
+  IDSAdminControlsGrantTypes = '/innskraningarkerfi/admin-controls/grant-types',
+  IDSAdminControlsIdpProviders = '/innskraningarkerfi/admin-controls/idp-providers',
 }
 
 export enum IDSAdminExternalPaths {

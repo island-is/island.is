@@ -41,6 +41,7 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
     }
     splitCase {
@@ -82,7 +83,11 @@ query Case($input: CaseQueryInput!) {
       alternativeServiceDescription
       indictmentReviewDecision
       isDrivingLicenseSuspended
-      appealStatementDate
+      policeCaseNumbers
+      indictmentCancelledOrDismissedState {
+        type
+        time
+      }
       subpoenas {
         id
         created
@@ -272,6 +277,7 @@ query Case($input: CaseQueryInput!) {
       isKeyAccessible
       defendantId
       civilClaimantId
+      rulingFileId
     }
     isAppealDeadlineExpired
     caseModifiedExplanation
@@ -325,6 +331,7 @@ query Case($input: CaseQueryInput!) {
       entries
       rulingType
       ruling
+      rulingFileId
       isAttestingWitness
       attestingWitnessId
       attestingWitness {
@@ -383,22 +390,30 @@ query Case($input: CaseQueryInput!) {
       generatedPdfUri
     }
     requestDriversLicenseSuspension
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     canProsecutorAppeal
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
       id
       appealState
       appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -581,6 +596,7 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -599,7 +615,6 @@ query Case($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
-      appealStatementDate
     }
     victims {
       id

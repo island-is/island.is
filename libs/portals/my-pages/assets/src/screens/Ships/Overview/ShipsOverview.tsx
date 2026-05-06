@@ -4,7 +4,7 @@ import { ActionCard, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
   EmptyState,
-  IntroWrapperV2,
+  IntroWrapper,
   SAMGONGUSTOFA_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
@@ -23,17 +23,26 @@ export const ShipsOverview = () => {
   const ships = data?.shipRegistryUserShips?.data ?? []
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={formatMessage(shipsMessages.title)}
       intro={formatMessage(shipsMessages.intro)}
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(coreMessages.shipsTooltip),
       }}
+      desktopContentSpan="10/12"
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && ships.length === 0 && <EmptyState />}
+      {!loading && !error && ships.length === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(shipsMessages.noShipsFound)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       {!loading && !error && ships.length > 0 && (
         <Stack space={2}>
           {ships.map((ship) => (
@@ -73,7 +82,7 @@ export const ShipsOverview = () => {
           ))}
         </Stack>
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

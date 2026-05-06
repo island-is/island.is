@@ -104,7 +104,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
           )}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          size="sm"
+          size="xs"
           backgroundColor="blue"
           icon={{ name: 'search' }}
         />

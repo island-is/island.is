@@ -28,6 +28,8 @@ type FilterCategory = {
   inline?: boolean
   /** Allow only one option at a time */
   singleOption?: boolean
+  /** Start the category expanded when the filter opens */
+  startExpanded?: boolean
   /** When provided, renders a search input above the list that filters options by label */
   searchPlaceholder?: string
 }
@@ -48,7 +50,7 @@ export interface FilterMultiChoiceProps {
   /** Array of different categories grouping different filter values */
   categories: ReadonlyArray<FilterCategory>
   /** Label for clear button for localization */
-  labelClear: string
+  labelClear?: string
   /** Only expand one accordion item at a time */
   singleExpand?: boolean
   /** OnChange event handler when user checks/unchecks a value */
@@ -151,13 +153,14 @@ export const FilterMultiChoice: FC<
           key={category.id}
           id={category.id}
           label={category.label}
+          startExpanded={category.startExpanded}
           iconVariant="small"
         >
           <Stack space={2}>
             <CheckboxWrapper inline={category.inline}>
               {renderCategoryFilters(category)}
             </CheckboxWrapper>
-            {category.selected.length > 0 && (
+            {category.selected.length > 0 && !!labelClear && (
               <Box textAlign="right">
                 <Button
                   icon="reload"
@@ -192,12 +195,13 @@ export const FilterMultiChoice: FC<
               category.selected.length > 0 ? 'blue400' : 'currentColor'
             }
             iconVariant="small"
+            startExpanded={category.startExpanded}
           >
             <Stack space={2}>
               <CheckboxWrapper inline={category.inline}>
                 {renderCategoryFilters(category)}
               </CheckboxWrapper>
-              {category.selected.length > 0 && (
+              {category.selected.length > 0 && !!labelClear && (
                 <Box textAlign="right">
                   <Button
                     icon="reload"

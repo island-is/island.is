@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {
   BadGatewayException,
   forwardRef,
+  HttpException,
   Inject,
   Injectable,
   NotFoundException,
@@ -463,10 +464,6 @@ export class PoliceService {
     user: User,
     source: string,
   ) {
-    if (!this.config.policeDigitalCaseFilesApiAvailable) {
-      return undefined
-    }
-
     const startTime = nowFactory()
     const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
 
@@ -541,12 +538,6 @@ export class PoliceService {
     user: User,
     source: string,
   ): Promise<string> {
-    if (!this.config.policeDigitalCaseFilesApiAvailable) {
-      throw new ServiceUnavailableException(
-        'Police digital case files API not available',
-      )
-    }
-
     const startTime = nowFactory()
     const query = new URLSearchParams({
       rvgCaseId,
@@ -554,6 +545,7 @@ export class PoliceService {
       rafraennGagnId: policeDigitalFileId,
     }).toString()
     const url = `${this.xRoadPath}/V4/GetTokenUrl?${query}`
+    const httpStatusTooEarly = 425
 
     try {
       const res = await this.fetchPoliceDocumentApi(url)
@@ -570,6 +562,17 @@ export class PoliceService {
         })
       }
 
+      if (res.status === httpStatusTooEarly) {
+        throw new HttpException(
+          {
+            error: 'PoliceDigitalFileNotPublished',
+            message:
+              'The police secure digital case file area is not ready yet. Please try again later.',
+          },
+          httpStatusTooEarly,
+        )
+      }
+
       const reason = await res.text()
 
       throw new NotFoundException({
@@ -578,6 +581,13 @@ export class PoliceService {
       })
     } catch (reason) {
       if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (
+        reason instanceof HttpException &&
+        reason.getStatus() === httpStatusTooEarly
+      ) {
         throw reason
       }
 

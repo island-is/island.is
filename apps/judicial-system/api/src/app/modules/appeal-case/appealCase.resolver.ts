@@ -17,6 +17,7 @@ import { type User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { AppealCase } from './dto/appealCase.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
+import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
 import { TransitionAppealCaseInput } from './dto/transitionAppealCase.input'
 import { UpdateAppealCaseInput } from './dto/updateAppealCase.input'
 
@@ -37,13 +38,15 @@ export class AppealCaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
-    this.logger.debug(`Creating appeal case for case ${input.caseId}`)
+    const { caseId, ...body } = input
+
+    this.logger.debug(`Creating appeal case for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.createAppealCase(input.caseId),
-      input.caseId,
+      backendService.createAppealCase(caseId, body),
+      caseId,
     )
   }
 
@@ -65,6 +68,22 @@ export class AppealCaseResolver {
       backendService.updateAppealCase(caseId, appealCaseId, updateAppealCase),
       caseId,
     )
+  }
+
+  @Mutation(() => AppealCase, { nullable: true })
+  createAppealEventLog(
+    @Args('input', { type: () => CreateAppealEventLogInput })
+    input: CreateAppealEventLogInput,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<AppealCase> {
+    const { caseId, appealCaseId, eventType } = input
+
+    this.logger.debug(
+      `Creating appeal event log ${eventType} on appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return backendService.createAppealEventLog(caseId, appealCaseId, eventType)
   }
 
   @Mutation(() => AppealCase, { nullable: true })

@@ -3,3 +3,5 @@ export const wait = async (seconds = 2) => {
 }
 
 export const DECEASED_STATUS = 'LÉST' as const
+
+export const INACTIVE_COMPANY_STATUS = 'Afskráð' as const

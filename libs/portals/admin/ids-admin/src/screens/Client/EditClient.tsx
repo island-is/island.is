@@ -61,37 +61,34 @@ export const EditClient = () => {
     >
       <StickyLayout
         header={(isSticky) => (
-          <div className={styles.editHeaderContainer}>
-            <EnvironmentHeader
-              title={getTranslatedValue(
-                selectedEnvironment.displayName,
-                locale,
-              )}
-              selectedEnvironment={selectedEnvironment.environment}
-              availableEnvironments={client.availableEnvironments}
-              onChange={onEnvironmentChange}
-              preHeader={
-                <div
-                  className={classNames(
-                    styles.tagWrapper,
-                    isSticky && styles.tagHide,
-                  )}
-                >
-                  <ClientType client={client} />
-                </div>
-              }
-            />
-            {selectedEnvironment.modified && (
-              <Text variant="small">
-                {formatMessage(m.modified, {
-                  date: format(
-                    new Date(selectedEnvironment.modified),
-                    'dd.MM.yyyy HH:mm',
-                  ),
-                })}
-              </Text>
-            )}
-          </div>
+          <EnvironmentHeader
+            title={getTranslatedValue(selectedEnvironment.displayName, locale)}
+            selectedEnvironment={selectedEnvironment.environment}
+            availableEnvironments={client.availableEnvironments}
+            onChange={onEnvironmentChange}
+            preHeader={
+              <div
+                className={classNames(
+                  styles.tagWrapper,
+                  isSticky && styles.tagHide,
+                )}
+              >
+                <ClientType client={client} />
+              </div>
+            }
+            postHeader={
+              selectedEnvironment.modified && (
+                <Text variant="small">
+                  {formatMessage(m.modified, {
+                    date: format(
+                      new Date(selectedEnvironment.modified),
+                      'dd.MM.yyyy HH:mm',
+                    ),
+                  })}
+                </Text>
+              )
+            }
+          />
         )}
       >
         <Stack space={3}>

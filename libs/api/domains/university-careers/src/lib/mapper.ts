@@ -1,51 +1,13 @@
 import {
-  StudentFileType,
   StudentTrackDto,
   StudentTrackOverviewDto,
 } from '@island.is/clients/university-careers'
 import { isDefined } from '@island.is/shared/utils'
+import { Locale } from '@island.is/shared/types'
 import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { Institution } from './models/institution.model'
-import { FileType, InstitutionProps } from './universityCareers.types'
-
-const mapTypeToEnum = (type: StudentFileType): FileType | null => {
-  switch (type) {
-    case 'course_descriptions':
-      return FileType.COURSE_DESCRIPTIONS
-    case 'diploma':
-      return FileType.DIPLOMA
-    case 'diploma_supplement':
-      return FileType.DIPLOMA_SUPPLEMENT
-    case 'transcript':
-      return FileType.TRANSCRIPT
-    case 'micro_credentials_supplement':
-      return FileType.MICRO_CREDENTIALS_SUPPLEMENT
-    case 'micro_credentials_transcript':
-      return FileType.MICRO_CREDENTIALS_TRANSCRIPT
-    default:
-      return null
-  }
-}
-
-export const mapEnumToType = (type: FileType): StudentFileType | null => {
-  switch (type) {
-    case FileType.COURSE_DESCRIPTIONS:
-      return 'course_descriptions'
-    case FileType.DIPLOMA:
-      return 'diploma'
-    case FileType.DIPLOMA_SUPPLEMENT:
-      return 'diploma_supplement'
-    case FileType.TRANSCRIPT:
-      return 'transcript'
-    case FileType.MICRO_CREDENTIALS_SUPPLEMENT:
-      return 'micro_credentials_supplement'
-    case FileType.MICRO_CREDENTIALS_TRANSCRIPT:
-      return 'micro_credentials_transcript'
-    default:
-      return null
-  }
-}
+import { InstitutionProps } from './universityCareers.types'
 
 export const mapToStudent = (
   data: StudentTrackDto,
@@ -83,6 +45,7 @@ export const mapToStudent = (
     faculty: data.faculty,
     studyProgram: data.studyProgram,
     degree: data.degree,
+    level: data.level,
     graduationDate: data.graduationDate.toISOString(),
   }
 }
@@ -90,6 +53,7 @@ export const mapToStudent = (
 export const mapToStudentTrackModel = (
   data: StudentTrackOverviewDto,
   institution: InstitutionProps,
+  locale: Locale,
 ): StudentTrack | null => {
   if (
     !data.transcript ||
@@ -111,14 +75,12 @@ export const mapToStudentTrackModel = (
     files:
       data.files
         ?.map((d) => {
-          const type = mapTypeToEnum(d.type)
-          if (!type || !d.locale || !d.displayName || !d.fileName) {
+          if (!d.displayName || !d.fileName) {
             return null
           }
 
           return {
-            type,
-            locale: d.locale,
+            url: d.url,
             displayName: d.displayName,
             fileName: d.fileName,
           }
@@ -129,5 +91,6 @@ export const mapToStudentTrackModel = (
       footer: data?.body?.footer,
       unconfirmedData: data?.body?.unconfirmedData,
     },
+    locale,
   }
 }

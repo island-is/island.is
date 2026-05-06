@@ -854,6 +854,7 @@ export class CaseNotificationService extends BaseNotificationService {
       // nothing happens
       return { delivered: true }
     }
+
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []
@@ -1266,14 +1267,16 @@ export class CaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
-    // DEFENDANTS BOTH S AND R CASES
     if (isIndictmentCase(theCase.type)) {
+      // DEFENDANTS
       const uniqueDefendants = _uniqBy(
-        theCase.defendants ?? [],
-        (d: Defendant) => d.defenderEmail,
+        theCase.defendants?.filter(
+          ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+        ) ?? [],
+        ({ defenderEmail }) => defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+        if (defendant.defenderEmail) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
               theCase,
@@ -1284,7 +1287,29 @@ export class CaseNotificationService extends BaseNotificationService {
           )
         }
       })
+
+      // CIVIL CLAIMANTS
+      const uniqueCivilClaimants = _uniqBy(
+        theCase.civilClaimants?.filter(
+          ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+            hasSpokesperson && isSpokespersonConfirmed,
+        ) ?? [],
+        ({ spokespersonEmail }) => spokespersonEmail,
+      )
+      uniqueCivilClaimants.forEach((civilClaimant) => {
+        if (civilClaimant.spokespersonEmail) {
+          promises.push(
+            this.sendRulingEmailNotificationToDefender(
+              theCase,
+              civilClaimant.spokespersonNationalId,
+              civilClaimant.spokespersonName,
+              civilClaimant.spokespersonEmail,
+            ),
+          )
+        }
+      })
     } else if (
+      // DEFENDANTS
       theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
         (isInvestigationCase(theCase.type) &&
@@ -1729,7 +1754,9 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     const uniqDefendants = _uniqBy(
-      theCase.defendants ?? [],
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
       (d: Defendant) => d.defenderEmail,
     )
     for (const defendant of uniqDefendants) {
@@ -2023,6 +2050,7 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.civilClaimants?.filter(
         (c) =>
           c.hasSpokesperson &&
+          c.isSpokespersonConfirmed &&
           !isCurrentUserRecipient(user, c.spokespersonEmail),
       ) ?? [],
       (c: CivilClaimant) => c.spokespersonEmail,
@@ -2048,11 +2076,13 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (isProsecutionUser(user)) {
       const uniqueDefendants = _uniqBy(
-        theCase.defendants ?? [],
+        theCase.defendants?.filter(
+          ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+        ) ?? [],
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+        if (defendant.defenderEmail) {
           promises.push(
             this.sendCaseFilesUpdatedNotification(
               theCase.courtCaseNumber,
@@ -2141,7 +2171,9 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     const uniqueSpokespersons = _uniqBy(
-      theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
+      theCase.civilClaimants?.filter(
+        (c) => c.hasSpokesperson && c.isSpokespersonConfirmed,
+      ) ?? [],
       (c: CivilClaimant) => c.spokespersonEmail,
     )
     uniqueSpokespersons.forEach((civilClaimant) => {
@@ -2164,11 +2196,13 @@ export class CaseNotificationService extends BaseNotificationService {
     })
 
     const uniqueDefendants = _uniqBy(
-      theCase.defendants ?? [],
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
       (d: Defendant) => d.defenderEmail,
     )
     uniqueDefendants.forEach((defendant) => {
-      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+      if (defendant.defenderEmail) {
         promises.push(
           this.sendRulingOrderAddedNotification({
             courtCaseNumber: theCase.courtCaseNumber,

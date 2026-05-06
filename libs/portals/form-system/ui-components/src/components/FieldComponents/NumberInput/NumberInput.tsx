@@ -26,6 +26,10 @@ export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
     return Number.isFinite(n) ? n : ''
   })()
 
+  const isDecimal = fieldSettings?.isDecimal ?? false
+  const minValue = fieldSettings?.minValue ?? Number.MIN_SAFE_INTEGER
+  const maxValue = fieldSettings?.maxValue ?? Number.MAX_SAFE_INTEGER
+
   return (
     <Box>
       <Controller
@@ -38,12 +42,22 @@ export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
             value: item.isRequired ?? false,
             message: formatMessage(m.required),
           },
+          min: {
+            value: minValue,
+            message: formatMessage(m.minValue, { minValue: minValue }),
+          },
+          max: {
+            value: maxValue,
+            message: formatMessage(m.maxValue, { maxValue: maxValue }),
+          },
         }}
         render={({ field, fieldState }) => (
           <Input
             label={item?.name?.[lang] ?? ''}
             name={field.name}
             type="number"
+            max={maxValue}
+            min={minValue}
             required={item.isRequired ?? false}
             tooltip={
               hasDescription ? item?.description?.[lang] ?? '' : undefined
@@ -52,9 +66,8 @@ export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
             value={field.value ?? ''}
             onChange={(e) => {
               const raw = e.target.value
+              const parsed = isDecimal ? parseFloat(raw) : parseInt(raw, 10)
 
-              // Keep empty as empty, otherwise coerce to an integer
-              const parsed = parseInt(raw, 10)
               const nextValue =
                 raw === '' ? '' : Number.isNaN(parsed) ? '' : parsed
 
@@ -76,6 +89,7 @@ export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
               if (e.target.value === null || e.target.value === '') {
                 field.onChange('')
               }
+
               field.onBlur()
             }}
             errorMessage={fieldState.error?.message}
