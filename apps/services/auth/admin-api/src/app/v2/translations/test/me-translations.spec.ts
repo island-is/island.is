@@ -95,9 +95,7 @@ describe('MeTranslationsController', () => {
 
     describe('GET /v2/me/translations', () => {
       it('returns an empty list when no translations exist', async () => {
-        const response = await server.get(
-          '/v2/me/translations?page=1&count=10',
-        )
+        const response = await server.get('/v2/me/translations?page=1&count=10')
 
         expect(response.status).toEqual(200)
         expect(response.body).toMatchObject({ rows: [], count: 0 })
@@ -106,9 +104,7 @@ describe('MeTranslationsController', () => {
       it('returns paginated translations', async () => {
         await translationModel.bulkCreate(seedTranslations)
 
-        const response = await server.get(
-          '/v2/me/translations?page=1&count=10',
-        )
+        const response = await server.get('/v2/me/translations?page=1&count=10')
 
         expect(response.status).toEqual(200)
         expect(response.body.count).toEqual(seedTranslations.length)
@@ -160,9 +156,7 @@ describe('MeTranslationsController', () => {
       })
 
       it('rejects non-positive page or count', async () => {
-        const response = await server.get(
-          '/v2/me/translations?page=0&count=10',
-        )
+        const response = await server.get('/v2/me/translations?page=0&count=10')
 
         expect(response.status).toEqual(400)
       })

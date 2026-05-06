@@ -253,11 +253,10 @@ describe('LanguageService', () => {
         new Error('cannot delete'),
       )
 
-      const result = await languageService.deleteLanguage(
-        currentUser,
-        'en',
-        [Environment.Development, Environment.Staging],
-      )
+      const result = await languageService.deleteLanguage(currentUser, 'en', [
+        Environment.Development,
+        Environment.Staging,
+      ])
 
       expect(result.success).toBe(false)
       expect(result.affectedEnvironments).toEqual([Environment.Development])
