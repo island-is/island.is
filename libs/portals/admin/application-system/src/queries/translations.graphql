@@ -81,6 +81,8 @@ fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
       description
     }
   }
+  alertType
+  alertMessage
 }
 
 query getApplicationTemplateList {
@@ -149,9 +151,19 @@ query getApplicationTemplateIntrospection($typeId: String!) {
           sections {
             id
             title
+            titleMessageDescriptor {
+              id
+              defaultMessage
+              description
+            }
             subSections {
               id
               title
+              titleMessageDescriptor {
+                id
+                defaultMessage
+                description
+              }
               screens {
                 ...ScreenIntrospectionNodeFields
                 children {
@@ -185,6 +197,12 @@ query getApplicationTemplateIntrospection($typeId: String!) {
       id
       defaultMessage
       description
+    }
+    validationMessageDescriptors {
+      id
+      defaultMessage
+      description
+      fieldPath
     }
   }
 }

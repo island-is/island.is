@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { z, ZodIssueCode } from 'zod'
 import { coreErrorMessages, coreMessages } from '@island.is/application/core'
 import {
   ApplicationTypes,
@@ -25,9 +26,15 @@ import type {
   NationalIdWithNameField,
   CheckboxField,
   StaticTableField,
+  AlertMessageField,
+  Schema,
 } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import type { MessageDescriptor } from 'react-intl'
+
+export interface ValidationMessageDescriptorInfo extends MessageDescriptorInfo {
+  fieldPath: string
+}
 
 export interface TemplateIntrospection {
   typeId: string
@@ -36,6 +43,7 @@ export interface TemplateIntrospection {
   translationNamespaces: string[]
   states: StateIntrospection[]
   allMessageDescriptors: MessageDescriptorInfo[]
+  validationMessageDescriptors: ValidationMessageDescriptorInfo[]
 }
 
 export interface StateIntrospection {
@@ -65,6 +73,8 @@ export interface FormIntrospection {
 export interface SectionIntrospection {
   id: string
   title: string | null
+  /** Message descriptor for `section.title` when message-backed. */
+  titleMessageDescriptor: MessageDescriptorInfo | null
   subSections: SubSectionIntrospection[]
   screens: ScreenIntrospection[]
 }
@@ -72,6 +82,8 @@ export interface SectionIntrospection {
 export interface SubSectionIntrospection {
   id: string
   title: string | null
+  /** Message descriptor for `subSection.title` when message-backed. */
+  titleMessageDescriptor: MessageDescriptorInfo | null
   screens: ScreenIntrospection[]
 }
 
@@ -145,6 +157,10 @@ export interface ScreenIntrospection {
     label: MessageDescriptorInfo
     value: MessageDescriptorInfo
   }>
+  /** `ALERT_MESSAGE`: visual type of the alert box (error, warning, info, success, default). */
+  alertType?: string | null
+  /** `ALERT_MESSAGE`: raw static text of the `message` body (resolve via descriptors). */
+  alertMessage?: string | null
 }
 
 export interface MessageDescriptorInfo {
@@ -158,6 +174,195 @@ export interface RadioOptionIntrospection {
   value: string
   labelMessageId?: string | null
   labelDefaultMessage?: string | null
+}
+
+const NAMESPACE_REGEX = /^[\w.]+:\w+(\.\w+)*$/
+
+/**
+ * Generates "invalid" skeleton data for a zod schema to trigger refinement errors.
+ * Uses empty strings, zeros, and false to maximize validation failures.
+ */
+function generateInvalidSkeleton(schema: z.ZodType): unknown {
+  if (schema instanceof z.ZodString) return ''
+  if (schema instanceof z.ZodNumber) return 0
+  if (schema instanceof z.ZodBoolean) return false
+  if (schema instanceof z.ZodDate) return ''
+  if (schema instanceof z.ZodEnum) return ''
+  if (schema instanceof z.ZodNativeEnum) return ''
+  if (schema instanceof z.ZodLiteral) return ''
+  if (schema instanceof z.ZodArray) return []
+  if (schema instanceof z.ZodObject) {
+    const shape = schema.shape
+    const result: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(shape)) {
+      result[key] = generateInvalidSkeleton(value as z.ZodType)
+    }
+    return result
+  }
+  if (schema instanceof z.ZodOptional) return generateInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodNullable) return generateInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodDefault) return generateInvalidSkeleton(schema._def.innerType)
+  if (schema instanceof z.ZodUnion) {
+    const options = schema.options as z.ZodType[]
+    return options.length > 0 ? generateInvalidSkeleton(options[0]) : undefined
+  }
+  if (schema instanceof z.ZodDiscriminatedUnion) {
+    const options = schema.options as z.ZodType[]
+    return options.length > 0 ? generateInvalidSkeleton(options[0]) : undefined
+  }
+  if (schema instanceof z.ZodRecord) return {}
+  if (schema instanceof z.ZodTuple) {
+    return (schema.items as z.ZodType[]).map((item) => generateInvalidSkeleton(item))
+  }
+  if (schema instanceof z.ZodEffects) return generateInvalidSkeleton(schema.innerType())
+  if (schema instanceof z.ZodLazy) {
+    try { return generateInvalidSkeleton(schema.schema) } catch { return undefined }
+  }
+  if (schema instanceof z.ZodIntersection) {
+    const left = generateInvalidSkeleton(schema._def.left)
+    const right = generateInvalidSkeleton(schema._def.right)
+    if (typeof left === 'object' && typeof right === 'object' && left !== null && right !== null) {
+      return { ...left, ...right }
+    }
+    return left
+  }
+  return undefined
+}
+
+/**
+ * Generates alternative invalid data (non-empty strings that fail format validations).
+ */
+function generateAlternativeInvalidSkeleton(schema: z.ZodType): unknown {
+  if (schema instanceof z.ZodString) return 'x'
+  if (schema instanceof z.ZodNumber) return -1
+  if (schema instanceof z.ZodBoolean) return false
+  if (schema instanceof z.ZodDate) return 'invalid-date'
+  if (schema instanceof z.ZodEnum) return '__invalid__'
+  if (schema instanceof z.ZodNativeEnum) return '__invalid__'
+  if (schema instanceof z.ZodLiteral) return '__invalid__'
+  if (schema instanceof z.ZodArray) return ['']
+  if (schema instanceof z.ZodObject) {
+    const shape = schema.shape
+    const result: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(shape)) {
+      result[key] = generateAlternativeInvalidSkeleton(value as z.ZodType)
+    }
+    return result
+  }
+  if (schema instanceof z.ZodOptional) return generateAlternativeInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodNullable) return generateAlternativeInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodDefault) return generateAlternativeInvalidSkeleton(schema._def.innerType)
+  if (schema instanceof z.ZodUnion) {
+    const options = schema.options as z.ZodType[]
+    return options.length > 0 ? generateAlternativeInvalidSkeleton(options[0]) : undefined
+  }
+  if (schema instanceof z.ZodDiscriminatedUnion) {
+    const options = schema.options as z.ZodType[]
+    return options.length > 0 ? generateAlternativeInvalidSkeleton(options[0]) : undefined
+  }
+  if (schema instanceof z.ZodRecord) return {}
+  if (schema instanceof z.ZodTuple) {
+    return (schema.items as z.ZodType[]).map((item) => generateAlternativeInvalidSkeleton(item))
+  }
+  if (schema instanceof z.ZodEffects) return generateAlternativeInvalidSkeleton(schema.innerType())
+  if (schema instanceof z.ZodLazy) {
+    try { return generateAlternativeInvalidSkeleton(schema.schema) } catch { return undefined }
+  }
+  if (schema instanceof z.ZodIntersection) {
+    const left = generateAlternativeInvalidSkeleton(schema._def.left)
+    const right = generateAlternativeInvalidSkeleton(schema._def.right)
+    if (typeof left === 'object' && typeof right === 'object' && left !== null && right !== null) {
+      return { ...left, ...right }
+    }
+    return left
+  }
+  return undefined
+}
+
+function collectDescriptorsFromIssues(
+  issues: z.ZodIssue[],
+  seen: Set<string>,
+  result: ValidationMessageDescriptorInfo[],
+): void {
+  for (const issue of issues) {
+    if (issue.code !== ZodIssueCode.custom) continue
+    const params = issue.params as Record<string, unknown> | undefined
+    if (!params || typeof params.id !== 'string') continue
+    if (!NAMESPACE_REGEX.test(params.id)) continue
+    if (seen.has(params.id)) continue
+    seen.add(params.id)
+    result.push({
+      id: params.id,
+      defaultMessage: typeof params.defaultMessage === 'string'
+        ? params.defaultMessage
+        : undefined,
+      description: typeof params.description === 'string'
+        ? params.description
+        : undefined,
+      fieldPath: issue.path.join('.'),
+    })
+  }
+}
+
+/**
+ * Extracts validation message descriptors from a zod dataSchema by running
+ * safeParse with multiple invalid inputs and collecting the params from
+ * resulting ZodIssues that contain message descriptors.
+ */
+export function extractValidationDescriptors(
+  schema: Schema | z.ZodEffects<any, any, any>,
+): ValidationMessageDescriptorInfo[] {
+  const result: ValidationMessageDescriptorInfo[] = []
+  const seen = new Set<string>()
+
+  const testInputs = [
+    {},
+    generateInvalidSkeleton(schema),
+    generateAlternativeInvalidSkeleton(schema),
+  ]
+
+  for (const input of testInputs) {
+    const parseResult = schema.safeParse(input)
+    if (!parseResult.success) {
+      collectDescriptorsFromIssues(parseResult.error.issues, seen, result)
+    }
+  }
+
+  // Also try parsing sub-schemas individually for nested objects with refinements
+  if (schema instanceof z.ZodObject) {
+    const shape = schema.shape as Record<string, z.ZodType>
+    for (const [key, subSchema] of Object.entries(shape)) {
+      const subInputs = [
+        generateInvalidSkeleton(subSchema),
+        generateAlternativeInvalidSkeleton(subSchema),
+      ]
+      for (const input of subInputs) {
+        const parseResult = subSchema.safeParse(input)
+        if (!parseResult.success) {
+          for (const issue of parseResult.error.issues) {
+            if (issue.code !== ZodIssueCode.custom) continue
+            const params = issue.params as Record<string, unknown> | undefined
+            if (!params || typeof params.id !== 'string') continue
+            if (!NAMESPACE_REGEX.test(params.id)) continue
+            if (seen.has(params.id)) continue
+            seen.add(params.id)
+            result.push({
+              id: params.id,
+              defaultMessage: typeof params.defaultMessage === 'string'
+                ? params.defaultMessage
+                : undefined,
+              description: typeof params.description === 'string'
+                ? params.description
+                : undefined,
+              fieldPath: [key, ...issue.path].join('.'),
+            })
+          }
+        }
+      }
+    }
+  }
+
+  return result
 }
 
 function extractStaticText(text: StaticText | undefined): string | null {
@@ -176,6 +381,43 @@ function isMessageDescriptor(obj: unknown): obj is MessageDescriptor {
     'id' in obj &&
     typeof (obj as MessageDescriptor).id === 'string'
   )
+}
+
+function tryInvokeFormTextFunction(
+  fn: Function,
+): { descriptors: MessageDescriptorInfo[]; staticText: string | null } {
+  try {
+    const mockApp = {
+      answers: {},
+      externalData: {},
+      id: '',
+      state: '',
+      typeId: '',
+      applicant: '',
+      assignees: [],
+      applicantActors: [],
+      modified: new Date(),
+      created: new Date(),
+      attachments: {},
+      status: 'draft',
+    }
+    const result = fn(mockApp, 'is')
+    if (isMessageDescriptor(result)) {
+      return {
+        descriptors: [
+          {
+            id: String(result.id),
+            defaultMessage: result.defaultMessage as string | undefined,
+            description: result.description as string | undefined,
+          },
+        ],
+        staticText: extractStaticText(result as StaticText),
+      }
+    }
+  } catch {
+    // Function depends on specific application data; skip gracefully.
+  }
+  return { descriptors: [], staticText: null }
 }
 
 function extractMessageDescriptorsFromFormText(
@@ -1145,6 +1387,25 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     }
   }
 
+  let alertType: string | null | undefined
+  let alertMessage: string | null | undefined
+
+  if (leaf.type === FieldTypes.ALERT_MESSAGE) {
+    const amf = leaf as AlertMessageField
+    alertType = amf.alertType ?? 'default'
+    if (typeof amf.message === 'function') {
+      const extracted = tryInvokeFormTextFunction(amf.message)
+      for (const d of extracted.descriptors) {
+        if (!descriptors.some((x) => x.id === d.id)) {
+          descriptors.push(d)
+        }
+      }
+      alertMessage = extracted.staticText
+    } else {
+      alertMessage = extractStaticText(amf.message as StaticText | undefined)
+    }
+  }
+
   return {
     id: leaf.id ?? '',
     type: leaf.type ?? 'FIELD',
@@ -1170,6 +1431,8 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     checkboxStrong,
     checkboxBackgroundColor,
     checkboxSpacing,
+    alertType,
+    alertMessage,
     ...nifMeta,
   }
 }
@@ -1189,6 +1452,9 @@ function walkSection(section: Section): SectionIntrospection {
   return {
     id: section.id ?? '',
     title: extractStaticText(section.title as StaticText | undefined),
+    titleMessageDescriptor:
+      extractMessageDescriptorsFromFormText(section.title as FormText)[0] ??
+      null,
     subSections,
     screens,
   }
@@ -1204,6 +1470,9 @@ function walkSubSection(subSection: SubSection): SubSectionIntrospection {
   return {
     id: subSection.id ?? '',
     title: extractStaticText(subSection.title as StaticText | undefined),
+    titleMessageDescriptor:
+      extractMessageDescriptorsFromFormText(subSection.title as FormText)[0] ??
+      null,
     screens,
   }
 }
@@ -1255,6 +1524,9 @@ function collectAllDescriptors(
   }
 
   for (const section of form.sections) {
+    if (section.titleMessageDescriptor) {
+      add(section.titleMessageDescriptor)
+    }
     for (const screen of section.screens) {
       screen.messageDescriptors.forEach(add)
       screen.tableRepeaterColumnHeaders?.forEach(add)
@@ -1267,6 +1539,9 @@ function collectAllDescriptors(
       screen.children?.forEach((c) => c.messageDescriptors.forEach(add))
     }
     for (const subSection of section.subSections) {
+      if (subSection.titleMessageDescriptor) {
+        add(subSection.titleMessageDescriptor)
+      }
       for (const screen of subSection.screens) {
         screen.messageDescriptors.forEach(add)
         screen.tableRepeaterColumnHeaders?.forEach(add)
@@ -1456,6 +1731,23 @@ export class TemplateIntrospectionService {
       typeof template.name === 'function' ? undefined : (template.name as StaticText),
     )
 
+    let validationDescriptors: ValidationMessageDescriptorInfo[] = []
+    try {
+      validationDescriptors = extractValidationDescriptors(template.dataSchema)
+      for (const d of validationDescriptors) {
+        if (!seenDescriptorIds.has(d.id)) {
+          seenDescriptorIds.add(d.id)
+          allDescriptors.push({
+            id: d.id,
+            defaultMessage: d.defaultMessage,
+            description: d.description,
+          })
+        }
+      }
+    } catch {
+      // dataSchema extraction may fail for some templates, skip gracefully
+    }
+
     return {
       typeId,
       name: templateName ?? config.slug,
@@ -1463,6 +1755,7 @@ export class TemplateIntrospectionService {
       translationNamespaces: [...new Set(translationNamespaces)],
       states,
       allMessageDescriptors: allDescriptors,
+      validationMessageDescriptors: validationDescriptors,
     }
   }
 

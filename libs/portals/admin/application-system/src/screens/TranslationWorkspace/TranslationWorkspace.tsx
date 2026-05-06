@@ -14,15 +14,18 @@ import {
 } from '../../queries/translations.generated'
 import type {
   EditedTranslations,
+  MessageDescriptor,
   ScreenIntrospection,
   SidebarNavLocation,
   TemplateSectionNav,
   TemplateStateNav,
+  ValidationMessageDescriptor,
 } from '../../types/translationWorkspace'
 import {
   getTranslationSaveErrorDetail,
   shortenForToast,
 } from '../../utils/translationWorkspaceErrors'
+import { PREVIEW_EXCLUDED_FIELD_TYPES } from '../../utils/translationWorkspaceFieldConstants'
 import {
   buildSectionNavigationScreen,
   buildSubSectionNavigationScreen,
@@ -30,7 +33,7 @@ import {
 import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
 import { TranslationWorkspacePageHeader } from '../../components/TranslationWorkspacePageHeader/TranslationWorkspacePageHeader'
 import { TranslationWorkspacePreviewArea } from '../../components/TranslationWorkspacePreviewArea/TranslationWorkspacePreviewArea'
-import { TranslationWorkspaceStatesNavPanel } from '../../components/TranslationWorkspaceStatesNavPanel/TranslationWorkspaceStatesNavPanel'
+import { TranslationWorkspaceStatesTabsPanel } from '../../components/TranslationWorkspaceStatesTabsPanel/TranslationWorkspaceStatesTabsPanel'
 import {
   TranslationWorkspaceError,
   TranslationWorkspaceLoading,
@@ -73,6 +76,7 @@ const TranslationWorkspace = () => {
   }, [translationsData])
 
   const [activeLocale, setActiveLocale] = useState<'is' | 'en'>('en')
+  const [showValidationErrors, setShowValidationErrors] = useState(false)
   const [selectedScreen, setSelectedScreen] =
     useState<ScreenIntrospection | null>(null)
   const [selectedLocation, setSelectedLocation] =
@@ -81,6 +85,14 @@ const TranslationWorkspace = () => {
     is: {},
     en: {},
   })
+  const [focusedFieldId, setFocusedFieldId] = useState<string | null>(null)
+  const [fieldsTabActive, setFieldsTabActive] = useState(false)
+  const [fieldErrorOverrides, setFieldErrorOverrides] = useState<Set<string>>(
+    () => new Set(),
+  )
+  const [previewFieldValues, setPreviewFieldValues] = useState<
+    Record<string, string>
+  >({})
 
   const getPersistedForMessage = useCallback(
     (messageKey: string, locale: 'is' | 'en') => {
@@ -184,22 +196,28 @@ const TranslationWorkspace = () => {
       (s) => s.id === selectedLocation.sectionId,
     )
     if (!section) return []
+
+    const excludeHidden = (screens: ScreenIntrospection[]) =>
+      screens.filter((s) => !PREVIEW_EXCLUDED_FIELD_TYPES.has(s.type))
+
     if (selectedLocation.leafSourceScreenId) {
       const screen = (section.screens as ScreenIntrospection[]).find(
         (s) => s.id === selectedLocation.leafSourceScreenId,
       )
-      return screen ? [screen] : []
+      return screen && !PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type)
+        ? [screen]
+        : []
     }
     if (selectedLocation.subsectionId) {
       const sub = section.subSections.find(
         (s) => s.id === selectedLocation.subsectionId,
       )
-      return (sub?.screens ?? []) as ScreenIntrospection[]
+      return excludeHidden((sub?.screens ?? []) as ScreenIntrospection[])
     }
-    return [
+    return excludeHidden([
       ...(section.screens as ScreenIntrospection[]),
       ...section.subSections.flatMap((s) => s.screens as ScreenIntrospection[]),
-    ]
+    ])
   }, [selectedLocation, introspection])
 
   const currentDescriptors = useMemo(() => {
@@ -224,6 +242,49 @@ const TranslationWorkspace = () => {
     },
     [activeLocale],
   )
+
+  const handleToggleValidationErrors = useCallback(() => {
+    setShowValidationErrors((prev) => !prev)
+  }, [])
+
+  const handleFocusedFieldChange = useCallback((fieldId: string | null) => {
+    setFocusedFieldId(fieldId)
+  }, [])
+
+  const handleSetPreviewFieldValue = useCallback(
+    (fieldId: string, value: string) => {
+      setPreviewFieldValues((prev) => ({ ...prev, [fieldId]: value }))
+    },
+    [],
+  )
+
+  const handleToggleFieldError = useCallback((fieldId: string) => {
+    setFieldErrorOverrides((prev) => {
+      const next = new Set(prev)
+      if (next.has(fieldId)) {
+        next.delete(fieldId)
+      } else {
+        next.add(fieldId)
+      }
+      return next
+    })
+  }, [])
+
+  const validationDescriptors = useMemo(
+    (): ValidationMessageDescriptor[] =>
+      (introspection?.validationMessageDescriptors ?? []) as ValidationMessageDescriptor[],
+    [introspection],
+  )
+
+  const validationDescriptorsByPath = useMemo(() => {
+    const map: Record<string, ValidationMessageDescriptor[]> = {}
+    for (const d of validationDescriptors) {
+      const key = d.fieldPath
+      if (!map[key]) map[key] = []
+      map[key].push(d)
+    }
+    return map
+  }, [validationDescriptors])
 
   const handleSaveAll = useCallback(async () => {
     const dirtyByKey = new Map<string, { valueIs?: string; valueEn?: string }>()
@@ -348,6 +409,7 @@ const TranslationWorkspace = () => {
           const subs = section.subSections as Array<{
             id: string
             title?: string | null
+            titleMessageDescriptor?: MessageDescriptor | null
             screens: ScreenIntrospection[]
           }>
           if (subs.length > 0) {
@@ -359,6 +421,7 @@ const TranslationWorkspace = () => {
               const nav = buildSubSectionNavigationScreen(
                 firstSub.id,
                 firstSub.title,
+                firstSub.titleMessageDescriptor,
                 screens,
               )
               handleSidebarNavClick(nav, {
@@ -378,6 +441,7 @@ const TranslationWorkspace = () => {
             const nav = buildSectionNavigationScreen(
               section.id,
               section.title,
+              section.titleMessageDescriptor,
               screens,
             )
             handleSidebarNavClick(nav, {
@@ -420,6 +484,8 @@ const TranslationWorkspace = () => {
     saving,
     onSaveAll: handleSaveAll,
     formatMessage,
+    showValidationErrors,
+    onToggleValidationErrors: handleToggleValidationErrors,
     isReady: isWorkspaceReady,
   })
 
@@ -455,10 +521,15 @@ const TranslationWorkspace = () => {
             activeRoleId={activeRoleId}
             formLogoKey={activeForm?.logoKey}
             onSidebarNavClick={handleSidebarNavClick}
+            showValidationErrors={showValidationErrors}
+            validationDescriptorsByPath={validationDescriptorsByPath}
+            focusedFieldId={fieldsTabActive ? focusedFieldId : null}
+            fieldErrorOverrides={fieldErrorOverrides}
+            previewFieldValues={previewFieldValues}
           />
         </div>
         <div className={workspaceStyles.workspaceNavAside}>
-          <TranslationWorkspaceStatesNavPanel
+          <TranslationWorkspaceStatesTabsPanel
             states={introspection.states as unknown as TemplateStateNav[]}
             selectedScreenId={selectedScreen?.id}
             onNavClick={handleSidebarNavClick}
@@ -469,6 +540,18 @@ const TranslationWorkspace = () => {
             activeLocale={activeLocale}
             getPersistedForLocale={getPersistedForLocale}
             onValueChange={handleValueChange}
+            showValidationErrors={showValidationErrors}
+            validationDescriptors={validationDescriptors}
+            persistedByKey={persistedByKey}
+            previewScreens={previewScreens}
+            resolvePreviewString={resolvePreviewString}
+            validationDescriptorsByPath={validationDescriptorsByPath}
+            focusedFieldId={focusedFieldId}
+            onFocusedFieldChange={handleFocusedFieldChange}
+            fieldErrorOverrides={fieldErrorOverrides}
+            onToggleFieldError={handleToggleFieldError}
+            onSetPreviewFieldValue={handleSetPreviewFieldValue}
+            onActiveTabChange={(tab) => setFieldsTabActive(tab === 'fields')}
           />
         </div>
       </div>

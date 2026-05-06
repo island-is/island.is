@@ -1,14 +1,5 @@
 import type { ScreenIntrospection } from '../types/translationWorkspace'
-
-/**
- * Introspection intentionally includes fields hidden by runtime conditions (see
- * template introspection docs). For preview parity with the running application,
- * omit field types that are never rendered in the form UI.
- */
-const PREVIEW_EXCLUDED_FIELD_TYPES = new Set([
-  'HIDDEN_INPUT',
-  'HIDDEN_INPUT_WITH_WATCHED_VALUE',
-])
+import { PREVIEW_EXCLUDED_FIELD_TYPES } from './translationWorkspaceFieldConstants'
 
 /**
  * Applicant info uses either separate postal + city fields or a combined field

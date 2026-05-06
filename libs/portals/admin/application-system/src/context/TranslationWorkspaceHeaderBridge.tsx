@@ -1,8 +1,10 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type Dispatch,
   type FC,
@@ -25,6 +27,8 @@ export type TranslationWorkspaceHeaderChrome = {
   saving: boolean
   onSaveAll: () => void
   formatMessage: FormatMessage
+  showValidationErrors: boolean
+  onToggleValidationErrors: () => void
 }
 
 type TranslationWorkspaceHeaderBridgeContextValue = {
@@ -84,38 +88,95 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   saving,
   onSaveAll,
   formatMessage,
+  showValidationErrors,
+  onToggleValidationErrors,
   isReady,
 }: TranslationWorkspaceHeaderChrome & { isReady: boolean }) => {
   const { setWorkspaceChrome } = useTranslationWorkspaceHeaderBridge()
+
+  // These callbacks are often created inline in the page component and therefore
+  // change identity on every render. Storing them in refs prevents an effect loop
+  // where updating the header causes a rerender, which recreates callbacks, which
+  // triggers the header registration effect again.
+  const onLocaleChangeRef = useRef(onLocaleChange)
+  const onSaveAllRef = useRef(onSaveAll)
+  const onToggleValidationErrorsRef = useRef(onToggleValidationErrors)
+  const formatMessageRef = useRef(formatMessage)
+
+  useEffect(() => {
+    onLocaleChangeRef.current = onLocaleChange
+  }, [onLocaleChange])
+
+  useEffect(() => {
+    onSaveAllRef.current = onSaveAll
+  }, [onSaveAll])
+
+  useEffect(() => {
+    onToggleValidationErrorsRef.current = onToggleValidationErrors
+  }, [onToggleValidationErrors])
+
+  useEffect(() => {
+    formatMessageRef.current = formatMessage
+  }, [formatMessage])
+
+  const stableOnLocaleChange = useCallback(
+    (locale: TranslationWorkspacePreviewLocale) =>
+      onLocaleChangeRef.current(locale),
+    [],
+  )
+
+  const stableOnSaveAll = useCallback(() => onSaveAllRef.current(), [])
+
+  const stableOnToggleValidationErrors = useCallback(
+    () => onToggleValidationErrorsRef.current(),
+    [],
+  )
+
+  const stableFormatMessage: FormatMessage = useCallback(
+    (...args) => formatMessageRef.current(...args),
+    [],
+  )
+
+  const chrome = useMemo<TranslationWorkspaceHeaderChrome>(
+    () => ({
+      activeLocale,
+      onLocaleChange: stableOnLocaleChange,
+      hasUnsavedChanges,
+      unsavedCount,
+      saving,
+      onSaveAll: stableOnSaveAll,
+      formatMessage: stableFormatMessage,
+      showValidationErrors,
+      onToggleValidationErrors: stableOnToggleValidationErrors,
+    }),
+    [
+      activeLocale,
+      stableOnLocaleChange,
+      hasUnsavedChanges,
+      unsavedCount,
+      saving,
+      stableOnSaveAll,
+      stableFormatMessage,
+      showValidationErrors,
+      stableOnToggleValidationErrors,
+    ],
+  )
+
+  // Clear chrome on unmount (route change).
+  useEffect(() => {
+    return () => {
+      setWorkspaceChrome(null)
+    }
+  }, [setWorkspaceChrome])
 
   useEffect(() => {
     if (!isReady) {
       setWorkspaceChrome(null)
       return undefined
     }
-    setWorkspaceChrome({
-      activeLocale,
-      onLocaleChange,
-      hasUnsavedChanges,
-      unsavedCount,
-      saving,
-      onSaveAll,
-      formatMessage,
-    })
-    return () => {
-      setWorkspaceChrome(null)
-    }
-  }, [
-    isReady,
-    activeLocale,
-    onLocaleChange,
-    hasUnsavedChanges,
-    unsavedCount,
-    saving,
-    onSaveAll,
-    formatMessage,
-    setWorkspaceChrome,
-  ])
+    setWorkspaceChrome(chrome)
+    return undefined
+  }, [isReady, chrome, setWorkspaceChrome])
 }
 
 export const TranslationWorkspaceHeaderLanguageTabs = () => {
@@ -154,6 +215,25 @@ export const TranslationWorkspaceHeaderSaveButton = () => {
   return (
     <Button size="small" loading={chrome.saving} onClick={chrome.onSaveAll}>
       {chrome.formatMessage(m.translationSaveAll)} ({chrome.unsavedCount})
+    </Button>
+  )
+}
+
+export const TranslationWorkspaceHeaderValidationToggle = () => {
+  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
+  const chrome = ctx?.workspaceChrome
+
+  if (!chrome) {
+    return null
+  }
+
+  return (
+    <Button
+      size="small"
+      variant={chrome.showValidationErrors ? 'primary' : 'ghost'}
+      onClick={chrome.onToggleValidationErrors}
+    >
+      {chrome.formatMessage(m.translationValidationErrors)}
     </Button>
   )
 }

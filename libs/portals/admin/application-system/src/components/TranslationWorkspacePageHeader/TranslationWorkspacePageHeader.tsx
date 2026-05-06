@@ -2,6 +2,7 @@ import { Box } from '@island.is/island-ui/core'
 import {
   TranslationWorkspaceHeaderLanguageTabs,
   TranslationWorkspaceHeaderSaveButton,
+  TranslationWorkspaceHeaderValidationToggle,
 } from '../../context/TranslationWorkspaceHeaderBridge'
 
 export const TranslationWorkspacePageHeader = () => (
@@ -16,6 +17,7 @@ export const TranslationWorkspacePageHeader = () => (
       alignItems="center"
       columnGap={2}
     >
+      <TranslationWorkspaceHeaderValidationToggle />
       <TranslationWorkspaceHeaderSaveButton />
       <TranslationWorkspaceHeaderLanguageTabs />
     </Box>

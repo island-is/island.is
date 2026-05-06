@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
+  AlertMessage,
   Box,
   Text,
   Button,
@@ -15,6 +16,7 @@ import {
   Icon,
   Table as T,
   Stack,
+  type AlertMessageType,
   type InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
@@ -25,12 +27,14 @@ import type {
   RadioOptionIntrospection,
   ResolvePreviewString,
   ScreenIntrospection,
+  ValidationMessageDescriptor,
 } from '../../types/translationWorkspace'
 import {
   HALF_WIDTH_IGNORED_TYPES,
   INPUT_FIELD_TYPES,
   noop,
   PLACEHOLDER_TYPES,
+  PREVIEW_EXCLUDED_FIELD_TYPES,
   TEXT_DISPLAY_TYPES,
   TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN,
 } from '../../utils/translationWorkspaceFieldConstants'
@@ -41,6 +45,7 @@ import {
   resolveTranslatableStaticText,
 } from '../../utils/translationWorkspaceStaticText'
 import { filterPreviewMultiFieldChildren } from '../../utils/translationWorkspaceMultiFieldChildren'
+import { focusedFieldHighlight } from '../TranslationWorkspacePreviewArea/TranslationWorkspacePreviewArea.css'
 
 const staticTableTitleVariantToText = (
   v: string | null | undefined,
@@ -138,6 +143,79 @@ const DescriptionFieldPreview = ({
           })}
         </Box>
       )}
+    </Box>
+  )
+}
+
+const VALID_ALERT_TYPES: Set<string> = new Set([
+  'default',
+  'error',
+  'info',
+  'success',
+  'warning',
+])
+
+const AlertMessageFieldPreview = ({
+  screen,
+  resolvePreviewString,
+}: {
+  screen: ScreenIntrospection
+  resolvePreviewString: ResolvePreviewString
+}) => {
+  const layout = fieldPreviewLayoutProps(screen)
+  if (layout.marginBottom == null) {
+    layout.marginBottom = 2
+  }
+  if (layout.marginTop == null) {
+    layout.marginTop = 2
+  }
+
+  const alertType: AlertMessageType = VALID_ALERT_TYPES.has(
+    screen.alertType ?? '',
+  )
+    ? (screen.alertType as AlertMessageType)
+    : 'default'
+
+  const titleResolved = resolveTranslatableStaticText(
+    screen.title,
+    screen.messageDescriptors,
+    resolvePreviewString,
+  ).trim()
+
+  const messageResolved = screen.alertMessage
+    ? resolveTranslatableStaticText(
+        screen.alertMessage,
+        screen.messageDescriptors,
+        resolvePreviewString,
+      ).trim()
+    : ''
+
+  if (!titleResolved && !messageResolved) {
+    const fallback = screen.messageDescriptors
+      .map((d) => resolvePreviewString(d.id, d.defaultMessage).trim())
+      .filter((t) => t.length > 0)
+      .join('\n')
+    return (
+      <Box {...layout}>
+        <AlertMessage
+          type={alertType}
+          title={fallback || screen.id}
+        />
+      </Box>
+    )
+  }
+
+  return (
+    <Box {...layout}>
+      <AlertMessage
+        type={alertType}
+        title={titleResolved || messageResolved}
+        message={
+          titleResolved && messageResolved ? (
+            <Markdown>{messageResolved}</Markdown>
+          ) : undefined
+        }
+      />
     </Box>
   )
 }
@@ -388,11 +466,13 @@ const RadioFieldLeafPreview = ({
   layout,
   label,
   resolvePreviewString,
+  previewValue,
 }: {
   screen: ScreenIntrospection
   layout: ReturnType<typeof fieldPreviewLayoutProps>
   label: string
   resolvePreviewString: ResolvePreviewString
+  previewValue?: string
 }) => {
   const key = screen.id
   const fallbackOptions: RadioOptionIntrospection[] = [
@@ -416,7 +496,13 @@ const RadioFieldLeafPreview = ({
 
   const split = screen.width === 'half' ? ('1/2' as const) : ('1/1' as const)
 
-  const [selected, setSelected] = useState('')
+  const [selected, setSelected] = useState(previewValue ?? '')
+
+  useEffect(() => {
+    if (previewValue !== undefined) {
+      setSelected(previewValue)
+    }
+  }, [previewValue])
 
   const resolveOptionLabel = (opt: RadioOptionIntrospection) => {
     if (opt.labelMessageId) {
@@ -473,11 +559,13 @@ const CheckboxFieldLeafPreview = ({
   layout,
   label,
   resolvePreviewString,
+  previewValue,
 }: {
   screen: ScreenIntrospection
   layout: ReturnType<typeof fieldPreviewLayoutProps>
   label: string
   resolvePreviewString: ResolvePreviewString
+  previewValue?: string
 }) => {
   const key = screen.id
   const options =
@@ -547,7 +635,7 @@ const CheckboxFieldLeafPreview = ({
                   backgroundColor={bgColor}
                   name={`${key}-${opt.value}`}
                   value={opt.value}
-                  checked={false}
+                  checked={previewValue === opt.value}
                   onChange={noop}
                   label={
                     <Markdown>
@@ -1036,14 +1124,45 @@ const LeafFieldPreview = ({
   screen,
   resolvePreviewString,
   formatMessage,
+  showValidationErrors,
+  validationDescriptorsByPath,
+  focusedFieldId,
+  fieldErrorOverrides,
+  previewFieldValues,
 }: {
   screen: ScreenIntrospection
   resolvePreviewString: ResolvePreviewString
   formatMessage: PreviewFormatMessage
+  showValidationErrors?: boolean
+  validationDescriptorsByPath?: Record<string, ValidationMessageDescriptor[]>
+  focusedFieldId?: string | null
+  fieldErrorOverrides?: Set<string>
+  previewFieldValues?: Record<string, string>
 }) => {
+  if (PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type)) {
+    return null
+  }
+
   const label = resolvePreviewLabel(screen, resolvePreviewString)
   const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
+  const isFocused = focusedFieldId != null && screen.id === focusedFieldId
+  const hasErrorOverride = fieldErrorOverrides?.has(screen.id) === true
+
+  const fieldErrorMessage = (() => {
+    if (hasErrorOverride) {
+      const descriptors = validationDescriptorsByPath?.[screen.id]
+      if (descriptors && descriptors.length > 0) {
+        return resolvePreviewString(descriptors[0].id, descriptors[0].defaultMessage)
+      }
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+    if (!showValidationErrors || !validationDescriptorsByPath) return undefined
+    const descriptors = validationDescriptorsByPath[screen.id]
+    if (!descriptors || descriptors.length === 0) return undefined
+    const d = descriptors[0]
+    return resolvePreviewString(d.id, d.defaultMessage)
+  })()
 
   if (screen.type === 'EXTERNAL_DATA_SOURCE') {
     return (
@@ -1171,10 +1290,19 @@ const LeafFieldPreview = ({
   }
 
   if (INPUT_FIELD_TYPES.has(screen.type)) {
+    const inputPreviewValue = previewFieldValues?.[screen.id]
     return (
       <Box key={key} {...layout}>
         <Box paddingTop={2}>
-          <Input label={label} name={key} placeholder={label} disabled />
+          <Input
+            label={label}
+            name={key}
+            placeholder={label}
+            disabled
+            value={inputPreviewValue ?? ''}
+            hasError={!!fieldErrorMessage}
+            errorMessage={fieldErrorMessage}
+          />
         </Box>
       </Box>
     )
@@ -1187,6 +1315,7 @@ const LeafFieldPreview = ({
         layout={layout}
         label={label}
         resolvePreviewString={resolvePreviewString}
+        previewValue={previewFieldValues?.[screen.id]}
       />
     )
   }
@@ -1198,6 +1327,8 @@ const LeafFieldPreview = ({
           label={label}
           placeholderText="dd.mm.yyyy"
           handleChange={noop}
+          hasError={!!fieldErrorMessage}
+          errorMessage={fieldErrorMessage}
         />
       </Box>
     )
@@ -1210,7 +1341,14 @@ const LeafFieldPreview = ({
   ) {
     return (
       <Box key={key} {...layout}>
-        <Select label={label} name={key} options={[]} isDisabled />
+        <Select
+          label={label}
+          name={key}
+          options={[]}
+          isDisabled
+          hasError={!!fieldErrorMessage}
+          errorMessage={fieldErrorMessage}
+        />
       </Box>
     )
   }
@@ -1222,6 +1360,7 @@ const LeafFieldPreview = ({
         layout={layout}
         label={label}
         resolvePreviewString={resolvePreviewString}
+        previewValue={previewFieldValues?.[screen.id]}
       />
     )
   }
@@ -1250,6 +1389,15 @@ const LeafFieldPreview = ({
   if (screen.type === 'DESCRIPTION') {
     return (
       <DescriptionFieldPreview
+        screen={screen}
+        resolvePreviewString={resolvePreviewString}
+      />
+    )
+  }
+
+  if (screen.type === 'ALERT_MESSAGE') {
+    return (
+      <AlertMessageFieldPreview
         screen={screen}
         resolvePreviewString={resolvePreviewString}
       />
@@ -1322,6 +1470,11 @@ export interface TranslationWorkspaceFieldPreviewProps {
   screen: ScreenIntrospection
   resolvePreviewString: ResolvePreviewString
   formatMessage: PreviewFormatMessage
+  showValidationErrors?: boolean
+  validationDescriptorsByPath?: Record<string, ValidationMessageDescriptor[]>
+  focusedFieldId?: string | null
+  fieldErrorOverrides?: Set<string>
+  previewFieldValues?: Record<string, string>
 }
 
 /**
@@ -1332,6 +1485,11 @@ export const TranslationWorkspaceFieldPreview = ({
   screen,
   resolvePreviewString,
   formatMessage,
+  showValidationErrors,
+  validationDescriptorsByPath,
+  focusedFieldId,
+  fieldErrorOverrides,
+  previewFieldValues,
 }: TranslationWorkspaceFieldPreviewProps) => {
   if (screen.type === 'MULTI_FIELD') {
     const space = (screen.space ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
@@ -1357,17 +1515,24 @@ export const TranslationWorkspaceFieldPreview = ({
               child.width === 'half'
             const span = isHalfColumn ? '1/2' : '1/1'
             const isLast = index === previewChildren.length - 1
+            const childIsFocused =
+              focusedFieldId != null && child.id === focusedFieldId
             return (
               <GridColumn
                 key={child.id || index}
                 span={['1/1', '1/1', '1/1', span]}
                 paddingBottom={isLast ? 0 : space}
               >
-                <Box>
+                <Box className={childIsFocused ? focusedFieldHighlight : undefined}>
                   <LeafFieldPreview
                     screen={child}
                     resolvePreviewString={resolvePreviewString}
                     formatMessage={formatMessage}
+                    showValidationErrors={showValidationErrors}
+                    validationDescriptorsByPath={validationDescriptorsByPath}
+                    focusedFieldId={focusedFieldId}
+                    fieldErrorOverrides={fieldErrorOverrides}
+                    previewFieldValues={previewFieldValues}
                   />
                 </Box>
               </GridColumn>
@@ -1378,11 +1543,21 @@ export const TranslationWorkspaceFieldPreview = ({
     )
   }
 
+  const isFocused =
+    focusedFieldId != null && screen.id === focusedFieldId
+
   return (
-    <LeafFieldPreview
-      screen={screen}
-      resolvePreviewString={resolvePreviewString}
-      formatMessage={formatMessage}
-    />
+    <Box className={isFocused ? focusedFieldHighlight : undefined}>
+      <LeafFieldPreview
+        screen={screen}
+        resolvePreviewString={resolvePreviewString}
+        formatMessage={formatMessage}
+        showValidationErrors={showValidationErrors}
+        validationDescriptorsByPath={validationDescriptorsByPath}
+        focusedFieldId={focusedFieldId}
+        fieldErrorOverrides={fieldErrorOverrides}
+        previewFieldValues={previewFieldValues}
+      />
+    </Box>
   )
 }

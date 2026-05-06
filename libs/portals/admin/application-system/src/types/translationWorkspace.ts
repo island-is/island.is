@@ -4,6 +4,10 @@ export interface MessageDescriptor {
   description?: string | null
 }
 
+export interface ValidationMessageDescriptor extends MessageDescriptor {
+  fieldPath: string
+}
+
 export interface RadioOptionIntrospection {
   value: string
   labelMessageId?: string | null
@@ -61,6 +65,10 @@ export interface ScreenIntrospection {
     label: MessageDescriptor
     value: MessageDescriptor
   }> | null
+  /** `ALERT_MESSAGE`: visual type of the alert box. */
+  alertType?: string | null
+  /** `ALERT_MESSAGE`: raw static text of the `message` body. */
+  alertMessage?: string | null
 }
 
 /** Where in the template tree a sidebar row was clicked (for debugging / tooling). */
@@ -95,10 +103,12 @@ export type PreviewFormatMessage = (
 export interface TemplateSectionNav {
   id: string
   title?: string | null
+  titleMessageDescriptor?: MessageDescriptor | null
   screens: ScreenIntrospection[]
   subSections: Array<{
     id: string
     title?: string | null
+    titleMessageDescriptor?: MessageDescriptor | null
     screens: ScreenIntrospection[]
   }>
 }

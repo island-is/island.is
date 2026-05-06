@@ -74,6 +74,21 @@ export class MessageDescriptorGql {
 }
 
 @ObjectType()
+export class ValidationMessageDescriptorGql {
+  @Field()
+  id!: string
+
+  @Field(() => String, { nullable: true })
+  defaultMessage?: string
+
+  @Field(() => String, { nullable: true })
+  description?: string
+
+  @Field()
+  fieldPath!: string
+}
+
+@ObjectType()
 export class RadioOptionIntrospectionGql {
   @Field()
   value!: string
@@ -231,6 +246,12 @@ export class ScreenIntrospectionGql {
   @Field(() => [StaticTableSummaryRowGql], { nullable: true })
   staticTableSummary?: StaticTableSummaryRowGql[] | null
 
+  @Field(() => String, { nullable: true })
+  alertType?: string | null
+
+  @Field(() => String, { nullable: true })
+  alertMessage?: string | null
+
   @Field(() => [ScreenIntrospectionGql], { nullable: true })
   children?: ScreenIntrospectionGql[]
 }
@@ -243,6 +264,9 @@ export class SubSectionIntrospectionGql {
   @Field(() => String, { nullable: true })
   title?: string | null
 
+  @Field(() => MessageDescriptorGql, { nullable: true })
+  titleMessageDescriptor?: MessageDescriptorGql | null
+
   @Field(() => [ScreenIntrospectionGql])
   screens!: ScreenIntrospectionGql[]
 }
@@ -254,6 +278,9 @@ export class SectionIntrospectionGql {
 
   @Field(() => String, { nullable: true })
   title?: string | null
+
+  @Field(() => MessageDescriptorGql, { nullable: true })
+  titleMessageDescriptor?: MessageDescriptorGql | null
 
   @Field(() => [SubSectionIntrospectionGql])
   subSections!: SubSectionIntrospectionGql[]
@@ -320,6 +347,9 @@ export class TemplateIntrospectionGql {
 
   @Field(() => [MessageDescriptorGql])
   allMessageDescriptors!: MessageDescriptorGql[]
+
+  @Field(() => [ValidationMessageDescriptorGql])
+  validationMessageDescriptors!: ValidationMessageDescriptorGql[]
 }
 
 @ObjectType()

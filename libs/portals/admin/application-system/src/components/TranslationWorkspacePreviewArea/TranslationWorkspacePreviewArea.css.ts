@@ -39,6 +39,13 @@ export const previewShell = style({
   },
 })
 
+export const focusedFieldHighlight = style({
+  outline: `2px solid ${theme.color.blue300}`,
+  outlineOffset: '2px',
+  borderRadius: theme.border.radius.standard,
+  transition: 'outline-color 150ms ease',
+})
+
 /** Mirrors `libs/application/ui-shell/src/components/ScreenFooter.css.ts` `.buttonContainer`. */
 export const previewFooter = style({
   borderTop: `2px solid ${theme.color.purple100}`,

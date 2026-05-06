@@ -15,7 +15,6 @@ export const INPUT_FIELD_TYPES = new Set([
 export const TEXT_DISPLAY_TYPES = new Set([
   'DESCRIPTION',
   'TITLE',
-  'ALERT_MESSAGE',
   'EXPANDABLE_DESCRIPTION',
   'LINK',
   'MESSAGE_WITH_LINK_BUTTON_FIELD',
@@ -29,7 +28,6 @@ export const TEXT_DISPLAY_TYPES = new Set([
  * Preview must do the same — message ids are not required to end with `#markdown`.
  */
 export const TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN = new Set([
-  'ALERT_MESSAGE',
   'EXPANDABLE_DESCRIPTION',
   'INFORMATION_CARD',
   'ACCORDION',
@@ -50,3 +48,8 @@ export const noop = () => {
 }
 
 export const HALF_WIDTH_IGNORED_TYPES = new Set(['RADIO', 'CHECKBOX'])
+
+export const PREVIEW_EXCLUDED_FIELD_TYPES = new Set([
+  'HIDDEN_INPUT',
+  'HIDDEN_INPUT_WITH_WATCHED_VALUE',
+])

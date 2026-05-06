@@ -217,6 +217,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationSaveFailed',
     defaultMessage: 'Ekki tókst að vista. {detail}',
   },
+  translationValidationErrors: {
+    id: 'admin-portal.application-system:translationValidationErrors',
+    defaultMessage: 'Villumeldingar',
+  },
   translationAiTranslateScreen: {
     id: 'admin-portal.application-system:translationAiTranslateScreen',
     defaultMessage: 'Þýða skjá',
@@ -237,6 +241,30 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:statisticsDescription',
     defaultMessage:
       'Staður til að sækja tölfræði um umsóknir og skoða gröf tengd þeim.',
+  },
+  translationFieldsTab: {
+    id: 'admin-portal.application-system:translationFieldsTab',
+    defaultMessage: 'Fields',
+  },
+  translationFieldAutofill: {
+    id: 'admin-portal.application-system:translationFieldAutofill',
+    defaultMessage: 'Autofill',
+  },
+  translationFieldShowError: {
+    id: 'admin-portal.application-system:translationFieldShowError',
+    defaultMessage: 'Show error',
+  },
+  translationFieldNoFields: {
+    id: 'admin-portal.application-system:translationFieldNoFields',
+    defaultMessage: 'No fields on this screen',
+  },
+  translationFieldPrevious: {
+    id: 'admin-portal.application-system:translationFieldPrevious',
+    defaultMessage: 'Previous',
+  },
+  translationFieldNext: {
+    id: 'admin-portal.application-system:translationFieldNext',
+    defaultMessage: 'Next',
   },
 
   // Filters

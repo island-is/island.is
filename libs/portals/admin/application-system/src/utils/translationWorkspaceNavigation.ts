@@ -1,4 +1,9 @@
-import type { MessageDescriptor, ScreenIntrospection } from '../types/translationWorkspace'
+import type {
+  EditedTranslations,
+  MessageDescriptor,
+  ScreenIntrospection,
+  TemplateStateNav,
+} from '../types/translationWorkspace'
 
 /** Deduped union of `messageDescriptors` on each screen (already flattened for multifields on the API). */
 export const mergeScreensMessageDescriptors = (
@@ -47,6 +52,7 @@ export const mergeScreensMessageDescriptors = (
 export const buildSectionNavigationScreen = (
   sectionId: string,
   title: string | null | undefined,
+  titleMessageDescriptor: MessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
 ): ScreenIntrospection => ({
   id: `__navigation:section:${sectionId}`,
@@ -55,13 +61,17 @@ export const buildSectionNavigationScreen = (
   description: null,
   width: null,
   space: null,
-  messageDescriptors: mergeScreensMessageDescriptors(screens),
+  messageDescriptors: [
+    ...(titleMessageDescriptor ? [titleMessageDescriptor] : []),
+    ...mergeScreensMessageDescriptors(screens),
+  ],
 })
 
 /** One sidebar entry per subsection (matches stepper subsection tabs). */
 export const buildSubSectionNavigationScreen = (
   subSectionId: string,
   title: string | null | undefined,
+  titleMessageDescriptor: MessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
 ): ScreenIntrospection => ({
   id: `__navigation:subsection:${subSectionId}`,
@@ -70,7 +80,10 @@ export const buildSubSectionNavigationScreen = (
   description: null,
   width: null,
   space: null,
-  messageDescriptors: mergeScreensMessageDescriptors(screens),
+  messageDescriptors: [
+    ...(titleMessageDescriptor ? [titleMessageDescriptor] : []),
+    ...mergeScreensMessageDescriptors(screens),
+  ],
 })
 
 /**
@@ -89,6 +102,97 @@ export const buildSectionLeafNavigationScreen = (
   space: null,
   messageDescriptors: mergeScreensMessageDescriptors([screen]),
 })
+
+export interface TranslationCount {
+  translated: number
+  total: number
+}
+
+export const countTranslatedDescriptors = (
+  descriptors: MessageDescriptor[],
+  persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
+  editedValues: EditedTranslations,
+  activeLocale: 'is' | 'en',
+): TranslationCount => {
+  let translated = 0
+  for (const d of descriptors) {
+    const edited = editedValues[activeLocale][d.id]
+    if (edited !== undefined && edited !== '') {
+      translated++
+      continue
+    }
+    const persisted = persistedByKey[d.id]
+    if (persisted) {
+      const value =
+        activeLocale === 'en' ? persisted.valueEn : persisted.valueIs
+      if (value && value !== '') {
+        translated++
+      }
+    }
+  }
+  return { translated, total: descriptors.length }
+}
+
+const collectAllScreensForRole = (
+  role: TemplateStateNav['roles'][number],
+): ScreenIntrospection[] => {
+  if (!role.form) return []
+  const all: ScreenIntrospection[] = []
+  for (const section of role.form.sections) {
+    all.push(...(section.screens as ScreenIntrospection[]))
+    for (const sub of section.subSections) {
+      all.push(...(sub.screens as ScreenIntrospection[]))
+    }
+  }
+  return all
+}
+
+export const countTranslationsForState = (
+  state: TemplateStateNav,
+  persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
+  editedValues: EditedTranslations,
+  activeLocale: 'is' | 'en',
+): TranslationCount => {
+  const allScreens = state.roles.flatMap(collectAllScreensForRole)
+  const descriptors = mergeScreensMessageDescriptors(allScreens)
+  return countTranslatedDescriptors(
+    descriptors,
+    persistedByKey,
+    editedValues,
+    activeLocale,
+  )
+}
+
+export const countTranslationsForRole = (
+  role: TemplateStateNav['roles'][number],
+  persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
+  editedValues: EditedTranslations,
+  activeLocale: 'is' | 'en',
+): TranslationCount => {
+  const allScreens = collectAllScreensForRole(role)
+  const descriptors = mergeScreensMessageDescriptors(allScreens)
+  return countTranslatedDescriptors(
+    descriptors,
+    persistedByKey,
+    editedValues,
+    activeLocale,
+  )
+}
+
+export const countTranslationsForScreens = (
+  screens: ScreenIntrospection[],
+  persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
+  editedValues: EditedTranslations,
+  activeLocale: 'is' | 'en',
+): TranslationCount => {
+  const descriptors = mergeScreensMessageDescriptors(screens)
+  return countTranslatedDescriptors(
+    descriptors,
+    persistedByKey,
+    editedValues,
+    activeLocale,
+  )
+}
 
 /** Sidebar label for a template role's form (accordion). */
 export const getRoleFormAccordionLabel = (roleId: string): string => {

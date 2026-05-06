@@ -13,6 +13,7 @@ import type {
   ScreenIntrospection,
   SidebarNavLocation,
   TemplateSectionNav,
+  ValidationMessageDescriptor,
 } from '../../types/translationWorkspace'
 import {
   buildSectionNavigationScreen,
@@ -40,6 +41,11 @@ export interface TranslationWorkspacePreviewAreaProps {
     nav: ScreenIntrospection,
     location: SidebarNavLocation,
   ) => void
+  showValidationErrors: boolean
+  validationDescriptorsByPath: Record<string, ValidationMessageDescriptor[]>
+  focusedFieldId: string | null
+  fieldErrorOverrides: Set<string>
+  previewFieldValues: Record<string, string>
 }
 
 export const TranslationWorkspacePreviewArea = ({
@@ -55,6 +61,11 @@ export const TranslationWorkspacePreviewArea = ({
   activeRoleId,
   formLogoKey,
   onSidebarNavClick,
+  showValidationErrors,
+  validationDescriptorsByPath,
+  focusedFieldId,
+  fieldErrorOverrides,
+  previewFieldValues,
 }: TranslationWorkspacePreviewAreaProps) => {
   if (previewScreens.length === 0) {
     return (
@@ -70,6 +81,19 @@ export const TranslationWorkspacePreviewArea = ({
       </Box>
     )
   }
+
+  const resolveStepTitle = (
+    title: string | null | undefined,
+    titleMessageDescriptor:
+      | (TemplateSectionNav['titleMessageDescriptor'] extends infer T ? T : never)
+      | null
+      | undefined,
+  ) =>
+    resolveTranslatableStaticText(
+      title ?? '',
+      titleMessageDescriptor ? [titleMessageDescriptor] : [],
+      resolvePreviewString,
+    )
 
   return (
     <div className={styles.previewWrapper}>
@@ -103,6 +127,11 @@ export const TranslationWorkspacePreviewArea = ({
                   screen={screen}
                   resolvePreviewString={resolvePreviewString}
                   formatMessage={formatMessage as PreviewFormatMessage}
+                  showValidationErrors={showValidationErrors}
+                  validationDescriptorsByPath={validationDescriptorsByPath}
+                  focusedFieldId={focusedFieldId}
+                  fieldErrorOverrides={fieldErrorOverrides}
+                  previewFieldValues={previewFieldValues}
                 />
               ))}
             </Box>
@@ -184,18 +213,20 @@ export const TranslationWorkspacePreviewArea = ({
                       ? buildSubSectionNavigationScreen(
                           firstSubSection.id,
                           firstSubSection.title,
+                          firstSubSection.titleMessageDescriptor,
                           navScreens,
                         )
                       : buildSectionNavigationScreen(
                           section.id,
                           section.title,
+                          section.titleMessageDescriptor,
                           navScreens,
                         )
                     onSidebarNavClick(nav, location)
                   }}
                 >
                   <Section
-                    section={section.title ?? section.id}
+                    section={resolveStepTitle(section.title, section.titleMessageDescriptor) || section.id}
                     sectionIndex={i}
                     isActive={selectedLocation?.sectionId === section.id}
                     isComplete={
@@ -217,6 +248,7 @@ export const TranslationWorkspacePreviewArea = ({
                                 const nav = buildSubSectionNavigationScreen(
                                   sub.id,
                                   sub.title,
+                                  sub.titleMessageDescriptor,
                                   subScreens,
                                 )
                                 onSidebarNavClick(nav, {
@@ -238,7 +270,7 @@ export const TranslationWorkspacePreviewArea = ({
                                     : 'regular'
                                 }
                               >
-                                {sub.title ?? sub.id}
+                                {resolveStepTitle(sub.title, sub.titleMessageDescriptor) || sub.id}
                               </Text>
                             </Box>
                           ))
