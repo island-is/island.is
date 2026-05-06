@@ -47,14 +47,12 @@ const stagingOnlyTranslation = {
 
 const createMockAdminApi = (translations: typeof translationDev[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
-  meTranslationsControllerFindAndCountAllRaw: jest
-    .fn()
-    .mockResolvedValue(
-      createMockApiResponse({
-        rows: translations,
-        count: translations.length,
-      }),
-    ),
+  meTranslationsControllerFindAndCountAllRaw: jest.fn().mockResolvedValue(
+    createMockApiResponse({
+      rows: translations,
+      count: translations.length,
+    }),
+  ),
   meTranslationsControllerFindOneRaw: jest
     .fn()
     .mockImplementation(({ language, className, property, key }) => {
@@ -87,11 +85,13 @@ const createMockAdminApi = (translations: typeof translationDev[]) => ({
   meTranslationsControllerDeleteRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse(undefined)),
-  meLanguagesControllerFindAllRaw: jest.fn().mockResolvedValue(
-    createMockApiResponse([
-      { isoKey: 'en', description: 'English', englishDescription: 'English' },
-    ]),
-  ),
+  meLanguagesControllerFindAllRaw: jest
+    .fn()
+    .mockResolvedValue(
+      createMockApiResponse([
+        { isoKey: 'en', description: 'English', englishDescription: 'English' },
+      ]),
+    ),
 })
 
 const mockAdminDevApi = createMockAdminApi([translationDev, otherTranslation])
@@ -187,9 +187,7 @@ describe('TranslationService', () => {
         Environment.Production,
       ])
 
-      const devOnlyRow = result.rows.find(
-        (r) => r.key === otherTranslation.key,
-      )
+      const devOnlyRow = result.rows.find((r) => r.key === otherTranslation.key)
       expect(devOnlyRow?.availableEnvironments).toEqual([
         Environment.Development,
       ])
