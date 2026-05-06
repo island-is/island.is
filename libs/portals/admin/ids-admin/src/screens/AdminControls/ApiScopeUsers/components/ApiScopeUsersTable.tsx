@@ -133,9 +133,7 @@ export const ApiScopeUsersTable = ({
                 {formatMessage(m.apiScopeUsersNationalId)}
               </T.HeadData>
               <T.HeadData>{formatMessage(m.apiScopeUsersEmail)}</T.HeadData>
-              <T.HeadData>
-                {formatMessage(m.apiScopeUsersEnvironments)}
-              </T.HeadData>
+              <T.HeadData>{formatMessage(m.environments)}</T.HeadData>
               <T.HeadData>{/* Actions */}</T.HeadData>
             </T.Row>
           </T.Head>
@@ -203,7 +201,7 @@ export const ApiScopeUsersTable = ({
           isVisible={deleteModalVisible}
           label={formatMessage(m.apiScopeUsersDeleteConfirmTitle)}
           onClose={closeDeleteModal}
-          closeButtonLabel={formatMessage(m.apiScopeUsersCancelButton)}
+          closeButtonLabel={formatMessage(m.cancel)}
           scrollType="outside"
         >
           <Box paddingX={4}>

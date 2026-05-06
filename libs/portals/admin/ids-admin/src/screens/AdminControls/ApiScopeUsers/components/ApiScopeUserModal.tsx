@@ -182,12 +182,12 @@ export const ApiScopeUserModal = ({ modal }: ApiScopeUserModalProps) => {
               columnGap={2}
             >
               <Button variant="ghost" onClick={modal.resetModalState}>
-                {formatMessage(m.apiScopeUsersCancelButton)}
+                {formatMessage(m.cancel)}
               </Button>
               <Button onClick={modal.handleSubmit} loading={modal.isSubmitting}>
                 {modal.isEditing
-                  ? formatMessage(m.apiScopeUsersSaveButton)
-                  : formatMessage(m.apiScopeUsersCreateButton)}
+                  ? formatMessage(m.save)
+                  : formatMessage(m.create)}
               </Button>
             </Box>
           </Stack>

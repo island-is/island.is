@@ -13,6 +13,8 @@ export enum IDSAdminPaths {
   IDSAdminControlsApiScopeUsers = '/innskraningarkerfi/admin-controls/api-scope-users',
   IDSAdminControlsGrantTypes = '/innskraningarkerfi/admin-controls/grant-types',
   IDSAdminControlsIdpProviders = '/innskraningarkerfi/admin-controls/idp-providers',
+  IDSAdminControlsTranslations = '/innskraningarkerfi/admin-controls/translations',
+  IDSAdminControlsLanguages = '/innskraningarkerfi/admin-controls/languages',
 }
 
 export enum IDSAdminExternalPaths {

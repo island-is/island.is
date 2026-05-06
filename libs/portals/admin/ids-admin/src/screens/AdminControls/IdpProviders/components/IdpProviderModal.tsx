@@ -195,7 +195,7 @@ export const IdpProviderModal = ({ modal }: IdpProviderModalProps) => {
               </Button>
               <Button onClick={modal.handleSubmit} loading={modal.isSubmitting}>
                 {modal.isEditing
-                  ? formatMessage(m.idpProvidersSaveButton)
+                  ? formatMessage(m.save)
                   : formatMessage(m.create)}
               </Button>
             </Box>

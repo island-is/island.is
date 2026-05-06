@@ -80,7 +80,7 @@ export const GrantTypeConfirmModal = ({
       isVisible
       label={formatMessage(config.title)}
       onClose={onClose}
-      closeButtonLabel={formatMessage(m.grantTypesCancelButton)}
+      closeButtonLabel={formatMessage(m.cancel)}
       scrollType="outside"
     >
       <Box paddingX={4}>
@@ -136,7 +136,7 @@ export const GrantTypeConfirmModal = ({
           columnGap={2}
         >
           <Button variant="ghost" onClick={onClose}>
-            {formatMessage(m.grantTypesCancelButton)}
+            {formatMessage(m.cancel)}
           </Button>
           <Button
             colorScheme={config.confirmColorScheme}
