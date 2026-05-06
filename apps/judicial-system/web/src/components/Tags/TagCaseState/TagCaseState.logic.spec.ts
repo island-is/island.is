@@ -308,4 +308,159 @@ describe('mapCaseStateToTagVariant', () => {
       }),
     ).toEqual({ color: 'rose', text: strings.recalled.defaultMessage })
   })
+
+  describe('defender with all defendants dismissed or cancelled', () => {
+    const mockDefender = { nationalId: '0000000000' } as User
+    const dismissedState = {
+      type: CaseIndictmentRulingDecision.DISMISSAL,
+      time: '2024-01-01',
+    }
+    const cancelledState = {
+      type: CaseIndictmentRulingDecision.CANCELLATION,
+      time: '2024-01-01',
+    }
+    const confirmedDefendant = {
+      id: 'd1',
+      defenderNationalId: '0000000000',
+      isDefenderChoiceConfirmed: true,
+    }
+
+    test('should return Lokið when all defender defendants are dismissed', () => {
+      expect(
+        fn(
+          {
+            ...theCase,
+            state: CaseState.RECEIVED,
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                ...confirmedDefendant,
+                indictmentCancelledOrDismissedState: dismissedState,
+              },
+            ],
+          },
+          mockDefender,
+        ),
+      ).toEqual({ color: 'darkerBlue', text: strings.inactive.defaultMessage })
+    })
+
+    test('should return Lokið when all defender defendants are cancelled', () => {
+      expect(
+        fn(
+          {
+            ...theCase,
+            state: CaseState.RECEIVED,
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                ...confirmedDefendant,
+                indictmentCancelledOrDismissedState: cancelledState,
+              },
+            ],
+          },
+          mockDefender,
+        ),
+      ).toEqual({ color: 'darkerBlue', text: strings.inactive.defaultMessage })
+    })
+
+    test('should return Lokið when defender has multiple defendants all dismissed or cancelled', () => {
+      expect(
+        fn(
+          {
+            ...theCase,
+            state: CaseState.RECEIVED,
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                ...confirmedDefendant,
+                indictmentCancelledOrDismissedState: dismissedState,
+              },
+              {
+                id: 'd2',
+                defenderNationalId: '0000000000',
+                isDefenderChoiceConfirmed: true,
+                indictmentCancelledOrDismissedState: cancelledState,
+              },
+            ],
+          },
+          mockDefender,
+        ),
+      ).toEqual({ color: 'darkerBlue', text: strings.inactive.defaultMessage })
+    })
+
+    test('should NOT return Lokið when one of defender defendants is still active', () => {
+      expect(
+        fn(
+          {
+            ...theCase,
+            state: CaseState.RECEIVED,
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                ...confirmedDefendant,
+                indictmentCancelledOrDismissedState: dismissedState,
+              },
+              {
+                id: 'd2',
+                defenderNationalId: '0000000000',
+                isDefenderChoiceConfirmed: true,
+                indictmentCancelledOrDismissedState: null,
+              },
+            ],
+          },
+          mockDefender,
+        ),
+      ).not.toEqual({
+        color: 'darkerBlue',
+        text: strings.inactive.defaultMessage,
+      })
+    })
+
+    test('should NOT return Lokið when no defendants match the defender nationalId', () => {
+      expect(
+        fn(
+          {
+            ...theCase,
+            state: CaseState.RECEIVED,
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd1',
+                defenderNationalId: '1111111111',
+                isDefenderChoiceConfirmed: true,
+                indictmentCancelledOrDismissedState: dismissedState,
+              },
+            ],
+          },
+          mockDefender,
+        ),
+      ).not.toEqual({
+        color: 'darkerBlue',
+        text: strings.inactive.defaultMessage,
+      })
+    })
+
+    test('should NOT return Lokið when defender choice is not confirmed', () => {
+      expect(
+        fn(
+          {
+            ...theCase,
+            state: CaseState.RECEIVED,
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                ...confirmedDefendant,
+                isDefenderChoiceConfirmed: false,
+                indictmentCancelledOrDismissedState: dismissedState,
+              },
+            ],
+          },
+          mockDefender,
+        ),
+      ).not.toEqual({
+        color: 'darkerBlue',
+        text: strings.inactive.defaultMessage,
+      })
+    })
+  })
 })

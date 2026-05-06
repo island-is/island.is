@@ -20,7 +20,7 @@ import {
   InfoLine,
   formatDate,
   m,
-  IntroWrapperV2,
+  IntroWrapper,
   formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { useParams } from 'react-router-dom'
@@ -79,7 +79,7 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
   const serviceProviderSlug = mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={
         studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
           ? m.educationMicroCredentials
@@ -222,7 +222,7 @@ export const UniversityGraduationDetail = ({ studyType }: Props) => {
           </Box>
         </>
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 
