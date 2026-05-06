@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  IntroWrapperV2,
+  IntroWrapper,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { isDefined } from '@island.is/shared/utils'
@@ -45,7 +45,7 @@ export const UniversityGraduation = ({ studyType }: Props) => {
   }, [errors])
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={
         studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
           ? coreMessages.educationMicroCredentials
@@ -139,7 +139,7 @@ export const UniversityGraduation = ({ studyType }: Props) => {
             )
           })}
       </Stack>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

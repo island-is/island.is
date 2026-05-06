@@ -59,16 +59,24 @@ const OrganDonation = () => {
     <IntroWrapper
       title={formatMessage(m.organDonation)}
       intro={formatMessage(m.organDonationDescription)}
-      buttonGroup={[
-        <LinkResolver
-          href={formatMessage(m.organDonationLink)}
-          key="organ-donation"
-        >
-          <Button variant="utility" size="small" icon="open" iconType="outline">
-            {formatMessage(m.readAboutOrganDonation)}
-          </Button>
-        </LinkResolver>,
-      ]}
+      buttonGroup={{
+        actions: [
+          <LinkResolver
+            href={formatMessage(m.organDonationLink)}
+            key="organ-donation"
+          >
+            <Button
+              variant="utility"
+              size="small"
+              icon="open"
+              iconType="outline"
+            >
+              {formatMessage(m.readAboutOrganDonation)}
+            </Button>
+          </LinkResolver>,
+        ],
+      }}
+      desktopContentSpan="10/12"
     >
       {loading && (
         <Box marginY={4}>

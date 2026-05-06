@@ -265,14 +265,14 @@ export const getAppealActorText = (workingCase: Case): string => {
     workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
 
   if (appealedInCourt) {
-    return workingCase.appealedByRole === UserRole.PROSECUTOR
+    return workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR
       ? 'Sækjandi kærði í þinghaldi'
       : 'Varnaraðili kærði í þinghaldi'
   }
 
-  const dateStr = formatDate(workingCase.appealedDate, 'PPPp')
+  const dateStr = formatDate(workingCase.appealCase?.appealedDate, 'PPPp')
 
-  if (workingCase.appealedByRole === UserRole.PROSECUTOR) {
+  if (workingCase.appealCase?.appealedByRole === UserRole.PROSECUTOR) {
     return `Kært af sækjanda ${dateStr}`
   }
 
@@ -402,6 +402,26 @@ export const isMatchingAppealCaseFile = (
   }
 
   return false
+}
+
+export const areAllDefenderDefendantsCancelledOrDismissed = (
+  nationalId: string | null | undefined,
+  defendants: Defendant[] | null | undefined,
+): boolean => {
+  if (!nationalId || !defendants) {
+    return false
+  }
+  const normalizedId = normalizeAndFormatNationalId(nationalId)
+  const defenderDefendants = defendants.filter(
+    (d) =>
+      d.isDefenderChoiceConfirmed &&
+      d.defenderNationalId &&
+      normalizedId.includes(d.defenderNationalId),
+  )
+  return (
+    defenderDefendants.length > 0 &&
+    defenderDefendants.every((d) => d.indictmentCancelledOrDismissedState)
+  )
 }
 
 // Use the gender of the single defendant if there is only one,

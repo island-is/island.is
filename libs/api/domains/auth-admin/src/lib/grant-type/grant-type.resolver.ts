@@ -11,6 +11,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Environment } from '@island.is/shared/types'
 
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { GrantType } from './models/grant-type.model'
 import { GrantTypesPayload } from './dto/grant-types.payload'
 import { GrantTypesInput } from './dto/grant-types.input'
@@ -70,12 +71,14 @@ export class GrantTypeResolver {
     return this.grantTypeService.updateGrantType(user, input)
   }
 
-  @Mutation(() => Boolean, { name: 'deleteAuthAdminGrantType' })
+  @Mutation(() => DeleteEnvironmentResult, {
+    name: 'deleteAuthAdminGrantType',
+  })
   deleteGrantType(
     @CurrentUser() user: User,
     @Args('input', { type: () => DeleteGrantTypeInput })
     input: DeleteGrantTypeInput,
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     return this.grantTypeService.deleteGrantType(
       user,
       input.name,
@@ -83,12 +86,14 @@ export class GrantTypeResolver {
     )
   }
 
-  @Mutation(() => Boolean, { name: 'restoreAuthAdminGrantType' })
+  @Mutation(() => DeleteEnvironmentResult, {
+    name: 'restoreAuthAdminGrantType',
+  })
   restoreGrantType(
     @CurrentUser() user: User,
     @Args('input', { type: () => RestoreGrantTypeInput })
     input: RestoreGrantTypeInput,
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     return this.grantTypeService.restoreGrantType(
       user,
       input.name,

@@ -105,7 +105,7 @@ const HtmlView = ({ item }: HtmlViewProps) => {
                   <Text variant="h4" as="h3">
                     {formatMessage(m.detailsPage.keywords)}
                   </Text>
-                  <Text>{item.keywords.join(', ')}</Text>
+                  <Text>{item.keywords.join('. ')}</Text>
                 </Box>
               )}
               {item.presentings && (
