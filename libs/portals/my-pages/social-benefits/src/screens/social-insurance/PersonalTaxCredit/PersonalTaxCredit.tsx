@@ -115,10 +115,11 @@ const PersonalTaxCredit = () => {
     <IntroWrapper
       title={formatMessage(m.personalTaxCredit)}
       intro={formatMessage(m.personalTaxCreditDescription)}
-      serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
-      serviceProviderTooltip={formatMessage(
-        coreMessages.socialInsuranceTooltip,
-      )}
+      desktopContentSpan="10/12"
+      serviceProvider={{
+        slug: TRYGGINGASTOFNUN_SLUG,
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
     >
       {loading ? (
         <CardLoader />

@@ -6,11 +6,7 @@ export const useApplicationCards = () => {
     APPLICATION_CARDS,
     {
       variables: {
-        input: {
-          scopeCheck: true,
-          showPruned: true,
-          excludeAttributes: ['answers', 'externalData', 'attachments'],
-        },
+        input: { scopeCheck: true, showPruned: true },
       },
     },
   )
