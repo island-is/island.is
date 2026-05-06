@@ -3,6 +3,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './DashboardV2.css'
@@ -30,7 +31,7 @@ export const DashboardV2 = () => {
   const location = useLocation()
   const userInfo = useUserInfo()
   const isMobile = width < theme.breakpoints.md
-  const { featured, rest } = useDashboardNav()
+  const { featured, rest, loading } = useDashboardNav()
   const IS_COMPANY = isCompany(userInfo)
 
   useEffect(() => {
@@ -59,7 +60,17 @@ export const DashboardV2 = () => {
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box marginTop={[1, 2, 2, 0]}>
-                <DashboardFeatured items={featured} isMobile={isMobile} />
+                {loading ? (
+                  <SkeletonLoader
+                    space={2}
+                    repeat={3}
+                    height={112}
+                    display="block"
+                    width="full"
+                  />
+                ) : (
+                  <DashboardFeatured items={featured} isMobile={isMobile} />
+                )}
               </Box>
             </GridColumn>
           </GridRow>
