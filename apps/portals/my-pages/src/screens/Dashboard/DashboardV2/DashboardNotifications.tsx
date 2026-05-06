@@ -55,14 +55,14 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         marginBottom={2}
       >
         <LinkResolver href={InformationPaths.Notifications}>
-          <Box display="flex" alignItems="center" columnGap={2}>
+          <Box display="flex" alignItems="center" columnGap={2} overflow="hidden">
             <Icon
               icon="notifications"
               type="outline"
               color="blue400"
               size="medium"
             />
-            <Text variant="h4" as="h2" color="blue400">
+            <Text variant="h4" as="h2" color="blue400" truncate>
               {formatMessage(m.notifications)}
             </Text>
           </Box>
