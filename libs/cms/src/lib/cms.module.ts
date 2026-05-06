@@ -18,6 +18,7 @@ import {
   IntroLinkImageResolver,
   GenericListResolver,
   FeaturedGenericListItemsResolver,
+  OrganizationResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -37,9 +38,15 @@ import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTit
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
 import { OrganizationPageResolver } from './organizationPage.resolver'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [
+    HttpModule,
+    TerminusModule,
+    PowerBiConfig.registerOptional(),
+    FeatureFlagModule,
+  ],
   providers: [
     CmsResolver,
     ArticleResolver,
@@ -74,6 +81,7 @@ import { OrganizationPageResolver } from './organizationPage.resolver'
     GenericListResolver,
     FeaturedGenericListItemsResolver,
     OrganizationPageResolver,
+    OrganizationResolver,
   ],
   exports: [
     ContentfulRepository,

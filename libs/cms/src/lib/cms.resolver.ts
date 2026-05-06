@@ -1,5 +1,6 @@
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   Args,
   Query,
@@ -177,6 +178,7 @@ import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { WebChat } from './models/webChat.model'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { ServicePortalPage } from './models/servicePortalPage.model'
+import { FooterItem } from './models/footerItem.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1205,5 +1207,48 @@ export class FeaturedGenericListItemsResolver {
       input,
     )
     return response.items
+  }
+}
+
+@Resolver(() => Organization)
+@CacheControl(defaultCache)
+export class OrganizationResolver {
+  constructor(
+    private readonly cmsContentfulService: CmsContentfulService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
+
+  @ResolveField(() => [FooterItem])
+  async footerItems(@Parent() organization: Organization) {
+    const oldBehaviour = !(await this.featureFlagService.getValue(
+      Features.organizationFooterComesFromOrganizationPage,
+      false,
+    ))
+
+    if (oldBehaviour) return organization.footerItems ?? []
+
+    const footer = await this.cmsContentfulService.getOrganizationFooter(
+      organization.id,
+      organization.lang ?? 'is',
+    )
+
+    return footer?.footerItems ?? []
+  }
+
+  @ResolveField(() => GraphQLJSONObject)
+  async footerConfig(@Parent() organization: Organization) {
+    const oldBehaviour = !(await this.featureFlagService.getValue(
+      Features.organizationFooterComesFromOrganizationPage,
+      false,
+    ))
+
+    if (oldBehaviour) return organization.footerConfig ?? {}
+
+    const footer = await this.cmsContentfulService.getOrganizationFooter(
+      organization.id,
+      organization.lang ?? 'is',
+    )
+
+    return footer?.footerConfig ?? {}
   }
 }
