@@ -2,7 +2,6 @@ import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
-  GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurXRoadAPIModelsAvailableActions,
@@ -12,9 +11,8 @@ import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
-  ValidationUnemploymentApplication,
+  VmstApplicationsValidationUnemploymentApplication,
 } from './models'
-import { resolveStatusColor } from './statusColorMap'
 import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
@@ -40,7 +38,7 @@ export class VMSTApplicationsService {
   async validateBankInformationUnemploymentApplication(
     auth: User,
     input: VmstApplicationsBankInformationInput,
-  ): Promise<ValidationUnemploymentApplication> {
+  ): Promise<VmstApplicationsValidationUnemploymentApplication> {
     const payload = {
       galdurApplicationApplicationsUnemploymentApplicationsCommandsValidateUnemploymentApplicationPaymentPageValidateUnemploymentApplicationPaymentPageCommand:
         {
@@ -75,7 +73,7 @@ export class VMSTApplicationsService {
   async validateVacationDays(
     auth: User,
     input: VmstApplicationsVacationValidationInput,
-  ): Promise<ValidationUnemploymentApplication> {
+  ): Promise<VmstApplicationsValidationUnemploymentApplication> {
     const payload = {
       galdurApplicationApplicationsUnemploymentApplicationsCommandsValidateUnemploymentApplicationUnpaidVacationValidateUnemploymentApplicationUnpaidVacationCommand:
         {
@@ -105,36 +103,15 @@ export class VMSTApplicationsService {
     auth: User,
     locale?: Locale,
   ): Promise<VmstApplicationsUnemploymentApplicationOverview> {
-    const response = await this.vmstUnemploymentService.getApplicationOverview(
-      auth,
-      locale,
-    )
-
-    return {
-      ...response,
-      applicationStatusColor: resolveStatusColor(response.applicationStatusId),
-    }
+    return this.vmstUnemploymentService.getApplicationOverview(auth, locale)
   }
 
-  async resolveApplicant(
-    auth: User,
-  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
-    return this.vmstUnemploymentService.resolveApplicant(auth)
+  async resolveApplicant(auth: User): Promise<{ applicantId: string }> {
+    return await this.vmstUnemploymentService.resolveApplicant(auth)
   }
 
   async getApplicationsOverview(applicantId: string) {
-    const response = await this.vmstUnemploymentService.getApplicationsOverview(
-      applicantId,
-    )
-
-    const enrich = (item?: { statusId?: string | null } | null) =>
-      item ? { ...item, statusColor: resolveStatusColor(item.statusId) } : item
-
-    return {
-      ...response,
-      unemploymentApplication: enrich(response.unemploymentApplication),
-      activationGrant: enrich(response.activationGrant),
-    }
+    return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
   }
 
   async getApplicantOverview(

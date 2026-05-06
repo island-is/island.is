@@ -1,14 +1,16 @@
-import { Box, Divider, Stack, Tag, TagVariant } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
+import { VmstApplicationStatus } from '@island.is/api/schema'
 import { VmstOverviewItem } from '@island.is/portals/my-pages/graphql'
+import { resolveStatusTagVariant } from '../../../lib/statusTagVariant'
 
 interface OverviewTableProps {
   overviewItems: VmstOverviewItem[]
   applicationStatusName?: string | null
-  applicationStatusColor?: TagVariant | null
+  applicationStatus?: VmstApplicationStatus | null
   dataRequested?: boolean | null
 }
 
@@ -29,14 +31,18 @@ const getJobSearchConfirmationDateRange = (locale: Locale): string => {
 const getRowTag = (
   key: string | null | undefined,
   applicationStatusName?: string | null,
-  applicationStatusColor?: TagVariant | null,
+  applicationStatus?: VmstApplicationStatus | null,
   dateRangeLabel?: string,
 ): (() => React.ReactNode) | undefined => {
   switch (key) {
     case 'application-status': {
       if (!applicationStatusName) return undefined
       return () => (
-        <Tag variant={applicationStatusColor ?? 'warn'} outlined disabled>
+        <Tag
+          variant={resolveStatusTagVariant(applicationStatus)}
+          outlined
+          disabled
+        >
           {applicationStatusName}
         </Tag>
       )
@@ -55,7 +61,7 @@ const getRowTag = (
 export const OverviewTable = ({
   overviewItems,
   applicationStatusName,
-  applicationStatusColor,
+  applicationStatus,
   dataRequested,
 }: OverviewTableProps) => {
   const { formatMessage, lang } = useLocale()
@@ -69,7 +75,7 @@ export const OverviewTable = ({
           const tag = getRowTag(
             item.key,
             applicationStatusName,
-            applicationStatusColor,
+            applicationStatus,
             dateRangeLabel,
           )
           return (

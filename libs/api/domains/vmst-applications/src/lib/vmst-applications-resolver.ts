@@ -6,13 +6,13 @@ import { Audit } from '@island.is/nest/audit'
 import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import {
-  ValidationUnemploymentApplication,
+  VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsOverview,
-  VmstApplicantOverview,
-  VmstApplicantRequestedAttachment,
+  VmstApplicationsApplicantOverview,
+  VmstApplicationsApplicantRequestedAttachment,
   VmstAvailableActions,
-  VmstAttachmentTypeList,
+  VmstApplicationsAttachmentTypeList,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import type { Locale } from '@island.is/shared/types'
@@ -39,7 +39,7 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateBankInformation(auth, input)
   }
 
-  @Query(() => ValidationUnemploymentApplication, {
+  @Query(() => VmstApplicationsValidationUnemploymentApplication, {
     name: 'vmstApplicationsAccountNumberValidationUnemploymentApplication',
   })
   @Audit()
@@ -56,7 +56,7 @@ export class VMSTApplicationsResolver {
     )
   }
 
-  @Query(() => ValidationUnemploymentApplication, {
+  @Query(() => VmstApplicationsValidationUnemploymentApplication, {
     name: 'vmstApplicationsVacationValidationUnemploymentApplication',
   })
   @Audit()
@@ -91,14 +91,10 @@ export class VMSTApplicationsResolver {
       auth,
     )
 
-    if (!applicantId) {
-      throw new Error('Could not resolve applicant')
-    }
-
     return this.vmstApplicationsService.getApplicationsOverview(applicantId)
   }
 
-  @Query(() => VmstApplicantOverview, {
+  @Query(() => VmstApplicationsApplicantOverview, {
     name: 'vmstApplicantOverview',
   })
   @Audit()
@@ -111,17 +107,13 @@ export class VMSTApplicationsResolver {
       auth,
     )
 
-    if (!applicantId) {
-      throw new Error('Could not resolve applicant')
-    }
-
     return this.vmstApplicationsService.getApplicantOverview(
       applicantId,
       locale,
     )
   }
 
-  @Query(() => [VmstApplicantRequestedAttachment], {
+  @Query(() => [VmstApplicationsApplicantRequestedAttachment], {
     name: 'vmstApplicantRequestedAttachments',
   })
   @Audit()
@@ -129,10 +121,6 @@ export class VMSTApplicationsResolver {
     const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
       auth,
     )
-
-    if (!applicantId) {
-      throw new Error('Could not resolve applicant')
-    }
 
     return this.vmstApplicationsService.getApplicantRequestedAttachments(
       applicantId,
@@ -148,14 +136,10 @@ export class VMSTApplicationsResolver {
       auth,
     )
 
-    if (!applicantId) {
-      throw new Error('Could not resolve applicant')
-    }
-
     return this.vmstApplicationsService.getApplicantActions(applicantId)
   }
 
-  @Query(() => VmstAttachmentTypeList, {
+  @Query(() => VmstApplicationsAttachmentTypeList, {
     name: 'vmstAttachmentTypes',
   })
   @Audit()

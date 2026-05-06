@@ -1,12 +1,11 @@
 import {
   Box,
-  Button,
   Divider,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { UserInfoLine } from '@island.is/portals/my-pages/core'
+import { UserInfoLine, LinkButton } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { useGetApplicantOverviewQuery } from './Status.generated'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
@@ -118,22 +117,12 @@ export const ApplicantOverview = () => {
   return (
     <Box paddingTop={4}>
       <Box marginBottom={3} display="inlineBlock">
-        <a
-          href={formatMessage(um.applicantEditInfoUrl)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Button
-            as="span"
-            unfocusable
-            variant="utility"
-            size="small"
-            icon="pencil"
-            iconType="outline"
-          >
-            {formatMessage(um.applicantEditInfo)}
-          </Button>
-        </a>
+        <LinkButton
+          to={formatMessage(um.applicantEditInfoUrl)}
+          variant="utility"
+          text={formatMessage(um.applicantEditInfo)}
+          size="small"
+        />
       </Box>
       <Stack space={0}>
         {visibleItems.map((item, index) => (

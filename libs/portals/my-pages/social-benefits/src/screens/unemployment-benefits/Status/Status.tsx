@@ -53,7 +53,7 @@ const Status = () => {
               iconType: 'outline',
               onClick: () =>
                 window.open(
-                  'https://island.is/umsoknir/stadfesta-atvinnuleit',
+                  formatMessage(um.jobSearchConfirmationUrl),
                   '_blank',
                   'noopener,noreferrer',
                 ),
@@ -86,7 +86,7 @@ const Status = () => {
               <OverviewTable
                 overviewItems={overview?.overviewItems ?? []}
                 applicationStatusName={overview?.applicationStatusName}
-                applicationStatusColor={overview?.applicationStatusColor}
+                applicationStatus={overview?.applicationStatus}
                 dataRequested={overview?.dataRequested}
               />
             ),

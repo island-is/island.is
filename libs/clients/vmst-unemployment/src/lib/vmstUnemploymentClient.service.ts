@@ -17,7 +17,7 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
-  GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse,
+  GaldurXRoadAPIModelsApplicationApplicationOverviewItem,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
@@ -42,6 +42,10 @@ import { Injectable, Inject } from '@nestjs/common'
 import { AuthHeaderMiddleware, User } from '@island.is/auth-nest-tools'
 import { VmstUnemploymentClientConfig } from './vmstUnemploymentClient.config'
 import { Locale } from '@island.is/shared/types'
+import {
+  VmstApplicationStatus,
+  resolveApplicationStatus,
+} from './vmstApplicationStatus'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
@@ -254,7 +258,11 @@ export class VmstUnemploymentClientService {
   async getApplicationOverview(
     auth: User,
     language?: Locale,
-  ): Promise<GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse> {
+  ): Promise<
+    GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse & {
+      applicationStatus: VmstApplicationStatus
+    }
+  > {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',
@@ -262,9 +270,15 @@ export class VmstUnemploymentClientService {
 
     const lang = language ? language.toUpperCase() : null
 
-    return await api.unemploymentApplicationGetLatestUnemploymentApplicationOverview(
-      { ssn: auth.nationalId, language: lang },
-    )
+    const response =
+      await api.unemploymentApplicationGetLatestUnemploymentApplicationOverview(
+        { ssn: auth.nationalId, language: lang },
+      )
+
+    return {
+      ...response,
+      applicationStatus: resolveApplicationStatus(response.applicationStatusId),
+    }
   }
 
   async submitApplication(
@@ -279,28 +293,27 @@ export class VmstUnemploymentClientService {
     )
   }
 
-  async resolveApplicant(
-    auth: User,
-  ): Promise<GaldurXRoadAPIModelsResolveApplicantResponse> {
+  async resolveApplicant(auth: User): Promise<{ applicantId: string }> {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
     )
 
-    return await api.applicantResolve({
+    const response = await api.applicantResolve({
       galdurXRoadAPIModelsResolveApplicantRequest: {
         ssn: auth.nationalId,
       },
     })
+    if (!response?.applicantId) {
+      throw new Error('Failed to fetch applicant Id')
+    }
+    return { applicantId: response.applicantId }
   }
 
   /**
    * Returns overview of applications that should be shown for an applicant.
    */
-  async getApplicationsOverview(
-    applicantId: string,
-    language?: Locale,
-  ): Promise<GaldurXRoadAPIModelsApplicationGetApplicationsOverviewResponse> {
+  async getApplicationsOverview(applicantId: string, language?: Locale) {
     const api = await this.createApiClient(
       ApplicationApi,
       'clients-vmst-unemployment',
@@ -308,12 +321,23 @@ export class VmstUnemploymentClientService {
 
     const lang = language ? language.toUpperCase() : null
 
-    return await api.applicationOverview({
+    const response = await api.applicationOverview({
       galdurXRoadAPIModelsApplicationGetApplicationsOverviewRequest: {
         applicantId,
         language: lang,
       },
     })
+
+    const enrichItem = (
+      item?: GaldurXRoadAPIModelsApplicationApplicationOverviewItem | null,
+    ) =>
+      item ? { ...item, status: resolveApplicationStatus(item.statusId) } : item
+
+    return {
+      ...response,
+      unemploymentApplication: enrichItem(response.unemploymentApplication),
+      activationGrant: enrichItem(response.activationGrant),
+    }
   }
 
   /*

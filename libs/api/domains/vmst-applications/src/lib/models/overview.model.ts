@@ -1,14 +1,10 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { VmstApplicationStatus } from '@island.is/clients/vmst-unemployment'
 
-export enum VmstApplicationStatusColor {
-  mint = 'mint',
-  purple = 'purple',
-  red = 'red',
-  warn = 'warn',
-}
+export { VmstApplicationStatus }
 
-registerEnumType(VmstApplicationStatusColor, {
-  name: 'VmstApplicationStatusColor',
+registerEnumType(VmstApplicationStatus, {
+  name: 'VmstApplicationStatus',
 })
 
 @ObjectType('VmstOverviewItem')
@@ -58,8 +54,8 @@ export class VmstApplicationsUnemploymentApplicationOverview {
   @Field(() => String, { nullable: true })
   applicationStatusName?: string | null
 
-  @Field(() => VmstApplicationStatusColor, { nullable: true })
-  applicationStatusColor?: VmstApplicationStatusColor
+  @Field(() => VmstApplicationStatus, { nullable: true })
+  applicationStatus?: VmstApplicationStatus
 
   @Field({ nullable: true })
   dataRequested?: boolean

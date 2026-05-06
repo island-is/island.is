@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('VmstApplicantLanguageOverview')
-export class VmstApplicantLanguageOverview {
+@ObjectType('VmstApplicationsApplicantLanguageOverview')
+export class VmstApplicationsApplicantLanguageOverview {
   @Field(() => String, { nullable: true })
   name?: string | null
 
@@ -9,8 +9,8 @@ export class VmstApplicantLanguageOverview {
   proficiency?: string | null
 }
 
-@ObjectType('VmstApplicantOverview')
-export class VmstApplicantOverview {
+@ObjectType('VmstApplicationsApplicantOverview')
+export class VmstApplicationsApplicantOverview {
   @Field(() => String, { nullable: true })
   passCode?: string | null
 
@@ -41,8 +41,8 @@ export class VmstApplicantOverview {
   @Field(() => [String])
   drivingLicenses!: string[]
 
-  @Field(() => [VmstApplicantLanguageOverview])
-  languageAbilities!: VmstApplicantLanguageOverview[]
+  @Field(() => [VmstApplicationsApplicantLanguageOverview])
+  languageAbilities!: VmstApplicationsApplicantLanguageOverview[]
 
   @Field(() => String, { nullable: true })
   serviceArea?: string | null

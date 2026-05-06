@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('VmstApplicantRequestedAttachment')
-export class VmstApplicantRequestedAttachment {
+@ObjectType('VmstApplicationsApplicantRequestedAttachment')
+export class VmstApplicationsApplicantRequestedAttachment {
   @Field()
   id!: string
 

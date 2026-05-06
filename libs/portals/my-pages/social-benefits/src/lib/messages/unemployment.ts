@@ -98,6 +98,10 @@ export const unemploymentBenefitsMessages = defineMessages({
     defaultMessage:
       'Mikilvægt er að staðfesta atvinnuleit mánaðarlega til að halda bótarétti. Staðfestingartímabil er frá 20.–25. hvers mánaðar.',
   },
+  jobSearchConfirmationUrl: {
+    id: 'sp.social-benefits-unemployment:jobSearchConfirmationUrl',
+    defaultMessage: 'https://island.is/umsoknir/stadfesta-atvinnuleit',
+  },
   jobSearchConfirmationCta: {
     id: 'sp.social-benefits-unemployment:jobSearchConfirmationCta',
     defaultMessage: 'Staðfesta hér',

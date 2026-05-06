@@ -6,23 +6,22 @@ import {
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { sharedMessages } from '../../lib/messages/shared'
-import {
-  unemploymentBenefitsMessages as um,
-  // activationGrantMessages as am,
-} from '../../lib/messages/'
-import { AlertMessage, Stack, TagVariant } from '@island.is/island-ui/core'
+import { unemploymentBenefitsMessages as um } from '../../lib/messages/'
+import { AlertMessage, Stack } from '@island.is/island-ui/core'
 import {
   SocialInsuranceMaintenancePaths,
   UnemploymentBenefitsPaths,
 } from '../../lib/paths'
 import { useGetApplicationsOverviewQuery } from './SocialBenefitsOverview.generated'
+import { resolveStatusTagVariant } from '../../lib/statusTagVariant'
+import type { VmstApplicationStatus } from '@island.is/api/schema'
 
 const getStatusTag = (
   statusName?: string | null,
-  statusColor?: string | null,
-): { label: string; variant: TagVariant } => ({
+  status?: VmstApplicationStatus | null,
+) => ({
   label: statusName || '',
-  variant: (statusColor as TagVariant) ?? 'warn',
+  variant: resolveStatusTagVariant(status),
 })
 
 const SocialBenefitsOverview = () => {
@@ -59,7 +58,7 @@ const SocialBenefitsOverview = () => {
             image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
             tag={getStatusTag(
               overview.unemploymentApplication.statusName,
-              overview.unemploymentApplication.statusColor,
+              overview.unemploymentApplication.status,
             )}
           />
         )}

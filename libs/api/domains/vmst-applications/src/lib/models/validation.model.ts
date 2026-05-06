@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('ValidationUnemploymentApplication')
-export class ValidationUnemploymentApplication {
+@ObjectType('VmstApplicationsValidationUnemploymentApplication')
+export class VmstApplicationsValidationUnemploymentApplication {
   @Field(() => Boolean)
   isValid!: boolean
 

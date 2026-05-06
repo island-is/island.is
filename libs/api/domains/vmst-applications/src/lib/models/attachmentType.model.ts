@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('VmstAttachmentType')
-export class VmstAttachmentType {
+@ObjectType('VmstApplicationsAttachmentType')
+export class VmstApplicationsAttachmentType {
   @Field()
   id!: string
 
@@ -12,14 +12,14 @@ export class VmstAttachmentType {
   english?: string | null
 }
 
-@ObjectType('VmstAttachmentTypeList')
-export class VmstAttachmentTypeList {
+@ObjectType('VmstApplicationsAttachmentTypeList')
+export class VmstApplicationsAttachmentTypeList {
   @Field({ nullable: true })
   success?: boolean
 
   @Field(() => String, { nullable: true })
   errorMessage?: string | null
 
-  @Field(() => [VmstAttachmentType], { nullable: true })
-  attachmentTypes?: VmstAttachmentType[] | null
+  @Field(() => [VmstApplicationsAttachmentType], { nullable: true })
+  attachmentTypes?: VmstApplicationsAttachmentType[] | null
 }
