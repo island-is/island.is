@@ -35,6 +35,7 @@ import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
 import { ApiScopeUsersV2Module } from './v2/api-scope-users/api-scope-users.module'
 import { GrantTypesV2Module } from './v2/grant-types/grant-types.module'
+import { IdpProvidersV2Module } from './v2/idp-providers/idp-providers.module'
 import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identity-confirmation.module'
 
 @Module({
@@ -61,6 +62,7 @@ import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identi
     ScopesModule,
     ApiScopeUsersV2Module,
     GrantTypesV2Module,
+    IdpProvidersV2Module,
     DelegationAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
