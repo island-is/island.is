@@ -26,8 +26,9 @@ export const ListSettings = () => {
 
   const predeterminedLists = [
     { label: 'Landalisti', value: ListTypesEnum.COUNTRIES },
-    // { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
-    // { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
+    { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
+    { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
+    { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
   ]
 
   const selectedPredetermined =

@@ -566,9 +566,3 @@ export const generateApplePayDecryptedChargeRequestOptions = ({
     body: JSON.stringify(body),
   }
 }
-
-/** Masks all but the last 4 digits for safe logging */
-export const redactCardNumber = (cardNumber: string): string => {
-  if (cardNumber.length <= 4) return '****'
-  return '*'.repeat(cardNumber.length - 4) + cardNumber.slice(-4)
-}
