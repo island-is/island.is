@@ -188,29 +188,40 @@ export class ScopeService {
           model: ApiScopeCategory,
           as: 'categories',
           attributes: ['categoryId'],
-          required: true,
+          required: false,
         },
       ],
     })
 
-    // Group scopes by category
+    // Group scopes by category. Scopes with no category go into a
+    // special __none__ bucket so they surface in the uncategorized group.
+    const UNCATEGORIZED_KEY = '__none__'
     const categoryMap = new Map<string, ScopeDTO[]>()
 
     for (const scope of scopes) {
       const categoryIds = scope.categories?.map((c) => c.categoryId) ?? []
 
-      for (const categoryId of categoryIds) {
-        if (!categoryMap.has(categoryId)) {
-          categoryMap.set(categoryId, [])
+      const scopeDto = {
+        name: scope.name,
+        displayName: scope.displayName,
+        description: scope.description || '',
+        domainName: scope.domainName,
+        order: scope.order || 0,
+        allowsWrite: scope.allowsWrite ?? false,
+      } as ScopeDTO
+
+      if (categoryIds.length === 0) {
+        if (!categoryMap.has(UNCATEGORIZED_KEY)) {
+          categoryMap.set(UNCATEGORIZED_KEY, [])
         }
-        categoryMap.get(categoryId)!.push({
-          name: scope.name,
-          displayName: scope.displayName,
-          description: scope.description || '',
-          domainName: scope.domainName,
-          order: scope.order || 0,
-          allowsWrite: scope.allowsWrite ?? false,
-        } as ScopeDTO)
+        categoryMap.get(UNCATEGORIZED_KEY)!.push(scopeDto)
+      } else {
+        for (const categoryId of categoryIds) {
+          if (!categoryMap.has(categoryId)) {
+            categoryMap.set(categoryId, [])
+          }
+          categoryMap.get(categoryId)!.push(scopeDto)
+        }
       }
     }
 
@@ -230,14 +241,15 @@ export class ScopeService {
       .filter((category) => category.scopes.length > 0)
       .sort((a, b) => a.title.localeCompare(b.title))
 
-    // Collect orphaned scopes whose categoryId no longer exists in CMS
-    // (excluding virtual categories which are handled separately)
+    // Collect orphaned scopes: either no category at all (__none__) or
+    // a categoryId that no longer exists in CMS (excluding virtual categories)
     const virtualCategoryIds = new Set<string>([ISLAND_IS_CATEGORY.id])
     const orphanedScopes = new Map<string, ScopeDTO>()
     for (const [categoryId, catScopes] of categoryMap.entries()) {
       if (
-        !resolvedCategoryIds.has(categoryId) &&
-        !virtualCategoryIds.has(categoryId)
+        categoryId === UNCATEGORIZED_KEY ||
+        (!resolvedCategoryIds.has(categoryId) &&
+          !virtualCategoryIds.has(categoryId))
       ) {
         for (const scope of catScopes) {
           orphanedScopes.set(scope.name, scope)
