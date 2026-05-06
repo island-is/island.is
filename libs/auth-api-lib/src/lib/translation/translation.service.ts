@@ -90,7 +90,6 @@ export class TranslationService {
       },
       limit: count,
       offset,
-      distinct: true,
       order: ['language', 'className', 'key', 'property'],
     })
   }
@@ -123,7 +122,6 @@ export class TranslationService {
       },
       limit: count,
       offset,
-      distinct: true,
       order: ['isoKey'],
     })
   }

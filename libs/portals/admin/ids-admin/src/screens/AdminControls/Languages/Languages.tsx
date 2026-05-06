@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useLoaderData, useNavigation } from 'react-router-dom'
 
 import { Box, Button, FilterInput } from '@island.is/island-ui/core'

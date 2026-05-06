@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   Box,
