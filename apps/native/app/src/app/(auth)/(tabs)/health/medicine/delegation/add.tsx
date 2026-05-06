@@ -1,12 +1,10 @@
+import { router } from 'expo-router'
 import * as kennitala from 'kennitala'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView, View } from 'react-native'
-import { router, Stack } from 'expo-router'
+import { ScrollView, View } from 'react-native'
 import styled from 'styled-components/native'
 
-import addMonths from 'date-fns/addMonths'
-import addYears from 'date-fns/addYears'
 import {
   useIdentityQueryLazyQuery,
   usePostMedicineDelegationMutation,
@@ -15,11 +13,12 @@ import {
   Button,
   Checkbox,
   DatePickerInput,
-  NavigationBarSheet,
   Tag,
   TextField,
-  Typography,
+  Typography
 } from '@/ui'
+import addMonths from 'date-fns/addMonths'
+import addYears from 'date-fns/addYears'
 import { StackScreen } from '../../../../../../components/stack-screen'
 
 const Host = styled(View)`
@@ -66,6 +65,7 @@ const QuickLabel = styled(View)`
 `
 
 const Actions = styled(View)`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   gap: ${({ theme }) => theme.spacing[2]}px;
 `
@@ -326,18 +326,18 @@ export default function MedicineDelegationFormScreen() {
           {delegateError && (
             <ErrorMessage variant="body3">{delegateError}</ErrorMessage>
           )}
+          <Actions>
+            <Button
+              title={intl.formatMessage({
+                id: 'health.medicineDelegation.form.submit',
+              })}
+              onPress={createMedicineDelegation}
+              disabled={!isValid || loadingDelegateMedicineDelegation}
+              loading={loadingDelegateMedicineDelegation}
+            />
+          </Actions>
         </View>
 
-        <Actions>
-          <Button
-            title={intl.formatMessage({
-              id: 'health.medicineDelegation.form.submit',
-            })}
-            onPress={createMedicineDelegation}
-            disabled={!isValid || loadingDelegateMedicineDelegation}
-            loading={loadingDelegateMedicineDelegation}
-          />
-        </Actions>
       </FormContainer>
     </Content>
   )
