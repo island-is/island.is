@@ -26,12 +26,14 @@ import { theme } from '@island.is/island-ui/theme'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import cn from 'classnames'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
   height: number
   pathname: string
   children: ReactNode
+  isDashboardV2?: boolean
 }
 type FullWidthLayoutProps = {
   isDashboard: boolean
@@ -49,6 +51,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   isDocuments,
   isFinance,
   isSearch,
+  isDashboardV2,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -69,11 +72,10 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     <Box
       as="main"
       component="main"
-      className={
-        isDocuments && hasDocumentsDelegationAccess
-          ? styles.fullWidthSplit
-          : undefined
-      }
+      className={cn(
+        isDocuments && hasDocumentsDelegationAccess ? styles.fullWidthSplit : '',
+        isDashboardV2 ? 'my-pages-hero-bg' : '',
+      )}
       paddingTop={
         isDocuments || isDashboard ? undefined : isFinance ? [0, 0, 9] : 9
       }

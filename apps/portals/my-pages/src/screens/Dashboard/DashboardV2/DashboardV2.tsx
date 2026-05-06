@@ -5,6 +5,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import * as styles from './DashboardV2.css'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
@@ -42,8 +43,8 @@ export const DashboardV2 = () => {
 
   return (
     <Box>
+      <Greeting compact />
       <GridContainer>
-        <Greeting compact />
         <Box paddingBottom={[1, 2]}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
@@ -56,19 +57,24 @@ export const DashboardV2 = () => {
             </GridColumn>
           </GridRow>
         </Box>
-        <Box paddingBottom={6}>
-          <Text
-            variant="eyebrow"
-            as="h2"
-            color="purple400"
-            marginBottom={2}
-            marginTop={2}
-          >
-            {formatMessage(m.moreCategories)}
-          </Text>
-          <DashboardModules items={rest} isMobile={isMobile} />
-        </Box>
       </GridContainer>
+
+      <div className={styles.whiteSection}>
+        <GridContainer>
+          <Box paddingBottom={6}>
+            <Text
+              variant="eyebrow"
+              as="h2"
+              color="purple400"
+              marginBottom={2}
+              marginTop={2}
+            >
+              {formatMessage(m.moreCategories)}
+            </Text>
+            <DashboardModules items={rest} isMobile={isMobile} />
+          </Box>
+        </GridContainer>
+      </div>
     </Box>
   )
 }

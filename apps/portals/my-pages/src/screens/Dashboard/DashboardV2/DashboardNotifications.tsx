@@ -32,6 +32,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
   return (
     <Box
       position="relative"
+      background="white"
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"

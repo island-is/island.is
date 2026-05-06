@@ -1,6 +1,20 @@
 import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
+globalStyle('body.my-pages-hero-bg', {
+  backgroundColor: '#F2F7FF',
+})
+
+globalStyle('main.my-pages-hero-bg', {
+  vars: {
+    '--my-pages-hero-blue-height': '380px',
+  },
+  backgroundColor: 'white',
+  backgroundImage:
+    'linear-gradient(to bottom, #F2F7FF 0, #F2F7FF var(--my-pages-hero-blue-height), white var(--my-pages-hero-blue-height), white 100%)',
+  backgroundRepeat: 'no-repeat',
+})
+
 export const wrap = style({
   marginBottom: -theme.spacing[1],
 })
