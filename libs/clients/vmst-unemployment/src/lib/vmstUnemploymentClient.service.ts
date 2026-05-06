@@ -26,7 +26,6 @@ import {
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
-  GaldurXRoadAPIModelsResolveApplicantResponse,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurXRoadAPIModelsAvailableActions,
