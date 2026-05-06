@@ -51,7 +51,9 @@ export const languagesAction: WrappedActionFn =
               input: {
                 isoKey: formData.get('isoKey') as string,
                 description: formData.get('description') as string,
-                englishDescription: formData.get('englishDescription') as string,
+                englishDescription: formData.get(
+                  'englishDescription',
+                ) as string,
                 environments: parseEnvironments(formData),
               },
             },
@@ -74,7 +76,9 @@ export const languagesAction: WrappedActionFn =
               input: {
                 isoKey: formData.get('isoKey') as string,
                 description: formData.get('description') as string,
-                englishDescription: formData.get('englishDescription') as string,
+                englishDescription: formData.get(
+                  'englishDescription',
+                ) as string,
                 environments: parseEnvironments(formData),
               },
             },

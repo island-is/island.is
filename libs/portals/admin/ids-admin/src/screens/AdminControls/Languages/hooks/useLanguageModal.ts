@@ -12,10 +12,7 @@ import {
   authAdminEnvironments,
   pickBestEnvironment,
 } from '../../../../utils/environments'
-import {
-  LanguageIntent,
-  type LanguagesActionResult,
-} from '../Languages.action'
+import { LanguageIntent, type LanguagesActionResult } from '../Languages.action'
 import {
   GetLanguageDocument,
   type GetLanguageQuery,
