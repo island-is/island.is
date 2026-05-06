@@ -243,7 +243,10 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     })
 
     it('does nothing when links array is empty', async () => {
-      const result = await service.assignDefendantPoliceCaseNumbers('case-1', [])
+      const result = await service.assignDefendantPoliceCaseNumbers(
+        'case-1',
+        [],
+      )
 
       expect(result).toEqual([])
       expect(mockModel.sequelize.transaction).not.toHaveBeenCalled()
