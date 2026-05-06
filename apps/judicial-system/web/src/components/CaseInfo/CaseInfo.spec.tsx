@@ -1,11 +1,29 @@
+import { render, screen } from '@testing-library/react'
+
 import {
+  AppealCaseState,
+  CaseState,
   CaseType,
   Defendant,
   Gender,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { mockCase } from '../../utils/mocks'
+import {
+  IntlProviderWrapper,
+  UserContextWrapper,
+} from '../../utils/testHelpers'
 import { createFormatMessage } from '../../utils/testHelpers.logic'
-import { getDefendantLabel } from './CaseInfo'
+import { CourtCaseInfo, getDefendantLabel } from './CaseInfo'
+
+jest.mock('next/router', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+}))
+
+jest.mock('@island.is/judicial-system-web/src/utils/hooks', () => ({
+  useCase: () => ({ updateCase: jest.fn() }),
+}))
 
 describe('getDefendantLabel - Indictment', () => {
   const formatMessage = createFormatMessage()
@@ -51,5 +69,66 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
   test('should render label for multiple defendants', () => {
     const defendants = [{}, {}] as Defendant[]
     expect(fn(defendants)).toBe('varnaraðilar')
+  })
+})
+
+describe('CourtCaseInfo - reopen button visibility', () => {
+  const completedIndictmentCase = {
+    ...mockCase(CaseType.INDICTMENT),
+    state: CaseState.COMPLETED,
+  }
+
+  const renderComponent = (
+    userRole: UserRole,
+    workingCase = completedIndictmentCase,
+  ) =>
+    render(
+      <IntlProviderWrapper>
+        <UserContextWrapper userRole={userRole}>
+          <CourtCaseInfo workingCase={workingCase} />
+        </UserContextWrapper>
+      </IntlProviderWrapper>,
+    )
+
+  it('shows the reopen button to a district court user when there is no appeal', () => {
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE)
+
+    expect(
+      screen.getByRole('button', { name: 'Enduropna mál' }),
+    ).toBeInTheDocument()
+  })
+
+  it('hides the reopen button from non-district-court users', () => {
+    renderComponent(UserRole.PROSECUTOR)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the reopen button when there is an active appeal', () => {
+    const caseWithActiveAppeal = {
+      ...completedIndictmentCase,
+      appealCase: { id: 'appeal_id', appealState: AppealCaseState.RECEIVED },
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, caseWithActiveAppeal)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the reopen button when the appeal is completed', () => {
+    const caseWithCompletedAppeal = {
+      ...completedIndictmentCase,
+      appealCase: { id: 'appeal_id', appealState: AppealCaseState.COMPLETED },
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, caseWithCompletedAppeal)
+
+    expect(
+      screen.getByRole('button', { name: 'Enduropna mál' }),
+    ).toBeInTheDocument()
   })
 })
