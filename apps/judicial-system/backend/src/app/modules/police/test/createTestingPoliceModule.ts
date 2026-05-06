@@ -62,9 +62,7 @@ export const createTestingPoliceModule = async () => {
       {
         provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
-          assignDefendantPoliceCaseNumbers: jest
-            .fn()
-            .mockResolvedValue([]),
+          assignDefendantPoliceCaseNumbers: jest.fn().mockResolvedValue([]),
         },
       },
       {
@@ -91,8 +89,9 @@ export const createTestingPoliceModule = async () => {
       CaseDefendantPoliceCaseNumberRepositoryService,
     )
 
-  const indictmentCountService =
-    policeModule.get<IndictmentCountService>(IndictmentCountService)
+  const indictmentCountService = policeModule.get<IndictmentCountService>(
+    IndictmentCountService,
+  )
 
   policeModule.close()
 
