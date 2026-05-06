@@ -324,7 +324,9 @@ describe('CaseInterceptor - reopenReason mapping', () => {
       }
 
       mockRequest.mockImplementationOnce(() => ({
-        user: { currentUser: { role: UserRole.DISTRICT_COURT_JUDGE, nationalId } },
+        user: {
+          currentUser: { role: UserRole.DISTRICT_COURT_JUDGE, nationalId },
+        },
       }))
       mockHandle.mockReturnValueOnce(of(theCase))
 
@@ -341,7 +343,9 @@ describe('CaseInterceptor - reopenReason mapping', () => {
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({
-        user: { currentUser: { role: UserRole.DISTRICT_COURT_JUDGE, nationalId } },
+        user: {
+          currentUser: { role: UserRole.DISTRICT_COURT_JUDGE, nationalId },
+        },
       }))
       mockHandle.mockReturnValueOnce(of(makeCase([])))
 
