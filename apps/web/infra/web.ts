@@ -31,7 +31,7 @@ export const serviceSetup = (services: {
         staging: '',
         prod: 'https://islandis.matomo.cloud',
       },
-      MATOMO_SITE_ID: { dev: '2', staging: '2', prod: '2' },
+      MATOMO_SITE_ID: { dev: '2', staging: '2', prod: '1' },
       DISABLE_API_CATALOGUE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_SYSLUMENN_PAGE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_ORGANIZATION_CHATBOT: {
