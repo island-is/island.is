@@ -24,18 +24,26 @@ export const PermissionSecurityAndCapabilities = () => {
   const { selectedPermission, permission } = usePermission()
   const { allowsWrite, requiresConfirmation } = selectedPermission
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [isCapabilitiesEnabled, setCapabilitiesEnabled] = useState(false)
   const [isStepUpAuthEnabled, setStepUpAuthEnabled] = useState(false)
 
   useEffect(() => {
-    const checkStepUpAuthEnabled = async () => {
-      const stepUpAuthEnabled = await featureFlagClient.getValue(
-        Features.isIDSAdminStepUpAuthEnabled,
-        false,
-      )
+    const checkFlags = async () => {
+      const [capabilitiesEnabled, stepUpAuthEnabled] = await Promise.all([
+        featureFlagClient.getValue(
+          Features.isNewPermissionsOptionsEnabled,
+          false,
+        ),
+        featureFlagClient.getValue(
+          Features.isIDSAdminStepUpAuthEnabled,
+          false,
+        ),
+      ])
+      setCapabilitiesEnabled(capabilitiesEnabled)
       setStepUpAuthEnabled(stepUpAuthEnabled)
     }
 
-    checkStepUpAuthEnabled()
+    checkFlags()
   }, [featureFlagClient])
 
   const [inputValues, setInputValues] = useEnvironmentState<{
@@ -45,6 +53,10 @@ export const PermissionSecurityAndCapabilities = () => {
     allowsWrite,
     requiresConfirmation,
   })
+
+  if (!isCapabilitiesEnabled) {
+    return null
+  }
 
   return (
     <FormCard

@@ -170,8 +170,9 @@ export class ScopeService {
       lang,
     )
 
-    // Fetch all scopes with their category associations
-    const scopes = await this.delegationResourcesService.findScopesInternal({
+    // Fetch all scopes with their category associations, excluding
+    // admin scopes which are not relevant.
+    const allScopes = await this.delegationResourcesService.findScopesInternal({
       user,
       language: lang,
       direction,
@@ -192,6 +193,9 @@ export class ScopeService {
         },
       ],
     })
+    const scopes = allScopes.filter(
+      (s) => s.domainName !== '@admin.island.is',
+    )
 
     // Group scopes by category. Scopes with no category go into a
     // special __none__ bucket so they surface in the uncategorized group.
@@ -257,16 +261,6 @@ export class ScopeService {
       }
     }
 
-    if (orphanedScopes.size > 0) {
-      result.push({
-        id: '__uncategorized__',
-        title: lang === 'is' ? 'Annað' : 'Other',
-        description: '',
-        slug: 'uncategorized-category',
-        scopes: Array.from(orphanedScopes.values()),
-      })
-    }
-
     // Virtual "Þjónusta ísland.is" category — scopes assigned to this
     // category ID in the DB won't match a CMS category, so build it here.
     const islandIsScopes = categoryMap.get(ISLAND_IS_CATEGORY.id)
@@ -278,6 +272,17 @@ export class ScopeService {
           ISLAND_IS_CATEGORY.description[lang === 'en' ? 'en' : 'is'],
         slug: ISLAND_IS_CATEGORY.slug,
         scopes: islandIsScopes,
+      })
+    }
+
+    // Uncategorized always last
+    if (orphanedScopes.size > 0) {
+      result.push({
+        id: '__uncategorized__',
+        title: lang === 'is' ? 'Annað' : 'Other',
+        description: '',
+        slug: 'uncategorized',
+        scopes: Array.from(orphanedScopes.values()),
       })
     }
 
@@ -362,17 +367,6 @@ export class ScopeService {
       }
     }
 
-    if (orphanedScopes.size > 0) {
-      result.push({
-        id: '__uncategorized__',
-        title: lang === 'is' ? 'Annað' : 'Other',
-        description: '',
-        slug: 'uncategorized-tag',
-        showAsCard: true,
-        scopes: Array.from(orphanedScopes.values()),
-      })
-    }
-
     // If the "Sveitarfélag" tag exists with scopes, look up the user's
     // municipality and extract matching scopes into a virtual tag.
     // Scopes remain in their original tag as well.
@@ -405,6 +399,18 @@ export class ScopeService {
           ]
         }
       }
+    }
+
+    // Uncategorized always last
+    if (orphanedScopes.size > 0) {
+      result.push({
+        id: '__uncategorized__',
+        title: lang === 'is' ? 'Annað' : 'Other',
+        description: '',
+        slug: 'uncategorized',
+        showAsCard: true,
+        scopes: Array.from(orphanedScopes.values()),
+      })
     }
 
     return result
