@@ -18,7 +18,7 @@ interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
 }
 
-function Permissions({ allowedScopes }: PermissionsProps) {
+const Permissions = ({ allowedScopes }: PermissionsProps) => {
   const { formatMessage, locale } = useLocale()
   const { tenant } = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false)

@@ -114,10 +114,11 @@ const NewPermit: React.FC = () => {
       introComponent={
         <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
       }
-      serviceProviderSlug="landlaeknir"
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirPatientPermitsTooltip,
-      )}
+      serviceProvider={{
+        slug: 'landlaeknir',
+        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {step === 1 && (
         <Countries

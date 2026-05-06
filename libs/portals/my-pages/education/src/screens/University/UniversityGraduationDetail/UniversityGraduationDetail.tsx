@@ -1,4 +1,8 @@
-import { UniversityCareersUniversityId } from '@island.is/api/schema'
+import {
+  LocaleEnum,
+  UniversityCareersStudyType,
+  UniversityCareersUniversityId,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -10,7 +14,6 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatNationalId } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   InfoLineStack,
@@ -34,7 +37,11 @@ type UseParams = {
   uni: string
 }
 
-export const UniversityGraduationDetail = () => {
+type Props = {
+  studyType?: UniversityCareersStudyType
+}
+
+export const UniversityGraduationDetail = ({ studyType }: Props) => {
   useNamespaces('sp.education-graduation')
   const { id, uni } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
@@ -43,7 +50,7 @@ export const UniversityGraduationDetail = () => {
     variables: {
       input: {
         trackNumber: parseInt(id),
-        locale: lang,
+        locale: lang === 'is' ? LocaleEnum.Is : LocaleEnum.En,
         universityId:
           mapSlugToUniversity(uni) ??
           UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND,
@@ -69,11 +76,17 @@ export const UniversityGraduationDetail = () => {
   const fileDownloadDisplay: 'dropdown' | 'inline' | undefined =
     downloadCount > 2 ? 'dropdown' : downloadCount > 0 ? 'inline' : undefined
 
+  const serviceProviderSlug = mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'
+
   return (
     <IntroWrapper
-      title={m.educationGraduation}
+      title={
+        studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+          ? m.educationMicroCredentials
+          : m.educationGraduation
+      }
       intro={text?.description || ''}
-      serviceProviderSlug={mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'}
+      serviceProvider={{ slug: serviceProviderSlug }}
     >
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">
@@ -97,7 +110,7 @@ export const UniversityGraduationDetail = () => {
                     }
                     return {
                       onClick: () => formSubmit(`${item.downloadServiceURL}`),
-                      title: item.displayName,
+                      title: item.fileName,
                     }
                   })
                   .filter(isDefined)}
@@ -112,14 +125,14 @@ export const UniversityGraduationDetail = () => {
                   }
                   return (
                     <Button
-                      key={`download-${item.displayName}`}
+                      key={`download-${item.fileName}`}
                       variant="utility"
                       size="small"
                       icon="document"
                       iconType="outline"
                       onClick={() => formSubmit(`${item.downloadServiceURL}`)}
                     >
-                      {item.displayName}
+                      {item.fileName}
                     </Button>
                   )
                 })}
@@ -164,36 +177,44 @@ export const UniversityGraduationDetail = () => {
               loading={loading}
               content={graduationDate}
             />
-            {studentInfo?.degree && (
+            {(studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+              ? studentInfo?.level
+              : studentInfo?.degree) && (
               <InfoLine
-                label={formatMessage(uniMessages.degree)}
+                label={formatMessage(
+                  studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+                    ? uniMessages.studyLevel
+                    : uniMessages.degree,
+                )}
                 loading={loading}
-                content={formatNationalId(studentInfo.degree)}
+                content={
+                  studyType === UniversityCareersStudyType.MICRO_CREDENTIALS
+                    ? studentInfo?.level ?? ''
+                    : studentInfo?.degree ?? ''
+                }
               />
             )}
             {studentInfo?.studyProgram && (
               <InfoLine
                 label={formatMessage(uniMessages.program)}
                 loading={loading}
-                content={formatNationalId(studentInfo?.studyProgram ?? '')}
+                content={studentInfo?.studyProgram ?? ''}
               />
             )}
             <InfoLine
               label={formatMessage(uniMessages.faculty)}
               loading={loading}
-              content={formatNationalId(studentInfo?.faculty ?? '')}
+              content={studentInfo?.faculty ?? ''}
             />
             <InfoLine
               label={formatMessage(uniMessages.school)}
               loading={loading}
-              content={formatNationalId(studentInfo?.school ?? '')}
+              content={studentInfo?.school ?? ''}
             />
             <InfoLine
               label={formatMessage(uniMessages.institution)}
               loading={loading}
-              content={formatNationalId(
-                studentInfo?.institution?.displayName ?? '',
-              )}
+              content={studentInfo?.institution?.displayName ?? ''}
             />
           </InfoLineStack>
           <Box marginTop={5}>

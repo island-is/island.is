@@ -1,4 +1,5 @@
 import { FormSystemApplication } from '@island.is/api/schema'
+import { ApplicationStatus } from '@island.is/form-system/enums'
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { useNamespaces } from '@island.is/localization'
 import {
@@ -44,6 +45,7 @@ export const ApplicationProvider: React.FC<{
     reducers,
     {
       ...initialState,
+      submitted: app.status === ApplicationStatus.COMPLETED,
       application: app,
     },
     initialReducer,
@@ -56,6 +58,21 @@ export const ApplicationProvider: React.FC<{
       console.log('Application state changed:', state)
     }
   }, [state])
+
+  useEffect(() => {
+    if (application.status !== ApplicationStatus.COMPLETED) return
+    dispatch({
+      type: 'SUBMITTED',
+      payload: {
+        submitted: true,
+        screenError: {
+          hasError: false,
+          title: { is: '', en: '' },
+          message: { is: '', en: '' },
+        },
+      },
+    })
+  }, [application.status])
 
   return (
     <ApplicationContext.Provider value={contextValue}>

@@ -18,7 +18,10 @@ import { UserShip } from '../models/userShip.model'
 import { UserShipsCollection } from '../models/userShipsCollection.model'
 import { UserShipsService } from '../services/userShips.service'
 import { UserShipInput } from '../dto/userShip.input'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
+@CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.ships)
 @FeatureFlag(Features.isServicePortalUserShipsPageEnabled)

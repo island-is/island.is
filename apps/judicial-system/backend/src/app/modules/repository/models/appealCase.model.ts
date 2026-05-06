@@ -20,6 +20,7 @@ import {
 
 import { AppealEventLog } from './appealEventLog.model'
 import { Case } from './case.model'
+import { CaseFile } from './caseFile.model'
 import { User } from './user.model'
 
 @Table({
@@ -48,7 +49,7 @@ export class AppealCase extends Model {
    * The surrogate key of the case
    **********/
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID, allowNull: false, unique: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
   caseId!: string
 
@@ -58,6 +59,23 @@ export class AppealCase extends Model {
   @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
+
+  /**********
+   * The surrogate key of the ruling order file being appealed — null for
+   * case-level appeals. Uniqueness of (caseId, rulingFileId) is enforced in
+   * the DB via a composite UNIQUE index with NULLS NOT DISTINCT.
+   **********/
+  @ForeignKey(() => CaseFile)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  rulingFileId?: string
+
+  /**********
+   * The ruling order file being appealed
+   **********/
+  @BelongsTo(() => CaseFile, 'rulingFileId')
+  @ApiPropertyOptional({ type: () => CaseFile })
+  rulingFile?: CaseFile
 
   /**********
    * The case appeal state
@@ -83,20 +101,6 @@ export class AppealCase extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   appealReceivedByCourtDate?: Date
-
-  /**********
-   * The date and time when the prosecutor appeal statement was sent
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  prosecutorStatementDate?: Date
-
-  /**********
-   * The date and time when the defendant appeal statement was sent
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  defendantStatementDate?: Date
 
   /**********
    * The surrogate key of the assistant assigned to the appeal case
