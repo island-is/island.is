@@ -34,6 +34,13 @@ export const DashboardV2 = () => {
   const IS_COMPANY = isCompany(userInfo)
 
   useEffect(() => {
+    document.body.classList.add('my-pages-hero-bg')
+    return () => {
+      document.body.classList.remove('my-pages-hero-bg')
+    }
+  }, [])
+
+  useEffect(() => {
     PlausiblePageviewDetail(
       ServicePortalPaths.Root,
       IS_COMPANY ? 'company' : 'person',

@@ -29,12 +29,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const user = useUserInfo()
   const isDelegation = checkDelegation(user)
   const featureFlagClient = useFeatureFlagClient()
-  const [useHeroBackground, setUseHeroBackground] = useState(false)
-
-  const isDashboardRoot = !!matchPath(
-    { path: ServicePortalPaths.Root, end: true },
-    pathname,
-  )
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children
@@ -73,27 +67,10 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    if (!isDashboardRoot) {
-      setUseHeroBackground(false)
-      return
-    }
-    featureFlagClient
-      .getValue('isServicePortalDashboardV2PageEnabled', false)
-      .then((value) => setUseHeroBackground(Boolean(value)))
-  }, [featureFlagClient, isDashboardRoot])
-
   const disableSearch = [
     ...Object.values(ServicePortalPaths),
     ...Object.values(SearchPaths),
   ].find((route) => matchPath(route, pathname))
-
-  useEffect(() => {
-    document.body.classList.toggle('my-pages-hero-bg', useHeroBackground)
-    return () => {
-      document.body.classList.remove('my-pages-hero-bg')
-    }
-  }, [useHeroBackground])
 
   return (
     <HeaderVisibilityContext.Provider
