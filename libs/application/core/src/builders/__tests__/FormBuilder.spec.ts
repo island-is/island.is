@@ -231,6 +231,7 @@ describe('FormBuilder', () => {
       id: 'submit',
       placement: 'footer',
       refetchApplicationAfterSubmit: true,
+      renderLongErrors: false,
       type: FieldTypes.SUBMIT,
       component: FieldComponents.SUBMIT,
     })

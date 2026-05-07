@@ -1,4 +1,5 @@
 import {
+  BankAccountField,
   DataProviderBuilderItem,
   DataProviderItem,
   DataProviderPermissionItem,
@@ -15,6 +16,7 @@ import {
   SubmitField,
 } from '@island.is/application/types'
 import { PageBuilder } from './PageBuilder'
+import { buildBankAccountField } from '../lib/fieldBuilders'
 
 type SectionBuilderOptions = Omit<Section, 'children' | 'id' | 'title' | 'type'>
 type SubSectionBuilderOptions = Omit<
@@ -40,8 +42,14 @@ type SubmitFieldOptions = {
   refetchApplicationAfterSubmit?: SubmitField['refetchApplicationAfterSubmit']
   title?: FormText
 }
+type BankAccountFieldOptions = Omit<
+  BankAccountField,
+  'children' | 'component' | 'id' | 'title' | 'type'
+>
 
-const toDataProviderItem = (data: DataProviderBuilderItem): DataProviderItem => ({
+const toDataProviderItem = (
+  data: DataProviderBuilderItem,
+): DataProviderItem => ({
   id: data.provider?.externalDataId ?? data.provider?.action ?? '',
   action: data.provider?.actionId,
   order: data.provider?.order,
@@ -57,6 +65,7 @@ const toSubmitField = (data: SubmitFieldOptions): SubmitField => ({
   actions: data.actions,
   placement: data.placement ?? 'footer',
   refetchApplicationAfterSubmit: data.refetchApplicationAfterSubmit ?? false,
+  renderLongErrors: false,
   doesNotRequireAnswer: true,
   children: undefined,
   type: FieldTypes.SUBMIT,
@@ -83,6 +92,15 @@ export class SubSectionBuilder<TSchema = unknown> {
     const pageBuilder = new PageBuilder<TSchema>(id, title)
     builderFn(pageBuilder)
     this.children.push(pageBuilder.build())
+    return this
+  }
+
+  addBankAccountField(
+    id: string,
+    title: FormText,
+    opts?: BankAccountFieldOptions,
+  ): this {
+    this.children.push(buildBankAccountField({ id, title, ...opts }))
     return this
   }
 

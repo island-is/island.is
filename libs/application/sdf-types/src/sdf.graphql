@@ -166,6 +166,7 @@ type SelectField {
   placeholder: String
   required: Boolean!
   disabled: Boolean!
+  isMulti: Boolean!
   options: [SelectOption!]!
   onSelectRefetchTemplateApis: [String!]
   refetchTargets: [String!]

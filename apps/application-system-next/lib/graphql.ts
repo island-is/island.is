@@ -149,6 +149,7 @@ export interface SdfComponentData {
   defaultValue?: string
   width?: string
   options?: { label: string; value: string }[]
+  isMulti?: boolean
   strong?: boolean
   large?: boolean
   spacing?: number
@@ -293,6 +294,7 @@ export const GET_SCREEN_QUERY = `
             placeholder
             required
             disabled
+            isMulti
             options { label value }
             width
             onSelectRefetchTemplateApis
@@ -699,7 +701,7 @@ export const EXECUTE_ACTION_MUTATION = `
         components {
           __typename
           ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfSelectField { id label placeholder required disabled options { label value } width onSelectRefetchTemplateApis refetchTargets clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfSelectField { id label placeholder required disabled isMulti options { label value } width onSelectRefetchTemplateApis refetchTargets clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSearchField { id label placeholder required disabled options { label value } searchAction minQueryLength width onSelectRefetchTemplateApis refetchTargets clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfDataTableField { id label header rows { id cells expandable { rows { id label cells hasCheckbox checkboxKey inputs { key label type min max format suffix } payload defaultValues } } } clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfRadioField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }

@@ -125,6 +125,11 @@ export class ComponentDto {
   options?: unknown
 
   @ApiPropertyOptional({
+    description: 'Whether a select component accepts multiple values.',
+  })
+  isMulti?: boolean
+
+  @ApiPropertyOptional({
     description:
       'Template API actions to run when this select changes (SDF inline REFETCH).',
     type: [String],

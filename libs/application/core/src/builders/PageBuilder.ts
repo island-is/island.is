@@ -1,19 +1,73 @@
 import {
   AllOrAny,
   Application,
+  AsyncSelectField,
+  BankAccountField,
+  CheckboxField,
+  AccordionField,
+  CompanySearchField,
   Comparators,
   Condition,
+  CustomField,
+  DateField,
   DynamicCheck,
+  DescriptionField,
+  DisplayField,
+  DividerField,
   Field,
   FieldTypes,
+  FileUploadField,
   FormItemTypes,
   MultiField,
+  NationalIdWithNameField,
+  PhoneField,
+  RadioField,
+  RecordObject,
+  SelectField,
+  SliderField,
   StaticCheck,
   FormText,
   StaticText,
   DataTableRow,
+  OverviewField,
+  SubmitField,
+  TextField,
+  TitleField,
+  FieldsRepeaterField,
+  PaginatedSearchableTableField,
+  StaticTableField,
+  TableRepeaterField,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { BoxProps } from '@island.is/island-ui/core/types'
+import {
+  buildAccordionField,
+  buildAsyncSelectField,
+  buildBankAccountField,
+  buildCheckboxField,
+  buildCompanySearchField,
+  buildCustomField,
+  buildDateField,
+  buildDescriptionField,
+  buildDisplayField,
+  buildDividerField,
+  buildFileUploadField,
+  buildFieldsRepeaterField,
+  buildNationalIdWithNameField,
+  buildOverviewField,
+  buildPaginatedSearchableTableField,
+  buildPhoneField,
+  buildRadioField,
+  buildSelectField,
+  buildSliderField,
+  buildSubmitField,
+  buildStaticTableField,
+  buildTableRepeaterField,
+  buildTextField,
+  buildTitleField,
+  buildVehiclePermnoWithInfoField,
+} from '../lib/fieldBuilders'
+import { Locale } from '@island.is/shared/types'
 
 /** Builder-time field: satisfies `Field` while allowing extra props not on every union member. */
 type MutableField = Field & Record<string, unknown>
@@ -71,17 +125,90 @@ interface FieldOptions {
   maxSize?: number
 }
 
-type OptionList = Array<string | { label: string; value: string }>
-type DynamicOptions = (application: any) => OptionList
-
-interface RadioSelectOptions extends FieldOptions {
-  options: OptionList | DynamicOptions
+type FieldBuilderOptions<TField extends Field> = Omit<
+  TField,
+  'children' | 'component' | 'id' | 'title' | 'type'
+>
+type FieldBuilderOptionsWithTitle<TField extends Field> = Omit<
+  TField,
+  'children' | 'component' | 'id' | 'type'
+>
+type OptionList = Array<string | { label: FormText; value: string }>
+type DynamicOptions = (application: Application) => OptionList
+type AccordionFieldOptions = FieldBuilderOptions<AccordionField>
+type AsyncSelectFieldOptions = FieldBuilderOptions<AsyncSelectField>
+type BankAccountFieldOptions = FieldBuilderOptions<BankAccountField>
+type WithShowWhen = {
+  showWhen?: ShowWhen
 }
-
-/** Select-only: template API `action` names to run on SDF REFETCH when the value changes. */
-interface SelectFieldOptions extends RadioSelectOptions {
-  onSelectRefetch?: string[]
-  refetchTargets?: string[]
+type CheckboxFieldOptions = Omit<
+  FieldBuilderOptions<CheckboxField>,
+  'options'
+> &
+  WithShowWhen & {
+    options: OptionList | DynamicOptions | CheckboxField['options']
+  }
+type CompanySearchFieldOptions = FieldBuilderOptions<CompanySearchField>
+type DateFieldOptions = FieldBuilderOptions<DateField>
+type DescriptionFieldOptions = FieldBuilderOptions<DescriptionField>
+type DisplayFieldOptions = Omit<
+  DisplayField,
+  'children' | 'component' | 'id' | 'title' | 'type' | 'value'
+>
+type DividerFieldOptions = Omit<
+  DividerField,
+  'children' | 'component' | 'id' | 'title' | 'type'
+>
+type FileUploadFieldOptions = FieldBuilderOptions<FileUploadField>
+type FieldsRepeaterFieldOptions = FieldBuilderOptions<FieldsRepeaterField>
+type NationalIdWithNameFieldOptions =
+  FieldBuilderOptions<NationalIdWithNameField>
+type OverviewFieldOptions = FieldBuilderOptions<OverviewField>
+type PaginatedSearchableTableFieldOptions =
+  FieldBuilderOptionsWithTitle<PaginatedSearchableTableField>
+type PhoneFieldOptions = FieldBuilderOptions<PhoneField>
+type RadioFieldOptions = Omit<FieldBuilderOptions<RadioField>, 'options'> &
+  WithShowWhen & {
+    options: OptionList | DynamicOptions | RadioField['options']
+  }
+type SelectFieldOptions = Omit<FieldBuilderOptions<SelectField>, 'options'> &
+  WithShowWhen & {
+    onSelectRefetch?: string[]
+    options: OptionList | DynamicOptions | SelectField['options']
+    refetchTargets?: string[]
+  }
+type SliderFieldOptions = FieldBuilderOptions<SliderField>
+type SubmitFieldOptions = Omit<
+  SubmitField,
+  | 'children'
+  | 'component'
+  | 'doesNotRequireAnswer'
+  | 'id'
+  | 'placement'
+  | 'renderLongErrors'
+  | 'title'
+  | 'type'
+> & {
+  placement?: SubmitField['placement']
+  renderLongErrors?: SubmitField['renderLongErrors']
+}
+type TableRepeaterFieldOptions = FieldBuilderOptions<TableRepeaterField>
+type TextFieldOptions = FieldBuilderOptions<TextField> & WithShowWhen
+type TitleFieldOptions = Omit<
+  TitleField,
+  'children' | 'component' | 'id' | 'title' | 'type'
+>
+type VehiclePermnoWithInfoFieldOptions = Omit<
+  VehiclePermnoWithInfoField,
+  'children' | 'component' | 'id' | 'type'
+>
+type CustomFieldOptions = Omit<
+  CustomField,
+  'children' | 'component' | 'id' | 'props' | 'title' | 'type'
+>
+type PageBuilderOptions = {
+  description?: MultiField['description']
+  space?: MultiField['space']
 }
 
 interface SearchFieldOptions extends FieldOptions {
@@ -106,10 +233,33 @@ interface AlertMessageFieldOptions extends FieldOptions {
 interface StaticTableFieldOptions extends Omit<FieldOptions, 'rows'> {
   header: StaticText[] | ((application: Application) => StaticText[])
   rows: StaticText[][] | ((application: Application) => StaticText[][])
+  summary?: StaticTableField['summary']
 }
 
 interface HiddenInputWithWatchedValueFieldOptions extends FieldOptions {
   watchValue: string
+}
+
+interface LinkFieldOptions extends Omit<FieldOptions, 'variant'> {
+  condition?: Condition
+  iconProps?: unknown
+  justifyContent?: 'flexStart' | 'center' | 'flexEnd'
+  link?: string
+  s3key?: FormText
+  variant?: 'text' | 'ghost' | 'utility'
+}
+
+interface ExpandableDescriptionFieldOptions extends FieldOptions {
+  description: FormText
+  introText?: FormText
+  startExpanded?: boolean
+}
+
+interface MessageWithLinkButtonFieldOptions extends FieldOptions {
+  buttonTitle: FormText
+  message: FormText
+  messageColor?: string
+  url: string
 }
 
 const toStaticCheck = (c: SimpleCondition): StaticCheck => {
@@ -164,20 +314,24 @@ const resolveShowWhen = (showWhen: ShowWhen): Condition => {
   return toStaticCheck(showWhen as SimpleCondition)
 }
 
+const normalizeOptionList = (options: OptionList) =>
+  options.map((o) => (typeof o === 'string' ? { label: o, value: o } : o))
+
 const normalizeOptions = (
-  options: OptionList | DynamicOptions,
-): OptionList | DynamicOptions => {
+  options: OptionList | DynamicOptions | RadioField['options'],
+): RadioField['options'] => {
   if (typeof options === 'function') {
-    return (app: Application) => {
-      const resolved = options(app)
-      return resolved.map((o: string | { label: string; value: string }) =>
-        typeof o === 'string' ? { label: o, value: o } : o,
-      )
-    }
+    const resolveOptions = options as (
+      application: Application,
+      field: Field,
+      locale: Locale,
+    ) => OptionList
+
+    return (application, field, locale) =>
+      normalizeOptionList(resolveOptions(application, field, locale))
   }
-  return options.map((o) =>
-    typeof o === 'string' ? { label: o, value: o } : o,
-  )
+
+  return normalizeOptionList(options as OptionList) as RadioField['options']
 }
 
 const resolveWidth = (width?: 'full' | 'half'): 'full' | 'half' | undefined => {
@@ -213,7 +367,7 @@ const makeBaseField = (
   }
 
   if (opts?.defaultValue !== undefined) {
-    field.defaultValue = opts.defaultValue as any
+    field.defaultValue = opts.defaultValue
   }
 
   if (opts?.doesNotRequireAnswer !== undefined) {
@@ -307,55 +461,76 @@ const makeBaseField = (
 }
 
 export class PageBuilder<TSchema = unknown> {
-  private fields: MutableField[] = []
+  private fields: Field[] = []
   private _id: string
   private _title: FormText
+  private opts: PageBuilderOptions
+  private readonly _schema?: TSchema
 
-  constructor(id: string, title: FormText) {
+  constructor(id: string, title: FormText, opts?: PageBuilderOptions) {
     this._id = id
     this._title = title
+    this.opts = opts ?? {}
   }
 
-  addTextField(id: string, title: FormText, opts?: FieldOptions): this {
+  setDescription(description: MultiField['description']): this {
+    this.opts.description = description
+    return this
+  }
+
+  setSpace(space: MultiField['space']): this {
+    this.opts.space = space
+    return this
+  }
+
+  addFields(fields: Field[]): this {
+    fields.forEach((field) => this.fields.push(field))
+    return this
+  }
+
+  addTextField(id: string, title: FormText, opts?: TextFieldOptions): this {
+    const { showWhen, ...fieldOpts } = opts ?? {}
     this.fields.push(
-      makeBaseField(id, title, FieldTypes.TEXT, 'TextFormField', opts),
+      buildTextField({
+        id,
+        title,
+        ...fieldOpts,
+        ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
+      }),
     )
     return this
   }
 
   /** When `opts.width` is `'half'`, SDF renders options side-by-side (e.g. Já/Nei); `'full'` stacks one per row. */
-  addRadioField(id: string, title: FormText, opts?: RadioSelectOptions): this {
-    const field = makeBaseField(
-      id,
-      title,
-      FieldTypes.RADIO,
-      'RadioFormField',
-      opts,
+  addRadioField(id: string, title: FormText, opts: RadioFieldOptions): this {
+    this.fields.push(
+      buildRadioField({
+        id,
+        title,
+        ...opts,
+        options: normalizeOptions(opts.options),
+      }),
     )
-    if (opts?.options) {
-      field.options = normalizeOptions(opts.options)
-    }
-    this.fields.push(field)
     return this
   }
 
-  addSelectField(id: string, title: FormText, opts?: SelectFieldOptions): this {
-    const field = makeBaseField(
+  addSelectField(id: string, title: FormText, opts: SelectFieldOptions): this {
+    const { onSelectRefetch, refetchTargets, showWhen, ...fieldOpts } = opts
+    const field = buildSelectField({
       id,
       title,
-      FieldTypes.SELECT,
-      'SelectFormField',
-      opts,
-    )
-    if (opts?.options) {
-      field.options = normalizeOptions(opts.options)
+      ...fieldOpts,
+      options: normalizeOptions(fieldOpts.options),
+      ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
+    }) as MutableField
+
+    if (onSelectRefetch?.length) {
+      field.inlineRefetchTemplateApis = onSelectRefetch
     }
-    if (opts?.onSelectRefetch?.length) {
-      field.inlineRefetchTemplateApis = opts.onSelectRefetch
+    if (refetchTargets?.length) {
+      field.refetchTargets = refetchTargets
     }
-    if (opts?.refetchTargets?.length) {
-      field.refetchTargets = opts.refetchTargets
-    }
+
     this.fields.push(field)
     return this
   }
@@ -405,66 +580,83 @@ export class PageBuilder<TSchema = unknown> {
   addCheckboxField(
     id: string,
     title: FormText,
-    opts?: RadioSelectOptions,
+    opts: CheckboxFieldOptions,
   ): this {
-    const field = makeBaseField(
-      id,
-      title,
-      FieldTypes.CHECKBOX,
-      'CheckboxFormField',
-      opts,
-    )
-    if (opts?.options) {
-      field.options = normalizeOptions(opts.options)
-    }
-    this.fields.push(field)
-    return this
-  }
-
-  addDateField(id: string, title: FormText, opts?: FieldOptions): this {
     this.fields.push(
-      makeBaseField(id, title, FieldTypes.DATE, 'DateFormField', opts),
-    )
-    return this
-  }
-
-  addFileUploadField(id: string, title: FormText, opts?: FieldOptions): this {
-    this.fields.push(
-      makeBaseField(
+      buildCheckboxField({
         id,
         title,
-        FieldTypes.FILEUPLOAD,
-        'FileUploadFormField',
-        opts,
-      ),
+        ...opts,
+        options: normalizeOptions(opts.options),
+      }),
     )
     return this
   }
 
-  addSubmitField(id: string, title: FormText, opts?: FieldOptions): this {
-    this.fields.push(
-      makeBaseField(id, title, FieldTypes.SUBMIT, 'SubmitFormField', opts),
-    )
+  addDateField(id: string, title: FormText, opts?: DateFieldOptions): this {
+    this.fields.push(buildDateField({ id, title, ...opts }))
     return this
   }
 
-  addDescriptionField(id: string, title: FormText, opts?: FieldOptions): this {
-    this.fields.push(
-      makeBaseField(
-        id,
-        title,
-        FieldTypes.DESCRIPTION,
-        'DescriptionFormField',
-        opts,
-      ),
-    )
-    return this
-  }
-
-  addAlertMessageField(
+  addFileUploadField(
     id: string,
-    opts: AlertMessageFieldOptions,
+    title: FormText,
+    opts?: FileUploadFieldOptions,
   ): this {
+    this.fields.push(buildFileUploadField({ id, title, ...opts }))
+    return this
+  }
+
+  addSubmitField(id: string, title: FormText, opts: SubmitFieldOptions): this {
+    this.fields.push(buildSubmitField({ id, title, ...opts }))
+    return this
+  }
+
+  addDescriptionField(
+    id: string,
+    title: FormText,
+    opts?: DescriptionFieldOptions,
+  ): this {
+    this.fields.push(buildDescriptionField({ id, title, ...opts }))
+    return this
+  }
+
+  addBankAccountField(
+    id: string,
+    title: FormText,
+    opts?: BankAccountFieldOptions,
+  ): this {
+    this.fields.push(buildBankAccountField({ id, title, ...opts }))
+    return this
+  }
+
+  addNationalIdWithNameField(
+    id: string,
+    title: FormText,
+    opts?: NationalIdWithNameFieldOptions,
+  ): this {
+    this.fields.push(buildNationalIdWithNameField({ id, title, ...opts }))
+    return this
+  }
+
+  addVehiclePermnoWithInfoField(
+    id: string,
+    opts: VehiclePermnoWithInfoFieldOptions,
+  ): this {
+    this.fields.push(buildVehiclePermnoWithInfoField({ id, ...opts }))
+    return this
+  }
+
+  addOverviewField(
+    id: string,
+    title: FormText,
+    opts?: OverviewFieldOptions,
+  ): this {
+    this.fields.push(buildOverviewField({ id, title, ...opts }))
+    return this
+  }
+
+  addAlertMessageField(id: string, opts: AlertMessageFieldOptions): this {
     const field = makeBaseField(
       id,
       opts.title ?? '',
@@ -477,6 +669,77 @@ export class PageBuilder<TSchema = unknown> {
     )
     field.alertType = opts.alertType ?? 'info'
     field.message = opts.message
+    field.disabled = field.disabled ?? false
+    field.width = field.width ?? 'full'
+    this.fields.push(field)
+    return this
+  }
+
+  addLinkField(id: string, title: FormText, opts?: LinkFieldOptions): this {
+    const { variant, ...fieldOpts } = opts ?? {}
+    const field = makeBaseField(id, title, FieldTypes.LINK, 'LinkFormField', {
+      ...fieldOpts,
+      doesNotRequireAnswer: opts?.doesNotRequireAnswer ?? false,
+    })
+    field.s3key = opts?.s3key ?? ''
+    field.link = opts?.link ?? ''
+    field.iconProps = opts?.iconProps
+    field.variant = variant ?? 'ghost'
+    field.justifyContent = opts?.justifyContent ?? 'flexStart'
+    if (opts?.condition) {
+      field.condition = opts.condition
+    }
+    field.disabled = field.disabled ?? false
+    field.width = field.width ?? 'full'
+    this.fields.push(field)
+    return this
+  }
+
+  addExpandableDescriptionField(
+    id: string,
+    title: FormText,
+    opts: ExpandableDescriptionFieldOptions,
+  ): this {
+    const field = makeBaseField(
+      id,
+      title,
+      FieldTypes.EXPANDABLE_DESCRIPTION,
+      'ExpandableDescriptionFormField',
+      {
+        ...opts,
+        doesNotRequireAnswer: opts.doesNotRequireAnswer ?? false,
+      },
+    )
+    const mutableField = field as Record<string, unknown>
+    mutableField.description = opts.description
+    mutableField.introText = opts.introText
+    mutableField.startExpanded = opts.startExpanded
+    mutableField.disabled = field.disabled ?? false
+    mutableField.width = field.width ?? 'full'
+    this.fields.push(field)
+    return this
+  }
+
+  addMessageWithLinkButtonField(
+    id: string,
+    opts: MessageWithLinkButtonFieldOptions,
+  ): this {
+    const field = makeBaseField(
+      id,
+      '',
+      FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+      'MessageWithLinkButtonFormField',
+      {
+        ...opts,
+        doesNotRequireAnswer: opts.doesNotRequireAnswer ?? false,
+      },
+    )
+    field.url = opts.url
+    field.message = opts.message
+    field.messageColor = opts.messageColor
+    field.buttonTitle = opts.buttonTitle
+    field.disabled = field.disabled ?? false
+    field.width = field.width ?? 'full'
     this.fields.push(field)
     return this
   }
@@ -487,19 +750,49 @@ export class PageBuilder<TSchema = unknown> {
     opts: StaticTableFieldOptions,
   ): this {
     const { header, rows, ...fieldOpts } = opts
-    const field = makeBaseField(
-      id,
+    const field = buildStaticTableField({
       title,
-      FieldTypes.STATIC_TABLE,
-      'StaticTableFormField',
-      {
-        ...fieldOpts,
-        doesNotRequireAnswer: true,
-      },
-    )
-    field.header = header
-    field.rows = rows
+      header,
+      rows,
+      ...fieldOpts,
+    })
+    ;(field as unknown as Record<string, unknown>).id = id
     this.fields.push(field)
+    return this
+  }
+
+  addTableRepeaterField(
+    id: string,
+    title: FormText,
+    opts: TableRepeaterFieldOptions,
+  ): this {
+    this.fields.push(buildTableRepeaterField({ id, title, ...opts }))
+    return this
+  }
+
+  addFieldsRepeaterField(
+    id: string,
+    title: FormText,
+    opts: FieldsRepeaterFieldOptions,
+  ): this {
+    this.fields.push(buildFieldsRepeaterField({ id, title, ...opts }))
+    return this
+  }
+
+  addPaginatedSearchableTableField(
+    id: string,
+    opts: PaginatedSearchableTableFieldOptions,
+  ): this {
+    this.fields.push(buildPaginatedSearchableTableField({ id, ...opts }))
+    return this
+  }
+
+  addAccordionField(
+    id: string,
+    title: FormText,
+    opts: AccordionFieldOptions,
+  ): this {
+    this.fields.push(buildAccordionField({ id, title, ...opts }))
     return this
   }
 
@@ -519,24 +812,32 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
-  addDividerField(id: string, opts?: FieldOptions): this {
-    this.fields.push(
-      makeBaseField(id, '', FieldTypes.DIVIDER, 'DividerFormField', opts),
-    )
+  addDividerField(id: string, opts?: DividerFieldOptions): this
+  addDividerField(opts?: DividerFieldOptions): this
+  addDividerField(
+    idOrOpts?: string | DividerFieldOptions,
+    opts?: DividerFieldOptions,
+  ): this {
+    const fieldOpts = typeof idOrOpts === 'string' ? opts : idOrOpts
+    const field = buildDividerField(fieldOpts ?? {}) as MutableField
+
+    if (typeof idOrOpts === 'string') {
+      ;(field as Record<string, unknown>).id = idOrOpts
+    }
+
+    this.fields.push(field)
     return this
   }
 
-  addPhoneField(id: string, title: FormText, opts?: FieldOptions): this {
-    this.fields.push(
-      makeBaseField(id, title, FieldTypes.PHONE, 'PhoneFormField', opts),
-    )
+  addPhoneField(id: string, title: FormText, opts?: PhoneFieldOptions): this {
+    this.fields.push(buildPhoneField({ id, title, ...opts }))
     return this
   }
 
   addKeyValueField(
     id: string,
     title: FormText,
-    value: FormText | ((app: any) => string),
+    value: FormText | ((app: Application) => string),
     opts?: FieldOptions,
   ): this {
     const field = makeBaseField(
@@ -549,7 +850,7 @@ export class PageBuilder<TSchema = unknown> {
         doesNotRequireAnswer: true,
       },
     )
-    ;(field as any).value = value
+    field.value = value
     this.fields.push(field)
     return this
   }
@@ -557,21 +858,38 @@ export class PageBuilder<TSchema = unknown> {
   addDisplayField(
     id: string,
     title: FormText,
-    value: FormText | ((app: any) => string),
-    opts?: FieldOptions,
+    value: DisplayField['value'],
+    opts?: DisplayFieldOptions,
   ): this {
-    const field = makeBaseField(
-      id,
-      title,
-      FieldTypes.DISPLAY,
-      'DisplayFormField',
-      {
-        ...opts,
-        doesNotRequireAnswer: true,
-      },
-    )
-    ;(field as any).value = value
-    this.fields.push(field)
+    this.fields.push(buildDisplayField({ id, title, value, ...opts }))
+    return this
+  }
+
+  addAsyncSelectField(
+    id: string,
+    title: FormText,
+    opts: AsyncSelectFieldOptions,
+  ): this {
+    this.fields.push(buildAsyncSelectField({ id, title, ...opts }))
+    return this
+  }
+
+  addCompanySearchField(
+    id: string,
+    title: FormText,
+    opts?: CompanySearchFieldOptions,
+  ): this {
+    this.fields.push(buildCompanySearchField({ id, title, ...opts }))
+    return this
+  }
+
+  addTitleField(title: FormText, opts?: TitleFieldOptions): this {
+    this.fields.push(buildTitleField({ title, ...opts }))
+    return this
+  }
+
+  addSliderField(id: string, title: FormText, opts: SliderFieldOptions): this {
+    this.fields.push(buildSliderField({ id, title, ...opts }))
     return this
   }
 
@@ -585,12 +903,30 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
+  addCustomField(
+    id: string,
+    title: FormText,
+    componentName: string,
+    props?: RecordObject,
+    opts?: CustomFieldOptions,
+  ): this {
+    this.fields.push(
+      buildCustomField({ id, title, component: componentName, ...opts }, props),
+    )
+    return this
+  }
+
+  getFields(): Field[] {
+    return this.fields as Field[]
+  }
+
   build(): MultiField {
     return {
       id: this._id,
       title: this._title,
       type: FormItemTypes.MULTI_FIELD,
-      children: this.fields as Field[],
+      children: this.fields,
+      ...this.opts,
     }
   }
 }

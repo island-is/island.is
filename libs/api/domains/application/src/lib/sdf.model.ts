@@ -180,6 +180,9 @@ export class SdfSelectField {
   @Field()
   disabled!: boolean
 
+  @Field()
+  isMulti!: boolean
+
   @Field(() => [SdfSelectOption])
   options!: SdfSelectOption[]
 

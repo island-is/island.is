@@ -18,6 +18,7 @@ describe('mapScreenToComponents — inline refetch target metadata', () => {
           page
             .addSelectField('selectField', 'Select', {
               options: [{ label: 'One', value: 'one' }],
+              isMulti: true,
               onSelectRefetch: ['getThing'],
               refetchTargets: ['dependentDisplay'],
             })
@@ -68,16 +69,20 @@ describe('mapScreenToComponents — inline refetch target metadata', () => {
     )
 
     expect(multi).toBeDefined()
+    if (!multi) {
+      throw new Error('Expected page1 multi field screen')
+    }
 
     const resolver = {
       resolve: (v: unknown) =>
         typeof v === 'string' ? v : v != null ? String(v) : '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(multi!, resolver, {} as Application)
+    const components = mapScreenToComponents(multi, resolver, {} as Application)
     const byId = (id: string) => components.find((c) => c.id === id)
 
     expect(byId('selectField')).toMatchObject({
+      isMulti: true,
       onSelectRefetchTemplateApis: ['getThing'],
       refetchTargets: ['dependentDisplay'],
     })
