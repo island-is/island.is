@@ -22,6 +22,8 @@ export const EditPermission = () => {
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [isNewPermissionsOptionsEnabled, setNewPermissionsOptionsEnabled] =
     useState(false)
+  const [showThirdPartyUrlOptions, setShowThirdPartyUrlOptions] =
+    useState(false)
 
   useEffect(() => {
     const checkNewPermissionsOptionsEnabled = async () => {
@@ -32,7 +34,16 @@ export const EditPermission = () => {
       setNewPermissionsOptionsEnabled(newPermissionsOptionsEnabled)
     }
 
+    const checkShowThirdPartyUrlOptions = async () => {
+      const thirdPartyUrlOptions = await featureFlagClient.getValue(
+        Features.showThirdPartyUrlOptions,
+        false,
+      )
+      setShowThirdPartyUrlOptions(thirdPartyUrlOptions)
+    }
+
     checkNewPermissionsOptionsEnabled()
+    checkShowThirdPartyUrlOptions()
   }, [featureFlagClient])
 
   return (
@@ -48,6 +59,7 @@ export const EditPermission = () => {
         )}
         <PermissionDelegations
           isNewPermissionsOptionsEnabled={isNewPermissionsOptionsEnabled}
+          showThirdPartyUrlOptions={showThirdPartyUrlOptions}
         />
         <PermissionAccessControl />
         <PermissionApplications />

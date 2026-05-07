@@ -2,8 +2,13 @@ import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ResourceAccessService } from './resource-access.service'
+import { ApiScope } from './models/api-scope.model'
 import { ApiScopeUser } from './models/api-scope-user.model'
 import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
+
+const mockApiScopeModel = {
+  findOne: jest.fn(),
+}
 
 const mockApiScopeUserModel = {
   findByPk: jest.fn(),
@@ -12,6 +17,7 @@ const mockApiScopeUserModel = {
 const mockApiScopeUserAccessModel = {
   destroy: jest.fn(),
   create: jest.fn(),
+  findOrCreate: jest.fn(),
 }
 
 const mockLogger = {
@@ -25,6 +31,10 @@ describe('ResourceAccessService', () => {
     const module = await Test.createTestingModule({
       providers: [
         ResourceAccessService,
+        {
+          provide: getModelToken(ApiScope),
+          useValue: mockApiScopeModel,
+        },
         {
           provide: getModelToken(ApiScopeUser),
           useValue: mockApiScopeUserModel,
@@ -79,16 +89,18 @@ describe('ResourceAccessService', () => {
 
     it('should replace scopes when userAccess is provided', async () => {
       const userAccess = [{ nationalId, scope: 'scope1' }]
-      mockApiScopeUserAccessModel.create.mockResolvedValue(userAccess[0])
+      mockApiScopeUserAccessModel.findOrCreate.mockResolvedValue([
+        userAccess[0],
+        true,
+      ])
 
       await service.update({ userAccess }, nationalId)
 
       expect(mockApiScopeUserAccessModel.destroy).toHaveBeenCalledWith({
         where: { nationalId },
       })
-      expect(mockApiScopeUserAccessModel.create).toHaveBeenCalledWith({
-        nationalId,
-        scope: 'scope1',
+      expect(mockApiScopeUserAccessModel.findOrCreate).toHaveBeenCalledWith({
+        where: { nationalId, scope: 'scope1' },
       })
     })
   })

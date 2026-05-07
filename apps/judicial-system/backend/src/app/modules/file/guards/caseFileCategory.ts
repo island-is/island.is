@@ -333,3 +333,34 @@ export const getDefenceUserCaseFileCategories = (
     civilClaimants,
   )
 }
+
+export const getDefenderVisiblePoliceCaseNumbers = (
+  userNationalId: string,
+  defendants: Defendant[] | undefined,
+  allPoliceCaseNumbers: string[],
+): string[] => {
+  const allAssigned = new Set(
+    (defendants ?? []).flatMap((d) => d.policeCaseNumbers ?? []),
+  )
+
+  if (allAssigned.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  const myDefendants = (defendants ?? []).filter(
+    (d) =>
+      d.isDefenderChoiceConfirmed &&
+      d.defenderNationalId &&
+      normalizeAndFormatNationalId(userNationalId).includes(
+        d.defenderNationalId,
+      ),
+  )
+
+  const assignedToMe = new Set(
+    myDefendants.flatMap((d) => d.policeCaseNumbers ?? []),
+  )
+
+  return allPoliceCaseNumbers.filter(
+    (pcn) => assignedToMe.has(pcn) || !allAssigned.has(pcn),
+  )
+}

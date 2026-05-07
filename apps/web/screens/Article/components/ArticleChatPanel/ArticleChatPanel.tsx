@@ -1,19 +1,11 @@
-import {
-  WatsonChatPanel,
-  WebChat,
-  ZendeskChatPanel,
-} from '@island.is/web/components'
+import { WatsonChatPanel, WebChat } from '@island.is/web/components'
 import {
   GetSingleArticleQuery,
   GetWebChatQuery,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
-import {
-  defaultZendeskConfig,
-  excludedOrganizationWatsonConfig,
-  watsonConfig,
-} from './config'
+import { watsonConfig } from './config'
 
 interface ArticleChatPanelProps {
   article: GetSingleArticleQuery['getSingleArticle']
@@ -64,18 +56,6 @@ export const ArticleChatPanel = ({
             />
           )
         }
-
-        if (
-          !article?.organization?.some((o) =>
-            excludedOrganizationWatsonConfig.includes(o.id),
-          )
-        )
-          return (
-            <ZendeskChatPanel
-              {...defaultZendeskConfig[activeLocale]}
-              pushUp={pushUp}
-            />
-          )
 
         return null
       }}

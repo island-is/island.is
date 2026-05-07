@@ -32,6 +32,7 @@ import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { EventService } from '../event'
 import { AppealCase, Case } from '../repository'
 import { UserService } from '../user'
+import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
 import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
@@ -89,11 +90,17 @@ export class AppealCaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Body() dto: CreateAppealCaseDto,
   ): Promise<AppealCase> {
     this.logger.debug(`Creating appeal case for case ${caseId}`)
 
     const appealCase = await this.sequelize.transaction((transaction) =>
-      this.appealCaseService.create(theCase, user, transaction),
+      this.appealCaseService.create(
+        theCase,
+        user,
+        dto.rulingFileId,
+        transaction,
+      ),
     )
 
     this.eventService.postEvent('CREATE_APPEAL', theCase)
@@ -209,6 +216,7 @@ export class AppealCaseController {
     @Param('appealCaseId') appealCaseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() dto: TransitionAppealCaseDto,
   ): Promise<AppealCase> {
     this.logger.debug(
@@ -217,8 +225,8 @@ export class AppealCaseController {
 
     const result = await this.sequelize.transaction((transaction) =>
       this.appealCaseService.transition(
-        appealCaseId,
         theCase,
+        appealCase,
         dto.transition,
         user,
         transaction,
