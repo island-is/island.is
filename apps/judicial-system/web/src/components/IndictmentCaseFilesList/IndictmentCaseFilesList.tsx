@@ -236,6 +236,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewDefendantRulings: !isDefenceUser(user),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -607,7 +608,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
                 filteredFiles.rulings.length > 0) ||
-              filteredFiles.defendantRulings.length > 0 ||
+              (permissions.canViewDefendantRulings &&
+                filteredFiles.defendantRulings.length > 0) ||
               permissions.canViewVerdictServiceCertificate ||
               filteredFiles.rulingOrders.length > 0) && (
               <div>
@@ -620,7 +622,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 {hideCourtRecord ? (
                   <AlertMessage
                     type="info"
-                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
+                    message="Hægt er að nálgast þingbók og dómsúrlausn hjá héraðsdómi"
                   />
                 ) : (
                   <>
@@ -646,10 +648,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.defendantRulings}
-                  onOpenFile={onOpen}
-                />
+                {permissions.canViewDefendantRulings && (
+                  <RenderFiles
+                    caseFiles={filteredFiles.defendantRulings}
+                    onOpenFile={onOpen}
+                  />
+                )}
                 {showRulingOrderAppealMenu ? (
                   filteredFiles.rulingOrders.map((file) => (
                     <RulingOrderFileRow

@@ -30,7 +30,6 @@ const defenderCaseFileCategoriesForRequestCases = [
 const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
-  CaseFileCategory.DEFENDANT_RULING,
   CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
 ]
 
@@ -203,6 +202,15 @@ const canDefenceUserViewCaseFile = ({
       civilClaimants,
     )
 
+    console.log('[caseFile cutoff check]', {
+      nationalId,
+      caseFileCategory,
+      cutoffDate,
+      fileCreated,
+      blocked: Boolean(
+        cutoffDate && fileCreated && fileCreated > cutoffDate,
+      ),
+    })
     if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
       return false
     }
