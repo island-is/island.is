@@ -11,7 +11,6 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
-import { Link } from 'react-router-dom'
 import { lock } from '../Dashboard.css'
 import * as styles from './DashboardNotifications.css'
 
@@ -145,7 +144,6 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         notifications.map((item) => {
           const href =
             resolveLink(item.message.link) || InformationPaths.Notifications
-          const isExternal = href.startsWith('http')
 
           const unread = !item.metadata.read
           const content = (
@@ -202,33 +200,15 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
             </Box>
           )
 
-          if (isExternal) {
-            return (
-              <a
-                key={item.notificationId}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${item.message.title} - ${formatMessage(
-                  m.notificationOpensInNewTab,
-                )}`}
-                className={styles.notificationLink}
-                onClick={() => handleNotificationClick(item.id)}
-              >
-                {content}
-              </a>
-            )
-          }
-
           return (
-            <Link
+            <LinkResolver
               key={item.notificationId}
-              to={href}
+              href={href}
               className={styles.notificationLink}
-              onClick={() => handleNotificationClick(item.id)}
+              callback={() => handleNotificationClick(item.id)}
             >
               {content}
-            </Link>
+            </LinkResolver>
           )
         })}
     </Box>
