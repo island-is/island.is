@@ -50,11 +50,10 @@ interface ViewPagerProps {
 
 export function ViewPager({ children, itemWidth }: ViewPagerProps) {
   const pages = React.Children.count(children)
-  const OFFSET_X = 16
   const OFFSET_CARD = itemWidth ?? 283
-  const OFFSET = OFFSET_X + OFFSET_CARD
+  const OFFSET = OFFSET_CARD
 
-  const [contentWidth, setContentWidth] = useState(pages * OFFSET - OFFSET_X)
+  const [contentWidth, setContentWidth] = useState(pages * OFFSET)
 
   const inputRange = (i: number) =>
     i === pages - 1
