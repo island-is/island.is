@@ -1218,37 +1218,49 @@ export class OrganizationResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  private getFooter(organization: Organization) {
+    const delimiter = ';'
+    const cacheKey = `${organization.id}-${
+      organization.lang ?? 'is'
+    }-${Date.now()}`
+    const org = organization as Organization & {
+      [cacheKey]?: ReturnType<CmsContentfulService['getOrganizationFooter']>
+    }
+
+    if (org[cacheKey]) {
+      const time = cacheKey.split(delimiter)[1]
+      const tenMinutesInMilliseconds = 10 * 60 * 1000
+      if (Boolean(time) && Number(time) < Date.now() - tenMinutesInMilliseconds)
+        delete org[cacheKey]
+    }
+
+    if (!org[cacheKey])
+      org[cacheKey] = this.featureFlagService
+        .getValue(Features.organizationFooterComesFromOrganizationPage, false)
+        .then((flag) =>
+          flag
+            ? this.cmsContentfulService.getOrganizationFooter(
+                org.id,
+                org.lang ?? 'is',
+              )
+            : {
+                footerItems: org?.footerItems ?? [],
+                footerConfig: org?.footerConfig ?? {},
+              },
+        )
+
+    return org[cacheKey]
+  }
+
   @ResolveField(() => [FooterItem])
   async footerItems(@Parent() organization: Organization) {
-    const oldBehaviour = !(await this.featureFlagService.getValue(
-      Features.organizationFooterComesFromOrganizationPage,
-      false,
-    ))
-
-    if (oldBehaviour) return organization.footerItems ?? []
-
-    const footer = await this.cmsContentfulService.getOrganizationFooter(
-      organization.id,
-      organization.lang ?? 'is',
-    )
-
+    const footer = await this.getFooter(organization)
     return footer?.footerItems ?? []
   }
 
   @ResolveField(() => GraphQLJSONObject)
   async footerConfig(@Parent() organization: Organization) {
-    const oldBehaviour = !(await this.featureFlagService.getValue(
-      Features.organizationFooterComesFromOrganizationPage,
-      false,
-    ))
-
-    if (oldBehaviour) return organization.footerConfig ?? {}
-
-    const footer = await this.cmsContentfulService.getOrganizationFooter(
-      organization.id,
-      organization.lang ?? 'is',
-    )
-
+    const footer = await this.getFooter(organization)
     return footer?.footerConfig ?? {}
   }
 }
