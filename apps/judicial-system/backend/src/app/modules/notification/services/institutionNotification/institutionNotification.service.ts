@@ -99,6 +99,8 @@ export class InstitutionNotificationService extends BaseNotificationService {
   private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
     prosecutorsOfficeId: string,
   ) {
+    await this.refreshFormatMessage()
+
     const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
     const targetDate = addDays(nowFactory(), 7)
 
