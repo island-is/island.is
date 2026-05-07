@@ -15,3 +15,8 @@ export const image = style({
   width: '100%',
   maxWidth: '546px',
 })
+
+export const imageCompact = style({
+  width: '100%',
+  maxWidth: '462px',
+})
