@@ -24,6 +24,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       textLeft,
       CustomLink,
       whiteBackground,
+      focusVisibleOnly = false,
       ...props
     }: TagProps,
     ref,
@@ -32,7 +33,8 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.active]: active,
       [styles.outlined]: outlined,
       [styles.attention]: attention,
-      [styles.focusable]: !disabled,
+      [styles.focusable]: !disabled && !focusVisibleOnly,
+      [styles.focusableVisibleOnly]: !disabled && focusVisibleOnly,
       [styles.hyphenate]: hyphenate,
       [styles.textLeft]: textLeft,
       [styles.disabled]: disabled,

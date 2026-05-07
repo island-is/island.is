@@ -72,11 +72,19 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 
   if (!defendants) return null
 
+  const activeDefendants = defendants.filter(
+    (d) => !d.indictmentCancelledOrDismissedState,
+  )
+
+  if (activeDefendants.length === 0) return null
+
   return (
     <Entry
-      label={capitalize(getDefendantLabel(formatMessage, defendants, type))}
+      label={capitalize(
+        getDefendantLabel(formatMessage, activeDefendants, type),
+      )}
       value={enumerate(
-        flatMap(defendants, (d) => (d.name ? [d.name] : [])),
+        flatMap(activeDefendants, (d) => (d.name ? [d.name] : [])),
         formatMessage(core.and),
       )}
     />
@@ -147,7 +155,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
               rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
             })}
           </Text>
-          {workingCase.appealedDate && (
+          {workingCase.appealCase?.appealedDate && (
             <Box marginBottom={1}>
               <Text as="h5" variant="h5">
                 {getAppealActorText(workingCase)}

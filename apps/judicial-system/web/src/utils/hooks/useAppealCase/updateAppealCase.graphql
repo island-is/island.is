@@ -6,6 +6,14 @@ mutation UpdateAppealCase($input: UpdateAppealCaseInput!) {
     appealReceivedByCourtDate
     prosecutorStatementDate
     defendantStatementDate
+    defendantStatementDates {
+      defendantId
+      statementDate
+    }
+    civilClaimantStatementDates {
+      civilClaimantId
+      statementDate
+    }
     appealAssistant {
       id
       name

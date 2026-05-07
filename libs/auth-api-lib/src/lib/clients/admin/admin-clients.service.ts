@@ -93,10 +93,10 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
-        archived: null,
       },
       include: this.clientInclude(),
     })
+
     const clientTranslations = await this.translationService.findTranslationMap(
       'client',
       clients.map((client) => client.clientId),
@@ -260,6 +260,36 @@ export class AdminClientsService {
     )
 
     return
+  }
+
+  async restore(clientId: string, tenantId: string) {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (!client) {
+      throw new NoContentException()
+    }
+
+    if (!client.archived) {
+      return
+    }
+
+    await this.clientModel.update(
+      {
+        archived: null,
+        enabled: true,
+      },
+      {
+        where: {
+          clientId,
+          domainName: tenantId,
+        },
+      },
+    )
   }
 
   async update(
@@ -627,6 +657,7 @@ export class AdminClientsService {
         client.allowedCorsOrigins?.map((cors) => cors.origin) ?? [],
       allowedAcr: client.allowedAcr.map((v) => v.toString()) ?? [],
       modified: client.modified,
+      archived: client.archived ?? undefined,
     }
   }
 

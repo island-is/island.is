@@ -63,6 +63,7 @@ const useAppealCase = () => {
     () =>
       async (
         caseId: string,
+        rulingFileId?: string,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
       ): Promise<AppealCase | undefined> => {
         const mutation = limitedAccess
@@ -75,7 +76,7 @@ const useAppealCase = () => {
 
         try {
           const { data } = await mutation({
-            variables: { input: { caseId } },
+            variables: { input: { caseId, rulingFileId } },
           })
 
           const res = data as CreateAppealCaseMutation &

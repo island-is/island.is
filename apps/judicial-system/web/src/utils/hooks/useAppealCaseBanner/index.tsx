@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from 'react'
+import { ReactElement, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -20,9 +19,7 @@ import {
 import { appealRuling } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
-  FeatureContext,
   FormContext,
-  Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -39,21 +36,20 @@ import {
   hasSentNotification,
 } from '../../utils'
 import useAppealCase from '../useAppealCase'
-import * as styles from './useAppealCase.css'
+import useAppealCaseModals from '../useAppealCaseModals'
+import * as styles from './useAppealCaseBanner.css'
 
-const renderLinkButton = (text: string, href: string) => {
-  return (
-    <Button
-      variant="text"
-      size="small"
-      onClick={() => {
-        router.push(href)
-      }}
-    >
-      {text}
-    </Button>
-  )
-}
+const renderLinkButton = (text: string, href: string) => (
+  <Button
+    variant="text"
+    size="small"
+    onClick={() => {
+      router.push(href)
+    }}
+  >
+    {text}
+  </Button>
+)
 
 export const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
@@ -80,19 +76,27 @@ export const getAppealDecision = (
   }
 }
 
-const useAppealCaseUI = () => {
+const useAppealCaseBanner = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, setWorkingCase, refreshCase } =
     useContext(FormContext)
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
-  const [appealModalVisible, setAppealModalVisible] = useState<
-    | 'ConfirmAppealAfterDeadline'
-    | 'ConfirmStatementAfterDeadline'
-    | 'AppealReceived'
-    | undefined
-  >()
+  const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
+  const statementRoute = isDefenceUser(user)
+    ? DEFENDER_STATEMENT_ROUTE
+    : STATEMENT_ROUTE
+
+  const {
+    appealCaseModals,
+    openConfirmAppealAfterDeadline,
+    openConfirmStatementAfterDeadline,
+    openAppealReceived,
+  } = useAppealCaseModals({
+    confirmAppealRoute: `${appealRoute}/${workingCase.id}`,
+    confirmStatementRoute: `${statementRoute}/${workingCase.id}`,
+  })
 
   const handleReceivedTransition = async () => {
     const success = await transitionAppealCase(
@@ -106,15 +110,9 @@ const useAppealCaseUI = () => {
       return
     }
 
-    setAppealModalVisible('AppealReceived')
-
+    openAppealReceived()
     refreshCase()
   }
-
-  const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
-  const statementRoute = isDefenceUser(user)
-    ? DEFENDER_STATEMENT_ROUTE
-    : STATEMENT_ROUTE
 
   let title = ''
   let description: string | undefined = undefined
@@ -122,20 +120,22 @@ const useAppealCaseUI = () => {
 
   const {
     appealCase,
-    statementDeadline,
     hasBeenAppealed,
     canBeAppealed,
     appealDeadline,
     isAppealDeadlineExpired,
-    isStatementDeadlineExpired,
     sharedWithProsecutorsOffice,
   } = workingCase
   const {
     appealState,
     prosecutorStatementDate,
     defendantStatementDate,
+    defendantStatementDates,
+    civilClaimantStatementDates,
     appealReceivedByCourtDate,
     appealRulingDecision,
+    statementDeadline,
+    isStatementDeadlineExpired,
   } = appealCase ?? {}
 
   const isSharedWithProsecutor =
@@ -143,23 +143,22 @@ const useAppealCaseUI = () => {
     user?.institution?.id === sharedWithProsecutorsOffice?.id
 
   // For indictment cases each defender / civil claimant spokesperson sends
-  // their own statement, so resolve the per-party date by national-id match
-  // against confirmed parties only. Request cases have a single defender,
-  // so the aggregated appealCase.defendantStatementDate is the right answer.
+  // their own statement, so resolve the per-party date from the per-appeal
+  // lists by id. Request cases have a single defender, so the aggregated
+  // appealCase.defendantStatementDate is the right answer.
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
     user,
   )
-  const currentDefenceStatementDate = defendantId
-    ? workingCase.defendants?.find((d) => d.id === defendantId)
-        ?.appealStatementDate
-    : civilClaimantId
-    ? workingCase.civilClaimants?.find((c) => c.id === civilClaimantId)
-        ?.appealStatementDate
-    : isIndictmentCase(workingCase.type)
-    ? // Indictment defence user whose pick isn't confirmed: no per-party
-      // statement is attributable to them.
-      undefined
+  const currentDefenceStatementDate = isIndictmentCase(workingCase.type)
+    ? defendantId
+      ? defendantStatementDates?.find((d) => d.defendantId === defendantId)
+          ?.statementDate
+      : civilClaimantId
+      ? civilClaimantStatementDates?.find(
+          (c) => c.civilClaimantId === civilClaimantId,
+        )?.statementDate
+      : undefined
     : defendantStatementDate
 
   const currentUserStatementDate = isProsecutionUser(user)
@@ -204,8 +203,6 @@ const useAppealCaseUI = () => {
     description = `Frestur til að skila greinargerð ${
       isStatementDeadlineExpired ? 'rann' : 'rennur'
     } út ${formatDate(statementDeadline, 'PPPp')}`
-    // if the current user has already sent a statement, we don't want to display
-    // the link to send a statement, instead we want to display the date it was sent
     if (hasCurrentUserSentStatement) {
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
@@ -226,7 +223,7 @@ const useAppealCaseUI = () => {
         <Button
           variant="text"
           size="small"
-          onClick={() => setAppealModalVisible('ConfirmStatementAfterDeadline')}
+          onClick={openConfirmStatementAfterDeadline}
         >
           Senda greinargerð
         </Button>
@@ -248,21 +245,18 @@ const useAppealCaseUI = () => {
     title = 'Úrskurður kærður'
     description = getAppealActorText(workingCase)
     if (isProsecutionUser(user) || isDefenceUser(user)) {
-      child = hasCurrentUserSentStatement
-        ? (child = (
-            <Text variant="small" color="mint800" fontWeight="semiBold">
-              {`Greinargerð send ${formatDate(
-                currentUserStatementDate,
-                'PPPp',
-              )}`}
-            </Text>
-          ))
-        : renderLinkButton(
-            'Senda greinargerð',
-            `${
-              isDefenceUser(user) ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
-            }/${workingCase.id}`,
-          )
+      child = hasCurrentUserSentStatement ? (
+        <Text variant="small" color="mint800" fontWeight="semiBold">
+          {`Greinargerð send ${formatDate(currentUserStatementDate, 'PPPp')}`}
+        </Text>
+      ) : (
+        renderLinkButton(
+          'Senda greinargerð',
+          `${
+            isDefenceUser(user) ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+          }/${workingCase.id}`,
+        )
+      )
     } else if (isDistrictCourtUser(user)) {
       child = (
         <Box>
@@ -290,7 +284,7 @@ const useAppealCaseUI = () => {
       <Button
         variant="text"
         size="small"
-        onClick={() => setAppealModalVisible('ConfirmAppealAfterDeadline')}
+        onClick={openConfirmAppealAfterDeadline}
       >
         Senda inn kæru
       </Button>
@@ -304,56 +298,8 @@ const useAppealCaseUI = () => {
     )
   }
 
-  const appealModals = (
-    <>
-      {appealModalVisible === 'ConfirmAppealAfterDeadline' && (
-        <Modal
-          title="Kærufrestur er liðinn"
-          text="Viltu halda áfram og senda kæru?"
-          primaryButton={{
-            text: 'Já, senda kæru',
-            onClick: () => router.push(`${appealRoute}/${workingCase.id}`),
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setAppealModalVisible(undefined),
-          }}
-        />
-      )}
-      {appealModalVisible === 'ConfirmStatementAfterDeadline' && (
-        <Modal
-          title="Frestur til að skila greinargerð er liðinn"
-          text="Viltu halda áfram og senda greinargerð?"
-          primaryButton={{
-            text: 'Já, senda greinargerð',
-            onClick: () => router.push(`${statementRoute}/${workingCase.id}`),
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setAppealModalVisible(undefined),
-          }}
-        />
-      )}
-      {appealModalVisible === 'AppealReceived' && (
-        <Modal
-          title="Tilkynningar sendar á málsaðila"
-          text="Kæra hefur borist Landsrétti. Aðilar máls hafa fengið tilkynningu um frest til að skila greinargerð."
-          primaryButton={{
-            text: 'Loka glugga',
-            onClick: () => setAppealModalVisible(undefined),
-          }}
-        />
-      )}
-    </>
-  )
-
-  const { features } = useContext(FeatureContext)
-
   const appealBanner =
-    isLoadingWorkingCase ||
-    (!title && !description) ||
-    (isIndictmentCase(workingCase.type) &&
-      !features.includes(Feature.INDICTMENT_APPEAL_RULING)) ? null : (
+    isLoadingWorkingCase || (!title && !description) ? null : (
       <AlertBanner variant="warning" title={title} description={description}>
         {child}
       </AlertBanner>
@@ -361,8 +307,8 @@ const useAppealCaseUI = () => {
 
   return {
     appealBanner,
-    appealModals,
+    appealModals: appealCaseModals,
   }
 }
 
-export default useAppealCaseUI
+export default useAppealCaseBanner
