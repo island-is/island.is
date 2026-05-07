@@ -25,7 +25,7 @@ export interface AdminLoaderQueryResponse {
 export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async ({ request }): Promise<LoaderResponse> => {
     const selectedOrganizationNationalId =
-      new URL(request.url).searchParams.get('organizationNationalId') ??
+      new URL(request.url).searchParams.get('organizationNationalId') ||
       userInfo?.profile.nationalId
     const { data: dataForms, error: errorData } =
       await client.query<FormsLoaderQueryResponse>({
