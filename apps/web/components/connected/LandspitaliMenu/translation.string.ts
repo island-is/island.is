@@ -11,13 +11,28 @@ export const m = defineMessages({
     defaultMessage: 'Hentar eldri kynslóðinni (A2)',
     description: 'Hentar eldri kynslóðinni (A2)',
   },
+  'A2 - hentar eldri kynslóðinni': {
+    id: 'web.landspitaliMenu:a2-hentar-eldri-kynslodinni',
+    defaultMessage: 'Hentar eldri kynslóðinni (A2)',
+    description: 'Hentar eldri kynslóðinni (A2)',
+  },
   A3: {
     id: 'web.landspitaliMenu:a3',
     defaultMessage: 'Grænmetisfæði (A3)',
     description: 'Grænmetisfæði (A3)',
   },
+  'A3 - grænmetisfæði': {
+    id: 'web.landspitaliMenu:a3-graenmetisfaedi',
+    defaultMessage: 'Grænmetisfæði (A3)',
+    description: 'Grænmetisfæði (A3)',
+  },
   A4: {
     id: 'web.landspitaliMenu:a4',
+    defaultMessage: 'Hentar börnum (A4)',
+    description: 'Hentar börnum (A4)',
+  },
+  'A4 - hentar börnum': {
+    id: 'web.landspitaliMenu:a4-hentar-bornum',
     defaultMessage: 'Hentar börnum (A4)',
     description: 'Hentar börnum (A4)',
   },
@@ -45,5 +60,35 @@ export const m = defineMessages({
     id: 'web.landspitaliMenu:hideMoreAboutCourse',
     defaultMessage: 'Fela upplýsingar',
     description: 'Fela upplýsingar',
+  },
+  todayPrefix: {
+    id: 'web.landspitaliMenu:todayPrefix',
+    defaultMessage: 'Í dag - ',
+    description: 'Prefix for currently selected day',
+  },
+  nutritionTitle: {
+    id: 'web.landspitaliMenu:nutritionTitle',
+    defaultMessage: 'Næringargildi',
+    description: 'Nutrition section title',
+  },
+  nutritionFallbackName: {
+    id: 'web.landspitaliMenu:nutritionFallbackName',
+    defaultMessage: 'Næring',
+    description: 'Fallback nutrient name',
+  },
+  ingredientsTitle: {
+    id: 'web.landspitaliMenu:ingredientsTitle',
+    defaultMessage: 'Innihaldsefni',
+    description: 'Ingredients section title',
+  },
+  co2Label: {
+    id: 'web.landspitaliMenu:co2Label',
+    defaultMessage: 'CO2: {value}',
+    description: 'CO2 equivalents label',
+  },
+  noMenuPublished: {
+    id: 'web.landspitaliMenu:noMenuPublished',
+    defaultMessage: 'Ekki er búið að gefa út matseðilinn fyrir {date}.',
+    description: 'Fallback text when no menu has been published',
   },
 })
