@@ -9,6 +9,7 @@ import {
   DEFENDER_STATEMENT_ROUTE,
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isDefenceUser,
   isDistrictCourtUser,
@@ -22,9 +23,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useWithdrawAppeal } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenuItems/WithdrawAppeal'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
+import TagAppealState from '@island.is/judicial-system-web/src/components/Tags/TagAppealState/TagAppealState'
 import {
+  AppealCase,
   AppealCaseState,
   AppealCaseTransition,
+  Case,
   CaseFile,
   CaseFileCategory,
   UserRole,
@@ -33,8 +37,34 @@ import {
   useAppealCase,
   useAppealCaseModals,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getAppealingPartyInfo } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
+
+/**
+ * Subject-verb form of "X kærði úrskurðinn DD.MM.YYYY kl. HH:MM" used in the
+ * ruling-order row status. Distinct from `getAppealActorText`, which is
+ * scoped to the case-level appeal and uses an "Kært af X" form.
+ */
+const getRulingOrderAppealActorText = (
+  workingCase: Case,
+  appealCase: AppealCase,
+): string => {
+  const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
+
+  if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
+    return `Sækjandi kærði úrskurðinn ${dateStr}`
+  }
+
+  const party = getAppealingPartyInfo(
+    workingCase,
+    appealCase.appealedByNationalId,
+  )
+
+  return party
+    ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+    : `Verjandi kærði úrskurðinn ${dateStr}`
+}
 
 interface Props {
   file: CaseFile
@@ -176,6 +206,62 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   }
   // COMPLETED / WITHDRAWN: read-only, no menu items.
 
+  // Status text below the file row. Visible to working prosecution, defence,
+  // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
+  // the row without status text or actions.
+  let statusText: string | undefined
+  const isVisibleRole = isProsecution || isDefence || isDistrictCourt
+
+  if (isVisibleRole) {
+    if (!appealCase) {
+      // Pre-appeal: only the appealing-eligible parties see the deadline.
+      if ((isProsecution || isDefence) && file.appealDeadline) {
+        statusText = `Kærufrestur ${
+          file.isAppealDeadlineExpired ? 'rann' : 'rennur'
+        } út ${formatDate(file.appealDeadline, 'PPPp')}`
+      }
+    } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
+      statusText = 'Afturkallað'
+    } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
+      // No notification template for ruling-order appeal completion yet.
+      // Use the row's modified timestamp as the proxy
+      // for "completion date" — the last write was the COMPLETE_APPEAL
+      // transition.
+      statusText = `Niðurstaða Landsréttar ${formatDate(
+        appealCase.modified,
+        'PPP',
+      )}`
+    } else if (appealCase.appealState === AppealCaseState.APPEALED) {
+      statusText = getRulingOrderAppealActorText(workingCase, appealCase)
+    } else if (appealCase.appealState === AppealCaseState.RECEIVED) {
+      if (isDistrictCourt) {
+        statusText = `Tilkynning um móttöku send ${formatDate(
+          appealCase.appealReceivedByCourtDate,
+          'PPPp',
+        )}`
+      } else if (isProsecution || isDefence) {
+        if (hasSentStatement && userStatementCategory) {
+          const sentStatementFile = workingCase.caseFiles?.find(
+            (f) =>
+              f.rulingFileId === file.id &&
+              f.category === userStatementCategory,
+          )
+          statusText = `Greinargerð send ${formatDate(
+            sentStatementFile?.created,
+            'PPPp',
+          )}`
+        } else if (appealCase.statementDeadline) {
+          statusText = `Frestur til að skila greinargerð ${
+            appealCase.isStatementDeadlineExpired ? 'rann' : 'rennur'
+          } út ${formatDate(appealCase.statementDeadline, 'PPPp')}`
+        }
+      }
+    }
+  }
+
+  const showCompletedPill =
+    isVisibleRole && appealCase?.appealState === AppealCaseState.COMPLETED
+
   const fileName = file.userGeneratedFilename ?? file.name ?? ''
 
   return (
@@ -183,10 +269,19 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       <Box flexGrow={1}>
         <PdfButton
           title={fileName}
+          subtitle={statusText}
           renderAs="row"
           disabled={!file.isKeyAccessible}
           handleClick={() => onOpenFile(file.id)}
         >
+          {showCompletedPill && (
+            <Box marginRight={1}>
+              <TagAppealState
+                appealState={appealCase?.appealState}
+                appealRulingDecision={appealCase?.appealRulingDecision}
+              />
+            </Box>
+          )}
           {items.length > 0 && (
             <Box marginLeft={1}>
               <ContextMenu

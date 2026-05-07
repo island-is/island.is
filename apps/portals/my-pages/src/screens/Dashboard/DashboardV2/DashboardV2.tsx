@@ -3,8 +3,10 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
+import * as styles from './DashboardV2.css'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
@@ -29,8 +31,15 @@ export const DashboardV2 = () => {
   const location = useLocation()
   const userInfo = useUserInfo()
   const isMobile = width < theme.breakpoints.md
-  const { featured, rest } = useDashboardNav()
+  const { featured, rest, loading } = useDashboardNav()
   const IS_COMPANY = isCompany(userInfo)
+
+  useEffect(() => {
+    document.body.classList.add('my-pages-hero-bg')
+    return () => {
+      document.body.classList.remove('my-pages-hero-bg')
+    }
+  }, [])
 
   useEffect(() => {
     PlausiblePageviewDetail(
@@ -42,8 +51,8 @@ export const DashboardV2 = () => {
 
   return (
     <Box>
+      <Greeting compact />
       <GridContainer>
-        <Greeting compact />
         <Box paddingBottom={[1, 2]}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
@@ -51,24 +60,39 @@ export const DashboardV2 = () => {
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box marginTop={[1, 2, 2, 0]}>
-                <DashboardFeatured items={featured} isMobile={isMobile} />
+                {loading ? (
+                  <SkeletonLoader
+                    space={2}
+                    repeat={3}
+                    height={112}
+                    display="block"
+                    width="full"
+                  />
+                ) : (
+                  <DashboardFeatured items={featured} isMobile={isMobile} />
+                )}
               </Box>
             </GridColumn>
           </GridRow>
         </Box>
-        <Box paddingBottom={6}>
-          <Text
-            variant="eyebrow"
-            as="h2"
-            color="purple400"
-            marginBottom={2}
-            marginTop={2}
-          >
-            {formatMessage(m.moreCategories)}
-          </Text>
-          <DashboardModules items={rest} isMobile={isMobile} />
-        </Box>
       </GridContainer>
+
+      <div className={styles.whiteSection}>
+        <GridContainer>
+          <Box paddingBottom={6}>
+            <Text
+              variant="eyebrow"
+              as="h2"
+              color="purple400"
+              marginBottom={2}
+              marginTop={2}
+            >
+              {formatMessage(m.moreCategories)}
+            </Text>
+            <DashboardModules items={rest} isMobile={isMobile} />
+          </Box>
+        </GridContainer>
+      </div>
     </Box>
   )
 }

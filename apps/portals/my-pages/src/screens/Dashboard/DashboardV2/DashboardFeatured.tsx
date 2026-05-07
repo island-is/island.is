@@ -114,6 +114,8 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
               </Tooltip>
             )}
             <CategoryCard
+              truncateHeading
+              hyphenate
               component={item.path ? Link : undefined}
               to={item.path}
               heading={title}
