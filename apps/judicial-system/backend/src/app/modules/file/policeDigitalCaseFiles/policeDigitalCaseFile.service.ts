@@ -45,6 +45,7 @@ export class PoliceDigitalCaseFileService {
   ): Promise<void> {
     const existingFile = await this.caseFileModel.findOne({
       where: { caseId, policeFileId: file.id },
+      transaction,
     })
 
     if (existingFile) {
@@ -61,8 +62,6 @@ export class PoliceDigitalCaseFileService {
 
       const fileId = uuid()
       const key = `${caseId}/${fileId}/${file.name}.pdf`
-
-      await this.awsS3Service.putObject(caseType, key, pdfBuffer)
 
       await this.caseFileModel.create(
         {
@@ -81,11 +80,15 @@ export class PoliceDigitalCaseFileService {
         },
         { transaction },
       )
+
+      await this.awsS3Service.putObject(caseType, key, pdfBuffer)
     } catch (error) {
       this.logger.error(
         `Failed to create metadata case file for digital case file ${file.id} in case ${caseId}`,
         { error },
       )
+
+      throw error
     }
   }
 

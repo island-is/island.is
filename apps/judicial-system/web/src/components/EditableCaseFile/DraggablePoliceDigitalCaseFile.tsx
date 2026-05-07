@@ -12,10 +12,15 @@ interface Props {
   file: PoliceDigitalCaseFile
 }
 
+const NEW_BADGE_RESERVED_WIDTH = 56
+
 const DraggablePoliceDigitalCaseFile: FC<Props> = ({ file }) => {
   const [ref, { width }] = useMeasure<HTMLDivElement>()
 
   const displayDate = formatDate(file.displayDate)
+
+  const reservedWidth =
+    (displayDate ? 180 : 90) + (file.isNew ? NEW_BADGE_RESERVED_WIDTH : 0)
 
   return (
     <div className={cn(styles.caseFileWrapper, styles.done)}>
@@ -42,7 +47,7 @@ const DraggablePoliceDigitalCaseFile: FC<Props> = ({ file }) => {
               <span
                 style={{
                   display: 'block',
-                  maxWidth: `${width - (displayDate ? 180 : 90)}px`,
+                  maxWidth: `${width - reservedWidth}px`,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
