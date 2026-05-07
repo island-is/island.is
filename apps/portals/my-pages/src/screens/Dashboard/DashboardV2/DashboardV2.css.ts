@@ -1,6 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
-
 globalStyle('body.my-pages-hero-bg', {
   backgroundColor: '#F2F7FF',
 })
@@ -15,10 +14,10 @@ globalStyle('body.my-pages-hero-bg main', {
   backgroundRepeat: 'no-repeat',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      vars: { '--my-pages-hero-blue-height': '330px' },
+      vars: { '--my-pages-hero-blue-height': '320px' },
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      vars: { '--my-pages-hero-blue-height': '380px' },
+      vars: { '--my-pages-hero-blue-height': '345px' },
     },
   },
 })
