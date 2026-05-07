@@ -2,6 +2,16 @@
 
 This guide explains how to add a component to the new server-driven forms (SDF) rendering application from the template field definition to a working rendered component.
 
+## Quick Path
+
+For a native SDF field, the frontend rendering step is always:
+
+1. Create `apps/application-system-next/components/form-renderer/fields/SdfMyComponentField.tsx`.
+2. Register `SdfMyComponentField` in `apps/application-system-next/components/form-renderer/ComponentSwitch.tsx`.
+3. If it must force a full row, add `SdfMyComponentField` to `FULL_ROW_TYPES` in `apps/application-system-next/components/form-renderer/layout.ts`.
+
+`apps/application-system-next/components/FormRenderer.tsx` is the public orchestration entry point. Do not add field-specific JSX there.
+
 ## How The Pipeline Works
 
 The SDF renderer is split across four layers:
@@ -9,9 +19,9 @@ The SDF renderer is split across four layers:
 1. Application templates emit legacy form AST fields, usually through `FormBuilder` or `build*Field` helpers.
 2. `apps/application-system/api/src/app/modules/sdf` compiles the active screen and maps each field into a REST `ComponentDto`.
 3. `libs/api/domains/application/src/lib/sdf.model.ts` exposes those REST components as a GraphQL union.
-4. `apps/application-system-next/components/FormRenderer.tsx` renders the GraphQL payload in the Next.js application.
+4. `apps/application-system-next/components/FormRenderer.tsx` orchestrates frontend layout, and `apps/application-system-next/components/form-renderer/fields` renders the GraphQL payload in the Next.js application.
 
-The discriminating value is the backend component `type`, for example `TEXT`, `SELECT`, or `DATA_TABLE`. GraphQL maps that value to a typename like `SdfTextField`, and the frontend switch renders by `component.__typename`.
+The discriminating value is the backend component `type`, for example `TEXT`, `SELECT`, or `DATA_TABLE`. GraphQL maps that value to a typename like `SdfTextField`, and `ComponentSwitch.tsx` dispatches by `component.__typename` to the matching field file.
 
 ## Choose The Right Path
 
@@ -151,28 +161,42 @@ Also extend `SdfComponentData` in the same file with the fields the renderer rea
 
 ### 7. Render The Component
 
-Update `ComponentSwitch` in:
+Create the field renderer under:
 
-`apps/application-system-next/components/FormRenderer.tsx`
+`apps/application-system-next/components/form-renderer/fields/SdfMyComponentField.tsx`
 
-Render by GraphQL typename:
+Render from the shared field props:
 
 ```tsx
-case 'SdfMyComponentField':
-  return (
-    <Box marginBottom={3}>
-      <Text>{component.myComponentMessage}</Text>
-    </Box>
-  )
+import { Box, Text } from '@island.is/island-ui/core'
+import type { FieldRendererProps } from '../types'
+
+export const SdfMyComponentField = ({ component }: FieldRendererProps) => (
+  <Box marginBottom={3}>
+    <Text>{component.myComponentMessage}</Text>
+  </Box>
+)
 ```
 
 For input components, read the current value from `answers[component.id]` and update through `handleChange(value)`. Do not store authoritative answer state inside the component.
+
+Then register it in:
+
+`apps/application-system-next/components/form-renderer/ComponentSwitch.tsx`
+
+```tsx
+import { SdfMyComponentField } from './fields/SdfMyComponentField'
+
+const fieldRenderers = {
+  SdfMyComponentField,
+}
+```
 
 For layout, prefer the existing SDF layout tokens:
 
 `apps/application-system-next/components/sdfLayoutTokens.ts`
 
-If the component should always take a full row, add its typename to `FULL_ROW_TYPES` in `FormRenderer.tsx`.
+If the component should always take a full row, add its typename to `FULL_ROW_TYPES` in `apps/application-system-next/components/form-renderer/layout.ts`.
 
 ### 8. Add Tests
 
@@ -281,7 +305,9 @@ For display-only recalculation without fetching external data, use `VALIDATE`; i
 - `sdf.model.ts` exposes a GraphQL object type and maps the REST `type`.
 - `apps/application-system-next/lib/graphql.ts` queries the new fields.
 - `SdfComponentData` includes the fields used by React.
-- `FormRenderer.tsx` renders the `Sdf*Field` typename.
+- `apps/application-system-next/components/form-renderer/fields/Sdf*Field.tsx` renders the `Sdf*Field` typename.
+- `apps/application-system-next/components/form-renderer/ComponentSwitch.tsx` registers the field renderer.
 - Input writes use `onAnswerChange`, not local authoritative state.
 - Tests cover the mapper and any risky renderer behavior.
 - `application-system-api` and `application-system-next` build successfully.
+

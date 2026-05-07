@@ -9,25 +9,19 @@ import * as path from 'path'
  * overhead and follow the same pattern as `formRendererFieldContract.spec.ts`.
  */
 describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
-  const formRendererPath = path.join(
+  const checkboxFieldPath = path.join(
     __dirname,
-    '../../components/FormRenderer.tsx',
+    '../../components/form-renderer/fields/SdfCheckboxField.tsx',
   )
-  const src = fs.readFileSync(formRendererPath, 'utf8')
-
-  const between = (start: string, end: string): string => {
-    const s = src.indexOf(start)
-    const e = src.indexOf(end, s + 1)
-    if (s < 0 || e < 0) {
-      throw new Error(
-        `Could not slice source between '${start}' and '${end}' — update the spec if the case labels changed.`,
-      )
-    }
-    return src.slice(s, e)
-  }
+  const displayFieldPath = path.join(
+    __dirname,
+    '../../components/form-renderer/fields/SdfDisplayField.tsx',
+  )
+  const checkboxBlock = fs.readFileSync(checkboxFieldPath, 'utf8')
+  const displayBlock = fs.readFileSync(displayFieldPath, 'utf8')
 
   describe('SdfCheckboxField case', () => {
-    const block = between("case 'SdfCheckboxField':", "case 'SdfDateField':")
+    const block = checkboxBlock
 
     it('splits width=HALF into 1/2 columns and full width into 1/1 columns', () => {
       expect(block).toMatch(/component\.width === 'HALF'[^]*?'1\/2'[^]*?'1\/1'/)
@@ -69,7 +63,7 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
   })
 
   describe('SdfDisplayField case', () => {
-    const block = between("case 'SdfDisplayField':", "case 'SdfSliderField':")
+    const block = displayBlock
 
     it('picks the title variant from component.titleVariant, defaulting to h4', () => {
       expect(block).toContain('component.titleVariant')
@@ -96,7 +90,9 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
 
     it('aligns halfWidthOwnline to the right half via flexEnd + width=half + paddingLeft', () => {
       expect(block).toContain('halfWidthOwnline')
-      expect(block).toContain("alignItems={\n            component.halfWidthOwnline ? 'flexEnd' : undefined\n          }")
+      expect(block).toContain(
+        "alignItems={component.halfWidthOwnline ? 'flexEnd' : undefined}",
+      )
       expect(block).toMatch(/width=\{component\.halfWidthOwnline \? 'half' : 'full'\}/)
     })
 

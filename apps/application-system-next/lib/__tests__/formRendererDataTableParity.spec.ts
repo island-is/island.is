@@ -2,16 +2,11 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 describe('FormRenderer — DataTable parity structure', () => {
-  const formRendererPath = path.join(
+  const dataTableFieldPath = path.join(
     __dirname,
-    '../../components/FormRenderer.tsx',
+    '../../components/form-renderer/fields/SdfDataTableField.tsx',
   )
-  const src = fs.readFileSync(formRendererPath, 'utf8')
-
-  const block = src.slice(
-    src.indexOf("case 'SdfDataTableField':"),
-    src.indexOf("case 'SdfStaticTableField':"),
-  )
+  const block = fs.readFileSync(dataTableFieldPath, 'utf8')
 
   it('renders data tables as real table rows, not accordion items', () => {
     expect(block).toContain('<table style={tableStyle}>')
