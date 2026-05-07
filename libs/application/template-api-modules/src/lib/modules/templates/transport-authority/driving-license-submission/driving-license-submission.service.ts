@@ -236,20 +236,141 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
 
     if (applicationFor === 'B-full-renewal-65') {
-      return this.drivingLicenseService.renewDrivingLicense65AndOver(
-        auth.authorization.replace('Bearer ', ''),
-        {
-          districtId: jurisdictionId
-            ? jurisdictionId
-            : setJurisdictionToKopavogur,
-          ...(deliveryMethod
-            ? {
-                pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
-                sendPlasticToPerson: deliveryMethod === Pickup.POST,
-              }
-            : {}),
-        },
+      const is65RenewalRedesignEnabled = getValueViaPath<boolean>(
+        answers,
+        'is65RenewalRedesignEnabled',
       )
+
+      if (!is65RenewalRedesignEnabled) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.failedDataProviderSubmit,
+            summary:
+              'Umsóknin þín var byrjuð áður en kerfið uppfærðist — vinsamlegast hefjið nýja umsókn.',
+          },
+          400,
+        )
+      }
+
+      const renewalEmail = getValueViaPath<string>(answers, 'email')
+      const renewalPhone = formatPhoneNumber(
+        getValueViaPath<string>(answers, 'phone') ?? '',
+      )
+      const selectedRenewalPhoto = getValueViaPath<string>(
+        answers,
+        'selectLicensePhoto',
+      )
+
+      let renewalPhotoBiometricsId: string | null = null
+      let renewalSignatureBiometricsId: string | null = null
+
+      if (selectedRenewalPhoto === 'qualityPhoto') {
+        const qualityPhotoData = application.externalData
+          ?.qualityPhotoAndSignature?.data as {
+          pohto?: string | null
+          imageTypeId?: number | null
+        } | null
+
+        if (!qualityPhotoData?.pohto) {
+          this.log(
+            'error',
+            'User selected qualityPhoto but no quality photo exists in externalData',
+            {},
+          )
+        }
+      } else if (selectedRenewalPhoto) {
+        const allThjodskraPhotos =
+          getValueViaPath<
+            Array<{ biometricId: string; contentSpecification: string }>
+          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+          []
+
+        const facialPhotos = allThjodskraPhotos.filter(
+          (p) => p.contentSpecification === 'FACIAL',
+        )
+
+        const isValidFacial = facialPhotos.some(
+          (p) => p.biometricId === selectedRenewalPhoto,
+        )
+
+        if (!isValidFacial) {
+          this.log(
+            'error',
+            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+            { selectedPhoto: selectedRenewalPhoto },
+          )
+        }
+
+        renewalPhotoBiometricsId = isValidFacial ? selectedRenewalPhoto : null
+        renewalSignatureBiometricsId = isValidFacial
+          ? allThjodskraPhotos.find(
+              (p) => p.contentSpecification === 'SIGNATURE',
+            )?.biometricId ?? null
+          : null
+      }
+
+      let renewalContentList:
+        | Array<{
+            fileName: string
+            fileExtension: string
+            contentType: string
+            content: string
+            description: string
+          }>
+        | undefined
+
+      try {
+        const files = await this.attachmentS3Service.getFiles(application, [
+          'healthCertificate',
+        ])
+
+        renewalContentList = files
+          .filter((f) => f.fileContent)
+          .map((f) => {
+            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
+            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
+            return {
+              fileName: f.fileName,
+              fileExtension: ext,
+              contentType: getContentType(f.fileName),
+              content: f.fileContent,
+              description: 'Laeknisvottord',
+            }
+          })
+      } catch (e) {
+        this.log('error', 'Failed to read health certificate files from S3', {
+          e,
+        })
+        throw e
+      }
+
+      if (!renewalContentList || renewalContentList.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.failedDataProviderSubmit,
+            summary:
+              'Health certificate is required but no valid files were found',
+          },
+          400,
+        )
+      }
+
+      return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
+        jurisdiction: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
+        primaryPhoneNumber: renewalPhone,
+        studentEmail: renewalEmail ?? '',
+        ...(deliveryMethod
+          ? {
+              pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+              sendPlasticToPerson: deliveryMethod === Pickup.POST,
+            }
+          : {}),
+        contentList: renewalContentList,
+        photoBiometricsId: renewalPhotoBiometricsId,
+        signatureBiometricsId: renewalSignatureBiometricsId,
+      })
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId

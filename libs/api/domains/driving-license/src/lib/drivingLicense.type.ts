@@ -9,10 +9,15 @@ export interface DrivingLicenseType {
 
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
-export interface PostRenewal65AndOverInput {
-  districtId?: number
-  pickupPlasticAtDistrict?: boolean | null
-  sendPlasticToPerson?: boolean | null
+export interface NewRenewal65DrivingLicenseInput {
+  jurisdiction: number
+  primaryPhoneNumber: string
+  studentEmail: string
+  pickupPlasticAtDistrict?: boolean
+  sendPlasticToPerson?: boolean
+  contentList?: NewBEDrivingLicenseContentItem[]
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export enum Pickup {

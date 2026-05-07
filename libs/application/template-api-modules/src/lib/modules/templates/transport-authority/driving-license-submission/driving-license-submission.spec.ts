@@ -107,4 +107,184 @@ describe('DrivingLicenseSubmissionService', () => {
       })
     })
   })
+
+  describe('B-full-renewal-65 redesign branch', () => {
+    let service: DrivingLicenseSubmissionService
+    let applyForRenewal65: jest.Mock
+    let getFiles: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'B-full-renewal-65',
+      certificate: 'yes',
+      email: 'mock@email.com',
+      phone: '9999999',
+      delivery: {
+        deliveryMethod: 'post',
+        jurisdiction: '37',
+      },
+    }
+
+    beforeEach(async () => {
+      applyForRenewal65 = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      getFiles = jest.fn(async () => [])
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { applyForRenewal65 },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('throws forced-restart error when flag is off (legacy / pre-flag-flip drafts)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: false,
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.stringContaining(
+              'Umsóknin þín var byrjuð áður en kerfið uppfærðist',
+            ),
+          },
+          status: 400,
+        },
+      })
+
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('throws missing-cert error when flag is on but no health certificate is uploaded', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      // getFiles returns [] (no cert)
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.stringContaining('Health certificate is required'),
+          },
+          status: 400,
+        },
+      })
+
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('calls applyForRenewal65 with the BE-shaped payload when flag is on and cert is uploaded', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        {
+          fileName: 'cert.pdf',
+          fileContent: 'base64pdfdata',
+        },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).toHaveBeenCalledTimes(1)
+
+      const [auth, input] = applyForRenewal65.mock.calls[0]
+      expect(auth).toBe(user.authorization)
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        primaryPhoneNumber: expect.any(String),
+        studentEmail: 'mock@email.com',
+        sendPlasticToPerson: true,
+        pickupPlasticAtDistrict: false,
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+      expect(input.contentList).toHaveLength(1)
+      expect(input.contentList[0]).toMatchObject({
+        fileName: 'cert.pdf',
+        contentType: 'application/pdf',
+        description: 'Laeknisvottord',
+      })
+    })
+  })
 })

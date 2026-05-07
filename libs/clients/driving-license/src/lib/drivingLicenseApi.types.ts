@@ -3,8 +3,8 @@ import {
   DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV4,
 } from '../v4'
 import {
-  DriverLicenseDto as DriverLicenseDtoV5,
-  DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5,
+  DtoV5DriverLicenseDto as DriverLicenseDtoV5,
+  DtoV5DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5,
 } from '../v5'
 
 export type DrivingLicenseV4V5Dto =
@@ -147,7 +147,7 @@ export type CanApplyErrorCodeBFull =
   | 'HAS_DEPRIVATION'
 
 export interface CanApplyForCategoryResult<
-  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary
 > {
   result: boolean
   errorCode?: T | undefined

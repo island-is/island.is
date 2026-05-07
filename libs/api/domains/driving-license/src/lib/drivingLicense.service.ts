@@ -15,7 +15,7 @@ import {
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
   DrivinglicenseDuplicateValidityStatus,
-  PostRenewal65AndOverInput,
+  NewRenewal65DrivingLicenseInput,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -25,7 +25,7 @@ import {
   DrivingAssessment,
   DrivingLicenseApi,
   TeacherV4,
-  PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
+  ModelsV5PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
   DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
 import {
@@ -525,17 +525,25 @@ export class DrivingLicenseService {
     }
   }
 
-  async renewDrivingLicense65AndOver(
+  async applyForRenewal65(
     auth: User['authorization'],
-    input: PostRenewal65AndOverInput,
+    input: NewRenewal65DrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
-      input,
-      auth: auth,
+    const response = await this.drivingLicenseApi.postApplyForRenewal65({
+      token: auth,
+      districtId: input.jurisdiction,
+      phoneNumber: input.primaryPhoneNumber,
+      email: input.studentEmail,
+      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
+      sendPlasticToPerson: input.sendPlasticToPerson,
+      contentList: input.contentList,
+      photoBiometricsId: input.photoBiometricsId,
+      signatureBiometricsId: input.signatureBiometricsId,
     })
+
     return {
-      success: response.isOk ?? false,
-      errorMessage: response.errorCode ?? null,
+      success: response,
+      errorMessage: null,
     }
   }
 
