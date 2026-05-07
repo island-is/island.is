@@ -209,8 +209,10 @@ export class PoliceService {
 
   private buildDigitalCaseFileName(
     file: z.infer<typeof this.policeDigitalCaseFileStructure>,
+    policeCaseNumber: string,
   ): string {
     return [
+      policeCaseNumber.trim(),
       file.evidenceType?.trim(),
       file.fullName?.trim(),
       file.externalVendorFileName.trim(),
@@ -506,9 +508,9 @@ export class PoliceService {
       const response: z.infer<typeof this.digitalCaseFilesStructure> =
         await res.json()
 
-      this.digitalCaseFilesStructure.parse(response)
+      const parsed = this.digitalCaseFilesStructure.parse(response)
 
-      return response
+      return parsed
     } catch (reason) {
       if (reason instanceof NotFoundException) {
         throw reason
@@ -681,7 +683,10 @@ export class PoliceService {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
           id: file.id.toString(),
-          name: this.buildDigitalCaseFileName(file),
+          name: this.buildDigitalCaseFileName(
+            file,
+            filesPerCaseNumber.malsnumer,
+          ),
           policeCaseNumber: filesPerCaseNumber.malsnumer,
           policeExternalVendorId: file.externalVendorID,
           displayDate: file.registeredAt
