@@ -32,6 +32,9 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
 
   const notifications = data?.userNotificationsOverview?.data ?? []
 
+  const handleNotificationClick = (id: number) =>
+    markAsRead({ variables: { id } })
+
   return (
     <Box
       position="relative"
@@ -209,7 +212,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                   m.notificationOpensInNewTab,
                 )}`}
                 className={styles.notificationLink}
-                onClick={() => markAsRead({ variables: { id: item.id } })}
+                onClick={() => handleNotificationClick(item.id)}
               >
                 {content}
               </a>
@@ -221,7 +224,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               key={item.notificationId}
               to={href}
               className={styles.notificationLink}
-              onClick={() => markAsRead({ variables: { id: item.id } })}
+              onClick={() => handleNotificationClick(item.id)}
             >
               {content}
             </Link>

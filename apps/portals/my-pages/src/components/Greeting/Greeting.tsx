@@ -49,7 +49,6 @@ const Greeting = ({ compact = false }: GreetingProps) => {
       display="flex"
       alignItems="flexEnd"
       justifyContent="flexEnd"
-      columnGap={2}
       paddingRight={3}
     >
       <img
@@ -68,53 +67,51 @@ const Greeting = ({ compact = false }: GreetingProps) => {
 
   return (
     <GridContainer>
-      <Box position="relative">
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', compact ? '6/12' : '5/12']}
-            offset={['0', '0', '0', compact ? '0' : '1/12']}
-          >
-            <Box marginTop={compact ? 6 : 9} data-testid="greeting">
-              <Text
-                variant="eyebrow"
-                marginBottom={2}
-                fontWeight="semiBold"
-                color="purple400"
-              >
-                {isEveningGreeting
-                  ? formatMessage(m.eveningGreeting)
-                  : formatMessage(m.dayGreeting)}
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', compact ? '6/12' : '5/12']}
+          offset={['0', '0', '0', compact ? '0' : '1/12']}
+        >
+          <Box marginTop={compact ? 6 : 9} data-testid="greeting">
+            <Text
+              variant="eyebrow"
+              marginBottom={2}
+              fontWeight="semiBold"
+              color="purple400"
+            >
+              {isEveningGreeting
+                ? formatMessage(m.eveningGreeting)
+                : formatMessage(m.dayGreeting)}
+            </Text>
+            <Text translate="no" variant="h2" as="h1" marginBottom={1}>
+              {userInfo?.profile.name}
+            </Text>
+            {!compact && (
+              <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
+                {formatMessage(m.greetingIntro)}
               </Text>
-              <Text translate="no" variant="h2" as="h1" marginBottom={1}>
-                {userInfo?.profile.name}
-              </Text>
-              {!compact && (
-                <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
-                  {formatMessage(m.greetingIntro)}
-                </Text>
-              )}
-              {showSearch && (
-                <Box marginTop={3} marginBottom={compact ? [3, 3, 3, 6] : 3}>
-                  <SearchInput
-                    colorScheme={compact ? 'default' : 'blue'}
-                    whiteMenuBackground={compact}
-                    size="large"
-                    placeholder={formatMessage(m.searchOnMyPages)}
-                    buttonAriaLabel={formatMessage(m.searchOnMyPages)}
-                  />
-                </Box>
-              )}
-            </Box>
-          </GridColumn>
-          <GridColumn span={'6/12'}>
-            <Hidden below="lg">
-              <Box display="flex" justifyContent="flexEnd">
-                {illustration}
+            )}
+            {showSearch && (
+              <Box marginTop={3} marginBottom={compact ? [3, 3, 3, 6] : 3}>
+                <SearchInput
+                  colorScheme={compact ? 'default' : 'blue'}
+                  whiteMenuBackground={compact}
+                  size="large"
+                  placeholder={formatMessage(m.searchOnMyPages)}
+                  buttonAriaLabel={formatMessage(m.searchOnMyPages)}
+                />
               </Box>
-            </Hidden>
-          </GridColumn>
-        </GridRow>
-      </Box>
+            )}
+          </Box>
+        </GridColumn>
+        <GridColumn span={'6/12'}>
+          <Hidden below="lg">
+            <Box display="flex" justifyContent="flexEnd">
+              {illustration}
+            </Box>
+          </Hidden>
+        </GridColumn>
+      </GridRow>
     </GridContainer>
   )
 }
