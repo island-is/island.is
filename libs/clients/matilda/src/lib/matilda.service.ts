@@ -11,11 +11,21 @@ export class MatildaClientService {
     private readonly config: ConfigType<typeof MatildaClientConfig>,
   ) {}
 
-  public async getMeals(): Promise<OpenMealMenuResponse> {
+  public async getMeals(selectedDate?: string): Promise<OpenMealMenuResponse> {
+    const parsedSelectedDate = selectedDate ? new Date(selectedDate) : undefined
+    const hasValidSelectedDate =
+      parsedSelectedDate && !Number.isNaN(parsedSelectedDate.getTime())
+
     const { data, error } = await openMealGetAllMeals({
       query: {
         distributorId: this.config.distributorId,
         lang: 'is',
+        ...(hasValidSelectedDate
+          ? {
+              startDate: parsedSelectedDate,
+              endDate: parsedSelectedDate,
+            }
+          : {}),
       },
     })
 

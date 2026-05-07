@@ -31,3 +31,49 @@ export const GET_LANDSPITALI_CATALOG = gql`
     }
   }
 `
+
+export const GET_LANDSPITALI_MENU = gql`
+  query WebLandspitaliMenu($selectedDate: String) {
+    webLandspitaliMenu(selectedDate: $selectedDate) {
+      meals {
+        name
+        date
+        dateDescription
+        holidayName
+        lang
+        description
+        order
+        distributor {
+          id
+          name
+        }
+        courses {
+          id
+          name
+          optionName
+          description
+          order
+          labelOfContents
+          ingredients {
+            name
+          }
+          nutrients {
+            name
+            amount
+            unit
+          }
+          prices {
+            name
+            value
+            currency
+          }
+          co2Equivalents
+          knownAllergens {
+            name
+            presenceLevel
+          }
+        }
+      }
+    }
+  }
+`

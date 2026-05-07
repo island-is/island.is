@@ -1,26 +1,25 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
+import { v4 as uuidv4 } from 'uuid'
 import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
 } from '@island.is/clients/payments'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { CreateMemorialCardPaymentUrlInput } from './dto/createMemorialCardPaymentUrl.input'
 import { CreateMemorialCardPaymentUrlResponse } from './dto/createMemorialCardPaymentUrl.response'
 import { CreateDirectGrantPaymentUrlInput } from './dto/createDirectGrantPaymentUrl.input'
 import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaymentUrl.response'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import {
-  MatildaClientService,
-  type OpenMealMenuResponse,
-} from '@island.is/clients/matilda'
+import { MatildaClientService } from '@island.is/clients/matilda'
 import { Catalog } from './dto/catalog.response'
+import { MenuResponse } from './dto/menu.response'
 import { LandspitaliApiModuleConfig } from './landspitali.config'
 import {
   type DirectGrantPaymentFlowMetadata,
   type MemorialCardPaymentFlowMetadata,
   PaymentType,
 } from './types'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const FEE_CHARGE_ITEM_CODE = 'MR101'
 
@@ -51,8 +50,58 @@ export class LandspitaliService {
     })
   }
 
-  async getMeals(): Promise<OpenMealMenuResponse> {
-    return this.matildaClientService.getMeals()
+  async getMeals(selectedDate?: string): Promise<MenuResponse> {
+    const menu = await this.matildaClientService.getMeals(selectedDate)
+
+    return {
+      meals:
+        menu.meals?.map((meal) => ({
+          name: meal.name,
+          date: meal.date?.toISOString(),
+          dateDescription: meal.dateDescription,
+          holidayName: meal.holidayName,
+          lang: meal.lang,
+          description: meal.description,
+          order: meal.order,
+          distributor: meal.distributor
+            ? {
+                id: meal.distributor.id,
+                name: meal.distributor.name,
+              }
+            : undefined,
+          courses:
+            meal.courses?.map((course) => ({
+              id: uuidv4(),
+              name: course.name,
+              optionName: course.optionName,
+              description: course.description,
+              order: course.order,
+              labelOfContents: course.labelOfContents,
+              ingredients:
+                course.ingredients?.map((ingredient) => ({
+                  name: ingredient.name,
+                })) ?? [],
+              nutrients:
+                course.nutrients?.map((nutrient) => ({
+                  name: nutrient.name,
+                  amount: nutrient.amount,
+                  unit: nutrient.unit,
+                })) ?? [],
+              prices:
+                course.prices?.map((price) => ({
+                  name: price.name,
+                  value: price.value,
+                  currency: price.currency,
+                })) ?? null,
+              co2Equivalents: course.co2Equivalents,
+              knownAllergens:
+                course.knownAllergens?.map((allergen) => ({
+                  name: allergen.name,
+                  presenceLevel: allergen.presenceLevel,
+                })) ?? [],
+            })) ?? [],
+        })) ?? [],
+    }
   }
 
   private getProtocol() {
