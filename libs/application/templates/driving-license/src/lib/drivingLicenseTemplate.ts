@@ -75,7 +75,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
         m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
   codeOwner: CodeOwners.Juni,
-  institution: m.districtCommissioners,
+  institution: m.nationalCommissionerOfPolice,
   dataSchema,
   translationNamespaces: configuration.translation,
   stateMachineConfig: {
