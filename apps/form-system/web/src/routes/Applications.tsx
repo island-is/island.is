@@ -1,5 +1,6 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemApplication } from '@island.is/api/schema'
+import { ApplicationStatus } from '@island.is/form-system/enums'
 import {
   CREATE_APPLICATION,
   DELETE_APPLICATION,
@@ -95,9 +96,18 @@ export const Applications = () => {
       const responseDto = await fetchApplications()
       if (cancelled) return
 
-      const apps = responseDto?.applications || []
+      const apps: FormSystemApplication[] = responseDto?.applications || []
       if (apps.length > 0) {
-        setApplications(apps)
+        setApplications(
+          apps.filter(
+            (app) =>
+              ![
+                ApplicationStatus.COMPLETED,
+                ApplicationStatus.REJECTED,
+                ApplicationStatus.APPROVED,
+              ].includes(app.status as string),
+          ),
+        )
       } else if (loginAllowed !== false) {
         await createApplication()
         if (cancelled) return
