@@ -14,6 +14,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -26,6 +27,7 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
+  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -47,6 +49,7 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
+import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
@@ -279,7 +282,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-
+  const { features } = useContext(FeatureContext)
+  const showRulingOrderAppealMenu = features.includes(
+    Feature.APPEAL_RULING_ORDER,
+  )
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -638,10 +644,20 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.rulingOrders}
-                  onOpenFile={onOpen}
-                />
+                {showRulingOrderAppealMenu ? (
+                  filteredFiles.rulingOrders.map((file) => (
+                    <RulingOrderFileRow
+                      key={file.id}
+                      file={file}
+                      onOpenFile={onOpen}
+                    />
+                  ))
+                ) : (
+                  <RenderFiles
+                    caseFiles={filteredFiles.rulingOrders}
+                    onOpenFile={onOpen}
+                  />
+                )}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (
