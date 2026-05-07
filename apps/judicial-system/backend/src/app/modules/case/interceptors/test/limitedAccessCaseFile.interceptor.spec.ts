@@ -7,7 +7,6 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
-  DefendantEventType,
   indictmentCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -345,9 +344,9 @@ describe('LimitedAccessCaseFileInterceptor', () => {
     })
   })
 
-  describe('DEFENDANT_RULING temporal cutoff', () => {
+  describe('DEFENDANT_RULING filtering', () => {
     describe.each(indictmentCases)('for %s cases', (type) => {
-      describe('defender whose defendant is still active sees DEFENDANT_RULING', () => {
+      describe('defender is always denied access to DEFENDANT_RULING files', () => {
         let then: Then
 
         beforeEach(async () => {
@@ -360,107 +359,8 @@ describe('LimitedAccessCaseFileInterceptor', () => {
                 id: uuid(),
                 defenderNationalId: nationalId,
                 isDefenderChoiceConfirmed: true,
+                caseFilesSharedWithDefender: true,
                 eventLogs: [],
-              },
-            ],
-            caseFiles: [
-              {
-                id: uuid(),
-                category: CaseFileCategory.DEFENDANT_RULING,
-                created: new Date('2024-06-01'),
-                submittedBy: 'test',
-                fileRepresentative: 'test',
-              },
-            ],
-          }
-
-          mockRequest.mockImplementationOnce(() => ({
-            user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
-          }))
-          mockHandle.mockReturnValueOnce(of(theCase))
-
-          then = await givenWhenThen()
-        })
-
-        it('should include defendant ruling file', () => {
-          const result = then.result as { caseFiles: unknown[] }
-          expect(result.caseFiles).toHaveLength(1)
-          expect(result.caseFiles[0]).toHaveProperty(
-            'category',
-            CaseFileCategory.DEFENDANT_RULING,
-          )
-        })
-      })
-
-      describe('defender whose defendant was dismissed after file creation sees DEFENDANT_RULING', () => {
-        let then: Then
-
-        beforeEach(async () => {
-          const nationalId = uuid()
-          const theCase = {
-            type: type as CaseType,
-            state: CaseState.RECEIVED,
-            defendants: [
-              {
-                id: uuid(),
-                defenderNationalId: nationalId,
-                isDefenderChoiceConfirmed: true,
-                eventLogs: [
-                  {
-                    eventType: DefendantEventType.INDICTMENT_DISMISSED,
-                    created: new Date('2024-06-02'),
-                  },
-                ],
-              },
-            ],
-            caseFiles: [
-              {
-                id: uuid(),
-                category: CaseFileCategory.DEFENDANT_RULING,
-                created: new Date('2024-06-01'),
-                submittedBy: 'test',
-                fileRepresentative: 'test',
-              },
-            ],
-          }
-
-          mockRequest.mockImplementationOnce(() => ({
-            user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
-          }))
-          mockHandle.mockReturnValueOnce(of(theCase))
-
-          then = await givenWhenThen()
-        })
-
-        it('should include defendant ruling file', () => {
-          const result = then.result as { caseFiles: unknown[] }
-          expect(result.caseFiles).toHaveLength(1)
-          expect(result.caseFiles[0]).toHaveProperty(
-            'category',
-            CaseFileCategory.DEFENDANT_RULING,
-          )
-        })
-      })
-
-      describe('defender whose defendant was dismissed before file creation cannot see DEFENDANT_RULING', () => {
-        let then: Then
-
-        beforeEach(async () => {
-          const nationalId = uuid()
-          const theCase = {
-            type: type as CaseType,
-            state: CaseState.RECEIVED,
-            defendants: [
-              {
-                id: uuid(),
-                defenderNationalId: nationalId,
-                isDefenderChoiceConfirmed: true,
-                eventLogs: [
-                  {
-                    eventType: DefendantEventType.INDICTMENT_DISMISSED,
-                    created: new Date('2024-05-31'),
-                  },
-                ],
               },
             ],
             caseFiles: [
