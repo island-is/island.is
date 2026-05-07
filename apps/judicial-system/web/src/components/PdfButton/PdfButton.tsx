@@ -11,6 +11,7 @@ interface Props {
   caseId?: string
   connectedCaseParentId?: string
   title?: string | null
+  subtitle?: string | null
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -36,6 +37,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   // For access control purposes, the data must be accessed through the parent case.
   connectedCaseParentId,
   title,
+  subtitle,
   pdfType,
   disabled,
   renderAs = 'button',
@@ -93,16 +95,25 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
         }
       }}
     >
-      <span
-        className={cn(styles.fileNameContainer, {
-          [styles.fileNameContainerWithChildren]: !!children,
-        })}
-      >
-        <Text color="blue400" variant="h4">
-          {title}
-        </Text>
-      </span>
-      {children}
+      <Box className={styles.pdfRowMain}>
+        <span
+          className={cn(styles.fileNameContainer, {
+            [styles.fileNameContainerWithChildren]: !!children,
+          })}
+        >
+          <Text color="blue400" variant="h4">
+            {title}
+          </Text>
+        </span>
+        {children}
+      </Box>
+      {subtitle && (
+        <Box marginTop={1}>
+          <Text variant="small" color="dark400">
+            {subtitle}
+          </Text>
+        </Box>
+      )}
     </Box>
   )
 }
