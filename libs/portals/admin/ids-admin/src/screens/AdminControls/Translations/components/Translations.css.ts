@@ -1,7 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const classKey = style({
-  maxWidth: 150,
+  width: 150,
   wordBreak: 'break-word',
 })
 

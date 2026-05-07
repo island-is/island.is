@@ -1,5 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator'
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator'
 
 import { Environment } from '@island.is/shared/types'
 
@@ -25,5 +32,7 @@ export class CreateLanguageInput {
 
   @Field(() => [Environment], { nullable: true })
   @IsOptional()
+  @IsArray()
+  @IsEnum(Environment, { each: true })
   environments?: Environment[]
 }
