@@ -345,14 +345,20 @@ export const isMatchingAppealCaseFile = (
     category?: CaseFileCategory | null
     defendantId?: string | null
     civilClaimantId?: string | null
+    rulingFileId?: string | null
   },
   user: User | undefined,
+  rulingFileId?: string | null,
 ): boolean => {
   if (!file.category) {
     return false
   }
 
   if (!categories.includes(file.category)) {
+    return false
+  }
+
+  if (rulingFileId && file.rulingFileId !== rulingFileId) {
     return false
   }
 
@@ -402,6 +408,26 @@ export const isMatchingAppealCaseFile = (
   }
 
   return false
+}
+
+export const areAllDefenderDefendantsCancelledOrDismissed = (
+  nationalId: string | null | undefined,
+  defendants: Defendant[] | null | undefined,
+): boolean => {
+  if (!nationalId || !defendants) {
+    return false
+  }
+  const normalizedId = normalizeAndFormatNationalId(nationalId)
+  const defenderDefendants = defendants.filter(
+    (d) =>
+      d.isDefenderChoiceConfirmed &&
+      d.defenderNationalId &&
+      normalizedId.includes(d.defenderNationalId),
+  )
+  return (
+    defenderDefendants.length > 0 &&
+    defenderDefendants.every((d) => d.indictmentCancelledOrDismissedState)
+  )
 }
 
 // Use the gender of the single defendant if there is only one,
