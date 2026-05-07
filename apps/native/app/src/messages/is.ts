@@ -761,7 +761,7 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
-  'health.overview.medicine': 'Lyfin mín',
+  'health.overview.medicine': 'Lyf',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
 
   // health: categories
@@ -920,7 +920,7 @@ export const is = {
   'health.medicineDelegation.form.xMonths': '{months} mán',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Lyfin mín',
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
   'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
   'health.prescriptionsAndCertificates.expired': 'Útrunnið',
   'health.prescriptionsAndCertificates.rejected': 'Hafnað',

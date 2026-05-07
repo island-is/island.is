@@ -80,7 +80,7 @@ const OrganizationParentSubpagePagesField = () => {
                 ?.sys?.id
 
             if (parentId) {
-              const parentExists = await cma.entry
+              const parentEntry = await cma.entry
                 .get({
                   entryId: parentId,
                 })
@@ -91,7 +91,12 @@ const OrganizationParentSubpagePagesField = () => {
                   }
                 })
 
-              if (parentExists) {
+              if (
+                parentEntry &&
+                parentEntry.fields?.pages?.[DEFAULT_LOCALE]?.some(
+                  (page) => page.sys.id === entries[0]?.sys.id,
+                )
+              ) {
                 sdk.notifier.warning(
                   'Subpage could not be linked since it is already linked to a parent page',
                 )

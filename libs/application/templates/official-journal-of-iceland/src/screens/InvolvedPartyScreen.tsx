@@ -17,7 +17,7 @@ import { useApplication } from '../hooks/useUpdateApplication'
 import { useFormContext } from 'react-hook-form'
 import set from 'lodash/set'
 import { DefaultEvents } from '@island.is/application/types'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { additionalPartySchema } from '../lib/dataSchema'
 import { z } from 'zod'
@@ -40,10 +40,8 @@ export const InvolvedPartyScreen = ({
   setSubmitButtonDisabled,
   refetch,
 }: OJOIFieldBaseProps) => {
-  const { value: regulationsEnabled } = useFeatureFlag(
-    Features.officialJournalOfIcelandRegulations,
-    false,
-  )
+  const { value: regulationsEnabled, loading: regulationsLoading } =
+    useFeatureFlag(Features.officialJournalOfIcelandRegulations, false)
 
   const { updateApplication, updateApplicationV2, submitApplication } =
     useApplication({
@@ -78,56 +76,83 @@ export const InvolvedPartyScreen = ({
     onError: () => {
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     },
-    onComplete: (data) => {
-      const involvedParties =
-        data.officialJournalOfIcelandApplicationGetUserInvolvedParties
-          .involvedParties
-
-      if (involvedParties.length === 1) {
-        const involvedParty = involvedParties[0]
-        const isMinistry = involvedParty.title
-          .toLowerCase()
-          .includes('ráðuneyti')
-
-        setIsCurrentPartyMinistry(isMinistry)
-
-        setValue(InputFields.advert.involvedPartyId, involvedParty.id)
-        setValue(InputFields.advert.involvedPartyTitle, involvedParty.title)
-        setValue(InputFields.requirements.additionalParties, [])
-
-        const currentAnswers = structuredClone(application.answers)
-
-        set(
-          currentAnswers,
-          InputFields.advert.involvedPartyId,
-          involvedParty.id,
-        )
-        set(
-          currentAnswers,
-          InputFields.advert.involvedPartyTitle,
-          involvedParty.title,
-        )
-        set(currentAnswers, InputFields.requirements.additionalParties, [])
-
-        // Pre-set applicationType for non-ministry parties so the
-        // TypeSelection screen can be skipped entirely.
-        if (!isMinistry) {
-          setValue('applicationType', ApplicationTypes.AD)
-          set(currentAnswers, 'applicationType', ApplicationTypes.AD)
-
-          updateApplication(currentAnswers, () => {
-            submitApplication(DefaultEvents.SUBMIT, () => {
-              refetch && refetch()
-            })
-          })
-          return
-        }
-
-        updateApplication(currentAnswers)
-        setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-      }
-    },
   })
+
+  // Auto-action for the single-involved-party case. Driven from a useEffect
+  // (rather than Apollo's onCompleted) so that we wait for the feature flag
+  // to resolve before deciding which branch to take — otherwise a stale
+  // `regulationsEnabled = false` closure could fire when the flag is
+  // actually on. autoActionedRef prevents the effect from firing twice.
+  const autoActionedRef = useRef(false)
+  useEffect(() => {
+    if (autoActionedRef.current) return
+    if (loading || regulationsLoading) return
+    if (!involvedParties || involvedParties.length !== 1) return
+
+    autoActionedRef.current = true
+
+    const involvedParty = involvedParties[0]
+
+    // When the regulations feature is disabled, this screen has no
+    // ministry-specific UI, so a single involved party should auto-submit
+    // straight through — same as the original pre-regulation-flow flow.
+    // applicationType is pinned to AD so downstream checks see an explicit
+    // value, mirroring the `!isMinistry` branch below.
+    if (!regulationsEnabled) {
+      setValue(InputFields.advert.involvedPartyId, involvedParty.id)
+      setValue('applicationType', ApplicationTypes.AD)
+
+      const currentAnswers = structuredClone(application.answers)
+      set(currentAnswers, InputFields.advert.involvedPartyId, involvedParty.id)
+      set(currentAnswers, 'applicationType', ApplicationTypes.AD)
+
+      updateApplication(currentAnswers, () => {
+        submitApplication(DefaultEvents.SUBMIT, () => {
+          refetch && refetch()
+        })
+      })
+      return
+    }
+
+    const isMinistry = involvedParty.title.toLowerCase().includes('ráðuneyti')
+
+    setIsCurrentPartyMinistry(isMinistry)
+
+    setValue(InputFields.advert.involvedPartyId, involvedParty.id)
+    setValue(InputFields.advert.involvedPartyTitle, involvedParty.title)
+
+    const currentAnswers = structuredClone(application.answers)
+
+    set(currentAnswers, InputFields.advert.involvedPartyId, involvedParty.id)
+    set(
+      currentAnswers,
+      InputFields.advert.involvedPartyTitle,
+      involvedParty.title,
+    )
+
+    // Pre-set applicationType for non-ministry parties so the
+    // TypeSelection screen can be skipped entirely. additionalParties is
+    // also cleared here — it's only meaningful for ministries, and a
+    // ministry returning to this screen must keep its previously selected
+    // parties intact.
+    if (!isMinistry) {
+      setValue(InputFields.requirements.additionalParties, [])
+      setValue('applicationType', ApplicationTypes.AD)
+      set(currentAnswers, InputFields.requirements.additionalParties, [])
+      set(currentAnswers, 'applicationType', ApplicationTypes.AD)
+
+      updateApplication(currentAnswers, () => {
+        submitApplication(DefaultEvents.SUBMIT, () => {
+          refetch && refetch()
+        })
+      })
+      return
+    }
+
+    updateApplication(currentAnswers)
+    setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [involvedParties, regulationsEnabled, regulationsLoading, loading])
 
   const options = involvedParties?.map((involvedParty) => ({
     label: involvedParty.title,
@@ -210,6 +235,14 @@ export const InvolvedPartyScreen = ({
           defaultValue={defaultValue}
           placeholder={involvedParty.inputs.select.placeholder}
           onChange={(selectedId) => {
+            // When the regulations feature is disabled, the OJOISelectController
+            // already persists involvedPartyId — there is no ministry-specific
+            // bookkeeping to do, so just enable the submit button.
+            if (!regulationsEnabled) {
+              setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+              return
+            }
+
             // Also persist the party title so downstream screens
             // can check whether the party is a ministry.
             const party = involvedParties?.find((p) => p.id === selectedId)

@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { TheIcelandicPoliceLogo } from '@island.is/application/assets/institution-logos'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
@@ -28,7 +28,7 @@ export const getForm = ({
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
-    logo: TheIcelandicPoliceLogo,
+    logo: DistrictCommissionersLogo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

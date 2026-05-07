@@ -1,0 +1,45 @@
+query getUnemploymentApplicationOverview($locale: String) {
+  vmstApplicationsUnemploymentApplicationOverview(locale: $locale) {
+    applicantId
+    unemploymentApplicationId
+    applicationStatusId
+    applicationStatusName
+    applicationStatus
+    dataRequested
+    availableActions {
+      canContact
+      canSubmitDocuments
+      canReportWork
+      canReportTravel
+      canUnregister
+      canConfirmJobSearch
+    }
+    overviewItems {
+      key
+      label
+      value
+    }
+  }
+}
+
+query getApplicantOverview($locale: String) {
+  vmstApplicantOverview(locale: $locale) {
+    passCode
+    preferredJobs
+    bankAccount
+    union
+    pensionFund
+    usedPersonalTaxCredit
+    numberOfChildren
+    employmentHistory
+    educationHistory
+    drivingLicenses
+    languageAbilities {
+      name
+      proficiency
+    }
+    serviceArea
+    currentAddressDifferent
+    savedToEures
+  }
+}
