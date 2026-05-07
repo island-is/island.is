@@ -24,7 +24,7 @@ export interface AdminLoaderQueryResponse {
 
 export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async ({ request }): Promise<LoaderResponse> => {
-    const selectedOrganizaionNationalId =
+    const selectedOrganizationNationalId =
       new URL(request.url).searchParams.get('organizationNationalId') ??
       userInfo?.profile.nationalId
     const { data: dataForms, error: errorData } =
@@ -32,7 +32,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
         query: GET_FORMS,
         variables: {
           input: {
-            nationalId: selectedOrganizaionNationalId,
+            nationalId: selectedOrganizationNationalId,
           },
         },
         fetchPolicy: 'no-cache',
@@ -47,7 +47,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       query: GET_ORGANIZATION_ADMIN,
       variables: {
         input: {
-          nationalId: selectedOrganizaionNationalId,
+          nationalId: selectedOrganizationNationalId,
         },
       },
       fetchPolicy: 'no-cache',
@@ -101,7 +101,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       '@admin.island.is/form-system:admin',
     )
 
-    const organizationNationalId = selectedOrganizaionNationalId
+    const organizationNationalId = selectedOrganizationNationalId
     const admin = data.formSystemOrganizationAdmin
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mapPermissionTypes = (types: any[]): FormSystemPermissionType[] =>
