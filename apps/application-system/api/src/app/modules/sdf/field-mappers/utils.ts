@@ -85,9 +85,11 @@ export const applySharedFieldProps = (
   } else if (
     raw.description &&
     raw.type !== FieldTypes.CHECKBOX &&
-    raw.type !== FieldTypes.DESCRIPTION
+    raw.type !== FieldTypes.DESCRIPTION &&
+    raw.type !== FieldTypes.FILEUPLOAD
   ) {
-    // CHECKBOX and DESCRIPTION use description as rendered copy, not placeholder text.
+    // CHECKBOX, DESCRIPTION, and FILEUPLOAD render `description` as their own
+    // copy block, not as input placeholder text.
     component.placeholder = resolver.resolve(raw.description)
   }
 

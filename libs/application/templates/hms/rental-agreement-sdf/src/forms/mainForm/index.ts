@@ -402,7 +402,8 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
               'condition.resultsFiles',
               housingCondition.fileUploadTitle,
               {
-                description: housingCondition.fileUploadDescription,
+                uploadHeader: housingCondition.fileUploadTitle,
+                uploadDescription: housingCondition.fileUploadDescription,
                 uploadAccept:
                   '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
                 uploadMultiple: true,

@@ -442,6 +442,33 @@ export class SdfFileUploadField {
   @Field({ nullable: true })
   accept?: string
 
+  @Field({ nullable: true })
+  uploadHeader?: string
+
+  @Field({ nullable: true })
+  uploadDescription?: string
+
+  @Field({ nullable: true })
+  uploadButtonLabel?: string
+
+  @Field({ nullable: true })
+  uploadMultiple?: boolean
+
+  @Field(() => Int, { nullable: true })
+  totalMaxSize?: number
+
+  @Field(() => Int, { nullable: true })
+  maxFileCount?: number
+
+  @Field({ nullable: true })
+  forImageUpload?: boolean
+
+  @Field({ nullable: true })
+  maxSizeErrorText?: string
+
+  @Field({ nullable: true })
+  introduction?: string
+
   @Field(() => SdfClientCondition, { nullable: true })
   clientCondition?: typeof SdfClientCondition
 }
