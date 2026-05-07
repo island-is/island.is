@@ -220,6 +220,9 @@ export interface IAnnualReportFields {
 
   /** Chapters */
   chapters: IAnnualReportChapter[]
+
+  /** Timeline */
+  timeline?: ITimeline | undefined
 }
 
 /** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
@@ -321,6 +324,9 @@ export interface IArticleFields {
   /** Slug */
   slug: string
 
+  /** Content last reviewed */
+  contentLastReviewed?: string | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -377,6 +383,9 @@ export interface IArticleFields {
 
   /** Stepper */
   stepper?: IStepper | undefined
+
+  /** Show date of the most recent review */
+  showDateOfTheMostRecentReview?: boolean | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -1084,6 +1093,9 @@ export interface IDelegationScopeTagFields {
 
   /** Slug */
   slug: string
+
+  /** Show as card */
+  showAsCard?: boolean | undefined
 }
 
 /** Tags that can be used to filter available delegations */
@@ -3853,6 +3865,9 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
+  /** Content last reviewed */
+  contentLastReviewed?: string | undefined
+
   /** Intro */
   intro?: string | undefined
 
@@ -3915,6 +3930,9 @@ export interface IOrganizationSubpageFields {
 
   /** Short Description */
   shortDescription?: string | undefined
+
+  /** Show date of the last review */
+  showDateOfTheLastReview?: boolean | undefined
 }
 
 export interface IOrganizationSubpage
@@ -4290,6 +4308,9 @@ export interface IProjectSubpageFields {
   /** Slug */
   slug: string
 
+  /** Content last reviewed */
+  contentLastReviewed?: string | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -4323,6 +4344,9 @@ export interface IProjectSubpageFields {
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
+
+  /** Show date of the last review */
+  showDateOfTheLastReview?: boolean | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {

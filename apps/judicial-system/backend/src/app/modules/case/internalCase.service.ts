@@ -1765,7 +1765,7 @@ export class InternalCaseService {
         {
           model: Defendant,
           as: 'defendants',
-          required: false,
+          required: true,
           order: [['created', 'DESC']],
           where: {
             indictmentReviewDecision: null,

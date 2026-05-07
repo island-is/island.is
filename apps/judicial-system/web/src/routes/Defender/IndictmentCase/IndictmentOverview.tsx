@@ -43,7 +43,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseUI } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -105,9 +105,10 @@ const IndictmentOverview: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { appealBanner, appealModals } = useAppealCaseUI()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
   const caseIsClosed = isCompletedCase(workingCase.state)
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
@@ -211,7 +212,8 @@ const IndictmentOverview: FC = () => {
               workingCase.indictmentDecision !==
                 IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
-                IndictmentDecision.REDISTRIBUTING && (
+                IndictmentDecision.REDISTRIBUTING &&
+              caseIsClosed === false && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
                     court={workingCase.court}

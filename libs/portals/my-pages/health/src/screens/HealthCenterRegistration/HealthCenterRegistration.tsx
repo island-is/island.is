@@ -210,6 +210,7 @@ const HealthCenterRegistration = () => {
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.healthCenterRegistrationTitle)}
       intro={formatMessage(messages.healthCenterRegistrationInfo)}
+      desktopContentSpan="10/12"
     >
       {errorTransfer && (
         <Box paddingBottom={4} ref={errorBoxRef}>

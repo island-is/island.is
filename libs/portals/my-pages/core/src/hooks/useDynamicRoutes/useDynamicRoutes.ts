@@ -29,6 +29,19 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
   }
 `
 
+export const GET_VMST_APPLICATIONS_OVERVIEW_QUERY = gql`
+  query GetVmstApplicationsOverviewDynamic {
+    vmstApplicationsOverview {
+      unemploymentApplication {
+        isVisible
+      }
+      activationGrant {
+        isVisible
+      }
+    }
+  }
+`
+
 export const GET_NAMESPACE_QUERY = gql`
   query GetNamespace($input: GetNamespaceInput!) {
     getNamespace(input: $input) {
@@ -47,6 +60,10 @@ export const useDynamicRoutes = () => {
 
   const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
     GET_DRIVING_LICENSE_BOOK_QUERY,
+  )
+
+  const { data: vmstOverview, loading: vmstLoading } = useQuery(
+    GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
   )
 
   useEffect(() => {
@@ -82,12 +99,25 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(DynamicPaths.EducationDrivingLessons)
     }
 
+    /**
+     * portals-my-pages/social-benefits
+     * Show unemployment benefits child routes only if user has visible application.
+     */
+    const vmstData = vmstOverview?.vmstApplicationsOverview
+    if (vmstData?.unemploymentApplication?.isVisible) {
+      dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentStatus)
+      dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
+    }
+
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, licenseBook])
+  }, [data, licenseBook, vmstOverview])
 
-  return { activeDynamicRoutes, loading: loading && licenseBookLoading }
+  return {
+    activeDynamicRoutes,
+    loading: loading || licenseBookLoading || vmstLoading,
+  }
 }
 
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {

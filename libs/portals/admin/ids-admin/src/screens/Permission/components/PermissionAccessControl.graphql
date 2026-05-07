@@ -1,0 +1,22 @@
+query GetScopeUsers($input: AuthAdminScopeUsersInput!) {
+  authAdminScopeUsers(input: $input) {
+    nationalId
+    name
+    email
+  }
+}
+
+query GetAllApiScopeUsersForSelect($input: AuthAdminApiScopeUsersInput!) {
+  authAdminApiScopeUsers(input: $input) {
+    rows {
+      nationalId
+      name
+      email
+    }
+    totalCount
+  }
+}
+
+mutation UpdateScopeUsers($input: UpdateAuthAdminScopeUsersInput!) {
+  updateAuthAdminScopeUsers(input: $input)
+}

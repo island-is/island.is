@@ -17,7 +17,12 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -482,6 +487,11 @@ export class FileController {
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a token URL for a police digital case file',
+  })
+  @ApiResponse({
+    status: 425,
+    description:
+      'Police digital case file is not published yet (secure area still processing)',
   })
   getPoliceDigitalCaseFileTokenUrl(
     @Param('caseId') caseId: string,

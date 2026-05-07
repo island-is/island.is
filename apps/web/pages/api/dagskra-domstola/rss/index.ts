@@ -1,3 +1,4 @@
+import escape from 'escape-html'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import initApollo from '@island.is/web/graphql/client'
@@ -18,11 +19,14 @@ interface Item {
 
 const generateItemString = (item: Item) => {
   return `<item>
-  <title>${item.title}</title>
-  <link>${item.fullUrl}</link>
-  ${item.description ? `<description>${item.description}</description>` : ''}
-  <guid isPermaLink="false">${item.id}</guid>
-  ${item.date ? ` <pubDate>${item.date}</pubDate>` : ''}
+  <title>${escape(item.title)}</title>
+  ${
+    item.description
+      ? `<description>${escape(item.description)}</description>`
+      : ''
+  }
+  <guid isPermaLink="false">${escape(item.id)}</guid>
+  ${item.date ? ` <pubDate>${escape(item.date)}</pubDate>` : ''}
   </item>`
 }
 
@@ -71,7 +75,7 @@ export default async function handler(
   <rss version="2.0">
   <channel>
   <title>Dagskrá dómstóla á Ísland.is</title>
-  <link>${baseUrl}</link>
+  <link>${escape(baseUrl)}</link>
   ${itemString}
   </channel>
   </rss>`
