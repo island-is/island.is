@@ -291,16 +291,16 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'parties.tenantInfo.table',
             )
-            const landlordName = landlords
+            const landlordNames = landlords
               ?.map((l) => l.nationalIdWithName.name)
               .join(', ')
-            const tenantName = tenants
+            const tenantNames = tenants
               ?.map((t) => t.nationalIdWithName.name)
               .join(', ')
             const args: Array<{ key: string; value: string }> = []
             if (address) args.push({ key: 'address', value: address })
-            if (landlordName) args.push({ key: 'landlordName', value: landlordName })
-            if (tenantName) args.push({ key: 'tenantName', value: tenantName })
+            if (landlordNames) args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames) args.push({ key: 'tenantNames', value: tenantNames })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
