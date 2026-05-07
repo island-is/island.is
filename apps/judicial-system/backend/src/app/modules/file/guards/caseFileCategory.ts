@@ -202,15 +202,6 @@ const canDefenceUserViewCaseFile = ({
       civilClaimants,
     )
 
-    console.log('[caseFile cutoff check]', {
-      nationalId,
-      caseFileCategory,
-      cutoffDate,
-      fileCreated,
-      blocked: Boolean(
-        cutoffDate && fileCreated && fileCreated > cutoffDate,
-      ),
-    })
     if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
       return false
     }

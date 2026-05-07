@@ -1700,23 +1700,26 @@ export class CaseService {
 
     await Promise.all(
       eventUpdates.map(({ defendantId, eventType, rulingDate }) => {
-        if (!rulingDate) {
-          return this.defendantEventLogRepositoryService.createWithUser(
-            eventType,
-            theCase.id,
-            defendantId,
-            user,
-            transaction,
+        let created: Date | undefined
+        if (rulingDate) {
+          // Combine the user-selected ruling date with the current server time so
+          // the cutoff timestamp is precise rather than midnight of the ruling date.
+          const now = new Date()
+          created = new Date(rulingDate)
+          created.setUTCHours(
+            now.getUTCHours(),
+            now.getUTCMinutes(),
+            now.getUTCSeconds(),
+            now.getUTCMilliseconds(),
           )
         }
-
         return this.defendantEventLogRepositoryService.createWithUser(
           eventType,
           theCase.id,
           defendantId,
           user,
           transaction,
-          rulingDate,
+          created,
         )
       }),
     )
