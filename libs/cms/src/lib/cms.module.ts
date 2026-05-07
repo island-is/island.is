@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { ConfigModule } from '@island.is/nest/config'
 import {
   CmsResolver,
   ArticleResolver,
@@ -38,13 +39,20 @@ import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTit
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
 import { OrganizationPageResolver } from './organizationPage.resolver'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlagConfig,
+  FeatureFlagModule,
+} from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
     HttpModule,
     TerminusModule,
     PowerBiConfig.registerOptional(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [FeatureFlagConfig],
+    }),
     FeatureFlagModule,
   ],
   providers: [
