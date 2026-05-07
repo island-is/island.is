@@ -53,6 +53,10 @@ mutation CreateApiScopeUser($input: CreateAuthAdminApiScopeUserInput!) {
         scope
       }
     }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }
 
@@ -70,9 +74,20 @@ mutation UpdateApiScopeUser($input: UpdateAuthAdminApiScopeUserInput!) {
         scope
       }
     }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }
 
 mutation DeleteApiScopeUser($input: DeleteAuthAdminApiScopeUserInput!) {
-  deleteAuthAdminApiScopeUser(input: $input)
+  deleteAuthAdminApiScopeUser(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
 }

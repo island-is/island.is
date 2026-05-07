@@ -176,6 +176,7 @@ const Questionnaires: FC = () => {
       title={formatMessage(messages.questionnaires)}
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
+      desktopContentSpan="10/12"
     >
       {!loading && error && (
         <Box marginTop={3}>

@@ -6,8 +6,10 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
@@ -29,6 +31,7 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
+import { areAllDefenderDefendantsCancelledOrDismissed } from '../../utils/utils'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
@@ -159,11 +162,9 @@ const Table: FC<TableProps> = (props) => {
           )
 
           const allDefenderDefendantsAreCancelledOrDismissed =
-            Boolean(defenderDefendants?.length) &&
-            defenderDefendants?.every(
-              (defendant) =>
-                defendant.indictmentCancelledOrDismissedState !== null &&
-                defendant.indictmentCancelledOrDismissedState !== undefined,
+            areAllDefenderDefendantsCancelledOrDismissed(
+              user?.nationalId,
+              entry.defendants,
             )
 
           const visibleDefendants = entry.defendants?.filter((defendant) => {

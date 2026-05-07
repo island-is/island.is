@@ -522,6 +522,8 @@ codemagic.yaml                                                                  
 /libs/api/domains/vmst-applications/                                                                                         @island-is/origo
 /libs/clients/vmst-unemployment/                                                                                             @island-is/origo
 
+libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
+
 # DevOps
 /.github/                                                                                                                    @island-is/devops
 /scripts/ci/                                                                                                                 @island-is/devops
