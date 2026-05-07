@@ -34,11 +34,13 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
             submittedBy,
             fileRepresentative,
             defendantId,
+            created,
           }: {
             category: CaseFileCategory
             submittedBy: string
             fileRepresentative: string
             defendantId?: string
+            created?: Date
           }) =>
             canLimitedAccessUserViewCaseFile({
               user,
@@ -50,6 +52,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               defendants: theCase.defendants,
               civilClaimants: theCase.civilClaimants,
               defendantId,
+              fileCreated: created,
             }),
         )
 
