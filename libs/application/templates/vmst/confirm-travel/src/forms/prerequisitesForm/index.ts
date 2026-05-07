@@ -9,7 +9,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { prerequisitesForm } from '../../lib/messages'
-import { getEligability } from '../../dataProviders'
+import { getEligibility } from '../../dataProviders'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
@@ -27,7 +27,7 @@ export const Prerequisites = buildForm({
           title: prerequisitesForm.general.externalDataTitle,
           dataProviders: [
             buildDataProviderItem({
-              provider: getEligability,
+              provider: getEligibility,
               title: prerequisitesForm.dataProviders.vmstTitle,
               subTitle: prerequisitesForm.dataProviders.vmstSubTitle,
             }),

@@ -20,7 +20,7 @@ import {
 } from '@island.is/application/core'
 import { applicationMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { getEligability } from '../dataProviders'
+import { getEligibility } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -56,7 +56,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [getEligability],
+              api: [getEligibility],
               delete: true,
             },
           ],
