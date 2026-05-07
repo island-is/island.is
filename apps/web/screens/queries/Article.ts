@@ -12,6 +12,8 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       keywords
       importance
+      contentLastReviewed
+      showDateOfTheMostRecentReview
       showTableOfContents
       processEntryButtonText
       signLanguageVideo {

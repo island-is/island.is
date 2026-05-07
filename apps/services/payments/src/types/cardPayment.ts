@@ -127,33 +127,21 @@ export const ApplePaySessionSuccessSchema = PaymentGatewaySuccessSchema.extend({
 /** Apple Pay session error */
 export const ApplePaySessionErrorSchema = PaymentGatewayErrorSchema
 
-const ApplePayPaymentDataSchema = z.object({
-  Version: z.string(),
-  Data: z.string(),
-  Signature: z.string(),
-  Header: z.object({
-    EphemeralPublicKey: z.string(),
-    PublicKeyHash: z.string(),
-    TransactionId: z.string(),
-  }),
+/** Valitor Apple Pay decrypted payment token payload (Sale operation with DecryptedPaymentTokenData) */
+const ApplePayDecryptedPaymentTokenDataSchema = z.object({
+  amount: z.string(),
+  cardNumber: z.string(),
+  currency: z.string(),
+  expirationMonth: z.number(),
+  expirationYear: z.number(),
+  paymentCryptogram: z.string(),
 })
 
-const ApplePayPaymentMethodSchema = z.object({
-  DisplayName: z.string(),
-  Network: z.string(),
-})
-
-const ApplePayPaymentTokenSchema = z.object({
-  PaymentData: ApplePayPaymentDataSchema,
-  PaymentMethod: ApplePayPaymentMethodSchema,
-  TransactionIdentifier: z.string(),
-})
-
-export const ApplePayPaymentInputSchema = z.object({
-  Operation: z.string(),
-  WalletPaymentType: z.literal('ApplePay'),
-  ApplePayWalletPayment: z.object({
-    PaymentToken: ApplePayPaymentTokenSchema,
+export const ApplePayDecryptedWalletPaymentPayloadSchema = z.object({
+  operation: z.literal('Sale'),
+  walletPaymentType: z.literal('ApplePay'),
+  applePayWalletPayment: z.object({
+    decryptedPaymentTokenData: ApplePayDecryptedPaymentTokenDataSchema,
   }),
   paymentAdditionalData: z.object({
     merchantReferenceData: z.string(),
@@ -162,7 +150,9 @@ export const ApplePayPaymentInputSchema = z.object({
   correlationId: z.string(),
 })
 
-export type ApplePayPaymentInput = z.infer<typeof ApplePayPaymentInputSchema>
+export type ApplePayDecryptedWalletPaymentPayload = z.infer<
+  typeof ApplePayDecryptedWalletPaymentPayloadSchema
+>
 export type CardVerificationSuccessResponse = z.infer<
   typeof CardVerificationSuccessSchema
 >

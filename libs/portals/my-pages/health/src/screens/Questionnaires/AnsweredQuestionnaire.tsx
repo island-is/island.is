@@ -127,70 +127,71 @@ const AnsweredQuestionnaire: FC = () => {
       }
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
-      childrenWidthFull
-      buttonGroupAlignment="spaceBetween"
-      buttonGroup={[
-        <Box key="submission-select-container">
-          <Inline space={2} alignY="bottom">
-            <Box className={styles.select}>
-              <Select
-                options={questionnaireData?.questionnairesDetail?.submissions?.map(
-                  (submission) => ({
-                    value: submission.id,
-                    label: submission.lastUpdated
+      buttonGroup={{
+        actions: [
+          <Box key="submission-select-container">
+            <Inline space={2} alignY="bottom">
+              <Box className={styles.select}>
+                <Select
+                  options={questionnaireData?.questionnairesDetail?.submissions?.map(
+                    (submission) => ({
+                      value: submission.id,
+                      label: submission.lastUpdated
+                        ? formatMessage(messages.answeredAt, {
+                            arg: formatDate(submission.lastUpdated),
+                          })
+                        : formatMessage(messages.unknown),
+                    }),
+                  )}
+                  value={{
+                    label: currentSubmission?.lastUpdated
                       ? formatMessage(messages.answeredAt, {
-                          arg: formatDate(submission.lastUpdated),
+                          arg: formatDate(currentSubmission.lastUpdated),
                         })
                       : formatMessage(messages.unknown),
-                  }),
-                )}
-                value={{
-                  label: currentSubmission?.lastUpdated
-                    ? formatMessage(messages.answeredAt, {
-                        arg: formatDate(currentSubmission.lastUpdated),
-                      })
-                    : formatMessage(messages.unknown),
-                  value: currentSubmission?.id ?? '',
-                }}
-                key="submission-select"
-                onChange={(option) =>
-                  option?.value != null
-                    ? handleSubmissionChange(option.value)
-                    : null
-                }
-                size="xs"
-                isSearchable={false}
-              />
-            </Box>
-            {isDraft ? (
-              <Box className={styles.button}>
-                <Button
-                  fluid
-                  key="answer-link"
-                  variant="utility"
-                  colorScheme="primary"
-                  size="small"
-                  onClick={() =>
-                    navigate(link, {
-                      state: { submissionId: currentSubmission?.id },
-                    })
+                    value: currentSubmission?.id ?? '',
+                  }}
+                  key="submission-select"
+                  onChange={(option) =>
+                    option?.value != null
+                      ? handleSubmissionChange(option.value)
+                      : null
                   }
-                >
-                  {formatMessage(messages.continueDraftQuestionnaire)}
-                </Button>
+                  size="xs"
+                  isSearchable={false}
+                />
               </Box>
-            ) : null}
-          </Inline>
-        </Box>,
-        <Button
-          key="print-button"
-          variant="utility"
-          onClick={() => window.print()}
-          preTextIcon="print"
-        >
-          {formatMessage(m.print)}
-        </Button>,
-      ]}
+              {isDraft ? (
+                <Box className={styles.button}>
+                  <Button
+                    fluid
+                    key="answer-link"
+                    variant="utility"
+                    colorScheme="primary"
+                    size="small"
+                    onClick={() =>
+                      navigate(link, {
+                        state: { submissionId: currentSubmission?.id },
+                      })
+                    }
+                  >
+                    {formatMessage(messages.continueDraftQuestionnaire)}
+                  </Button>
+                </Box>
+              ) : null}
+            </Inline>
+          </Box>,
+          <Button
+            key="print-button"
+            variant="utility"
+            onClick={() => window.print()}
+            preTextIcon="print"
+          >
+            {formatMessage(m.print)}
+          </Button>,
+        ],
+        alignment: 'spaceBetween',
+      }}
     >
       {loading && !error && (
         <Box marginTop={6}>

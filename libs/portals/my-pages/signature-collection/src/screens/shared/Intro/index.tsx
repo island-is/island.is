@@ -25,7 +25,8 @@ const Intro = ({
       <IntroWrapper
         title={title}
         intro={intro}
-        serviceProviderSlug={providerSlug ?? providerSlugFallback}
+        serviceProvider={{ slug: providerSlug ?? providerSlugFallback }}
+        desktopContentSpan="10/12"
       />
       {slug && <ShareLink slug={slug} />}
     </Box>

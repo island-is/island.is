@@ -15,6 +15,9 @@ export class ScopeTag {
   @Field(() => String)
   slug!: string
 
+  @Field(() => Boolean, { nullable: true })
+  showAsCard?: boolean
+
   @Field(() => [ApiScope])
   scopes!: ApiScope[]
 

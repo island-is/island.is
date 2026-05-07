@@ -1082,6 +1082,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                             <Tag
                               key={tag.value}
                               active={isActive}
+                              focusVisibleOnly={true}
                               onClick={() => {
                                 if (tag.value === ALL_COURTS_TAG) {
                                   updateQueryState(QueryParam.COURT, [])
@@ -1161,6 +1162,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                           <Inline alignY="center" space={2}>
                             <Tag
                               key={DEFAULT_DISTRICT_COURT_TAG}
+                              focusVisibleOnly={true}
                               active={
                                 selectedCourts.includes(
                                   DEFAULT_DISTRICT_COURT_TAG,
@@ -1202,6 +1204,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                                 <Tag
                                   key={tag.value}
                                   active={isActive}
+                                  focusVisibleOnly={true}
                                   onClick={() => {
                                     updateQueryState(
                                       QueryParam.DISTRICT_COURTS,
@@ -1559,11 +1562,16 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                     }
                     time={time}
                     hearingTime={
-                      agenda.hearingTime
-                        ? formatMessage(m.listPage.hearingTime, {
-                            hearingTime: agenda.hearingTime,
-                          })
-                        : undefined
+                      agenda.hearingTime ? (
+                        <Text variant="small">
+                          {formatMessage(m.listPage.hearingTimePrefix)}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: agenda.hearingTime,
+                            }}
+                          />
+                        </Text>
+                      ) : undefined
                     }
                     court={agenda.court}
                     courtRoom={agenda.courtRoom}

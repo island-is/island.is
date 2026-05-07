@@ -87,6 +87,11 @@ export class DelegationDTO {
   @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
 
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  subjectId?: string | null
+
   // This property is only used in delegation index
   rights?: PersonalRepresentativeRightTypeDTO[]
 

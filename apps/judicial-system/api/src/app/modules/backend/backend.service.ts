@@ -311,8 +311,11 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  createAppealCase(caseId: string): Promise<AppealCase> {
-    return this.post(`case/${caseId}/appealCase`)
+  createAppealCase(
+    caseId: string,
+    createAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase`, createAppealCase)
   }
 
   updateAppealCase(
@@ -335,6 +338,16 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/appealCase/${appealCaseId}/state`,
       transitionAppealCase,
     )
+  }
+
+  createAppealEventLog(
+    caseId: string,
+    appealCaseId: string,
+    eventType: string,
+  ): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
+      eventType,
+    })
   }
 
   requestCourtRecordSignature(
@@ -813,18 +826,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  limitedAccessCreateAppealCase(caseId: string): Promise<AppealCase> {
-    return this.post(`case/${caseId}/limitedAccess/appealCase`)
-  }
-
-  limitedAccessUpdateAppealCase(
+  limitedAccessCreateAppealCase(
     caseId: string,
-    appealCaseId: string,
-    updateAppealCase: unknown,
+    createAppealCase: unknown,
   ): Promise<AppealCase> {
-    return this.patch(
-      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}`,
-      updateAppealCase,
+    return this.post(
+      `case/${caseId}/limitedAccess/appealCase`,
+      createAppealCase,
     )
   }
 
@@ -836,6 +844,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/state`,
       transitionAppealCase,
+    )
+  }
+
+  limitedAccessCreateAppealEventLog(
+    caseId: string,
+    appealCaseId: string,
+    eventType: string,
+  ): Promise<AppealCase> {
+    return this.post(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
+      { eventType },
     )
   }
 

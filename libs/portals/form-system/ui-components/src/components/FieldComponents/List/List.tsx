@@ -1,13 +1,16 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
+import { ListTypesEnum } from '@island.is/form-system/enums'
 import { Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect } from 'react'
-import { getValue } from '../../../lib/getValue'
-import { Action } from '../../../lib/reducerTypes'
 import { Controller, useFormContext } from 'react-hook-form'
-import { m } from '../../../lib/messages'
+import { getValue } from '../../../lib/getValue'
 import { countriesAsListItems } from '../../../lib/lists/countries.list'
-import { ListTypesEnum } from '@island.is/form-system/enums'
+import { getCurrenciesList } from '../../../lib/lists/currencies.list'
+import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
+import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
+import { m } from '../../../lib/messages'
+import { Action } from '../../../lib/reducerTypes'
 
 interface Props {
   item: FormSystemField
@@ -22,10 +25,23 @@ type ListItem = {
 }
 
 const listTypePlaceholder = {
-  lond: 'Veldu land',
-  sveitarfelog: 'Veldu sveitarfélag',
-  postnumer: 'Veldu póstnúmer',
-}
+  [ListTypesEnum.COUNTRIES]: {
+    is: 'Veldu land',
+    en: 'Select country',
+  },
+  [ListTypesEnum.MUNICIPALITIES]: {
+    is: 'Veldu sveitarfélag',
+    en: 'Select municipality',
+  },
+  [ListTypesEnum.POSTAL_CODES]: {
+    is: 'Veldu póstnúmer',
+    en: 'Select postal code',
+  },
+  [ListTypesEnum.CURRENCIES]: {
+    is: 'Veldu gjaldmiðil',
+    en: 'Select currency',
+  },
+} as const
 
 export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { lang, formatMessage } = useLocale()
@@ -60,6 +76,12 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
     switch (item.fieldSettings?.listType) {
       case ListTypesEnum.COUNTRIES:
         return countriesAsListItems()
+      case ListTypesEnum.MUNICIPALITIES:
+        return getMunicipalitiesList()
+      case ListTypesEnum.POSTAL_CODES:
+        return getPostalCodesList()
+      case ListTypesEnum.CURRENCIES:
+        return getCurrenciesList()
       default:
         return item.list ?? []
     }
@@ -87,6 +109,11 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const placeholder = item.fieldSettings?.listType
+    ? listTypePlaceholder[item.fieldSettings.listType]?.[lang] ??
+      formatMessage(m.select)
+    : formatMessage(m.select)
+
   return (
     <Controller
       key={item.id}
@@ -113,11 +140,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
                 }
               : undefined
           }
-          placeholder={
-            listTypePlaceholder[
-              item.fieldSettings?.listType as keyof typeof listTypePlaceholder
-            ] ?? formatMessage(m.select)
-          }
+          placeholder={placeholder}
           backgroundColor="blue"
           onChange={(e) => {
             field.onChange(e)
