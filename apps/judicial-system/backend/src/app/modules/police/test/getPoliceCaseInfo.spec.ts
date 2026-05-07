@@ -233,12 +233,6 @@ describe('PoliceController - Get police case info', () => {
 
     it('should create indictment counts for newly discovered police case numbers', () => {
       expect(
-        mockIndictmentCountService.existsForCaseAndPoliceCaseNumber,
-      ).toHaveBeenCalledWith(caseId, '007-2020-000103')
-      expect(
-        mockIndictmentCountService.existsForCaseAndPoliceCaseNumber,
-      ).toHaveBeenCalledWith(caseId, '007-2020-000057')
-      expect(
         mockIndictmentCountService.createWithPoliceCaseNumber,
       ).toHaveBeenCalledTimes(2)
       expect(
@@ -265,7 +259,6 @@ describe('PoliceController - Get police case info', () => {
             },
           }),
         }),
-        expect.objectContaining({ transaction: undefined }),
       )
     })
 

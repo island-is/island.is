@@ -75,7 +75,6 @@ export const createTestingPoliceModule = async () => {
         provide: IndictmentCountService,
         useValue: {
           createWithPoliceCaseNumber: jest.fn().mockResolvedValue({}),
-          existsForCaseAndPoliceCaseNumber: jest.fn().mockResolvedValue(false),
         },
       },
       {

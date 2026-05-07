@@ -65,20 +65,8 @@ export class IndictmentCountService {
   ): Promise<IndictmentCount> {
     return this.indictmentCountModel.create(
       { caseId, policeCaseNumber },
-      transaction ? { transaction } : undefined,
+      { transaction },
     )
-  }
-
-  async existsForCaseAndPoliceCaseNumber(
-    caseId: string,
-    policeCaseNumber: string,
-  ): Promise<boolean> {
-    const indictmentCount = await this.indictmentCountModel.findOne({
-      where: { caseId, policeCaseNumber },
-      attributes: ['id'],
-    })
-
-    return Boolean(indictmentCount)
   }
 
   async update(

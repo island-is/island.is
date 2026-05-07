@@ -94,7 +94,7 @@ interface SplitCaseOptions {
 }
 
 interface UpdateCaseOptions {
-  transaction: Transaction
+  transaction?: Transaction
 }
 
 @Injectable()
@@ -749,7 +749,7 @@ export class CaseRepositoryService {
   async update(
     caseId: string,
     data: UpdateCase,
-    options: UpdateCaseOptions,
+    options?: UpdateCaseOptions,
   ): Promise<Case> {
     try {
       this.logger.debug(`Updating case ${caseId} with data:`, {
@@ -758,7 +758,7 @@ export class CaseRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: caseId },
-        transaction: options.transaction,
+        transaction: options?.transaction,
       }
 
       const { policeCaseNumbers, ...caseFields } = data
@@ -788,7 +788,7 @@ export class CaseRepositoryService {
         updatedCase = cases[0]
       } else {
         const theCase = await this.caseModel.findByPk(caseId, {
-          transaction: options.transaction,
+          transaction: options?.transaction,
         })
 
         if (!theCase) {
@@ -802,7 +802,7 @@ export class CaseRepositoryService {
 
       this.logger.debug(`Updated case ${caseId}`)
 
-      if (policeCaseNumbers) {
+      if (policeCaseNumbers && options?.transaction) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
           caseId,
           policeCaseNumbers ?? [],
@@ -812,7 +812,7 @@ export class CaseRepositoryService {
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
         [updatedCase],
-        { transaction: options.transaction },
+        { transaction: options?.transaction },
       )
 
       return updatedCase

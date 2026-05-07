@@ -26,7 +26,7 @@ export const PoliceCaseInfo: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase, refreshCase } = useContext(FormContext)
-  const hasTriggeredRefreshRef = useRef(false)
+  const hasRefreshedRef = useRef(false)
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: { input: { caseId: workingCase.id } },
@@ -38,14 +38,8 @@ export const PoliceCaseInfo: FC<Props> = ({
         return
       }
 
-      const hasUnselectedPoliceCaseNumbers = data.policeCaseInfo.some(
-        (caseInfo) =>
-          !workingCase.policeCaseNumbers?.includes(caseInfo.policeCaseNumber),
-      )
-
-      // Keep local case state in sync with backend auto-selection side effects.
-      if (hasUnselectedPoliceCaseNumbers && !hasTriggeredRefreshRef.current) {
-        hasTriggeredRefreshRef.current = true
+      if (!hasRefreshedRef.current) {
+        hasRefreshedRef.current = true
         refreshCase()
       }
 
