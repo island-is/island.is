@@ -31,6 +31,7 @@ import {
   NationalRegistryV3UserApi,
   NationalRegistryV3SpouseApi,
 } from '../dataProviders'
+import { ApplicantsInfo } from '../shared'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
@@ -185,11 +186,29 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'registerProperty.searchresults.address',
             )
+            const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.landlordInfo.table',
+            )
+            const tenants = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.tenantInfo.table',
+            )
+            const landlordNames = landlords
+              ?.map((l) => l.nationalIdWithName.name)
+              .join(', ')
+            const tenantNames = tenants
+              ?.map((t) => t.nationalIdWithName.name)
+              .join(', ')
+            const args: Array<{ key: string; value: string }> = []
+            if (address) args.push({ key: 'address', value: address })
+            if (landlordNames) args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames) args.push({ key: 'tenantNames', value: tenantNames })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
                   .templateId,
-              ...(address && { internalBody: address }),
+              ...(args.length > 0 && { args }),
             }
           }),
           onEntry: defineTemplateApi({
@@ -264,11 +283,29 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'registerProperty.searchresults.address',
             )
+            const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.landlordInfo.table',
+            )
+            const tenants = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.tenantInfo.table',
+            )
+            const landlordName = landlords
+              ?.map((l) => l.nationalIdWithName.name)
+              .join(', ')
+            const tenantName = tenants
+              ?.map((t) => t.nationalIdWithName.name)
+              .join(', ')
+            const args: Array<{ key: string; value: string }> = []
+            if (address) args.push({ key: 'address', value: address })
+            if (landlordName) args.push({ key: 'landlordName', value: landlordName })
+            if (tenantName) args.push({ key: 'tenantName', value: tenantName })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
                   .templateId,
-              ...(address && { internalBody: address }),
+              ...(args.length > 0 && { args }),
             }
           }),
           onEntry: defineTemplateApi({
