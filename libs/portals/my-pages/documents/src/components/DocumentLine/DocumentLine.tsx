@@ -75,11 +75,10 @@ export const DocumentLine: FC<Props> = ({
     id: string
   }>()
   const isUrgent = documentLine.isUrgent
-  const {
-    submitMailAction,
-    loading: postLoading,
-    bookmarkSuccess,
-  } = useMailAction()
+  const { submitMailAction, loading: postLoading } = useMailAction()
+  const [optimisticBookmarked, setOptimisticBookmarked] = useState<
+    boolean | undefined
+  >(undefined)
 
   const { fetchObject, refetch } = useDocumentList()
 
@@ -101,6 +100,7 @@ export const DocumentLine: FC<Props> = ({
   const avatarRef = useRef(null)
 
   const isFocused = useIsChildFocusedorHovered(wrapperRef)
+  const isHovered = useIsChildFocusedorHovered(wrapperRef, false)
   const isAvatarFocused = useIsChildFocusedorHovered(avatarRef, false)
 
   useEffect(() => {
@@ -291,7 +291,7 @@ export const DocumentLine: FC<Props> = ({
     })
   }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
-  const isBookmarked = bookmarked || bookmarkSuccess
+  const isBookmarked = optimisticBookmarked ?? bookmarked
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
       <Box
@@ -410,17 +410,19 @@ export const DocumentLine: FC<Props> = ({
             </button>
 
             <Box display="flex" alignItems="center">
-              {(postLoading || fileLoading || metadataLoading) && (
+              {(fileLoading || metadataLoading) && (
                 <Box display="flex" alignItems="center">
                   <LoadingDots single />
                 </Box>
               )}
               {(hasFocusOrHover || isBookmarked) &&
-                !postLoading &&
                 !fileLoading &&
                 !asFrame && (
                   <FavAndStash
                     bookmarked={isBookmarked}
+                    colorScheme={
+                      !unread && !isHovered && !active ? 'negative' : 'light'
+                    }
                     stashLabels={{
                       add: formatMessage(m.addToStorage),
                       remove: formatMessage(messages.moveToInbox),
@@ -429,11 +431,17 @@ export const DocumentLine: FC<Props> = ({
                       isBookmarked || hasFocusOrHover
                         ? async (e) => {
                             e.stopPropagation()
-                            await submitMailAction(
-                              isBookmarked ? 'unbookmark' : 'bookmark',
-                              documentLine.id,
-                            )
-                            refetch(fetchObject)
+                            const newValue = !isBookmarked
+                            setOptimisticBookmarked(newValue)
+                            try {
+                              await submitMailAction(
+                                newValue ? 'bookmark' : 'unbookmark',
+                                documentLine.id,
+                              )
+                              refetch(fetchObject)
+                            } catch {
+                              setOptimisticBookmarked(!newValue)
+                            }
                           }
                         : undefined
                     }

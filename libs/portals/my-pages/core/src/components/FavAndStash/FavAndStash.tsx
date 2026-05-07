@@ -18,6 +18,13 @@ type FavAndStashProps = {
   colorScheme?: 'light' | 'negative'
 }
 
+const blurAfter =
+  (handler?: (e: MouseEvent<HTMLElement>) => void) =>
+  (e: MouseEvent<HTMLElement>) => {
+    handler?.(e)
+    ;(e.currentTarget as HTMLElement).blur()
+  }
+
 export const FavAndStash: React.FC<FavAndStashProps> = ({
   onFav,
   onStash,
@@ -55,7 +62,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             circle
             icon="fileTrayEmpty"
             iconType={archived ? 'filled' : 'outline'}
-            onClick={onStash}
+            onClick={blurAfter(onStash)}
             size="small"
             colorScheme={colorScheme}
           />
@@ -69,7 +76,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             circle
             icon="star"
             iconType={bookmarked ? 'filled' : 'outline'}
-            onClick={onFav}
+            onClick={blurAfter(onFav)}
             size="small"
             colorScheme={colorScheme}
           />
@@ -81,7 +88,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             circle
             icon="mailOpen"
             iconType="outline"
-            onClick={onRead}
+            onClick={blurAfter(onRead)}
             size="small"
             colorScheme={colorScheme}
           />

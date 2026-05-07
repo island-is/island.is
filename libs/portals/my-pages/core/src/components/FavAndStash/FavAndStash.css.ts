@@ -6,7 +6,17 @@ export const filterActionButtons = style({
   gap: '2px',
 })
 
+globalStyle(`${filterActionButtons} button`, {
+  backgroundColor: 'transparent',
+  boxShadow: 'none',
+})
+
+globalStyle(`${filterActionButtons} button:hover, ${filterActionButtons} button:focus-visible`, {
+  backgroundColor: theme.color.blue100,
+  boxShadow: 'none',
+})
+
 export const hoverWhite = style({})
-globalStyle(`${hoverWhite} button:hover`, {
+globalStyle(`${hoverWhite} button:hover, ${hoverWhite} button:focus-visible`, {
   backgroundColor: theme.color.white,
 })
