@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  Box,
-  Button,
-  ModalBase,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, ModalBase, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
@@ -48,7 +42,7 @@ import * as workspaceStyles from './TranslationWorkspace.css'
 
 const AUTOSAVE_INTERVAL_MS = 60_000
 
-const TranslationWorkspace = () => {
+export const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
   const { formatMessage } = useLocale()
 
@@ -146,7 +140,6 @@ const TranslationWorkspace = () => {
     },
     [editedValues, activeLocale, getPersistedForMessage],
   )
-
 
   useEffect(() => {
     if (!introspection) return
@@ -299,7 +292,8 @@ const TranslationWorkspace = () => {
 
   const validationDescriptors = useMemo(
     (): ValidationMessageDescriptor[] =>
-      (introspection?.validationMessageDescriptors ?? []) as ValidationMessageDescriptor[],
+      (introspection?.validationMessageDescriptors ??
+        []) as ValidationMessageDescriptor[],
     [introspection],
   )
 
@@ -401,7 +395,9 @@ const TranslationWorkspace = () => {
         await handleSaveAllRef.current()
         const now = new Date()
         setLastAutosaveTime(
-          `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+          `${String(now.getHours()).padStart(2, '0')}:${String(
+            now.getMinutes(),
+          ).padStart(2, '0')}`,
         )
       }
     }, AUTOSAVE_INTERVAL_MS)
@@ -634,6 +630,7 @@ const TranslationWorkspace = () => {
           <TranslationWorkspaceStatesTabsPanel
             states={introspection.states as unknown as TemplateStateNav[]}
             selectedScreenId={selectedScreen?.id}
+            selectedLocation={selectedLocation}
             onNavClick={handleSidebarNavClick}
             formatMessage={formatMessage}
             selectedScreen={selectedScreen}
@@ -689,11 +686,7 @@ const TranslationWorkspace = () => {
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={closeModal}
-              >
+              <Button variant="ghost" size="small" onClick={closeModal}>
                 {formatMessage(m.translationPublishCancel)}
               </Button>
               <Button
@@ -710,5 +703,3 @@ const TranslationWorkspace = () => {
     </Box>
   )
 }
-
-export default TranslationWorkspace

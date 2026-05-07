@@ -26,6 +26,7 @@ export interface PublishHistoryItem {
   id: string
   namespace: string
   publishedBy?: string
+  actorNationalId?: string
   publishedAt: Date
   note?: string
 }
@@ -227,8 +228,10 @@ export class ApplicationTranslationService {
     namespace: string,
     publishedBy?: string,
     note?: string,
+    actorNationalId?: string,
   ): Promise<ApplicationTranslationPublish> {
     const actor = truncateActorId(publishedBy)
+    const truncatedActorNationalId = truncateActorId(actorNationalId)
 
     const rows = await this.translationModel.findAll({
       where: { namespace },
@@ -237,6 +240,7 @@ export class ApplicationTranslationService {
     const publish = await this.publishModel.create({
       namespace,
       publishedBy: actor,
+      actorNationalId: truncatedActorNationalId,
       note,
     })
 
@@ -301,6 +305,7 @@ export class ApplicationTranslationService {
       id: p.id,
       namespace: p.namespace,
       publishedBy: p.publishedBy,
+      actorNationalId: p.actorNationalId,
       publishedAt: p.publishedAt,
       note: p.note,
     }))
@@ -313,8 +318,10 @@ export class ApplicationTranslationService {
     publishId: string,
     namespace: string,
     rolledBackBy?: string,
+    actorNationalId?: string,
   ): Promise<ApplicationTranslationPublish | null> {
     const actor = truncateActorId(rolledBackBy)
+    const truncatedActorNationalId = truncateActorId(actorNationalId)
 
     const publish = await this.publishModel.findByPk(publishId, {
       include: [ApplicationTranslationPublishSnapshot],
@@ -331,10 +338,10 @@ export class ApplicationTranslationService {
       where: { namespace },
     })
 
-    // Create a rollback publish record for the history
     const rollbackPublish = await this.publishModel.create({
       namespace,
       publishedBy: actor,
+      actorNationalId: truncatedActorNationalId,
       note: `Rollback to version from ${publish.publishedAt.toISOString()}`,
     })
 

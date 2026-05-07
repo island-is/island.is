@@ -147,6 +147,7 @@ export class TranslationController {
       namespace,
       user.nationalId,
       body.note,
+      user.actor?.nationalId,
     )
   }
 
@@ -173,6 +174,7 @@ export class TranslationController {
       publishId,
       namespace,
       user.nationalId,
+      user.actor?.nationalId,
     )
   }
 

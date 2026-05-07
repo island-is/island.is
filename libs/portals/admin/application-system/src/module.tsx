@@ -6,8 +6,10 @@ import { ApplicationSystemPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
 const Root = lazy(() => import('./screens/Root/Root'))
-const TranslationWorkspace = lazy(
-  () => import('./screens/TranslationWorkspace/TranslationWorkspace'),
+const TranslationWorkspace = lazy(() =>
+  import('./screens/TranslationWorkspace/TranslationWorkspace').then((m) => ({
+    default: m.TranslationWorkspace,
+  })),
 )
 
 const allowedScopes: string[] = [

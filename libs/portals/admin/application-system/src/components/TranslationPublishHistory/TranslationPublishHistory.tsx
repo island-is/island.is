@@ -116,7 +116,16 @@ export const TranslationPublishHistory = ({
                   </Text>
                   {pub.publishedBy && (
                     <Text variant="small" color="dark300">
-                      {pub.publishedBy}
+                      {formatMessage(m.translationPublishedByLabel, {
+                        nationalId: pub.publishedBy,
+                      })}
+                    </Text>
+                  )}
+                  {pub.actorNationalId && (
+                    <Text variant="small" color="dark300">
+                      {formatMessage(m.translationActorLabel, {
+                        actorNationalId: pub.actorNationalId,
+                      })}
                     </Text>
                   )}
                   {pub.note && (

@@ -51,6 +51,14 @@ export class ApplicationTranslationPublish extends Model {
   publishedAt!: Date
 
   @Column({
+    type: DataType.STRING(20),
+    allowNull: true,
+    field: 'actor_national_id',
+  })
+  @ApiPropertyOptional()
+  actorNationalId?: string
+
+  @Column({
     type: DataType.TEXT,
     allowNull: true,
   })

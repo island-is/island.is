@@ -69,6 +69,14 @@ export interface ScreenIntrospection {
   alertType?: string | null
   /** `ALERT_MESSAGE`: raw static text of the `message` body. */
   alertMessage?: string | null
+  /** `FILEUPLOAD`: static text of the drag-and-drop header inside the upload box. */
+  fileUploadHeader?: string | null
+  /** `FILEUPLOAD`: static text of the accepted file types description inside the upload box. */
+  fileUploadDescription?: string | null
+  /** `FILEUPLOAD`: static text of the upload button label. */
+  fileUploadButtonLabel?: string | null
+  /** `FILEUPLOAD`: static text of the introduction rendered above the upload area. */
+  fileUploadIntroduction?: string | null
 }
 
 /** Where in the template tree a sidebar row was clicked (for debugging / tooling). */

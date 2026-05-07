@@ -434,4 +434,12 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationCurrentVersion',
     defaultMessage: 'Núverandi',
   },
+  translationPublishedByLabel: {
+    id: 'admin-portal.application-system:translationPublishedByLabel',
+    defaultMessage: 'Kennitala: {nationalId}',
+  },
+  translationActorLabel: {
+    id: 'admin-portal.application-system:translationActorLabel',
+    defaultMessage: 'Umboðsaðili: {actorNationalId}',
+  },
 })

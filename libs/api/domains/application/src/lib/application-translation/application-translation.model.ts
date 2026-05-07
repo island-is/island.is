@@ -258,6 +258,18 @@ export class ScreenIntrospectionGql {
   @Field(() => String, { nullable: true })
   alertMessage?: string | null
 
+  @Field(() => String, { nullable: true })
+  fileUploadHeader?: string | null
+
+  @Field(() => String, { nullable: true })
+  fileUploadDescription?: string | null
+
+  @Field(() => String, { nullable: true })
+  fileUploadButtonLabel?: string | null
+
+  @Field(() => String, { nullable: true })
+  fileUploadIntroduction?: string | null
+
   @Field(() => [ScreenIntrospectionGql], { nullable: true })
   children?: ScreenIntrospectionGql[]
 }
@@ -383,6 +395,9 @@ export class TranslationPublishGql {
 
   @Field(() => String, { nullable: true })
   publishedBy?: string | null
+
+  @Field(() => String, { nullable: true })
+  actorNationalId?: string | null
 
   @Field()
   publishedAt!: string

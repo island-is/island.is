@@ -103,12 +103,6 @@ export const TabsPanelFieldsTab = ({
               </Text>
             </Box>
 
-            <Box marginBottom={2}>
-              <Text variant="eyebrow" color="dark300" truncate>
-                {currentField.id}
-              </Text>
-            </Box>
-
             <Divider />
 
             <Box marginTop={3}>

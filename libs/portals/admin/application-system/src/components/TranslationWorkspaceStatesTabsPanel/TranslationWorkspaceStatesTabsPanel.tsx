@@ -24,6 +24,7 @@ import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 export interface TranslationWorkspaceStatesTabsPanelProps {
   states: TemplateStateNav[]
   selectedScreenId: string | undefined
+  selectedLocation: SidebarNavLocation | null
   onNavClick: (nav: ScreenIntrospection, location: SidebarNavLocation) => void
   formatMessage: FormatMessage
   selectedScreen: ScreenIntrospection | null
@@ -49,6 +50,7 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
 export const TranslationWorkspaceStatesTabsPanel = ({
   states,
   selectedScreenId,
+  selectedLocation,
   onNavClick,
   formatMessage,
   selectedScreen,
@@ -89,8 +91,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   useEffect(() => {
     if (
       focusableFields.length > 0 &&
-      (!focusedFieldId ||
-        !focusableFields.some((f) => f.id === focusedFieldId))
+      (!focusedFieldId || !focusableFields.some((f) => f.id === focusedFieldId))
     ) {
       onFocusedFieldChange(focusableFields[0].id)
     }
@@ -108,6 +109,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
         <TranslationWorkspaceStatesNav
           states={states}
           selectedScreenId={selectedScreenId}
+          selectedLocation={selectedLocation}
           onNavClick={onNavClick}
           persistedByKey={persistedByKey}
           editedValues={editedValues}
@@ -142,7 +144,9 @@ export const TranslationWorkspaceStatesTabsPanel = ({
     },
     {
       id: FIELDS_TAB_ID,
-      label: `${formatMessage(m.translationFieldsTab)}${focusableFields.length ? ` (${focusableFields.length})` : ''}`,
+      label: `${formatMessage(m.translationFieldsTab)}${
+        focusableFields.length ? ` (${focusableFields.length})` : ''
+      }`,
       content: (
         <TabsPanelFieldsTab
           focusableFields={focusableFields}
@@ -176,7 +180,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
         onChange={setActiveTab}
         contentBackground="white"
         variant="alternative"
-        size="sm"
+        size="md"
       />
     </Box>
   )

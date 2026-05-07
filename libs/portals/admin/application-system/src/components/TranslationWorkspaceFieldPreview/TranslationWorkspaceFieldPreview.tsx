@@ -16,11 +16,16 @@ import {
   Icon,
   Table as T,
   Stack,
+  InputFileUpload,
   type AlertMessageType,
   type InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
-import { coreErrorMessages, coreMessages } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  coreMessages,
+  coreDefaultFieldMessages,
+} from '@island.is/application/core'
 import type {
   MessageDescriptor,
   PreviewFormatMessage,
@@ -734,7 +739,7 @@ const NationalIdWithNameFieldPreview = ({
             name={`${key}.__preview.nationalId`}
             placeholder="######-####"
             backgroundColor="blue"
-            disabled
+            readOnly
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
@@ -757,7 +762,7 @@ const NationalIdWithNameFieldPreview = ({
                 label={phoneLabel}
                 name={`${key}.__preview.phone`}
                 backgroundColor="blue"
-                disabled
+                readOnly
               />
             </GridColumn>
           ) : null}
@@ -771,7 +776,7 @@ const NationalIdWithNameFieldPreview = ({
                 name={`${key}.__preview.email`}
                 type="email"
                 backgroundColor="blue"
-                disabled
+                readOnly
               />
             </GridColumn>
           ) : null}
@@ -892,7 +897,6 @@ const FieldsRepeaterFieldPreview = ({
             variant="ghost"
             size="small"
             icon="add"
-            disabled
           >
             {addLabel}
           </Button>
@@ -1051,11 +1055,11 @@ const TableRepeaterFieldPreview = ({
               alignItems="center"
               justifyContent="flexEnd"
             >
-              <Button variant="ghost" type="button" size="small" disabled>
+              <Button variant="ghost" type="button" size="small">
                 {cancelLabel}
               </Button>
               <Box marginLeft={2}>
-                <Button type="button" size="small" disabled>
+                <Button type="button" size="small">
                   {saveLabel}
                 </Button>
               </Box>
@@ -1298,7 +1302,7 @@ const LeafFieldPreview = ({
             label={label}
             name={key}
             placeholder={label}
-            disabled
+            readOnly
             value={inputPreviewValue ?? ''}
             hasError={!!fieldErrorMessage}
             errorMessage={fieldErrorMessage}
@@ -1366,22 +1370,55 @@ const LeafFieldPreview = ({
   }
 
   if (screen.type === 'FILEUPLOAD') {
+    const introductionText = screen.fileUploadIntroduction
+      ? resolveTranslatableStaticText(
+          screen.fileUploadIntroduction,
+          screen.messageDescriptors,
+          resolvePreviewString,
+        ).trim()
+      : ''
+
+    const uploadHeader = screen.fileUploadHeader
+      ? resolveTranslatableStaticText(
+          screen.fileUploadHeader,
+          screen.messageDescriptors,
+          resolvePreviewString,
+        ).trim()
+      : label.trim() || formatMessage(coreDefaultFieldMessages.defaultFileUploadHeader)
+
+    const uploadDescription = screen.fileUploadDescription
+      ? resolveTranslatableStaticText(
+          screen.fileUploadDescription,
+          screen.messageDescriptors,
+          resolvePreviewString,
+        ).trim()
+      : formatMessage(coreDefaultFieldMessages.defaultFileUploadDescription)
+
+    const uploadButtonLabel = screen.fileUploadButtonLabel
+      ? resolveTranslatableStaticText(
+          screen.fileUploadButtonLabel,
+          screen.messageDescriptors,
+          resolvePreviewString,
+        ).trim()
+      : formatMessage(coreDefaultFieldMessages.defaultFileUploadButtonLabel)
+
     return (
-      <Box
-        key={key}
-        padding={3}
-        border="standard"
-        borderRadius="large"
-        background="white"
-        style={{ borderStyle: 'dashed' }}
-        {...layout}
-      >
-        <Text variant="small" color="dark300">
-          {label}
-        </Text>
-        <Text variant="small" color="blue400">
-          Upload file
-        </Text>
+      <Box key={key} marginTop={3} marginBottom={3} {...layout}>
+        {introductionText !== '' && (
+          <Box marginBottom={2}>
+            <Markdown>{introductionText}</Markdown>
+          </Box>
+        )}
+        <Box paddingTop={2}>
+          <InputFileUpload
+            name={key}
+            files={[]}
+            title={uploadHeader || undefined}
+            description={uploadDescription || undefined}
+            buttonLabel={uploadButtonLabel || undefined}
+            onRemove={noop}
+          />
+        </Box>
       </Box>
     )
   }

@@ -40,11 +40,8 @@ export const TranslationDescriptorCard = ({
       borderRadius="standard"
       border={isDirty ? 'focus' : 'standard'}
     >
-      <Box display="flex" justifyContent="spaceBetween" marginBottom={1}>
-        <Text variant="eyebrow" color="dark300">
-          {descriptor.id}
-        </Text>
-        <Box display="flex" columnGap={1}>
+      {(tags?.length || isDirty) && (
+        <Box display="flex" justifyContent="flexEnd" marginBottom={1} columnGap={1}>
           {tags?.map((tag, i) => (
             <Tag
               key={i}
@@ -60,7 +57,7 @@ export const TranslationDescriptorCard = ({
             </Tag>
           )}
         </Box>
-      </Box>
+      )}
 
       {subtitle && (
         <Box marginBottom={1}>

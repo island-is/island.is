@@ -12,9 +12,9 @@ export const tabsPanelRoot = style({
   maxWidth: '100%',
   boxSizing: 'border-box',
   background: theme.color.white,
-  paddingTop: theme.spacing[3],
-  paddingBottom: theme.spacing[3],
-  paddingLeft: theme.spacing[3],
+  paddingTop: 0,
+  paddingBottom: 0,
+  paddingLeft: 0,
   paddingRight: 0,
 })
 
@@ -39,10 +39,12 @@ globalStyle(
   flexColumnChild,
 )
 
-globalStyle(
-  `${tabsPanelRoot} [role="tabpanel"]:not([hidden])`,
-  flexColumnChild,
-)
+globalStyle(`${tabsPanelRoot} [role="tabpanel"]:not([hidden])`, {
+  ...flexColumnChild,
+  paddingLeft: theme.spacing[6],
+  paddingRight: theme.spacing[6],
+  paddingTop: theme.spacing[6],
+})
 
 globalStyle(
   `${tabsPanelRoot} [role="tabpanel"]:not([hidden]) > div`,
@@ -64,6 +66,11 @@ globalStyle(`${tabsPanelRoot} [role="tablist"]`, {
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'nowrap',
+  width: '100%',
+})
+
+globalStyle(`${tabsPanelRoot} [role="tab"]`, {
+  flex: 1,
 })
 
 export const tabsPanelScroll = style({
@@ -77,5 +84,4 @@ export const tabsPanelInner = style({
   minWidth: 0,
   maxWidth: '100%',
   overflowWrap: 'anywhere',
-  paddingRight: theme.spacing[3],
 })

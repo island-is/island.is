@@ -27,6 +27,7 @@ import type {
   CheckboxField,
   StaticTableField,
   AlertMessageField,
+  FileUploadField,
   Schema,
 } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
@@ -161,6 +162,14 @@ export interface ScreenIntrospection {
   alertType?: string | null
   /** `ALERT_MESSAGE`: raw static text of the `message` body (resolve via descriptors). */
   alertMessage?: string | null
+  /** `FILEUPLOAD`: static text of the drag-and-drop header inside the upload box. */
+  fileUploadHeader?: string | null
+  /** `FILEUPLOAD`: static text of the accepted file types description inside the upload box. */
+  fileUploadDescription?: string | null
+  /** `FILEUPLOAD`: static text of the upload button label. */
+  fileUploadButtonLabel?: string | null
+  /** `FILEUPLOAD`: static text of the introduction rendered above the upload area. */
+  fileUploadIntroduction?: string | null
 }
 
 export interface MessageDescriptorInfo {
@@ -1227,6 +1236,13 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     nationalIdWithNameEmailLabelText?: string | null
   } = {}
 
+  const fileUploadMeta: {
+    fileUploadHeader?: string | null
+    fileUploadDescription?: string | null
+    fileUploadButtonLabel?: string | null
+    fileUploadIntroduction?: string | null
+  } = {}
+
   let description: string | null = null
   let subTitle: string | null = null
   let subDescription: string | null = null
@@ -1334,6 +1350,34 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
         nif.emailLabel as StaticText | undefined,
       )
     }
+    if (leaf.type === FieldTypes.FILEUPLOAD) {
+      const fu = leaf as FileUploadField
+      const pushFileUploadDescriptor = (t: unknown) => {
+        if (t) {
+          for (const d of extractMessageDescriptorsFromFormText(t as FormText)) {
+            if (!fromField.some((x) => x.id === d.id)) {
+              fromField.push(d)
+            }
+          }
+        }
+      }
+      pushFileUploadDescriptor(fu.introduction)
+      pushFileUploadDescriptor(fu.uploadHeader)
+      pushFileUploadDescriptor(fu.uploadDescription)
+      pushFileUploadDescriptor(fu.uploadButtonLabel)
+      fileUploadMeta.fileUploadHeader = extractStaticText(
+        fu.uploadHeader as StaticText | undefined,
+      )
+      fileUploadMeta.fileUploadDescription = extractStaticText(
+        fu.uploadDescription as StaticText | undefined,
+      )
+      fileUploadMeta.fileUploadButtonLabel = extractStaticText(
+        fu.uploadButtonLabel as StaticText | undefined,
+      )
+      fileUploadMeta.fileUploadIntroduction = extractStaticText(
+        fu.introduction as StaticText | undefined,
+      )
+    }
     descriptors.push(...fromField)
     description = extractStaticText(
       leafRecord.description as StaticText | undefined,
@@ -1434,6 +1478,7 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     alertType,
     alertMessage,
     ...nifMeta,
+    ...fileUploadMeta,
   }
 }
 
