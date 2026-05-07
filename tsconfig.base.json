@@ -902,6 +902,7 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/lyfjastofnun-pharmacies": [
         "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
       ],

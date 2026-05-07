@@ -9,6 +9,10 @@ import { CreateMemorialCardPaymentUrlResponse } from './dto/createMemorialCardPa
 import { CreateDirectGrantPaymentUrlInput } from './dto/createDirectGrantPaymentUrl.input'
 import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaymentUrl.response'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import {
+  MatildaClientService,
+  type OpenMealMenuResponse,
+} from '@island.is/clients/matilda'
 import { Catalog } from './dto/catalog.response'
 import { LandspitaliApiModuleConfig } from './landspitali.config'
 import {
@@ -34,6 +38,7 @@ export class LandspitaliService {
   constructor(
     private readonly paymentsClient: PaymentsApi,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private readonly matildaClientService: MatildaClientService,
     @Inject(LandspitaliApiModuleConfig.KEY)
     private readonly config: ConfigType<typeof LandspitaliApiModuleConfig>,
     @Inject(LOGGER_PROVIDER)
@@ -44,6 +49,10 @@ export class LandspitaliService {
     return this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
       performingOrgID: this.config.landspitaliOrganisationId,
     })
+  }
+
+  async getMeals(): Promise<OpenMealMenuResponse> {
+    return this.matildaClientService.getMeals()
   }
 
   private getProtocol() {
