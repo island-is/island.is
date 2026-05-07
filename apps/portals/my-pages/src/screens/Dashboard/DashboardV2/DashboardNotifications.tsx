@@ -43,7 +43,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       borderWidth="standard"
       borderColor="blue200"
       paddingY={3}
-      paddingX={4}
+      paddingX={[0, 0, 4]}
     >
       {!loading && !hasDelegationAccess && (
         <span className={lock} aria-hidden="true">
@@ -56,6 +56,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
+        paddingX={[4, 4, 0]}
       >
         <LinkResolver href={InformationPaths.Notifications}>
           <Box
@@ -91,7 +92,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       </Box>
 
       {loading && (
-        <Box marginTop={4}>
+        <Box marginTop={4} paddingX={[4, 4, 0]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -109,6 +110,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
           alignItems="center"
           paddingTop={2}
           rowGap={2}
+          paddingX={[4, 4, 0]}
         >
           <Text variant="h4" textAlign="center">
             {formatMessage(m.accessNeeded)}
@@ -141,7 +143,8 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         hasDelegationAccess &&
         !error &&
         notifications.map((item) => {
-          const href = resolveLink(item.message.link)
+          const href =
+            resolveLink(item.message.link) || InformationPaths.Notifications
           const isExternal = href.startsWith('http')
 
           const unread = !item.metadata.read
@@ -151,7 +154,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               alignItems="center"
               columnGap={2}
               paddingY={2}
-              paddingX={2}
+              paddingX={[4, 4, 2]}
               borderTopWidth="standard"
               borderColor="blue200"
               className={unread ? styles.unreadRow : undefined}
@@ -198,8 +201,6 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               </Box>
             </Box>
           )
-
-          if (!href) return <Box key={item.notificationId}>{content}</Box>
 
           if (isExternal) {
             return (
