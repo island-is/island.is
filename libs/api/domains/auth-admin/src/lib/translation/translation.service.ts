@@ -29,10 +29,6 @@ const mapTranslation = (
   environment: Environment,
 ): TranslationEnvironmentData => ({
   environment,
-  language: translation.language,
-  className: translation.className,
-  property: translation.property,
-  key: translation.key,
   value: translation.value ?? undefined,
 })
 

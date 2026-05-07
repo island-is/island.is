@@ -21,10 +21,6 @@ query GetTranslation($input: AuthAdminTranslationKeyInput!) {
     availableEnvironments
     environments {
       environment
-      language
-      className
-      property
-      key
       value
     }
   }
@@ -51,10 +47,6 @@ mutation CreateTranslation($input: CreateAuthAdminTranslationInput!) {
     availableEnvironments
     environments {
       environment
-      language
-      className
-      property
-      key
       value
     }
     failedEnvironments {
@@ -73,10 +65,6 @@ mutation UpdateTranslation($input: UpdateAuthAdminTranslationInput!) {
     availableEnvironments
     environments {
       environment
-      language
-      className
-      property
-      key
       value
     }
     failedEnvironments {
