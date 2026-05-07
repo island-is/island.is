@@ -81,7 +81,8 @@ export const m = defineMessages({
   applicantInstitution: {
     id: 'dld.application:information.applicantInstitution',
     defaultMessage: 'Sýslumenn',
-    description: 'Institution responsible for the driving license duplicate application',
+    description:
+      'Institution responsible for the driving license duplicate application',
   },
   validTag: {
     id: 'dld.application:information.validTag',
