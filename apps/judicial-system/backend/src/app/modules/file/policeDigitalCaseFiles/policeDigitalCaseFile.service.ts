@@ -10,7 +10,9 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseFileState,
+  type CaseState,
   CaseType,
+  hasIndictmentCaseBeenSubmittedToCourt,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -95,6 +97,8 @@ export class PoliceDigitalCaseFileService {
   async syncAndGetPoliceDigitalCaseFiles(
     caseId: string,
     caseType: CaseType,
+    caseState: CaseState,
+    courtCaseNumber: string | null | undefined,
     policeCaseNumbers: string[],
     user: User,
   ): Promise<PoliceDigitalCaseFileSyncResult[]> {
@@ -127,6 +131,11 @@ export class PoliceDigitalCaseFileService {
       filesToCreate.map((f) => f.id),
     )
 
+    // Only create metadata case files for cases that have a court case number and have been submitted to court
+    const shouldCreateMetadataCaseFiles =
+      Boolean(courtCaseNumber) &&
+      hasIndictmentCaseBeenSubmittedToCourt(caseState)
+
     if (filesToCreate.length > 0) {
       await this.sequelize.transaction(async (transaction) => {
         await Promise.all(
@@ -145,11 +154,13 @@ export class PoliceDigitalCaseFileService {
           ),
         )
 
-        await Promise.all(
-          filesToCreate.map((f) =>
-            this.createMetadataCaseFile(caseId, caseType, f, transaction),
-          ),
-        )
+        if (shouldCreateMetadataCaseFiles) {
+          await Promise.all(
+            filesToCreate.map((f) =>
+              this.createMetadataCaseFile(caseId, caseType, f, transaction),
+            ),
+          )
+        }
       })
     }
 
