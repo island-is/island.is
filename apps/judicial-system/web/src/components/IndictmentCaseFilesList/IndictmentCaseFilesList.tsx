@@ -607,6 +607,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
                 filteredFiles.rulings.length > 0) ||
+              filteredFiles.defendantRulings.length > 0 ||
               permissions.canViewVerdictServiceCertificate ||
               filteredFiles.rulingOrders.length > 0) && (
               <div>
