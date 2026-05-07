@@ -1229,8 +1229,11 @@ export class OrganizationResolver {
 
     if (org[cacheKey]) {
       const time = cacheKey.split(delimiter)[1]
-      const tenMinutesInMilliseconds = 10 * 60 * 1000
-      if (Boolean(time) && Number(time) < Date.now() - tenMinutesInMilliseconds)
+      const fiveMinutesInMilliseconds = 5 * 60 * 1000
+      if (
+        Boolean(time) &&
+        Number(time) < Date.now() - fiveMinutesInMilliseconds
+      )
         delete org[cacheKey]
     }
 
