@@ -162,7 +162,7 @@ export const MainContent = () => {
           {activeItem.type === 'Screen' && (
             <>
               <Row>
-                <Column span="4/12">
+                <Column span="3/12">
                   <Checkbox
                     name="multi"
                     disabled={isReadOnly || disableAllowMultiple}
@@ -196,7 +196,7 @@ export const MainContent = () => {
                 </Column>
               </Row>
               <Row>
-                <Column span="6/12">
+                <Column span="7/12">
                   {(activeItem.data as FormSystemScreen).isMulti && (
                     <Box marginTop={2}>
                       <Select
