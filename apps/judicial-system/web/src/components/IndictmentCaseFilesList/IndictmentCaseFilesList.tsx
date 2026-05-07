@@ -154,6 +154,7 @@ const useFilteredCaseFiles = (
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
       rulings: filterByCategories(CaseFileCategory.RULING),
+      defendantRulings: filterByCategories(CaseFileCategory.DEFENDANT_RULING),
       rulingOrders: filterByCategories(
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ),
@@ -561,6 +562,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
+                <RenderFiles
+                  caseFiles={filteredFiles.defendantRulings}
+                  onOpenFile={onOpen}
+                />
                 <RenderFiles
                   caseFiles={filteredFiles.rulingOrders}
                   onOpenFile={onOpen}

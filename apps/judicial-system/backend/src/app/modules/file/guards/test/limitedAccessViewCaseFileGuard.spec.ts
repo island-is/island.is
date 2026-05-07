@@ -12,6 +12,7 @@ import {
   CaseType,
   completedCaseStates,
   courtOfAppealsRoles,
+  DefendantEventType,
   districtCourtRoles,
   indictmentCases,
   InstitutionType,
@@ -156,6 +157,7 @@ describe('Limited Access View Case File Guard', () => {
         const allowedCaseFileCategories = [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
+          CaseFileCategory.DEFENDANT_RULING,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
@@ -422,6 +424,7 @@ describe('Limited Access View Case File Guard', () => {
         const allowedCaseFileCategories = [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
+          CaseFileCategory.DEFENDANT_RULING,
           CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
         ]
 
@@ -548,6 +551,131 @@ describe('Limited Access View Case File Guard', () => {
         })
       })
     })
+
+    describe.each(indictmentCases)(
+      'for %s cases, DEFENDANT_RULING temporal cutoff',
+      (type) => {
+        describe.each(Object.values(CaseState))('in state %s', (state) => {
+          describe('defender whose defendant has not been dismissed can view DEFENDANT_RULING', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  defendants: [
+                    {
+                      id: uuid(),
+                      defenderNationalId: nationalId,
+                      isDefenderChoiceConfirmed: true,
+                      eventLogs: [],
+                    },
+                  ],
+                },
+                caseFile: {
+                  category: CaseFileCategory.DEFENDANT_RULING,
+                  created: new Date('2024-06-01'),
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should activate', () => {
+              expect(then.result).toBe(true)
+            })
+          })
+
+          describe('defender whose defendant was dismissed after the file was created can view DEFENDANT_RULING', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  defendants: [
+                    {
+                      id: uuid(),
+                      defenderNationalId: nationalId,
+                      isDefenderChoiceConfirmed: true,
+                      eventLogs: [
+                        {
+                          eventType: DefendantEventType.INDICTMENT_DISMISSED,
+                          created: new Date('2024-06-02'),
+                        },
+                      ],
+                    },
+                  ],
+                },
+                caseFile: {
+                  category: CaseFileCategory.DEFENDANT_RULING,
+                  created: new Date('2024-06-01'),
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should activate', () => {
+              expect(then.result).toBe(true)
+            })
+          })
+
+          describe('defender whose defendant was dismissed before the file was created cannot view DEFENDANT_RULING', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  defendants: [
+                    {
+                      id: uuid(),
+                      defenderNationalId: nationalId,
+                      isDefenderChoiceConfirmed: true,
+                      eventLogs: [
+                        {
+                          eventType: DefendantEventType.INDICTMENT_DISMISSED,
+                          created: new Date('2024-05-31'),
+                        },
+                      ],
+                    },
+                  ],
+                },
+                caseFile: {
+                  category: CaseFileCategory.DEFENDANT_RULING,
+                  created: new Date('2024-06-01'),
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
+          })
+        })
+      },
+    )
   })
 
   describe('prison admin users', () => {

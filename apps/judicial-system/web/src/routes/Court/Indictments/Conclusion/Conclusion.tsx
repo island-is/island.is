@@ -906,7 +906,11 @@ const Conclusion: FC = () => {
               <InputFileUpload
                 name="ruling"
                 files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.RULING,
+                  (file) =>
+                    file.category ===
+                    (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                      ? CaseFileCategory.DEFENDANT_RULING
+                      : CaseFileCategory.RULING),
                 )}
                 accept="application/pdf"
                 title={formatMessage(strings.inputFieldLabel)}
@@ -917,7 +921,10 @@ const Conclusion: FC = () => {
                 onChange={(files) => {
                   handleUpload(
                     addUploadFiles(files, {
-                      category: CaseFileCategory.RULING,
+                      category:
+                        selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                          ? CaseFileCategory.DEFENDANT_RULING
+                          : CaseFileCategory.RULING,
                     }),
                     updateUploadFile,
                   )

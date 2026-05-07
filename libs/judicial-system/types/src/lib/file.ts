@@ -33,6 +33,7 @@ export enum CaseFileCategory {
   CIVIL_CLAIM = 'CIVIL_CLAIM',
   SENT_TO_PRISON_ADMIN_FILE = 'SENT_TO_PRISON_ADMIN_FILE',
   COURT_INDICTMENT_RULING_ORDER = 'COURT_INDICTMENT_RULING_ORDER', // dómari: úrskurðarskjal undir rekstri máls
+  DEFENDANT_RULING = 'DEFENDANT_RULING', // dómari: dómur yfir ákærða sem er vísað frá eða hætt saksókn
 }
 
 // MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
