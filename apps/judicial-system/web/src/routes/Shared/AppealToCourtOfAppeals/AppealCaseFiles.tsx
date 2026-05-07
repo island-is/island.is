@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -49,7 +50,9 @@ const AppealFiles = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
+  const { id, rulingFileId: rulingFileIdQuery } = router.query
+  const rulingFileId =
+    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -67,6 +70,7 @@ const AppealFiles = () => {
     workingCase.id,
     defendantId,
     civilClaimantId,
+    rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
@@ -83,7 +87,9 @@ const AppealFiles = () => {
         ? constants.DEFENDER_INDICTMENT_ROUTE
         : constants.DEFENDER_ROUTE
       : isIndictmentCase(workingCase.type)
-      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      ? isCompletedCase(workingCase.state)
+        ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+        : constants.INDICTMENTS_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 

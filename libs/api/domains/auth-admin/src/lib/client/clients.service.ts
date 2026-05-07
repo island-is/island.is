@@ -3,10 +3,12 @@ import groupBy from 'lodash/groupBy'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  AdminApi,
   CreateClientType,
   MeClientsControllerCreateRequest,
   ClientSso,
 } from '@island.is/clients/auth/admin-api'
+import { type ApiResponse } from '@island.is/clients/middlewares'
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
@@ -23,6 +25,7 @@ import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { environments } from '../shared/constants/environments'
 import { DeleteClientInput } from './dto/delete-client.input'
+import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientsPayload } from './dto/clients.payload'
 import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 
@@ -62,6 +65,7 @@ export class ClientsService extends MultiEnvironmentService {
         clientType: clients[0].clientType,
         sso: clients[0].sso,
         modified: clients[0].modified,
+        archived: clients.every((c) => !!c.archived),
         environments: clients,
       }))
       .sort((a, b) => a.clientId.localeCompare(b.clientId))
@@ -111,6 +115,7 @@ export class ClientsService extends MultiEnvironmentService {
       clientType: clientEnvs[0].clientType,
       sso: clientEnvs[0].sso,
       modified: clientEnvs[0].modified,
+      archived: clientEnvs.every((c) => !!c.archived),
       environments: clientEnvs,
     }
   }
@@ -268,6 +273,34 @@ export class ClientsService extends MultiEnvironmentService {
     return `${clientId}#${environment}`
   }
 
+  /**
+   * Run a void API call across all environments. Returns true only if
+   * all environments succeeded.
+   */
+  private async runOnAllEnvironments(
+    user: User,
+    request: (api: AdminApi) => Promise<ApiResponse<void>>,
+  ): Promise<boolean> {
+    const targets = environments.map((env) => ({
+      environment: env,
+      success: false,
+    }))
+
+    await Promise.all(
+      targets.map(async (target) => {
+        await this.makeRequest(user, target.environment, request)
+          .then(() => {
+            target.success = true
+          })
+          .catch((error) => {
+            this.handleError(error, target.environment)
+          })
+      }),
+    )
+
+    return targets.every((target) => target.success)
+  }
+
   async getAllowedScopes(
     user: User,
     { environment, clientId, tenantId }: ClientAllowedScopeInput,
@@ -335,33 +368,21 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    const targets = environments.map((env) => ({
-      environment: env,
-      success: true,
-    }))
-
-    await Promise.all(
-      targets.map(async (target) => {
-        const response = await this.makeRequest(
-          user,
-          target.environment,
-          (api) =>
-            api.meClientsControllerDeleteRaw({
-              tenantId: input.tenantId,
-              clientId: input.clientId,
-            }),
-        ).catch((error) => {
-          target.success = false
-          this.handleError(error, target.environment)
-        })
-
-        if (!response) {
-          target.success = false
-        }
+    return this.runOnAllEnvironments(user, (api) =>
+      api.meClientsControllerDeleteRaw({
+        tenantId: input.tenantId,
+        clientId: input.clientId,
       }),
     )
+  }
 
-    return targets.some((target) => target.success)
+  async restoreClient(user: User, input: RestoreClientInput): Promise<boolean> {
+    return this.runOnAllEnvironments(user, (api) =>
+      api.meClientsControllerRestoreRaw({
+        tenantId: input.tenantId,
+        clientId: input.clientId,
+      }),
+    )
   }
 
   async revokeSecret(
