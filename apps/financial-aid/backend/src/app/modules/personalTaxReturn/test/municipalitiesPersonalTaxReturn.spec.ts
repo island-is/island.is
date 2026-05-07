@@ -141,7 +141,6 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
         method: 'PUT',
         body: Buffer.from(Base64.atob(content), 'binary'),
         headers: {
-          'x-amz-acl': 'bucket-owner-full-control',
           'Content-Type': 'application/pdf',
           'Content-Length': Base64.atob(content).length.toString(),
         },
@@ -215,7 +214,6 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
         method: 'PUT',
         body: Buffer.from(Base64.atob(content), 'binary'),
         headers: {
-          'x-amz-acl': 'bucket-owner-full-control',
           'Content-Type': 'application/pdf',
           'Content-Length': Base64.atob(content).length.toString(),
         },

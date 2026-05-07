@@ -25,7 +25,9 @@ export class FileController {
     type: SignedUrlModel,
     description: 'Creates a new signed url',
   })
-  createSignedUrl(@Body() getSignedUrl: GetSignedUrlDto): SignedUrlModel {
+  async createSignedUrl(
+    @Body() getSignedUrl: GetSignedUrlDto,
+  ): Promise<SignedUrlModel> {
     return this.fileService.createSignedUrl(
       getSignedUrl.folder,
       getSignedUrl.fileName,

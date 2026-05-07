@@ -1,4 +1,4 @@
-import { buildCustomField } from '@island.is/application/core'
+import { buildFileUploadField } from '@island.is/application/core'
 import { buildSubSection } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { hasChildren } from '../../../utils/conditions'
@@ -9,10 +9,14 @@ export const childrenFilesSubsection = buildSubSection({
   id: Routes.CHILDRENFILES,
   title: m.childrenFilesForm.general.sectionTitle,
   children: [
-    buildCustomField({
+    buildFileUploadField({
       id: Routes.CHILDRENFILES,
       title: m.childrenFilesForm.general.pageTitle,
-      component: 'ChildrenFilesForm',
+      introduction: m.childrenFilesForm.general.description,
+      uploadMultiple: true,
+      uploadHeader: m.filesText.header,
+      uploadDescription: m.filesText.description,
+      uploadButtonLabel: m.filesText.buttonLabel,
     }),
   ],
 })

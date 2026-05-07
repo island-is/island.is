@@ -1,20 +1,21 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import {
-  UploadFileDeprecated,
-  Box,
-  AlertMessage,
-} from '@island.is/island-ui/core'
-import { taxReturnForm } from '../../lib/messages'
+import { Box, AlertMessage } from '@island.is/island-ui/core'
+import { FileUploadController } from '@island.is/application/ui-components'
+import { Application } from '@island.is/application/types'
+import { filesText, taxReturnForm } from '../../lib/messages'
 
-import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
+import { FAFieldBaseProps } from '../..'
 
-import { Files } from '..'
 import { getTaxFormContent } from './taxFormContent'
 
-const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
+const TaxReturnFilesForm = ({
+  field,
+  application,
+  error,
+}: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { id, answers, externalData, assignees } = application
+  const { externalData, assignees } = application
 
   const { municipalitiesDirectTaxPayments, municipalitiesPersonalTaxReturn } =
     assignees.includes(externalData.nationalRegistry.data.nationalId) &&
@@ -49,14 +50,14 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
 
       {content.data}
 
-      <Files
-        fileKey={field.id as UploadFileType}
-        uploadFiles={
-          answers[
-            field.id as keyof OverrideAnswerSchema
-          ] as UploadFileDeprecated[]
-        }
-        folderId={id}
+      <FileUploadController
+        id={field.id}
+        application={application as unknown as Application}
+        error={typeof error === 'string' ? error : undefined}
+        header={formatMessage(filesText.header)}
+        description={formatMessage(filesText.description)}
+        buttonLabel={formatMessage(filesText.buttonLabel)}
+        multiple
       />
 
       {content.info}

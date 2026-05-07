@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 
 import { CloudFrontService } from './cloudFront.service'
 
@@ -18,12 +19,16 @@ import { environment } from '../../../environments'
 import { CreateFileDto } from './dto'
 import { CreateFilesDto } from './dto/createFiles.dto'
 
+const downloadExpirationSeconds =
+  environment.files.getTimeToLiveMinutes * 60
+
 @Injectable()
 export class FileService {
   constructor(
     @InjectModel(ApplicationFileModel)
     private readonly fileModel: typeof ApplicationFileModel,
     private readonly cloudFrontService: CloudFrontService,
+    private readonly s3Service: S3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -31,6 +36,7 @@ export class FileService {
   async createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
     return this.fileModel.create(createFile)
   }
+
   async createFiles(createFiles: CreateFilesDto): Promise<CreateFilesModel> {
     const promises = createFiles.files.map((file) =>
       this.fileModel.create({
@@ -79,17 +85,21 @@ export class FileService {
     })
   }
 
-  createSignedUrl(folder: string, fileName: string): SignedUrlModel {
+  async createSignedUrl(
+    folder: string,
+    fileName: string,
+  ): Promise<SignedUrlModel> {
+    const bucket = environment.files.applicationAttachmentBucket
     const key = `${folder}/${fileName}`
+    const uploadExpirationSeconds =
+      environment.files.postTimeToLiveMinutes * 60
 
-    const fileUrl = `${environment.files.fileBaseUrl}/${key}`
+    const url = await this.s3Service.getPresignedUploadUrl(
+      { bucket, key },
+      uploadExpirationSeconds,
+    )
 
-    const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
-
-    return {
-      key,
-      url: signedUrl,
-    }
+    return { key, url }
   }
 
   async createSignedUrlForFileId(id: string): Promise<SignedUrlModel> {
@@ -97,14 +107,17 @@ export class FileService {
       where: { id },
     })
 
-    const fileUrl = `${environment.files.fileBaseUrl}/${file.key}`
-
-    const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
-
-    return {
-      key: file.key,
-      url: signedUrl,
+    const s3Url = await this.tryGetS3PresignedUrl(
+      file.key,
+      file.applicationId,
+    )
+    if (s3Url) {
+      return { key: file.key, url: s3Url }
     }
+
+    const fileUrl = `${environment.files.fileBaseUrl}/${file.key}`
+    const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
+    return { key: file.key, url: signedUrl }
   }
 
   async createSignedUrlForAllFilesId(
@@ -115,14 +128,57 @@ export class FileService {
     })
 
     return await Promise.all(
-      allFiles.map((file) => {
+      allFiles.map(async (file) => {
+        const s3Url = await this.tryGetS3PresignedUrl(
+          file.key,
+          file.applicationId,
+        )
+        if (s3Url) {
+          return { key: file.key, url: s3Url }
+        }
+
         const fileUrl = `${environment.files.fileBaseUrl}/${file.key}`
         const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
-        return {
-          key: file.key,
-          url: signedUrl,
-        }
+        return { key: file.key, url: signedUrl }
       }),
     )
+  }
+
+  private async tryGetS3PresignedUrl(
+    fileKey: string,
+    applicationId: string,
+  ): Promise<string | null> {
+    const bucket = environment.files.applicationAttachmentBucket
+    if (!bucket) {
+      return null
+    }
+
+    // New files from buildFileUploadField have key = "{uuid}_{name}.{ext}"
+    // and are stored in S3 at "{applicationId}/{key}".
+    // Old CloudFront files have key = "{applicationId}/{filename}"
+    // and are not in the application-system S3 bucket.
+    const keysToTry = [
+      `${applicationId}/${fileKey}`,
+      fileKey,
+    ]
+
+    for (const key of keysToTry) {
+      try {
+        const exists = await this.s3Service.fileExists({ bucket, key })
+        if (exists) {
+          return await this.s3Service.getPresignedUrl(
+            { bucket, key },
+            downloadExpirationSeconds,
+          )
+        }
+      } catch {
+        // Continue to next key pattern
+      }
+    }
+
+    this.logger.debug(
+      `File ${fileKey} not found in S3 bucket ${bucket}, falling back to CloudFront`,
+    )
+    return null
   }
 }

@@ -14,6 +14,7 @@ const prodConfig = {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID,
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
     fileBaseUrl: `${process.env.OSK_BASE_URL}/files`,
+    applicationAttachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET ?? '',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
@@ -48,6 +49,7 @@ const devConfig = {
     fileBaseUrl: process.env.OSK_BASE_URL
       ? `${process.env.OSK_BASE_URL}/files`
       : 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    applicationAttachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET ?? '',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },

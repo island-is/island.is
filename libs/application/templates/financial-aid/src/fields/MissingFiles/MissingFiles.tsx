@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
+import { gql } from '@apollo/client'
 
 import {
   Text,
@@ -13,17 +15,33 @@ import {
   ApplicationState,
   FileType,
   getCommentFromLatestEvent,
+  CreateFilesResponse,
 } from '@island.is/financial-aid/shared/lib'
 import { getValueViaPath } from '@island.is/application/core'
-import { RecordObject } from '@island.is/application/types'
+import { Application, RecordObject } from '@island.is/application/types'
+import { FileUploadController } from '@island.is/application/ui-components'
 
 import { filesText, missingFiles } from '../../lib/messages'
-import { Files } from '..'
-import { FAFieldBaseProps, UploadFileType } from '../../lib/types'
+import { FAFieldBaseProps } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useFileUpload } from '../../lib/hooks/useFileUpload'
 import DescriptionText from '../DescriptionText/DescriptionText'
+
+const ApplicationFilesMutation = gql`
+  mutation CreateMunicipalitiesFinancialAidFilesMutation(
+    $input: MunicipalitiesFinancialAidApplicationFilesInput!
+  ) {
+    createMunicipalitiesFinancialAidApplicationFiles(input: $input) {
+      success
+      files {
+        id
+        key
+        name
+        size
+      }
+    }
+  }
+`
 
 const MissingFiles = ({
   application,
@@ -39,13 +57,15 @@ const MissingFiles = ({
   )
 
   const { formatMessage } = useIntl()
-  const { setValue, getValues } = useFormContext()
+  const { setValue, getValues, watch } = useFormContext()
 
-  const fileType: UploadFileType = 'otherFiles'
+  const fileType = 'otherFiles'
   const commentType = 'fileUploadComment'
-  const files = getValues(fileType)
+  const currentFiles = watch(fileType)
 
-  const { uploadFiles } = useFileUpload(files, application.id)
+  const [createApplicationFiles] = useMutation<{
+    createMunicipalitiesFinancialAidApplicationFiles: CreateFilesResponse
+  }>(ApplicationFilesMutation)
 
   const [error, setError] = useState(false)
   const [filesError, setFilesError] = useState(false)
@@ -60,33 +80,49 @@ const MissingFiles = ({
   }, [currentApplication])
 
   useEffect(() => {
-    if (filesError) {
+    if (filesError && currentFiles?.length > 0) {
       setFilesError(false)
     }
-  }, [files])
+  }, [currentFiles])
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       setError(false)
-      if (files.length <= 0) {
+      const files = getValues(fileType)
+      if (!files || files.length <= 0) {
         setFilesError(true)
         return [false, formatMessage(filesText.errorMessage)]
       }
 
       try {
-        if (
-          !application.externalData.currentApplication.data
+        const currentApplicationId =
+          application.externalData.currentApplication.data
             ?.currentApplicationId
-        ) {
+        if (!currentApplicationId) {
           throw new Error()
         }
 
-        const uploadedFiles = await uploadFiles(
-          application.externalData.currentApplication.data.currentApplicationId,
-          FileType.OTHER,
-          files,
+        const formattedFiles = files.map(
+          (f: { key: string; name: string }) => ({
+            applicationId: currentApplicationId,
+            name: f.name ?? '',
+            key: f.key ?? '',
+            size: 0,
+            type: FileType.OTHER,
+          }),
         )
-        setValue(fileType, uploadedFiles)
+
+        const result = await createApplicationFiles({
+          variables: {
+            input: { files: formattedFiles },
+          },
+        })
+
+        const uploadedFiles =
+          result.data?.createMunicipalitiesFinancialAidApplicationFiles?.files
+        if (uploadedFiles) {
+          setValue(fileType, uploadedFiles)
+        }
 
         await updateApplication(
           ApplicationState.INPROGRESS,
@@ -95,7 +131,7 @@ const MissingFiles = ({
             : ApplicationEventType.FILEUPLOAD,
           getValues(commentType),
         )
-      } catch (e) {
+      } catch {
         setError(true)
         return [false, formatMessage(missingFiles.error.title)]
       }
@@ -125,11 +161,16 @@ const MissingFiles = ({
       )}
 
       <Box marginBottom={[7, 7, 8]}>
-        <Files
-          fileKey={fileType}
-          uploadFiles={files}
-          folderId={application.id}
-          hasError={filesError}
+        <FileUploadController
+          id={fileType}
+          application={application as unknown as Application}
+          error={
+            filesError ? formatMessage(filesText.errorMessage) : undefined
+          }
+          header={formatMessage(filesText.header)}
+          description={formatMessage(filesText.description)}
+          buttonLabel={formatMessage(filesText.buttonLabel)}
+          multiple
         />
       </Box>
 

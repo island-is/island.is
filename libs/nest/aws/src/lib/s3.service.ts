@@ -7,6 +7,8 @@ import {
   GetObjectCommandOutput,
   GetObjectTaggingCommand,
   HeadObjectCommand,
+  ObjectCannedACL,
+  PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
   Tag,
@@ -135,6 +137,26 @@ export class S3Service {
     const command = new GetObjectCommand({ Bucket: bucket, Key: key })
     return getSignedUrl(this.s3Client, command, {
       expiresIn: expiration,
+    })
+  }
+
+  public async getPresignedUploadUrl(
+    BucketKeyPairOrFilename: BucketKeyPair | string,
+    expirationOverride?: number,
+    acl?: ObjectCannedACL,
+  ): Promise<string> {
+    const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
+    const expiration = expirationOverride ?? SIGNED_GET_EXPIRES
+
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ACL: acl ?? ObjectCannedACL.bucket_owner_full_control,
+    })
+
+    return getSignedUrl(this.s3Client, command, {
+      expiresIn: expiration,
+      signableHeaders: new Set(['x-amz-acl']),
     })
   }
 

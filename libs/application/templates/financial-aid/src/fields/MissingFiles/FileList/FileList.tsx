@@ -1,43 +1,72 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useLazyQuery } from '@apollo/client'
 import cn from 'classnames'
 
-import { Text, Box, UploadFileDeprecated } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import {
   getFileSizeInKilo,
   getFileType,
 } from '@island.is/financial-aid/shared/lib'
+import { GET_ATTACHMENT_PRESIGNED_URL } from '@island.is/application/graphql'
 
 import * as styles from './FileList.css'
 import { missingFiles } from '../../../lib/messages'
-import { useFileUpload } from '../../../lib/hooks/useFileUpload'
+
+interface FileItem {
+  id?: string
+  key?: string
+  name: string
+  size?: number
+}
 
 interface Props {
   applicationSystemId: string
-  files?: UploadFileDeprecated[]
+  files?: FileItem[]
 }
 
 const FileList = ({ files, applicationSystemId }: Props) => {
   const { formatMessage } = useIntl()
-  const { openFileById } = useFileUpload(files ?? [], applicationSystemId)
 
-  if (files === undefined || files.length === 0) {
+  const [getPresignedUrl] = useLazyQuery(GET_ATTACHMENT_PRESIGNED_URL, {
+    fetchPolicy: 'no-cache',
+  })
+
+  const handleOpenFile = async (file: FileItem) => {
+    if (!file.key) {
+      return
+    }
+    const { data } = await getPresignedUrl({
+      variables: {
+        input: {
+          id: applicationSystemId,
+          attachmentKey: file.key,
+        },
+      },
+    })
+    const url = data?.attachmentPresignedURL?.url
+    if (url) {
+      window.open(url)
+    }
+  }
+
+  if (!files || files.length === 0) {
     return null
   }
 
   return (
     <Box marginBottom={2}>
-      {files.map((file, i) => {
-        return file.id ? (
+      {files.map((file, i) =>
+        file.key ? (
           <button
             className={cn({
               [`${styles.filesLink}`]: true,
-              [styles.hoverState]: file.id,
+              [styles.hoverState]: !!file.key,
             })}
             key={'file-' + i}
             onClick={(e) => {
               e.preventDefault()
-              openFileById(file.id as string)
+              handleOpenFile(file)
             }}
           >
             <div className={styles.container}>
@@ -54,8 +83,8 @@ const FileList = ({ files, applicationSystemId }: Props) => {
               )} • ${getFileSizeInKilo(file)} KB`}</Text>
             </div>
           </button>
-        ) : null
-      })}
+        ) : null,
+      )}
     </Box>
   )
 }

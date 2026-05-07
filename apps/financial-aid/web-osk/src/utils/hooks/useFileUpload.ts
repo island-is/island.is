@@ -69,7 +69,7 @@ export const useFileUpload = (formFiles: UploadFileDeprecated[]) => {
 
         updateFile(file)
 
-        uploadToCloudFront(file, signedUrl.url)
+        uploadToS3(file, signedUrl.url)
       } else {
         file.status = 'error'
 
@@ -138,7 +138,7 @@ export const useFileUpload = (formFiles: UploadFileDeprecated[]) => {
     })
   }
 
-  const uploadToCloudFront = (file: UploadFileDeprecated, url: string) => {
+  const uploadToS3 = (file: UploadFileDeprecated, url: string) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
@@ -183,14 +183,12 @@ export const useFileUpload = (formFiles: UploadFileDeprecated[]) => {
 
     request.open('PUT', url)
 
-    const formData = new FormData()
-
-    formData.append('file', file as File)
-    request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
-
-    formData.forEach((el) => {
-      request.send(el)
-    })
+    const uploadFile = file as File
+    request.setRequestHeader(
+      'Content-Type',
+      uploadFile.type || 'application/octet-stream',
+    )
+    request.send(uploadFile)
   }
 
   const updateFile = (file: UploadFileDeprecated) => {

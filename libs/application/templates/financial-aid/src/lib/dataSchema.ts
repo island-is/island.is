@@ -78,6 +78,11 @@ const employmentSchema = z
     path: ['custom'],
   })
 
+const fileSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
     params: error.validation.dataGathering,
@@ -102,6 +107,11 @@ export const dataSchema = z.object({
   income: z.enum([ApproveOptions.Yes, ApproveOptions.No]).refine((v) => v, {
     params: error.validation.radioErrorMessage,
   }),
+  incomeFiles: z.array(fileSchema).optional(),
+  taxReturnFiles: z.array(fileSchema).optional(),
+  childrenFiles: z.array(fileSchema).optional(),
+  spouseIncomeFiles: z.array(fileSchema).optional(),
+  spouseTaxReturnFiles: z.array(fileSchema).optional(),
   bankInfo: z.object({
     bankNumber: z.string().optional(),
     ledger: z.string().optional(),

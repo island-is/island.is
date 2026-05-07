@@ -68,16 +68,15 @@ export class PersonalTaxReturnService {
 
       const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
 
-      const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
+      const presignedUrl = await this.fileService.createSignedUrl(folder, fileName)
 
       const base64 = Base64.atob(taxReturn.content)
       const size = base64.length
 
       await fetch(presignedUrl.url, {
         method: 'PUT',
-        body: Buffer.from(base64, 'binary'),
+        body: new Uint8Array(Buffer.from(base64, 'binary')),
         headers: {
-          'x-amz-acl': 'bucket-owner-full-control',
           'Content-Type': 'application/pdf',
           'Content-Length': size.toString(),
         },

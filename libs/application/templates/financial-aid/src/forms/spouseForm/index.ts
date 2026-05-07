@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -42,10 +43,14 @@ export const Spouse: Form = buildForm({
       id: Routes.SPOUSEINCOMEFILES,
       title: m.incomeFilesForm.general.sectionTitle,
       children: [
-        buildCustomField({
+        buildFileUploadField({
           id: Routes.SPOUSEINCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
-          component: 'IncomeFilesForm',
+          introduction: m.incomeFilesForm.general.description,
+          uploadMultiple: true,
+          uploadHeader: m.filesText.header,
+          uploadDescription: m.filesText.description,
+          uploadButtonLabel: m.filesText.buttonLabel,
         }),
       ],
     }),

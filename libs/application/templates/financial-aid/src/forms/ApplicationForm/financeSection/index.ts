@@ -1,9 +1,11 @@
 import {
   buildCustomField,
+  buildFileUploadField,
   getValueViaPath,
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { ApproveOptions, TaxData } from '../../../lib/types'
@@ -24,10 +26,22 @@ export const financeSection = buildSection({
       id: Routes.INCOMEFILES,
       title: m.incomeFilesForm.general.sectionTitle,
       children: [
-        buildCustomField({
+        buildFileUploadField({
           id: Routes.INCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
-          component: 'IncomeFilesForm',
+          introduction: (application: Application) => {
+            const success = getValueViaPath<boolean>(
+              application.externalData,
+              'taxData.data.municipalitiesDirectTaxPayments.success',
+            )
+            return success
+              ? m.incomeFilesForm.general.descriptionTaxSuccess
+              : m.incomeFilesForm.general.description
+          },
+          uploadMultiple: true,
+          uploadHeader: m.filesText.header,
+          uploadDescription: m.filesText.description,
+          uploadButtonLabel: m.filesText.buttonLabel,
         }),
       ],
     }),
