@@ -133,6 +133,7 @@ export class PoliceDigitalCaseFileService {
 
     // Only create metadata case files for cases that have a court case number and have been submitted to court
     const shouldCreateMetadataCaseFiles =
+      caseType === CaseType.INDICTMENT &&
       Boolean(courtCaseNumber) &&
       hasIndictmentCaseBeenSubmittedToCourt(caseState)
 

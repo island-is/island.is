@@ -8,6 +8,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import * as formatterModule from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { PoliceService } from '../../../police/police.service'
 import {
@@ -122,6 +123,10 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
   })
 
   it('creates metadata case files after court connection and submission', async () => {
+    const createDigitalCaseFileMetadataPdfSpy = jest
+      .spyOn(formatterModule, 'createDigitalCaseFileMetadataPdf')
+      .mockResolvedValueOnce(Buffer.from('mock-pdf'))
+
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
@@ -148,8 +153,38 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledTimes(
       1,
     )
+    expect(createDigitalCaseFileMetadataPdfSpy).toHaveBeenCalledTimes(1)
     expect(caseFileModel.findOne).toHaveBeenCalledTimes(1)
     expect(caseFileModel.create).toHaveBeenCalledTimes(1)
     expect(awsS3Service.putObject).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not create metadata case files for non-indictment cases', async () => {
+    policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
+      makePoliceSystemDigitalCaseFile() as never,
+    ])
+    policeDigitalCaseFileRepositoryService.findAll
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
+
+    policeDigitalCaseFileRepositoryService.create.mockResolvedValueOnce(
+      makeStoredPoliceDigitalCaseFile() as never,
+    )
+
+    await service.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      CaseType.CUSTODY,
+      CaseState.SUBMITTED,
+      'R-2026-1234',
+      [policeCaseNumber],
+      { nationalId: '0000000000' } as User,
+    )
+
+    expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledTimes(
+      1,
+    )
+    expect(caseFileModel.findOne).not.toHaveBeenCalled()
+    expect(caseFileModel.create).not.toHaveBeenCalled()
+    expect(awsS3Service.putObject).not.toHaveBeenCalled()
   })
 })
