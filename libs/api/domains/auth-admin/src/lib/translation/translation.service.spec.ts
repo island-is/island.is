@@ -67,8 +67,8 @@ const createMockAdminApi = (translations: typeof translationDev[]) => ({
     }),
   meTranslationsControllerCreateRaw: jest
     .fn()
-    .mockImplementation(({ translationDTO }) =>
-      createMockApiResponse(translationDTO),
+    .mockImplementation(({ createTranslationDto }) =>
+      createMockApiResponse(createTranslationDto),
     ),
   meTranslationsControllerUpdateRaw: jest
     .fn()

@@ -203,7 +203,7 @@ export class TranslationService extends MultiEnvironmentService {
       try {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meTranslationsControllerCreateRaw({
-            translationDTO: {
+            createTranslationDto: {
               language: input.language,
               className: input.className,
               property: input.property,

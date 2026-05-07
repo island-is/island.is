@@ -226,26 +226,34 @@ describe('MeTranslationsController', () => {
         expect(response.status).toEqual(400)
       })
 
-      it.each([
-        ['language', { language: 'en/uk' }],
-        ['className', { className: 'client/extra' }],
-        ['property', { property: 'display/Name' }],
-        ['key', { key: 'island.is/1' }],
-      ])(
-        'rejects a slash in %s — would make the row unreachable via path-param routes',
-        async (_field, override) => {
-          const response = await server.post('/v2/me/translations').send({
-            language: 'en',
-            className: 'client',
-            property: 'displayName',
-            key: 'no-slash-key',
-            value: 'value',
-            ...override,
-          })
+      it('round-trips a key containing slashes (URL-encoded path params)', async () => {
+        const slashKey = 'auth/login/title'
+        const createResponse = await server.post('/v2/me/translations').send({
+          language: 'en',
+          className: 'client',
+          property: 'displayName',
+          key: slashKey,
+          value: 'Sign in',
+        })
 
-          expect(response.status).toEqual(400)
-        },
-      )
+        expect(createResponse.status).toEqual(201)
+        expect(createResponse.body.key).toEqual(slashKey)
+
+        const getResponse = await server.get(
+          `/v2/me/translations/en/client/displayName/${encodeURIComponent(
+            slashKey,
+          )}`,
+        )
+
+        expect(getResponse.status).toEqual(200)
+        expect(getResponse.body).toMatchObject({
+          language: 'en',
+          className: 'client',
+          property: 'displayName',
+          key: slashKey,
+          value: 'Sign in',
+        })
+      })
     })
 
     describe('PATCH /v2/me/translations/:language/:className/:property/:key', () => {

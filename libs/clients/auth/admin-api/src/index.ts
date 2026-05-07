@@ -22,7 +22,7 @@ export {
   PagedLanguagesDto,
   UpdateLanguageDto,
   Translation as GeneratedTranslation,
-  TranslationDTO,
+  CreateTranslationDto,
   PagedTranslationsDto,
   UpdateTranslationDto,
   MeClientsControllerCreateRequest,

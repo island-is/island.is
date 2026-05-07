@@ -21,7 +21,7 @@ const variantConfig = {
     message: m.grantTypesDeleteConfirmMessage,
     environmentLabel: m.grantTypesDeleteSelectEnvironments,
     environmentError: m.grantTypesDeleteEnvironmentRequired,
-    confirmLabel: m.grantTypesDeleteButton,
+    confirmLabel: m.archive,
     confirmColorScheme: 'destructive' as const,
   },
   restore: {
@@ -29,7 +29,7 @@ const variantConfig = {
     message: m.grantTypesRestoreConfirmMessage,
     environmentLabel: m.grantTypesRestoreSelectEnvironments,
     environmentError: m.grantTypesRestoreEnvironmentRequired,
-    confirmLabel: m.grantTypesRestoreButton,
+    confirmLabel: m.restore,
     confirmColorScheme: 'default' as const,
   },
 }

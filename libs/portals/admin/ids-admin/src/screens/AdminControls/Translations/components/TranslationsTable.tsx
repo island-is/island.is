@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
@@ -9,6 +9,7 @@ import {
   Stack,
   Table as T,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
@@ -17,6 +18,7 @@ import { m } from '../../../../lib/messages'
 import type { TranslationRow } from '../Translations.types'
 import { buildTranslationKey } from '../Translations.utils'
 import { TranslationConfirmModal } from './TranslationConfirmModal'
+import * as styles from './Translations.css'
 
 interface TranslationsTableProps {
   rows: TranslationRow[]
@@ -33,6 +35,14 @@ interface TranslationsTableProps {
   onPageChange: (page: number) => void
   onClearSearch?: () => void
 }
+
+const renderBreakableKey = (key: string) =>
+  key.split(/(?=[/:])/).map((segment, index) => (
+    <Fragment key={index}>
+      {index > 0 && <wbr />}
+      {segment}
+    </Fragment>
+  ))
 
 export const TranslationsTable = ({
   rows,
@@ -93,58 +103,79 @@ export const TranslationsTable = ({
           )}
         </Box>
       ) : (
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(m.translationsLanguage)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.translationsClassName)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.translationsProperty)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.translationsKey)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.translationsValue)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.environments)}</T.HeadData>
-              <T.HeadData>{/* Actions */}</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {rows.map((translation) => (
-              <T.Row key={buildTranslationKey(translation)}>
-                <T.Data>{translation.language}</T.Data>
-                <T.Data>{translation.className}</T.Data>
-                <T.Data>{translation.property}</T.Data>
-                <T.Data>{translation.key}</T.Data>
-                <T.Data>{translation.value}</T.Data>
-                <T.Data>
-                  <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
-                    {translation.availableEnvironments?.map((env) => (
-                      <Tag key={env} variant="blue" outlined disabled>
-                        {env}
-                      </Tag>
-                    ))}
-                  </Box>
-                </T.Data>
-                <T.Data>
-                  <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                    <Button
-                      aria-label={formatMessage(m.edit)}
-                      variant="ghost"
-                      size="small"
-                      icon="pencil"
-                      onClick={() => onEdit(translation)}
-                    />
-                    <Button
-                      aria-label={formatMessage(m.delete)}
-                      variant="ghost"
-                      size="small"
-                      icon="trash"
-                      colorScheme="destructive"
-                      onClick={() => setDeleteTarget(translation)}
-                    />
-                  </Box>
-                </T.Data>
+        <Box className={styles.tableWrapper}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>
+                  {formatMessage(m.translationsLanguageShort)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(m.translationsClassNameShort)} /{' '}
+                  {formatMessage(m.translationsKey)}
+                </T.HeadData>
+                <T.HeadData>{formatMessage(m.translationsProperty)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.translationsValue)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.environments)}</T.HeadData>
+                <T.HeadData>{/* Actions */}</T.HeadData>
               </T.Row>
-            ))}
-          </T.Body>
-        </T.Table>
+            </T.Head>
+            <T.Body>
+              {rows.map((translation) => (
+                <T.Row key={buildTranslationKey(translation)}>
+                  <T.Data>{translation.language}</T.Data>
+                  <T.Data>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      className={styles.classKey}
+                    >
+                      <Text variant="small">{translation.className}</Text>
+                      <Text variant="small" fontWeight="medium">
+                        {renderBreakableKey(translation.key)}
+                      </Text>
+                    </Box>
+                  </T.Data>
+                  <T.Data>{translation.property}</T.Data>
+                  <T.Data>{translation.value}</T.Data>
+                  <T.Data>
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      columnGap={1}
+                      rowGap={1}
+                    >
+                      {translation.availableEnvironments?.map((env) => (
+                        <Tag key={env} variant="blue" outlined disabled>
+                          {env}
+                        </Tag>
+                      ))}
+                    </Box>
+                  </T.Data>
+                  <T.Data>
+                    <Box display="flex" columnGap={2} justifyContent="flexEnd">
+                      <Button
+                        aria-label={formatMessage(m.edit)}
+                        variant="ghost"
+                        size="small"
+                        icon="pencil"
+                        onClick={() => onEdit(translation)}
+                      />
+                      <Button
+                        aria-label={formatMessage(m.delete)}
+                        variant="ghost"
+                        size="small"
+                        icon="trash"
+                        colorScheme="destructive"
+                        onClick={() => setDeleteTarget(translation)}
+                      />
+                    </Box>
+                  </T.Data>
+                </T.Row>
+              ))}
+            </T.Body>
+          </T.Table>
+        </Box>
       )}
 
       {totalPages > 1 && (

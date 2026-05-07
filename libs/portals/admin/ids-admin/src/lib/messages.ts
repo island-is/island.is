@@ -1139,10 +1139,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-confirm-message',
     defaultMessage: 'Are you sure you want to delete this API scope user?',
   },
-  apiScopeUsersDeleteButton: {
-    id: 'ap.ids-admin:api-scope-users-delete-button',
-    defaultMessage: 'Delete',
-  },
   /** @deprecated Use m.edit instead */
   apiScopeUserEditButton: {
     id: 'ap.ids-admin:api-scope-user-edit',
@@ -1263,10 +1259,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-description',
     defaultMessage: 'Description',
   },
-  grantTypesDeleteButton: {
-    id: 'ap.ids-admin:grant-types-delete-button',
-    defaultMessage: 'Archive',
-  },
   grantTypesDeleteConfirmTitle: {
     id: 'ap.ids-admin:grant-types-delete-confirm-title',
     defaultMessage: 'Archive Grant Type',
@@ -1340,10 +1332,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-delete-environment-required',
     defaultMessage: 'Select at least one environment to archive from',
   },
-  grantTypesRestoreButton: {
-    id: 'ap.ids-admin:grant-types-restore-button',
-    defaultMessage: 'Restore',
-  },
   grantTypesRestoreConfirmTitle: {
     id: 'ap.ids-admin:grant-types-restore-confirm-title',
     defaultMessage: 'Restore Grant Type',
@@ -1407,10 +1395,6 @@ export const m = defineMessages({
   idpProvidersLevel: {
     id: 'ap.ids-admin:idp-providers-level',
     defaultMessage: 'Level',
-  },
-  idpProvidersDeleteButton: {
-    id: 'ap.ids-admin:idp-providers-delete-button',
-    defaultMessage: 'Delete',
   },
   idpProvidersDeleteConfirmTitle: {
     id: 'ap.ids-admin:idp-providers-delete-confirm-title',
@@ -1517,9 +1501,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:translations-language',
     defaultMessage: 'Language',
   },
+  translationsLanguageShort: {
+    id: 'ap.ids-admin:translations-language-short',
+    defaultMessage: 'Lang',
+  },
   translationsClassName: {
     id: 'ap.ids-admin:translations-class-name',
     defaultMessage: 'Class name',
+  },
+  translationsClassNameShort: {
+    id: 'ap.ids-admin:translations-class-name-short',
+    defaultMessage: 'Class',
   },
   translationsProperty: {
     id: 'ap.ids-admin:translations-property',
@@ -1711,6 +1703,10 @@ export const m = defineMessages({
   },
   delete: {
     id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  archive: {
+    id: 'ap.ids-admin:archive',
     defaultMessage: 'Archive',
   },
   closeDeleteModal: {
