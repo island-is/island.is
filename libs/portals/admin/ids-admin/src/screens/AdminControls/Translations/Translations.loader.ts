@@ -91,8 +91,7 @@ export const translationsLoader: WrappedLoaderFn = ({ client }) => {
         [],
       configuredEnvironments:
         (envsSettled.status === 'fulfilled' &&
-          envsSettled.value.data
-            ?.authAdminTranslationConfiguredEnvironments) ||
+          envsSettled.value.data?.authAdminTranslationConfiguredEnvironments) ||
         [],
     }
   }
