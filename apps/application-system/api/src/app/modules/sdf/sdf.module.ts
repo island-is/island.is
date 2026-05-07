@@ -7,7 +7,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 
 import { ApplicationModule } from '../application/application.module'
 import { SdfController } from './sdf.controller'
-import { AstAdapterService } from './ast-adapter.service'
+import { SdfScreenService } from './sdf-screen.service'
 import { I18nResolverService } from './i18n-resolver.service'
 import { environment } from '../../../environments'
 
@@ -21,6 +21,6 @@ import { environment } from '../../../environments'
     AuthModule.register(environment.auth),
   ],
   controllers: [SdfController],
-  providers: [AstAdapterService, I18nResolverService],
+  providers: [SdfScreenService, I18nResolverService],
 })
 export class SdfModule {}

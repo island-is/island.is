@@ -103,7 +103,7 @@ const toApplicationSnapshot = (
 }
 
 @Injectable()
-export class AstAdapterService {
+export class SdfScreenService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationService: ApplicationService,

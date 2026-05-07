@@ -12,7 +12,7 @@ import {
 import type { ApplicationWithAttachments } from '@island.is/application/types'
 import { createApplicationTemplate } from '@island.is/application/testing'
 
-import { AstAdapterService } from '../ast-adapter.service'
+import { SdfScreenService } from '../sdf-screen.service'
 
 const getApplicationTemplateByTypeIdMock = jest.fn()
 
@@ -104,7 +104,7 @@ const createApplicationModel = (
   return model as ApplicationWithAttachments
 }
 
-describe('AstAdapterService handleRefetch', () => {
+describe('SdfScreenService handleRefetch', () => {
   const lookupApi = defineTemplateApi({ action: 'lookupThing' })
 
   it('does not persist answers or external data during refetch', async () => {
@@ -155,7 +155,7 @@ describe('AstAdapterService handleRefetch', () => {
       }),
     }
 
-    const service = new AstAdapterService(
+    const service = new SdfScreenService(
       { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
       applicationService,
       {
@@ -234,7 +234,7 @@ describe('AstAdapterService handleRefetch', () => {
       }),
     }
 
-    const service = new AstAdapterService(
+    const service = new SdfScreenService(
       { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
       applicationService,
       {

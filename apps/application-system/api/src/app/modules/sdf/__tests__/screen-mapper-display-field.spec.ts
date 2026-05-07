@@ -84,7 +84,7 @@ describe('mapScreenToComponents — display field parity props', () => {
   it('recomputes value reactively when merged answers change (mirrors computeDisplayValues)', () => {
     // Mirrors the example-inputs displayFieldSubsection.ts `displayField`
     // closure: Sum of inputs 1, 2, and 3. The same closure is invoked by
-    // `AstAdapterService.computeDisplayValues` during VALIDATE; re-running the
+    // `SdfScreenService.computeDisplayValues` during VALIDATE; re-running the
     // mapper with different `application.answers` is a high-fidelity proxy
     // for the reactive recompute path.
     const screen = {

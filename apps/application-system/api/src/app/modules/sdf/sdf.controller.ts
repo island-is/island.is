@@ -29,7 +29,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import type { Locale } from '@island.is/shared/types'
 
-import { AstAdapterService } from './ast-adapter.service'
+import { SdfScreenService } from './sdf-screen.service'
 import { ExecuteActionDto, SdfActionType } from './dto/action.dto'
 import { ScreenDto, ValidateResponseDto } from './dto/screen.dto'
 import { createSdfProblem, SdfProblemDetailsDto } from './problem-details'
@@ -39,7 +39,7 @@ import { createSdfProblem, SdfProblemDetailsDto } from './problem-details'
 @ApiBearerAuth()
 @Controller('sdf')
 export class SdfController {
-  constructor(private readonly astAdapter: AstAdapterService) {}
+  constructor(private readonly sdfScreenService: SdfScreenService) {}
 
   @Scopes(ApplicationScope.read)
   @Get(':applicationId/screen')
@@ -84,7 +84,7 @@ export class SdfController {
       }
       pageIndexOverride = n
     }
-    return this.astAdapter.getScreen(
+    return this.sdfScreenService.getScreen(
       applicationId,
       pageIndexOverride,
       (locale ?? 'is') as Locale,
@@ -121,7 +121,7 @@ export class SdfController {
         // fieldIds may be empty when the caller only wants recomputed
         // displayValues (no error surface). In that case validation is skipped
         // and only the displayValues map is returned. See plan §2d.
-        return this.astAdapter.validateFields(
+        return this.sdfScreenService.validateFields(
           applicationId,
           dto.answers ?? {},
           dto.fieldIds ?? [],
@@ -130,7 +130,7 @@ export class SdfController {
         )
 
       case SdfActionType.NEXT_PAGE:
-        return this.astAdapter.persistAnswersAndAdvance(
+        return this.sdfScreenService.persistAnswersAndAdvance(
           applicationId,
           dto.answers ?? {},
           locale,
@@ -139,10 +139,14 @@ export class SdfController {
         )
 
       case SdfActionType.PREV_PAGE:
-        return this.astAdapter.goToPreviousPage(applicationId, locale, user!)
+        return this.sdfScreenService.goToPreviousPage(
+          applicationId,
+          locale,
+          user!,
+        )
 
       case SdfActionType.REFETCH:
-        return this.astAdapter.handleRefetch(
+        return this.sdfScreenService.handleRefetch(
           applicationId,
           dto.answers,
           dto.refetchTemplateApiActions,
@@ -151,7 +155,7 @@ export class SdfController {
         )
 
       case SdfActionType.SUBMIT:
-        return this.astAdapter.handleSubmit(
+        return this.sdfScreenService.handleSubmit(
           applicationId,
           dto.event ?? 'SUBMIT',
           dto.answers,

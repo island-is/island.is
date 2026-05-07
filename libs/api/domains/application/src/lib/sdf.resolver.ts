@@ -118,7 +118,7 @@ export class SdfResolver {
    * Lightweight mutation that validates a subset of fields and/or recomputes
    * display-field values for the current page without producing a fresh screen
    * snapshot. Intended for reactive updates (debounced keystrokes) where a
-   * full screen re-render is wasteful. See AstAdapterService.validateFields.
+   * full screen re-render is wasteful. See SdfScreenService.validateFields.
    */
   @Mutation(() => SdfValidateResult, { name: 'applicationSdfValidate' })
   async validate(

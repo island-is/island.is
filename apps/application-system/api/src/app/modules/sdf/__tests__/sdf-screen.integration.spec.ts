@@ -72,7 +72,7 @@ function createMockApplication(
 
 /**
  * Extracted filterDataByRole logic to test directly without NestJS DI.
- * This mirrors AstAdapterService.filterDataByRole exactly —
+ * This mirrors SdfScreenService.filterDataByRole exactly —
  * unions BOTH read + write keys (matching ApplicationTemplateHelper behavior).
  */
 function filterDataByRole(
