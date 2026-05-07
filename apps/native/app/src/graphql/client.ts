@@ -63,6 +63,11 @@ const retryLink = new RetryLink({
 
 let cognitoBrowserOpen = false
 
+// Keep in sync with LOCK_SCREEN_SUPPRESS_MAX_MS in stores/auth-store.ts.
+// Inlined here because client.ts uses getAuthStoreRef() instead of importing
+// auth-store directly to avoid a circular dependency.
+const LOCK_SCREEN_SUPPRESS_MAX_MS = 15 * 60 * 1000
+
 const triggerCognitoReauth = ({
   clearStaleToken,
 }: {
@@ -79,11 +84,19 @@ const triggerCognitoReauth = ({
     !cognitoBrowserOpen
   ) {
     cognitoBrowserOpen = true
+    // Suppress the app-lock screen while the Cognito browser is open. iOS
+    // Keychain autofill in the Microsoft login page briefly backgrounds the
+    // app, which would otherwise trigger the AuthLayout AppState listener and
+    // push /app-lock, dismissing the FORM_SHEET webview.
+    getAuthStoreRef().setState({
+      lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+    })
     WebBrowser.openBrowserAsync(redirectUrl, {
       presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
     })
       .finally(() => {
         cognitoBrowserOpen = false
+        getAuthStoreRef().setState({ lockScreenSuppressedUntil: undefined })
       })
       .catch(() => void 0)
   }
