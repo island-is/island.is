@@ -44,7 +44,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
       }),
       columnHelper.display({
         id: 'download',
-        header: formatMessage(psm.downloadResults),
+        header: () => null,
         enableSorting: false,
         cell: ({ row }) => {
           const url = row.original.downloadServiceUrl
@@ -56,6 +56,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
               size="small"
               icon="download"
               iconType="outline"
+              aria-label={`${formatMessage(psm.downloadResults)}: ${row.original.schoolYear}`}
               onClick={() => formSubmit(url)}
             >
               {formatMessage(psm.downloadResults)}

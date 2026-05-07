@@ -66,19 +66,19 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData scope="col" text={{ variant: 'small', fontWeight: 'semiBold' }}>
               {formatMessage(fm.paymentType)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData scope="col" text={{ variant: 'small', fontWeight: 'semiBold' }}>
               {formatMessage(fm.share)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData scope="col" text={{ variant: 'small', fontWeight: 'semiBold' }}>
               {formatMessage(fm.pendingPayments)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData scope="col" text={{ variant: 'small', fontWeight: 'semiBold' }}>
               {formatMessage(fm.operation)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData scope="col" text={{ variant: 'small', fontWeight: 'semiBold' }}>
               {formatMessage(m.date)}
             </T.HeadData>
           </T.Row>

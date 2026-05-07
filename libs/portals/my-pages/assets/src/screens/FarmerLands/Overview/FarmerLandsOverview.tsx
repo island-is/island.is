@@ -19,6 +19,7 @@ import { useState } from 'react'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNavigate } from 'react-router-dom'
 import { AssetsPaths } from '../../../lib/paths'
+import { m as cm } from '@island.is/portals/core'
 
 export const FarmerLandsOverview = () => {
   useNamespaces('sp.farmer-lands')
@@ -48,6 +49,7 @@ export const FarmerLandsOverview = () => {
               icon={{ name: 'search' }}
               backgroundColor="blue"
               size="xs"
+              label={formatMessage(m.searchLabel)}
               value={search ?? ''}
               onChange={(search) => {
                 setSearch(search.target.value)
