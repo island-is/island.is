@@ -1,25 +1,28 @@
-# confirm-travel
+# Confirm Travel
 
 This template for an application was generated with the `nx generate-template confirm-travel` command.
 
-Write documentation here.
+## Overview
 
-- What gervimenn can use this template
+This application allows unemployment benefit applicants to submit notice of travel to VMST (Unemployment Insurance Fund of Iceland).
 
-* 1709711409
-* 0101051450
-* Depends on the status of gervimenn in Galdur, they need to have an active unemployment application
+## Who Can Use This Template
 
-- What is this application for
+- Institution IDs: 1709711409, 0101051450
+- Applicants must have an active unemployment application status in Galdur
 
-* For unemployment benefit applicants to send notice of a travel
+## Purpose
 
-- Which organization is this application for
+This application enables unemployment benefit applicants to notify VMST of their travel plans.
 
-* VMST
+## Organization
 
-- Describe the stateflow of the application on a high level
+This template is for **VMST** (Vinnumálastofnun - Directorate of Labour)
 
-## Running unit tests
+## Application State Flow
+
+[Describe the stateflow of the application on a high level]
+
+## Running Unit Tests
 
 Run `nx test confirm-travel` to execute the unit tests via [Jest](https://jestjs.io).

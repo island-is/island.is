@@ -21,7 +21,7 @@ export class ConfirmTravelService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL)
   }
-  async getEligability({ auth }: TemplateApiModuleActionProps) {
+  async getEligibility({ auth }: TemplateApiModuleActionProps) {
     let result
     try {
       result =
