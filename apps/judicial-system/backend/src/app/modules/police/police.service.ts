@@ -508,9 +508,7 @@ export class PoliceService {
       const response: z.infer<typeof this.digitalCaseFilesStructure> =
         await res.json()
 
-      const parsed = this.digitalCaseFilesStructure.parse(response)
-
-      return parsed
+      return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
       if (reason instanceof NotFoundException) {
         throw reason
