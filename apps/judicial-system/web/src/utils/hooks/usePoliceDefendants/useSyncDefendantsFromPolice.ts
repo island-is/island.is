@@ -110,8 +110,6 @@ export const useSyncDefendantsFromPolice = () => {
               },
             })
 
-            // Re-fetch the full case so newly auto-created indictment counts and
-            // inferred metadata are visible immediately without navigation.
             refreshCase()
           }
 
