@@ -17,7 +17,7 @@ export const Dashboard = () => {
 
   if (useNewDashboard === null) return null
 
-  return useNewDashboard ? <DashboardV2 /> : <DashboardV1 />
+  return useNewDashboard ? <DashboardV1 /> : <DashboardV1 />
 }
 
 export default Dashboard

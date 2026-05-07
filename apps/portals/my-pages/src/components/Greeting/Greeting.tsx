@@ -53,7 +53,7 @@ const Greeting = ({ compact = false }: GreetingProps) => {
     >
       <img
         src="./assets/images/illustration.svg"
-        className={styles.image}
+        className={styles.imageCompact}
         alt=""
       />
     </Box>
