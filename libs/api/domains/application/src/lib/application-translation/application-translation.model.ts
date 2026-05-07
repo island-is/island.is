@@ -62,9 +62,9 @@ export class ApplicationTranslationStatus {
 }
 
 @ObjectType()
-export class AiTranslationResultGql {
-  @Field(() => graphqlTypeJson)
-  translations!: Record<string, string>
+export class GoogleTranslateResultGql {
+  @Field(() => [String])
+  translations!: string[]
 }
 
 @ObjectType()

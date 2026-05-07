@@ -12,6 +12,7 @@ import {
   ApplicationTranslationApiService,
   TRANSLATION_API_CONFIG,
 } from './application-translation/application-translation.service'
+import { GoogleTranslateService } from './application-translation/google-translate.service'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   AdminApi as FormSystemAdminApi,
@@ -37,6 +38,7 @@ export class ApplicationModule {
         ApplicationV2Service,
         ApplicationAdminV2Service,
         ApplicationTranslationApiService,
+        GoogleTranslateService,
         {
           provide: TRANSLATION_API_CONFIG,
           useValue: { baseApiUrl: config.baseApiUrl },

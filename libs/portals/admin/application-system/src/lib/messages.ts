@@ -221,12 +221,12 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationValidationErrors',
     defaultMessage: 'Villumeldingar',
   },
-  translationAiTranslateScreen: {
-    id: 'admin-portal.application-system:translationAiTranslateScreen',
-    defaultMessage: 'Þýða skjá',
+  translationGoogleTranslate: {
+    id: 'admin-portal.application-system:translationGoogleTranslate',
+    defaultMessage: 'Þýða',
   },
-  translationAiTranslateAll: {
-    id: 'admin-portal.application-system:translationAiTranslateAll',
+  translationGoogleTranslateAll: {
+    id: 'admin-portal.application-system:translationGoogleTranslateAll',
     defaultMessage: 'Þýða allt',
   },
   translationReview: {

@@ -53,3 +53,9 @@ export class RollbackTranslationsInput {
   @Field()
   publishId!: string
 }
+
+@InputType()
+export class GoogleTranslateStringsInput {
+  @Field(() => [String])
+  texts!: string[]
+}

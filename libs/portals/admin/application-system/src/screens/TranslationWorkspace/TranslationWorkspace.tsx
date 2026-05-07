@@ -9,6 +9,7 @@ import {
   useBulkUpdateApplicationTranslationsMutation,
   useGetApplicationTemplateRoleFormLazyQuery,
   usePublishApplicationTranslationsMutation,
+  useGoogleTranslateStringsMutation,
 } from '../../queries/translations.generated'
 import type {
   EditedTranslations,
@@ -185,6 +186,9 @@ export const TranslationWorkspace = () => {
   const [publishMutation, { loading: publishing }] =
     usePublishApplicationTranslationsMutation()
 
+  const [googleTranslate, { loading: translating }] =
+    useGoogleTranslateStringsMutation()
+
   const [fetchRoleForm] = useGetApplicationTemplateRoleFormLazyQuery()
 
   const activeStateKey = selectedLocation?.stateKey ?? ''
@@ -289,6 +293,45 @@ export const TranslationWorkspace = () => {
       return next
     })
   }, [])
+
+  const handleGoogleTranslate = useCallback(
+    async (descriptorId: string, sourceText: string) => {
+      try {
+        const { data } = await googleTranslate({
+          variables: { input: { texts: [sourceText] } },
+        })
+        const translated = data?.googleTranslateStrings?.translations?.[0]
+        if (translated) {
+          handleValueChange(descriptorId, translated)
+        }
+      } catch (err) {
+        console.error('Google Translate failed', err)
+        toast.error('Translation failed')
+      }
+    },
+    [googleTranslate, handleValueChange],
+  )
+
+  const handleGoogleTranslateAll = useCallback(
+    async (items: Array<{ id: string; sourceText: string }>) => {
+      if (items.length === 0) return
+      try {
+        const { data } = await googleTranslate({
+          variables: { input: { texts: items.map((i) => i.sourceText) } },
+        })
+        const translations = data?.googleTranslateStrings?.translations ?? []
+        for (let i = 0; i < items.length; i++) {
+          if (translations[i]) {
+            handleValueChange(items[i].id, translations[i])
+          }
+        }
+      } catch (err) {
+        console.error('Google Translate all failed', err)
+        toast.error('Translation failed')
+      }
+    },
+    [googleTranslate, handleValueChange],
+  )
 
   const validationDescriptors = useMemo(
     (): ValidationMessageDescriptor[] =>
@@ -651,6 +694,13 @@ export const TranslationWorkspace = () => {
             onToggleFieldError={handleToggleFieldError}
             onSetPreviewFieldValue={handleSetPreviewFieldValue}
             onActiveTabChange={(tab) => setFieldsTabActive(tab === 'fields')}
+            onGoogleTranslate={
+              activeLocale === 'en' ? handleGoogleTranslate : undefined
+            }
+            onGoogleTranslateAll={
+              activeLocale === 'en' ? handleGoogleTranslateAll : undefined
+            }
+            isTranslating={translating}
           />
         </div>
       </div>

@@ -23,7 +23,6 @@ import {
   ApplicationTranslationService,
   TemplateIntrospectionService,
 } from '@island.is/application/api/core'
-import { AiTranslateService } from '@island.is/application/api/core'
 import { ApplicationTypes } from '@island.is/application/types'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -31,7 +30,6 @@ import {
   BulkUpdateTranslationsDto,
   PublishTranslationsDto,
 } from './dto/translation.dto'
-import { AiTranslateDto } from './dto/ai-translate.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('translations')
@@ -41,7 +39,6 @@ export class TranslationController {
   constructor(
     private readonly translationService: ApplicationTranslationService,
     private readonly introspectionService: TemplateIntrospectionService,
-    private readonly aiTranslateService: AiTranslateService,
   ) {}
 
   @Scopes(
@@ -175,32 +172,6 @@ export class TranslationController {
       namespace,
       user.nationalId,
       user.actor?.nationalId,
-    )
-  }
-
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
-  @Post('ai-translate')
-  async aiTranslate(@Body() body: AiTranslateDto) {
-    const sourceTranslations =
-      await this.translationService.getTranslationsForNamespace(
-        body.namespace,
-        body.sourceLocale as Locale,
-      )
-
-    const sourceStrings: Record<string, string> = {}
-    for (const key of body.messageKeys) {
-      if (sourceTranslations[key]) {
-        sourceStrings[key] = sourceTranslations[key]
-      }
-    }
-
-    return this.aiTranslateService.translateStrings(
-      sourceStrings,
-      body.sourceLocale,
-      body.targetLocale,
     )
   }
 

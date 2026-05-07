@@ -45,6 +45,11 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
   onToggleFieldError: (fieldId: string) => void
   onSetPreviewFieldValue: (fieldId: string, value: string) => void
   onActiveTabChange?: (tab: string) => void
+  onGoogleTranslate?: (descriptorId: string, sourceText: string) => void
+  onGoogleTranslateAll?: (
+    items: Array<{ id: string; sourceText: string }>,
+  ) => void
+  isTranslating?: boolean
 }
 
 export const TranslationWorkspaceStatesTabsPanel = ({
@@ -70,6 +75,9 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   onToggleFieldError,
   onSetPreviewFieldValue,
   onActiveTabChange,
+  onGoogleTranslate,
+  onGoogleTranslateAll,
+  isTranslating,
 }: TranslationWorkspaceStatesTabsPanelProps) => {
   const [activeTab, setActiveTabRaw] = useState('states')
   const setActiveTab = (tab: string) => {
@@ -139,6 +147,10 @@ export const TranslationWorkspaceStatesTabsPanel = ({
           showValidationErrors={showValidationErrors}
           validationDescriptors={validationDescriptors}
           formatMessage={formatMessage}
+          persistedByKey={persistedByKey}
+          onGoogleTranslate={onGoogleTranslate}
+          onGoogleTranslateAll={onGoogleTranslateAll}
+          isTranslating={isTranslating}
         />
       ),
     },
@@ -161,6 +173,10 @@ export const TranslationWorkspaceStatesTabsPanel = ({
           onSetPreviewFieldValue={onSetPreviewFieldValue}
           onFocusedFieldChange={onFocusedFieldChange}
           formatMessage={formatMessage}
+          persistedByKey={persistedByKey}
+          onGoogleTranslate={onGoogleTranslate}
+          onGoogleTranslateAll={onGoogleTranslateAll}
+          isTranslating={isTranslating}
         />
       ),
     },

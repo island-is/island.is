@@ -145,25 +145,6 @@ export class ApplicationTranslationApiService {
     })
   }
 
-  async aiTranslateStrings(
-    user: User,
-    input: {
-      namespace: string
-      messageKeys: string[]
-      sourceLocale: string
-      targetLocale: string
-    },
-  ): Promise<{ translations: Record<string, string> }> {
-    return this.request<{ translations: Record<string, string> }>(
-      user,
-      '/ai-translate',
-      {
-        method: 'POST',
-        body: JSON.stringify(input),
-      },
-    )
-  }
-
   async listTemplates(user: User): Promise<
     Array<{
       typeId: string

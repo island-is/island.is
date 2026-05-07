@@ -14,6 +14,11 @@ import {
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
+type PersistedByKey = Record<
+  string,
+  { valueIs: string; valueEn?: string | null }
+>
+
 export interface TabsPanelFieldsTabProps {
   focusableFields: ScreenIntrospection[]
   focusedIndex: number
@@ -27,6 +32,12 @@ export interface TabsPanelFieldsTabProps {
   onSetPreviewFieldValue: (fieldId: string, value: string) => void
   onFocusedFieldChange: (fieldId: string | null) => void
   formatMessage: FormatMessage
+  persistedByKey: PersistedByKey
+  onGoogleTranslate?: (descriptorId: string, sourceText: string) => void
+  onGoogleTranslateAll?: (
+    items: Array<{ id: string; sourceText: string }>,
+  ) => void
+  isTranslating?: boolean
 }
 
 export const TabsPanelFieldsTab = ({
@@ -42,7 +53,38 @@ export const TabsPanelFieldsTab = ({
   onSetPreviewFieldValue,
   onFocusedFieldChange,
   formatMessage,
+  persistedByKey,
+  onGoogleTranslate,
+  onGoogleTranslateAll,
+  isTranslating,
 }: TabsPanelFieldsTabProps) => {
+  const getReferenceForDescriptor = (descriptor: {
+    id: string
+    defaultMessage?: string | null
+  }) => {
+    if (activeLocale === 'en') {
+      const isEdited = editedValues.is[descriptor.id]
+      const isPersisted = persistedByKey[descriptor.id]?.valueIs
+      return isEdited || isPersisted || descriptor.defaultMessage || null
+    }
+    return descriptor.defaultMessage || null
+  }
+
+  const referenceLabel = activeLocale === 'en' ? 'Icelandic' : 'Default'
+  const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
+
+  const getSourceText = (descriptor: {
+    id: string
+    defaultMessage?: string | null
+  }) => {
+    return (
+      editedValues.is[descriptor.id] ||
+      persistedByKey[descriptor.id]?.valueIs ||
+      descriptor.defaultMessage ||
+      ''
+    )
+  }
+
   const currentField = focusableFields[focusedIndex] ?? null
 
   const currentFieldProperties = useMemo(
@@ -98,14 +140,42 @@ export const TabsPanelFieldsTab = ({
                   {currentField.type}
                 </Text>
               </Box>
-              <Text variant="small" color="dark300">
-                {focusedIndex + 1} / {focusableFields.length}
-              </Text>
+              <Box display="flex" alignItems="center" columnGap={2}>
+                <Text variant="small" color="dark300">
+                  {focusedIndex + 1} / {focusableFields.length}
+                </Text>
+                {showTranslateButtons && currentFieldProperties.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    size="small"
+                    preTextIcon="swapHorizontal"
+                    preTextIconType="outline"
+                    onClick={() => {
+                      if (!onGoogleTranslateAll) return
+                      const items = currentFieldProperties
+                        .filter((p) => p.descriptor)
+                        .map((p) => ({
+                          id: p.descriptor!.id,
+                          sourceText: getSourceText(p.descriptor!),
+                        }))
+                        .filter((item) => item.sourceText)
+                      if (items.length > 0) {
+                        onGoogleTranslateAll(items)
+                      }
+                    }}
+                    disabled={isTranslating}
+                    loading={isTranslating}
+                  >
+                    {formatMessage(m.translationGoogleTranslateAll)}
+                  </Button>
+                )}
+              </Box>
             </Box>
 
             <Divider />
 
-            <Box marginTop={3}>
+            <Box marginTop={6}>
               {currentFieldProperties.map((prop) => {
                 if (!prop.descriptor) return null
                 const descriptor = prop.descriptor
@@ -113,10 +183,12 @@ export const TabsPanelFieldsTab = ({
                 const persisted = getPersistedForLocale(descriptor.id)
                 const currentValue = draft ?? persisted
                 const isDirty = draft !== undefined && draft !== persisted
+                const sourceText = getSourceText(descriptor)
 
                 return (
                   <TranslationDescriptorCard
                     key={`${prop.role}-${descriptor.id}`}
+                    formatMessage={formatMessage}
                     descriptor={descriptor}
                     currentValue={currentValue}
                     isDirty={isDirty}
@@ -129,6 +201,14 @@ export const TabsPanelFieldsTab = ({
                         variant: prop.role === 'error' ? 'rose' : 'blue',
                       },
                     ]}
+                    referenceLabel={referenceLabel}
+                    referenceValue={getReferenceForDescriptor(descriptor)}
+                    onGoogleTranslate={
+                      showTranslateButtons && sourceText
+                        ? () => onGoogleTranslate(descriptor.id, sourceText)
+                        : undefined
+                    }
+                    isTranslating={isTranslating}
                   />
                 )
               })}
@@ -142,35 +222,41 @@ export const TabsPanelFieldsTab = ({
               )}
             </Box>
 
-            {currentField.type !== 'DESCRIPTION' && currentField.type !== 'ALERT_MESSAGE' && (
-              <Box display="flex" columnGap={2} marginTop={2} marginBottom={3}>
-                <Button
-                  variant="ghost"
-                  size="small"
-                  type="button"
-                  onClick={handleAutofill}
+            {currentField.type !== 'DESCRIPTION' &&
+              currentField.type !== 'ALERT_MESSAGE' && (
+                <Box
+                  display="flex"
+                  columnGap={2}
+                  marginTop={2}
+                  marginBottom={3}
                 >
-                  {formatMessage(m.translationFieldAutofill)}
-                </Button>
-                <Button
-                  variant={
-                    fieldErrorOverrides.has(currentField.id)
-                      ? 'primary'
-                      : 'ghost'
-                  }
-                  size="small"
-                  type="button"
-                  colorScheme={
-                    fieldErrorOverrides.has(currentField.id)
-                      ? 'destructive'
-                      : 'default'
-                  }
-                  onClick={() => onToggleFieldError(currentField.id)}
-                >
-                  {formatMessage(m.translationFieldShowError)}
-                </Button>
-              </Box>
-            )}
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    type="button"
+                    onClick={handleAutofill}
+                  >
+                    {formatMessage(m.translationFieldAutofill)}
+                  </Button>
+                  <Button
+                    variant={
+                      fieldErrorOverrides.has(currentField.id)
+                        ? 'primary'
+                        : 'ghost'
+                    }
+                    size="small"
+                    type="button"
+                    colorScheme={
+                      fieldErrorOverrides.has(currentField.id)
+                        ? 'destructive'
+                        : 'default'
+                    }
+                    onClick={() => onToggleFieldError(currentField.id)}
+                  >
+                    {formatMessage(m.translationFieldShowError)}
+                  </Button>
+                </Box>
+              )}
 
             <Divider />
 

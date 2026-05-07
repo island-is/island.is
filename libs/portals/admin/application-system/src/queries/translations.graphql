@@ -246,18 +246,8 @@ mutation reviewApplicationTranslation($id: String!) {
   }
 }
 
-query aiTranslateStrings(
-  $namespace: String!
-  $messageKeys: [String!]!
-  $sourceLocale: String!
-  $targetLocale: String!
-) {
-  aiTranslateStrings(
-    namespace: $namespace
-    messageKeys: $messageKeys
-    sourceLocale: $sourceLocale
-    targetLocale: $targetLocale
-  ) {
+mutation googleTranslateStrings($input: GoogleTranslateStringsInput!) {
+  googleTranslateStrings(input: $input) {
     translations
   }
 }

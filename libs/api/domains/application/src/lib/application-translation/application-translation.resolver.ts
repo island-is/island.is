@@ -13,15 +13,17 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   ApplicationTranslationGql,
   ApplicationTranslationStatus,
-  AiTranslationResultGql,
+  GoogleTranslateResultGql,
   TemplateIntrospectionGql,
   TemplateListItemGql,
   TranslationPublishGql,
 } from './application-translation.model'
 import { ApplicationTranslationApiService } from './application-translation.service'
+import { GoogleTranslateService } from './google-translate.service'
 import {
   UpdateApplicationTranslationInput,
   BulkUpdateApplicationTranslationsInput,
+  GoogleTranslateStringsInput,
   PublishTranslationsInput,
   RollbackTranslationsInput,
 } from './dto/application-translation.input'
@@ -31,6 +33,7 @@ import {
 export class ApplicationTranslationResolver {
   constructor(
     private readonly translationService: ApplicationTranslationApiService,
+    private readonly googleTranslateService: GoogleTranslateService,
   ) {}
 
   @Query(() => [ApplicationTranslationGql], { nullable: true })
@@ -117,24 +120,18 @@ export class ApplicationTranslationResolver {
     return this.translationService.reviewTranslation(user, id)
   }
 
-  @Query(() => AiTranslationResultGql, { nullable: true })
+  @Mutation(() => GoogleTranslateResultGql)
   @Scopes(
     AdminPortalScope.applicationTranslation,
     AdminPortalScope.applicationSystemAdmin,
   )
-  async aiTranslateStrings(
-    @CurrentUser() user: User,
-    @Args('namespace') namespace: string,
-    @Args('messageKeys', { type: () => [String] }) messageKeys: string[],
-    @Args('sourceLocale') sourceLocale: string,
-    @Args('targetLocale') targetLocale: string,
-  ): Promise<{ translations: Record<string, string> }> {
-    return this.translationService.aiTranslateStrings(user, {
-      namespace,
-      messageKeys,
-      sourceLocale,
-      targetLocale,
-    })
+  async googleTranslateStrings(
+    @Args('input') input: GoogleTranslateStringsInput,
+  ): Promise<GoogleTranslateResultGql> {
+    const translations = await this.googleTranslateService.translateTexts(
+      input.texts,
+    )
+    return { translations }
   }
 
   @Mutation(() => TranslationPublishGql)
