@@ -251,13 +251,23 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
 
       if (!is65RenewalRedesignEnabled) {
-        throw new TemplateApiError(
+        // Legacy 65+ submit path. Used while the redesign flag is OFF in
+        // prod and during the post-deploy rollout window. Removed once the
+        // flag has been ON in prod long enough that no flag-OFF submissions
+        // reach this branch.
+        return this.drivingLicenseService.renewDrivingLicense65AndOver(
+          auth.authorization,
           {
-            title: coreErrorMessages.failedDataProviderSubmit,
-            summary:
-              'Umsóknin þín var byrjuð áður en kerfið uppfærðist — vinsamlegast hefjið nýja umsókn.',
+            jurisdiction: jurisdictionId
+              ? jurisdictionId
+              : setJurisdictionToKopavogur,
+            ...(deliveryMethod
+              ? {
+                  pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+                  sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                }
+              : {}),
           },
-          400,
         )
       }
 

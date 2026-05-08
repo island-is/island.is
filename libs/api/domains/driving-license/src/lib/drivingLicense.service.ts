@@ -547,6 +547,29 @@ export class DrivingLicenseService {
     }
   }
 
+  // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF.
+  // Removed alongside `postRenewLicenseOver65` in the wrapper once the flag
+  // has been ON in prod long enough to retire the legacy submit path.
+  async renewDrivingLicense65AndOver(
+    auth: User['authorization'],
+    input: { jurisdiction: number } & Pick<
+      NewRenewal65DrivingLicenseInput,
+      'pickupPlasticAtDistrict' | 'sendPlasticToPerson'
+    >,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
+      token: auth,
+      districtId: input.jurisdiction,
+      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
+      sendPlasticToPerson: input.sendPlasticToPerson,
+    })
+
+    return {
+      success: response,
+      errorMessage: null,
+    }
+  }
+
   async applyForBELicense(
     nationalId: User['nationalId'],
     auth: User['authorization'],

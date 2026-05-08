@@ -547,6 +547,35 @@ export class DrivingLicenseApi {
     return response.result ?? false
   }
 
+  // Legacy 65+ submit endpoint, used when `is65RenewalRedesignEnabled` is OFF.
+  // Removed from upstream spec briefly mid-Phase-B; restored at our request
+  // with `deprecated: true`. Will be deleted along with this method once the
+  // redesign flag has been fully ON in prod long enough that no flag-OFF
+  // 65+ submissions reach this branch.
+  async postRenewLicenseOver65(params: {
+    token: string
+    districtId: number
+    pickupPlasticAtDistrict?: boolean
+    sendPlasticToPerson?: boolean
+  }): Promise<boolean> {
+    const response = await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post(
+      {
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
+        modelsV5PostRenewal65AndOver: {
+          userId: v5.DRIVING_LICENSE_API_USER_ID,
+          districtId: params.districtId,
+          renewalDate: new Date(),
+          pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
+          sendPlasticToPerson: params.sendPlasticToPerson,
+        },
+      },
+    )
+
+    return Boolean(response.isOk)
+  }
+
   async postApplyForBELicense(params: {
     nationalIdApplicant: string
     token: string
@@ -557,7 +586,7 @@ export class DrivingLicenseApi {
     contentList?: v5.ContractsRLSApplicationSystemRLSApplicationContentModel[]
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
-    healthDeclarationModel?: v5.ModelsHealthDeclarationModel
+    healthDeclarationModel: v5.ModelsHealthDeclarationModel
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,

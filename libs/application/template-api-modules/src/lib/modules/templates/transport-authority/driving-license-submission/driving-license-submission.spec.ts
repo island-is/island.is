@@ -111,6 +111,7 @@ describe('DrivingLicenseSubmissionService', () => {
   describe('B-full-renewal-65 redesign branch', () => {
     let service: DrivingLicenseSubmissionService
     let applyForRenewal65: jest.Mock
+    let renewDrivingLicense65AndOver: jest.Mock
     let getFiles: jest.Mock
 
     const baseAnswers = {
@@ -129,6 +130,10 @@ describe('DrivingLicenseSubmissionService', () => {
         success: true,
         errorMessage: null,
       }))
+      renewDrivingLicense65AndOver = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
       getFiles = jest.fn(async () => [])
 
       const module = await Test.createTestingModule({
@@ -144,7 +149,7 @@ describe('DrivingLicenseSubmissionService', () => {
           AdapterService,
           {
             provide: DrivingLicenseService,
-            useValue: { applyForRenewal65 },
+            useValue: { applyForRenewal65, renewDrivingLicense65AndOver },
           },
           { provide: LOGGER_PROVIDER, useValue: logger },
           {
@@ -172,7 +177,7 @@ describe('DrivingLicenseSubmissionService', () => {
       service = module.get(DrivingLicenseSubmissionService)
     })
 
-    it('throws forced-restart error when flag is off (legacy / pre-flag-flip drafts)', async () => {
+    it('routes to legacy renewDrivingLicense65AndOver when flag is off', async () => {
       const user = createCurrentUser()
       const application = createApplication({
         answers: {
@@ -183,24 +188,23 @@ describe('DrivingLicenseSubmissionService', () => {
         status: ApplicationStatus.IN_PROGRESS,
       })
 
-      await expect(
-        service.submitApplication({
-          application,
-          auth: user,
-          currentUserLocale: 'is',
-        }),
-      ).rejects.toMatchObject({
-        problem: {
-          errorReason: {
-            summary: expect.stringContaining(
-              'Umsóknin þín var byrjuð áður en kerfið uppfærðist',
-            ),
-          },
-          status: 400,
-        },
+      const result = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
       })
 
+      expect(result).toEqual({ success: true })
+      expect(renewDrivingLicense65AndOver).toHaveBeenCalledTimes(1)
       expect(applyForRenewal65).not.toHaveBeenCalled()
+
+      const [auth, input] = renewDrivingLicense65AndOver.mock.calls[0]
+      expect(auth).toBe(user.authorization)
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        sendPlasticToPerson: true,
+        pickupPlasticAtDistrict: false,
+      })
     })
 
     it('throws missing-cert error when flag is on but no health certificate is uploaded', async () => {
