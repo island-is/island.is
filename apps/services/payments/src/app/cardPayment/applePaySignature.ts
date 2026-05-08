@@ -582,7 +582,6 @@ export const verifyApplePaySignature = ({
   }
   trace('signed-attrs.parsed', { attributeOids: Array.from(attrByOid.keys()) })
 
-
   // contentType MUST be id-data per Apple's spec — anything else means
   // the signature was for a different kind of payload entirely.
   const contentTypeAttr = attrByOid.get(CONTENT_TYPE_OID)
