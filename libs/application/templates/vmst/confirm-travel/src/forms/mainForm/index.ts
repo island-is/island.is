@@ -47,6 +47,18 @@ export const MainForm = buildForm({
             )
             return fromDate ? new Date(fromDate) : undefined
           },
+          maxDate: (application) => {
+            const fromDate = getValueViaPath<string>(
+              application.answers,
+              'date.from',
+            )
+            if (fromDate) {
+              const date = new Date(fromDate)
+              date.setDate(date.getDate() + 30)
+              return date
+            }
+            return undefined
+          },
         }),
         buildSubmitField({
           id: 'submit',

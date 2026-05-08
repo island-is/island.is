@@ -35,6 +35,8 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.UnemploymentConfirmTravel.translation,
   dataSchema: ConfirmTravelUnemploymentBenefitsSchema,
   featureFlag: Features.isTravelConfirmationEnabled,
+  allowMultipleApplicationsInDraft: false,
+
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
