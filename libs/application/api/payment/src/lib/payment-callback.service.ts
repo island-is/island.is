@@ -18,6 +18,11 @@ export class PaymentCallbackService {
 
   async handleApiClientCallback(callback: ApiClientCallback): Promise<void> {
     if (callback.type === 'update') {
+      if (!callback.paymentFlowMetadata) {
+        throw new BadRequestException(
+          'No paymentFlowMetadata found in update callback',
+        )
+      }
       if (!callback.paymentFlowMetadata?.applicationId) {
         throw new BadRequestException(
           'No applicationId found in update callback',
@@ -77,6 +82,11 @@ export class PaymentCallbackService {
     }
 
     if (callback.type === 'success') {
+      if (!callback.paymentFlowMetadata) {
+        throw new BadRequestException(
+          'No paymentFlowMetadata found in success callback',
+        )
+      }
       if (!callback.paymentFlowMetadata.paymentId) {
         throw new BadRequestException('No paymentId found in success callback')
       }
