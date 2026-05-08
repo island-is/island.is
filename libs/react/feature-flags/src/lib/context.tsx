@@ -6,7 +6,7 @@ import {
 } from '@island.is/feature-flags'
 import { gql, useQuery } from '@apollo/client'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import React, { FC, createContext, useContext, useMemo } from 'react'
+import React, { FC, createContext, useContext, useEffect, useMemo, useRef } from 'react'
 
 type FeatureFlagRecord = Record<string, boolean | string>
 
@@ -33,29 +33,61 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
 }) => {
   const userInfo = useUserInfo()
   const isAuthenticated = !!userInfo?.profile?.nationalId
-  const { data } = useQuery<{ featureFlags: { flags: FeatureFlagRecord } }>(
-    FEATURE_FLAGS_QUERY,
-    { skip: !isAuthenticated },
-  )
+  const { data, loading } = useQuery<{
+    featureFlags: { flags: FeatureFlagRecord }
+  }>(FEATURE_FLAGS_QUERY, { skip: !isAuthenticated })
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-  const context = useMemo<FeatureFlagClient>(
-    () => ({
-      getValue: async <T extends SettingValue>(
-        key: string,
-        defaultValue: T,
-        _user?: FeatureFlagUser,
-      ) => {
-        return (flags[key] ?? defaultValue) as SettingTypeOf<T>
-      },
-      getAllValues: async () => flags,
-      dispose: () => {},
-    }),
-    [flags],
-  )
+  // Use a ref for flags so getValue always reads the latest value
+  // regardless of which render's closure it was created in.
+  const flagsRef = useRef<FeatureFlagRecord>(EMPTY_FLAGS)
+  flagsRef.current = flags
+
+  // Pending resolvers — getValue() calls that arrive before the query
+  // completes will await this promise, matching the old ConfigCat behavior.
+  const readyRef = useRef<{
+    resolve: () => void
+    promise: Promise<void>
+  } | null>(null)
+
+  if (isAuthenticated && loading && !readyRef.current) {
+    let resolve: () => void
+    const promise = new Promise<void>((r) => {
+      resolve = r
+    })
+    readyRef.current = { resolve: resolve!, promise }
+  }
+
+  useEffect(() => {
+    if (!loading && readyRef.current) {
+      readyRef.current.resolve()
+      readyRef.current = null
+    }
+  }, [loading])
+
+  // Stable context — identity never changes, getValue reads from flagsRef.
+  const contextRef = useRef<FeatureFlagClient>({
+    getValue: async <T extends SettingValue>(
+      key: string,
+      defaultValue: T,
+      _user?: FeatureFlagUser,
+    ) => {
+      if (readyRef.current) {
+        await readyRef.current.promise
+      }
+      return (flagsRef.current[key] ?? defaultValue) as SettingTypeOf<T>
+    },
+    getAllValues: async () => {
+      if (readyRef.current) {
+        await readyRef.current.promise
+      }
+      return flagsRef.current
+    },
+    dispose: () => {},
+  })
 
   return (
-    <FeatureFlagContext.Provider value={context}>
+    <FeatureFlagContext.Provider value={contextRef.current}>
       {children}
     </FeatureFlagContext.Provider>
   )

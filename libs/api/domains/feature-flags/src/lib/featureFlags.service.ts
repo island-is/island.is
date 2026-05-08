@@ -22,6 +22,7 @@ export class FeatureFlagsService {
   private toFeatureFlagUser(user: User): FeatureFlagUser {
     const attributes: Record<string, string> = {}
     if (user.nationalId) {
+      attributes.nationalId = user.nationalId
       attributes.subjectType = kennitala.isCompany(user.nationalId)
         ? 'legalEntity'
         : 'person'
