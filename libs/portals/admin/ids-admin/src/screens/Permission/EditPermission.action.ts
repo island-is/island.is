@@ -117,7 +117,10 @@ export const editPermissionAction: WrappedActionFn =
 
       const failedEnvironments: NonNullable<
         EditPermissionResult['failedEnvironments']
-      > = [...(patchScopeResult.data?.patchAuthAdminScope.failedEnvironments ?? [])]
+      > = [
+        ...(patchScopeResult.data?.patchAuthAdminScope.failedEnvironments ??
+          []),
+      ]
 
       // Update scope users if there are changes
       const hasUserChanges =
@@ -142,13 +145,21 @@ export const editPermissionAction: WrappedActionFn =
         })
 
         if (updateUsersResult.errors?.length) {
-          return globalErrorResponse
+          const transportMessage = updateUsersResult.errors
+            .map((e) => e.message)
+            .join('; ')
+          for (const env of environments) {
+            failedEnvironments.push({
+              environment: env,
+              message: `Updating scope users failed: ${transportMessage}`,
+            })
+          }
+        } else {
+          const userFailures =
+            updateUsersResult.data?.updateAuthAdminScopeUsers
+              .failedEnvironments ?? []
+          failedEnvironments.push(...userFailures)
         }
-
-        const userFailures =
-          updateUsersResult.data?.updateAuthAdminScopeUsers
-            .failedEnvironments ?? []
-        failedEnvironments.push(...userFailures)
       }
 
       return {

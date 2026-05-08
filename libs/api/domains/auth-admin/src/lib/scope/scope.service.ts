@@ -69,8 +69,7 @@ export class ScopeService extends MultiEnvironmentService {
    * Updates a scope for a specific tenant for the given environments.
    *
    * Per-environment failures are collected and returned alongside the
-   * successful results so the caller can surface partial failures to the user
-   * instead of silently dropping them.
+   * successful results
    */
   async updateScope({
     user,
@@ -340,8 +339,8 @@ export class ScopeService extends MultiEnvironmentService {
   /**
    * Updates the user access list for a scope by adding/removing users.
    *
-   * Per-environment failures are collected and returned so the caller can
-   * surface partial failures to the user.
+   * Per-environment failures are collected and returned and
+   * surfaced to the user.
    */
   async updateScopeUsers(
     user: User,
@@ -368,13 +367,13 @@ export class ScopeService extends MultiEnvironmentService {
       settledPromises,
       targetEnvironments,
       {
-        mapper: () => true as const,
+        mapper: (_value, index) => targetEnvironments[index],
         prefixErrorMessage: `Failed to update scope users for ${input.scopeName}`,
       },
     )
 
     return {
-      success: values.length > 0,
+      ...(values.length > 0 && { environments: values }),
       ...(failures.length > 0 && { failedEnvironments: failures }),
     }
   }

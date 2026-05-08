@@ -12,6 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import { RouterActionResponse } from '@island.is/portals/core'
+import { AuthAdminEnvironmentFailure } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
 import { DropdownSync } from '../DropdownSync/DropdownSync'
@@ -87,11 +88,18 @@ export const FormCard = <Intent extends string>({
   const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const { isLoading, isSubmitting, formData } = useSubmitting()
   const { loading } = useIntent(intent)
-  const actionData = useActionData() as RouterActionResponse<
-    unknown, // We don't know the type of the data or the error since it can be permission or client.
-    unknown,
-    Intent
-  >
+  const actionData = useActionData() as
+    | (RouterActionResponse<
+        unknown, // We don't know the type of the data or the error since it can be permission or client.
+        unknown,
+        Intent
+      > & {
+        failedEnvironments?: Pick<
+          AuthAdminEnvironmentFailure,
+          'environment' | 'message'
+        >[]
+      })
+    | undefined
 
   /**
    * On form change check if form is dirty and set dirty state accordingly.
@@ -140,9 +148,7 @@ export const FormCard = <Intent extends string>({
 
         onFormChange()
 
-        const failedEnvironments = (
-          actionData as { failedEnvironments?: { environment: string }[] }
-        )?.failedEnvironments
+        const failedEnvironments = actionData?.failedEnvironments
 
         if (failedEnvironments && failedEnvironments.length > 0) {
           const envs = failedEnvironments.map((f) => f.environment).join(', ')

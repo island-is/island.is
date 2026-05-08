@@ -131,12 +131,7 @@ export abstract class MultiEnvironmentService {
 
   /**
    * Like {@link handleSettledPromises} but also collects per-environment
-   * failures so callers can surface them to the user. Use for write paths
-   * where silently dropping a failed env would mislead the caller.
-   *
-   * `requestedEnvs` must be the same array (or aligned) as the one used to
-   * build the settled promises — index `i` of `settledPromises` corresponds to
-   * `requestedEnvs[i]`.
+   * failures and returns them alongside the successful results
    */
   public handleSettledPromisesWithFailures<T, K>(
     settledPromises: PromiseSettledResult<T | undefined | null>[],
@@ -156,7 +151,16 @@ export abstract class MultiEnvironmentService {
       const environment = requestedEnvs[index]
       if (resp.status === 'fulfilled' && resp.value) {
         values.push(mapper(resp.value, index))
-      } else if (resp.status === 'rejected') {
+      } else if (resp.status === 'fulfilled') {
+        // makeRequest resolves to null/undefined when the env's API client
+        // is not configured, or when the upstream returned an empty body.
+        // Surface this as a failure rather than silently dropping it.
+        const message = `${
+          prefixErrorMessage ?? 'Error'
+        } in environment ${environment}: no response (environment not configured or empty response)`
+        this.logger.error(message)
+        failures.push({ environment, message })
+      } else {
         const message =
           resp.reason instanceof Error
             ? resp.reason.message
