@@ -5,7 +5,7 @@ import {
   EmptyState,
   InfoLine,
   InfoLineStack,
-  IntroWrapperV2,
+  IntroWrapper,
   SAMGONGUSTOFA_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
@@ -35,7 +35,7 @@ export const ShipDetail = () => {
   const certificates = useMemo(() => ship?.certificates ?? [], [ship])
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={ship?.name ?? formatMessage(shipsMessages.title)}
       intro={formatMessage(shipsMessages.intro)}
       serviceProvider={{
@@ -137,7 +137,7 @@ export const ShipDetail = () => {
           )}
         </Stack>
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

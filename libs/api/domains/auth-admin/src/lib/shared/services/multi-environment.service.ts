@@ -13,6 +13,7 @@ import { Environment } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
 import { environments } from '../constants/environments'
+import { EnvironmentFailure } from '../models/multi-environment-result.model'
 
 @Injectable()
 export abstract class MultiEnvironmentService {
@@ -140,5 +141,52 @@ export abstract class MultiEnvironmentService {
         }
       })
       .filter(isDefined)
+  }
+
+  /**
+   * Like {@link handleSettledPromises} but also collects per-environment
+   * failures and returns them alongside the successful results
+   */
+  public handleSettledPromisesWithFailures<T, K>(
+    settledPromises: PromiseSettledResult<T | undefined | null>[],
+    requestedEnvs: Environment[],
+    {
+      mapper,
+      prefixErrorMessage,
+    }: {
+      mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
+      prefixErrorMessage?: string
+    },
+  ): { values: K[]; failures: EnvironmentFailure[] } {
+    const values: K[] = []
+    const failures: EnvironmentFailure[] = []
+
+    settledPromises.forEach((resp, index) => {
+      const environment = requestedEnvs[index]
+      if (resp.status === 'fulfilled' && resp.value) {
+        values.push(mapper(resp.value, index))
+      } else if (resp.status === 'fulfilled') {
+        // makeRequest resolves to null/undefined when the env's API client
+        // is not configured, or when the upstream returned an empty body.
+        // Surface this as a failure rather than silently dropping it.
+        const message = `${
+          prefixErrorMessage ?? 'Error'
+        } in environment ${environment}: no response (environment not configured or empty response)`
+        this.logger.error(message)
+        failures.push({ environment, message })
+      } else {
+        const message =
+          resp.reason instanceof Error
+            ? resp.reason.message
+            : String(resp.reason ?? 'Unknown error')
+        this.logger.error(
+          `${prefixErrorMessage ?? 'Error'} in environment ${environment}`,
+          resp.reason,
+        )
+        failures.push({ environment, message })
+      }
+    })
+
+    return { values, failures }
   }
 }

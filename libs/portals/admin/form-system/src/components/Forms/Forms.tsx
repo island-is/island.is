@@ -123,10 +123,10 @@ export const Forms = () => {
         },
       })
       navigate(
-        FormSystemPaths.Form.replace(
+        `${FormSystemPaths.Form.replace(
           ':formId',
           String(data?.createFormSystemForm?.form?.id),
-        ),
+        )}?organizationNationalId=${organizationNationalId}`,
       )
     } catch (error) {
       setIsCreatingForm(false)

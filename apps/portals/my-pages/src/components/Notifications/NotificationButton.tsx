@@ -17,12 +17,14 @@ interface Props {
   setMenuState: (val: MenuTypes) => void
   showMenu?: boolean
   disabled?: boolean
+  onButtonClick?: () => void
 }
 
 const NotificationButton = ({
   setMenuState,
   showMenu = false,
   disabled,
+  onButtonClick,
 }: Props) => {
   const { formatMessage, lang } = useLocale()
   const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
@@ -67,6 +69,7 @@ const NotificationButton = ({
         icon={showMenu && isTablet ? 'close' : 'notifications'}
         iconType="outline"
         onClick={() => {
+          onButtonClick?.()
           showMenu && isTablet
             ? setMenuState(undefined)
             : setMenuState('notifications')

@@ -8,7 +8,10 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../../lib/messages'
 import { useEnvironmentQuery } from '../../../../hooks/useEnvironmentQuery'
-import { authAdminEnvironments } from '../../../../utils/environments'
+import {
+  authAdminEnvironments,
+  pickBestEnvironment,
+} from '../../../../utils/environments'
 import {
   GrantTypeIntent,
   type GrantTypesActionResult,
@@ -81,6 +84,12 @@ export const useGrantTypeModal = ({
     lastHandledFetcherData.current = fetcher.data
 
     if (!fetcher.data.globalError) {
+      const data = fetcher.data.data as {
+        failedEnvironments?: { environment: string; message: string }[]
+      } | null
+
+      const failedEnvs = data?.failedEnvironments
+
       switch (fetcher.data.intent) {
         case GrantTypeIntent.create:
           toast.success(formatMessage(m.grantTypesCreateSuccess))
@@ -95,6 +104,16 @@ export const useGrantTypeModal = ({
           toast.success(formatMessage(m.grantTypesRestoreSuccess))
           break
       }
+
+      if (failedEnvs && failedEnvs.length > 0) {
+        const envNames = failedEnvs.map((f) => f.environment).join(', ')
+        toast.warning(
+          formatMessage(m.grantTypesPartialFailure, {
+            environments: envNames,
+          }),
+        )
+      }
+
       resetModalState()
     } else {
       toast.error(formatMessage(m.grantTypesError))
@@ -126,19 +145,31 @@ export const useGrantTypeModal = ({
         variables: { name: grantType.name },
       })
       const gtData = result.data?.authAdminGrantType
-      if (gtData?.availableEnvironments) {
-        setUserAvailableEnvironments(gtData.availableEnvironments)
-      }
-      // Update description from fetched data if available
-      const fetchedFirstEnv = gtData?.environments?.[0]
-      if (fetchedFirstEnv) {
-        setFormData((prev) => ({
-          ...prev,
-          description: fetchedFirstEnv.description,
-        }))
+      const availableEnvironments = gtData?.availableEnvironments
+      if (availableEnvironments) {
+        setUserAvailableEnvironments(availableEnvironments)
+        const bestEnv = pickBestEnvironment(
+          selectedEnvResult.environment,
+          availableEnvironments,
+        )
+
+        if (bestEnv) {
+          updateEnvironment(bestEnv)
+        }
+
+        // Load form data from the selected environment
+        const targetEnvData = gtData.environments?.find(
+          (e) => e.environment === bestEnv,
+        )
+        if (targetEnvData) {
+          setFormData((prev) => ({
+            ...prev,
+            description: targetEnvData.description,
+          }))
+        }
       }
     } catch {
-      setModalVisible(false)
+      toast.error(formatMessage(m.grantTypesError))
     } finally {
       setLoadingGrantType(false)
     }

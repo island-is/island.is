@@ -25,6 +25,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clear-filter',
     defaultMessage: 'Clear filter',
   },
+  noResultsForSearch: {
+    id: 'ap.ids-admin:no-results-for-search',
+    defaultMessage: 'No results found for your search',
+  },
   clearAllFilters: {
     id: 'ap.ids-admin:clear-all-filters',
     defaultMessage: 'Clear all filters',
@@ -121,6 +125,10 @@ export const m = defineMessages({
   create: {
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
+  },
+  edit: {
+    id: 'ap.ids-admin:edit',
+    defaultMessage: 'Edit',
   },
   displayName: {
     id: 'ap.ids-admin:display-name',
@@ -684,6 +692,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
   },
+  partiallySaved: {
+    id: 'ap.ids-admin:partially-saved',
+    defaultMessage: 'Saved in some environments. Operation failed on: {envs}',
+  },
   globalErrorMessage: {
     id: 'ap.ids-admin:global-error-message',
     defaultMessage: 'An error occurred',
@@ -923,6 +935,39 @@ export const m = defineMessages({
     id: 'ap.ids-admin:select-categories-placeholder',
     defaultMessage: 'Select categories',
   },
+  thirdPartyLoginUrl: {
+    id: 'ap.ids-admin:third-party-login-url',
+    defaultMessage: 'Third party login URL',
+  },
+  thirdPartyLoginUrlDescription: {
+    id: 'ap.ids-admin:third-party-login-url-description',
+    defaultMessage:
+      'URL that can be used to login to the application using third party delegation.',
+  },
+  originUrl: {
+    id: 'ap.ids-admin:origin-url',
+    defaultMessage: 'URL origin',
+  },
+  targetLinkUri: {
+    id: 'ap.ids-admin:target-link-uri',
+    defaultMessage: 'Target link URI',
+  },
+  linkPreview: {
+    id: 'ap.ids-admin:link-preview',
+    defaultMessage: 'Link Preview',
+  },
+  linkPreviewPlaceholder: {
+    id: 'ap.ids-admin:link-preview-placeholder',
+    defaultMessage: 'Fill in the above fields to see a preview of the link',
+  },
+  originUrlRequired: {
+    id: 'ap.ids-admin:origin-url-required',
+    defaultMessage: 'URL origin is required when target link URI is provided',
+  },
+  targetLinkUriRequired: {
+    id: 'ap.ids-admin:target-link-uri-required',
+    defaultMessage: 'Target link URI is required when URL origin is provided',
+  },
   noTags: {
     id: 'ap.ids-admin:no-tags',
     defaultMessage: 'No tags available',
@@ -951,6 +996,34 @@ export const m = defineMessages({
     id: 'ap.ids-admin:is-access-controlled-description',
     defaultMessage:
       'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
+  },
+  scopeUsersLabel: {
+    id: 'ap.ids-admin:scope-users-label',
+    defaultMessage: 'Users with access',
+  },
+  scopeUsersPlaceholder: {
+    id: 'ap.ids-admin:scope-users-placeholder',
+    defaultMessage: 'Choose from the list or create a new user',
+  },
+  scopeUsersLoading: {
+    id: 'ap.ids-admin:scope-users-loading',
+    defaultMessage: 'Loading users...',
+  },
+  addScopeUser: {
+    id: 'ap.ids-admin:add-scope-user',
+    defaultMessage: 'Create new user',
+  },
+  createScopeUserTitle: {
+    id: 'ap.ids-admin:create-scope-user-title',
+    defaultMessage: 'Create user',
+  },
+  createScopeUserSuccess: {
+    id: 'ap.ids-admin:create-scope-user-success',
+    defaultMessage: 'User created successfully',
+  },
+  createScopeUserError: {
+    id: 'ap.ids-admin:create-scope-user-error',
+    defaultMessage: 'Failed to create user',
   },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
@@ -1066,6 +1139,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-button',
     defaultMessage: 'Delete',
   },
+  /** @deprecated Use m.edit instead */
   apiScopeUserEditButton: {
     id: 'ap.ids-admin:api-scope-user-edit',
     defaultMessage: 'Edit',
@@ -1156,6 +1230,10 @@ export const m = defineMessages({
   apiScopeUsersDeleteEnvironmentRequired: {
     id: 'ap.ids-admin:api-scope-users-delete-environment-required',
     defaultMessage: 'Select at least one environment to delete from',
+  },
+  apiScopeUsersPartialFailure: {
+    id: 'ap.ids-admin:api-scope-users-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   grantTypes: {
     id: 'ap.ids-admin:grant-types',
@@ -1306,9 +1384,142 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-restore-environment-required',
     defaultMessage: 'Select at least one environment to restore to',
   },
+  grantTypesPartialFailure: {
+    id: 'ap.ids-admin:grant-types-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
     defaultMessage: 'IDP Providers',
+  },
+  idpProvidersIntro: {
+    id: 'ap.ids-admin:idp-providers-intro',
+    defaultMessage: 'Manage identity providers',
+  },
+  idpProvidersSearchPlaceholder: {
+    id: 'ap.ids-admin:idp-providers-search-placeholder',
+    defaultMessage: 'Search by name or description',
+  },
+  idpProvidersCreateNew: {
+    id: 'ap.ids-admin:idp-providers-create-new',
+    defaultMessage: 'Create IDP Provider',
+  },
+  idpProvidersCreateTitle: {
+    id: 'ap.ids-admin:idp-providers-create-title',
+    defaultMessage: 'Create IDP Provider',
+  },
+  idpProvidersEditTitle: {
+    id: 'ap.ids-admin:idp-providers-edit-title',
+    defaultMessage: 'Edit IDP Provider',
+  },
+  idpProvidersName: {
+    id: 'ap.ids-admin:idp-providers-name',
+    defaultMessage: 'Name',
+  },
+  idpProvidersDescription: {
+    id: 'ap.ids-admin:idp-providers-description',
+    defaultMessage: 'Description',
+  },
+  idpProvidersHelptext: {
+    id: 'ap.ids-admin:idp-providers-helptext',
+    defaultMessage: 'Help text',
+  },
+  idpProvidersLevel: {
+    id: 'ap.ids-admin:idp-providers-level',
+    defaultMessage: 'Level',
+  },
+  idpProvidersEnvironments: {
+    id: 'ap.ids-admin:idp-providers-environments',
+    defaultMessage: 'Environments',
+  },
+  idpProvidersSaveButton: {
+    id: 'ap.ids-admin:idp-providers-save-button',
+    defaultMessage: 'Save',
+  },
+  idpProvidersDeleteButton: {
+    id: 'ap.ids-admin:idp-providers-delete-button',
+    defaultMessage: 'Delete',
+  },
+  idpProvidersDeleteConfirmTitle: {
+    id: 'ap.ids-admin:idp-providers-delete-confirm-title',
+    defaultMessage: 'Delete IDP Provider',
+  },
+  idpProvidersDeleteConfirmMessage: {
+    id: 'ap.ids-admin:idp-providers-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this IDP provider?',
+  },
+  idpProvidersCreateSuccess: {
+    id: 'ap.ids-admin:idp-providers-create-success',
+    defaultMessage: 'IDP provider created successfully',
+  },
+  idpProvidersUpdateSuccess: {
+    id: 'ap.ids-admin:idp-providers-update-success',
+    defaultMessage: 'IDP provider updated successfully',
+  },
+  idpProvidersDeleteSuccess: {
+    id: 'ap.ids-admin:idp-providers-delete-success',
+    defaultMessage: 'IDP provider deleted successfully',
+  },
+  idpProvidersPublishSuccess: {
+    id: 'ap.ids-admin:idp-providers-publish-success',
+    defaultMessage: 'IDP provider published to {environment}',
+  },
+  idpProvidersError: {
+    id: 'ap.ids-admin:idp-providers-error',
+    defaultMessage: 'An error occurred',
+  },
+  idpProvidersNoResults: {
+    id: 'ap.ids-admin:idp-providers-no-results',
+    defaultMessage: 'No IDP providers found',
+  },
+  idpProvidersErrorNameRequired: {
+    id: 'ap.ids-admin:idp-providers-error-name-required',
+    defaultMessage: 'Name is required',
+  },
+  idpProvidersErrorNamePattern: {
+    id: 'ap.ids-admin:idp-providers-error-name-pattern',
+    defaultMessage:
+      'Name must start with a letter and contain only letters, numbers, underscores, dots, and hyphens',
+  },
+  idpProvidersErrorNameExists: {
+    id: 'ap.ids-admin:idp-providers-error-name-exists',
+    defaultMessage: 'An IDP provider with this name already exists',
+  },
+  idpProvidersErrorNameCheckFailed: {
+    id: 'ap.ids-admin:idp-providers-error-name-check-failed',
+    defaultMessage: 'Could not verify IDP provider name',
+  },
+  idpProvidersErrorDescriptionRequired: {
+    id: 'ap.ids-admin:idp-providers-error-description-required',
+    defaultMessage: 'Description is required',
+  },
+  idpProvidersErrorDescriptionChars: {
+    id: 'ap.ids-admin:idp-providers-error-description-chars',
+    defaultMessage: 'Description must not contain < > % $ characters',
+  },
+  idpProvidersErrorHelptextRequired: {
+    id: 'ap.ids-admin:idp-providers-error-helptext-required',
+    defaultMessage: 'Help text is required',
+  },
+  idpProvidersErrorLevelRange: {
+    id: 'ap.ids-admin:idp-providers-error-level-range',
+    defaultMessage: 'Level must be between 1 and 4',
+  },
+  idpProvidersErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:idp-providers-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  idpProvidersDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:idp-providers-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  idpProvidersDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:idp-providers-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
+  idpProvidersPartialFailure: {
+    id: 'ap.ids-admin:idp-providers-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',
@@ -1657,5 +1868,21 @@ export const m = defineMessages({
     id: 'ap.ids-admin:partially-created-tenant',
     defaultMessage:
       'Domain was only created in some of the selected environments. You can use the edit page to publish it to the remaining environments.',
+  },
+  deletedCategory: {
+    id: 'ap.ids-admin:deleted-category',
+    defaultMessage: 'Þessum flokki hefur verið eytt ({id})',
+  },
+  deletedCategoryDescription: {
+    id: 'ap.ids-admin:deleted-category-description',
+    defaultMessage: 'Þessi flokkur er ekki lengur til í Contentful',
+  },
+  deletedTag: {
+    id: 'ap.ids-admin:deleted-tag',
+    defaultMessage: 'Þessu merki hefur verið eytt ({id})',
+  },
+  deletedTagDescription: {
+    id: 'ap.ids-admin:deleted-tag-description',
+    defaultMessage: 'Þetta merki er ekki lengur til í Contentful',
   },
 })
