@@ -44,10 +44,28 @@ globalStyle(`${svgOutline} svg path`, {
   stroke: theme.color.blue400,
 })
 
-export const featuredCardImage = style({
-  height: 110,
-  width: 'auto',
-  display: 'block',
+export const featuredCardImageWrapper = style({
+  alignSelf: 'stretch',
+  flexShrink: 0,
+  width: 132,
+  marginTop: -theme.spacing[3],
+  marginBottom: -theme.spacing[3],
+  marginRight: -theme.spacing[3],
+  borderTopRightRadius: 8,
+  borderBottomRightRadius: 8,
+  overflow: 'hidden',
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginRight: -theme.spacing[4],
+    },
+  }),
+})
+
+
+export const featuredCardWithImage = style({})
+
+globalStyle(`${featuredCardWithImage} > *`, {
+  overflow: 'hidden',
 })
 
 export const featuredCardNoText = style({})

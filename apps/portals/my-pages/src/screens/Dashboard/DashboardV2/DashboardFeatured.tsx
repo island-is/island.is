@@ -59,6 +59,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
         // TODO: Update to use the featuredImage when it is available
         const image =
           item.path === '/heilsa' ? './assets/images/jobs.svg' : undefined
+        const showImage = !!image && !isMobile
 
         const icon = item.icon
         const iconEl = icon ? (
@@ -93,6 +94,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
             // Remove when category card supports no text
             className={cn(styles.svgOutline, {
               [styles.featuredCardNoText]: i >= 2,
+              [styles.featuredCardWithImage]: showImage,
             })}
           >
             {isDisabled && (
@@ -124,12 +126,18 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
               text={description ?? title}
               icon={iconEl}
               customImage={
-                image && !isMobile ? (
-                  <img
-                    src={image}
-                    alt=""
-                    className={styles.featuredCardImage}
-                  />
+                showImage ? (
+                  <div className={styles.featuredCardImageWrapper}>
+                    <img
+                      src={image}
+                      alt=""
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </div>
                 ) : undefined
               }
               tags={[]}
