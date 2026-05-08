@@ -264,7 +264,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               notificationTemplateId:
                 NotificationConfig[NotificationType.NewPrimarySchoolPruned]
                   .templateId,
-              ...(nationalId && { internalBody: nationalId }),
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
             }
           }),
           actionCard: {
@@ -391,7 +393,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               notificationTemplateId:
                 NotificationConfig[NotificationType.NewPrimarySchoolPruned]
                   .templateId,
-              ...(nationalId && { internalBody: nationalId }),
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
             }
           }),
           actionCard: {
