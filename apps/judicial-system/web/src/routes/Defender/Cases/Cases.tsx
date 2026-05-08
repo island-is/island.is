@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Tabs } from '@island.is/island-ui/core'
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -14,6 +13,7 @@ import {
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import SectionHeading from '../../../components/SectionHeading/SectionHeading'
+import { areAllDefenderDefendantsCancelledOrDismissed } from '../../../utils/utils'
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
@@ -49,37 +49,13 @@ export const Cases: FC = () => {
       return [[], []]
     }
 
-    const allDefenderDefendantsAreCancelledOrDismissed = (
-      defenderNationalId?: string | null,
-      defendants?: typeof cases[number]['defendants'],
-    ) => {
-      const defenderDefendants =
-        defendants?.filter(
-          (defendant) =>
-            defendant.defenderNationalId &&
-            defendant.isDefenderChoiceConfirmed &&
-            normalizeAndFormatNationalId(defenderNationalId).includes(
-              defendant.defenderNationalId,
-            ),
-        ) ?? []
-
-      return (
-        defenderDefendants.length > 0 &&
-        defenderDefendants.every(
-          (defendant) =>
-            defendant.indictmentCancelledOrDismissedState !== null &&
-            defendant.indictmentCancelledOrDismissedState !== undefined,
-        )
-      )
-    }
-
     return partition(
       cases,
       (c) =>
         !(
           isCompletedCase(c.state) ||
           c.state === CaseState.WAITING_FOR_CANCELLATION ||
-          allDefenderDefendantsAreCancelledOrDismissed(
+          areAllDefenderDefendantsCancelledOrDismissed(
             user?.nationalId,
             c.defendants,
           )

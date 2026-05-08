@@ -356,16 +356,7 @@ export class ApplicationLifeCycleService {
                   nationalId: application.applicant,
                 },
                 templateId: pruneMessage.notificationTemplateId,
-                args: [
-                  {
-                    key: 'externalBody',
-                    value: pruneMessage.externalBody || '',
-                  },
-                  {
-                    key: 'internalBody',
-                    value: pruneMessage.internalBody || '',
-                  },
-                ],
+                args: pruneMessage.args ?? [],
               }
               notificationArray.push(notification)
             })
@@ -373,16 +364,7 @@ export class ApplicationLifeCycleService {
             const notification = {
               recipient: application.applicant,
               templateId: pruneMessage.notificationTemplateId,
-              args: [
-                {
-                  key: 'externalBody',
-                  value: pruneMessage.externalBody || '',
-                },
-                {
-                  key: 'internalBody',
-                  value: pruneMessage.internalBody || '',
-                },
-              ],
+              args: pruneMessage.args ?? [],
             }
             notificationArray.push(notification)
           }

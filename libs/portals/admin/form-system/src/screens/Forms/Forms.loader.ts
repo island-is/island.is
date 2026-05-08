@@ -1,4 +1,3 @@
-import { WrappedLoaderFn } from '@island.is/portals/core'
 import {
   FormSystemForm,
   FormSystemFormResponse,
@@ -12,6 +11,7 @@ import {
   GET_ORGANIZATION_TITLE,
   LoaderResponse,
 } from '@island.is/form-system/graphql'
+import { WrappedLoaderFn } from '@island.is/portals/core'
 import { removeTypename } from '../../lib/utils/removeTypename'
 
 export interface FormsLoaderQueryResponse {
@@ -23,13 +23,16 @@ export interface AdminLoaderQueryResponse {
 }
 
 export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
-  return async (): Promise<LoaderResponse> => {
+  return async ({ request }): Promise<LoaderResponse> => {
+    const selectedOrganizationNationalId =
+      new URL(request.url).searchParams.get('organizationNationalId') ||
+      userInfo?.profile.nationalId
     const { data: dataForms, error: errorData } =
       await client.query<FormsLoaderQueryResponse>({
         query: GET_FORMS,
         variables: {
           input: {
-            nationalId: userInfo?.profile.nationalId,
+            nationalId: selectedOrganizationNationalId,
           },
         },
         fetchPolicy: 'no-cache',
@@ -44,7 +47,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       query: GET_ORGANIZATION_ADMIN,
       variables: {
         input: {
-          nationalId: userInfo?.profile.nationalId,
+          nationalId: selectedOrganizationNationalId,
         },
       },
       fetchPolicy: 'no-cache',
@@ -98,7 +101,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       '@admin.island.is/form-system:admin',
     )
 
-    const organizationNationalId = userInfo?.profile.nationalId
+    const organizationNationalId = selectedOrganizationNationalId
     const admin = data.formSystemOrganizationAdmin
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mapPermissionTypes = (types: any[]): FormSystemPermissionType[] =>
