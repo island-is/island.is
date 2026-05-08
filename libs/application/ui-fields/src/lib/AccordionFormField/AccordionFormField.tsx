@@ -21,6 +21,7 @@ export const AccordionFormField = ({
   const { formatMessage, lang: locale } = useLocale()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
   useEffect(() => {
+    // adsf
     if (typeof accordionItems === 'function') {
       setItems(accordionItems(application))
     } else {
