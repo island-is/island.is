@@ -6,7 +6,7 @@ globalStyle('body.my-pages-hero-bg', {
 
 globalStyle('body.my-pages-hero-bg main', {
   vars: {
-    '--my-pages-hero-blue-height': '300px',
+    '--my-pages-hero-blue-height': '298px',
   },
   backgroundColor: 'white',
   backgroundImage:
@@ -14,10 +14,10 @@ globalStyle('body.my-pages-hero-bg main', {
   backgroundRepeat: 'no-repeat',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      vars: { '--my-pages-hero-blue-height': '320px' },
+      vars: { '--my-pages-hero-blue-height': '319px' },
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      vars: { '--my-pages-hero-blue-height': '345px' },
+      vars: { '--my-pages-hero-blue-height': '344px' },
     },
   },
 })
