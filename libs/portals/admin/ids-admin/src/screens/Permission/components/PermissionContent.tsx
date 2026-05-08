@@ -53,7 +53,10 @@ export const PermissionContent = () => {
     const original = createLanguagesState(selectedPermission.description)
     const nextIs = formData.get(`${Languages.IS}_description`)?.toString() ?? ''
     const nextEn = formData.get(`${Languages.EN}_description`)?.toString() ?? ''
-    if (nextIs === original[Languages.IS] && nextEn === original[Languages.EN]) {
+    if (
+      nextIs === original[Languages.IS] &&
+      nextEn === original[Languages.EN]
+    ) {
       return true
     }
     setPendingFormData(formData)
