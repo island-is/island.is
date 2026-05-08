@@ -167,7 +167,9 @@ const PassportTemplate: ApplicationTemplate<
                 notificationTemplateId:
                   NotificationConfig[NotificationType.PassportPruned]
                     .templateId,
-                ...(nationalId && { internalBody: nationalId }),
+                ...(nationalId && {
+                  args: [{ key: 'internalBody', value: nationalId }],
+                }),
               }
             },
           },

@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
-import { AdminApi } from '@island.is/clients/auth/admin-api'
-import { ApiResponse } from '@island.is/clients/middlewares'
+import { GrantType as GeneratedGrantType } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { environments } from '../shared/constants/environments'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { GrantTypesPayload } from './dto/grant-types.payload'
 import { GrantTypesInput } from './dto/grant-types.input'
 import { CreateGrantTypeInput } from './dto/create-grant-type.input'
@@ -14,55 +15,8 @@ import { UpdateGrantTypeInput } from './dto/update-grant-type.input'
 import { GrantType } from './models/grant-type.model'
 import { GrantTypeEnvironmentData } from './models/grant-type-environment-data.model'
 
-interface GrantTypeResponse {
-  name: string
-  description: string
-  archived: Date | null
-  created: Date
-  modified: Date
-}
-
-interface PagedGrantTypesResponse {
-  rows: GrantTypeResponse[]
-  count: number
-}
-
-interface GrantTypesApi {
-  meGrantTypesControllerFindAndCountAllRaw(params: {
-    searchString?: string
-    page: number
-    count: number
-  }): Promise<ApiResponse<PagedGrantTypesResponse>>
-
-  meGrantTypesControllerFindOneRaw(params: {
-    name: string
-  }): Promise<ApiResponse<GrantTypeResponse>>
-
-  meGrantTypesControllerCreateRaw(params: {
-    grantTypeDTO: {
-      name: string
-      description: string
-    }
-  }): Promise<ApiResponse<GrantTypeResponse>>
-
-  meGrantTypesControllerUpdateRaw(params: {
-    name: string
-    updateGrantTypeDto: {
-      description: string
-    }
-  }): Promise<ApiResponse<GrantTypeResponse>>
-
-  meGrantTypesControllerDeleteRaw(params: {
-    name: string
-  }): Promise<ApiResponse<void>>
-
-  meGrantTypesControllerRestoreRaw(params: {
-    name: string
-  }): Promise<ApiResponse<void>>
-}
-
 const mapGrantType = (
-  gt: GrantTypeResponse,
+  gt: GeneratedGrantType,
   environment: Environment,
 ): GrantTypeEnvironmentData => ({
   name: gt.name,
@@ -73,20 +27,16 @@ const mapGrantType = (
   archived: gt.archived && gt.archived.getTime() > 0 ? gt.archived : undefined,
 })
 
+const toFailure = (
+  environment: Environment,
+  error: unknown,
+): EnvironmentFailure => ({
+  environment,
+  message: error instanceof Error ? error.message : 'Unknown error',
+})
+
 @Injectable()
 export class GrantTypeService extends MultiEnvironmentService {
-  private typedRequest<T>(
-    user: User,
-    environment: typeof environments[number],
-    request: (api: GrantTypesApi) => Promise<ApiResponse<T>>,
-  ) {
-    return this.makeRequest(
-      user,
-      environment,
-      request as unknown as (api: AdminApi) => Promise<ApiResponse<T>>,
-    )
-  }
-
   getAvailableEnvironments(): Environment[] {
     return this.getConfiguredEnvironments()
   }
@@ -97,7 +47,7 @@ export class GrantTypeService extends MultiEnvironmentService {
   ): Promise<GrantTypesPayload> {
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meGrantTypesControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
             page: input.page,
@@ -133,7 +83,7 @@ export class GrantTypeService extends MultiEnvironmentService {
       if (result.status === 'fulfilled' && result.value) {
         const { data } = result.value
         return {
-          rows: data.rows.map((row: GrantTypeResponse) => {
+          rows: data.rows.map((row: GeneratedGrantType) => {
             const allEnvs = envMap.get(row.name) ?? []
             const archivedEnvs = archivedEnvMap.get(row.name) ?? []
             const isFullyArchived =
@@ -165,7 +115,7 @@ export class GrantTypeService extends MultiEnvironmentService {
     const environmentsData: GrantTypeEnvironmentData[] = []
 
     for (const environment of environments) {
-      const result = await this.typedRequest(user, environment, (api) =>
+      const result = await this.makeRequest(user, environment, (api) =>
         api.meGrantTypesControllerFindOneRaw({ name }),
       )
 
@@ -200,10 +150,11 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meGrantTypesControllerCreateRaw({
             grantTypeDTO: {
               name: input.name,
@@ -223,6 +174,7 @@ export class GrantTypeService extends MultiEnvironmentService {
           `Failed to create grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -232,10 +184,11 @@ export class GrantTypeService extends MultiEnvironmentService {
         name: first.name,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to create grant type')
+    throw new Error('Failed to create grant type in all environments')
   }
 
   async updateGrantType(
@@ -254,10 +207,11 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
-        const result = await this.typedRequest(user, environment, (api) =>
+        const result = await this.makeRequest(user, environment, (api) =>
           api.meGrantTypesControllerUpdateRaw({
             name: input.name,
             updateGrantTypeDto: {
@@ -277,6 +231,7 @@ export class GrantTypeService extends MultiEnvironmentService {
           `Failed to update grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -286,91 +241,88 @@ export class GrantTypeService extends MultiEnvironmentService {
         name: first.name,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to update grant type')
+    throw new Error('Failed to update grant type in all environments')
   }
 
   async deleteGrantType(
     user: User,
     name: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToDelete =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const deletedEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToDelete) {
-      let requestMade = false
-
       try {
-        await this.typedRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meGrantTypesControllerDeleteRaw({ name })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+        await this.makeRequest(user, environment, (api) =>
+          api.meGrantTypesControllerDeleteRaw({ name }),
+        )
+        deletedEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to delete grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (deletedEnvironments.length === 0) {
+      throw new Error('Failed to delete grant type in all environments')
     }
 
-    throw lastError ?? new Error('Failed to delete grant type')
+    return {
+      success: failedEnvironments.length === 0,
+      affectedEnvironments: deletedEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 
   async restoreGrantType(
     user: User,
     name: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToRestore =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const restoredEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToRestore) {
-      let requestMade = false
-
       try {
-        await this.typedRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meGrantTypesControllerRestoreRaw({ name })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+        await this.makeRequest(user, environment, (api) =>
+          api.meGrantTypesControllerRestoreRaw({ name }),
+        )
+        restoredEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to restore grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (restoredEnvironments.length === 0) {
+      throw new Error('Failed to restore grant type in all environments')
     }
 
-    throw lastError ?? new Error('Failed to restore grant type')
+    return {
+      success: failedEnvironments.length === 0,
+      affectedEnvironments: restoredEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 }

@@ -29,11 +29,14 @@ import { LandsCollection } from './models/farmerLandsCollection.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
 import { FarmersService } from './farmers.service'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal)
 @FeatureFlag(Features.isServicePortalFarmersLandsPageEnabled)
 @Audit({ namespace: '@island.is/api/farmers' })
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver(() => FarmerLand)
 export class FarmersResolver {
   constructor(private readonly farmersService: FarmersService) {}

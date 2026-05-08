@@ -24,7 +24,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { useAppealCaseUI } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
@@ -41,7 +41,7 @@ const CourtOfAppealResult = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const { appealBanner } = useAppealCaseUI()
+  const { appealBanner } = useAppealCaseBanner()
   const {
     defendants,
     policeCaseNumbers,

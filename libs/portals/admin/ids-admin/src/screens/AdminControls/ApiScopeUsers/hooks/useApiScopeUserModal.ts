@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../../lib/messages'
 import { useEnvironmentQuery } from '../../../../hooks/useEnvironmentQuery'
-import { authAdminEnvironments } from '../../../../utils/environments'
+import {
+  authAdminEnvironments,
+  pickBestEnvironment,
+} from '../../../../utils/environments'
 import {
   ApiScopeUserIntent,
   type ApiScopeUsersActionResult,
@@ -136,6 +139,12 @@ export const useApiScopeUserModal = ({
     lastHandledFetcherData.current = fetcher.data
 
     if (!fetcher.data.globalError) {
+      const data = fetcher.data.data as {
+        failedEnvironments?: { environment: string; message: string }[]
+      } | null
+
+      const failedEnvs = data?.failedEnvironments
+
       switch (fetcher.data.intent) {
         case ApiScopeUserIntent.create:
           toast.success(formatMessage(m.apiScopeUsersCreateSuccess))
@@ -147,6 +156,16 @@ export const useApiScopeUserModal = ({
           toast.success(formatMessage(m.apiScopeUsersDeleteSuccess))
           break
       }
+
+      if (failedEnvs && failedEnvs.length > 0) {
+        const envNames = failedEnvs.map((f) => f.environment).join(', ')
+        toast.warning(
+          formatMessage(m.apiScopeUsersPartialFailure, {
+            environments: envNames,
+          }),
+        )
+      }
+
       resetModalState()
     } else {
       toast.error(formatMessage(m.apiScopeUsersError))
@@ -208,27 +227,35 @@ export const useApiScopeUserModal = ({
       }
       setEnvironmentsData(envData)
 
-      if (envData.length > 0) {
-        const first = envData[0]
-        setFormData({
-          nationalId: user.nationalId,
-          name: first.name,
-          email: first.email,
-        })
-        setActiveScopes(first.scopes)
-        setEditEnvironment(first.environment)
-        updateEnvironment(first.environment)
-      }
-
       if (userData?.availableEnvironments) {
         setUserAvailableEnvironments(userData.availableEnvironments)
       }
 
-      const firstEnv = envData[0]?.environment
-      if (firstEnv) {
+      if (envData.length > 0) {
+        const available = envData.map((e) => e.environment)
+        const bestEnv =
+          pickBestEnvironment(selectedEnvResult.environment, available) ??
+          available[0]
+
+        const targetData =
+          envData.find((e) => e.environment === bestEnv) ?? envData[0]
+        setFormData({
+          nationalId: user.nationalId,
+          name: targetData.name,
+          email: targetData.email,
+        })
+        setActiveScopes(targetData.scopes)
+        setEditEnvironment(targetData.environment)
+        updateEnvironment(targetData.environment)
+      }
+
+      const selectedEnv =
+        envData.find((e) => e.environment === selectedEnvResult.environment)
+          ?.environment ?? envData[0]?.environment
+      if (selectedEnv) {
         setLoadingScopes(true)
         const scopesResult = await fetchScopes({
-          variables: { environment: firstEnv },
+          variables: { environment: selectedEnv },
         })
 
         if (requestId !== openEditRequestId.current) return

@@ -107,7 +107,8 @@ export const createIndictment = async (
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
   theCase.indictmentCounts
-    ?.sort(getIndictmentCountCompare(theCase.policeCaseNumbers))
+    ?.slice()
+    .sort(getIndictmentCountCompare(theCase.crimeScenes))
     .forEach((count, index) => {
       addEmptyLines(doc)
 

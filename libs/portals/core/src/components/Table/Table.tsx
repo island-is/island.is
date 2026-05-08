@@ -20,6 +20,7 @@ import { EmptyTable } from '../EmptyTable/EmptyTable'
 import { useIsMobile } from '../../hooks/useIsMobile/useIsMobile'
 import * as styles from './Table.css'
 import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
 
 interface TableProps<TData extends object> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -241,6 +242,7 @@ export const Table = <TData extends object>({
                 key={header.id}
                 style={{
                   cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                  fontSize: '16px',
                 }}
                 onClick={header.column.getToggleSortingHandler()}
               >
@@ -290,6 +292,7 @@ export const Table = <TData extends object>({
                   i === 0 && renderExpandedRow ? (
                     <T.Data
                       key={cell.id}
+                      style={{ padding: theme.spacing[2] + 'px' }}
                       box={{
                         position: 'relative',
                         background: rowBackground,
@@ -327,13 +330,17 @@ export const Table = <TData extends object>({
                   ) : (
                     <T.Data
                       key={cell.id}
+                      style={{
+                        padding: theme.spacing[2] + 'px',
+                        background: rowBackground,
+                      }}
                       box={{
                         background: rowBackground,
                         borderBottomWidth:
                           isExpanded || isCollapsing ? undefined : 'standard',
                       }}
                     >
-                      <Text variant="small">
+                      <Text variant="medium">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),

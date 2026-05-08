@@ -1015,7 +1015,9 @@ describe('CardPaymentController', () => {
     describe('POST /apple-pay/charge', () => {
       // Hex strings to satisfy the @Matches(/^[a-fA-F0-9]{1,128}$/) bound on
       // transactionId and transactionIdentifier introduced in this round.
-      const hexId = () => uuid().replace(/-/g, '')
+      // Apple Pay transactionId is exactly 64 hex chars; concat two
+      // dashless UUIDs (32 hex chars each) to reach the required length.
+      const hexId = () => uuid().replace(/-/g, '') + uuid().replace(/-/g, '')
       const getApplePayChargeInput = (transactionIdentifier = hexId()) => ({
         paymentFlowId,
         paymentData: {
@@ -1193,6 +1195,95 @@ describe('CardPaymentController', () => {
 
         getPaymentFlowDetailsSpy.mockRestore()
         fetchSpy.mockRestore()
+      })
+
+      it('rejects the charge with ApplePaySignatureVerificationFailed when the strict-verify flag is enabled and the token signature is not valid', async () => {
+        // Flip strict-verify on for this single request. The other flags
+        // stay at their default mock behaviour. The synthetic input below
+        // carries a stub signature that the verifier cannot parse, so we
+        // expect a 400 with the verification-failed error code.
+        const ffs = app.get<{ getValue: jest.Mock }>(FeatureFlagService)
+        const originalImpl = ffs.getValue.getMockImplementation()
+        ffs.getValue.mockImplementation((feature: Features) =>
+          Promise.resolve(
+            feature === Features.isIslandisPaymentEnabled ||
+              feature === Features.isIslandisApplePayPaymentEnabled ||
+              feature ===
+                Features.isIslandisApplePayStrictSignatureVerificationEnabled,
+          ),
+        )
+
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url) => {
+            if (typeof url === 'string' && url.includes(ON_UPDATE_URL)) {
+              return {
+                json: async () => ({ isSuccess: true }),
+                status: 200,
+                ok: true,
+              } as Response
+            }
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        try {
+          const applePayInput = getApplePayChargeInput()
+          const response = await server
+            .post('/v1/payments/card/apple-pay/charge')
+            .send(applePayInput)
+
+          expect(response.status).toBe(400)
+          expect(response.body.detail).toBe(
+            CardErrorCode.ApplePaySignatureVerificationFailed,
+          )
+        } finally {
+          ffs.getValue.mockImplementation(
+            originalImpl ?? (() => Promise.resolve(false) as Promise<unknown>),
+          )
+          getPaymentFlowDetailsSpy.mockRestore()
+          getPaymentFlowChargeDetailsSpy.mockRestore()
+          getPaymentFlowStatusSpy.mockRestore()
+          fetchSpy.mockRestore()
+        }
       })
 
       it('should throw an error if trying to charge a payment flow that has already been paid', async () => {

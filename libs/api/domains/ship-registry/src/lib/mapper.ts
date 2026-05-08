@@ -9,9 +9,10 @@ import { isDefined } from '@island.is/shared/utils'
 import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
 import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
-import { LocaleEnum, ShipRegistryCertificateStatus } from './models/enums'
+import { ShipRegistryCertificateStatus } from './models/enums'
 import { parseDate } from './utils'
 import format from 'date-fns/format'
+import { LocaleEnum } from '@island.is/nest/graphql'
 
 const mapCertificateStatus = (
   raw: ShipCertificateDetailDto['certificateIssueStatusEnum'] | undefined,
@@ -85,7 +86,7 @@ export const mapToUserShipFromDetails = (
 
   const seaworthinessDate =
     info.seaworthyExpiryDate?.value && info.seaworthyExpiryDate?.value !== '-'
-      ? parseDate(info.seaworthyExpiryDate.value)
+      ? parseDate(info.seaworthyExpiryDate.value, 'yyyy-MM-dd HH:mm:ss')
       : undefined
 
   const fisheryName = toLocalizedValue(info.fishery, locale)
