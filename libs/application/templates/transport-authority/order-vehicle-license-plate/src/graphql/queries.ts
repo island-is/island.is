@@ -54,7 +54,7 @@ export const GET_VEHICLE_PLATE_ORDER_OPTIONS = `
         plateType
         plateTypeName
         plateBackground
-        plateForground
+        plateForeground
         plateSizes {
           plateSizeType
           plateHeight
