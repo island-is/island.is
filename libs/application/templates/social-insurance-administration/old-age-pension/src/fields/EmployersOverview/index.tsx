@@ -120,7 +120,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
           </Button>
         </Inline>
       </Box>
-      {!!error && (
+      {typeof error === 'string' && !!error && (
         <Box marginTop={3}>
           <ContentBlock>
             <AlertMessage type="error" title={error} />
