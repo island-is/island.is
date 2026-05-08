@@ -266,7 +266,7 @@ const template: ApplicationTemplate<
                   NotificationConfig[
                     NotificationType.TransferOfMachineOwnershipPruned
                   ].templateId,
-                internalBody: regNumber ?? '',
+                args: [{ key: 'internalBody', value: regNumber ?? '' }],
               }
             },
           },

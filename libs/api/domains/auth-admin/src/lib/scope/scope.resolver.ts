@@ -32,6 +32,8 @@ import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
 import { ScopeCategory } from './models/scope-category.model'
 import { ScopeTag } from './models/scope-tag.model'
+import { PatchScopeResponse } from './models/patch-scope-response.model'
+import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Scope)
@@ -52,14 +54,14 @@ export class ScopeResolver {
     return this.scopeService.createScope(user, input)
   }
 
-  @Mutation(() => [ScopeEnvironment], {
+  @Mutation(() => PatchScopeResponse, {
     name: 'patchAuthAdminScope',
   })
   patchScope(
     @CurrentUser() user: User,
     @Args('input', { type: () => AdminPatchScopeInput })
     input: AdminPatchScopeInput,
-  ): Promise<ScopeEnvironment[]> {
+  ): Promise<PatchScopeResponse> {
     return this.scopeService.updateScope({ user, input })
   }
 
@@ -195,14 +197,14 @@ export class ScopeResolver {
     return this.scopeService.createScopeUser(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => UpdateScopeUsersResponse, {
     name: 'updateAuthAdminScopeUsers',
   })
   updateScopeUsers(
     @CurrentUser() user: User,
     @Args('input', { type: () => UpdateScopeUsersInput })
     input: UpdateScopeUsersInput,
-  ): Promise<boolean> {
+  ): Promise<UpdateScopeUsersResponse> {
     return this.scopeService.updateScopeUsers(user, input)
   }
 }

@@ -99,5 +99,5 @@ export class ScheduledNotification extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional({ type: Object })
-  args?: Record<string, string>
+  args?: { key: string; value: string }[]
 }

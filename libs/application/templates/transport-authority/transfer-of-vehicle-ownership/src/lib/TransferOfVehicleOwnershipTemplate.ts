@@ -259,7 +259,7 @@ const template: ApplicationTemplate<
                   NotificationConfig[
                     NotificationType.TransferOfVehicleOwnershipPruned
                   ].templateId,
-                internalBody: plate ?? '',
+                args: [{ key: 'internalBody', value: plate ?? '' }],
               }
             },
           },
