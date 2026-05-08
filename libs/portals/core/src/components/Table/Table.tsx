@@ -164,7 +164,11 @@ export const Table = <TData extends object>({
                   variant="h4"
                   as="h2"
                   color="blue400"
-                  id={mobileTitleKey ? `${tableId}-row-title-${row.id}` : undefined}
+                  id={
+                    mobileTitleKey
+                      ? `${tableId}-row-title-${row.id}`
+                      : undefined
+                  }
                 >
                   {titleCell
                     ? flexRender(
@@ -184,7 +188,9 @@ export const Table = <TData extends object>({
                       type="button"
                       variant="primary"
                       aria-labelledby={
-                        mobileTitleKey ? `${tableId}-row-title-${row.id}` : undefined
+                        mobileTitleKey
+                          ? `${tableId}-row-title-${row.id}`
+                          : undefined
                       }
                       aria-expanded={isExpanded}
                       aria-controls={`${tableId}-row-expanded-${row.id}`}
@@ -389,7 +395,9 @@ export const Table = <TData extends object>({
                           type="button"
                           variant="primary"
                           aria-labelledby={
-                            mobileTitleKey ? `${tableId}-row-title-${row.id}` : undefined
+                            mobileTitleKey
+                              ? `${tableId}-row-title-${row.id}`
+                              : undefined
                           }
                           aria-expanded={isExpanded}
                           aria-controls={`${tableId}-row-expanded-${row.id}`}
