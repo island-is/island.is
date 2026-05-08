@@ -3,7 +3,10 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  AuthAdminEnvironment,
+  AuthAdminEnvironmentFailure,
+} from '@island.is/api/schema'
 
 import {
   PatchAuthAdminScopeDocument,
@@ -24,10 +27,15 @@ import {
 } from './EditPermission.schema'
 
 export type EditPermissionResult = RouterActionResponse<
-  PatchAuthAdminScopeMutation['patchAuthAdminScope'],
+  PatchAuthAdminScopeMutation['patchAuthAdminScope']['environments'],
   ValidateFormDataResult<MergedFormDataSchema>['errors'],
   keyof typeof PermissionFormTypes
->
+> & {
+  failedEnvironments?: Pick<
+    AuthAdminEnvironmentFailure,
+    'environment' | 'message'
+  >[]
+}
 
 export const editPermissionAction: WrappedActionFn =
   ({ client }) =>
@@ -107,13 +115,17 @@ export const editPermissionAction: WrappedActionFn =
         return globalErrorResponse
       }
 
+      const failedEnvironments: NonNullable<
+        EditPermissionResult['failedEnvironments']
+      > = [...(patchScopeResult.data?.patchAuthAdminScope.failedEnvironments ?? [])]
+
       // Update scope users if there are changes
       const hasUserChanges =
         (addedScopeUserNationalIds && addedScopeUserNationalIds.length > 0) ||
         (removedScopeUserNationalIds && removedScopeUserNationalIds.length > 0)
 
       if (intent === PermissionFormTypes.ACCESS_CONTROL && hasUserChanges) {
-        await client.mutate<
+        const updateUsersResult = await client.mutate<
           UpdateScopeUsersMutation,
           UpdateScopeUsersMutationVariables
         >({
@@ -128,11 +140,21 @@ export const editPermissionAction: WrappedActionFn =
             },
           },
         })
+
+        if (updateUsersResult.errors?.length) {
+          return globalErrorResponse
+        }
+
+        const userFailures =
+          updateUsersResult.data?.updateAuthAdminScopeUsers
+            .failedEnvironments ?? []
+        failedEnvironments.push(...userFailures)
       }
 
       return {
-        data: patchScopeResult.data?.patchAuthAdminScope ?? null,
+        data: patchScopeResult.data?.patchAuthAdminScope.environments ?? null,
         intent,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     } catch (e) {
       return globalErrorResponse

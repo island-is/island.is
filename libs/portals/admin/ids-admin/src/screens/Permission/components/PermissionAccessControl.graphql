@@ -18,5 +18,11 @@ query GetAllApiScopeUsersForSelect($input: AuthAdminApiScopeUsersInput!) {
 }
 
 mutation UpdateScopeUsers($input: UpdateAuthAdminScopeUsersInput!) {
-  updateAuthAdminScopeUsers(input: $input)
+  updateAuthAdminScopeUsers(input: $input) {
+    success
+    failedEnvironments {
+      environment
+      message
+    }
+  }
 }

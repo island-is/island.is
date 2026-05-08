@@ -139,7 +139,17 @@ export const FormCard = <Intent extends string>({
         }
 
         onFormChange()
-        toast.success(formatMessage(m.successfullySaved))
+
+        const failedEnvironments = (
+          actionData as { failedEnvironments?: { environment: string }[] }
+        )?.failedEnvironments
+
+        if (failedEnvironments && failedEnvironments.length > 0) {
+          const envs = failedEnvironments.map((f) => f.environment).join(', ')
+          toast.warning(formatMessage(m.partiallySaved, { envs }))
+        } else {
+          toast.success(formatMessage(m.successfullySaved))
+        }
       } else if (actionData?.globalError) {
         toast.error(formatMessage(m.globalErrorMessage))
       }

@@ -13,6 +13,7 @@ import { Environment } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
 import { environments } from '../constants/environments'
+import { EnvironmentFailure } from '../models/multi-environment-result.model'
 
 @Injectable()
 export abstract class MultiEnvironmentService {
@@ -126,5 +127,48 @@ export abstract class MultiEnvironmentService {
         }
       })
       .filter(isDefined)
+  }
+
+  /**
+   * Like {@link handleSettledPromises} but also collects per-environment
+   * failures so callers can surface them to the user. Use for write paths
+   * where silently dropping a failed env would mislead the caller.
+   *
+   * `requestedEnvs` must be the same array (or aligned) as the one used to
+   * build the settled promises — index `i` of `settledPromises` corresponds to
+   * `requestedEnvs[i]`.
+   */
+  public handleSettledPromisesWithFailures<T, K>(
+    settledPromises: PromiseSettledResult<T | undefined | null>[],
+    requestedEnvs: Environment[],
+    {
+      mapper,
+      prefixErrorMessage,
+    }: {
+      mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
+      prefixErrorMessage?: string
+    },
+  ): { values: K[]; failures: EnvironmentFailure[] } {
+    const values: K[] = []
+    const failures: EnvironmentFailure[] = []
+
+    settledPromises.forEach((resp, index) => {
+      const environment = requestedEnvs[index]
+      if (resp.status === 'fulfilled' && resp.value) {
+        values.push(mapper(resp.value, index))
+      } else if (resp.status === 'rejected') {
+        const message =
+          resp.reason instanceof Error
+            ? resp.reason.message
+            : String(resp.reason ?? 'Unknown error')
+        this.logger.error(
+          `${prefixErrorMessage ?? 'Error'} in environment ${environment}`,
+          resp.reason,
+        )
+        failures.push({ environment, message })
+      }
+    })
+
+    return { values, failures }
   }
 }
