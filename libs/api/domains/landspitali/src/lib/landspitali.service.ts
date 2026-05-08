@@ -57,25 +57,12 @@ export class LandspitaliService {
       meals:
         menu.meals?.map((meal) => ({
           name: meal.name,
-          date: meal.date?.toISOString(),
-          dateDescription: meal.dateDescription,
-          holidayName: meal.holidayName,
-          lang: meal.lang,
-          description: meal.description,
-          order: meal.order,
-          distributor: meal.distributor
-            ? {
-                id: meal.distributor.id,
-                name: meal.distributor.name,
-              }
-            : undefined,
           courses:
             meal.courses?.map((course) => ({
               id: uuidv4(),
               name: course.name,
               optionName: course.optionName,
               description: course.description,
-              order: course.order,
               labelOfContents: course.labelOfContents,
               ingredients:
                 course.ingredients?.map((ingredient) => ({

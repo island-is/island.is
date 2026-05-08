@@ -37,22 +37,11 @@ export const GET_LANDSPITALI_MENU = gql`
     webLandspitaliMenu(selectedDate: $selectedDate) {
       meals {
         name
-        date
-        dateDescription
-        holidayName
-        lang
-        description
-        order
-        distributor {
-          id
-          name
-        }
         courses {
           id
           name
           optionName
           description
-          order
           labelOfContents
           ingredients {
             name

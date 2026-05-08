@@ -1,13 +1,4 @@
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
-
-@ObjectType('WebLandspitaliMenuDistributorSummary')
-export class MenuDistributorSummary {
-  @Field(() => String, { nullable: true })
-  id?: string | null
-
-  @Field(() => String, { nullable: true })
-  name?: string | null
-}
+import { Field, Float, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('WebLandspitaliMenuCourse')
 export class MenuCourse {
@@ -22,9 +13,6 @@ export class MenuCourse {
 
   @Field(() => String, { nullable: true })
   description?: string | null
-
-  @Field(() => Int, { nullable: true })
-  order?: number
 
   @Field(() => String, { nullable: true })
   labelOfContents?: string | null
@@ -88,27 +76,6 @@ export class MenuKnownAllergen {
 export class MenuMeal {
   @Field(() => String, { nullable: true })
   name?: string | null
-
-  @Field(() => String, { nullable: true })
-  date?: string
-
-  @Field(() => String, { nullable: true })
-  dateDescription?: string | null
-
-  @Field(() => String, { nullable: true })
-  holidayName?: string | null
-
-  @Field(() => String, { nullable: true })
-  lang?: string | null
-
-  @Field(() => String, { nullable: true })
-  description?: string | null
-
-  @Field(() => Int, { nullable: true })
-  order?: number
-
-  @Field(() => MenuDistributorSummary, { nullable: true })
-  distributor?: MenuDistributorSummary
 
   @Field(() => [MenuCourse])
   courses!: MenuCourse[]
