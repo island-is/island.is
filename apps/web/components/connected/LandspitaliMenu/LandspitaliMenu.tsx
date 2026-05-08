@@ -6,6 +6,7 @@ import isToday from 'date-fns/isToday'
 import { useLazyQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
   Inline,
@@ -135,6 +136,7 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
   const [data, setData] = useState<WebLandspitaliMenuQuery | null>(null)
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set())
   const [selectedOption, setSelectedOption] = useState<string>('A1')
+  const [hasError, setHasError] = useState(false)
   const isLoading = useRef<boolean>(false)
 
   const { format } = useDateUtils()
@@ -146,15 +148,18 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
   >(GET_LANDSPITALI_MENU, {
     onCompleted(a) {
       setData(a)
+      setHasError(false)
       isLoading.current = false
     },
     onError: () => {
+      setHasError(true)
       isLoading.current = false
     },
   })
 
   useDebounce(
     () => {
+      setHasError(false)
       getLandspitaliMenu({
         variables: {
           selectedDate: formatDateOnlyLocal(selectedDate),
@@ -255,6 +260,13 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
           </Box>
 
           <Stack space={5}>
+            {hasError ? (
+              <AlertMessage
+                type="error"
+                message={formatMessage(m.errorFetchingMenu)}
+              />
+            ) : null}
+
             {filteredMeals.map((meal, mealIndex) => {
               return (
                 <Stack space={2} key={`${meal.name ?? 'meal'}-${mealIndex}`}>

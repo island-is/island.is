@@ -91,4 +91,9 @@ export const m = defineMessages({
     defaultMessage: 'Ekki er búið að gefa út matseðilinn fyrir {date}.',
     description: 'Fallback text when no menu has been published',
   },
+  errorFetchingMenu: {
+    id: 'web.landspitaliMenu:errorFetchingMenu',
+    defaultMessage: 'Villa kom upp við að sækja matseðilinn. Reyndu aftur síðar.',
+    description: 'Error message shown when fetching the menu fails',
+  },
 })
