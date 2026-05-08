@@ -31,6 +31,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
 import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
+import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
@@ -356,9 +357,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.failedDataProviderSubmit,
-            // TODO(Tinna/Fanney): confirm final Icelandic wording before merge
-            summary:
-              'Læknisvottorð vantar — vinsamlegast hladið upp gildu skjali áður en umsókninni er skilað.',
+            summary: drivingLicenseMessages.healthCertificateRequired,
           },
           400,
         )
@@ -533,9 +532,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.failedDataProviderSubmit,
-              // TODO(Tinna/Fanney): confirm final Icelandic wording before merge
-              summary:
-                'Læknisvottorð vantar — vinsamlegast hladið upp gildu skjali áður en umsókninni er skilað.',
+              summary: drivingLicenseMessages.healthCertificateRequired,
             },
             400,
           )
