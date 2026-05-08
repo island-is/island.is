@@ -125,6 +125,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   const popoverContent = (component: boolean) => (
     <Box
       component={component ? Popover : undefined}
+      aria-label={component ? labelOpen : undefined}
       background="white"
       borderRadius="large"
       boxShadow="subtle"
@@ -286,7 +287,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           </Box>
         )}
       </DialogDisclosure>
-      <Dialog {...dialog} preventBodyScroll={false}>
+      <Dialog
+        {...dialog}
+        preventBodyScroll={false}
+        aria-label={labelTitle ?? labelOpen}
+      >
         <Box
           background="white"
           position="fixed"
