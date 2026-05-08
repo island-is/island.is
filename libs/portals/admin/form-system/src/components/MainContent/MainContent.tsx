@@ -1,4 +1,8 @@
-import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
+} from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
@@ -11,7 +15,7 @@ import {
   Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
@@ -41,6 +45,27 @@ export const MainContent = () => {
     (form.useValidate &&
       (activeItem.data as FormSystemScreen)?.shouldValidate) ||
     (form.usePopulate && (activeItem.data as FormSystemScreen)?.shouldPopulate)
+
+  const activeScreen =
+    activeItem.type === 'Screen'
+      ? (activeItem.data as FormSystemScreen)
+      : undefined
+
+  const screenHasMultisetFields = useMemo(() => {
+    if (!activeScreen?.id) return false
+
+    return (
+      form.fields?.some(
+        (field) =>
+          field?.screenId === activeScreen.id &&
+          (field as FormSystemField)?.isPartOfMultiset === true,
+      ) ?? false
+    )
+  }, [form.fields, activeScreen?.id])
+
+  // 3) Disable only when checkbox is checked AND there are multiset fields
+  const disableAllowMultiple =
+    (activeScreen?.isMulti ?? false) && screenHasMultisetFields
 
   return (
     <Box>
@@ -137,10 +162,15 @@ export const MainContent = () => {
           {activeItem.type === 'Screen' && (
             <>
               <Row>
-                <Column span="12/12">
+                <Column span="3/12">
                   <Checkbox
                     name="multi"
-                    disabled={isReadOnly}
+                    disabled={isReadOnly || disableAllowMultiple}
+                    tooltip={
+                      disableAllowMultiple
+                        ? 'Ekki er hægt að afmerkja skjá sem fjölval ef hann hefur reit sem er merktur sem hluti af fjölmenginu'
+                        : undefined
+                    }
                     label={formatMessage(m.allowMultiple)}
                     checked={
                       (activeItem.data as FormSystemScreen).isMulti ?? false
@@ -166,7 +196,7 @@ export const MainContent = () => {
                 </Column>
               </Row>
               <Row>
-                <Column span="6/12">
+                <Column span="7/12">
                   {(activeItem.data as FormSystemScreen).isMulti && (
                     <Box marginTop={2}>
                       <Select

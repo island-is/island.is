@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { ConfigModule } from '@island.is/nest/config'
 import {
   CmsResolver,
   ArticleResolver,
@@ -10,6 +11,7 @@ import {
   FeaturedEventsResolver,
   FeaturedSupportQNAsResolver,
   GrantCardsListResolver,
+  LastCallsForGrantsResolver,
   PowerBiSliceResolver,
   LatestEventsSliceResolver,
   TeamListResolver,
@@ -17,6 +19,7 @@ import {
   IntroLinkImageResolver,
   GenericListResolver,
   FeaturedGenericListItemsResolver,
+  OrganizationResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -36,9 +39,22 @@ import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTit
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
 import { OrganizationPageResolver } from './organizationPage.resolver'
+import {
+  FeatureFlagConfig,
+  FeatureFlagModule,
+} from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [
+    HttpModule,
+    TerminusModule,
+    PowerBiConfig.registerOptional(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [FeatureFlagConfig],
+    }),
+    FeatureFlagModule,
+  ],
   providers: [
     CmsResolver,
     ArticleResolver,
@@ -51,6 +67,7 @@ import { OrganizationPageResolver } from './organizationPage.resolver'
     FeaturedArticlesResolver,
     FeaturedEventsResolver,
     GrantCardsListResolver,
+    LastCallsForGrantsResolver,
     FeaturedSupportQNAsResolver,
     OrganizationLogoByNationalIdLoader,
     OrganizationLogoByReferenceIdLoader,
@@ -72,6 +89,7 @@ import { OrganizationPageResolver } from './organizationPage.resolver'
     GenericListResolver,
     FeaturedGenericListItemsResolver,
     OrganizationPageResolver,
+    OrganizationResolver,
   ],
   exports: [
     ContentfulRepository,

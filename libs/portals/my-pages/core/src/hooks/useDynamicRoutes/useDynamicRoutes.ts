@@ -6,6 +6,7 @@ import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { DynamicPaths } from './paths'
 import { orderRoutes } from '../../utils/orderRoutes'
+export { parseMenuConfig } from '../../utils/orderRoutes'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -23,6 +24,19 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
     drivingLicenseBookUserBook {
       book {
         id
+      }
+    }
+  }
+`
+
+export const GET_VMST_APPLICATIONS_OVERVIEW_QUERY = gql`
+  query GetVmstApplicationsOverviewDynamic {
+    vmstApplicationsOverview {
+      unemploymentApplication {
+        isVisible
+      }
+      activationGrant {
+        isVisible
       }
     }
   }
@@ -46,6 +60,10 @@ export const useDynamicRoutes = () => {
 
   const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
     GET_DRIVING_LICENSE_BOOK_QUERY,
+  )
+
+  const { data: vmstOverview, loading: vmstLoading } = useQuery(
+    GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
   )
 
   useEffect(() => {
@@ -81,12 +99,25 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(DynamicPaths.EducationDrivingLessons)
     }
 
+    /**
+     * portals-my-pages/social-benefits
+     * Show unemployment benefits child routes only if user has visible application.
+     */
+    const vmstData = vmstOverview?.vmstApplicationsOverview
+    if (vmstData?.unemploymentApplication?.isVisible) {
+      dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentStatus)
+      dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
+    }
+
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, licenseBook])
+  }, [data, licenseBook, vmstOverview])
 
-  return { activeDynamicRoutes, loading: loading && licenseBookLoading }
+  return {
+    activeDynamicRoutes,
+    loading: loading || licenseBookLoading || vmstLoading,
+  }
 }
 
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
@@ -102,7 +133,5 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
 
   const sortedNavigation = orderRoutes(nav, data?.getNamespace?.fields)
 
-  const navigation = useNavigation(sortedNavigation, activeDynamicRoutes)
-
-  return navigation
+  return useNavigation(sortedNavigation, activeDynamicRoutes)
 }

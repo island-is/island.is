@@ -145,4 +145,7 @@ export class Defendant {
 
   @Field(() => IndictmentCancelledOrDismissedState, { nullable: true })
   readonly indictmentCancelledOrDismissedState?: IndictmentCancelledOrDismissedState
+
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
 }

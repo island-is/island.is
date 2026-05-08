@@ -3,7 +3,8 @@ import { assign } from 'xstate'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  pruneAfterDays,
+  getValueViaPath,
+  pruneAfterDaysWithMessage,
 } from '@island.is/application/core'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -20,6 +21,8 @@ import {
   defineTemplateApi,
   InstitutionNationalIds,
   IdentityApi,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import { Events } from '../utils/types'
 import { States, Roles } from '../utils/enums'
@@ -28,6 +31,7 @@ import {
   NationalRegistryV3UserApi,
   NationalRegistryV3SpouseApi,
 } from '../dataProviders'
+import { ApplicantsInfo } from '../shared'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
@@ -177,7 +181,38 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.INREVIEW,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(10),
+          lifecycle: pruneAfterDaysWithMessage(10, (application) => {
+            const address = getValueViaPath<string>(
+              application.answers,
+              'registerProperty.searchresults.address',
+            )
+            const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.landlordInfo.table',
+            )
+            const tenants = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.tenantInfo.table',
+            )
+            const landlordNames = landlords
+              ?.map((l) => l.nationalIdWithName.name)
+              .join(', ')
+            const tenantNames = tenants
+              ?.map((t) => t.nationalIdWithName.name)
+              .join(', ')
+            const args: Array<{ key: string; value: string }> = []
+            if (address) args.push({ key: 'address', value: address })
+            if (landlordNames)
+              args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames)
+              args.push({ key: 'tenantNames', value: tenantNames })
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.RentalAgreementPruned]
+                  .templateId,
+              ...(args.length > 0 && { args }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendDraft,
           }),
@@ -245,7 +280,38 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.SIGNING,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(31),
+          lifecycle: pruneAfterDaysWithMessage(31, (application) => {
+            const address = getValueViaPath<string>(
+              application.answers,
+              'registerProperty.searchresults.address',
+            )
+            const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.landlordInfo.table',
+            )
+            const tenants = getValueViaPath<Array<ApplicantsInfo>>(
+              application.answers,
+              'parties.tenantInfo.table',
+            )
+            const landlordNames = landlords
+              ?.map((l) => l.nationalIdWithName.name)
+              .join(', ')
+            const tenantNames = tenants
+              ?.map((t) => t.nationalIdWithName.name)
+              .join(', ')
+            const args: Array<{ key: string; value: string }> = []
+            if (address) args.push({ key: 'address', value: address })
+            if (landlordNames)
+              args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames)
+              args.push({ key: 'tenantNames', value: tenantNames })
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.RentalAgreementPruned]
+                  .templateId,
+              ...(args.length > 0 && { args }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplicationToHmsRentalService,
           }),

@@ -1,6 +1,7 @@
 import { NoContentException } from '@island.is/nest/problem'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 import { IdpProviderDTO } from './dto/idp-provider.dto'
 import { IdpProvider } from './models/idp-provider.model'
 import type { Logger } from '@island.is/logging'
@@ -50,6 +51,33 @@ export class IdpProviderService {
       offset: offset,
       distinct: true,
       where: { name: searchString },
+      order: ['name'],
+    })
+  }
+
+  /** Searches IDP providers by name or description with pagination */
+  async search(
+    searchString: string,
+    page: number,
+    count: number,
+  ): Promise<{ rows: IdpProvider[]; count: number }> {
+    page--
+    const offset = page * count
+    const whereClause = searchString
+      ? {
+          [Op.or]: ['name', 'description'].map((key) => ({
+            [key]: {
+              [Op.iLike]: `%${searchString.toLowerCase()}%`,
+            },
+          })),
+        }
+      : {}
+
+    return this.idpProvider.findAndCountAll({
+      limit: count,
+      offset,
+      where: whereClause,
+      distinct: true,
       order: ['name'],
     })
   }

@@ -72,7 +72,7 @@ export const coreMessages = defineMessages({
     description: 'Button label when application is approved',
   },
   cardButtonNotStarted: {
-    id: 'application:card.button.notStarted',
+    id: 'application.system:card.button.notStarted',
     defaultMessage: 'Hefja umsókn',
     description: 'Button label when application is not started',
   },
@@ -313,6 +313,17 @@ export const coreMessages = defineMessages({
     id: 'application.system:copyLinkButtonTitle',
     defaultMessage: 'Afrita tengil',
     description: 'Copy link button title',
+  },
+  paymentPendingInvoiceTitle: {
+    id: 'application.system:core.payment.pendingInvoiceTitle',
+    defaultMessage: 'Krafa stofnuð',
+    description: 'Title for payment pending invoice',
+  },
+  paymentPendingInvoiceDescription: {
+    id: 'application.system:core.payment.pendingInvoiceDescription#markdown',
+    defaultMessage:
+      '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan 48 klst (á virkum degi) mun umsóknin verða felld niður.',
+    description: 'Description for payment pending invoice',
   },
 })
 

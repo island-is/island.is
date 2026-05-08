@@ -74,6 +74,9 @@ import { mapTabSection, TabSection } from './models/tabSection.model'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { AnnualReport, mapAnnualReport } from './models/annualReport.model'
+import { GetAnnualReportInput } from './dto/getAnnualReport.input'
+import { GetAnnualReportsInput } from './dto/getAnnualReports.input'
 import {
   DelegationScopeTag,
   mapDelegationScopeTag,
@@ -129,6 +132,7 @@ import {
   mapServicePortalPage,
   ServicePortalPage,
 } from './models/servicePortalPage.model'
+import { mapFooterItem } from './models/footerItem.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -149,6 +153,7 @@ const ArticleFields = (
     'fields.alertBanner',
     'fields.category',
     'fields.content',
+    'fields.contentLastReviewed',
     'fields.contentStatus',
     'fields.featuredImage',
     'fields.group',
@@ -164,6 +169,7 @@ const ArticleFields = (
     'fields.relatedOrganization',
     'fields.responsibleParty',
     'fields.shortTitle',
+    'fields.showDateOfTheMostRecentReview',
     'fields.showTableOfContents',
     'fields.signLanguageVideo',
     'fields.slug',
@@ -900,6 +906,44 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEvents'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
+  async getAnnualReports({
+    organizationSlug,
+    lang,
+  }: GetAnnualReportsInput): Promise<AnnualReport[]> {
+    const params = {
+      ['content_type']: 'annualReport',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': organizationSlug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnnualReportFields>(lang, params, 5)
+      .catch(errorHandler('getAnnualReports'))
+
+    return (result.items as types.IAnnualReport[]).map(mapAnnualReport) ?? []
+  }
+
+  async getAnnualReport({
+    organizationSlug,
+    annualReportSlug,
+    lang,
+  }: GetAnnualReportInput): Promise<AnnualReport | null> {
+    const params = {
+      ['content_type']: 'annualReport',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': organizationSlug,
+      'fields.slug': annualReportSlug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnnualReportFields>(lang, params)
+      .catch(errorHandler('getAnnualReport'))
+
+    return (
+      (result.items as types.IAnnualReport[]).map(mapAnnualReport)[0] ?? null
+    )
   }
 
   async getDelegationScopeTags(lang: string): Promise<DelegationScopeTag[]> {
@@ -1869,5 +1913,32 @@ export class CmsContentfulService {
 
     return response?.fields?.courseListPage?.fields?.organization?.fields
       ?.kennitala
+  }
+
+  async getOrganizationFooter(organizationId: string, lang: string) {
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationPageFields>(lang, {
+        content_type: 'organizationPage',
+        'fields.organization.sys.id': organizationId,
+        select: 'fields.footerItems,fields.footerConfig',
+        limit: 1,
+      })
+      .catch((error) => {
+        logger.error(
+          'cms.contentful.service getOrganizationFooter error',
+          error,
+        )
+        return { items: [] }
+      })
+
+    if (!response?.items?.length) return null
+
+    const organizationPage = response.items[0]
+
+    return {
+      footerItems:
+        organizationPage?.fields?.footerItems?.map(mapFooterItem) ?? [],
+      footerConfig: organizationPage?.fields?.footerConfig ?? {},
+    }
   }
 }

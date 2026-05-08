@@ -10,6 +10,8 @@ import {
   defineTemplateApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -24,8 +26,10 @@ import {
 import {
   coreHistoryMessages,
   coreMessages,
+  defaultLifecycleWithPruneMessage,
   EphemeralStateLifeCycle,
   DefaultStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
@@ -201,7 +205,22 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                     content: history.actions.waitingForCounterpartyDescription,
                   },
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: defaultLifecycleWithPruneMessage((application) => {
+            const children = getValueViaPath<string[]>(
+              application.answers,
+              'selectedChildren',
+            )
+            const internalBody = children?.join(',')
+            return {
+              notificationTemplateId:
+                NotificationConfig[
+                  NotificationType.ChildrenResidenceChangePruned
+                ].templateId,
+              ...(internalBody && {
+                args: [{ key: 'internalBody', value: internalBody }],
+              }),
+            }
+          }),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendNotificationToCounterParty,
           }),

@@ -593,8 +593,12 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
         courtSession.closedLegalProvisions.length > 0
       : true) &&
     (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+    courtSession.rulingType === CourtSessionRulingType.DISMISSAL_ORDER ||
     courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.ruling
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.rulingFileId
       : true) &&
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId

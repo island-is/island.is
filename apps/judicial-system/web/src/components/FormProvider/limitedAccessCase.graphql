@@ -48,6 +48,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
     }
     caseFiles {
@@ -67,6 +68,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isKeyAccessible
       defendantId
       civilClaimantId
+      rulingFileId
+      hasBeenAppealed
+      canBeAppealed
+      appealDeadline
+      isAppealDeadlineExpired
     }
     defendants {
       id
@@ -98,6 +104,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isAlternativeService
       alternativeServiceDescription
       indictmentReviewDecision
+      indictmentCancelledOrDismissedState {
+        type
+        time
+      }
+      policeCaseNumbers
       subpoenas {
         id
         created
@@ -194,22 +205,30 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     accusedAppealDecision
     prosecutorAppealDecision
     isAppealDeadlineExpired
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     canDefenderAppeal
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
       id
       appealState
       appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -229,6 +248,51 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingDecision
       appealConclusion
       appealRulingModifiedHistory
+    }
+    rulingOrderAppealCases {
+      id
+      appealState
+      appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
+      appealCaseNumber
+      appealReceivedByCourtDate
+      prosecutorStatementDate
+      defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealRulingDecision
+      appealConclusion
+      appealRulingModifiedHistory
+      requestAppealRulingNotToBePublished
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
+      rulingFileId
     }
     notifications {
       id
@@ -431,6 +495,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -445,6 +510,51 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       prosecutorsOffice {
         id
         name
+      }
+      rulingOrderAppealCases {
+        id
+        appealState
+        appealedByNationalId
+        appealedByRole
+        appealedDate
+        statementDeadline
+        isStatementDeadlineExpired
+        appealCaseNumber
+        appealReceivedByCourtDate
+        prosecutorStatementDate
+        defendantStatementDate
+        defendantStatementDates {
+          defendantId
+          statementDate
+        }
+        civilClaimantStatementDates {
+          civilClaimantId
+          statementDate
+        }
+        appealAssistant {
+          id
+          name
+        }
+        appealJudge1 {
+          id
+          name
+        }
+        appealJudge2 {
+          id
+          name
+        }
+        appealJudge3 {
+          id
+          name
+        }
+        appealRulingDecision
+        appealConclusion
+        appealRulingModifiedHistory
+        requestAppealRulingNotToBePublished
+        appealValidToDate
+        isAppealCustodyIsolation
+        appealIsolationToDate
+        rulingFileId
       }
     }
     hasCivilClaims

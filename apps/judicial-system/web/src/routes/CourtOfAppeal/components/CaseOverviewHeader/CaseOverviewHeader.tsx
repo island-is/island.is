@@ -1,19 +1,15 @@
 import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseDates,
   CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
@@ -86,28 +82,17 @@ interface Props {
 
 const CaseOverviewHeader: FC<Props> = (props) => {
   const { alerts } = props
-  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const router = useRouter()
 
   const wasAppealedAfterDeadline =
-    workingCase.appealedDate &&
+    workingCase.appealCase?.appealedDate &&
     workingCase.appealDeadline &&
-    workingCase.appealedDate > workingCase.appealDeadline
+    workingCase.appealCase.appealedDate > workingCase.appealDeadline
 
   return (
     <div className={grid({ gap: 5 })}>
-      <Box>
-        <Button
-          variant="text"
-          preTextIcon="arrowBack"
-          onClick={() => router.push(getStandardUserDashboardRoute(user))}
-        >
-          {formatMessage(core.back)}
-        </Button>
-      </Box>
       <Box className={grid({ gap: 2 })}>
         {!workingCase.appealCase?.appealRulingDecision &&
           wasAppealedAfterDeadline && (

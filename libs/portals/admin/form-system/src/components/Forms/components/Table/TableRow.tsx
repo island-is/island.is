@@ -25,7 +25,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
@@ -78,7 +78,7 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
-
+  const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
@@ -308,27 +308,37 @@ export const TableRow = ({
       console.error('Error updating form:', error)
     }
 
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+        },
       },
-    })
+    )
   }
 
   const view = async () => {
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
-        readOnly: true,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+          readOnly: true,
+        },
       },
-    })
+    )
   }
 
   return (
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
         <Row key={id}>
-          <Column span={['5/12', '5/12', '7/12']}>
+          <Column span={['6/12', '7/12', '6/12', '7/12']}>
             <Inline space={2}>
               <Icon
                 icon={isOpen ? 'remove' : 'add'}
@@ -339,7 +349,7 @@ export const TableRow = ({
             </Inline>
           </Column>
           <Column span="2/12" hiddenBelow="md">
-            <Box display="flex" justifyContent="flexEnd">
+            <Box display="flex" justifyContent="flexStart">
               <Text variant="medium">
                 {formatDate(lastModified ? lastModified : new Date(), {
                   day: '2-digit',
@@ -350,28 +360,14 @@ export const TableRow = ({
             </Box>
           </Column>
 
-          <Column span={['3/12', '3/12', '2/12']}>
-            <Box display="flex" justifyContent="center">
+          <Column span={['2/12', '2/12', '2/12', '1/12']}>
+            <Box display="flex" justifyContent="flexStart">
               <StatusTag status={status ?? ''} />
             </Box>
           </Column>
 
-          <Column span={['4/12', '4/12', '1/12']}>
+          <Column span={['4/12', '3/12', '2/12', '2/12']}>
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              >
-                <Button
-                  icon="eye"
-                  circle
-                  colorScheme="negative"
-                  inline
-                  onClick={() => view()}
-                  title="Skoða"
-                />
-              </Box>
               {(status === FormStatus.IN_DEVELOPMENT ||
                 status === FormStatus.PUBLISHED_BEING_CHANGED) && (
                 <Box
@@ -389,6 +385,21 @@ export const TableRow = ({
                   />
                 </Box>
               )}
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <Button
+                  icon="eye"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={() => view()}
+                  title="Skoða"
+                />
+              </Box>
+
               <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}

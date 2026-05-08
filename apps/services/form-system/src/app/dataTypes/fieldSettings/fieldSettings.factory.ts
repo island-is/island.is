@@ -15,7 +15,7 @@ export class FieldSettingsFactory {
         keys = ['minLength', 'maxLength', 'isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
-        keys = ['minValue', 'maxValue', 'hasDescription', ...keys]
+        keys = ['minValue', 'maxValue', 'hasDescription', 'isDecimal', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText', ...keys]

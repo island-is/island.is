@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { ApplicationEventDto } from './applications.model'
 import { Month } from './month.model'
 import { LanguageType } from './languageType.model'
@@ -8,7 +8,7 @@ export class Value {
   @Field(() => String, { nullable: true })
   text?: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   number?: number
 
   @Field(() => Date, { nullable: true })

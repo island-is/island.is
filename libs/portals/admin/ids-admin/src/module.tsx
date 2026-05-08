@@ -2,6 +2,7 @@ import { lazy } from 'react'
 
 import { ModuleErrorScreen, PortalModule } from '@island.is/portals/core'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
@@ -15,6 +16,12 @@ import { createPermissionAction } from './screens/Permission/CreatePermission/Cr
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
 import { permissionLoader } from './screens/Permission/Permission.loader'
 import { editPermissionAction } from './screens/Permission/EditPermission.action'
+import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.loader'
+import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.action'
+import { grantTypesLoader } from './screens/AdminControls/GrantTypes/GrantTypes.loader'
+import { grantTypesAction } from './screens/AdminControls/GrantTypes/GrantTypes.action'
+import { idpProvidersLoader } from './screens/AdminControls/IdpProviders/IdpProviders.loader'
+import { idpProvidersAction } from './screens/AdminControls/IdpProviders/IdpProviders.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -36,6 +43,20 @@ const CreatePermission = lazy(() =>
   import('./screens/Permission/CreatePermission/CreatePermission'),
 )
 
+// Admin Controls
+const AdminControls = lazy(() =>
+  import('./screens/AdminControls/AdminControls'),
+)
+const ApiScopeUsers = lazy(() =>
+  import('./screens/AdminControls/ApiScopeUsers/ApiScopeUsers'),
+)
+const GrantTypes = lazy(() =>
+  import('./screens/AdminControls/GrantTypes/GrantTypes'),
+)
+const IdpProviders = lazy(() =>
+  import('./screens/AdminControls/IdpProviders/IdpProviders'),
+)
+
 const allowedScopes: string[] = [
   AdminPortalScope.idsAdmin,
   AdminPortalScope.idsAdminSuperUser,
@@ -51,23 +72,90 @@ export const idsAdminModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes(props) {
+  async routes(props) {
+    const { userInfo, featureFlagClient } = props
+    const isSuperUser = userInfo.scopes.includes(
+      AdminPortalScope.idsAdminSuperUser,
+    )
+    const showAdminControls =
+      isSuperUser &&
+      (await featureFlagClient.getValue(Features.showIdsAdminControls, false, {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      }))
+
     return [
       {
         name: m.idsAdmin,
         path: IDSAdminPaths.IDSAdmin,
         element: <IDSAdmin />,
         children: [
-          {
-            name: m.idsAdmin,
-            path: IDSAdminPaths.IDSAdmin,
-            element: <Tenants />,
-            loader: tenantsLoader(props),
-            navHide: true,
-            handle: {
-              backPath: IDSAdminPaths.IDSAdmin,
-            },
-          },
+          ...(showAdminControls
+            ? [
+                {
+                  name: m.adminControls,
+                  path: IDSAdminPaths.IDSAdmin,
+                  element: <AdminControls />,
+                  navHide: true,
+                  handle: {
+                    backPath: IDSAdminPaths.IDSAdmin,
+                  },
+                  children: [
+                    {
+                      name: m.idsAdmin,
+                      path: '',
+                      element: <Tenants />,
+                      loader: tenantsLoader(props),
+                      navHide: true,
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.apiScopeUsers,
+                      path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+                      element: <ApiScopeUsers />,
+                      loader: apiScopeUsersLoader(props),
+                      action: apiScopeUsersAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.grantTypes,
+                      path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+                      element: <GrantTypes />,
+                      loader: grantTypesLoader(props),
+                      action: grantTypesAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.idpProviders,
+                      path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+                      element: <IdpProviders />,
+                      loader: idpProvidersLoader(props),
+                      action: idpProvidersAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                  ],
+                },
+              ]
+            : [
+                {
+                  name: m.idsAdmin,
+                  path: IDSAdminPaths.IDSAdmin,
+                  element: <Tenants />,
+                  loader: tenantsLoader(props),
+                  navHide: true,
+                  handle: {
+                    backPath: IDSAdminPaths.IDSAdmin,
+                  },
+                },
+              ]),
           {
             name: m.tenants,
             path: '',

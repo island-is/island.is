@@ -22,13 +22,25 @@ import type { ConfigType } from '@nestjs/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { CaseFilterOptionType } from './types'
 import {
+  ALL_COURT_AGENDA_GOPRO_SLUGS,
   ALL_DISTRICT_COURTS,
+  ALL_VERDICT_LIST_GOPRO_SLUGS,
   COURT_OF_APPEAL,
   RETRIAL_COURT,
   SUPREME_COURT,
 } from './constants'
 
 const ITEMS_PER_PAGE = 10
+
+const isFullGoproSlugSelection = (
+  selected: string[],
+  fullSet: readonly string[],
+) => {
+  if (selected.length !== fullSet.length) return false
+  const set = new Set(selected)
+  if (set.size !== fullSet.length) return false
+  return fullSet.every((slug) => set.has(slug))
+}
 const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
@@ -159,7 +171,7 @@ export class VerdictsClientService {
     pageNumber: number
     searchTerm: string
     caseNumber?: string
-    courtLevel?: string
+    court?: string[]
     keywords?: string[]
     caseCategories?: string[]
     caseTypes?: string[]
@@ -169,7 +181,22 @@ export class VerdictsClientService {
     caseContact?: string
     pageSize?: number
   }) {
-    const onlyFetchSupremeCourtVerdicts = input.courtLevel === SUPREME_COURT
+    const selectedCourts = input.court ?? []
+    const hasNoCourtFilter = selectedCourts.length === 0
+    const includesSupremeCourt = selectedCourts.includes(SUPREME_COURT)
+    const goproCourts = selectedCourts.filter(
+      (court) => court !== SUPREME_COURT,
+    )
+    const goproCourtsForApi =
+      goproCourts.length > 0 &&
+      isFullGoproSlugSelection(goproCourts, ALL_VERDICT_LIST_GOPRO_SLUGS)
+        ? []
+        : goproCourts
+
+    const shouldFetchGoproVerdicts = hasNoCourtFilter || goproCourts.length > 0
+    const shouldFetchSupremeCourtVerdicts =
+      !input.caseCategories?.length &&
+      (hasNoCourtFilter || includesSupremeCourt)
 
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
 
@@ -181,14 +208,14 @@ export class VerdictsClientService {
         : ITEMS_PER_PAGE
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      !onlyFetchSupremeCourtVerdicts
+      shouldFetchGoproVerdicts
         ? goproVerdictApi.getVerdictsV2({
             requestData: {
               orderBy: 'verdictDate desc',
               itemsPerPage,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
-              courts: input.courtLevel ? input.courtLevel.split(',') : [],
+              courts: goproCourtsForApi,
               keywords: input.keywords,
               caseCategories: input.caseCategories,
               caseNumber: input.caseNumber,
@@ -200,8 +227,7 @@ export class VerdictsClientService {
             },
           })
         : { status: 'rejected', items: [], total: 0 },
-      !input.caseCategories?.length &&
-      (!input.courtLevel || onlyFetchSupremeCourtVerdicts)
+      shouldFetchSupremeCourtVerdicts
         ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
             verdictSearchRequest: {
               page: input.pageNumber,
@@ -503,22 +529,44 @@ export class VerdictsClientService {
 
   async getCourtAgendas(input: {
     page?: number
-    court?: string
+    court?: string[]
     dateFrom?: string
     dateTo?: string
     lawyer?: string
     scheduleTypes?: string[]
     caseTypes?: string[]
   }) {
-    const onlyFetchSupremeCourtAgendas = input.court === SUPREME_COURT
+    const selectedCourts = input.court ?? []
+    const hasNoCourtFilter = selectedCourts.length === 0
+    const includesSupremeCourt = selectedCourts.includes(SUPREME_COURT)
+    const goproCourts = selectedCourts.filter(
+      (court) => court !== SUPREME_COURT,
+    )
+    const goproCourtsForApi =
+      goproCourts.length > 0 &&
+      isFullGoproSlugSelection(goproCourts, ALL_COURT_AGENDA_GOPRO_SLUGS)
+        ? []
+        : goproCourts
+    const hasScheduleTypesFilter = Boolean(input.scheduleTypes?.length)
+
+    // Supreme court has no schedule types, so skip it whenever a schedule type
+    // filter is active. Otherwise fetch it when the user hasn't filtered
+    // courts at all, or when the supreme court is explicitly included.
+    const shouldFetchSupremeCourtAgendas =
+      !hasScheduleTypesFilter && (hasNoCourtFilter || includesSupremeCourt)
+
+    // The gopro endpoint covers every court except the supreme court. Fetch
+    // from it when no courts are selected (= "all") or at least one non-
+    // supreme court is selected.
+    const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
+
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
-      (!input.court && !input.scheduleTypes?.length) ||
-      onlyFetchSupremeCourtAgendas
+      shouldFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
             agendaSearchRequest: {
               page: pageNumber,
@@ -543,11 +591,10 @@ export class VerdictsClientService {
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
-      onlyFetchSupremeCourtAgendas
-        ? { status: 'rejected', items: [], total: 0 }
-        : goproCourtAgendasApi.getPublishedBookingsV2({
+      shouldFetchGoproAgendas
+        ? goproCourtAgendasApi.getPublishedBookingsV2({
             pageNumber: pageNumber,
-            courts: input.court ? input.court.split(',') : [],
+            courts: goproCourtsForApi,
             itemsPerPage,
             dateFrom: input.dateFrom
               ? input.dateFrom
@@ -560,7 +607,8 @@ export class VerdictsClientService {
             orderDirection: 'ASC',
             scheduleType: input.scheduleTypes ? input.scheduleTypes : undefined,
             caseType: input.caseTypes ? input.caseTypes : undefined,
-          }),
+          })
+        : { status: 'rejected', items: [], total: 0 },
     ])
 
     const items = []
@@ -581,7 +629,7 @@ export class VerdictsClientService {
           court: SUPREME_COURT,
           type: '',
           title: agenda.title ?? '',
-          hearingTime: agenda.hearingTime ?? '',
+          hearingTime: sanitizeHtml(agenda.hearingTime ?? ''),
         })
       }
     } else {
@@ -606,7 +654,7 @@ export class VerdictsClientService {
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
           caseSubType: agenda.caseSubType ?? '',
-          hearingTime: agenda.length ?? '',
+          hearingTime: sanitizeHtml(agenda.length ?? ''),
         })
       }
     } else {

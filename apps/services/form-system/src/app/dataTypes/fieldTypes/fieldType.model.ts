@@ -222,7 +222,7 @@ export const FieldTypes: FieldType[] = [
   },
   {
     id: FieldTypesEnum.PAYMENT_QUANTITY,
-    name: { is: 'Greiðslu magn', en: 'Payment quantity' },
+    name: { is: 'Magngreiðslur', en: 'Payment quantity' },
     description: {
       is: 'Notandi slær inn magn sem tengist greiðslu',
       en: 'User enters quantity related to a payment',
