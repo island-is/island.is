@@ -216,7 +216,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 NotificationConfig[
                   NotificationType.ChildrenResidenceChangePruned
                 ].templateId,
-              ...(internalBody && { internalBody }),
+              ...(internalBody && {
+                args: [{ key: 'internalBody', value: internalBody }],
+              }),
             }
           }),
           onEntry: defineTemplateApi({
