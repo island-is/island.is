@@ -10,16 +10,13 @@ export const container = style({
 })
 
 export const image = style({
-  width: 100,
+  width: 140,
   height: 'auto',
-  maxWidth: 100,
-  maxHeight: 100,
+  maxWidth: 140,
+  maxHeight: 140,
   marginTop: 10,
   ...themeUtils.responsiveStyle({
     xl: {
-      width: 120,
-      maxWidth: 120,
-      maxHeight: 120,
       marginRight: 20,
     },
   }),

@@ -9,6 +9,7 @@ export const container = style({
 export const image = style({
   width: '100%',
   height: 'auto',
-  maxHeight: '100%',
+  maxWidth: 140,
+  maxHeight: 140,
   objectFit: 'contain',
 })
