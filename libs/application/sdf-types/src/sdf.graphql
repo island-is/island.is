@@ -272,6 +272,15 @@ type FileUploadField {
   disabled: Boolean!
   maxSize: Int
   accept: String
+  uploadHeader: String
+  uploadDescription: String
+  uploadButtonLabel: String
+  uploadMultiple: Boolean
+  totalMaxSize: Int
+  maxFileCount: Int
+  forImageUpload: Boolean
+  maxSizeErrorText: String
+  introduction: String
   clientCondition: ClientCondition
 }
 

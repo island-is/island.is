@@ -150,7 +150,8 @@ type CheckboxFieldOptions = Omit<
   }
 type CompanySearchFieldOptions = FieldBuilderOptions<CompanySearchField>
 type DateFieldOptions = FieldBuilderOptions<DateField>
-type DescriptionFieldOptions = FieldBuilderOptions<DescriptionField>
+type DescriptionFieldOptions = FieldBuilderOptions<DescriptionField> &
+  WithShowWhen
 type DisplayFieldOptions = Omit<
   DisplayField,
   'children' | 'component' | 'id' | 'title' | 'type' | 'value'
@@ -617,7 +618,15 @@ export class PageBuilder<TSchema = unknown> {
     title: FormText,
     opts?: DescriptionFieldOptions,
   ): this {
-    this.fields.push(buildDescriptionField({ id, title, ...opts }))
+    const { showWhen, ...fieldOpts } = opts ?? {}
+    this.fields.push(
+      buildDescriptionField({
+        id,
+        title,
+        ...fieldOpts,
+        ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
+      }),
+    )
     return this
   }
 

@@ -10,8 +10,6 @@ interface Plot {
   sizeSqm: number
 }
 
-type ExampleSdfApplication = Application<ExampleSdfAnswers>
-
 const isPlotsPayload = (data: unknown): data is { plots: Plot[] } => {
   return (
     typeof data === 'object' &&
@@ -21,14 +19,15 @@ const isPlotsPayload = (data: unknown): data is { plots: Plot[] } => {
   )
 }
 
-const getPlots = (app: ExampleSdfApplication): Plot[] => {
+const getPlots = (app: Application): Plot[] => {
   const data = app.externalData?.getMyPlots?.data
   return isPlotsPayload(data) ? data.plots : []
 }
 
-const getSelectedPlot = (app: ExampleSdfApplication): Plot | undefined => {
+const getSelectedPlot = (app: Application): Plot | undefined => {
   const plots = getPlots(app)
-  return plots.find((p) => p.id === app.answers.selectedPlot)
+  const answers = app.answers as ExampleSdfAnswers
+  return plots.find((p) => p.id === answers.selectedPlot)
 }
 
 type PlotDetailsData = {
@@ -51,9 +50,7 @@ const isPlotDetailsData = (data: unknown): data is PlotDetailsData => {
   )
 }
 
-const getPlotDetailsData = (
-  app: ExampleSdfApplication,
-): PlotDetailsData | null => {
+const getPlotDetailsData = (app: Application): PlotDetailsData | null => {
   const data = app.externalData?.getPlotDetails?.data
   return isPlotDetailsData(data) ? data : null
 }
@@ -80,6 +77,24 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
   'gardenEnlargementForm',
   'Garden Plot Enlargement',
 )
+  .addSection('uploadDocuments', 'Upload Documents', (section) => {
+    section.addPage('uploadDocuments', 'Upload Documents', (page) => {
+      page.addFileUploadField('documents', 'Documents', {
+        uploadMultiple: true,
+        uploadAccept: '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+        uploadButtonLabel: 'Upload documents',
+        uploadDescription:
+          'Upload the documents you want to submit with your request.',
+        uploadHeader: 'Documents',
+        introduction:
+          'Upload the documents you want to submit with your request.',
+        maxSize: 10 * 1024 * 1024, // 10MB
+        maxSizeErrorText:
+          'The document is too large. The maximum size is 10MB.',
+        doesNotRequireAnswer: false,
+      })
+    })
+  })
   .addSection('selectPlot', 'Select Plot', (section) => {
     section.addPage('plotSelection', 'Choose Your Plot', (page) => {
       page
@@ -88,7 +103,7 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
           'Select the garden plot you would like to request an enlargement for. The plots listed below are registered to your account.',
         )
         .addSelectField('selectedPlot', 'My garden plots', {
-          options: (app: ExampleSdfApplication) =>
+          options: (app: Application) =>
             getPlots(app).map((p) => ({
               label: `${p.name} — ${p.address} (${p.sizeSqm} sqm)`,
               value: p.id,
@@ -105,36 +120,31 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
         .addKeyValueField(
           'plotSoilType',
           'Soil',
-          (app: ExampleSdfApplication) =>
-            getPlotDetailsData(app)?.soilType ?? '—',
+          (app) => getPlotDetailsData(app)?.soilType ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotSunlight',
           'Sunlight',
-          (app: ExampleSdfApplication) =>
-            getPlotDetailsData(app)?.sunlightExposure ?? '—',
+          (app) => getPlotDetailsData(app)?.sunlightExposure ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotTools',
           'Available tools',
-          (app: ExampleSdfApplication) =>
-            getPlotDetailsData(app)?.availableTools ?? '—',
+          (app) => getPlotDetailsData(app)?.availableTools ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotNeighbors',
           'Neighboring plots',
-          (app: ExampleSdfApplication) =>
-            getPlotDetailsData(app)?.neighboringPlots ?? '—',
+          (app) => getPlotDetailsData(app)?.neighboringPlots ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
         .addKeyValueField(
           'plotLease',
           'Lease until',
-          (app: ExampleSdfApplication) =>
-            getPlotDetailsData(app)?.leaseExpires ?? '—',
+          (app) => getPlotDetailsData(app)?.leaseExpires ?? '—',
           { showWhen: showWhenPlotDetailsLoaded },
         )
     })
@@ -148,21 +158,17 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
         .addKeyValueField(
           'plotName',
           'Plot name',
-          (app: ExampleSdfApplication) => getSelectedPlot(app)?.name ?? '—',
+          (app) => getSelectedPlot(app)?.name ?? '—',
         )
         .addKeyValueField(
           'plotAddress',
           'Address',
-          (app: ExampleSdfApplication) => getSelectedPlot(app)?.address ?? '—',
+          (app) => getSelectedPlot(app)?.address ?? '—',
         )
-        .addKeyValueField(
-          'plotCurrentSize',
-          'Current size',
-          (app: ExampleSdfApplication) => {
-            const plot = getSelectedPlot(app)
-            return plot ? `${plot.sizeSqm} sqm` : '—'
-          },
-        )
+        .addKeyValueField('plotCurrentSize', 'Current size', (app) => {
+          const plot = getSelectedPlot(app)
+          return plot ? `${plot.sizeSqm} sqm` : '—'
+        })
     })
   })
   .addSection('enlargement', 'Enlargement Request', (section) => {
