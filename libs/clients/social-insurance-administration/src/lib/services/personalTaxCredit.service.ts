@@ -4,14 +4,15 @@ import { Injectable } from '@nestjs/common'
 import {
   PersonalTaxCreditApi,
   TrWebApiServicesCommonClientsEnumsPersonalTaxAllowanceAction,
+  TrWebApiServicesCommonClientsEnumsTaxBracketAction,
   TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
   TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsGetTaxBracketReturn,
   TrWebApiServicesCommonClientsModelsYearWithMonthsDto,
   TrWebApiServicesCommonClientsModelsGetTaxCardsReturn,
   TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
   TrWebApiServicesCommonClientsModelsSpousalTaxCardUsageYearMonthResult,
-  TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
-  TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageInput,
+  TrWebApiServicesCommonClientsModelsSpouseInfoResult,
 } from '../../../gen/fetch/v1'
 import { PersonalTaxCreditWriteApi } from '../socialInsuranceAdministrationClient.type'
 
@@ -104,26 +105,33 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     })
   }
 
-  async setSpouseTaxCard(
+  async getSpouseInfo(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageInput,
-  ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
-      user,
-    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPost({
-      trWebApiServicesCommonClientsModelsSpouseTaxCardUsageInput: input,
-    })
+  ): Promise<TrWebApiServicesCommonClientsModelsSpouseInfoResult | null> {
+    return this.personalTaxCreditApiWithAuth(user)
+      .apiProtectedV1PersonalTaxCreditSpouseInfoGet()
+      .catch(handle404)
   }
 
-  async setSpouseTaxCardDueToDeath(
+  async getTaxBracketActions(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
-  ): Promise<void> {
+  ): Promise<TrWebApiServicesCommonClientsEnumsTaxBracketAction> {
+    return this.personalTaxCreditApiWithAuth(
+      user,
+    ).apiProtectedV1PersonalTaxCreditTaxBracketActionsGet()
+  }
+
+  async getTaxBracket(
+    user: User,
+  ): Promise<TrWebApiServicesCommonClientsModelsGetTaxBracketReturn | null> {
+    return this.personalTaxCreditApiWithAuth(user)
+      .apiProtectedV1PersonalTaxCreditTaxBracketGet()
+      .catch(handle404)
+  }
+
+  async setTaxBracket(user: User, taxBracket: string): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPost({
-      trWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput:
-        input,
-    })
+    ).apiProtectedV1PersonalTaxCreditTaxBracketPost({ body: taxBracket })
   }
 }

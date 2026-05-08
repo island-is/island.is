@@ -36,3 +36,13 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
 ) {
   discontinueSocialInsuranceTaxCardAllowance(input: $input)
 }
+
+query getPersonalTaxCreditTaxBracket {
+  socialInsurancePersonalTaxCreditTaxBracket
+}
+
+mutation setSocialInsurancePersonalTaxCreditTaxBracket(
+  $taxBracket: SocialInsuranceTaxBracketAction!
+) {
+  setSocialInsurancePersonalTaxCreditTaxBracket(taxBracket: $taxBracket)
+}

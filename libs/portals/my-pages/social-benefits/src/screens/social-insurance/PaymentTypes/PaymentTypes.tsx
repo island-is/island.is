@@ -1,16 +1,10 @@
-import {
-  AlertMessage,
-  Button,
-  Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatNationalId,
   IntroWrapper,
-  LinkResolver,
+  LinkButton,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -23,13 +17,16 @@ import {
 
 const PaymentTypes = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage, formatDate } = useLocale()
+  const { formatMessage, formatDate, lang } = useLocale()
 
   const {
     data: paymentTypesData,
     loading: paymentTypesLoading,
     error: paymentTypesError,
-  } = useGetPaymentTypesQuery()
+  } = useGetPaymentTypesQuery({
+    variables: { locale: lang },
+    fetchPolicy: 'no-cache',
+  })
 
   const {
     data: childBenefitsData,
@@ -41,20 +38,13 @@ const PaymentTypes = () => {
   const childBenefits = childBenefitsData?.socialInsuranceChildBenefits
 
   const buttonGroup = [
-    <LinkResolver
+    <LinkButton
       key="calculate-my-rights"
-      href="https://island.is/s/tryggingastofnun/reiknivel"
-    >
-      <Button
-        as="span"
-        variant="utility"
-        icon="open"
-        iconType="outline"
-        unfocusable
-      >
-        {formatMessage(m.calculateMyRights)}
-      </Button>
-    </LinkResolver>,
+      to="https://island.is/s/tryggingastofnun/reiknivel"
+      text={formatMessage(m.calculateMyRights)}
+      icon="open"
+      variant="utility"
+    />,
   ]
 
   return (
@@ -74,9 +64,12 @@ const PaymentTypes = () => {
         ) : paymentTypesError ? (
           <Problem error={paymentTypesError} noBorder={false} />
         ) : !paymentTypes?.length ? (
-          <AlertMessage
-            type="info"
-            message={formatMessage(m.noPaymentTypesFound)}
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noPaymentTypesFound)}
+            message={formatMessage(coreMessages.noDataFoundDetail)}
+            imgSrc="./assets/images/nodata.svg"
           />
         ) : (
           <Stack space={2}>

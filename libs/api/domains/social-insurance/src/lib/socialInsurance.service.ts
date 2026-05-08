@@ -46,8 +46,11 @@ import {
   mapChildBenefitInformation,
   mapPaymentTypeOverview,
 } from './mappers/mapPaymentTypesOverview'
+import { parseTaxBracketAction } from './mappers/parseTaxBracketAction'
 import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
 import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
+import { PersonalTaxCreditSpouseInfo } from './models/personalTaxCredit/spouseInfo.model'
+import { TaxBracketAction } from './enums/taxBracketAction'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -310,11 +313,14 @@ export class SocialInsuranceService {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async getPaymentTypes(user: User): Promise<PaymentTypeOverview[] | null> {
+  async getPaymentTypes(
+    user: User,
+    locale: Locale,
+  ): Promise<PaymentTypeOverview[] | null> {
     const data = await this.paymentTypesOverviewClient
       .getPaymentTypesOverview(user)
       .catch(handle404)
-    return data ? data.map(mapPaymentTypeOverview) : null
+    return data ? data.map((row) => mapPaymentTypeOverview(row, locale)) : null
   }
 
   async getChildBenefits(
@@ -324,5 +330,43 @@ export class SocialInsuranceService {
       .getChildBenefitsInformation(user)
       .catch(handle404)
     return data ? data.map(mapChildBenefitInformation) : null
+  }
+
+  async getTaxBracket(user: User): Promise<TaxBracketAction | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracket(user)
+      .catch(handle404)
+    if (!data?.taxBracket) {
+      return null
+    }
+    return data.taxBracket as TaxBracketAction
+  }
+
+  async setTaxBracket(user: User, taxBracket: TaxBracketAction): Promise<void> {
+    return this.personalTaxCreditClient.setTaxBracket(user, taxBracket)
+  }
+
+  async getSpouseInfo(user: User): Promise<PersonalTaxCreditSpouseInfo | null> {
+    const data = await this.personalTaxCreditClient
+      .getSpouseInfo(user)
+      .catch(handle404)
+    if (!data?.nationalId) {
+      return null
+    }
+    return {
+      nationalId: data.nationalId,
+      name: data.name ?? undefined,
+      isDeceased: data.isDeceased ?? undefined,
+    }
+  }
+
+  async getTaxBracketAction(user: User): Promise<TaxBracketAction | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracketActions(user)
+      .catch(handle404)
+    if (data == null) {
+      return null
+    }
+    return parseTaxBracketAction(data)
   }
 }

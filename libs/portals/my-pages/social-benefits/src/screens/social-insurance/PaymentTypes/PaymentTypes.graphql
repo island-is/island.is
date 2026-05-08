@@ -1,5 +1,5 @@
-query GetPaymentTypes {
-  socialInsurancePaymentTypes {
+query GetPaymentTypes($locale: String) {
+  socialInsurancePaymentTypes(locale: $locale) {
     name
     dateFrom
     dateTo

@@ -3,8 +3,8 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   PaymentTypesOverviewApi,
-  TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn,
-  TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn,
+  TrWebApiServicesDomainPaymentTypesModelsPaymentTypesOverviewReturn,
+  TrWebApiServicesDomainPaymentTypesModelsBenefitChildrenInformationReturn,
 } from '../../../gen/fetch/v1'
 
 @Injectable()
@@ -21,21 +21,23 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   async getPaymentTypesOverview(
     user: User,
   ): Promise<
-    TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn[] | null
+    TrWebApiServicesDomainPaymentTypesModelsPaymentTypesOverviewReturn[] | null
   > {
     return this.paymentTypesOverviewApiWithAuth(user)
-      .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet({})
+      .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet()
+      .then((result) => result?.paymentOverview ?? null)
       .catch(handle404)
   }
 
   async getChildBenefitsInformation(
     user: User,
   ): Promise<
-    | TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn[]
+    | TrWebApiServicesDomainPaymentTypesModelsBenefitChildrenInformationReturn[]
     | null
   > {
     return this.paymentTypesOverviewApiWithAuth(user)
-      .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet({})
+      .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet()
+      .then((result) => result?.benefitChildren ?? null)
       .catch(handle404)
   }
 }
