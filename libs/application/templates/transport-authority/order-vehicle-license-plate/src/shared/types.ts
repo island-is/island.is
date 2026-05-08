@@ -3,6 +3,7 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+  regGroup?: string
 }
 
 type VehicleValidationErrorMessage = {
@@ -33,4 +34,16 @@ export type PlateType = {
 export type CurrentVehiclesAndRecords = {
   totalRecords: number
   vehicles: VehiclesCurrentVehicle[]
+}
+
+export type PlateSizeOption = {
+  plateSizeType?: string | null
+  plateHeight?: number | null
+  plateWidth?: number | null
+}
+
+export type PlateOption = {
+  plateType?: string | null
+  plateTypeName?: string | null
+  plateSizes?: PlateSizeOption[] | null
 }

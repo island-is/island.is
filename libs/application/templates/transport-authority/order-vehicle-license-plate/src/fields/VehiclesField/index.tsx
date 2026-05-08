@@ -14,7 +14,7 @@ import {
 import { information, error } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { ApolloQueryResult, useMutation } from '@apollo/client'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
@@ -22,11 +22,32 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { locale } = useLocale()
-  const { setValue } = useFormContext()
+  const { setValue, control } = useFormContext()
   const { application } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
+
+  const selectedVehicleIndex = useWatch({
+    control,
+    name: 'pickVehicle.vehicle',
+  })
+
+  // If the user has 5 or less vehicles,
+  // we will automatically set the regGroup for validation.
+  useEffect(() => {
+    if (
+      currentVehicleList.totalRecords <= 5 &&
+      selectedVehicleIndex !== undefined &&
+      selectedVehicleIndex !== ''
+    ) {
+      const vehicle =
+        currentVehicleList?.vehicles?.[parseInt(selectedVehicleIndex, 10)]
+      if (vehicle?.regGroup) {
+        setValue('plateType.regGroup', vehicle.regGroup)
+      }
+    }
+  }, [selectedVehicleIndex, currentVehicleList, setValue])
 
   const getVehicleDetails = useLazyVehicleDetails()
   const createGetVehicleDetailsWrapper = (
@@ -37,7 +58,12 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     return async (plate: string) => {
       const variables = { permno: plate }
       const result = await getVehicleDetailsFunction(variables)
-      return result.data.vehiclePlateOrderChecksByPermno // Adjust based on your query
+      const data = result.data.vehiclePlateOrderChecksByPermno
+      setValue(
+        'plateType.regGroup',
+        data?.basicVehicleInformation?.regGroup || '',
+      )
+      return data
     }
   }
 
