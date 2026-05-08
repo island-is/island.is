@@ -355,7 +355,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               notificationTemplateId:
                 NotificationConfig[NotificationType.AccidentNotificationPruned]
                   .templateId,
-              ...(nationalId && { internalBody: nationalId }),
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
             }
           }),
           onEntry: defineTemplateApi({
