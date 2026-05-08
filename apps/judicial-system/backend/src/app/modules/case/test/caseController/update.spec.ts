@@ -219,6 +219,7 @@ describe('CaseController - Update', () => {
         defendantId1,
         user,
         transaction,
+        undefined,
       )
 
       expect(
@@ -230,6 +231,7 @@ describe('CaseController - Update', () => {
         defendantId2,
         user,
         transaction,
+        undefined,
       )
     })
   })
