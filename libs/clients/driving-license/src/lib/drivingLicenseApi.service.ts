@@ -9,6 +9,7 @@ import * as v4 from '../v4'
 import * as v5 from '../v5'
 import {
   CanApplyErrorCodeBTemporary,
+  CanApplyErrorCodeRenewal65,
   DriversLicense,
   QualitySignature,
   QualityPhotoAndSignature,
@@ -379,7 +380,7 @@ export class DrivingLicenseApi {
 
   public async getCanApplyForRenewal65(params: {
     token: string
-  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeRenewal65>> {
     const response =
       await this.applicationV5.apiApplicationsV5CanapplyRenewal65Get({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -389,9 +390,7 @@ export class DrivingLicenseApi {
 
     return {
       result: !!response.result,
-      errorCode: response.errorCode
-        ? (response.errorCode as CanApplyErrorCodeBFull)
-        : undefined,
+      errorCode: response.errorCode ?? undefined,
     }
   }
 

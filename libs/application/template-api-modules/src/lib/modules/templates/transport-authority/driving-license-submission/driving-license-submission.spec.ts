@@ -224,7 +224,7 @@ describe('DrivingLicenseSubmissionService', () => {
       ).rejects.toMatchObject({
         problem: {
           errorReason: {
-            summary: expect.stringContaining('Health certificate is required'),
+            summary: expect.stringContaining('Læknisvottorð vantar'),
           },
           status: 400,
         },

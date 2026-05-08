@@ -356,8 +356,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.failedDataProviderSubmit,
+            // TODO(Tinna/Fanney): confirm final Icelandic wording before merge
             summary:
-              'Health certificate is required but no valid files were found',
+              'Læknisvottorð vantar — vinsamlegast hladið upp gildu skjali áður en umsókninni er skilað.',
           },
           400,
         )
@@ -532,8 +533,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.failedDataProviderSubmit,
+              // TODO(Tinna/Fanney): confirm final Icelandic wording before merge
               summary:
-                'Health certificate is required but no valid files were found',
+                'Læknisvottorð vantar — vinsamlegast hladið upp gildu skjali áður en umsókninni er skilað.',
             },
             400,
           )
