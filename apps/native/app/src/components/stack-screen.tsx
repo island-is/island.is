@@ -20,11 +20,11 @@ export type StackScreenOptions = Omit<
   'unstable_headerLeftItems' | 'unstable_headerRightItems'
 > & {
   headerRightItems?:
-    | NativeStackHeaderItem[]
-    | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
+  | NativeStackHeaderItem[]
+  | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
   headerLeftItems?:
-    | NativeStackHeaderItem[]
-    | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
+  | NativeStackHeaderItem[]
+  | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
 }
 
 export type StackScreenProps = {
@@ -89,13 +89,6 @@ export function StackScreen({
   options,
   closeable,
 }: StackScreenProps) {
-  const leftAlignSpacing = useMemo(() => {
-    const title = options?.title
-    if (typeof title === 'string') {
-      return title.length < 24
-    }
-    return false
-  }, [options?.title])
   const headerLeftItems = useCallback(
     (props?: NativeStackHeaderItemProps) => {
       const currentLeftItems =
@@ -111,13 +104,6 @@ export function StackScreen({
         callbackOrValue(options?.headerRightItems, props) || []
 
       const result = [
-        leftAlignSpacing
-          ? {
-              type: 'custom',
-              element: <View style={{ width: 30 }} />,
-              hidesSharedBackground: true,
-            }
-          : undefined,
         navbarOfflineItem(networkStatus),
         ...currentRightItems,
         closeable && Platform.OS === 'ios' ? navbarCloseItem() : undefined,
@@ -125,7 +111,7 @@ export function StackScreen({
 
       return result
     },
-    [options?.headerRightItems, networkStatus, closeable, leftAlignSpacing],
+    [options?.headerRightItems, networkStatus, closeable],
   )
 
   // Android doesn't support dynamic header items, so we need to compute them here.
