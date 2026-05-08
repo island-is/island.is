@@ -1,4 +1,6 @@
-import { getModelToken } from '@nestjs/sequelize'
+import type { Transaction } from 'sequelize'
+
+import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -31,6 +33,8 @@ jest.mock('../../case/internalCase.service.ts')
 jest.mock('../../subpoena/subpoena.service.ts')
 
 export const createTestingPoliceModule = async () => {
+  const transaction = {} as Transaction
+
   const policeModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
@@ -55,14 +59,17 @@ export const createTestingPoliceModule = async () => {
         },
       },
       {
+        provide: getConnectionToken(),
+        useValue: {
+          transaction: jest.fn(async (fn: (transaction: Transaction) => unknown) => {
+            await fn(transaction)
+          }),
+        },
+      },
+      {
         provide: getModelToken(IndictmentSubtype),
         useValue: {
           findOne: jest.fn(),
-          sequelize: {
-            transaction: jest.fn(async (fn: () => Promise<void>) => {
-              await fn()
-            }),
-          },
         },
       },
       {

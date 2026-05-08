@@ -171,6 +171,7 @@ describe('PoliceController - Get police case info', () => {
             policeCaseNumber: '007-2020-000057',
           },
         ]),
+        expect.objectContaining({ transaction: expect.any(Object) }),
       )
     })
   })
@@ -237,14 +238,25 @@ describe('PoliceController - Get police case info', () => {
       ).toHaveBeenCalledTimes(2)
       expect(
         mockIndictmentCountService.createWithPoliceCaseNumber,
-      ).toHaveBeenCalledWith(caseId, '007-2020-000103')
+      ).toHaveBeenCalledWith(
+        caseId,
+        '007-2020-000103',
+        expect.any(Object),
+      )
       expect(
         mockIndictmentCountService.createWithPoliceCaseNumber,
-      ).toHaveBeenCalledWith(caseId, '007-2020-000057')
+      ).toHaveBeenCalledWith(
+        caseId,
+        '007-2020-000057',
+        expect.any(Object),
+      )
     })
 
     it('should auto-fill missing inferred crime scenes and subtypes', () => {
-      expect(mockCaseRepositoryService.findById).toHaveBeenCalledWith(caseId)
+      expect(mockCaseRepositoryService.findById).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({ transaction: expect.any(Object) }),
+      )
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         expect.objectContaining({
@@ -259,6 +271,7 @@ describe('PoliceController - Get police case info', () => {
             },
           }),
         }),
+        expect.objectContaining({ transaction: expect.any(Object) }),
       )
     })
 
