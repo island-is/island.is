@@ -67,7 +67,6 @@ export const featuredCardImage = style({
   objectFit: 'contain',
 })
 
-
 export const featuredCardWithImage = style({})
 
 globalStyle(`${featuredCardWithImage} > *`, {
