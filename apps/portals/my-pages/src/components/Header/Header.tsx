@@ -16,10 +16,20 @@ import { hasNotificationScopes } from '@island.is/auth/scopes'
 import {
   LinkResolver,
   ServicePortalPaths,
+  formatPlausiblePathToParams,
   m,
   useScrollPosition,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
+import {
+  myPagesHeaderDocumentsClick,
+  myPagesHeaderLanguageSwitchClick,
+  myPagesHeaderNotificationsClick,
+  myPagesHeaderOverviewClick,
+  myPagesHeaderSearchIconClick,
+  myPagesHeaderSearchInputInitialized,
+  myPagesHeaderUserMenuClick,
+} from '@island.is/plausible'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   DelegationBanner,
@@ -196,6 +206,16 @@ export const Header = ({
                             whiteMenuBackground
                             hideInput={isMobile}
                             box={{ marginLeft: 'auto' }}
+                            onButtonClick={() =>
+                              myPagesHeaderSearchIconClick(
+                                formatPlausiblePathToParams(location.pathname),
+                              )
+                            }
+                            onInputInitialized={() =>
+                              myPagesHeaderSearchInputInitialized(
+                                formatPlausiblePathToParams(location.pathname),
+                              )
+                            }
                           />
                         </Box>
                       )}
@@ -203,6 +223,11 @@ export const Header = ({
                         <Box marginRight={[1, 1, 2]} position="relative">
                           <LinkResolver
                             href={DocumentsPaths.ElectronicDocumentsRoot}
+                            callback={() =>
+                              myPagesHeaderDocumentsClick(
+                                formatPlausiblePathToParams(location.pathname),
+                              )
+                            }
                           >
                             <Button
                               icon="mail"
@@ -225,9 +250,22 @@ export const Header = ({
                         setMenuState={(val: MenuTypes) => setMenuOpen(val)}
                         showMenu={menuOpen === 'notifications'}
                         disabled={!hasNotificationsDelegationAccess}
+                        onButtonClick={() =>
+                          myPagesHeaderNotificationsClick(
+                            formatPlausiblePathToParams(location.pathname),
+                          )
+                        }
                       />
 
-                      {user && <UserLanguageSwitcher />}
+                      {user && (
+                        <UserLanguageSwitcher
+                          onButtonClick={() =>
+                            myPagesHeaderLanguageSwitchClick(
+                              formatPlausiblePathToParams(location.pathname),
+                            )
+                          }
+                        />
+                      )}
 
                       <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button
@@ -237,6 +275,9 @@ export const Header = ({
                             menuOpen === 'side' && isMobile ? 'close' : 'dots'
                           }
                           onClick={() => {
+                            myPagesHeaderOverviewClick(
+                              formatPlausiblePathToParams(location.pathname),
+                            )
                             menuOpen === 'side' && isMobile
                               ? setMenuOpen(undefined)
                               : setMenuOpen('side')
@@ -273,6 +314,11 @@ export const Header = ({
                         iconOnlyMobile
                         showLanguageSwitcher={false}
                         userMenuOpen={menuOpen === 'user'}
+                        onButtonClick={() =>
+                          myPagesHeaderUserMenuClick(
+                            formatPlausiblePathToParams(location.pathname),
+                          )
+                        }
                       />
                     </Box>
                   </Box>

@@ -3,6 +3,7 @@ import { Box, Breadcrumbs, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import cn from 'classnames'
 import { useContext, useState } from 'react'
+import { useLocation } from 'react-router'
 import { ControlContext } from '../../context/ControlContext'
 import { FormSystemPaths } from '../../lib/paths'
 import { FormHeader } from '../../screens/Form/FormHeader'
@@ -15,7 +16,7 @@ export const FormLayout = () => {
   const { control } = useContext(ControlContext)
   const { name } = control.form
   const [mobileNavOpen, setMobileNavOpen] = useState(true)
-
+  const location = useLocation()
   return (
     <>
       <Box marginBottom={4}>
@@ -24,7 +25,7 @@ export const FormLayout = () => {
             { title: 'Ísland.is', href: '/stjornbord' },
             {
               title: formatMessage(m.rootName),
-              href: `/stjornbord${FormSystemPaths.FormSystemRoot}`,
+              href: `/stjornbord${FormSystemPaths.FormSystemRoot}${location.search}`,
             },
             {
               title: name[lang] ?? '',

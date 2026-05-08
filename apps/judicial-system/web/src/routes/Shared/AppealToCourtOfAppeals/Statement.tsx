@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -52,7 +53,9 @@ const Statement = () => {
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
+  const { id, rulingFileId: rulingFileIdQuery } = router.query
+  const rulingFileId =
+    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -75,7 +78,17 @@ const Statement = () => {
     workingCase.id,
     defendantId,
     civilClaimantId,
+    rulingFileId,
   )
+
+  // Statement events target the specific appeal-case row. For ruling-order
+  // appeals, look up the matching row by rulingFileId; otherwise use the
+  // case-level appeal.
+  const targetAppealCaseId = rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (a) => a.rulingFileId === rulingFileId,
+      )?.id
+    : workingCase.appealCase?.id
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -91,7 +104,9 @@ const Statement = () => {
         ? constants.DEFENDER_INDICTMENT_ROUTE
         : constants.DEFENDER_ROUTE
       : isIndictmentCase(workingCase.type)
-      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      ? isCompletedCase(workingCase.state)
+        ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+        : constants.INDICTMENTS_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
@@ -105,13 +120,13 @@ const Statement = () => {
       return
     }
 
-    if (!workingCase.appealCase?.id) {
+    if (!targetAppealCaseId) {
       return
     }
 
     const sent = await createAppealEventLog(
       workingCase.id,
-      workingCase.appealCase.id,
+      targetAppealCaseId,
       AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
@@ -123,7 +138,7 @@ const Statement = () => {
     createAppealEventLog,
     updateUploadFile,
     uploadFiles,
-    workingCase.appealCase?.id,
+    targetAppealCaseId,
     workingCase.id,
   ])
 
@@ -141,11 +156,18 @@ const Statement = () => {
       status: FileUploadStatus.done,
       defendantId,
       civilClaimantId,
+      rulingFileId,
     })
   }
 
   const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
-    return isMatchingAppealCaseFile(workingCase, [category], file, user)
+    return isMatchingAppealCaseFile(
+      workingCase,
+      [category],
+      file,
+      user,
+      rulingFileId,
+    )
   }
   const appealStatementFiles = uploadFiles.filter((file) =>
     filter(file, appealStatementType),
@@ -238,7 +260,9 @@ const Statement = () => {
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
           nextIsDisabled={
-            appealStatementFiles.length === 0 || isCreatingAppealEventLog
+            !targetAppealCaseId ||
+            appealStatementFiles.length === 0 ||
+            isCreatingAppealEventLog
           }
           nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
           nextButtonIcon={undefined}

@@ -50,7 +50,7 @@ export const CardWithFeaturedItems = ({
         <Box height="full">
           {limitedFeaturedItems.length > 0 && (
             <Hidden below="sm">
-              <FeaturedItemTags featuredItems={limitedFeaturedItems} />
+              <FeaturedItemTags featuredItems={limitedFeaturedItems} truncate />
             </Hidden>
           )}
         </Box>
