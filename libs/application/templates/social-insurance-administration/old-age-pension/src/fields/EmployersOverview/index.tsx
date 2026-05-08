@@ -75,7 +75,13 @@ const EmployersOverview: FC<RepeaterProps> = ({
     if (nonEmptyEmployers.length !== rawEmployers.length) {
       setRepeaterItems(nonEmptyEmployers)
     }
-  }, [application.id, expandRepeater, employers, rawEmployers, setRepeaterItems])
+  }, [
+    application.id,
+    expandRepeater,
+    employers,
+    rawEmployers,
+    setRepeaterItems,
+  ])
 
   setBeforeSubmitCallback?.(async () => {
     if (
