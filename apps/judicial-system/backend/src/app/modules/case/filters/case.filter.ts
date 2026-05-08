@@ -178,14 +178,6 @@ const canAppealsCourtUserAccessAppealedCase = (
   return true
 }
 
-const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
-  if (!theCase.appealCase) {
-    return false
-  }
-
-  return canAppealsCourtUserAccessAppealedCase(theCase.appealCase)
-}
-
 const canAppealsCourtUserAccessCaseAppealCase = (theCase: Case): boolean => {
   if (!theCase.appealCase) {
     return false
@@ -204,6 +196,10 @@ const canAppealsCourtUserAccessCaseRulingOrderAppealCase = (
   return theCase.rulingOrderAppealCases.some((rulingOrderAppealCase) =>
     canAppealsCourtUserAccessAppealedCase(rulingOrderAppealCase),
   )
+}
+
+const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
+  return canAppealsCourtUserAccessCaseAppealCase(theCase)
 }
 
 const canAppealsCourtUserAccessIndictmentCase = (theCase: Case): boolean => {

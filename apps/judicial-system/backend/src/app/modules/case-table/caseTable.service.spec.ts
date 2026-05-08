@@ -2,7 +2,13 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import type { User } from '@island.is/judicial-system/types'
-import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
+  CaseTableType,
+  CaseType,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { CaseRepositoryService } from '../repository'
 import { CaseTableService } from './caseTable.service'
@@ -12,6 +18,13 @@ const prosecutionUser = (id: string): User =>
     id,
     role: UserRole.PROSECUTOR,
     institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
+  } as User)
+
+const courtOfAppealsUser = (id: string): User =>
+  ({
+    id,
+    role: UserRole.COURT_OF_APPEALS_JUDGE,
+    institution: { type: InstitutionType.COURT_OF_APPEALS },
   } as User)
 
 describe('CaseTableService', () => {
@@ -182,6 +195,126 @@ describe('CaseTableService', () => {
       )
 
       expect(result).toEqual([expect.any(String)])
+    })
+  })
+
+  describe('getCaseTableRows for Court of Appeals', () => {
+    const buildAppeal = (
+      id: string,
+      appealCaseNumber: string,
+      rulingFileId: string | null,
+    ) => ({
+      id,
+      rulingFileId,
+      appealState: AppealCaseState.RECEIVED,
+      appealRulingDecision: null,
+      appealCaseNumber,
+      appealReceivedByCourtDate: null,
+      appealJudge1: { name: 'Anna Judge' },
+    })
+
+    const buildCase = (
+      appealCase: ReturnType<typeof buildAppeal> | null,
+      rulingOrderAppealCases: ReturnType<typeof buildAppeal>[],
+    ) => {
+      const fields = {
+        id: 'case-1',
+        type: CaseType.INDICTMENT,
+        decision: null,
+        parentCaseId: null,
+        policeCaseNumbers: ['001-2026'],
+        courtCaseNumber: null,
+        court: { name: 'Héraðsdómur Reykjavíkur' },
+        defendants: [],
+        appealCase,
+        rulingOrderAppealCases,
+      }
+
+      return {
+        ...fields,
+        toJSON: () => fields,
+      }
+    }
+
+    it('emits one row per qualifying appeal — case-level + each ruling-order — with the correct appealCaseId per row', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const caseLevel = buildAppeal('appeal-case-level', '1/2026', null)
+      const rulingOrder1 = buildAppeal('appeal-ro-1', '2/2026', 'rf-1')
+      const rulingOrder2 = buildAppeal('appeal-ro-2', '3/2026', 'rf-2')
+
+      mockFindAll.mockResolvedValue([
+        buildCase(caseLevel, [rulingOrder1, rulingOrder2]),
+      ])
+
+      const result = await service.getCaseTableRows(
+        CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
+        user,
+      )
+
+      expect(result.rowCount).toBe(3)
+      expect(result.rows.map((r) => r.caseId)).toEqual([
+        'case-1',
+        'case-1',
+        'case-1',
+      ])
+      expect(result.rows.map((r) => r.appealCaseId)).toEqual([
+        'appeal-case-level',
+        'appeal-ro-1',
+        'appeal-ro-2',
+      ])
+    })
+
+    it('cell values reflect the appeal on each row, not always the case-level one', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const caseLevel = buildAppeal('appeal-case-level', '1/2026', null)
+      const rulingOrder = buildAppeal('appeal-ro-1', '2/2026', 'rf-1')
+
+      mockFindAll.mockResolvedValue([buildCase(caseLevel, [rulingOrder])])
+
+      const result = await service.getCaseTableRows(
+        CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
+        user,
+      )
+
+      const caseNumberCellIndex = 0 // first column in COA in-progress table
+      const caseLevelCell = result.rows[0].cells[caseNumberCellIndex]
+        .value as { strList: string[] }
+      const rulingOrderCell = result.rows[1].cells[caseNumberCellIndex]
+        .value as { strList: string[] }
+
+      // The appealCaseNumber is the first entry of strList in the caseNumber cell
+      expect(caseLevelCell.strList[0]).toBe('1/2026')
+      expect(rulingOrderCell.strList[0]).toBe('2/2026')
+    })
+
+    it('emits only ruling-order rows when no case-level appeal qualifies', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const rulingOrder1 = buildAppeal('appeal-ro-1', '2/2026', 'rf-1')
+
+      mockFindAll.mockResolvedValue([buildCase(null, [rulingOrder1])])
+
+      const result = await service.getCaseTableRows(
+        CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
+        user,
+      )
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-ro-1')
+    })
+
+    it('emits only the case-level row when there are no ruling-order appeals', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const caseLevel = buildAppeal('appeal-case-level', '1/2026', null)
+
+      mockFindAll.mockResolvedValue([buildCase(caseLevel, [])])
+
+      const result = await service.getCaseTableRows(
+        CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
+        user,
+      )
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-case-level')
     })
   })
 })
