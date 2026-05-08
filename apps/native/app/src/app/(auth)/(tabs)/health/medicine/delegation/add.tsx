@@ -15,7 +15,7 @@ import {
   DatePickerInput,
   Tag,
   TextField,
-  Typography
+  Typography,
 } from '@/ui'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
@@ -337,7 +337,6 @@ export default function MedicineDelegationFormScreen() {
             />
           </Actions>
         </View>
-
       </FormContainer>
     </Content>
   )
