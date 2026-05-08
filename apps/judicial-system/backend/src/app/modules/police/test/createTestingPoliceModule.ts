@@ -61,9 +61,11 @@ export const createTestingPoliceModule = async () => {
       {
         provide: getConnectionToken(),
         useValue: {
-          transaction: jest.fn(async (fn: (transaction: Transaction) => unknown) => {
-            await fn(transaction)
-          }),
+          transaction: jest.fn(
+            async (fn: (transaction: Transaction) => unknown) => {
+              await fn(transaction)
+            },
+          ),
         },
       },
       {

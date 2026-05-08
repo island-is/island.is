@@ -211,7 +211,9 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
         ...new Set(insertedLinks.map((link) => link.policeCaseNumber)),
       ]
 
-      const policeCaseNumbers = [...new Set(links.map((l) => l.policeCaseNumber))]
+      const policeCaseNumbers = [
+        ...new Set(links.map((l) => l.policeCaseNumber)),
+      ]
 
       await this.model.destroy({
         where: {

@@ -217,10 +217,14 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
         { policeCaseNumber: '007-2' },
       ])
 
-      const result = await service.assignDefendantPoliceCaseNumbers('case-1', [
-        { defendantId: 'def-a', policeCaseNumber: '007-1' },
-        { defendantId: 'def-b', policeCaseNumber: '007-2' },
-      ], { transaction })
+      const result = await service.assignDefendantPoliceCaseNumbers(
+        'case-1',
+        [
+          { defendantId: 'def-a', policeCaseNumber: '007-1' },
+          { defendantId: 'def-b', policeCaseNumber: '007-2' },
+        ],
+        { transaction },
+      )
 
       expect(result).toEqual(['007-1', '007-2'])
       expect(mockModel.bulkCreate).toHaveBeenCalledWith(
