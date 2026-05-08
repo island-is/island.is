@@ -2,6 +2,7 @@ import { m } from '@island.is/form-system/ui'
 import { Box, Select } from '@island.is/island-ui/core'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
+import { useSearchParams } from 'react-router-dom'
 import { FormsContext } from '../context/FormsContext'
 
 export const OrganizationSelect = () => {
@@ -12,6 +13,8 @@ export const OrganizationSelect = () => {
     setOrganizationNationalId,
     handleOrganizationChange,
   } = useContext(FormsContext)
+
+  const [, setSearchParams] = useSearchParams()
 
   const sortedOrganizations = useMemo(
     () =>
@@ -35,8 +38,8 @@ export const OrganizationSelect = () => {
         )}
         onChange={async (selected) => {
           if (selected && handleOrganizationChange) {
-            setOrganizationNationalId(selected.value)
             handleOrganizationChange({ value: selected.value })
+            setSearchParams({ organizationNationalId: selected.value })
           }
         }}
       />

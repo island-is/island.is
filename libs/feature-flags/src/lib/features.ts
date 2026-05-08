@@ -190,6 +190,8 @@ export enum Features {
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+
+  organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }
 
 export enum ServerSideFeature {
