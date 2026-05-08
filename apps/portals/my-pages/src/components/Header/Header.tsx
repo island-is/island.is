@@ -15,10 +15,12 @@ import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/con
 import { hasNotificationScopes } from '@island.is/auth/scopes'
 import {
   ServicePortalPaths,
+  formatPlausiblePathToParams,
   m,
   useScrollPosition,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
+import { myPagesHeaderDocumentsClick } from '@island.is/plausible'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   DelegationBanner,
@@ -226,6 +228,11 @@ export const Header = ({
                             size="small"
                             variant="utility"
                             aria-label={formatMessage(m.openDocuments)}
+                            onClick={() =>
+                              myPagesHeaderDocumentsClick(
+                                formatPlausiblePathToParams(location.pathname),
+                              )
+                            }
                           />
                         </Box>
                       </Hidden>
