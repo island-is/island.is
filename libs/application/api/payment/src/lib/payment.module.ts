@@ -26,9 +26,8 @@ import { PaymentCallbackService } from './payment-callback.service'
       isGlobal: true,
       load: [XRoadConfig, ChargeFjsV2ClientConfig],
     }),
-    PaymentCallbackService,
   ],
-  providers: [PaymentService],
+  providers: [PaymentService, PaymentCallbackService],
   exports: [PaymentService],
   controllers: [PaymentController, PaymentCallbackController],
 })
