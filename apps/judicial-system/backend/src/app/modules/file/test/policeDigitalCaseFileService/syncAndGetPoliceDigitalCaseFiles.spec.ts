@@ -13,6 +13,7 @@ import { AwsS3Service } from '../../../aws-s3'
 import { PoliceService } from '../../../police/police.service'
 import {
   CaseFile,
+  CourtDocumentRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
 } from '../../../repository'
 import { PoliceDigitalCaseFileService } from '../../policeDigitalCaseFiles/policeDigitalCaseFile.service'
@@ -41,6 +42,7 @@ const makeStoredPoliceDigitalCaseFile = () => ({
 
 describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () => {
   let policeDigitalCaseFileRepositoryService: jest.Mocked<PoliceDigitalCaseFileRepositoryService>
+  let courtDocumentRepositoryService: jest.Mocked<CourtDocumentRepositoryService>
   let policeService: jest.Mocked<PoliceService>
   let awsS3Service: jest.Mocked<AwsS3Service>
   let caseFileModel: {
@@ -60,6 +62,10 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService = {
       getAllPoliceSystemDigitalCaseFiles: jest.fn(),
     } as unknown as jest.Mocked<PoliceService>
+
+    courtDocumentRepositoryService = {
+      create: jest.fn(),
+    } as unknown as jest.Mocked<CourtDocumentRepositoryService>
 
     awsS3Service = {
       putObject: jest.fn(),
@@ -81,6 +87,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
 
     service = new PoliceDigitalCaseFileService(
       policeDigitalCaseFileRepositoryService,
+      courtDocumentRepositoryService,
       policeService,
       awsS3Service,
       caseFileModel as unknown as typeof CaseFile,
@@ -110,6 +117,8 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       CaseType.INDICTMENT,
       CaseState.DRAFT,
       undefined,
+      true,
+      'Prosecutor Name',
       [policeCaseNumber],
       { nationalId: '0000000000' } as User,
     )
@@ -119,6 +128,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     )
     expect(caseFileModel.findOne).not.toHaveBeenCalled()
     expect(caseFileModel.create).not.toHaveBeenCalled()
+    expect(courtDocumentRepositoryService.create).not.toHaveBeenCalled()
     expect(awsS3Service.putObject).not.toHaveBeenCalled()
   })
 
@@ -138,7 +148,11 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       makeStoredPoliceDigitalCaseFile() as never,
     )
     caseFileModel.findOne.mockResolvedValueOnce(null)
-    caseFileModel.create.mockResolvedValueOnce({ id: 'metadata-file-1' })
+    caseFileModel.create.mockResolvedValueOnce({
+      id: 'metadata-file-1',
+      userGeneratedFilename: 'digital-file-name',
+      name: 'digital-file-name.pdf',
+    })
     awsS3Service.putObject.mockResolvedValueOnce('ok')
 
     await service.syncAndGetPoliceDigitalCaseFiles(
@@ -146,6 +160,8 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       CaseType.INDICTMENT,
       CaseState.SUBMITTED,
       'R-2026-1234',
+      true,
+      'Prosecutor Name',
       [policeCaseNumber],
       { nationalId: '0000000000' } as User,
     )
@@ -156,6 +172,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     expect(createDigitalCaseFileMetadataPdfSpy).toHaveBeenCalledTimes(1)
     expect(caseFileModel.findOne).toHaveBeenCalledTimes(1)
     expect(caseFileModel.create).toHaveBeenCalledTimes(1)
+    expect(courtDocumentRepositoryService.create).toHaveBeenCalledTimes(1)
     expect(awsS3Service.putObject).toHaveBeenCalledTimes(1)
   })
 
@@ -176,6 +193,8 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       CaseType.CUSTODY,
       CaseState.SUBMITTED,
       'R-2026-1234',
+      true,
+      'Prosecutor Name',
       [policeCaseNumber],
       { nationalId: '0000000000' } as User,
     )
@@ -185,6 +204,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     )
     expect(caseFileModel.findOne).not.toHaveBeenCalled()
     expect(caseFileModel.create).not.toHaveBeenCalled()
+    expect(courtDocumentRepositoryService.create).not.toHaveBeenCalled()
     expect(awsS3Service.putObject).not.toHaveBeenCalled()
   })
 })

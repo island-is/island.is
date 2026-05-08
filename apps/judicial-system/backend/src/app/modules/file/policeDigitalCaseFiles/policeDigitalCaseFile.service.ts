@@ -10,8 +10,9 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseFileState,
-  type CaseState,
+  CaseState,
   CaseType,
+  CourtDocumentType,
   hasIndictmentCaseBeenSubmittedToCourt,
   type User,
 } from '@island.is/judicial-system/types'
@@ -22,6 +23,7 @@ import { PoliceSystemDigitalCaseFile } from '../../police/models/PoliceSystemDig
 import { PoliceService } from '../../police/police.service'
 import {
   CaseFile,
+  CourtDocumentRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
 } from '../../repository'
 import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
@@ -32,6 +34,7 @@ import { getFilesToCreate } from './getFilesToCreate'
 export class PoliceDigitalCaseFileService {
   constructor(
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly policeService: PoliceService,
     private readonly awsS3Service: AwsS3Service,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
@@ -42,6 +45,9 @@ export class PoliceDigitalCaseFileService {
   private async createMetadataCaseFile(
     caseId: string,
     caseType: CaseType,
+    caseState: CaseState,
+    withCourtSessions: boolean,
+    submittedBy: string | undefined,
     file: PoliceSystemDigitalCaseFile,
     transaction: Transaction,
   ): Promise<void> {
@@ -55,6 +61,18 @@ export class PoliceDigitalCaseFileService {
     }
 
     try {
+      this.logger.debug(
+        `Creating metadata case file for digital case file ${file.id} in case ${caseId}`,
+        {
+          caseId,
+          policeDigitalFileId: file.id,
+          policeCaseNumber: file.policeCaseNumber,
+          policeExternalVendorId: file.policeExternalVendorId,
+          displayDate: file.displayDate,
+          metadataFileName: file.name,
+        },
+      )
+
       const pdfBuffer = await createDigitalCaseFileMetadataPdf({
         name: file.name,
         policeDigitalFileId: file.id,
@@ -65,7 +83,7 @@ export class PoliceDigitalCaseFileService {
       const fileId = uuid()
       const key = `${caseId}/${fileId}/${file.name}.pdf`
 
-      await this.caseFileModel.create(
+      const metadataCaseFile = await this.caseFileModel.create(
         {
           id: fileId,
           caseId,
@@ -79,11 +97,38 @@ export class PoliceDigitalCaseFileService {
           policeFileId: file.id,
           displayDate: file.displayDate,
           userGeneratedFilename: file.name,
+          submittedBy,
         },
         { transaction },
       )
 
+      if (
+        [CaseState.SUBMITTED, CaseState.RECEIVED].includes(caseState) &&
+        withCourtSessions
+      ) {
+        await this.courtDocumentRepositoryService.create(
+          caseId,
+          {
+            documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+            name:
+              metadataCaseFile.userGeneratedFilename ?? metadataCaseFile.name,
+            caseFileId: metadataCaseFile.id,
+          },
+          { transaction },
+        )
+      }
+
       await this.awsS3Service.putObject(caseType, key, pdfBuffer)
+
+      this.logger.debug(
+        `Successfully created metadata case file for digital case file ${file.id} in case ${caseId}`,
+        {
+          caseId,
+          policeDigitalFileId: file.id,
+          metadataCaseFileId: fileId,
+          s3Key: key,
+        },
+      )
     } catch (error) {
       this.logger.error(
         `Failed to create metadata case file for digital case file ${file.id} in case ${caseId}`,
@@ -99,6 +144,8 @@ export class PoliceDigitalCaseFileService {
     caseType: CaseType,
     caseState: CaseState,
     courtCaseNumber: string | null | undefined,
+    withCourtSessions: boolean,
+    submittedBy: string | undefined,
     policeCaseNumbers: string[],
     user: User,
   ): Promise<PoliceDigitalCaseFileSyncResult[]> {
@@ -158,7 +205,15 @@ export class PoliceDigitalCaseFileService {
         if (shouldCreateMetadataCaseFiles) {
           await Promise.all(
             filesToCreate.map((f) =>
-              this.createMetadataCaseFile(caseId, caseType, f, transaction),
+              this.createMetadataCaseFile(
+                caseId,
+                caseType,
+                caseState,
+                withCourtSessions,
+                submittedBy,
+                f,
+                transaction,
+              ),
             ),
           )
         }

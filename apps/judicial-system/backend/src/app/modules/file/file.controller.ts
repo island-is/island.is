@@ -469,6 +469,8 @@ export class FileController {
       theCase.type,
       theCase.state,
       theCase.courtCaseNumber,
+      theCase.withCourtSessions,
+      theCase.prosecutor?.name,
       theCase.policeCaseNumbers,
       user,
     )
