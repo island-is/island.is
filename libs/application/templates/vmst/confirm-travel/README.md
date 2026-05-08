@@ -4,7 +4,7 @@ This template for an application was generated with the `nx generate-template co
 
 ## Overview
 
-This application allows unemployment benefit applicants to submit notice of travel to VMST (Unemployment Insurance Fund of Iceland).
+This application allows unemployment benefit applicants to submit notice of travel to VMST (Directorate of Labour).
 
 ## Who Can Use This Template
 

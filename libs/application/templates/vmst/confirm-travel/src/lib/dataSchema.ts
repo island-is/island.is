@@ -26,3 +26,5 @@ export const ConfirmTravelUnemploymentBenefitsSchema = z.object({
 export type ConfirmTravelUnemploymentBenefits = z.TypeOf<
   typeof ConfirmTravelUnemploymentBenefitsSchema
 >
+
+export type DateInAnswers = z.TypeOf<typeof dateSchema>
