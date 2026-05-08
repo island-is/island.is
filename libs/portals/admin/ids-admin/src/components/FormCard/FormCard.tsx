@@ -60,6 +60,12 @@ type FormCardProps<Intent> = {
    * Useful when the form has pending input that must be resolved before submission.
    */
   submitDisabled?: boolean
+  /**
+   * Synchronous gate run on form submission. Return false to block the action;
+   * the parent is then responsible for re-submitting (e.g. via useSubmit) once
+   * any required confirmation has been resolved.
+   */
+  onBeforeSubmit?(formData: FormData): boolean
   headerMarginBottom?: 3 | 5
 }
 
@@ -73,6 +79,7 @@ export const FormCard = <Intent extends string>({
   description,
   customValidation,
   submitDisabled,
+  onBeforeSubmit,
   headerMarginBottom = 5,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
@@ -178,7 +185,20 @@ export const FormCard = <Intent extends string>({
   }, [formData, customValidation])
 
   return (
-    <Form ref={formRef} method="post" onChange={onFormChange}>
+    <Form
+      ref={formRef}
+      method="post"
+      onChange={onFormChange}
+      onSubmit={(e) => {
+        if (onBeforeSubmit && formRef.current) {
+          const submitter = (e.nativeEvent as SubmitEvent).submitter
+          const fd = new FormData(formRef.current, submitter)
+          if (!onBeforeSubmit(fd)) {
+            e.preventDefault()
+          }
+        }
+      }}
+    >
       <Box
         padding={4}
         borderRadius="large"

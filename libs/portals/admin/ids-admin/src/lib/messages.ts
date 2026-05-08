@@ -126,6 +126,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
   },
+  save: {
+    id: 'ap.ids-admin:save',
+    defaultMessage: 'Save',
+  },
   edit: {
     id: 'ap.ids-admin:edit',
     defaultMessage: 'Edit',
@@ -146,6 +150,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:description-info',
     defaultMessage:
       'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this permission gives access to.',
+  },
+  descriptionChangeWarningTitle: {
+    id: 'ap.ids-admin:description-change-warning-title',
+    defaultMessage: 'Are you sure you want to change the description?',
+  },
+  descriptionChangeWarningMessage: {
+    id: 'ap.ids-admin:description-change-warning-message',
+    defaultMessage:
+      'Users may have already granted active delegations based on the current description. Changing it now retroactively alters what those delegations appear to authorize, which can mislead the people who granted them. Only proceed if you are sure the new wording still accurately reflects what the permission allows.',
   },
   clientId: {
     id: 'ap.ids-admin:clientId',
