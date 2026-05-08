@@ -256,7 +256,9 @@ export const Table = <TData extends object>({
     )
   }
 
-  const hasSortableColumns = table.getAllColumns().some((col) => col.getCanSort())
+  const hasSortableColumns = table
+    .getAllColumns()
+    .some((col) => col.getCanSort())
 
   return (
     <T.Table>
@@ -385,9 +387,7 @@ export const Table = <TData extends object>({
                           type="button"
                           variant="primary"
                           aria-labelledby={
-                            mobileTitleKey
-                              ? `row-title-${row.id}`
-                              : undefined
+                            mobileTitleKey ? `row-title-${row.id}` : undefined
                           }
                           aria-expanded={isExpanded}
                           aria-controls={`row-expanded-${row.id}`}

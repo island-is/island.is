@@ -287,7 +287,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           </Box>
         )}
       </DialogDisclosure>
-      <Dialog {...dialog} preventBodyScroll={false} aria-label={labelTitle ?? labelOpen}>
+      <Dialog
+        {...dialog}
+        preventBodyScroll={false}
+        aria-label={labelTitle ?? labelOpen}
+      >
         <Box
           background="white"
           position="fixed"
