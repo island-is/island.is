@@ -286,5 +286,117 @@ describe('DrivingLicenseSubmissionService', () => {
         description: 'Laeknisvottord',
       })
     })
+
+    it('short-circuits with fake success when fakeData.useFakeData=yes and submitToRLS unset (default)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          fakeData: { useFakeData: 'yes' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('short-circuits with fake success when fakeData.useFakeData=yes and submitToRLS=no (explicit default)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          fakeData: { useFakeData: 'yes', submitToRLS: 'no' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('bypasses short-circuit and calls applyForRenewal65 when fakeData.useFakeData=yes and submitToRLS=yes', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+          fakeData: { useFakeData: 'yes', submitToRLS: 'yes' },
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).toHaveBeenCalledTimes(1)
+    })
+
+    it('runs the normal RLS path when fakeData.useFakeData=no even with submitToRLS=yes set', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+          fakeData: { useFakeData: 'no', submitToRLS: 'yes' },
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).toHaveBeenCalledTimes(1)
+    })
   })
 })

@@ -51,6 +51,23 @@ export const sectionFakeData = buildSubSection({
           ],
         }),
         buildRadioField({
+          id: 'fakeData.submitToRLS',
+          title: 'Senda umsóknina samt til RLS?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: YES,
+              label: 'Já — kalla á raunverulegt RLS endapunkt',
+            },
+            {
+              value: NO,
+              label: 'Nei — skila gervisvari án RLS-kalls',
+            },
+          ],
+        }),
+        buildRadioField({
           id: 'fakeData.currentLicense',
           title: 'Núverandi ökuréttindi umsækjanda',
           width: 'half',
@@ -76,7 +93,7 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.qualityPhoto',
-          title: 'Gervimynd eða enga mynd?',
+          title: 'B-full / B-temp / 65+ gamla flæðið: Gervimynd eða enga mynd?',
           width: 'half',
           condition: allowFakeCondition(YES),
           options: [
@@ -108,35 +125,43 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.hasThjodskraPhoto',
-          title: 'BE: Mynd úr Þjóðskrá?',
+          title: 'BE / 65+ endurnýjun: Mynd úr Þjóðskrá?',
           width: 'half',
           condition: allowFakeCondition(YES),
-          defaultValue: YES,
+          defaultValue: 'real',
           options: [
             {
               value: YES,
-              label: 'Já — mynd til staðar',
+              label: 'Já — gervi mynd til staðar',
             },
             {
               value: NO,
-              label: 'Nei — engin mynd',
+              label: 'Nei — gervi engin mynd',
+            },
+            {
+              value: 'real',
+              label: 'Raunveruleg gögn (sækja í Þjóðskrá)',
             },
           ],
         }),
         buildRadioField({
           id: 'fakeData.hasRLSPhoto',
-          title: 'BE: Gæðamynd úr ökuskírteinaskrá (RLS)?',
+          title: 'BE / 65+ endurnýjun: Gæðamynd úr ökuskírteinaskrá (RLS)?',
           width: 'half',
           condition: allowFakeCondition(YES),
-          defaultValue: NO,
+          defaultValue: 'real',
           options: [
             {
               value: YES,
-              label: 'Já — gæðamynd til staðar',
+              label: 'Já — gervi gæðamynd til staðar',
             },
             {
               value: NO,
-              label: 'Nei — engin gæðamynd',
+              label: 'Nei — gervi engin gæðamynd',
+            },
+            {
+              value: 'real',
+              label: 'Raunveruleg gögn (sækja í RLS)',
             },
           ],
         }),

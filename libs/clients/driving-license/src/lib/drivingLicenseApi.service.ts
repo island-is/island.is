@@ -361,14 +361,13 @@ export class DrivingLicenseApi {
     category: string
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
-    const response = await this.v5.apiDrivinglicenseV5CanapplyforCategoryFullGet(
-      {
+    const response =
+      await this.v5.apiDrivinglicenseV5CanapplyforCategoryFullGet({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         category: params.category,
         jwttoken: params.token,
-      },
-    )
+      })
 
     return {
       result: !!response.result,
@@ -381,13 +380,12 @@ export class DrivingLicenseApi {
   public async getCanApplyForRenewal65(params: {
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
-    const response = await this.applicationV5.apiApplicationsV5CanapplyRenewal65Get(
-      {
+    const response =
+      await this.applicationV5.apiApplicationsV5CanapplyRenewal65Get({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token,
-      },
-    )
+        jwttoken: params.token.replace('Bearer ', ''),
+      })
 
     return {
       result: !!response.result,
@@ -441,8 +439,8 @@ export class DrivingLicenseApi {
     auth: string
   }) {
     try {
-      const response = await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost(
-        {
+      const response =
+        await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost({
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
           modelsV5PostTemporaryLicense: {
@@ -455,8 +453,7 @@ export class DrivingLicenseApi {
             gsm: params.phone,
             authority: params.jurisdictionId,
           },
-        },
-      )
+        })
       if (!response.result) {
         throw new Error(
           `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
@@ -490,8 +487,8 @@ export class DrivingLicenseApi {
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
-    const response = await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost(
-      {
+    const response =
+      await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         category: params.category,
@@ -505,8 +502,7 @@ export class DrivingLicenseApi {
           sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
         },
-      },
-    )
+      })
 
     const handledResponse = handleCreateResponse(response)
 
@@ -530,8 +526,8 @@ export class DrivingLicenseApi {
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
   }): Promise<boolean> {
-    const response = await this.applicationV5.apiApplicationsV5ApplyforRenewal65Post(
-      {
+    const response =
+      await this.applicationV5.apiApplicationsV5ApplyforRenewal65Post({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         jwttoken: params.token.replace('Bearer ', ''),
@@ -547,8 +543,7 @@ export class DrivingLicenseApi {
           renewalDate: new Date(),
           userId: v5.DRIVING_LICENSE_API_USER_ID,
         },
-      },
-    )
+      })
 
     return response.result ?? false
   }
@@ -698,13 +693,14 @@ export class DrivingLicenseApi {
     token: string
   }): Promise<QualityPhotoAndSignature | null> {
     try {
-      const res = await this.imageApiV5.apiImagecontrollerV5GetqualityphotoandsignatureGet(
-        {
-          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-          jwttoken: params.token.replace('Bearer ', ''),
-        },
-      )
+      const res =
+        await this.imageApiV5.apiImagecontrollerV5GetqualityphotoandsignatureGet(
+          {
+            apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+            apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+            jwttoken: params.token.replace('Bearer ', ''),
+          },
+        )
 
       return {
         imageId: res.imageId ?? null,
@@ -724,13 +720,12 @@ export class DrivingLicenseApi {
   }
 
   async getHasQualityScannedPhoto(params: { token: string }): Promise<boolean> {
-    const res = await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet(
-      {
+    const res =
+      await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         jwttoken: params.token.replace('Bearer ', ''),
-      },
-    )
+      })
 
     return res > 0
   }
@@ -738,13 +733,14 @@ export class DrivingLicenseApi {
   async getAllPhotosFromThjodskra(params: {
     token: string
   }): Promise<DtoImagesFromThjodskraDto> {
-    const res = await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
-      {
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-      },
-    )
+    const res =
+      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
+        {
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+          jwttoken: params.token.replace('Bearer ', ''),
+        },
+      )
 
     return res
   }

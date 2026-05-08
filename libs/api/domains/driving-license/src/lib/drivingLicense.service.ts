@@ -18,8 +18,6 @@ import {
   NewRenewal65DrivingLicenseInput,
 } from './drivingLicense.type'
 import {
-  CanApplyErrorCodeBFull,
-  CanApplyErrorCodeBTemporary,
   Disqualification,
   DriversLicense,
   DrivingAssessment,
@@ -326,7 +324,7 @@ export class DrivingLicenseService {
   }
 
   private canApplyErrorCodeToRequirementKey(
-    errorCode?: CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+    errorCode?: string,
   ): RequirementKey {
     if (errorCode === undefined) {
       return RequirementKey.deniedByService
@@ -349,6 +347,8 @@ export class DrivingLicenseService {
         return RequirementKey.personNot17YearsOld
       case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
         return RequirementKey.personNotFoundInNationalRegistry
+      case 'PERSON_NOT_REGISTERED_IN_ICELAND':
+        return RequirementKey.localResidency
       default:
         this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
 

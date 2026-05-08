@@ -185,12 +185,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     auth: User,
     application: ApplicationWithAttachments,
   ): Promise<NewDrivingLicenseResult> {
-    // If using fake data, skip calling RLS and pretend submission succeeded
+    // If using fake data, skip calling RLS and pretend submission succeeded.
+    // Opt-in escape hatch: fakeData.submitToRLS = 'yes' bypasses this
+    // short-circuit so devs can still exercise the real RLS submission path
+    // (with whatever fake-derived biometric IDs etc. are in externalData) for
+    // integration testing.
     const useFakeData = getValueViaPath<'yes' | 'no'>(
       answers,
       'fakeData.useFakeData',
     )
-    if (useFakeData === YES) {
+    const fakeDataSubmitToRLS = getValueViaPath<'yes' | 'no'>(
+      answers,
+      'fakeData.submitToRLS',
+    )
+    if (useFakeData === YES && fakeDataSubmitToRLS !== YES) {
       return {
         success: true,
         errorMessage: null,

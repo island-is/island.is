@@ -94,9 +94,44 @@ export const useEligibility = (
     (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled)
 
   if (usingFakeData) {
-    const hasPhoto = usesNewPhotoSelector
-      ? fakeData?.hasThjodskraPhoto === YES || fakeData?.hasRLSPhoto === YES
-      : fakeData?.qualityPhoto === YES
+    let hasPhoto: boolean
+    if (usesNewPhotoSelector) {
+      // When a photo source is set to 'real', the data provider falls through
+      // to RLS, so externalData reflects whatever the logged-in user actually
+      // has. For 'yes' it's faked into externalData; for 'no' it's empty.
+      // In all three cases, reading externalData via the same logic the real
+      // path uses gives us the correct hasPhoto.
+      const thjodskraOrRLSIsReal =
+        fakeData?.hasThjodskraPhoto === 'real' ||
+        fakeData?.hasRLSPhoto === 'real'
+
+      if (thjodskraOrRLSIsReal) {
+        const qualityPhotoAndSignature = getValueViaPath<{
+          imageTypeId?: number | null
+          pohto?: string | null
+        }>(application.externalData, 'qualityPhotoAndSignature.data')
+        const qualityPhotoConfirmed =
+          QUALITY_IMAGE_TYPE_IDS.includes(
+            qualityPhotoAndSignature?.imageTypeId ?? 0,
+          ) && !!qualityPhotoAndSignature?.pohto
+
+        const thjodskraPhotos =
+          getValueViaPath<{
+            images?: Array<{ contentSpecification?: string }>
+          }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
+          []
+        const hasThjodskraFacial = thjodskraPhotos.some(
+          (p) => p.contentSpecification === 'FACIAL',
+        )
+
+        hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
+      } else {
+        hasPhoto =
+          fakeData?.hasThjodskraPhoto === YES || fakeData?.hasRLSPhoto === YES
+      }
+    } else {
+      hasPhoto = fakeData?.qualityPhoto === YES
+    }
     return {
       loading: false,
       eligibility: fakeEligibility(
