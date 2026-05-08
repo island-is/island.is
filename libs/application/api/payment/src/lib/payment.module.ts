@@ -13,6 +13,7 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { XRoadConfig } from '@island.is/nest/config'
 import { ClientsPaymentsModule } from '@island.is/clients/payments'
+import { PaymentCallbackService } from './payment-callback.service'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ClientsPaymentsModule } from '@island.is/clients/payments'
       isGlobal: true,
       load: [XRoadConfig, ChargeFjsV2ClientConfig],
     }),
+    PaymentCallbackService,
   ],
   providers: [PaymentService],
   exports: [PaymentService],
