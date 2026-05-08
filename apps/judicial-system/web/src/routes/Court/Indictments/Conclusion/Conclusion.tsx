@@ -1186,22 +1186,25 @@ const Conclusion: FC = () => {
               text: 'Staðfesta',
               onClick: async () => {
                 setIsSubmittingForSome(true)
-                const pendingFiles = uploadFiles.filter(
-                  (file) =>
-                    file.category === CaseFileCategory.DEFENDANT_RULING &&
-                    !file.key,
-                )
-                if (pendingFiles.length > 0) {
-                  const result = await handleUpload(
-                    pendingFiles,
-                    updateUploadFile,
+                try {
+                  const pendingFiles = uploadFiles.filter(
+                    (file) =>
+                      file.category === CaseFileCategory.DEFENDANT_RULING &&
+                      !file.key,
                   )
-                  if (result === 'NONE_SUCCEEDED') {
-                    setIsSubmittingForSome(false)
-                    return
+                  if (pendingFiles.length > 0) {
+                    const result = await handleUpload(
+                      pendingFiles,
+                      updateUploadFile,
+                    )
+                    if (result === 'NONE_SUCCEEDED') {
+                      return
+                    }
                   }
+                  handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE)
+                } finally {
+                  setIsSubmittingForSome(false)
                 }
-                handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE)
               },
               icon: 'checkmark',
               isLoading: isSubmittingForSome || isUpdatingCase,
