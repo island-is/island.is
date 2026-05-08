@@ -21,12 +21,7 @@ export const FeaturedItemTags = ({
   const items = featuredItems.slice(0, maxItems)
 
   return (
-    <Box
-      marginY={2}
-      className={`${styles.purpleTags}${
-        truncate ? ` ${styles.truncatedTags}` : ''
-      }`}
-    >
+    <Box marginY={2} className={styles.purpleTags}>
       {items.map((item: Featured) => {
         const { thing } = item
         if (!thing?.type || !thing?.slug) {
@@ -35,7 +30,7 @@ export const FeaturedItemTags = ({
         const cardUrl = linkResolver(thing.type as LinkType, [thing.slug])
         return (
           <Box marginBottom={1} key={thing.slug}>
-            <FeaturedTag item={item} cardUrl={cardUrl} />
+            <FeaturedTag item={item} cardUrl={cardUrl} truncate={truncate} />
           </Box>
         )
       })}
@@ -46,9 +41,11 @@ export const FeaturedItemTags = ({
 const FeaturedTag = ({
   item,
   cardUrl,
+  truncate,
 }: {
   item: Featured
   cardUrl: { href: string; as?: string }
+  truncate?: boolean
 }) => {
   const CustomLink = useMemo(
     () =>
@@ -71,6 +68,7 @@ const FeaturedTag = ({
         ? { CustomLink }
         : { href: cardUrl.href })}
       variant="purple"
+      truncate={truncate}
     >
       {item.title}
     </Tag>
