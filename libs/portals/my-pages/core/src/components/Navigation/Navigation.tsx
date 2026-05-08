@@ -629,7 +629,7 @@ export const NavigationTree: FC<
                     id={ariaId}
                     duration={300}
                     height={activeAccordion ? 'auto' : 0}
-                    aria-labelledby={labelId}
+                    aria-labelledby={titleId}
                   >
                     {nextLevelTree}
                   </AnimateHeight>

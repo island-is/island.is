@@ -20,7 +20,6 @@ import {
   useScrollPosition,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
-import { myPagesHeaderDocumentsClick } from '@island.is/plausible'
 import {
   myPagesHeaderDocumentsClick,
   myPagesHeaderLanguageSwitchClick,
@@ -49,15 +48,18 @@ const DocumentsLink = ({
   className,
   children,
   'aria-label': ariaLabel,
+  onClick,
 }: {
   className?: string
   children?: React.ReactNode
   'aria-label'?: string
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>
 }) => (
   <Link
     to={DocumentsPaths.ElectronicDocumentsRoot}
     className={className}
     aria-label={ariaLabel}
+    onClick={onClick}
   >
     {children}
   </Link>

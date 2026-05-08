@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import {
   ColumnDef,
@@ -98,6 +98,8 @@ export const Table = <TData extends object>({
     return [expanderCol, ...providedColumns]
   }, [providedColumns, renderExpandedRow])
 
+  const tableId = useId()
+
   const table = useReactTable<TData>({
     data,
     columns,
@@ -162,7 +164,7 @@ export const Table = <TData extends object>({
                   variant="h4"
                   as="h2"
                   color="blue400"
-                  id={mobileTitleKey ? `row-title-${row.id}` : undefined}
+                  id={mobileTitleKey ? `${tableId}-row-title-${row.id}` : undefined}
                 >
                   {titleCell
                     ? flexRender(
@@ -182,10 +184,10 @@ export const Table = <TData extends object>({
                       type="button"
                       variant="primary"
                       aria-labelledby={
-                        mobileTitleKey ? `row-title-${row.id}` : undefined
+                        mobileTitleKey ? `${tableId}-row-title-${row.id}` : undefined
                       }
                       aria-expanded={isExpanded}
-                      aria-controls={`row-expanded-${row.id}`}
+                      aria-controls={`${tableId}-row-expanded-${row.id}`}
                       onClick={() => {
                         if (isExpanded) {
                           setCollapsingRows((prev) => new Set(prev).add(row.id))
@@ -233,7 +235,7 @@ export const Table = <TData extends object>({
               </Box>
               {renderExpandedRow && (
                 <AnimateHeight
-                  id={`row-expanded-${row.id}`}
+                  id={`${tableId}-row-expanded-${row.id}`}
                   duration={300}
                   height={isExpanded ? 'auto' : 0}
                   onHeightAnimationEnd={(newHeight) => {
@@ -265,7 +267,7 @@ export const Table = <TData extends object>({
       {hasSortableColumns && (
         <caption>
           <span className={helperStyles.srOnly}>
-            {srCaption ?? formatMessage(m.tableCaption)}.{' '}
+            {srCaption ?? formatMessage(m.tableCaption)}{' '}
             {formatMessage(m.tableSortHint)}
           </span>
         </caption>
@@ -387,10 +389,10 @@ export const Table = <TData extends object>({
                           type="button"
                           variant="primary"
                           aria-labelledby={
-                            mobileTitleKey ? `row-title-${row.id}` : undefined
+                            mobileTitleKey ? `${tableId}-row-title-${row.id}` : undefined
                           }
                           aria-expanded={isExpanded}
-                          aria-controls={`row-expanded-${row.id}`}
+                          aria-controls={`${tableId}-row-expanded-${row.id}`}
                           onClick={() => {
                             if (isExpanded) {
                               setCollapsingRows((prev) =>
@@ -419,7 +421,7 @@ export const Table = <TData extends object>({
                         variant="medium"
                         id={
                           mobileTitleKey && cell.column.id === mobileTitleKey
-                            ? `row-title-${row.id}`
+                            ? `${tableId}-row-title-${row.id}`
                             : undefined
                         }
                       >
@@ -446,7 +448,7 @@ export const Table = <TData extends object>({
                     }}
                   >
                     <AnimateHeight
-                      id={`row-expanded-${row.id}`}
+                      id={`${tableId}-row-expanded-${row.id}`}
                       duration={300}
                       height={isExpanded ? 'auto' : 0}
                       onHeightAnimationEnd={(newHeight) => {

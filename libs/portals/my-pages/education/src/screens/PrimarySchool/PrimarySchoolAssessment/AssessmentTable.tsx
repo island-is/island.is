@@ -56,9 +56,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
               size="small"
               icon="download"
               iconType="outline"
-              aria-label={`${formatMessage(psm.downloadResults)}: ${
-                row.original.schoolYear
-              }`}
+              aria-label={`${formatMessage(psm.downloadResults)}${row.original.schoolYear ? `: ${row.original.schoolYear}` : ''}`}
               onClick={() => formSubmit(url)}
             >
               {formatMessage(psm.downloadResults)}
