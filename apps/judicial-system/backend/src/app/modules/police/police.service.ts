@@ -1,6 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
+import { Sequelize, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
@@ -13,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -254,6 +255,7 @@ export class PoliceService {
   private defendantsResponseSchema = z.array(this.defendantSchema)
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentSubtype)
     private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
@@ -1110,55 +1112,63 @@ export class PoliceService {
         )
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
-        const newPoliceCaseNumbers =
-          await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-            caseId,
-            defendantPoliceCaseNumberLinks,
-          )
-
-        if (
-          newPoliceCaseNumbers.length > 0 &&
-          caseType &&
-          isIndictmentCase(caseType)
-        ) {
-          for (const policeCaseNumber of newPoliceCaseNumbers) {
-            await this.indictmentCountService.createWithPoliceCaseNumber(
+        await this.sequelize.transaction(async (transaction: Transaction) => {
+          const newPoliceCaseNumbers =
+            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
               caseId,
-              policeCaseNumber,
+              defendantPoliceCaseNumberLinks,
+              { transaction },
             )
-          }
 
-          const newFills = this.buildAutoFillUpdates(
-            cases,
-            newPoliceCaseNumbers,
-          )
+          if (
+            newPoliceCaseNumbers.length > 0 &&
+            caseType &&
+            isIndictmentCase(caseType)
+          ) {
+            for (const policeCaseNumber of newPoliceCaseNumbers) {
+              await this.indictmentCountService.createWithPoliceCaseNumber(
+                caseId,
+                policeCaseNumber,
+                transaction,
+              )
+            }
 
-          const theCase = await this.caseRepositoryService.findById(caseId)
-          if (theCase) {
-            const updates: {
-              crimeScenes?: CrimeSceneMap
-              indictmentSubtypes?: IndictmentSubtypeMap
-            } = {}
+            const newFills = this.buildAutoFillUpdates(
+              cases,
+              newPoliceCaseNumbers,
+            )
 
-            if (Object.keys(newFills.crimeScenes).length > 0) {
-              updates.crimeScenes = {
-                ...theCase.crimeScenes,
-                ...newFills.crimeScenes,
+            const theCase = await this.caseRepositoryService.findById(caseId, {
+              transaction,
+            })
+            if (theCase) {
+              const updates: {
+                crimeScenes?: CrimeSceneMap
+                indictmentSubtypes?: IndictmentSubtypeMap
+              } = {}
+
+              if (Object.keys(newFills.crimeScenes).length > 0) {
+                updates.crimeScenes = {
+                  ...theCase.crimeScenes,
+                  ...newFills.crimeScenes,
+                }
+              }
+
+              if (Object.keys(newFills.indictmentSubtypes).length > 0) {
+                updates.indictmentSubtypes = {
+                  ...theCase.indictmentSubtypes,
+                  ...newFills.indictmentSubtypes,
+                }
+              }
+
+              if (updates.crimeScenes || updates.indictmentSubtypes) {
+                await this.caseRepositoryService.update(caseId, updates, {
+                  transaction,
+                })
               }
             }
-
-            if (Object.keys(newFills.indictmentSubtypes).length > 0) {
-              updates.indictmentSubtypes = {
-                ...theCase.indictmentSubtypes,
-                ...newFills.indictmentSubtypes,
-              }
-            }
-
-            if (updates.crimeScenes || updates.indictmentSubtypes) {
-              await this.caseRepositoryService.update(caseId, updates)
-            }
           }
-        }
+        })
       }
 
       return cases

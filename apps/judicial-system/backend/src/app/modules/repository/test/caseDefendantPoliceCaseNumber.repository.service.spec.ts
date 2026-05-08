@@ -220,10 +220,9 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       const result = await service.assignDefendantPoliceCaseNumbers('case-1', [
         { defendantId: 'def-a', policeCaseNumber: '007-1' },
         { defendantId: 'def-b', policeCaseNumber: '007-2' },
-      ])
+      ], { transaction })
 
       expect(result).toEqual(['007-1', '007-2'])
-      expect(mockModel.sequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockModel.bulkCreate).toHaveBeenCalledWith(
         [
           { caseId: 'case-1', defendantId: 'def-a', policeCaseNumber: '007-1' },
@@ -246,10 +245,10 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       const result = await service.assignDefendantPoliceCaseNumbers(
         'case-1',
         [],
+        { transaction },
       )
 
       expect(result).toEqual([])
-      expect(mockModel.sequelize.transaction).not.toHaveBeenCalled()
       expect(mockModel.bulkCreate).not.toHaveBeenCalled()
       expect(mockModel.destroy).not.toHaveBeenCalled()
     })

@@ -189,45 +189,37 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   async assignDefendantPoliceCaseNumbers(
     caseId: string,
     links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
+    options: { transaction: Transaction },
   ): Promise<string[]> {
     if (links.length === 0) {
       return []
     }
 
-    const sequelize = this.model.sequelize
-    if (!sequelize) {
-      throw new Error('Sequelize instance unavailable')
-    }
-
     try {
-      let newPoliceCaseNumbers: string[] = []
+      const { transaction } = options
 
-      await sequelize.transaction(async (transaction) => {
-        const insertedLinks = await this.model.bulkCreate(
-          links.map(({ defendantId, policeCaseNumber }) => ({
-            caseId,
-            defendantId,
-            policeCaseNumber,
-          })),
-          { transaction, ignoreDuplicates: true, returning: true },
-        )
+      const insertedLinks = await this.model.bulkCreate(
+        links.map(({ defendantId, policeCaseNumber }) => ({
+          caseId,
+          defendantId,
+          policeCaseNumber,
+        })),
+        { transaction, ignoreDuplicates: true, returning: true },
+      )
 
-        newPoliceCaseNumbers = [
-          ...new Set(insertedLinks.map((link) => link.policeCaseNumber)),
-        ]
+      const newPoliceCaseNumbers = [
+        ...new Set(insertedLinks.map((link) => link.policeCaseNumber)),
+      ]
 
-        const policeCaseNumbers = [
-          ...new Set(links.map((l) => l.policeCaseNumber)),
-        ]
+      const policeCaseNumbers = [...new Set(links.map((l) => l.policeCaseNumber))]
 
-        await this.model.destroy({
-          where: {
-            caseId,
-            defendantId: { [Op.is]: null },
-            policeCaseNumber: { [Op.in]: policeCaseNumbers },
-          },
-          transaction,
-        })
+      await this.model.destroy({
+        where: {
+          caseId,
+          defendantId: { [Op.is]: null },
+          policeCaseNumber: { [Op.in]: policeCaseNumbers },
+        },
+        transaction,
       })
 
       this.logger.debug(
