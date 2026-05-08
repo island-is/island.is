@@ -117,7 +117,10 @@ export const editPermissionAction: WrappedActionFn =
 
       const failedEnvironments: NonNullable<
         EditPermissionResult['failedEnvironments']
-      > = [...(patchScopeResult.data?.patchAuthAdminScope.failedEnvironments ?? [])]
+      > = [
+        ...(patchScopeResult.data?.patchAuthAdminScope.failedEnvironments ??
+          []),
+      ]
 
       // Update scope users if there are changes
       const hasUserChanges =
