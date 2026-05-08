@@ -902,7 +902,10 @@ export const mainFormAccessAgreementOverviewItems = (
   for (const row of repeater) {
     const files = row.file
     const fileNames = Array.isArray(files)
-      ? files.map((f) => f.name).filter(Boolean).join(', ')
+      ? files
+          .map((f) => f.name)
+          .filter(Boolean)
+          .join(', ')
       : ''
     if (!fileNames) {
       continue

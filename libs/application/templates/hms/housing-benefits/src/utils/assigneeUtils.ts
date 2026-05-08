@@ -44,9 +44,9 @@ export const buildChildNationalIdSetFromAssigneeExternalData = (
   const kt = kennitala.isValid(assigneeKennitala)
     ? kennitala.sanitize(assigneeKennitala)
     : assigneeKennitala.trim()
-  const entry = externalData[
-    `${kt}.assigneeChildrenCustody`
-  ] as { data?: ApplicantChildCustodyInformationV3[]; status?: string } | undefined
+  const entry = externalData[`${kt}.assigneeChildrenCustody`] as
+    | { data?: ApplicantChildCustodyInformationV3[]; status?: string }
+    | undefined
   const raw = entry?.data
   const set = new Set<string>()
   for (const child of Array.isArray(raw) ? raw : []) {
@@ -60,7 +60,8 @@ export const applicationFromFormValue = (
   answers: FormValue,
   externalData: ExternalData,
 ): Application => {
-  const raw = getValueViaPath<string>(answers, 'applicant.nationalId')?.trim() ?? ''
+  const raw =
+    getValueViaPath<string>(answers, 'applicant.nationalId')?.trim() ?? ''
   const applicant = kennitala.isValid(raw) ? kennitala.sanitize(raw) : raw
   return {
     id: 'assignee-form-eval',
@@ -112,7 +113,9 @@ export const getHouseholdMembersOver18ExcludingApplicant = (
   if (Array.isArray(tableRows)) {
     const contractTenants = getRentalAgreementTenantsFlat(application)
     const tenantKeySet = new Set(
-      contractTenants.map((t) => comparableNationalId(t.nationalId)).filter(Boolean),
+      contractTenants
+        .map((t) => comparableNationalId(t.nationalId))
+        .filter(Boolean),
     )
     allMembers = [...contractTenants]
     for (const row of tableRows.filter((r) => !r.isRemoved)) {
@@ -121,11 +124,7 @@ export const getHouseholdMembersOver18ExcludingApplicant = (
       if (!natId) continue
       const key = comparableNationalId(natId)
       if (tenantKeySet.has(key)) continue
-      if (
-        allMembers.some(
-          (m) => comparableNationalId(m.nationalId) === key,
-        )
-      ) {
+      if (allMembers.some((m) => comparableNationalId(m.nationalId) === key)) {
         continue
       }
       allMembers.push({ nationalId: natId, name })
@@ -227,10 +226,11 @@ export const getAssigneeChildrenNeedingUmgengnissamningur = (
   const currentKey = kennitala.sanitize(assigneeNationalId)
 
   const inApplicantCustody = getApplicantChildCustodyNationalIdSet(externalData)
-  const currentAssigneeCustody = buildChildNationalIdSetFromAssigneeExternalData(
-    externalData,
-    assigneeNationalId,
-  )
+  const currentAssigneeCustody =
+    buildChildNationalIdSetFromAssigneeExternalData(
+      externalData,
+      assigneeNationalId,
+    )
   const app = applicationFromFormValue(answers, externalData)
   const otherAssigneeIds = getAssigneeNationalIds(app).filter(
     (id) => comparableNationalId(id) !== currentKey,
@@ -270,9 +270,10 @@ export const getAssigneeChildrenNeedingUmgengnissamningur = (
         continue
       }
       if (
-        buildChildNationalIdSetFromAssigneeExternalData(externalData, otherId).has(
-          childKey,
-        )
+        buildChildNationalIdSetFromAssigneeExternalData(
+          externalData,
+          otherId,
+        ).has(childKey)
       ) {
         coveredByOtherAssignee = true
         break
@@ -281,8 +282,7 @@ export const getAssigneeChildrenNeedingUmgengnissamningur = (
     if (coveredByOtherAssignee) {
       continue
     }
-    const name =
-      row.nationalIdWithName?.name?.trim() || nationalId
+    const name = row.nationalIdWithName?.name?.trim() || nationalId
     out.push({ nationalId, name })
   }
   return out
@@ -302,8 +302,7 @@ export const getAssigneeChildrenStillMissingAnyAccessAgreementUpload = (
     externalData,
     assigneeNationalId,
   ).filter(
-    (c) =>
-      !minorHasAnyUmgengnissamningurUploadAttached(answers, c.nationalId),
+    (c) => !minorHasAnyUmgengnissamningurUploadAttached(answers, c.nationalId),
   )
 
 /**
@@ -315,9 +314,9 @@ export const getCurrentDraftAssigneeNationalId = (
 ): string | undefined => {
   const assignees = getAssigneeNationalIds(application)
   const signed = new Set(
-    (getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? []).map(
-      normalizeAssigneeNationalId,
-    ),
+    (
+      getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? []
+    ).map(normalizeAssigneeNationalId),
   )
   const unsigned = assignees.filter(
     (id) => !signed.has(normalizeAssigneeNationalId(id)),
@@ -347,9 +346,9 @@ export const getAssigneeNationalIdForUmgengnissamningurForm = (
   }
   const assignees = getAssigneeNationalIds(application)
   const signed = new Set(
-    (getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? []).map(
-      normalizeAssigneeNationalId,
-    ),
+    (
+      getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? []
+    ).map(normalizeAssigneeNationalId),
   )
   const unsigned = assignees.filter(
     (id) => !signed.has(normalizeAssigneeNationalId(id)),
@@ -523,10 +522,14 @@ type HouseholdMemberRepeaterRow = {
   isRemoved?: boolean
 }
 
-const displayNameFromHouseholdRow = (row: HouseholdMemberRepeaterRow): string => {
+const displayNameFromHouseholdRow = (
+  row: HouseholdMemberRepeaterRow,
+): string => {
   const nested = row.nationalIdWithName
-  const name = typeof nested === 'object' && nested ? (nested.name ?? '').trim() : ''
-  const id = typeof nested === 'object' && nested ? (nested.nationalId ?? '').trim() : ''
+  const name =
+    typeof nested === 'object' && nested ? (nested.name ?? '').trim() : ''
+  const id =
+    typeof nested === 'object' && nested ? (nested.nationalId ?? '').trim() : ''
   if (name) return name
   if (id) return id
   return ''
@@ -579,7 +582,9 @@ export const getApplicantSubmitMissingAccessAgreementChildren = (
         const nid = row.nationalIdWithName?.nationalId?.trim()
         if (!nid) continue
         if (normalizeKennitalaKey(nid) !== key) continue
-        nationalIdForRow = kennitala.isValid(nid) ? kennitala.sanitize(nid) : nid
+        nationalIdForRow = kennitala.isValid(nid)
+          ? kennitala.sanitize(nid)
+          : nid
         label = displayNameFromHouseholdRow(row) || nationalIdForRow
         break
       }
@@ -599,4 +604,5 @@ export const shouldShowApplicantSubmitAccessAgreementSection = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean =>
-  getApplicantSubmitMissingAccessAgreementChildren(answers, externalData).length > 0
+  getApplicantSubmitMissingAccessAgreementChildren(answers, externalData)
+    .length > 0

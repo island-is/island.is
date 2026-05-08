@@ -84,8 +84,9 @@ const buildCustodyNationalIdSet = (externalData: ExternalData) => {
 }
 
 /** Applicant (registry) forsjá — same keys as used for household minor custody checks. */
-export const getApplicantChildCustodyNationalIdSet = (externalData: ExternalData) =>
-  buildCustodyNationalIdSet(externalData)
+export const getApplicantChildCustodyNationalIdSet = (
+  externalData: ExternalData,
+) => buildCustodyNationalIdSet(externalData)
 
 /**
  * Display names of household members in the table repeater who are under 18, not in the
@@ -203,9 +204,8 @@ export const minorHasAnyUmgengnissamningurUploadAttached = (
     }
   }
 
-  const mainFormRepeater = (
-    answers as Record<string, unknown>
-  ).mainFormAccessAgreementRepeater as
+  const mainFormRepeater = (answers as Record<string, unknown>)
+    .mainFormAccessAgreementRepeater as
     | Array<{
         childNationalId?: string
         file?: Array<{ key: string; name: string }>

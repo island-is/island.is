@@ -95,7 +95,8 @@ export const prereqMessages = defineMessages({
     id: 'hb.application:prereq.domicileResidentsSubtitle',
     defaultMessage:
       'Einstaklingar með sama lögheimilistengsl og þú í Þjóðskrá, þar sem heimilisfang samsvarar leigulausn hvers leigusamnings',
-    description: 'Data provider: domicile residents subtitle (signed-in user lögheimilistengsl)',
+    description:
+      'Data provider: domicile residents subtitle (signed-in user lögheimilistengsl)',
   },
   childrenCustodyTitle: {
     id: 'hb.application:prereq.childrenCustodyTitle',

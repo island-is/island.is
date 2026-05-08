@@ -71,9 +71,14 @@ export const accessAgreementSection = buildSection({
         }),
         buildDescriptionField({
           id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneeAccessAgreementDescription'),
+            nationalIdPreface(
+              application,
+              user,
+              'assigneeAccessAgreementDescription',
+            ),
           description:
-            m.draftMessages.accessAgreementSection.repeaterIntroDescriptionWithChildren,
+            m.draftMessages.accessAgreementSection
+              .repeaterIntroDescriptionWithChildren,
           marginBottom: 4,
         }),
         buildFieldsRepeaterField({

@@ -63,175 +63,182 @@ const householdMemberRowSchema = z
 
 const devMockTaxVariants = ['withSampleData', 'emptySuccess'] as const
 
-const baseSchema = z.object({
-  mockData: z.array(z.string()).optional(),
-  devMockSettings: z
-    .object({
-      useMock: z.union([z.literal(YES), z.literal('no')]).optional(),
-      mockRentalAgreements: z.array(z.literal(YES)).optional(),
-      mockTaxReturn: z.array(z.literal(YES)).optional(),
-      mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
-    })
-    .optional(),
-  assigneeDevMockSettings: z
-    .object({
-      useMock: z.union([z.literal(YES), z.literal('no')]).optional(),
-      mockTaxReturn: z.array(z.literal(YES)).optional(),
-      mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
-      mockNationalRegistryAddress: z.array(z.literal(YES)).optional(),
-    })
-    .optional(),
-  confirmRead: confirmReadSchema.optional(),
-  approveExternalData: z.literal(true).optional(),
-  applicant: applicantSchema.optional(),
-  rentalAgreement: z
-    .object({
-      answer: z.string().min(1),
-    })
-    .optional(),
-  exemptionCheckbox: z
-    .union([z.array(z.string()), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  exemptionReason: z
-    .union([z.enum(exemptionReasons), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  exemptionDocuments: z
-    .object({
-      studies: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-      health: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-      housing: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-      work: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-    })
-    .optional(),
-  householdMembersTableRepeater: z
-    .array(householdMemberRowSchema)
-    .optional()
-    .nullable(),
-  signedAssignees: z.array(z.string()).optional(),
-  /** National IDs of assignees who finished the assignee-prerequisite step (same state). */
-  assigneePrerequisitesCompleted: z.array(z.string()).optional(),
-  assigneePrereq: z
-    .object({
-      confirmRead: z.array(z.string()).optional(),
-    })
-    .optional(),
-  assigneePrereqByNationalId: z
-    .record(
-      z.string(),
-      z
-        .object({
-          confirmRead: z.array(z.string()).optional(),
-        })
-        .optional(),
-    )
-    .optional(),
-  assigneeApproval: z
-    .object({
-      confirmRead: z.array(z.string()).optional(),
-    })
-    .optional(),
-  approveOrReject: z.enum(['approve', 'reject', 'requestExtraData']).optional(),
-  approveOrRejectReason: z.string().optional(),
-  // clearOnChange on approveOrReject sets this to ""; normalize away
-  institutionRequestedDocuments: z
-    .union([z.array(z.enum(institutionRequestedDocumentTypes)), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  institutionMessageToApplicant: z.string().optional(),
-  extraDataAttachments: z
-    .object({
-      exemptionReason: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-      custodyAgreement: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-      changedCircumstances: z
-        .union([z.array(fileSchema), z.literal('')])
-        .optional()
-        .transform((v) => (v === '' ? undefined : v)),
-    })
-    .optional(),
-  incomeHasOtherIncome: z.union([z.literal(YES), z.literal(NO)]).optional(),
-  incomeContractorCheckbox: z
-    .union([z.array(z.literal(YES)), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  incomeForeignCheckbox: z
-    .union([z.array(z.literal(YES)), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  incomeOtherCheckbox: z
-    .union([z.array(z.literal(YES)), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  incomeContractorDescription: z.string().optional(),
-  incomeContractorFiles: z
-    .union([z.array(fileSchema), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  incomeForeignDescription: z.string().optional(),
-  incomeForeignFiles: z
-    .union([z.array(fileSchema), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  incomeOtherDescription: z.string().optional(),
-  incomeOtherFiles: z
-    .union([z.array(fileSchema), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  incomeNoTaxReturnDescription: z.string().optional(),
-  incomeNoTaxReturnFiles: z
-    .union([z.array(fileSchema), z.literal('')])
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
-  payment: z
-    .object({
-      paymentRadio: z.enum(['me', 'landlord']).optional(),
-      landlordSelection: z.string().nullish(),
-      // clearOnChange sets these to "" when switching to "me"; must accept string
-      landlordBankAccount: z
-        .union([bankAccountSchema, z.string(), z.null()])
-        .optional(),
-    })
-    .superRefine((payment, ctx) => {
-      if (payment.paymentRadio !== 'landlord') return
+const baseSchema = z
+  .object({
+    mockData: z.array(z.string()).optional(),
+    devMockSettings: z
+      .object({
+        useMock: z.union([z.literal(YES), z.literal('no')]).optional(),
+        mockRentalAgreements: z.array(z.literal(YES)).optional(),
+        mockTaxReturn: z.array(z.literal(YES)).optional(),
+        mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
+      })
+      .optional(),
+    assigneeDevMockSettings: z
+      .object({
+        useMock: z.union([z.literal(YES), z.literal('no')]).optional(),
+        mockTaxReturn: z.array(z.literal(YES)).optional(),
+        mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
+        mockNationalRegistryAddress: z.array(z.literal(YES)).optional(),
+      })
+      .optional(),
+    confirmRead: confirmReadSchema.optional(),
+    approveExternalData: z.literal(true).optional(),
+    applicant: applicantSchema.optional(),
+    rentalAgreement: z
+      .object({
+        answer: z.string().min(1),
+      })
+      .optional(),
+    exemptionCheckbox: z
+      .union([z.array(z.string()), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    exemptionReason: z
+      .union([z.enum(exemptionReasons), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    exemptionDocuments: z
+      .object({
+        studies: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        health: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        housing: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        work: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+      })
+      .optional(),
+    householdMembersTableRepeater: z
+      .array(householdMemberRowSchema)
+      .optional()
+      .nullable(),
+    signedAssignees: z.array(z.string()).optional(),
+    /** National IDs of assignees who finished the assignee-prerequisite step (same state). */
+    assigneePrerequisitesCompleted: z.array(z.string()).optional(),
+    assigneePrereq: z
+      .object({
+        confirmRead: z.array(z.string()).optional(),
+      })
+      .optional(),
+    assigneePrereqByNationalId: z
+      .record(
+        z.string(),
+        z
+          .object({
+            confirmRead: z.array(z.string()).optional(),
+          })
+          .optional(),
+      )
+      .optional(),
+    assigneeApproval: z
+      .object({
+        confirmRead: z.array(z.string()).optional(),
+      })
+      .optional(),
+    approveOrReject: z
+      .enum(['approve', 'reject', 'requestExtraData'])
+      .optional(),
+    approveOrRejectReason: z.string().optional(),
+    // clearOnChange on approveOrReject sets this to ""; normalize away
+    institutionRequestedDocuments: z
+      .union([
+        z.array(z.enum(institutionRequestedDocumentTypes)),
+        z.literal(''),
+      ])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    institutionMessageToApplicant: z.string().optional(),
+    extraDataAttachments: z
+      .object({
+        exemptionReason: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        custodyAgreement: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        changedCircumstances: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+      })
+      .optional(),
+    incomeHasOtherIncome: z.union([z.literal(YES), z.literal(NO)]).optional(),
+    incomeContractorCheckbox: z
+      .union([z.array(z.literal(YES)), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    incomeForeignCheckbox: z
+      .union([z.array(z.literal(YES)), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    incomeOtherCheckbox: z
+      .union([z.array(z.literal(YES)), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    incomeContractorDescription: z.string().optional(),
+    incomeContractorFiles: z
+      .union([z.array(fileSchema), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    incomeForeignDescription: z.string().optional(),
+    incomeForeignFiles: z
+      .union([z.array(fileSchema), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    incomeOtherDescription: z.string().optional(),
+    incomeOtherFiles: z
+      .union([z.array(fileSchema), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    incomeNoTaxReturnDescription: z.string().optional(),
+    incomeNoTaxReturnFiles: z
+      .union([z.array(fileSchema), z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    payment: z
+      .object({
+        paymentRadio: z.enum(['me', 'landlord']).optional(),
+        landlordSelection: z.string().nullish(),
+        // clearOnChange sets these to "" when switching to "me"; must accept string
+        landlordBankAccount: z
+          .union([bankAccountSchema, z.string(), z.null()])
+          .optional(),
+      })
+      .superRefine((payment, ctx) => {
+        if (payment.paymentRadio !== 'landlord') return
 
-      const landlordBankAccount = payment.landlordBankAccount as
-        | { bankNumber?: string; ledger?: string; accountNumber?: string }
-        | undefined
-      const bankNumber = landlordBankAccount?.bankNumber?.trim() ?? ''
-      const ledger = landlordBankAccount?.ledger?.trim() ?? ''
-      const accountNumber = landlordBankAccount?.accountNumber?.trim() ?? ''
-      if (!bankNumber || !ledger || !accountNumber) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['landlordBankAccount'],
-          params:
-            m.draftMessages.paymentSection
-              .validationLandlordBankAccountRequired,
-        })
-      }
-    })
-    .optional(),
-  // Preserve per-user buckets (`{nationalId}.*`) used by applicant/assignee forms.
-}).passthrough()
+        const landlordBankAccount = payment.landlordBankAccount as
+          | { bankNumber?: string; ledger?: string; accountNumber?: string }
+          | undefined
+        const bankNumber = landlordBankAccount?.bankNumber?.trim() ?? ''
+        const ledger = landlordBankAccount?.ledger?.trim() ?? ''
+        const accountNumber = landlordBankAccount?.accountNumber?.trim() ?? ''
+        if (!bankNumber || !ledger || !accountNumber) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['landlordBankAccount'],
+            params:
+              m.draftMessages.paymentSection
+                .validationLandlordBankAccountRequired,
+          })
+        }
+      })
+      .optional(),
+    // Preserve per-user buckets (`{nationalId}.*`) used by applicant/assignee forms.
+  })
+  .passthrough()
 
 export const dataSchema = baseSchema
   .superRefine((data, ctx) => {
@@ -431,9 +438,8 @@ export const dataSchema = baseSchema
     })
   })
   .superRefine((data, ctx) => {
-    const repeater = (
-      data as { mainFormAccessAgreementRepeater?: unknown }
-    ).mainFormAccessAgreementRepeater
+    const repeater = (data as { mainFormAccessAgreementRepeater?: unknown })
+      .mainFormAccessAgreementRepeater
     if (!Array.isArray(repeater)) return
 
     repeater.forEach((row, index) => {

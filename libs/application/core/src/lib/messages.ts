@@ -440,9 +440,9 @@ export const coreErrorMessages = defineMessages({
   },
   fileUploadRequired: {
     id: 'application.system:core.error.file.uploadRequired',
-    defaultMessage:
-      'Vinsamlegast hladdu inn að minnsta kosti einni skrá.',
-    description: 'Shown when a required file upload field has no files attached',
+    defaultMessage: 'Vinsamlegast hladdu inn að minnsta kosti einni skrá.',
+    description:
+      'Shown when a required file upload field has no files attached',
   },
   fileUploadMalware: {
     id: 'application.system:core.error.file.uploadMalware',

@@ -178,9 +178,8 @@ export class HousingBenefitsService extends BaseTemplateApiService {
 
     let domicileGroup
     try {
-      domicileGroup = await this.nationalRegistryV3Service.getCohabitantsDetailed(
-        props,
-      )
+      domicileGroup =
+        await this.nationalRegistryV3Service.getCohabitantsDetailed(props)
     } catch (e) {
       this.logger.error(
         'Failed to fetch lögheimilistengsl for domicile residents:',

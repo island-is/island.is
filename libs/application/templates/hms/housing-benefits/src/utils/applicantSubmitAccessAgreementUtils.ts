@@ -1,5 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, ExternalData, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { applicantSubmitMessages as asm } from '../lib/messages/applicantSubmitMessages'
 import { getApplicantSubmitMissingAccessAgreementChildren } from './assigneeUtils'
@@ -97,9 +101,10 @@ export const applicantSubmitAccessAgreementChildOptions = (
     return base
   }
   const kt = kennitala.sanitize(applicantRaw)
-  const repeater = getValueViaPath<
-    Array<{ childNationalId?: string }>
-  >(answers, `${kt}.applicantSubmitAccessAgreementRepeater`)
+  const repeater = getValueViaPath<Array<{ childNationalId?: string }>>(
+    answers,
+    `${kt}.applicantSubmitAccessAgreementRepeater`,
+  )
 
   if (!Array.isArray(repeater)) {
     return base
@@ -109,15 +114,12 @@ export const applicantSubmitAccessAgreementChildOptions = (
   for (const row of repeater) {
     const rawId = row?.childNationalId?.trim()
     if (!rawId) continue
-    const value = kennitala.isValid(rawId)
-      ? kennitala.sanitize(rawId)
-      : rawId
+    const value = kennitala.isValid(rawId) ? kennitala.sanitize(rawId) : rawId
     if (seen.has(value)) continue
     seen.add(value)
     extra.push({
       value,
-      label:
-        labelForChildNationalIdFromHouseholdTable(answers, value) || rawId,
+      label: labelForChildNationalIdFromHouseholdTable(answers, value) || rawId,
     })
   }
 
