@@ -128,15 +128,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
               customImage={
                 showImage ? (
                   <div className={styles.featuredCardImageWrapper}>
-                    <img
-                      src={image}
-                      alt=""
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                      }}
-                    />
+                    <img src={image} alt="" className={styles.featuredCardImage} />
                   </div>
                 ) : undefined
               }

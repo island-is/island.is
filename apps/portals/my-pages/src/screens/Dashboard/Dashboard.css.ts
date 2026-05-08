@@ -61,6 +61,12 @@ export const featuredCardImageWrapper = style({
   }),
 })
 
+export const featuredCardImage = style({
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+})
+
 
 export const featuredCardWithImage = style({})
 
