@@ -9,12 +9,12 @@ export const formatPlateSize = (
   if (!plate) return ''
   const code =
     'code' in plate
-      ? plate.code
+      ? plate.code ?? ''
       : 'plateSizeType' in plate
-      ? plate.plateSizeType
+      ? plate.plateSizeType ?? ''
       : ''
-  const height = plate.plateHeight
-  const width = plate.plateWidth
+  const height = plate.plateHeight ?? ''
+  const width = plate.plateWidth ?? ''
   return formatMessage(information.labels.plateSize.plateSizeOptionTitle, {
     name: code,
     height,
