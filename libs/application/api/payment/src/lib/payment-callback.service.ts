@@ -23,7 +23,7 @@ export class PaymentCallbackService {
           'No paymentFlowMetadata found in update callback',
         )
       }
-      if (!callback.paymentFlowMetadata?.applicationId) {
+      if (!callback.paymentFlowMetadata.applicationId) {
         throw new BadRequestException(
           'No applicationId found in update callback',
         )
@@ -105,6 +105,9 @@ export class PaymentCallbackService {
       )
       if (application) {
         const oneMonthFromNow = addMonths(new Date(), 1)
+        //Applications payment states are default to be pruned in 24 hours.
+        //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
+
         await this.applicationService.update(
           callback.paymentFlowMetadata.applicationId,
           {
