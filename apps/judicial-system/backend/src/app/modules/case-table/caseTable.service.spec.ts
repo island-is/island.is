@@ -277,8 +277,9 @@ describe('CaseTableService', () => {
       )
 
       const caseNumberCellIndex = 0 // first column in COA in-progress table
-      const caseLevelCell = result.rows[0].cells[caseNumberCellIndex]
-        .value as { strList: string[] }
+      const caseLevelCell = result.rows[0].cells[caseNumberCellIndex].value as {
+        strList: string[]
+      }
       const rulingOrderCell = result.rows[1].cells[caseNumberCellIndex]
         .value as { strList: string[] }
 
