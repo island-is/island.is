@@ -507,9 +507,7 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
-      // TODO: find a better place for id - it is not used in this cell generator
-      // and there is no guarantee that this column will be included in all tables
-      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+      attributes: ['noNationalId', 'nationalId', 'name'],
       includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },

@@ -120,9 +120,6 @@ export const expandCasesWithAppeals = (cs: Case[]) =>
     const rulingOrderRows = (c.rulingOrderAppealCases ?? []).map(
       (roa: AppealCase) => ({ ...rest, appealCase: roa }),
     )
-    console.log('appealCases', {
-      count: rulingOrderRows.length,
-      acount: c.rulingOrderAppealCases?.length,
-    })
+
     return rest.appealCase ? [rest, ...rulingOrderRows] : rulingOrderRows
   })
