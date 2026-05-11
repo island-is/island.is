@@ -10,16 +10,14 @@ import {
   buildSelectField,
   buildBankAccountField,
   buildTableRepeaterField,
-  getValueViaPath,
   buildRadioField,
   coreMessages,
   NO,
   YES,
   buildAlertMessageField,
 } from '@island.is/application/core'
-import { Application, FormModes } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-// import { application as applicationMessages } from '../../lib/messages'
 import * as m from '../../lib/messages'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import {
@@ -37,43 +35,22 @@ import {
   getYearOptions,
 } from '../../utils/educationInformation'
 import {
-  getDefaultDrivingLicenses,
-  getDefaultEducation,
-  getDefaultLanguages,
-  getDefaultEures,
-} from '../../utils/defaultValues'
-import type { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
-
-const EDUCATION_PATH =
-  'currentApplicationInformation.data.supportData.education'
-
-const findDegreeLabel = (application: Application, value: string): string => {
-  const education =
-    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
-      application.externalData,
-      EDUCATION_PATH,
-    ) ?? []
-  for (const program of education) {
-    const match = program.degrees?.find((d) => d.id === value)
-    if (match) return match.name ?? value
-  }
-  return value
-}
-
-const findCourseLabel = (application: Application, value: string): string => {
-  const education =
-    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
-      application.externalData,
-      EDUCATION_PATH,
-    ) ?? []
-  for (const program of education) {
-    for (const degree of program.degrees ?? []) {
-      const match = degree.subjects?.find((s) => s.id === value)
-      if (match) return match.name ?? value
-    }
-  }
-  return value
-}
+  showOtherAddress,
+  showDrivingLicenseTypes,
+  showHeavyMachineryLicenseTypes,
+} from '../../utils/conditions'
+import {
+  getEducationStaticTableData,
+  formatLevelOfStudy,
+  formatDegree,
+  formatCourseOfStudy,
+  getDefaultHasDrivingLicense,
+  getDefaultDrivingLicenseTypes,
+  getDefaultEuresValue,
+  getLanguageStaticTableData,
+  formatLanguage,
+  formatLanguageSkill,
+} from '../../utils/tableHelpers'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -92,7 +69,6 @@ export const MainForm = buildForm({
         }),
         buildAccordionField({
           id: 'mainFormAccordion',
-          // title: m.application.pageTitle,
           marginTop: 4,
           accordionItems: [
             {
@@ -109,25 +85,13 @@ export const MainForm = buildForm({
                   ],
                 }),
                 buildTextField({
-                  condition: (answers) => {
-                    const val = (answers as Record<string, unknown>)
-                      .otherAddress as
-                      | { currentAddressIsNotDifferent?: string[] }
-                      | undefined
-                    return !val?.currentAddressIsNotDifferent?.includes('yes')
-                  },
+                  condition: showOtherAddress,
                   id: 'otherAddress.otherAddress',
                   title: m.application.addressLabel,
                   width: 'half',
                 }),
                 buildSelectField({
-                  condition: (answers) => {
-                    const val = (answers as Record<string, unknown>)
-                      .otherAddress as
-                      | { currentAddressIsNotDifferent?: string[] }
-                      | undefined
-                    return !val?.currentAddressIsNotDifferent?.includes('yes')
-                  },
+                  condition: showOtherAddress,
                   id: 'otherAddress.otherPostcode',
                   title: m.application.postCodeLabel,
                   width: 'half',
@@ -180,36 +144,7 @@ export const MainForm = buildForm({
                   addItemButtonText: m.application.addNewEducation,
                   saveItemButtonText: m.application.addNewEducation,
                   editField: true,
-                  getStaticTableData: (application) => {
-                    const defaults = getDefaultEducation(
-                      application.externalData,
-                    )
-                    const levels = getLevelsOfStudyOptions(
-                      application,
-                      'is' as Locale,
-                    )
-                    return defaults.map((edu) => ({
-                      levelOfStudy:
-                        levels.find((o) => o.value === edu.levelOfStudy)
-                          ?.label ?? edu.levelOfStudy,
-                      degree:
-                        getDegreeOptions(
-                          application,
-                          'is' as Locale,
-                          edu.levelOfStudy,
-                        ).find((o) => o.value === edu.degree)?.label ??
-                        edu.degree,
-                      courseOfStudy:
-                        getCourseOfStudy(
-                          application,
-                          edu.levelOfStudy,
-                          edu.degree,
-                          'is' as Locale,
-                        ).find((o) => o.value === edu.courseOfStudy)?.label ??
-                        edu.courseOfStudy,
-                      endDate: edu.endDate,
-                    }))
-                  },
+                  getStaticTableData: getEducationStaticTableData,
                   fields: {
                     levelOfStudy: {
                       component: 'select',
@@ -264,24 +199,9 @@ export const MainForm = buildForm({
                       'endDate',
                     ],
                     format: {
-                      levelOfStudy: (value, _, application) => {
-                        if (!application) return value
-                        const opts = getLevelsOfStudyOptions(
-                          application,
-                          'is' as Locale,
-                        )
-                        return (
-                          opts.find((o) => o.value === value)?.label ?? value
-                        )
-                      },
-                      degree: (value, _, application) => {
-                        if (!application) return value
-                        return findDegreeLabel(application, value)
-                      },
-                      courseOfStudy: (value, _, application) => {
-                        if (!application) return value
-                        return findCourseLabel(application, value)
-                      },
+                      levelOfStudy: formatLevelOfStudy,
+                      degree: formatDegree,
+                      courseOfStudy: formatCourseOfStudy,
                     },
                   },
                 }),
@@ -300,28 +220,15 @@ export const MainForm = buildForm({
                       label: m.application.driversLicenseCheckbox,
                     },
                   ],
-                  defaultValue: (application: Application) => {
-                    const defaults = getDefaultDrivingLicenses(
-                      application.externalData,
-                    )
-                    return defaults.length > 0 ? ['yes'] : []
-                  },
+                  defaultValue: getDefaultHasDrivingLicense,
                 }),
                 buildCheckboxField({
                   id: 'licenses.drivingLicenseTypes',
                   description: m.application.driversLicenseDescription,
-                  condition: (answers, externalData) => {
-                    const val = (answers as Record<string, unknown>)
-                      .licenses as { hasDrivingLicense?: string[] } | undefined
-                    if (val?.hasDrivingLicense !== undefined) {
-                      return val.hasDrivingLicense.includes('yes')
-                    }
-                    return getDefaultDrivingLicenses(externalData).length > 0
-                  },
+                  condition: showDrivingLicenseTypes,
                   options: (application) =>
                     getDrivingLicenseOptions(application.externalData),
-                  defaultValue: (application: Application) =>
-                    getDefaultDrivingLicenses(application.externalData),
+                  defaultValue: getDefaultDrivingLicenseTypes,
                   large: true,
                 }),
                 buildCheckboxField({
@@ -336,15 +243,7 @@ export const MainForm = buildForm({
                   ],
                 }),
                 buildSelectField({
-                  condition: (answers) => {
-                    const val = (answers as Record<string, unknown>)
-                      .licenses as
-                      | { hasHeavyMachineryLicense?: string[] }
-                      | undefined
-                    return (
-                      val?.hasHeavyMachineryLicense?.includes('yes') ?? false
-                    )
-                  },
+                  condition: showHeavyMachineryLicenseTypes,
                   id: 'licenses.heavyMachineryLicensesTypes',
                   title: m.application.workMachineTitle,
                   options: (application, _field, locale) =>
@@ -362,27 +261,7 @@ export const MainForm = buildForm({
                   addItemButtonText: m.application.addLanguageLabel,
                   saveItemButtonText: m.application.addLanguageLabel,
                   editField: true,
-                  getStaticTableData: (application) => {
-                    const defaults = getDefaultLanguages(
-                      application.externalData,
-                    )
-                    const langs = getLanguageOptions(
-                      application.externalData,
-                      'is' as Locale,
-                    )
-                    const abilities = getLanguageAbilityOptions(
-                      application.externalData,
-                      'is' as Locale,
-                    )
-                    return defaults.map((lang) => ({
-                      language:
-                        langs.find((o) => o.value === lang.language)?.label ??
-                        lang.language,
-                      skill:
-                        abilities.find((o) => o.value === lang.skill)?.label ??
-                        lang.skill,
-                    }))
-                  },
+                  getStaticTableData: getLanguageStaticTableData,
                   fields: {
                     language: {
                       component: 'select',
@@ -412,26 +291,8 @@ export const MainForm = buildForm({
                     ],
                     rows: ['language', 'skill'],
                     format: {
-                      language: (value, _, application) => {
-                        if (!application) return value
-                        const opts = getLanguageOptions(
-                          application.externalData,
-                          'is' as Locale,
-                        )
-                        return (
-                          opts.find((o) => o.value === value)?.label ?? value
-                        )
-                      },
-                      skill: (value, _, application) => {
-                        if (!application) return value
-                        const opts = getLanguageAbilityOptions(
-                          application.externalData,
-                          'is' as Locale,
-                        )
-                        return (
-                          opts.find((o) => o.value === value)?.label ?? value
-                        )
-                      },
+                      language: formatLanguage,
+                      skill: formatLanguageSkill,
                     },
                   },
                 }),
@@ -448,8 +309,7 @@ export const MainForm = buildForm({
                     { value: YES, label: coreMessages.radioYes },
                     { value: NO, label: coreMessages.radioNo },
                   ],
-                  defaultValue: (application: Application) =>
-                    getDefaultEures(application.externalData),
+                  defaultValue: getDefaultEuresValue,
                 }),
                 buildAlertMessageField({
                   id: 'eures.alertMessage',
