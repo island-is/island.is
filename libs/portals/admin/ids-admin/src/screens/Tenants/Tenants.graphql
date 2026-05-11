@@ -40,7 +40,6 @@ query TenantDetails($id: String!) {
       name
       nationalId
       description
-      organisationLogoKey
       contactEmail
       displayName {
         locale
@@ -63,7 +62,6 @@ mutation UpdateTenant($input: UpdateAuthAdminTenantInput!) {
     name
     nationalId
     description
-    organisationLogoKey
     contactEmail
     displayName {
       locale

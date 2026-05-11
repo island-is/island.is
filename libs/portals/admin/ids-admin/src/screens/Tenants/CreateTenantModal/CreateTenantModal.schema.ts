@@ -16,7 +16,6 @@ export const createTenantSchema = z.object({
   nationalId: nationalIdSchema,
   displayName: safeTextSchema,
   description: safeTextSchema,
-  organisationLogoKey: z.string().min(1, 'errorOrgLogoKey'),
   contactEmail: contactEmailSchema,
   environments: z
     .array(z.nativeEnum(AuthAdminEnvironment))

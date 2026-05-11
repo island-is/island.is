@@ -17,7 +17,6 @@ export const editTenantSchema = {
       nationalId: nationalIdSchema,
       displayName: safeTextSchema,
       description: safeTextSchema,
-      organisationLogoKey: z.string().min(1, 'errorOrgLogoKey'),
       contactEmail: contactEmailSchema,
     })
     .merge(defaultEnvironmentSchema),

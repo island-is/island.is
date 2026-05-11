@@ -1801,10 +1801,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-description-tooltip',
     defaultMessage: 'The description of this domain',
   },
-  tenantOrgLogoKeyTooltip: {
-    id: 'ap.ids-admin:tenant-org-logo-key-tooltip',
-    defaultMessage: 'The logo key for this domain',
-  },
   tenantContactEmailTooltip: {
     id: 'ap.ids-admin:tenant-contact-email-tooltip',
     defaultMessage: 'The contact email for this domain',
@@ -1821,10 +1817,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-description',
     defaultMessage: 'Description',
   },
-  tenantOrgLogoKey: {
-    id: 'ap.ids-admin:tenant-org-logo-key',
-    defaultMessage: 'Organisation logo key',
-  },
   tenantContactEmail: {
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
@@ -1837,10 +1829,6 @@ export const m = defineMessages({
   errorNationalId: {
     id: 'ap.ids-admin:error-national-id',
     defaultMessage: 'National id must be a valid 10 digit kennitala',
-  },
-  errorOrgLogoKey: {
-    id: 'ap.ids-admin:error-org-logo-key',
-    defaultMessage: 'Organisation logo key is required',
   },
   errorRequired: {
     id: 'ap.ids-admin:error-required',

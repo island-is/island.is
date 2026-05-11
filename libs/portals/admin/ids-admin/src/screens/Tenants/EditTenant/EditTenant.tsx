@@ -38,7 +38,6 @@ export const EditTenant = () => {
       'nationalId',
       'displayName',
       'description',
-      'organisationLogoKey',
       'contactEmail',
     ])
 
@@ -121,21 +120,7 @@ export const EditTenant = () => {
                     rows={2}
                   />
                 </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
-                  <Input
-                    key={`organisationLogoKey-${selectedEnvironment.environment}`}
-                    name="organisationLogoKey"
-                    label={formatMessage(m.tenantOrgLogoKey)}
-                    size="sm"
-                    backgroundColor="blue"
-                    defaultValue={selectedEnvironment.organisationLogoKey ?? ''}
-                    errorMessage={formatErrorMessage(
-                      actionData?.errors?.organisationLogoKey,
-                    )}
-                    tooltip={formatMessage(m.tenantOrgLogoKeyTooltip)}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
+                <GridColumn span="12/12">
                   <Input
                     key={`contactEmail-${selectedEnvironment.environment}`}
                     name="contactEmail"

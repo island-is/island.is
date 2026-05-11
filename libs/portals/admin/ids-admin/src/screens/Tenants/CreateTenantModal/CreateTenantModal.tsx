@@ -52,7 +52,6 @@ const getInitialValues = (
     nationalId: '',
     displayName: '',
     description: '',
-    organisationLogoKey: '',
     contactEmail: '',
     environments: defaultEnv ? [defaultEnv] : [],
   }
@@ -125,7 +124,9 @@ const CreateTenantModal = ({
             nationalId: result.data.nationalId,
             displayName: result.data.displayName,
             description: result.data.description,
-            organisationLogoKey: result.data.organisationLogoKey,
+            // Backend still requires this field; sending the tenant name as a
+            // placeholder until the column is dropped from the database.
+            organisationLogoKey: result.data.name,
             contactEmail: result.data.contactEmail || undefined,
             environments: result.data.environments,
           },
@@ -229,19 +230,7 @@ const CreateTenantModal = ({
                   rows={2}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
-                <Input
-                  name="organisationLogoKey"
-                  label={formatMessage(m.tenantOrgLogoKey)}
-                  size="sm"
-                  backgroundColor="blue"
-                  value={values.organisationLogoKey}
-                  onChange={onChange('organisationLogoKey')}
-                  errorMessage={formatErrorMessage(errors.organisationLogoKey)}
-                  tooltip={formatMessage(m.tenantOrgLogoKeyTooltip)}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
+              <GridColumn span="12/12">
                 <Input
                   name="contactEmail"
                   label={formatMessage(m.tenantContactEmail)}
