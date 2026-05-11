@@ -41,22 +41,12 @@ export const GET_LANDSPITALI_MENU = gql`
           id
           name
           optionName
-          description
           labelOfContents
-          ingredients {
-            name
-          }
           nutrients {
             name
             amount
             unit
           }
-          prices {
-            name
-            value
-            currency
-          }
-          co2Equivalents
           knownAllergens {
             name
             presenceLevel

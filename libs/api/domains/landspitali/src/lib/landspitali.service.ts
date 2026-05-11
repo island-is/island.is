@@ -62,25 +62,13 @@ export class LandspitaliService {
               id: uuidv4(),
               name: course.name,
               optionName: course.optionName,
-              description: course.description,
               labelOfContents: course.labelOfContents,
-              ingredients:
-                course.ingredients?.map((ingredient) => ({
-                  name: ingredient.name,
-                })) ?? [],
               nutrients:
                 course.nutrients?.map((nutrient) => ({
                   name: nutrient.name,
                   amount: nutrient.amount,
                   unit: nutrient.unit,
                 })) ?? [],
-              prices:
-                course.prices?.map((price) => ({
-                  name: price.name,
-                  value: price.value,
-                  currency: price.currency,
-                })) ?? null,
-              co2Equivalents: course.co2Equivalents,
               knownAllergens:
                 course.knownAllergens?.map((allergen) => ({
                   name: allergen.name,

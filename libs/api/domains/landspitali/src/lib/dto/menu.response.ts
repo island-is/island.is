@@ -12,31 +12,13 @@ export class MenuCourse {
   optionName?: string | null
 
   @Field(() => String, { nullable: true })
-  description?: string | null
-
-  @Field(() => String, { nullable: true })
   labelOfContents?: string | null
-
-  @Field(() => [MenuIngredient])
-  ingredients!: MenuIngredient[]
 
   @Field(() => [MenuNutrient])
   nutrients!: MenuNutrient[]
 
-  @Field(() => [MenuPrice], { nullable: true })
-  prices?: MenuPrice[] | null
-
-  @Field(() => Float, { nullable: true })
-  co2Equivalents?: number | null
-
   @Field(() => [MenuKnownAllergen])
   knownAllergens!: MenuKnownAllergen[]
-}
-
-@ObjectType('WebLandspitaliMenuIngredient')
-export class MenuIngredient {
-  @Field(() => String, { nullable: true })
-  name?: string | null
 }
 
 @ObjectType('WebLandspitaliMenuNutrient')
@@ -49,18 +31,6 @@ export class MenuNutrient {
 
   @Field(() => String, { nullable: true })
   unit?: string | null
-}
-
-@ObjectType('WebLandspitaliMenuPrice')
-export class MenuPrice {
-  @Field(() => String)
-  name!: string
-
-  @Field(() => Float)
-  value!: number
-
-  @Field(() => String, { nullable: true })
-  currency?: string | null
 }
 
 @ObjectType('WebLandspitaliMenuKnownAllergen')

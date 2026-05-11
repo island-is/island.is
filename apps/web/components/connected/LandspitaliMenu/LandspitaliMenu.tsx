@@ -75,58 +75,15 @@ const CourseDetails = ({ course }: { course: MenuCourse }) => {
         </Box>
       ) : null}
 
-      {course.ingredients?.length ? (
-        <Text>
-          <strong>{formatMessage(m.ingredientsTitle)}:</strong>{' '}
-          {course.ingredients.map((ingredient) => ingredient.name).join(', ')}
-        </Text>
-      ) : null}
-
-      {course.co2Equivalents != null ? (
-        <Text variant="small">
-          {formatMessage(m.co2Label, {
-            value: formatRoundedNumber(course.co2Equivalents),
-          })}
-        </Text>
-      ) : null}
-
-      {course.prices?.length ? (
-        <Inline alignY="center" space={1}>
-          {course.prices.map((price, index) => (
-            <Tag
-              key={`${price.name}-${index}`}
-              variant="purple"
-              disabled
-              outlined
-            >
-              {`${price.name}: ${formatRoundedNumber(price.value)}${
-                price.currency ? ` ${price.currency}` : ''
-              }`}
-            </Tag>
-          ))}
-        </Inline>
-      ) : null}
-
       {course.labelOfContents ? (
         <Text variant="small">{course.labelOfContents}</Text>
-      ) : null}
-
-      {course.description ? (
-        <Text variant="small">{course.description}</Text>
       ) : null}
     </Stack>
   )
 }
 
 const hasCourseDetails = (course: MenuCourse) =>
-  Boolean(
-    course.nutrients?.length ||
-      course.ingredients?.length ||
-      course.prices?.length ||
-      course.co2Equivalents != null ||
-      course.labelOfContents ||
-      course.description,
-  )
+  Boolean(course.nutrients?.length || course.labelOfContents)
 
 const formatDateOnlyLocal = (date: Date): string => {
   const y = date.getFullYear()
@@ -173,7 +130,6 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
     300,
     [selectedDate],
   )
-
   const RDS_VARIANTS = ['RDS kjöt/fiskur', 'RDS grænmetisfæði'] as const
 
   const optionTags = Array.from(
