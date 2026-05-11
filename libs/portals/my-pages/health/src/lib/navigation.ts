@@ -111,9 +111,16 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: messages.healthMessages,
+      name: m.messages,
       path: HealthPaths.HealthMessages,
       searchTags: [s.healthShorter],
+      children: [
+        {
+          name: m.messages,
+          path: HealthPaths.HealthMessagesDetail,
+          navHide: true,
+        },
+      ],
     },
     {
       name: messages.referrals,

@@ -1878,10 +1878,6 @@ export const messages = defineMessages({
     defaultMessage: 'Upplýsingar um tímabókun',
     id: 'sp.health:appointment-detail',
   },
-  healthMessages: {
-    defaultMessage: 'Skilaboð',
-    id: 'sp.health:health-messages',
-  },
   healthMessagesIntro: {
     defaultMessage:
       'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
@@ -1894,6 +1890,34 @@ export const messages = defineMessages({
   healthMessagesCreate: {
     defaultMessage: 'Ný skilaboð',
     id: 'sp.health:health-messages-create',
+  },
+  healthMessagesShowAll: {
+    defaultMessage: 'Sýna öll',
+    id: 'sp.health:health-messages-show-all',
+  },
+  healthMessagesShowOpen: {
+    defaultMessage: 'Sýna opin',
+    id: 'sp.health:health-messages-show-open',
+  },
+  healthMessageAttachment: {
+    defaultMessage: 'Viðhengi',
+    id: 'sp.health:health-message-attachment',
+  },
+  healthMessageNotFound: {
+    defaultMessage: 'Skilaboð fundust ekki',
+    id: 'sp.health:health-message-not-found',
+  },
+  healthMessageTo: {
+    defaultMessage: 'Til: {arg}',
+    id: 'sp.health:health-message-to',
+  },
+  healthMessageUploadFile: {
+    defaultMessage: 'Hlaða upp skjali',
+    id: 'sp.health:health-message-upload-file',
+  },
+  healthMessageSend: {
+    defaultMessage: 'Senda skilaboð',
+    id: 'sp.health:health-message-send',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',

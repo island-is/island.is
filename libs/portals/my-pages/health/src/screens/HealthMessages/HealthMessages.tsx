@@ -8,13 +8,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FavAndStash,
-  IntroWrapperV2,
-  m,
-} from '@island.is/portals/my-pages/core'
+import { FavAndStash, IntroWrapper, m } from '@island.is/portals/my-pages/core'
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 
 const CircleLogo = ({
   img,
@@ -51,6 +49,7 @@ const HealthMessages = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
+  const navigate = useNavigate()
   const [filterOpenOnly, setFilterOpenOnly] = useState(false)
   const [query, setQuery] = useState('')
   const [starredById, setStarredById] = useState<Record<string, boolean>>({})
@@ -123,8 +122,8 @@ const HealthMessages = () => {
   }, [baseItems, filterOpenOnly, query])
 
   return (
-    <IntroWrapperV2
-      title={messages.healthMessages}
+    <IntroWrapper
+      title={m.messages}
       intro={messages.healthMessagesIntro}
       buttonGroup={{
         alignment: 'spaceBetween',
@@ -166,7 +165,9 @@ const HealthMessages = () => {
                 size="small"
                 onClick={() => setFilterOpenOnly((v) => !v)}
               >
-                {filterOpenOnly ? 'Sýna öll' : 'Sýna opin'}
+                {filterOpenOnly
+                  ? formatMessage(messages.healthMessagesShowAll)
+                  : formatMessage(messages.healthMessagesShowOpen)}
               </Button>
             </Box>
           </Filter>,
@@ -193,7 +194,7 @@ const HealthMessages = () => {
         paddingY={2}
       >
         <Text variant="medium" fontWeight="semiBold">
-          {formatMessage(messages.healthMessages)}
+          {formatMessage(m.messages)}
         </Text>
         <Text variant="medium" fontWeight="semiBold">
           {formatMessage(messages.date)}
@@ -218,6 +219,12 @@ const HealthMessages = () => {
               paddingX={2}
               paddingY="p2"
               columnGap={2}
+              cursor="pointer"
+              onClick={() =>
+                navigate(
+                  HealthPaths.HealthMessagesDetail.replace(':id', item.id),
+                )
+              }
             >
               {/* Left: logo + text */}
               <Box
@@ -267,7 +274,7 @@ const HealthMessages = () => {
           )
         })}
       </Stack>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 
