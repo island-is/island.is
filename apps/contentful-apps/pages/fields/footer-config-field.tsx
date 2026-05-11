@@ -3,7 +3,6 @@ import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
   FormControl,
-  Paragraph,
   Radio,
   Stack,
   TextInput,
@@ -15,36 +14,20 @@ enum TextColor {
   White = 'white',
 }
 
-interface ThemeProperties {
-  gradientStartColor?: string
-  gradientEndColor?: string
-  backgroundColor?: string
-  darkText?: boolean
-  fullWidth?: boolean
+interface FooterConfig {
   textColor?: TextColor
-  imagePadding?: string
-  imageIsFullHeight?: boolean
-  imageObjectFit?: 'contain' | 'cover'
-  imageObjectPosition?: 'left' | 'center' | 'right'
-  useGradientColor?: boolean
+  background?: string
 }
 
 const DEBOUNCE_TIME = 150
 
-const getSelectedTextColor = (state: ThemeProperties) => {
-  let selectedTextColor =
-    state.darkText === false ? TextColor.White : TextColor.Dark400
-  if (state.textColor) {
-    selectedTextColor = state.textColor
-  }
-  return selectedTextColor
+const getSelectedTextColor = (state: FooterConfig) => {
+  return state.textColor ?? TextColor.Dark400
 }
 
-const ThemePropertiesField = () => {
+const FooterConfigField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
-  const [state, setState] = useState<ThemeProperties>(
-    sdk.field.getValue() || {},
-  )
+  const [state, setState] = useState<FooterConfig>(sdk.field.getValue() || {})
 
   useEffect(() => {
     sdk.window.startAutoResizer()
@@ -52,7 +35,10 @@ const ThemePropertiesField = () => {
 
   useDebounce(
     () => {
-      sdk.field.setValue(state)
+      sdk.field.setValue({
+        textColor: getSelectedTextColor(state),
+        ...(state.background ? { background: state.background } : {}),
+      })
     },
     DEBOUNCE_TIME,
     [state],
@@ -60,15 +46,11 @@ const ThemePropertiesField = () => {
 
   const selectedTextColor = getSelectedTextColor(state)
 
-  const updateState = <K extends keyof ThemeProperties>(
+  const updateState = <K extends keyof FooterConfig>(
     key: K,
-    value: ThemeProperties[K],
+    value: FooterConfig[K],
   ) => {
     setState((prevState) => ({ ...prevState, [key]: value }))
-  }
-
-  if (!sdk.user.spaceMembership.admin) {
-    return <Paragraph>(Only admins can edit this JSON field)</Paragraph>
   }
 
   return (
@@ -105,9 +87,9 @@ const ThemePropertiesField = () => {
           alignItems="flex-start"
         >
           <TextInput
-            value={state.backgroundColor || ''}
+            value={state.background || ''}
             onChange={(event) => {
-              updateState('backgroundColor', event.target.value)
+              updateState('background', event.target.value)
             }}
           />
         </Stack>
@@ -116,4 +98,4 @@ const ThemePropertiesField = () => {
   )
 }
 
-export default ThemePropertiesField
+export default FooterConfigField
