@@ -1,5 +1,5 @@
 import {
-  CategoryDto,
+  DtoV5CategoryDto,
   DrivingLicenseV4V5Dto as DriversLicense,
   RemarkCode,
 } from '@island.is/clients/driving-license'
@@ -31,7 +31,7 @@ const mapRemarks = (
 }
 
 const mapCategoryToRight = (
-  category: Partial<CategoryDto>,
+  category: Partial<DtoV5CategoryDto>,
   remarks?: Array<RemarkCode> | null,
 ) => {
   let right = `Réttindaflokkur ${category.nr ?? ''}, ${
@@ -51,7 +51,7 @@ const mapCategoryToRight = (
 }
 
 const formatRights = (
-  categories: Array<Partial<CategoryDto>> | null,
+  categories: Array<Partial<DtoV5CategoryDto>> | null,
   remarks?: Array<RemarkCode> | null,
 ) => {
   if (!categories) {

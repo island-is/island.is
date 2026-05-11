@@ -132,7 +132,7 @@ const AddRulingOrder: FC = () => {
           <FormContentContainer>
             <PageTitle>Úrskurðir</PageTitle>
             <CourtCaseInfo workingCase={workingCase} />
-            <SectionHeading title="Hlaða upp úrskurði" />
+            <SectionHeading title="Hlaða upp úrskurði" required />
             <UploadFiles
               files={uploadFiles}
               onChange={addFiles}
