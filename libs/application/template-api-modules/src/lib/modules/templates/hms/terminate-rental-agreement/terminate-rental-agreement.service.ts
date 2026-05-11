@@ -34,6 +34,7 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
 
   async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
     try {
+      ts - error
       const contracts = await this.homeApiWithAuth(auth)
         .contractKtKtGet({
           kt: auth.nationalId,
