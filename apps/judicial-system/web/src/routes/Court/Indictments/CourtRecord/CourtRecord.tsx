@@ -100,7 +100,7 @@ const CourtRecord: FC = () => {
                 />
               ))}
             </Accordion>
-            <TinyMCE />
+            <TinyMCE label="Afstaða ákærða, málflutningur og aðrar bókanir" />
             <Box
               display="flex"
               justifyContent="flexEnd"

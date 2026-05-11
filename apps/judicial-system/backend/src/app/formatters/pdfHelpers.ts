@@ -1,3 +1,5 @@
+import type { ChildNode, Element, Text } from 'domhandler'
+import { parseDocument } from 'htmlparser2'
 import { PDFFont, PDFPage } from 'pdf-lib'
 
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
@@ -485,4 +487,148 @@ export const addNumberedList = (
   }
 
   doc.x = originalX
+}
+
+const HIGHLIGHT_COLOR = '#FFFF00'
+const INDENT_PTS = 20
+
+interface Run {
+  text: string
+  bold: boolean
+  italic: boolean
+  highlight: boolean
+}
+
+export interface RichTextBlock {
+  runs: Run[]
+  indent: number
+}
+
+const collectRuns = (
+  nodes: ChildNode[],
+  bold: boolean,
+  italic: boolean,
+  highlight: boolean,
+  result: Run[],
+): void => {
+  for (const node of nodes) {
+    if (node.type === 'text') {
+      const text = (node as Text).data
+      if (text) result.push({ text, bold, italic, highlight })
+      continue
+    }
+    if (node.type !== 'tag') continue
+    const el = node as Element
+    const children = el.children ?? []
+    if (el.name === 'strong' || el.name === 'b') {
+      collectRuns(children, true, italic, highlight, result)
+    } else if (el.name === 'em' || el.name === 'i') {
+      collectRuns(children, bold, true, highlight, result)
+    } else if (
+      el.name === 'mark' ||
+      (el.name === 'span' && el.attribs?.style?.includes('background-color'))
+    ) {
+      collectRuns(children, bold, italic, true, result)
+    } else if (el.name === 'br') {
+      result.push({ text: '\n', bold: false, italic: false, highlight: false })
+    } else {
+      collectRuns(children, bold, italic, highlight, result)
+    }
+  }
+}
+
+const collectBlocksFromNodes = (
+  nodes: ChildNode[],
+  indent = 0,
+): RichTextBlock[] => {
+  const blocks: RichTextBlock[] = []
+
+  for (const node of nodes) {
+    if (node.type === 'text') {
+      const text = (node as Text).data.trim()
+      if (text) {
+        blocks.push({
+          runs: [{ text, bold: false, italic: false, highlight: false }],
+          indent,
+        })
+      }
+      continue
+    }
+    if (node.type !== 'tag') continue
+    const el = node as Element
+    const children = el.children ?? []
+
+    if (el.name === 'p') {
+      const style = el.attribs?.style ?? ''
+      const paddingMatch = style.match(/padding-left:\s*(\d+(?:\.\d+)?)px/)
+      const pIndent = paddingMatch
+        ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
+        : 0
+      const runs: Run[] = []
+      collectRuns(children, false, false, false, runs)
+      blocks.push({ runs, indent: indent + pIndent })
+    } else if (el.name === 'blockquote') {
+      blocks.push(...collectBlocksFromNodes(children, indent + INDENT_PTS))
+    } else {
+      blocks.push(...collectBlocksFromNodes(children, indent))
+    }
+  }
+
+  return blocks
+}
+
+export const htmlToBlocks = (html: string): RichTextBlock[] => {
+  const dom = parseDocument(html)
+  return collectBlocksFromNodes(dom.children as ChildNode[])
+}
+
+const getFontName = (run: Run): string => {
+  if (run.bold && run.italic) return 'Times-BoldItalic'
+  if (run.bold) return 'Times-Bold'
+  if (run.italic) return 'Times-Italic'
+  return 'Times-Roman'
+}
+
+export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
+  const blocks = htmlToBlocks(html)
+
+  for (const block of blocks) {
+    const isEmptyBlock =
+      block.runs.length === 0 || block.runs.every((r) => !r.text.trim())
+
+    if (isEmptyBlock) {
+      addEmptyLines(doc)
+      continue
+    }
+
+    const leftX = doc.page.margins.left + block.indent
+    const width = doc.page.width - doc.page.margins.right - leftX
+
+    for (let i = 0; i < block.runs.length; i++) {
+      const run = block.runs[i]
+      const isLast = i === block.runs.length - 1
+
+      doc.font(getFontName(run)).fontSize(baseFontSize)
+
+      const textX = i === 0 ? leftX : doc.x
+      const textY = doc.y
+
+      if (run.highlight) {
+        const w = doc.widthOfString(run.text)
+        const h = doc.currentLineHeight(true)
+        doc.rect(textX, textY, w, h).fill(HIGHLIGHT_COLOR)
+        doc.fillColor('black')
+      }
+
+      if (i === 0) {
+        doc.text(run.text, textX, textY, {
+          continued: !isLast,
+          paragraphGap: 1,
+          width,
+        })
+      } else {
+        doc.text(run.text, { continued: !isLast, paragraphGap: 1 })
+      }
+    }
+  }
 }

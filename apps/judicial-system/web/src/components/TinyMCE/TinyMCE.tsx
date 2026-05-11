@@ -1,21 +1,34 @@
 import React from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 
-export default function App() {
+import * as styles from './TinyMCE.css'
+
+interface Props {
+  label: string
+}
+
+const TinyMCE = ({ label }: Props) => {
   return (
-    <Editor
-      apiKey={process.env.TINY_MCE_API_KEY}
-      init={{
-        plugins:
-          'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks',
-        toolbar:
-          'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-        branding: false,
-        statusbar: false,
-        placeholder: 'Start typing...',
-      }}
-      initialValue=""
-      onEditorChange={(content) => console.log(content)}
-    />
+    <div className={styles.wrapper}>
+      <label className={styles.label}>{label}</label>
+      <Editor
+        apiKey={process.env.TINY_MCE_API_KEY}
+        init={{
+          plugins: 'lists',
+          toolbar: 'bold italic | indent outdent | hilitecolor',
+          toolbar_mode: 'wrap',
+          menubar: false,
+          content_style:
+            "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;1,300&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; }",
+          branding: false,
+          statusbar: false,
+          placeholder: 'Start typing...',
+        }}
+        initialValue=""
+        onEditorChange={(content) => console.log(content)}
+      />
+    </div>
   )
 }
+
+export default TinyMCE
