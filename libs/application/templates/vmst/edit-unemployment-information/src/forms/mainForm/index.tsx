@@ -40,6 +40,7 @@ import {
   getDefaultDrivingLicenses,
   getDefaultEducation,
   getDefaultLanguages,
+  getDefaultEures,
 } from '../../utils/defaultValues'
 import type { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
 
@@ -447,6 +448,8 @@ export const MainForm = buildForm({
                     { value: YES, label: coreMessages.radioYes },
                     { value: NO, label: coreMessages.radioNo },
                   ],
+                  defaultValue: (application: Application) =>
+                    getDefaultEures(application.externalData),
                 }),
                 buildAlertMessageField({
                   id: 'eures.alertMessage',
