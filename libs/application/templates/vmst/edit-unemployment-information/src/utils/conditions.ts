@@ -3,10 +3,11 @@ import { getDefaultDrivingLicenses } from './defaultValues'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const showOtherAddress = (formValue: FormValue): boolean => {
-  const val = formValue.otherAddress as
-    | { currentAddressIsNotDifferent?: string[] }
-    | undefined
-  return !val?.currentAddressIsNotDifferent?.includes('yes')
+  const val = getValueViaPath<string[]>(
+    formValue,
+    'otherAddress.currentAddressIsNotDifferent',
+  )
+  return !val?.includes('yes')
 }
 
 export const showDrivingLicenseTypes = (
