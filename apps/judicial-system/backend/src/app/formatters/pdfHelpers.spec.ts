@@ -4,14 +4,24 @@ describe('htmlToBlocks', () => {
   it('wraps plain text in a single block', () => {
     const blocks = htmlToBlocks('Hello world')
     expect(blocks).toEqual([
-      { runs: [{ text: 'Hello world', bold: false, italic: false, highlight: false }], indent: 0 },
+      {
+        runs: [
+          { text: 'Hello world', bold: false, italic: false, highlight: false },
+        ],
+        indent: 0,
+      },
     ])
   })
 
   it('parses a simple paragraph', () => {
     const blocks = htmlToBlocks('<p>Hello world</p>')
     expect(blocks).toEqual([
-      { runs: [{ text: 'Hello world', bold: false, italic: false, highlight: false }], indent: 0 },
+      {
+        runs: [
+          { text: 'Hello world', bold: false, italic: false, highlight: false },
+        ],
+        indent: 0,
+      },
     ])
   })
 
@@ -24,12 +34,20 @@ describe('htmlToBlocks', () => {
 
   it('marks bold runs', () => {
     const blocks = htmlToBlocks('<p><strong>bold</strong></p>')
-    expect(blocks[0].runs[0]).toMatchObject({ text: 'bold', bold: true, italic: false })
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'bold',
+      bold: true,
+      italic: false,
+    })
   })
 
   it('marks italic runs', () => {
     const blocks = htmlToBlocks('<p><em>italic</em></p>')
-    expect(blocks[0].runs[0]).toMatchObject({ text: 'italic', bold: false, italic: true })
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'italic',
+      bold: false,
+      italic: true,
+    })
   })
 
   it('marks bold+italic for nested strong and em', () => {
@@ -39,11 +57,16 @@ describe('htmlToBlocks', () => {
 
   it('marks highlight for <mark>', () => {
     const blocks = htmlToBlocks('<p><mark>highlighted</mark></p>')
-    expect(blocks[0].runs[0]).toMatchObject({ text: 'highlighted', highlight: true })
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'highlighted',
+      highlight: true,
+    })
   })
 
   it('marks highlight for span with background-color style', () => {
-    const blocks = htmlToBlocks('<p><span style="background-color: #ffff00;">highlighted</span></p>')
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: #ffff00;">highlighted</span></p>',
+    )
     expect(blocks[0].runs[0]).toMatchObject({ highlight: true })
   })
 
@@ -61,7 +84,9 @@ describe('htmlToBlocks', () => {
   })
 
   it('adds cumulative indent for nested blockquotes', () => {
-    const blocks = htmlToBlocks('<blockquote><blockquote><p>deep</p></blockquote></blockquote>')
+    const blocks = htmlToBlocks(
+      '<blockquote><blockquote><p>deep</p></blockquote></blockquote>',
+    )
     expect(blocks[0].indent).toBe(40)
   })
 

@@ -317,7 +317,10 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    addRichText(doc, courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>')
+    addRichText(
+      doc,
+      courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+    )
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)
