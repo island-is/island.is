@@ -57,8 +57,31 @@ const EmployersOverview: FC<RepeaterProps> = ({
     ) {
       markEmployersOverviewAutoExpanded(application.id)
       expandRepeater()
+      return
     }
-  }, [application.id, expandRepeater, employers, rawEmployers])
+
+    // expandRepeater appends an empty {} to the employers array. If the user
+    // backs out of the addEmployers form without entering anything, that empty
+    // entry stays in state and fails dataSchema validation, silently blocking
+    // submission on earlier screens (e.g. employmentStatusSubSection).
+    const nonEmptyEmployers = rawEmployers.filter(
+      (e) =>
+        !!e?.email ||
+        !!e?.phoneNumber ||
+        !!e?.ratioType ||
+        !!e?.ratioYearly ||
+        !!e?.ratioMonthlyAvg,
+    )
+    if (nonEmptyEmployers.length !== rawEmployers.length) {
+      setRepeaterItems(nonEmptyEmployers)
+    }
+  }, [
+    application.id,
+    expandRepeater,
+    employers,
+    rawEmployers,
+    setRepeaterItems,
+  ])
 
   setBeforeSubmitCallback?.(async () => {
     if (
@@ -103,7 +126,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
           </Button>
         </Inline>
       </Box>
-      {!!error && (
+      {typeof error === 'string' && !!error && (
         <Box marginTop={3}>
           <ContentBlock>
             <AlertMessage type="error" title={error} />
