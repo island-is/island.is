@@ -836,6 +836,43 @@
         ]
       }
     },
+    "/api/applicants/{id}/foreignTravel/eligibility": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að skrá dvöl erlendis.",
+        "operationId": "Applicant_GetForeignTravelEligibility",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upplýsingar um hvort megi stofna staðfestingu atvinnuleitar.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ForeignTravelEligibilityResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applicants/{id}/foreignTravel": {
       "post": {
         "tags": ["Applicant"],
@@ -874,6 +911,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Applicant_CreateForeignTravelResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
                 }
               }
             }
@@ -6570,6 +6617,15 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_ForeignTravelEligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
           }
         }
       },
