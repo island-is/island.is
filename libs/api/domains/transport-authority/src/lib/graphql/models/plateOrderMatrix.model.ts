@@ -20,12 +20,6 @@ export class PlateOrderType {
   @Field(() => String, { nullable: true })
   plateTypeName?: string | null
 
-  @Field(() => String, { nullable: true })
-  plateBackground?: string | null
-
-  @Field(() => String, { nullable: true })
-  plateForeground?: string | null
-
   @Field(() => [PlateSize], { nullable: true })
   plateSizes?: PlateSize[]
 }
@@ -46,12 +40,6 @@ export class VehicleCurrentPlates {
 
   @Field(() => String, { nullable: true })
   plateTypeName?: string | null
-
-  @Field(() => String, { nullable: true })
-  plateBackground?: string | null
-
-  @Field(() => String, { nullable: true })
-  plateForeground?: string | null
 
   @Field(() => String, { nullable: true })
   plateStatusCode?: string | null

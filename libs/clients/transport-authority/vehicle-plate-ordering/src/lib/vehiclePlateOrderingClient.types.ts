@@ -33,8 +33,6 @@ export interface PlateSize {
 export interface PlateOrderType {
   plateTypeCode?: string | null
   plateTypeName?: string | null
-  plateBackground?: string | null
-  plateForeground?: string | null
   plateSizes: PlateSize[]
 }
 
@@ -47,8 +45,6 @@ export interface CurrentPlates {
   permno?: string | null
   plateTypeCode?: string | null
   plateTypeName?: string | null
-  plateBackground?: string | null
-  plateForeground?: string | null
   plateStatusCode?: string | null
   plateStatusName?: string | null
 }
