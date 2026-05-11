@@ -13,6 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
+import { Features } from '@island.is/feature-flags'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 import { replaceParams } from '@island.is/react-spa/shared'
 
 import { useLooseSearch } from '../../hooks/useLooseSearch'
@@ -31,6 +33,11 @@ const Tenants = () => {
     useLoaderData() as TenantsLoaderData
   const { formatMessage, locale } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
+  const { value: showAdminControlsFlag } = useFeatureFlag(
+    Features.showIdsAdminControls,
+    false,
+  )
+  const canManageTenants = isSuperAdmin && showAdminControlsFlag
   const revalidator = useRevalidator()
 
   const searchableTenants: SearchableTenant[] = useMemo(
@@ -85,7 +92,7 @@ const Tenants = () => {
             onChange={handleSearch}
             backgroundColor="blue"
           />
-          {isSuperAdmin && (
+          {canManageTenants && (
             <Button size="small" onClick={() => setCreateOpen(true)}>
               {formatMessage(m.createTenant)}
             </Button>
@@ -154,7 +161,7 @@ const Tenants = () => {
           })}
         </Stack>
       </Stack>
-      {isSuperAdmin && isCreateOpen && (
+      {canManageTenants && isCreateOpen && (
         <CreateTenantModal
           configuredEnvironments={configuredEnvironments}
           onClose={() => setCreateOpen(false)}

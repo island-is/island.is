@@ -1,6 +1,7 @@
 import { redirect } from 'react-router-dom'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { replaceParams } from '@island.is/react-spa/shared'
 
@@ -18,7 +19,11 @@ export type EditTenantLoaderResult = NonNullable<
 export type EditTenantEnvironment =
   EditTenantLoaderResult['environments'][number]
 
-export const editTenantLoader: WrappedLoaderFn = ({ client, userInfo }) => {
+export const editTenantLoader: WrappedLoaderFn = ({
+  client,
+  userInfo,
+  featureFlagClient,
+}) => {
   return async ({ params }) => {
     const tenantId = params['tenant']
 
@@ -26,7 +31,17 @@ export const editTenantLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       throw new Error('Tenant id not found')
     }
 
-    if (!userInfo.scopes.includes(AdminPortalScope.idsAdminSuperUser)) {
+    const isSuperAdmin = userInfo.scopes.includes(
+      AdminPortalScope.idsAdminSuperUser,
+    )
+    const showAdminControls =
+      isSuperAdmin &&
+      (await featureFlagClient.getValue(Features.showIdsAdminControls, false, {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      }))
+
+    if (!showAdminControls) {
       return redirect(
         replaceParams({
           href: IDSAdminPaths.IDSAdminClients,
