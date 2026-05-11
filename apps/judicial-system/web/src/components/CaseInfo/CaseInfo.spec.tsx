@@ -119,6 +119,19 @@ describe('CourtCaseInfo - reopen button visibility', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('hides the reopen button when the appeal is in APPEALED state', () => {
+    const caseWithAppealedAppeal = {
+      ...completedIndictmentCase,
+      appealCase: { id: 'appeal_id', appealState: AppealCaseState.APPEALED },
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, caseWithAppealedAppeal)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('shows the reopen button when the appeal is completed', () => {
     const caseWithCompletedAppeal = {
       ...completedIndictmentCase,
