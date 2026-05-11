@@ -24,7 +24,7 @@ import type {
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { GET_LANDSPITALI_MENU } from '@island.is/web/screens/queries/Landspitali'
 
-import { m } from './translation.string'
+import { m } from './translation.strings'
 
 interface LandspitaliMenuProps {
   slice: ConnectedComponent
