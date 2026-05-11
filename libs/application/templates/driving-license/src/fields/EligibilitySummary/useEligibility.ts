@@ -138,6 +138,7 @@ export const useEligibility = (
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
         hasPhoto,
+        is65RenewalRedesignEnabled,
       ),
     }
   }
