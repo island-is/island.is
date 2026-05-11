@@ -26,10 +26,11 @@ export const sectionFakeData = buildSubSection({
           // and so it will wrap the text in a <code> block when the double
           // spaces are not removed.
           description: `
-            Ath. gervigögn eru eingöngu notuð í stað þess að sækja
-            forsendugögn í staging umhverfi (dev x-road) hjá RLS, auk þess
-            sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
-            eins nema að RLS tekur ekki við umsókninni.
+            Ath. gervigögn eru eingöngu notuð í stað þess að sækja forsendugögn
+            í staging umhverfi (dev x-road) hjá RLS. Sjálfgefið tekur RLS ekki
+            við umsókninni þegar gervigögn eru notuð, en hægt er að virkja
+            senda-til-RLS hér að neðan til að senda inn raunverulega umsókn í
+            dev x-road.
 
             Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
             til að hægt sé að prófa ferlið án þess að vera með tilheyrandi

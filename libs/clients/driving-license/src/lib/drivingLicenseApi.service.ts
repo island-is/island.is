@@ -381,12 +381,11 @@ export class DrivingLicenseApi {
   public async getCanApplyForRenewal65(params: {
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeRenewal65>> {
-    const response =
-      await this.applicationV5.apiApplicationsV5CanapplyRenewal65Get({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token,
-      })
+    const response = await this.v5.apiDrivinglicenseV5CanapplyforRenewal65Get({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+    })
 
     return {
       result: !!response.result,
