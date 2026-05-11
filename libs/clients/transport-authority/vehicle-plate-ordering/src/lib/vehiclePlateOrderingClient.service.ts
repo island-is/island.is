@@ -54,23 +54,27 @@ export class VehiclePlateOrderingClient {
   public async getCurrentPlates(
     auth: User,
     permno: string,
-  ): Promise<CurrentPlates> {
-    const result = await this.plateOrderingApiWithAuth(
-      auth,
-    ).currentplatesPermnoGet({
-      permno,
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-    })
+  ): Promise<CurrentPlates | null> {
+    try {
+      const result = await this.plateOrderingApiWithAuth(
+        auth,
+      ).currentplatesPermnoGet({
+        permno,
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
+      })
 
-    return {
-      permno: result.permno,
-      plateTypeCode: result.plateTypeCode,
-      plateTypeName: result.plateTypeName,
-      plateBackground: result.plateBackground,
-      plateForeground: result.plateForground,
-      plateStatusCode: result.plateStatusCode,
-      plateStatusName: result.plateStatusName,
+      return {
+        permno: result.permno,
+        plateTypeCode: result.plateTypeCode,
+        plateTypeName: result.plateTypeName,
+        plateBackground: result.plateBackground,
+        plateForeground: result.plateForground,
+        plateStatusCode: result.plateStatusCode,
+        plateStatusName: result.plateStatusName,
+      }
+    } catch (e) {
+      return null
     }
   }
 

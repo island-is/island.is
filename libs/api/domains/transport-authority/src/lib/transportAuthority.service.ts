@@ -392,7 +392,7 @@ export class TransportAuthorityApi {
   async getCurrentPlates(
     auth: User,
     permno: string,
-  ): Promise<VehicleCurrentPlates> {
+  ): Promise<VehicleCurrentPlates | null> {
     return await this.vehiclePlateOrderingClient.getCurrentPlates(auth, permno)
   }
 
