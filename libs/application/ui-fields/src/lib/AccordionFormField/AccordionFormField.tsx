@@ -68,8 +68,10 @@ export const AccordionFormField = ({
           )
           newVisibility[child.id] = isVisible
 
-          if (prevVisibilityRef.current[child.id] !== undefined &&
-              prevVisibilityRef.current[child.id] !== isVisible) {
+          if (
+            prevVisibilityRef.current[child.id] !== undefined &&
+            prevVisibilityRef.current[child.id] !== isVisible
+          ) {
             conditionChanged = true
           }
         }
