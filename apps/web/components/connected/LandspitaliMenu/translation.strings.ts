@@ -1,6 +1,26 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  present: {
+    id: 'web.landspitaliMenu:present',
+    defaultMessage: 'Inniheldur',
+    description: 'Inniheldur',
+  },
+  absent: {
+    id: 'web.landspitaliMenu:absent',
+    defaultMessage: 'Gæti innihaldið',
+    description: 'Gæti innihaldið',
+  },
+  'RDS kjöt/fiskur': {
+    id: 'web.landspitaliMenu:rds-kjot-fiskur',
+    defaultMessage: 'RDS kjöt/fiskur',
+    description: 'RDS kjöt/fiskur',
+  },
+  'RDS grænmetisfæði': {
+    id: 'web.landspitaliMenu:rds-graenmetisfaedi',
+    defaultMessage: 'RDS grænmetisfæði',
+    description: 'RDS grænmetisfæði',
+  },
   A1: {
     id: 'web.landspitaliMenu:a1',
     defaultMessage: 'Almennt fæði (A1)',
@@ -78,7 +98,7 @@ export const m = defineMessages({
   },
   ingredientsTitle: {
     id: 'web.landspitaliMenu:ingredientsTitle',
-    defaultMessage: 'Innihaldsefni',
+    defaultMessage: 'Hráefni/Innihald',
     description: 'Ingredients section title',
   },
   co2Label: {
@@ -93,7 +113,8 @@ export const m = defineMessages({
   },
   errorFetchingMenu: {
     id: 'web.landspitaliMenu:errorFetchingMenu',
-    defaultMessage: 'Villa kom upp við að sækja matseðilinn. Reyndu aftur síðar.',
+    defaultMessage:
+      'Villa kom upp við að sækja matseðilinn. Reyndu aftur síðar.',
     description: 'Error message shown when fetching the menu fails',
   },
 })

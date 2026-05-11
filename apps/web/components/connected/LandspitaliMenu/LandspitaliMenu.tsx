@@ -46,36 +46,40 @@ const CourseDetails = ({ course }: { course: MenuCourse }) => {
   const { formatMessage } = useIntl()
 
   return (
-    <Stack space={2}>
+    <Stack space={3}>
       {course.nutrients?.length ? (
-        <Stack space={1}>
-          <Text variant="eyebrow">{formatMessage(m.nutritionTitle)}</Text>
-          <Inline alignY="center" space={1}>
-            {course.nutrients.map((nutrient, index) => (
-              <Tag
-                key={`${nutrient.name ?? 'nutrient'}-${index}`}
-                variant="dark"
-                disabled
-                outlined
-              >
-                {`${
-                  nutrient.name ?? formatMessage(m.nutritionFallbackName)
-                }: ${formatRoundedNumber(nutrient.amount)}${
-                  nutrient.unit ?? ''
+        <Box
+          display="flex"
+          flexDirection={['column', 'row']}
+          alignItems="center"
+          justifyContent="center"
+          flexWrap="wrap"
+          style={{ gap: '16px' }}
+        >
+          {course.nutrients.map((nutrient, index) => (
+            <Box
+              key={`${nutrient.name ?? 'nutrient'}-${index}`}
+              textAlign="center"
+              style={{ minWidth: '70px' }}
+            >
+              <Text variant="small" color="blue400" fontWeight="semiBold">
+                {formatRoundedNumber(nutrient.amount)}
+              </Text>
+              <Text variant="small" fontWeight="semiBold">
+                {`${nutrient.name ?? formatMessage(m.nutritionFallbackName)}${
+                  nutrient.unit ? ` ${nutrient.unit}` : ''
                 }`}
-              </Tag>
-            ))}
-          </Inline>
-        </Stack>
+              </Text>
+            </Box>
+          ))}
+        </Box>
       ) : null}
 
       {course.ingredients?.length ? (
-        <Stack space={1}>
-          <Text variant="eyebrow">{formatMessage(m.ingredientsTitle)}</Text>
-          <Text>
-            {course.ingredients.map((ingredient) => ingredient.name).join(', ')}
-          </Text>
-        </Stack>
+        <Text>
+          <strong>{formatMessage(m.ingredientsTitle)}:</strong>{' '}
+          {course.ingredients.map((ingredient) => ingredient.name).join(', ')}
+        </Text>
       ) : null}
 
       {course.co2Equivalents != null ? (
@@ -170,6 +174,8 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
     [selectedDate],
   )
 
+  const RDS_VARIANTS = ['RDS kjöt/fiskur', 'RDS grænmetisfæði'] as const
+
   const optionTags = Array.from(
     (data?.webLandspitaliMenu.meals ?? [])
       .flatMap((meal) => meal.courses)
@@ -187,6 +193,7 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
       .entries(),
   )
     .map(([key, fullName]) => ({ key, fullName }))
+    .filter(({ key }) => key in m)
     .sort(sortAlpha('key'))
 
   const filteredMeals =
@@ -195,11 +202,15 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
         ...meal,
         courses: meal.courses.filter((course) => {
           const option = course.optionName?.split(',')[0].trim()
+          if (
+            RDS_VARIANTS.includes(selectedOption as typeof RDS_VARIANTS[number])
+          )
+            return option === selectedOption || option === 'RDS'
+
           return option === selectedOption
         }),
       }))
       .filter((meal) => meal.courses.length > 0) ?? []
-
   return (
     <Stack space={2}>
       <Stack space={5}>
@@ -241,9 +252,7 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
                   onClick={() => setSelectedOption(option.key)}
                   active={selectedOption === option.key}
                 >
-                  {option.key in m
-                    ? formatMessage(m[option.key as keyof typeof m])
-                    : option.key}
+                  {formatMessage(m[option.key as keyof typeof m])}
                 </Tag>
               ))}
             </Inline>
@@ -318,18 +327,30 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
                                 {course.knownAllergens?.map(
                                   (allergen, allergenIndex) =>
                                     allergen.name ? (
-                                      <Tag
+                                      <div
                                         key={`${allergen.name}-${allergenIndex}`}
-                                        variant={
+                                        title={
                                           allergen.presenceLevel === 'PRESENT'
-                                            ? 'red'
-                                            : 'yellow'
+                                            ? `${formatMessage(m.present)}: ${
+                                                allergen.name
+                                              }`
+                                            : `${formatMessage(m.absent)}: ${
+                                                allergen.name
+                                              }`
                                         }
-                                        disabled
-                                        outlined
                                       >
-                                        {allergen.name}
-                                      </Tag>
+                                        <Tag
+                                          variant={
+                                            allergen.presenceLevel === 'PRESENT'
+                                              ? 'red'
+                                              : 'yellow'
+                                          }
+                                          disabled
+                                          outlined
+                                        >
+                                          {allergen.name}
+                                        </Tag>
+                                      </div>
                                     ) : null,
                                 )}
                               </Inline>
