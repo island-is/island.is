@@ -131,8 +131,8 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [loading, currentPlateTypeRear, setValue, props.field.id])
 
   useEffect(() => {
-    setFieldLoadingState?.(loading || !!error)
-  }, [loading, error, setFieldLoadingState])
+    setFieldLoadingState?.(loading)
+  }, [loading, setFieldLoadingState])
 
   const sizeOptions = useMemo(
     () =>

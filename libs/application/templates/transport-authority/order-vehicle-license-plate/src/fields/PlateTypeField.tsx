@@ -93,8 +93,8 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [loading, plates, selectedPlateType, setValue])
 
   useEffect(() => {
-    setFieldLoadingState?.(loading || !!error)
-  }, [loading, error, setFieldLoadingState])
+    setFieldLoadingState?.(loading)
+  }, [loading, setFieldLoadingState])
 
   return (
     <Box paddingTop={2}>
