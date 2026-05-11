@@ -565,8 +565,8 @@ export class DrivingLicenseService {
     })
 
     return {
-      success: response,
-      errorMessage: null,
+      success: response.isOk ?? false,
+      errorMessage: response.errorCode ?? null,
     }
   }
 

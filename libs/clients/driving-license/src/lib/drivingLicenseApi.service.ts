@@ -557,23 +557,19 @@ export class DrivingLicenseApi {
     districtId: number
     pickupPlasticAtDistrict?: boolean
     sendPlasticToPerson?: boolean
-  }): Promise<boolean> {
-    const response = await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post(
-      {
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-        modelsV5PostRenewal65AndOver: {
-          userId: v5.DRIVING_LICENSE_API_USER_ID,
-          districtId: params.districtId,
-          renewalDate: new Date(),
-          pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
-          sendPlasticToPerson: params.sendPlasticToPerson,
-        },
+  }): Promise<v5.DtoV5Renewal65AndOver> {
+    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
+      modelsV5PostRenewal65AndOver: {
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+        districtId: params.districtId,
+        renewalDate: new Date(),
+        pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
+        sendPlasticToPerson: params.sendPlasticToPerson,
       },
-    )
-
-    return Boolean(response.isOk)
+    })
   }
 
   async postApplyForBELicense(params: {
