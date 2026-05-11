@@ -385,7 +385,7 @@ export class DrivingLicenseApi {
       await this.applicationV5.apiApplicationsV5CanapplyRenewal65Get({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
+        jwttoken: params.token,
       })
 
     return {
