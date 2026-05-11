@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
+import { Environment } from '@island.is/shared/types'
 
 import { environments } from '../shared/constants/environments'
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
@@ -16,6 +17,10 @@ import { Tenant } from './models/tenant.model'
 
 @Injectable()
 export class TenantsService extends MultiEnvironmentService {
+  getAvailableEnvironments(): Environment[] {
+    return this.getConfiguredEnvironments()
+  }
+
   async getTenants(user: User): Promise<TenantsPayload> {
     const tenantsSettledPromises = await Promise.allSettled(
       environments.map((environment) =>

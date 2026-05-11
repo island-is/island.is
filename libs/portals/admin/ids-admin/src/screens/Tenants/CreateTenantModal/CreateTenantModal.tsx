@@ -29,29 +29,47 @@ import {
   createTenantSchema,
 } from './CreateTenantModal.schema'
 
-type FieldErrors = Partial<Record<keyof CreateTenantFormValues, string>>
+type FormState = Omit<CreateTenantFormValues, 'environments'> & {
+  environments: AuthAdminEnvironment[]
+}
+
+type FieldErrors = Partial<Record<keyof FormState, string>>
 
 export type CreateTenantModalProps = {
+  configuredEnvironments: AuthAdminEnvironment[]
   onClose: () => void
   onCreated: () => void
 }
 
-const initialValues: CreateTenantFormValues = {
-  name: '',
-  nationalId: '',
-  displayName: '',
-  description: '',
-  organisationLogoKey: '',
-  contactEmail: '',
-  environments: [AuthAdminEnvironment.Development],
+const getInitialValues = (
+  configuredEnvironments: AuthAdminEnvironment[],
+): FormState => {
+  const defaultEnv = authAdminEnvironments.find((env) =>
+    configuredEnvironments.includes(env),
+  )
+  return {
+    name: '',
+    nationalId: '',
+    displayName: '',
+    description: '',
+    organisationLogoKey: '',
+    contactEmail: '',
+    environments: defaultEnv ? [defaultEnv] : [],
+  }
 }
 
-const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
+const CreateTenantModal = ({
+  configuredEnvironments,
+  onClose,
+  onCreated,
+}: CreateTenantModalProps) => {
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const navigate = useNavigate()
 
-  const [values, setValues] = useState<CreateTenantFormValues>(initialValues)
+  const [values, setValues] = useState<FormState>(() =>
+    getInitialValues(configuredEnvironments),
+  )
   const [errors, setErrors] = useState<FieldErrors>({})
   const [globalError, setGlobalError] = useState<string | null>(null)
 
@@ -63,7 +81,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
   }
 
   const onChange =
-    (field: Exclude<keyof CreateTenantFormValues, 'environments'>) =>
+    (field: Exclude<keyof FormState, 'environments'>) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setValues((prev) => ({ ...prev, [field]: e.target.value }))
       setErrors((prev) => ({ ...prev, [field]: undefined }))
@@ -71,15 +89,12 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
     }
 
   const toggleEnvironment = (env: AuthAdminEnvironment) => {
-    setValues((prev) => {
-      const next = prev.environments.includes(env)
+    setValues((prev) => ({
+      ...prev,
+      environments: prev.environments.includes(env)
         ? prev.environments.filter((e) => e !== env)
-        : [...prev.environments, env]
-      return {
-        ...prev,
-        environments: next as CreateTenantFormValues['environments'],
-      }
-    })
+        : [...prev.environments, env],
+    }))
     setErrors((prev) => ({ ...prev, environments: undefined }))
     setGlobalError(null)
   }
@@ -93,7 +108,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
     if (!result.success) {
       const nextErrors: FieldErrors = {}
       for (const issue of result.error.issues) {
-        const field = issue.path[0] as keyof CreateTenantFormValues | undefined
+        const field = issue.path[0] as keyof FormState | undefined
         if (field && !nextErrors[field]) {
           nextErrors[field] = issue.message
         }
@@ -258,6 +273,7 @@ const CreateTenantModal = ({ onClose, onCreated }: CreateTenantModalProps) => {
                         value={env}
                         checked={values.environments.includes(env)}
                         onChange={() => toggleEnvironment(env)}
+                        disabled={!configuredEnvironments.includes(env)}
                         large
                         backgroundColor="blue"
                       />

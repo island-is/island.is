@@ -17,6 +17,10 @@ query Tenants {
   }
 }
 
+query TenantConfiguredEnvironments {
+  authAdminTenantConfiguredEnvironments
+}
+
 query TenantDetails($id: String!) {
   authAdminTenantDetails(id: $id) {
     id

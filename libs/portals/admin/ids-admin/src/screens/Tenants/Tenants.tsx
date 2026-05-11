@@ -20,14 +20,15 @@ import { useSuperAdmin } from '../../hooks/useSuperAdmin'
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import CreateTenantModal from './CreateTenantModal/CreateTenantModal'
-import type { AuthTenants } from './Tenants.loader'
+import type { AuthTenants, TenantsLoaderData } from './Tenants.loader'
 
 type SearchableTenant = AuthTenants[number] & {
   searchNationalId: string
 }
 
 const Tenants = () => {
-  const originalTenantsList = useLoaderData() as AuthTenants
+  const { tenants: originalTenantsList, configuredEnvironments } =
+    useLoaderData() as TenantsLoaderData
   const { formatMessage, locale } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
   const revalidator = useRevalidator()
@@ -155,6 +156,7 @@ const Tenants = () => {
       </Stack>
       {isSuperAdmin && isCreateOpen && (
         <CreateTenantModal
+          configuredEnvironments={configuredEnvironments}
           onClose={() => setCreateOpen(false)}
           onCreated={() => {
             setCreateOpen(false)
