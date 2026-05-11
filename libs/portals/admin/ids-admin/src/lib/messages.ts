@@ -25,6 +25,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clear-filter',
     defaultMessage: 'Clear filter',
   },
+  noResultsForSearch: {
+    id: 'ap.ids-admin:no-results-for-search',
+    defaultMessage: 'No results found for your search',
+  },
   clearAllFilters: {
     id: 'ap.ids-admin:clear-all-filters',
     defaultMessage: 'Clear all filters',
@@ -93,6 +97,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
   },
+  noMatchingClients: {
+    id: 'ap.ids-admin:no-matching-clients',
+    defaultMessage: 'No applications match the current filter.',
+  },
   noClients: {
     id: 'ap.ids-admin:no-clients',
     defaultMessage: 'No applications',
@@ -117,6 +125,10 @@ export const m = defineMessages({
   create: {
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
+  },
+  edit: {
+    id: 'ap.ids-admin:edit',
+    defaultMessage: 'Edit',
   },
   displayName: {
     id: 'ap.ids-admin:display-name',
@@ -221,6 +233,48 @@ export const m = defineMessages({
   change: {
     id: 'ap.ids-admin:change',
     defaultMessage: 'Change',
+  },
+  restore: {
+    id: 'ap.ids-admin:restore',
+    defaultMessage: 'Restore',
+  },
+  restoreClient: {
+    id: 'ap.ids-admin:restore-client',
+    defaultMessage: 'Restore application',
+  },
+  restoreClientDescription: {
+    id: 'ap.ids-admin:restore-client-description',
+    defaultMessage:
+      'Restore this archived application across all environments.',
+  },
+  restoreClientAlertMessage: {
+    id: 'ap.ids-admin:restore-client-alert-message',
+    defaultMessage:
+      'Restoring this application may re-enable access to systems. Please verify the application settings after restoring.',
+  },
+  successRestoringClient: {
+    id: 'ap.ids-admin:success-restoring-client',
+    defaultMessage: 'Successfully restored application',
+  },
+  archived: {
+    id: 'ap.ids-admin:archived',
+    defaultMessage: 'Archived',
+  },
+  clientStatus: {
+    id: 'ap.ids-admin:client-status',
+    defaultMessage: 'Status',
+  },
+  activeClients: {
+    id: 'ap.ids-admin:active-clients',
+    defaultMessage: 'Active',
+  },
+  archivedClients: {
+    id: 'ap.ids-admin:archived-clients',
+    defaultMessage: 'Archived',
+  },
+  allClients: {
+    id: 'ap.ids-admin:all-clients',
+    defaultMessage: 'All',
   },
   absoluteLifetime: {
     id: 'ap.ids-admin:absolute-lifetime',
@@ -638,6 +692,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
   },
+  partiallySaved: {
+    id: 'ap.ids-admin:partially-saved',
+    defaultMessage: 'Saved in some environments. Operation failed on: {envs}',
+  },
   globalErrorMessage: {
     id: 'ap.ids-admin:global-error-message',
     defaultMessage: 'An error occurred',
@@ -877,6 +935,39 @@ export const m = defineMessages({
     id: 'ap.ids-admin:select-categories-placeholder',
     defaultMessage: 'Select categories',
   },
+  thirdPartyLoginUrl: {
+    id: 'ap.ids-admin:third-party-login-url',
+    defaultMessage: 'Third party login URL',
+  },
+  thirdPartyLoginUrlDescription: {
+    id: 'ap.ids-admin:third-party-login-url-description',
+    defaultMessage:
+      'URL that can be used to login to the application using third party delegation.',
+  },
+  originUrl: {
+    id: 'ap.ids-admin:origin-url',
+    defaultMessage: 'URL origin',
+  },
+  targetLinkUri: {
+    id: 'ap.ids-admin:target-link-uri',
+    defaultMessage: 'Target link URI',
+  },
+  linkPreview: {
+    id: 'ap.ids-admin:link-preview',
+    defaultMessage: 'Link Preview',
+  },
+  linkPreviewPlaceholder: {
+    id: 'ap.ids-admin:link-preview-placeholder',
+    defaultMessage: 'Fill in the above fields to see a preview of the link',
+  },
+  originUrlRequired: {
+    id: 'ap.ids-admin:origin-url-required',
+    defaultMessage: 'URL origin is required when target link URI is provided',
+  },
+  targetLinkUriRequired: {
+    id: 'ap.ids-admin:target-link-uri-required',
+    defaultMessage: 'Target link URI is required when URL origin is provided',
+  },
   noTags: {
     id: 'ap.ids-admin:no-tags',
     defaultMessage: 'No tags available',
@@ -905,6 +996,34 @@ export const m = defineMessages({
     id: 'ap.ids-admin:is-access-controlled-description',
     defaultMessage:
       'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
+  },
+  scopeUsersLabel: {
+    id: 'ap.ids-admin:scope-users-label',
+    defaultMessage: 'Users with access',
+  },
+  scopeUsersPlaceholder: {
+    id: 'ap.ids-admin:scope-users-placeholder',
+    defaultMessage: 'Choose from the list or create a new user',
+  },
+  scopeUsersLoading: {
+    id: 'ap.ids-admin:scope-users-loading',
+    defaultMessage: 'Loading users...',
+  },
+  addScopeUser: {
+    id: 'ap.ids-admin:add-scope-user',
+    defaultMessage: 'Create new user',
+  },
+  createScopeUserTitle: {
+    id: 'ap.ids-admin:create-scope-user-title',
+    defaultMessage: 'Create user',
+  },
+  createScopeUserSuccess: {
+    id: 'ap.ids-admin:create-scope-user-success',
+    defaultMessage: 'User created successfully',
+  },
+  createScopeUserError: {
+    id: 'ap.ids-admin:create-scope-user-error',
+    defaultMessage: 'Failed to create user',
   },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
@@ -959,6 +1078,448 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-to-personal-representatives-description',
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
+  },
+  domains: {
+    id: 'ap.ids-admin:domains',
+    defaultMessage: 'Domains',
+  },
+  adminControls: {
+    id: 'ap.ids-admin:admin-controls',
+    defaultMessage: 'Admin Controls',
+  },
+  apiScopeUsers: {
+    id: 'ap.ids-admin:api-scope-users',
+    defaultMessage: 'API Scope Users',
+  },
+  apiScopeUsersDescription: {
+    id: 'ap.ids-admin:api-scope-users-description',
+    defaultMessage: 'Manage users who have access to API scopes.',
+  },
+  apiScopeUsersSearchPlaceholder: {
+    id: 'ap.ids-admin:api-scope-users-search-placeholder',
+    defaultMessage: 'Search by name, national ID or email',
+  },
+  apiScopeUsersName: {
+    id: 'ap.ids-admin:api-scope-users-name',
+    defaultMessage: 'Name',
+  },
+  apiScopeUsersNationalId: {
+    id: 'ap.ids-admin:api-scope-users-national-id',
+    defaultMessage: 'National ID',
+  },
+  apiScopeUsersEmail: {
+    id: 'ap.ids-admin:api-scope-users-email',
+    defaultMessage: 'Email',
+  },
+  apiScopeUsersActions: {
+    id: 'ap.ids-admin:api-scope-users-actions',
+    defaultMessage: 'Actions',
+  },
+  apiScopeUsersCreateNew: {
+    id: 'ap.ids-admin:api-scope-users-create-new',
+    defaultMessage: 'Create user',
+  },
+  apiScopeUsersCreateTitle: {
+    id: 'ap.ids-admin:api-scope-users-create-title',
+    defaultMessage: 'Create API scope user',
+  },
+  apiScopeUsersEditTitle: {
+    id: 'ap.ids-admin:api-scope-users-edit-title',
+    defaultMessage: 'Edit API scope user',
+  },
+  apiScopeUsersDeleteConfirmTitle: {
+    id: 'ap.ids-admin:api-scope-users-delete-confirm-title',
+    defaultMessage: 'Delete API scope user',
+  },
+  apiScopeUsersDeleteConfirmMessage: {
+    id: 'ap.ids-admin:api-scope-users-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this API scope user?',
+  },
+  apiScopeUsersDeleteButton: {
+    id: 'ap.ids-admin:api-scope-users-delete-button',
+    defaultMessage: 'Delete',
+  },
+  /** @deprecated Use m.edit instead */
+  apiScopeUserEditButton: {
+    id: 'ap.ids-admin:api-scope-user-edit',
+    defaultMessage: 'Edit',
+  },
+  apiScopeUsersSaveButton: {
+    id: 'ap.ids-admin:api-scope-users-save-button',
+    defaultMessage: 'Save',
+  },
+  /** @deprecated Use m.create instead */
+  apiScopeUsersCreateButton: {
+    id: 'ap.ids-admin:create',
+    defaultMessage: 'Create',
+  },
+  /** @deprecated Use m.cancel instead */
+  apiScopeUsersCancelButton: {
+    id: 'ap.ids-admin:cancel',
+    defaultMessage: 'Cancel',
+  },
+  apiScopeUsersCreateSuccess: {
+    id: 'ap.ids-admin:api-scope-users-create-success',
+    defaultMessage: 'API scope user created successfully',
+  },
+  apiScopeUsersUpdateSuccess: {
+    id: 'ap.ids-admin:api-scope-users-update-success',
+    defaultMessage: 'API scope user updated successfully',
+  },
+  apiScopeUsersDeleteSuccess: {
+    id: 'ap.ids-admin:api-scope-users-delete-success',
+    defaultMessage: 'API scope user deleted successfully',
+  },
+  apiScopeUsersError: {
+    id: 'ap.ids-admin:api-scope-users-error',
+    defaultMessage: 'An error occurred',
+  },
+  apiScopeUsersNoResults: {
+    id: 'ap.ids-admin:api-scope-users-no-results',
+    defaultMessage: 'No API scope users found',
+  },
+  apiScopeUsersScopes: {
+    id: 'ap.ids-admin:api-scope-users-scopes',
+    defaultMessage: 'Scopes',
+  },
+  apiScopeUsersScopesLoading: {
+    id: 'ap.ids-admin:api-scope-users-scopes-loading',
+    defaultMessage: 'Loading scopes...',
+  },
+  apiScopeUsersPublishSuccess: {
+    id: 'ap.ids-admin:api-scope-users-publish-success',
+    defaultMessage: 'User published to {environment} successfully',
+  },
+  apiScopeUsersErrorNameMinLength: {
+    id: 'ap.ids-admin:api-scope-users-error-name-min-length',
+    defaultMessage: 'Name must be at least 2 characters',
+  },
+  apiScopeUsersErrorNationalId: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id',
+    defaultMessage: 'National ID must be exactly 10 digits',
+  },
+  apiScopeUsersErrorEmailRequired: {
+    id: 'ap.ids-admin:api-scope-users-error-email-required',
+    defaultMessage: 'Email is required',
+  },
+  apiScopeUsersErrorEmailFormat: {
+    id: 'ap.ids-admin:api-scope-users-error-email-format',
+    defaultMessage: 'Email must be a valid email address',
+  },
+  apiScopeUsersErrorNationalIdExists: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id-exists',
+    defaultMessage: 'A user with this national ID already exists',
+  },
+  apiScopeUsersErrorNationalIdCheckFailed: {
+    id: 'ap.ids-admin:api-scope-users-error-national-id-check-failed',
+    defaultMessage: 'Unable to verify national ID. Please try again.',
+  },
+  /** @deprecated Use m.errorEnvironment instead */
+  apiScopeUsersErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:error-environment',
+    defaultMessage: 'Choose at least one environment.',
+  },
+  apiScopeUsersEnvironments: {
+    id: 'ap.ids-admin:api-scope-users-environments',
+    defaultMessage: 'Environments',
+  },
+  apiScopeUsersDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:api-scope-users-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  apiScopeUsersDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:api-scope-users-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
+  apiScopeUsersPartialFailure: {
+    id: 'ap.ids-admin:api-scope-users-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
+  grantTypes: {
+    id: 'ap.ids-admin:grant-types',
+    defaultMessage: 'Grant Types',
+  },
+  grantTypesIntro: {
+    id: 'ap.ids-admin:grant-types-intro',
+    defaultMessage: 'Manage grant types',
+  },
+  grantTypesSearchPlaceholder: {
+    id: 'ap.ids-admin:grant-types-search-placeholder',
+    defaultMessage: 'Search by name or description',
+  },
+  grantTypesCreateNew: {
+    id: 'ap.ids-admin:grant-types-create-new',
+    defaultMessage: 'Create Grant Type',
+  },
+  grantTypesCreateTitle: {
+    id: 'ap.ids-admin:grant-types-create-title',
+    defaultMessage: 'Create Grant Type',
+  },
+  grantTypesEditTitle: {
+    id: 'ap.ids-admin:grant-types-edit-title',
+    defaultMessage: 'Edit Grant Type',
+  },
+  grantTypesName: {
+    id: 'ap.ids-admin:grant-types-name',
+    defaultMessage: 'Name',
+  },
+  grantTypesDescription: {
+    id: 'ap.ids-admin:grant-types-description',
+    defaultMessage: 'Description',
+  },
+  grantTypesSaveButton: {
+    id: 'ap.ids-admin:grant-types-save-button',
+    defaultMessage: 'Save',
+  },
+  grantTypesCreateButton: {
+    id: 'ap.ids-admin:grant-types-create-button',
+    defaultMessage: 'Create',
+  },
+  grantTypesCancelButton: {
+    id: 'ap.ids-admin:grant-types-cancel-button',
+    defaultMessage: 'Cancel',
+  },
+  grantTypesDeleteButton: {
+    id: 'ap.ids-admin:grant-types-delete-button',
+    defaultMessage: 'Archive',
+  },
+  grantTypesDeleteConfirmTitle: {
+    id: 'ap.ids-admin:grant-types-delete-confirm-title',
+    defaultMessage: 'Archive Grant Type',
+  },
+  grantTypesDeleteConfirmMessage: {
+    id: 'ap.ids-admin:grant-types-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to archive this grant type?',
+  },
+  grantTypesCreateSuccess: {
+    id: 'ap.ids-admin:grant-types-create-success',
+    defaultMessage: 'Grant type created successfully',
+  },
+  grantTypesUpdateSuccess: {
+    id: 'ap.ids-admin:grant-types-update-success',
+    defaultMessage: 'Grant type updated successfully',
+  },
+  grantTypesDeleteSuccess: {
+    id: 'ap.ids-admin:grant-types-delete-success',
+    defaultMessage: 'Grant type archived successfully',
+  },
+  grantTypesPublishSuccess: {
+    id: 'ap.ids-admin:grant-types-publish-success',
+    defaultMessage: 'Grant type published to {environment}',
+  },
+  grantTypesError: {
+    id: 'ap.ids-admin:grant-types-error',
+    defaultMessage: 'An error occurred',
+  },
+  grantTypesNoResults: {
+    id: 'ap.ids-admin:grant-types-no-results',
+    defaultMessage: 'No grant types found',
+  },
+  grantTypesArchived: {
+    id: 'ap.ids-admin:grant-types-archived',
+    defaultMessage: 'Archived',
+  },
+  grantTypesErrorNameRequired: {
+    id: 'ap.ids-admin:grant-types-error-name-required',
+    defaultMessage: 'Name is required',
+  },
+  grantTypesErrorNamePattern: {
+    id: 'ap.ids-admin:grant-types-error-name-pattern',
+    defaultMessage:
+      'Name must start and end with a lowercase letter and contain only lowercase letters, underscores, colons, dots, and hyphens',
+  },
+  grantTypesErrorNameExists: {
+    id: 'ap.ids-admin:grant-types-error-name-exists',
+    defaultMessage: 'A grant type with this name already exists',
+  },
+  grantTypesErrorNameCheckFailed: {
+    id: 'ap.ids-admin:grant-types-error-name-check-failed',
+    defaultMessage: 'Could not verify grant type name',
+  },
+  grantTypesErrorDescriptionRequired: {
+    id: 'ap.ids-admin:grant-types-error-description-required',
+    defaultMessage: 'Description is required',
+  },
+  grantTypesErrorDescriptionChars: {
+    id: 'ap.ids-admin:grant-types-error-description-chars',
+    defaultMessage: 'Description must not contain < > % $ characters',
+  },
+  grantTypesErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:grant-types-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  grantTypesDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:grant-types-delete-select-environments',
+    defaultMessage: 'Select environments to archive from',
+  },
+  grantTypesDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:grant-types-delete-environment-required',
+    defaultMessage: 'Select at least one environment to archive from',
+  },
+  grantTypesEnvironments: {
+    id: 'ap.ids-admin:grant-types-environments',
+    defaultMessage: 'Environments',
+  },
+  grantTypesRestoreButton: {
+    id: 'ap.ids-admin:grant-types-restore-button',
+    defaultMessage: 'Restore',
+  },
+  grantTypesRestoreConfirmTitle: {
+    id: 'ap.ids-admin:grant-types-restore-confirm-title',
+    defaultMessage: 'Restore Grant Type',
+  },
+  grantTypesRestoreConfirmMessage: {
+    id: 'ap.ids-admin:grant-types-restore-confirm-message',
+    defaultMessage: 'Are you sure you want to restore this grant type?',
+  },
+  grantTypesRestoreSuccess: {
+    id: 'ap.ids-admin:grant-types-restore-success',
+    defaultMessage: 'Grant type restored successfully',
+  },
+  grantTypesRestoreSelectEnvironments: {
+    id: 'ap.ids-admin:grant-types-restore-select-environments',
+    defaultMessage: 'Select environments to restore to',
+  },
+  grantTypesRestoreEnvironmentRequired: {
+    id: 'ap.ids-admin:grant-types-restore-environment-required',
+    defaultMessage: 'Select at least one environment to restore to',
+  },
+  grantTypesPartialFailure: {
+    id: 'ap.ids-admin:grant-types-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
+  idpProviders: {
+    id: 'ap.ids-admin:idp-providers',
+    defaultMessage: 'IDP Providers',
+  },
+  idpProvidersIntro: {
+    id: 'ap.ids-admin:idp-providers-intro',
+    defaultMessage: 'Manage identity providers',
+  },
+  idpProvidersSearchPlaceholder: {
+    id: 'ap.ids-admin:idp-providers-search-placeholder',
+    defaultMessage: 'Search by name or description',
+  },
+  idpProvidersCreateNew: {
+    id: 'ap.ids-admin:idp-providers-create-new',
+    defaultMessage: 'Create IDP Provider',
+  },
+  idpProvidersCreateTitle: {
+    id: 'ap.ids-admin:idp-providers-create-title',
+    defaultMessage: 'Create IDP Provider',
+  },
+  idpProvidersEditTitle: {
+    id: 'ap.ids-admin:idp-providers-edit-title',
+    defaultMessage: 'Edit IDP Provider',
+  },
+  idpProvidersName: {
+    id: 'ap.ids-admin:idp-providers-name',
+    defaultMessage: 'Name',
+  },
+  idpProvidersDescription: {
+    id: 'ap.ids-admin:idp-providers-description',
+    defaultMessage: 'Description',
+  },
+  idpProvidersHelptext: {
+    id: 'ap.ids-admin:idp-providers-helptext',
+    defaultMessage: 'Help text',
+  },
+  idpProvidersLevel: {
+    id: 'ap.ids-admin:idp-providers-level',
+    defaultMessage: 'Level',
+  },
+  idpProvidersEnvironments: {
+    id: 'ap.ids-admin:idp-providers-environments',
+    defaultMessage: 'Environments',
+  },
+  idpProvidersSaveButton: {
+    id: 'ap.ids-admin:idp-providers-save-button',
+    defaultMessage: 'Save',
+  },
+  idpProvidersDeleteButton: {
+    id: 'ap.ids-admin:idp-providers-delete-button',
+    defaultMessage: 'Delete',
+  },
+  idpProvidersDeleteConfirmTitle: {
+    id: 'ap.ids-admin:idp-providers-delete-confirm-title',
+    defaultMessage: 'Delete IDP Provider',
+  },
+  idpProvidersDeleteConfirmMessage: {
+    id: 'ap.ids-admin:idp-providers-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this IDP provider?',
+  },
+  idpProvidersCreateSuccess: {
+    id: 'ap.ids-admin:idp-providers-create-success',
+    defaultMessage: 'IDP provider created successfully',
+  },
+  idpProvidersUpdateSuccess: {
+    id: 'ap.ids-admin:idp-providers-update-success',
+    defaultMessage: 'IDP provider updated successfully',
+  },
+  idpProvidersDeleteSuccess: {
+    id: 'ap.ids-admin:idp-providers-delete-success',
+    defaultMessage: 'IDP provider deleted successfully',
+  },
+  idpProvidersPublishSuccess: {
+    id: 'ap.ids-admin:idp-providers-publish-success',
+    defaultMessage: 'IDP provider published to {environment}',
+  },
+  idpProvidersError: {
+    id: 'ap.ids-admin:idp-providers-error',
+    defaultMessage: 'An error occurred',
+  },
+  idpProvidersNoResults: {
+    id: 'ap.ids-admin:idp-providers-no-results',
+    defaultMessage: 'No IDP providers found',
+  },
+  idpProvidersErrorNameRequired: {
+    id: 'ap.ids-admin:idp-providers-error-name-required',
+    defaultMessage: 'Name is required',
+  },
+  idpProvidersErrorNamePattern: {
+    id: 'ap.ids-admin:idp-providers-error-name-pattern',
+    defaultMessage:
+      'Name must start with a letter and contain only letters, numbers, underscores, dots, and hyphens',
+  },
+  idpProvidersErrorNameExists: {
+    id: 'ap.ids-admin:idp-providers-error-name-exists',
+    defaultMessage: 'An IDP provider with this name already exists',
+  },
+  idpProvidersErrorNameCheckFailed: {
+    id: 'ap.ids-admin:idp-providers-error-name-check-failed',
+    defaultMessage: 'Could not verify IDP provider name',
+  },
+  idpProvidersErrorDescriptionRequired: {
+    id: 'ap.ids-admin:idp-providers-error-description-required',
+    defaultMessage: 'Description is required',
+  },
+  idpProvidersErrorDescriptionChars: {
+    id: 'ap.ids-admin:idp-providers-error-description-chars',
+    defaultMessage: 'Description must not contain < > % $ characters',
+  },
+  idpProvidersErrorHelptextRequired: {
+    id: 'ap.ids-admin:idp-providers-error-helptext-required',
+    defaultMessage: 'Help text is required',
+  },
+  idpProvidersErrorLevelRange: {
+    id: 'ap.ids-admin:idp-providers-error-level-range',
+    defaultMessage: 'Level must be between 1 and 4',
+  },
+  idpProvidersErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:idp-providers-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  idpProvidersDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:idp-providers-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  idpProvidersDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:idp-providers-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
+  idpProvidersPartialFailure: {
+    id: 'ap.ids-admin:idp-providers-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
   },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',
@@ -1160,5 +1721,21 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
       'Should legal representative automatically get this permission for their clients.',
+  },
+  deletedCategory: {
+    id: 'ap.ids-admin:deleted-category',
+    defaultMessage: 'Þessum flokki hefur verið eytt ({id})',
+  },
+  deletedCategoryDescription: {
+    id: 'ap.ids-admin:deleted-category-description',
+    defaultMessage: 'Þessi flokkur er ekki lengur til í Contentful',
+  },
+  deletedTag: {
+    id: 'ap.ids-admin:deleted-tag',
+    defaultMessage: 'Þessu merki hefur verið eytt ({id})',
+  },
+  deletedTagDescription: {
+    id: 'ap.ids-admin:deleted-tag-description',
+    defaultMessage: 'Þetta merki er ekki lengur til í Contentful',
   },
 })

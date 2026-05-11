@@ -16,6 +16,7 @@ import {
 import { AppealCase } from '../models/appealCase.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
 import { Case } from '../models/case.model'
+import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
 import { CivilClaimant } from '../models/civilClaimant.model'
@@ -43,6 +44,41 @@ export const caseInclude: Includeable[] = [
     model: AppealCase,
     as: 'appealCase',
     required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
     include: [
       {
         model: User,
@@ -144,6 +180,12 @@ export const caseInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -188,6 +230,11 @@ export const caseInclude: Includeable[] = [
         as: 'attestingWitness',
         required: false,
         include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CaseFile,
+        as: 'rulingFile',
+        required: false,
       },
       {
         model: CourtDocument,
@@ -529,8 +576,6 @@ export interface UpdateAppealCase
     AppealCase,
     | 'appealCaseNumber'
     | 'appealReceivedByCourtDate'
-    | 'prosecutorStatementDate'
-    | 'defendantStatementDate'
     | 'appealAssistantId'
     | 'appealJudge1Id'
     | 'appealJudge2Id'
@@ -543,6 +588,7 @@ export interface UpdateAppealCase
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
     | 'appealedByNationalId'
+    | 'rulingFileId'
   > {
   appealState?: AppealCase['appealState']
 }

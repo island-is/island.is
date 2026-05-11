@@ -1,5 +1,7 @@
 import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
 import { ConfirmJobSearchService } from './vmst/confirm-job-search/confirm-job-search.service'
+import { EditUnemploymentInformationModule } from './vmst/edit-unemployment-information/edit-unemployment-information.module'
+import { EditUnemploymentInformationService } from './vmst/edit-unemployment-information/edit-unemployment-information.service'
 import { DeRegisterUnemploymentBenefitsModule } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.module'
 import { DeRegisterUnemploymentBenefitsService } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
@@ -281,6 +283,7 @@ export const modules = [
   MileCarModule,
   CoursesModule,
   ConfirmJobSearchModule,
+  EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
 ]
 
@@ -377,5 +380,6 @@ export const services = [
   MileCarService,
   CoursesService,
   ConfirmJobSearchService,
+  EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,
 ]

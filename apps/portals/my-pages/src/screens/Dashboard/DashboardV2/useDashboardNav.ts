@@ -23,7 +23,7 @@ export const useDashboardNav = () => {
 
   // Temporary handling of the navigation ordering until we can remove DashboardV1
   // and only use the new Dashboard ordering for everything
-  const { data: configData } = useQuery<Query, QueryGetNamespaceArgs>(
+  const { data: configData, loading } = useQuery<Query, QueryGetNamespaceArgs>(
     GET_NAMESPACE_QUERY,
     {
       variables: {
@@ -56,5 +56,5 @@ export const useDashboardNav = () => {
           )
       : children.filter((item) => !featuredPathSet.has(item.path))
 
-  return { featured, rest }
+  return { featured, rest, loading }
 }

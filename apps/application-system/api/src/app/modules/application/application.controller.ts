@@ -189,13 +189,6 @@ export class ApplicationController {
     description:
       'To include pruned applications in the response. Defaults to false.',
   })
-  @ApiQuery({
-    name: 'excludeAttributes',
-    required: false,
-    type: 'string',
-    description:
-      'Comma-separated list of column names to exclude from the query (e.g. "answers,externalData,attachments").',
-  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -210,7 +203,6 @@ export class ApplicationController {
     scopeCheck?: boolean,
     @Query('showPruned', new ParseBoolPipe({ optional: true }))
     showPruned?: boolean,
-    @Query('excludeAttributes') excludeAttributes?: string,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
@@ -218,7 +210,6 @@ export class ApplicationController {
       typeId,
       status,
       showPruned ?? false,
-      excludeAttributes?.split(','),
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -239,7 +230,6 @@ export class ApplicationController {
     typeId?: string,
     status?: string,
     showPruned?: boolean,
-    excludeAttributes?: string[],
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
@@ -247,7 +237,6 @@ export class ApplicationController {
       typeId,
       status,
       showPruned,
-      excludeAttributes,
     )
   }
 

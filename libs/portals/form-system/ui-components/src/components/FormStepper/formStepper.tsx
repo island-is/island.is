@@ -14,6 +14,7 @@ interface Props {
   currentScreen?: Current<FormSystemScreen>
   hasSummaryScreen: boolean
   hasPayment: boolean
+  submitted: boolean
 }
 
 export const FormStepper = ({
@@ -22,6 +23,7 @@ export const FormStepper = ({
   currentScreen,
   hasSummaryScreen,
   hasPayment,
+  submitted,
 }: Props) => {
   const { lang } = useLocale()
 
@@ -46,7 +48,7 @@ export const FormStepper = ({
           key={section.id}
           sectionIndex={visIndex}
           section={section?.name?.[lang] ?? ''}
-          isComplete={Boolean(section?.isCompleted)}
+          isComplete={Boolean(section?.isCompleted) || submitted}
           isActive={section?.id === activeSectionId}
           subSections={(section?.screens ?? [])
             .filter((screen) => !!screen && !screen.isHidden)
