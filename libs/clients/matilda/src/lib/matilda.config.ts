@@ -15,7 +15,7 @@ export const MatildaClientConfig = defineConfig<z.infer<typeof schema>>({
       'MATILDA_BASE_URL',
       'https://matildaplatform.com/api/menu-publication',
     ),
-    distributorId: env.required('MATILDA_DISTRIBUTOR_ID'),
-    apiKey: env.required('MATILDA_API_KEY'),
+    distributorId: env.required('MATILDA_DISTRIBUTOR_ID', ''),
+    apiKey: env.required('MATILDA_API_KEY', ''),
   }),
 })
