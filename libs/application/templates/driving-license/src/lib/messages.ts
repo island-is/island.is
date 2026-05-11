@@ -887,8 +887,8 @@ export const m = defineMessages({
   },
   nationalCommissionerOfPolice: {
     id: 'dl.application:nationalCommissionerOfPolice',
-    defaultMessage: 'Ríkislögreglustjóri',
-    description: 'National Commissioner of Police',
+    defaultMessage: 'Sýslumenn',
+    description: 'Institution responsible for the driving license application',
   },
   countryDirectionsTitle: {
     id: 'dl.application:countryDirectionsTitle',
