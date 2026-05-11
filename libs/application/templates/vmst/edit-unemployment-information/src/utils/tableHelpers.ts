@@ -1,9 +1,6 @@
 import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import {
-  getLanguageOptions,
-  getLanguageAbilityOptions,
-} from './selectOptions'
+import { getLanguageOptions, getLanguageAbilityOptions } from './selectOptions'
 import {
   getLevelsOfStudyOptions,
   getDegreeOptions,
@@ -65,8 +62,7 @@ export const getLanguageStaticTableData = (application: Application) => {
   return defaults.map((lang) => ({
     language:
       langs.find((o) => o.value === lang.language)?.label ?? lang.language,
-    skill:
-      abilities.find((o) => o.value === lang.skill)?.label ?? lang.skill,
+    skill: abilities.find((o) => o.value === lang.skill)?.label ?? lang.skill,
   }))
 }
 
