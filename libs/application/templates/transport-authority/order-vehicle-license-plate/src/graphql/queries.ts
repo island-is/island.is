@@ -49,7 +49,6 @@ export const VALIDATE_VEHICLE_PLATE_ORDER = `
 export const GET_VEHICLE_PLATE_ORDER_OPTIONS = `
   query GetVehiclePlateOrderOptions($permno: String!) {
     vehiclePlateOrderOptions(permno: $permno) {
-      permno
       plates {
         plateTypeCode
         plateTypeName

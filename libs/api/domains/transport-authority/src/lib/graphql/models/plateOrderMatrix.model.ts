@@ -32,9 +32,6 @@ export class PlateOrderType {
 
 @ObjectType()
 export class PlateOrderMatrix {
-  @Field(() => String, { nullable: true })
-  permno?: string | null
-
   @Field(() => [PlateOrderType], { nullable: true })
   plates?: PlateOrderType[]
 }
