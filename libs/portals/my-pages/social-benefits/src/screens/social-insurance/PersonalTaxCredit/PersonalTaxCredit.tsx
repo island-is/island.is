@@ -108,7 +108,6 @@ const PersonalTaxCredit = () => {
               onSave={handleSaveMyTaxCredit}
             />
           </Box>
-
         </Stack>
       )}
     </IntroWrapper>

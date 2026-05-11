@@ -46,9 +46,7 @@ export class PersonalTaxCreditResolver {
     nullable: true,
   })
   @Audit()
-  getTaxBracket(
-    @CurrentUser() user: User,
-  ): Promise<TaxBracketAction | null> {
+  getTaxBracket(@CurrentUser() user: User): Promise<TaxBracketAction | null> {
     return this.service.getTaxBracket(user)
   }
 
@@ -115,7 +113,8 @@ export class PersonalTaxCreditResolver {
   })
   @Audit()
   async setTaxBracket(
-    @Args('taxBracket', { type: () => TaxBracketAction }) taxBracket: TaxBracketAction,
+    @Args('taxBracket', { type: () => TaxBracketAction })
+    taxBracket: TaxBracketAction,
     @CurrentUser() user: User,
   ): Promise<boolean> {
     await this.service.setTaxBracket(user, taxBracket)

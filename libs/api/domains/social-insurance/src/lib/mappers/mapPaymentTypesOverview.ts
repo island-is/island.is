@@ -12,8 +12,8 @@ export const mapPaymentTypeOverview = (
 ): PaymentTypeOverview => ({
   name:
     locale === 'en'
-      ? (row.paymentTypeEnglish ?? row.paymentType ?? undefined)
-      : (row.paymentType ?? undefined),
+      ? row.paymentTypeEnglish ?? row.paymentType ?? undefined
+      : row.paymentType ?? undefined,
   dateFrom: row.dateFrom ? new Date(row.dateFrom) : undefined,
   dateTo: row.dateTo ? new Date(row.dateTo) : undefined,
 })
