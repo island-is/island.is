@@ -17,7 +17,7 @@ import {
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 
 interface PlateOptionType {
   plateTypeCode?: string | null
@@ -139,11 +139,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               largeButtons
               backgroundColor="blue"
               defaultValue={
-                (
-                  application.answers as {
-                    plateType?: { regGroup?: string }
-                  }
-                )?.plateType?.regGroup
+                getValueViaPath(application.answers, 'plateType.regGroup') || ''
               }
               options={plates.map((plate) => ({
                 value: plate.plateTypeCode || '',
