@@ -1421,8 +1421,7 @@ const useSections = (
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
           (!workingCase.parentCase &&
             isCompletedCase(workingCase.state) &&
-            !workingCase.prosecutorPostponedAppealDate &&
-            !workingCase.accusedPostponedAppealDate &&
+            !workingCase.hasBeenAppealed &&
             workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
         children: [],
       },
@@ -1442,8 +1441,7 @@ const useSections = (
               ),
               isActive:
                 isCompletedCase(workingCase.state) &&
-                !workingCase.prosecutorPostponedAppealDate &&
-                !workingCase.accusedPostponedAppealDate &&
+                !workingCase.hasBeenAppealed &&
                 workingCase.appealCase?.appealState !==
                   AppealCaseState.COMPLETED,
               children: [],
