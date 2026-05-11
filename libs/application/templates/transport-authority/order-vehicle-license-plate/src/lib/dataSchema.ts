@@ -18,10 +18,10 @@ export const OrderVehicleLicensePlateSchema = z.object({
     .object({
       frontPlateSize: z.array(z.string()).max(1),
       rearPlateSize: z.array(z.string()).max(1),
-      currentFrontSize: z.string().optional(),
-      currentRearSize: z.string().optional(),
       frontPlateSizeName: z.string().optional(),
       rearPlateSizeName: z.string().optional(),
+      currentFrontSize: z.string().optional(),
+      currentRearSize: z.string().optional(),
     })
     .refine(({ frontPlateSize, rearPlateSize }) => {
       return frontPlateSize.length !== 0 || rearPlateSize.length !== 0
