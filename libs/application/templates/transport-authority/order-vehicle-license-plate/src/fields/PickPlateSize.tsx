@@ -30,17 +30,19 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
 ) => {
   const { formatMessage } = useLocale()
   const { application, errors, setFieldLoadingState } = props
-  const { setValue, control } = useFormContext()
+  const { setValue } = useFormContext()
 
-  const selectedFrontSizes = useWatch({
-    control,
+  const plateSizeDefault: string[] = []
+
+  const selectedFrontSizes: string[] = useWatch({
     name: `${props.field.id}.frontPlateSize`,
-  }) as string[] | undefined
+    defaultValue: plateSizeDefault,
+  })
 
-  const selectedRearSizes = useWatch({
-    control,
+  const selectedRearSizes: string[] = useWatch({
     name: `${props.field.id}.rearPlateSize`,
-  }) as string[] | undefined
+    defaultValue: plateSizeDefault,
+  })
 
   const vehicle = getSelectedVehicle(
     application.externalData,
@@ -91,8 +93,10 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const error = vehicleError || optionsError
 
   // Get all plate types from external data
-  const plateTypeList = application.externalData.plateTypeList
-    ?.data as PlateType[]
+  const plateTypeList = getValueViaPath<PlateType[]>(
+    application.externalData,
+    'plateTypeList.data',
+  )
 
   // Get current plate types from vehicle data
   const currentPlateTypeFront =
@@ -247,7 +251,7 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
             )
             if (sizesWithVisuals.length === 0) return null
             const maxW = Math.max(
-              ...sizesWithVisuals.map((s) => s.plateWidth as number),
+              ...sizesWithVisuals.map((s) => s.plateWidth ?? 0),
             )
             const scale = 200 / maxW
             return (
@@ -260,7 +264,7 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 rowGap={2}
               >
                 {sizesWithVisuals.map((size) => {
-                  const w = size.plateWidth as number
+                  const w = size.plateWidth ?? 0
                   return (
                     <Box
                       key={size.plateSizeType}
