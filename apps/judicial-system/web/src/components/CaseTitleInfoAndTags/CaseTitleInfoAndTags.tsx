@@ -42,7 +42,7 @@ const CaseTitleInfoAndTags: FC = () => {
           ) : (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           ))}
-        {workingCase.appealCase?.appealedDate && (
+        {workingCase.hasBeenAppealed && (
           <>
             <Box marginTop={1}>
               <Text as="h5" variant="h5">

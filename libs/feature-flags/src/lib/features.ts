@@ -44,7 +44,7 @@ export enum Features {
   inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
   isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
-
+  isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 

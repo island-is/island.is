@@ -246,7 +246,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const fakeData = getFakeData(application.answers)
     if (fakeData) {
-      return buildFakeQualityPhotoAndSignature(fakeData)
+      const fake = buildFakeQualityPhotoAndSignature(fakeData)
+      // undefined = "use real data"; null = "fake no photo"; object = fake photo
+      if (fake !== undefined) {
+        return fake
+      }
     }
 
     try {
@@ -264,7 +268,12 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const fakeData = getFakeData(application.answers)
     if (fakeData) {
-      return buildFakeAllPhotosFromThjodskra(fakeData)
+      const fake = buildFakeAllPhotosFromThjodskra(fakeData)
+      // undefined = "use real data"; the substitution helper otherwise returns
+      // either fake images or { images: [] } (fake "no photos").
+      if (fake !== undefined) {
+        return fake
+      }
     }
 
     try {
