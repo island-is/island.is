@@ -1,5 +1,6 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { getDefaultDrivingLicenses } from './defaultValues'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const showOtherAddress = (formValue: FormValue): boolean => {
   const val = formValue.otherAddress as
@@ -12,11 +13,9 @@ export const showDrivingLicenseTypes = (
   formValue: FormValue,
   externalData: ExternalData,
 ): boolean => {
-  const val = formValue.licenses as
-    | { hasDrivingLicense?: string[] }
-    | undefined
-  if (val?.hasDrivingLicense !== undefined) {
-    return val.hasDrivingLicense.includes('yes')
+  const val = getValueViaPath<string[]>(formValue, 'licenses.hasDrivingLicense')
+  if (val !== undefined) {
+    return val?.includes('yes') ?? false
   }
   return getDefaultDrivingLicenses(externalData).length > 0
 }
@@ -24,8 +23,9 @@ export const showDrivingLicenseTypes = (
 export const showHeavyMachineryLicenseTypes = (
   formValue: FormValue,
 ): boolean => {
-  const val = formValue.licenses as
-    | { hasHeavyMachineryLicense?: string[] }
-    | undefined
-  return val?.hasHeavyMachineryLicense?.includes('yes') ?? false
+  const val = getValueViaPath<string[]>(
+    formValue,
+    'licenses.hasHeavyMachineryLicense',
+  )
+  return val?.includes('yes') ?? false
 }
