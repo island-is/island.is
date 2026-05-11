@@ -109,14 +109,6 @@ const PersonalTaxCredit = () => {
             />
           </Box>
 
-          <AlertMessage
-            type="info"
-            message={
-              <Text as="span" variant="small" whiteSpace="preLine">
-                {formatMessage(m.taxBracketInfo)}
-              </Text>
-            }
-          />
         </Stack>
       )}
     </IntroWrapper>

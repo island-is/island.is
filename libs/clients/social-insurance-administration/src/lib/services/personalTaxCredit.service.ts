@@ -3,6 +3,7 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   PersonalTaxCreditApi,
+  TrWebApiServicesCommonClientsModelsGetTaxBracketReturn,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceGetTaxCardsReturn,
@@ -152,5 +153,19 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     return this.personalTaxCreditApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditTaxBracketActionsGet()
+  }
+
+  async getTaxBracket(
+    user: User,
+  ): Promise<TrWebApiServicesCommonClientsModelsGetTaxBracketReturn> {
+    return this.personalTaxCreditApiWithAuth(
+      user,
+    ).apiProtectedV1PersonalTaxCreditTaxBracketGet()
+  }
+
+  async setTaxBracket(user: User, taxBracket: string): Promise<void> {
+    await this.personalTaxCreditApiWithAuth(
+      user,
+    ).apiProtectedV1PersonalTaxCreditTaxBracketPost({ body: taxBracket })
   }
 }
