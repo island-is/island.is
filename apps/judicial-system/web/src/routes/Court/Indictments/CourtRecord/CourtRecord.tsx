@@ -16,6 +16,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  TinyMCE,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -99,6 +100,7 @@ const CourtRecord: FC = () => {
                 />
               ))}
             </Accordion>
+            <TinyMCE />
             <Box
               display="flex"
               justifyContent="flexEnd"
