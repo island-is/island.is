@@ -115,10 +115,11 @@ export const overviewSection = buildSection({
                 answers,
                 'plateDelivery.deliveryStationTypeCode',
               )
-              const deliveryStationList =
-                (externalData?.deliveryStationList
-                  ?.data as DeliveryStation[]) ?? []
-              const selectedStation = deliveryStationList.find(
+              const deliveryStationList = getValueViaPath<DeliveryStation[]>(
+                externalData,
+                'deliveryStationList.data',
+              )
+              const selectedStation = deliveryStationList?.find(
                 (s) => s.value === deliveryStationCode,
               )
               items.push({
