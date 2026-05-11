@@ -86,7 +86,7 @@ export const mapVehicle = async (
         await deps.vehiclePlateOrderingClient.validateVehicleForPlateOrder(
           auth,
           vehicle.permno || '',
-          vehicleInfo?.plates?.[0]?.reggroup || '',
+          regGroup || '',
           vehicleInfo?.platetypefront || '',
           vehicleInfo?.platetyperear || '',
         )
