@@ -6,6 +6,7 @@ export default defineConfig({
     filters: {
       operations: {
         include: [
+          'GET /sailor/certificates',
           'GET /ships/myships',
           'GET /ships/myshipdetail/{shipRegistrationNumber}',
         ],
