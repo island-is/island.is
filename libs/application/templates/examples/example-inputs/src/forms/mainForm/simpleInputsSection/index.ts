@@ -10,13 +10,11 @@ import { sliderSubsection } from './sliderSubsection'
 import { companySearchSubsection } from './companySearchSubsection'
 import { asyncSelectSubsection } from './asyncSelectSubsection'
 import { displayFieldSubsection } from './displayFieldSubsection'
-import { accordionSubsection } from '../tablesAndRepeatersSection/accordionSubsection'
 
 export const simpleInputsSection = buildSection({
   id: 'simpleInputsSection',
   title: 'Simple inputs',
   children: [
-    accordionSubsection,
     textInputSubsection,
     displayFieldSubsection,
     checkboxSubsection,
