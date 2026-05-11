@@ -692,6 +692,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
   },
+  partiallySaved: {
+    id: 'ap.ids-admin:partially-saved',
+    defaultMessage: 'Saved in some environments. Operation failed on: {envs}',
+  },
   globalErrorMessage: {
     id: 'ap.ids-admin:global-error-message',
     defaultMessage: 'An error occurred',
