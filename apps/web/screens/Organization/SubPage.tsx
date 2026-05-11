@@ -217,35 +217,34 @@ export const SubPageContent = ({
           organizationPage.slug,
         )}
       </Stack>
-      {subpage?.showDateOfTheMostRecentReview &&
-        subpage.contentLastReviewed && (
-          <GridContainer>
-            <Box paddingTop={4}>
-              <GridRow>
-                <GridColumn
-                  span={['9/9', '9/9', '7/9']}
-                  offset={['0', '0', '1/9']}
-                >
-                  <GridContainer>
-                    <Box paddingBottom={2}>
-                      <Text variant="small">
-                        {`${n(
-                          'contentLastReviewedLabel',
-                          activeLocale === 'is'
-                            ? 'Síðast uppfært'
-                            : 'Last updated',
-                        )}: ${format(
-                          new Date(subpage.contentLastReviewed),
-                          'do MMMM yyyy',
-                        )}`}
-                      </Text>
-                    </Box>
-                  </GridContainer>
-                </GridColumn>
-              </GridRow>
-            </Box>
-          </GridContainer>
-        )}
+      {subpage?.showDateOfTheMostRecentReview && subpage.contentLastReviewed && (
+        <GridContainer>
+          <Box paddingTop={4}>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <GridContainer>
+                  <Box paddingBottom={2}>
+                    <Text variant="small">
+                      {`${n(
+                        'contentLastReviewedLabel',
+                        activeLocale === 'is'
+                          ? 'Síðast uppfært'
+                          : 'Last updated',
+                      )}: ${format(
+                        new Date(subpage.contentLastReviewed),
+                        'do MMMM yyyy',
+                      )}`}
+                    </Text>
+                  </Box>
+                </GridContainer>
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
+      )}
     </>
   )
 }
