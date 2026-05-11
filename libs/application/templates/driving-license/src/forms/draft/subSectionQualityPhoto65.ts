@@ -93,11 +93,7 @@ export const subSectionQualityPhoto65 = buildSubSection({
               return 'qualityPhoto'
             }
 
-            // Pair with `selectLicensePhoto: z.string().min(1).optional()` in
-            // dataSchema.ts: returning '' here (instead of undefined) makes
-            // schema validation block Continue when no usable photo exists,
-            // so the alert above is enforced rather than dismissable.
-            return ''
+            return undefined
           },
           options: ({ externalData }) => {
             const options: Array<{

@@ -41,11 +41,7 @@ export const dataSchema = z.object({
     hasOtherDiseases: z.enum([YES, NO]),
   }),
   contactGlassesMismatch: z.boolean(),
-  // `.min(1)` pairs with subSectionQualityPhoto65.ts: when no usable photo
-  // exists, the radio's defaultValue returns '' (not undefined), so this
-  // refine fires and blocks advance on the 65+ photo step. `.optional()`
-  // keeps flows that never render the photo step unaffected.
-  selectLicensePhoto: z.string().min(1).optional(),
+  selectLicensePhoto: z.string().optional(),
   healthCertificate: z
     .array(z.object({ name: z.string(), key: z.string() }))
     .refine((files) => files.length > 0, {
