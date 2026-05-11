@@ -15,7 +15,7 @@ export class PlateSize {
 @ObjectType()
 export class PlateOrderType {
   @Field(() => String, { nullable: true })
-  plateType?: string | null
+  plateTypeCode?: string | null
 
   @Field(() => String, { nullable: true })
   plateTypeName?: string | null

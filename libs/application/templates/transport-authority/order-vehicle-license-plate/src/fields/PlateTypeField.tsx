@@ -20,7 +20,7 @@ import { useFormContext, useWatch } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
 
 interface PlateOptionType {
-  plateType?: string | null
+  plateTypeCode?: string | null
   plateTypeName?: string | null
 }
 
@@ -85,7 +85,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   // Populate selectedPlateTypeName when data loads and a value is already selected
   useEffect(() => {
     if (!loading && plates.length > 0 && selectedPlateType) {
-      const match = plates.find((p) => p.plateType === selectedPlateType)
+      const match = plates.find((p) => p.plateTypeCode === selectedPlateType)
       if (match?.plateTypeName) {
         setValue('plateType.selectedPlateTypeName', match.plateTypeName)
       }
@@ -146,14 +146,14 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 )?.plateType?.regGroup
               }
               options={plates.map((plate) => ({
-                value: plate.plateType || '',
+                value: plate.plateTypeCode || '',
                 label: plate.plateTypeName || '',
               }))}
               onSelect={(value) => {
                 setValue('plateType.regGroup', value)
                 setValue(
                   'plateType.selectedPlateTypeName',
-                  plates.find((p) => p.plateType === value)?.plateTypeName,
+                  plates.find((p) => p.plateTypeCode === value)?.plateTypeName,
                 )
               }}
             />

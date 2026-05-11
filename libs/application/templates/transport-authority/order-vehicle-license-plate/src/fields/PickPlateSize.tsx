@@ -111,7 +111,9 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   // Get available sizes for the selected plate type
   const plates: PlateOption[] =
     optionsData?.vehiclePlateOrderOptions?.plates ?? []
-  const selectedPlate = plates.find((p) => p.plateType === selectedPlateType)
+  const selectedPlate = plates.find(
+    (p) => p.plateTypeCode === selectedPlateType,
+  )
   const availableSizes: PlateSizeOption[] = useMemo(
     () => selectedPlate?.plateSizes ?? [],
     [selectedPlate],

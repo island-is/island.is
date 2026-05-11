@@ -43,7 +43,7 @@ export type PlateSizeOption = {
 }
 
 export type PlateOption = {
-  plateType?: string | null
+  plateTypeCode?: string | null
   plateTypeName?: string | null
   plateSizes?: PlateSizeOption[] | null
 }

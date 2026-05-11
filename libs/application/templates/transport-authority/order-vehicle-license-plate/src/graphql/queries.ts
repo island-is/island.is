@@ -51,7 +51,7 @@ export const GET_VEHICLE_PLATE_ORDER_OPTIONS = `
     vehiclePlateOrderOptions(permno: $permno) {
       permno
       plates {
-        plateType
+        plateTypeCode
         plateTypeName
         plateBackground
         plateForeground

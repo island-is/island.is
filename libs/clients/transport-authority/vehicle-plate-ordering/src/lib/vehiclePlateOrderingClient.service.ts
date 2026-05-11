@@ -38,7 +38,7 @@ export class VehiclePlateOrderingClient {
     return {
       permno: result.permno,
       plates: (result.plates || []).map((plate) => ({
-        plateType: plate.regGroupCode,
+        plateTypeCode: plate.regGroupCode,
         plateTypeName: plate.regGroupName,
         plateBackground: plate.plateBackground,
         plateForeground: plate.plateForground,

@@ -31,7 +31,7 @@ export interface PlateSize {
 }
 
 export interface PlateOrderType {
-  plateType?: string | null
+  plateTypeCode?: string | null
   plateTypeName?: string | null
   plateBackground?: string | null
   plateForeground?: string | null
