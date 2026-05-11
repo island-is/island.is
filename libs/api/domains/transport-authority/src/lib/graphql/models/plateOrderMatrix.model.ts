@@ -24,7 +24,7 @@ export class PlateOrderType {
   plateBackground?: string | null
 
   @Field(() => String, { nullable: true })
-  plateForground?: string | null
+  plateForeground?: string | null
 
   @Field(() => [PlateSize], { nullable: true })
   plateSizes?: PlateSize[]
@@ -54,7 +54,7 @@ export class VehicleCurrentPlates {
   plateBackground?: string | null
 
   @Field(() => String, { nullable: true })
-  plateForground?: string | null
+  plateForeground?: string | null
 
   @Field(() => String, { nullable: true })
   plateStatusCode?: string | null

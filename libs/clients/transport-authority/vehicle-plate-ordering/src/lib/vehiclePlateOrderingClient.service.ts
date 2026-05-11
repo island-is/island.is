@@ -41,7 +41,7 @@ export class VehiclePlateOrderingClient {
         plateType: plate.regGroupCode,
         plateTypeName: plate.regGroupName,
         plateBackground: plate.plateBackground,
-        plateForground: plate.plateForground,
+        plateForeground: plate.plateForground,
         plateSizes: (plate.plateSizes || []).map((size) => ({
           plateSizeType: size.plateSizeType,
           plateHeight: size.plateHeight,
@@ -68,7 +68,7 @@ export class VehiclePlateOrderingClient {
       plateTypeCode: result.plateTypeCode,
       plateTypeName: result.plateTypeName,
       plateBackground: result.plateBackground,
-      plateForground: result.plateForground,
+      plateForeground: result.plateForground,
       plateStatusCode: result.plateStatusCode,
       plateStatusName: result.plateStatusName,
     }
