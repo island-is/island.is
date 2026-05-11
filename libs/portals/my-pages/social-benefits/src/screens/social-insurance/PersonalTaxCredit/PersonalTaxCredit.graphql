@@ -19,6 +19,10 @@ query getPersonalTaxCredit {
   }
 }
 
+query getPersonalTaxCreditTaxBracket {
+  socialInsurancePersonalTaxCreditTaxBracket
+}
+
 mutation registerSocialInsuranceTaxCardAllowance(
   $input: SocialInsuranceRegisterTaxCardAllowanceInput!
 ) {
@@ -35,4 +39,10 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
   $input: SocialInsuranceDiscontinueTaxCardAllowanceInput!
 ) {
   discontinueSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation setSocialInsurancePersonalTaxCreditTaxBracket(
+  $taxBracket: SocialInsuranceTaxBracketAction!
+) {
+  setSocialInsurancePersonalTaxCreditTaxBracket(taxBracket: $taxBracket)
 }
