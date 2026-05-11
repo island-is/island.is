@@ -33,6 +33,14 @@ export const accordionSubsection = buildSubSection({
             'A good use case for accordions with fields is when everything is optional and users only need to open some items, for example while editing or updating existing data.',
           marginBottom: 4,
         }),
+        buildTextField({
+          // condition: () => {
+          //   return false
+          // },
+          id: 'accordionTextField',
+          title: 'Full name',
+          placeholder: 'Enter your full name',
+        }),
         buildAccordionField({
           id: 'accordionDemo',
           title: 'Accordion demo',
@@ -46,6 +54,11 @@ export const accordionSubsection = buildSubSection({
               itemTitle: 'With input fields',
               children: [
                 buildTextField({
+                  condition: (answers, externalData) => {
+                    console.log('answers: ', answers)
+                    console.log('externalData: ', externalData)
+                    return false
+                  },
                   id: 'accordionTextField',
                   title: 'Full name',
                   placeholder: 'Enter your full name',

@@ -2,12 +2,26 @@ import {
   AccordionField,
   AccordionItem as AccordionItemType,
   FieldBaseProps,
+  FieldTypes,
+  FormValue,
 } from '@island.is/application/types'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText, formatTextWithLocale } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  shouldShowFormItem,
+} from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useWatch } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AccordionField
@@ -15,19 +29,59 @@ interface Props extends FieldBaseProps {
 export const AccordionFormField = ({
   field,
   application,
+  answerQuestions,
   renderField,
 }: Props) => {
   const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage, lang: locale } = useLocale()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
+  const formValues = useWatch({ defaultValue: application.answers })
+  const prevVisibilityRef = useRef<Record<string, boolean>>({})
+
   useEffect(() => {
-    // adsf
     if (typeof accordionItems === 'function') {
       setItems(accordionItems(application))
     } else {
       setItems(accordionItems)
     }
   }, [accordionItems])
+
+  useEffect(() => {
+    if (!items) return
+
+    const mergedValues = {
+      ...application.answers,
+      ...formValues,
+    } as FormValue
+
+    let conditionChanged = false
+    const newVisibility: Record<string, boolean> = {}
+
+    for (const item of items) {
+      if (item.children) {
+        for (const child of item.children) {
+          const isVisible = shouldShowFormItem(
+            child,
+            mergedValues,
+            application.externalData,
+            null,
+          )
+          newVisibility[child.id] = isVisible
+
+          if (prevVisibilityRef.current[child.id] !== undefined &&
+              prevVisibilityRef.current[child.id] !== isVisible) {
+            conditionChanged = true
+          }
+        }
+      }
+    }
+
+    prevVisibilityRef.current = newVisibility
+
+    if (conditionChanged && answerQuestions) {
+      answerQuestions(formValues as FormValue)
+    }
+  }, [formValues, items, application, answerQuestions])
   if (!items || items.length === 0) {
     return null
   }
@@ -60,15 +114,26 @@ export const AccordionFormField = ({
                   style={{ overflow: 'visible' }}
                   marginTop={hasContent ? 2 : 0}
                 >
-                  {item.children!.map((childField) => {
-                    const rendered = renderField?.(childField)
-                    if (!rendered) return null
-                    return (
-                      <Box key={childField.id} marginBottom={2}>
-                        {rendered}
-                      </Box>
-                    )
-                  })}
+                  <GridRow>
+                    {item.children!.map((childField) => {
+                      const rendered = renderField?.(childField)
+                      if (!rendered) return null
+                      const isHalfColumn =
+                        childField.type !== FieldTypes.RADIO &&
+                        childField.type !== FieldTypes.CHECKBOX &&
+                        childField.width === 'half'
+                      const span = isHalfColumn ? '1/2' : '1/1'
+                      return (
+                        <GridColumn
+                          key={childField.id}
+                          span={['1/1', '1/1', '1/1', span]}
+                          paddingBottom={2}
+                        >
+                          {rendered}
+                        </GridColumn>
+                      )
+                    })}
+                  </GridRow>
                 </Box>
               )}
             </AccordionItem>
