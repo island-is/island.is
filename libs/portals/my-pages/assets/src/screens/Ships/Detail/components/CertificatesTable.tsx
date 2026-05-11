@@ -8,6 +8,7 @@ import {
   Table,
   createColumnHelper,
   formatDate,
+  m,
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
@@ -96,15 +97,13 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
       <Box marginBottom={3} style={{ maxWidth: 318 }}>
         <Input
           name="cert-search"
-          aria-label={formatMessage(
-            shipsMessages.certificatesSearchPlaceholder,
-          )}
+          label={formatMessage(m.searchLabel)}
           placeholder={formatMessage(
             shipsMessages.certificatesSearchPlaceholder,
           )}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          size="sm"
+          size="xs"
           backgroundColor="blue"
           icon={{ name: 'search' }}
         />
@@ -116,6 +115,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
         emptyMessage={formatMessage(shipsMessages.certificatesEmpty)}
         mobileTitleKey="name"
         renderExpandedRow={renderExpandedRow}
+        srCaption={formatMessage(shipsMessages.certificatesTab)}
       />
     </Box>
   )

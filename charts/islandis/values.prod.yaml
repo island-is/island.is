@@ -3061,7 +3061,7 @@ services-bff-portals-admin:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/stjornbord"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/stjornbord","https://www.island.is/stjornbord"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://island.is/stjornbord/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/stjornbord'
@@ -3163,7 +3163,7 @@ services-bff-portals-my-pages:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/minarsidur","https://island.is/umsoknir","https://island.is/form"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/minarsidur","https://island.is/umsoknir","https://island.is/form","https://www.island.is/minarsidur","https://www.island.is/umsoknir","https://www.island.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://island.is/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/minarsidur'
@@ -5102,9 +5102,9 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'prod'
     LOG_LEVEL: 'info'
-    MATOMO_DOMAIN: 'https://cdn.matomo.cloud/islandis.matomo.cloud'
+    MATOMO_DOMAIN: 'https://islandis.matomo.cloud'
     MATOMO_ENABLED: 'true'
-    MATOMO_SITE_ID: '2'
+    MATOMO_SITE_ID: '1'
     NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'

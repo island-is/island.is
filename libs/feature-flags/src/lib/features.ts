@@ -77,6 +77,7 @@ export enum Features {
   isIDSAdminStepUpAuthEnabled = 'isIDSAdminStepUpAuthEnabled',
   isNewPermissionsOptionsEnabled = 'isNewPermissionsOptionsEnabled',
   showIdsAdminControls = 'showIdsAdminControls',
+  showThirdPartyUrlOptions = 'showThirdPartyUrlOptions',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
@@ -148,6 +149,7 @@ export enum Features {
   isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
   isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
+  isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -188,6 +190,8 @@ export enum Features {
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+
+  organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }
 
 export enum ServerSideFeature {

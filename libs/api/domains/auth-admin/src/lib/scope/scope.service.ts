@@ -8,14 +8,19 @@ import { Environment } from '@island.is/shared/types'
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
+import { CreateScopeUserInput } from './dto/create-scope-user.input'
+import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
 import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
 import { ScopeClient } from './models/scope-client.model'
+import { ScopeUser } from './models/scope-user.model'
 import { ScopesPayload } from './dto/scopes.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
+import { PatchScopeResponse } from './models/patch-scope-response.model'
+import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -61,7 +66,10 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Updates a scope for a specific tenant for the given environments
+   * Updates a scope for a specific tenant for the given environments.
+   *
+   * Per-environment failures are collected and returned alongside the
+   * successful results
    */
   async updateScope({
     user,
@@ -69,7 +77,7 @@ export class ScopeService extends MultiEnvironmentService {
   }: {
     user: User
     input: AdminPatchScopeInput
-  }): Promise<ScopeEnvironment[]> {
+  }): Promise<PatchScopeResponse> {
     if (Object.keys(adminPatchScopeDto).length === 0) {
       throw new Error('Nothing provided to update')
     }
@@ -86,16 +94,24 @@ export class ScopeService extends MultiEnvironmentService {
       }),
     )
 
-    return this.handleSettledPromises(updatedSettledPromises, {
-      mapper: (scope, index) => ({
-        ...scope,
-        scopeName: scope.name,
-        environment: environments[index],
-        categoryIds: scope.categoryIds ?? [],
-        tagIds: scope.tagIds ?? [],
-      }),
-      prefixErrorMessage: `Failed to update scope ${scopeName}`,
-    })
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      updatedSettledPromises,
+      environments,
+      {
+        mapper: (scope, index): ScopeEnvironment => ({
+          ...scope,
+          environment: environments[index],
+          categoryIds: scope.categoryIds ?? [],
+          tagIds: scope.tagIds ?? [],
+        }),
+        prefixErrorMessage: `Failed to update scope ${scopeName}`,
+      },
+    )
+
+    return {
+      environments: values,
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
   }
 
   /**
@@ -250,5 +266,115 @@ export class ScopeService extends MultiEnvironmentService {
       clientType: client.clientType,
       displayName: client.displayName,
     }))
+  }
+
+  /**
+   * Gets all users with access to a specific scope in a given environment
+   */
+  async getScopeUsers(
+    user: User,
+    tenantId: string,
+    scopeName: string,
+    environment: Environment,
+  ): Promise<ScopeUser[]> {
+    const result = await this.makeRequest(user, environment, (api) =>
+      api.meScopeUsersControllerFindUsersByScopeRaw({
+        tenantId,
+        scopeName,
+      }),
+    )
+
+    return (result ?? []).map((u) => ({
+      nationalId: u.nationalId,
+      name: u.name ?? undefined,
+      email: u.email,
+    }))
+  }
+
+  /**
+   * Creates a new user with access to a specific scope in the given environments
+   */
+  async createScopeUser(
+    user: User,
+    input: CreateScopeUserInput,
+  ): Promise<ScopeUser> {
+    let createdUser: ScopeUser | null = null
+
+    for (const environment of input.environments) {
+      try {
+        const result = await this.makeRequest(user, environment, (api) =>
+          api.meScopeUsersControllerCreateRaw({
+            tenantId: input.tenantId,
+            scopeName: input.scopeName,
+            apiScopeUserDTO: {
+              nationalId: input.nationalId,
+              name: input.name,
+              email: input.email,
+            },
+          }),
+        )
+
+        if (result && !createdUser) {
+          createdUser = {
+            nationalId: result.nationalId,
+            name: result.name ?? undefined,
+            email: result.email,
+          }
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to create scope user in ${environment}`,
+          error as Error,
+        )
+      }
+    }
+
+    if (!createdUser) {
+      throw new Error('Failed to create scope user')
+    }
+
+    return createdUser
+  }
+
+  /**
+   * Updates the user access list for a scope by adding/removing users.
+   *
+   * Per-environment failures are collected and returned and
+   * surfaced to the user.
+   */
+  async updateScopeUsers(
+    user: User,
+    input: UpdateScopeUsersInput,
+  ): Promise<UpdateScopeUsersResponse> {
+    const targetEnvironments = input.environments
+
+    const settledPromises = await Promise.allSettled(
+      targetEnvironments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meScopeUsersControllerUpdateScopeUsersRaw({
+            tenantId: input.tenantId,
+            scopeName: input.scopeName,
+            updateScopeUsersDto: {
+              addedNationalIds: input.addedNationalIds,
+              removedNationalIds: input.removedNationalIds,
+            },
+          }),
+        ),
+      ),
+    )
+
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      settledPromises,
+      targetEnvironments,
+      {
+        mapper: (_value, index) => targetEnvironments[index],
+        prefixErrorMessage: `Failed to update scope users for ${input.scopeName}`,
+      },
+    )
+
+    return {
+      ...(values.length > 0 && { environments: values }),
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
   }
 }

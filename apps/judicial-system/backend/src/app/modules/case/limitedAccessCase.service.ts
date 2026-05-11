@@ -36,11 +36,13 @@ import {
   FileService,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenderVisiblePoliceCaseNumbers,
 } from '../file'
 import {
   AppealCase,
   AppealEventLog,
   Case,
+  CaseDefendantPoliceCaseNumber,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -185,6 +187,41 @@ export const include: Includeable[] = [
       },
     ],
   },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
   {
@@ -212,6 +249,12 @@ export const include: Includeable[] = [
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
+        separate: true,
+      },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
         separate: true,
       },
     ],
@@ -802,7 +845,18 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      )
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        : theCase.policeCaseNumbers
+
+      policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),

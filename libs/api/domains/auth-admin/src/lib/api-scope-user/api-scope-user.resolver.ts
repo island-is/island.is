@@ -11,6 +11,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Environment } from '@island.is/shared/types'
 
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { ApiScopeUser } from './models/api-scope-user.model'
 import { AccessControlledScope } from './models/access-controlled-scope.model'
 import { ApiScopeUsersPayload } from './dto/api-scope-users.payload'
@@ -81,12 +82,14 @@ export class ApiScopeUserResolver {
     return this.apiScopeUserService.updateApiScopeUser(user, input)
   }
 
-  @Mutation(() => Boolean, { name: 'deleteAuthAdminApiScopeUser' })
+  @Mutation(() => DeleteEnvironmentResult, {
+    name: 'deleteAuthAdminApiScopeUser',
+  })
   deleteApiScopeUser(
     @CurrentUser() user: User,
     @Args('input', { type: () => DeleteApiScopeUserInput })
     input: DeleteApiScopeUserInput,
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     return this.apiScopeUserService.deleteApiScopeUser(
       user,
       input.nationalId,
