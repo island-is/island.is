@@ -20,7 +20,11 @@ export const mapRightCertificate = (
 
   const rawStatus = dto.certificateStatus?.status
   const status: SailorCertificateStatus =
-    rawStatus === 'VALID' ? 'Valid' : rawStatus === 'INVALID' ? 'Invalid' : 'Unknown'
+    rawStatus === 'VALID'
+      ? 'Valid'
+      : rawStatus === 'INVALID'
+      ? 'Invalid'
+      : 'Unknown'
 
   return {
     id: serialNo,

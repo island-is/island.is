@@ -1746,7 +1746,8 @@ export const m = defineMessages({
   },
   sailorsTooltip: {
     id: 'service.portal:sailors-tooltip',
-    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um starfsleyfi sjómanna.',
+    defaultMessage:
+      'Samgöngustofa hefur umsjón með gögnum um starfsleyfi sjómanna.',
   },
   drivingLessonTooltip: {
     id: 'service.portal:driving-lessons-tooltip',

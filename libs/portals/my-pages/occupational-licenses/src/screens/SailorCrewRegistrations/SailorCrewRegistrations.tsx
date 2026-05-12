@@ -170,7 +170,9 @@ const SailorCrewRegistrations = () => {
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       <Tabs
-        label={`${formatMessage(om.sailorTabSiglingartimi)} / ${formatMessage(om.sailorTabUndanthaegur)} / ${formatMessage(om.sailorTabSjoferoadabaekur)}`}
+        label={`${formatMessage(om.sailorTabSiglingartimi)} / ${formatMessage(
+          om.sailorTabUndanthaegur,
+        )} / ${formatMessage(om.sailorTabSjoferoadabaekur)}`}
         contentBackground="white"
         tabs={[
           {

@@ -13,7 +13,9 @@ export class SailorsService {
   async getSailorCertificates(
     user: User,
   ): Promise<ShipRegistrySailorCertificates | null> {
-    const dto = await this.shipRegistryClientV2Service.getSailorCertificates(user)
+    const dto = await this.shipRegistryClientV2Service.getSailorCertificates(
+      user,
+    )
 
     if (!dto) {
       return null

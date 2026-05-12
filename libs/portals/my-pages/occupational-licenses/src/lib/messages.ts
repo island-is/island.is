@@ -297,7 +297,8 @@ export const olMessage = defineMessages({
   },
   sailorMaritimeBooksIntro: {
     id: 'sp.occupational-licenses:sailor-maritime-books-intro',
-    defaultMessage: 'Hér finnur þú upplýsingar um útgefnar sjóferðabækur sjómanns.',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um útgefnar sjóferðabækur sjómanns.',
   },
   sailorMaritimeBooksLinkText: {
     id: 'sp.occupational-licenses:sailor-maritime-books-link-text',
