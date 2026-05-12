@@ -28,6 +28,7 @@ import { DeleteClientInput } from './dto/delete-client.input'
 import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientsPayload } from './dto/clients.payload'
 import { RevokeSecretsInput } from './dto/revoke-secrets.input'
+import { PatchClientResponse } from './models/patch-client-response.model'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -167,7 +168,7 @@ export class ClientsService extends MultiEnvironmentService {
       environments,
       ...adminPatchClientDto
     }: PatchClientInput,
-  ): Promise<ClientEnvironment[]> {
+  ): Promise<PatchClientResponse> {
     if (Object.keys(adminPatchClientDto).length === 0) {
       throw new Error('Nothing provided to update')
     }
@@ -184,14 +185,23 @@ export class ClientsService extends MultiEnvironmentService {
       ),
     )
 
-    return this.handleSettledPromises(updated, {
-      mapper: (client, index) => ({
-        ...client,
-        id: this.formatClientId(client.clientId, environments[index]),
-        environment: environments[index],
-      }),
-      prefixErrorMessage: `Failed to update application ${clientId}`,
-    })
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      updated,
+      environments,
+      {
+        mapper: (client, index): ClientEnvironment => ({
+          ...client,
+          id: this.formatClientId(client.clientId, environments[index]),
+          environment: environments[index],
+        }),
+        prefixErrorMessage: `Failed to update application ${clientId}`,
+      },
+    )
+
+    return {
+      environments: values,
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
   }
 
   async getClientSecrets(

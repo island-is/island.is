@@ -20,11 +20,11 @@ export type StackScreenOptions = Omit<
   'unstable_headerLeftItems' | 'unstable_headerRightItems'
 > & {
   headerRightItems?:
-  | NativeStackHeaderItem[]
-  | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
+    | NativeStackHeaderItem[]
+    | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
   headerLeftItems?:
-  | NativeStackHeaderItem[]
-  | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
+    | NativeStackHeaderItem[]
+    | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
 }
 
 export type StackScreenProps = {

@@ -37,3 +37,11 @@ export const notificationSenderLogoImage = style({
   height: 24,
   objectFit: 'contain',
 })
+export const notificationRowMobileFull = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
+      marginLeft: -theme.spacing[4],
+      marginRight: -theme.spacing[4],
+    },
+  },
+})

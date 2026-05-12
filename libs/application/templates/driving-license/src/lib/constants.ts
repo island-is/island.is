@@ -200,6 +200,12 @@ export enum States {
 
 type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
 
+// Fake-photo modes for hasThjodskraPhoto / hasRLSPhoto:
+//   'yes'  — inject a fake photo
+//   'no'   — inject "no photo" (fake empty)
+//   'real' — fall through to real RLS / Þjóðskrá data (default)
+export type FakePhotoMode = 'yes' | 'no' | 'real'
+
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
@@ -207,6 +213,6 @@ export interface DrivingLicenseFakeData {
   remarks?: YesOrNo
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
-  hasThjodskraPhoto?: YesOrNo
-  hasRLSPhoto?: YesOrNo
+  hasThjodskraPhoto?: FakePhotoMode
+  hasRLSPhoto?: FakePhotoMode
 }

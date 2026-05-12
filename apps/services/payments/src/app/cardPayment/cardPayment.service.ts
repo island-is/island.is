@@ -555,25 +555,15 @@ export class CardPaymentService {
         },
       )
     } else {
+      // Trace the verification process, for error logging
+      const traceEvents: { stage: string; data: Record<string, unknown> }[] = []
       try {
         verifyApplePaySignature({
           paymentData: input.paymentData,
           paymentProcessingKey: applePayPaymentProcessingKey,
-          onTrace: ({ stage, data }) => {
-            this.logger.info(
-              `${logPrefix} [APPLEPAY-VERIFY] trace stage=${stage}`,
-              {
-                paymentFlowId,
-                transactionIdentifier,
-                stage,
-                ...data,
-              },
-            )
+          onTrace: (event) => {
+            traceEvents.push(event)
           },
-        })
-        this.logger.info(`${logPrefix} [APPLEPAY-VERIFY] result=ok`, {
-          paymentFlowId,
-          transactionIdentifier,
         })
       } catch (e) {
         const message = (e as Error).message
@@ -584,6 +574,7 @@ export class CardPaymentService {
           transactionIdentifier,
           failureStage,
           failureReason: message,
+          traceEvents,
         })
         throw new BadRequestException(
           CardErrorCode.ApplePaySignatureVerificationFailed,

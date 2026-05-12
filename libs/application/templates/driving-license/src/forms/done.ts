@@ -1,4 +1,4 @@
-import { buildForm, YES } from '@island.is/application/core'
+import { buildForm, getValueViaPath, YES } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
@@ -31,7 +31,9 @@ export const done: Form = buildForm({
           : answers.applicationFor === BE
           ? m.nextStepsDescriptionBE
           : answers.applicationFor === B_FULL_RENEWAL_65
-          ? m.nextStepsDescription65Renewal
+          ? getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
+            ? m.nextStepsDescription65RenewalRedesigned
+            : m.nextStepsDescription65Renewal
           : needsHealthCertificateCondition(YES)(answers, externalData)
           ? m.nextStepsDescriptionBFull
           : m.nextStepsInfoLink,

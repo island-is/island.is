@@ -216,7 +216,6 @@ export class LimitedAccessFileController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
     CaseFileExistsGuard,
     LimitedAccessDeleteCaseFileGuard,
   )
