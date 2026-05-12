@@ -34,6 +34,7 @@ import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHel
 
 import { findFirstInvalidStep } from '../../formHelper'
 import useCase from '../useCase'
+import { resolveTargetAppealCaseByAppealCaseId } from '../useTargetAppealCaseByAppealCaseId'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
@@ -77,15 +78,12 @@ const useCaseList = () => {
       } else if (isCourtOfAppealsUser(user)) {
         // Court of appeals users see one row per appeal — case-level or
         // ruling-order. Pick OVERVIEW vs RESULT based on the *target* appeal's
-        // state (resolved by id from either side), falling back to the
-        // case-level appeal when no appealCaseId is supplied.
-        const targetAppealCase = appealCaseId
-          ? caseToOpen.appealCase?.id === appealCaseId
-            ? caseToOpen.appealCase
-            : caseToOpen.rulingOrderAppealCases?.find(
-                (a) => a.id === appealCaseId,
-              )
-          : caseToOpen.appealCase
+        // state, falling back to the case-level appeal when no appealCaseId is
+        // supplied.
+        const targetAppealCase = resolveTargetAppealCaseByAppealCaseId(
+          caseToOpen,
+          appealCaseId ?? undefined,
+        )
 
         if (targetAppealCase?.appealState === AppealCaseState.COMPLETED) {
           routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE

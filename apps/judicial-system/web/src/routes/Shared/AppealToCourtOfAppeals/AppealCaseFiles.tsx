@@ -39,6 +39,7 @@ import {
   useCase,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -54,11 +55,7 @@ const AppealFiles = () => {
   const { id, rulingFileId: rulingFileIdQuery } = router.query
   const rulingFileId =
     typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
-  const targetAppealCase = rulingFileId
-    ? workingCase.rulingOrderAppealCases?.find(
-        (a) => a.rulingFileId === rulingFileId,
-      )
-    : workingCase.appealCase
+  const targetAppealCase = useTargetAppealCaseByRulingFileId()
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,

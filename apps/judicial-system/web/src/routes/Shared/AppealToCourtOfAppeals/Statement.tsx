@@ -40,6 +40,7 @@ import {
   useAppealCase,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -82,14 +83,8 @@ const Statement = () => {
     rulingFileId,
   )
 
-  // Statement events target the specific appeal-case row. For ruling-order
-  // appeals, look up the matching row by rulingFileId; otherwise use the
-  // case-level appeal.
-  const targetAppealCase = rulingFileId
-    ? workingCase.rulingOrderAppealCases?.find(
-        (a) => a.rulingFileId === rulingFileId,
-      )
-    : workingCase.appealCase
+  // Statement events target the specific appeal-case row.
+  const targetAppealCase = useTargetAppealCaseByRulingFileId()
   const targetAppealCaseId = targetAppealCase?.id
 
   const appealStatementType = !isDefenceUser(user)
