@@ -386,7 +386,9 @@ export class VerdictsClientService {
           courts: [COURT_OF_APPEAL],
         },
       }),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+        akvardanir: 0,
+      }),
       goproVerdictApi.getCaseTypesV2({
         requestData: {
           courts: ALL_DISTRICT_COURTS,
