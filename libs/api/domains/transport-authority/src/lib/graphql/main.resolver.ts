@@ -27,8 +27,6 @@ import {
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
   PlateOrderValidation,
-  PlateOrderMatrix,
-  VehicleCurrentPlates,
   BasicVehicleInformation,
   ExemptionValidation,
 } from './models'
@@ -139,30 +137,6 @@ export class MainResolver {
       user,
       answers,
     )
-  }
-
-  @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => PlateOrderMatrix, {
-    name: 'vehiclePlateOrderOptions',
-    nullable: true,
-  })
-  async getVehiclePlateOrderOptions(
-    @Args('permno', { type: () => String }) permno: string,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transportAuthorityApi.getPlateOrderOptions(user, permno)
-  }
-
-  @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => VehicleCurrentPlates, {
-    name: 'vehicleCurrentPlates',
-    nullable: true,
-  })
-  async getVehicleCurrentPlates(
-    @Args('permno', { type: () => String }) permno: string,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transportAuthorityApi.getCurrentPlates(user, permno)
   }
 
   @Scopes(ApiScope.internal)

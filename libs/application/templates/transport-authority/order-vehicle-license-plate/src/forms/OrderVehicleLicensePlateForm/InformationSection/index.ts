@@ -1,7 +1,6 @@
 import { buildSection } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { pickVehicleSubSection } from './pickVehicleSubSection'
-import { plateTypeSubSection } from './plateTypeSubSection'
 import { plateSizeSubSection } from './plateSizeSubSection'
 import { plateDeliverySubSection } from './plateDeliverySubSection'
 
@@ -10,7 +9,6 @@ export const informationSection = buildSection({
   title: information.general.sectionTitle,
   children: [
     pickVehicleSubSection,
-    plateTypeSubSection,
     plateSizeSubSection,
     plateDeliverySubSection,
   ],

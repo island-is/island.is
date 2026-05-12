@@ -7,8 +7,6 @@ import {
   SGS_DELIVERY_STATION_TYPE,
   PlateOrder,
   PlateOrderValidation,
-  PlateOrderMatrix,
-  CurrentPlates,
 } from './vehiclePlateOrderingClient.types'
 import {
   ErrorMessage,
@@ -21,57 +19,6 @@ export class VehiclePlateOrderingClient {
 
   private plateOrderingApiWithAuth(auth: Auth) {
     return this.plateOrderingApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  public async getPlateOrderOptions(
-    auth: User,
-    permno: string,
-  ): Promise<PlateOrderMatrix> {
-    const result = await this.plateOrderingApiWithAuth(
-      auth,
-    ).plateorderoptionsPermnoGet({
-      permno,
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-    })
-
-    return {
-      permno: result.permno,
-      plates: (result.plates || []).map((plate) => ({
-        plateTypeCode: plate.regGroupCode,
-        plateTypeName: plate.regGroupName,
-        plateSizes: (plate.plateSizes || []).map((size) => ({
-          plateSizeType: size.plateSizeType,
-          plateHeight: size.plateHeight,
-          plateWidth: size.plateWidth,
-        })),
-      })),
-    }
-  }
-
-  public async getCurrentPlates(
-    auth: User,
-    permno: string,
-  ): Promise<CurrentPlates | null> {
-    try {
-      const result = await this.plateOrderingApiWithAuth(
-        auth,
-      ).currentplatesPermnoGet({
-        permno,
-        apiVersion: '1.0',
-        apiVersion2: '1.0',
-      })
-
-      return {
-        permno: result.permno,
-        plateTypeCode: result.plateTypeCode,
-        plateTypeName: result.plateTypeName,
-        plateStatusCode: result.plateStatusCode,
-        plateStatusName: result.plateStatusName,
-      }
-    } catch (e) {
-      return null
-    }
   }
 
   public async getDeliveryStations(
@@ -94,7 +41,6 @@ export class VehiclePlateOrderingClient {
   public async validateVehicleForPlateOrder(
     auth: User,
     permno: string,
-    regGroup: string,
     frontType: string,
     rearType: string,
   ): Promise<PlateOrderValidation> {
@@ -107,7 +53,6 @@ export class VehiclePlateOrderingClient {
     return await this.validateAllForPlateOrder(
       auth,
       permno,
-      regGroup,
       frontType,
       rearType,
       deliveryStationType,
@@ -119,7 +64,6 @@ export class VehiclePlateOrderingClient {
   public async validateAllForPlateOrder(
     auth: User,
     permno: string,
-    regGroup: string,
     frontType: string,
     rearType: string,
     deliveryStationType: string,
@@ -134,7 +78,6 @@ export class VehiclePlateOrderingClient {
         apiVersion2: '1.0',
         postOrderPlatesModel: {
           permno: permno,
-          regGroup: regGroup,
           frontType: frontType || null,
           rearType: rearType || null,
           stationToDeliverTo: deliveryStationCode || '',
@@ -167,7 +110,6 @@ export class VehiclePlateOrderingClient {
         apiVersion2: '1.0',
         postOrderPlatesModel: {
           permno: plateOrder.permno,
-          regGroup: plateOrder.regGroup,
           frontType: plateOrder.frontType || null,
           rearType: plateOrder.rearType || null,
           stationToDeliverTo: plateOrder.deliveryStationCode || '',
