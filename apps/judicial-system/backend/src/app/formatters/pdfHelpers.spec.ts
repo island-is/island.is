@@ -55,14 +55,6 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[0]).toMatchObject({ bold: true, italic: true })
   })
 
-  it('marks highlight for <mark>', () => {
-    const blocks = htmlToBlocks('<p><mark>highlighted</mark></p>')
-    expect(blocks[0].runs[0]).toMatchObject({
-      text: 'highlighted',
-      highlight: '#fff066',
-    })
-  })
-
   it('marks highlight for span with background-color style', () => {
     const blocks = htmlToBlocks(
       '<p><span style="background-color: #ffff00;">highlighted</span></p>',

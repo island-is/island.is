@@ -529,8 +529,6 @@ const collectRuns = (
       collectRuns(children, true, italic, highlight, result)
     } else if (el.name === 'em' || el.name === 'i') {
       collectRuns(children, bold, true, highlight, result)
-    } else if (el.name === 'mark') {
-      collectRuns(children, bold, italic, MARK_HIGHLIGHT_COLOR, result)
     } else if (
       el.name === 'span' &&
       el.attribs?.style?.includes('background-color')
