@@ -33,32 +33,37 @@ import {
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../utils'
-
-const validateFormStepper = (
-  isActiveSubSectionValid: boolean,
-  steps: string[],
-  workingCase: Case,
-) => {
-  if (!isActiveSubSectionValid) {
-    return false
-  }
-
-  const validationForStep = stepValidations()
-
-  return steps.some(
-    (step) =>
-      validationForStep[step as keyof typeof validationForStep](workingCase) ===
-      false,
-  )
-    ? false
-    : true
-}
+import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 
 const useSections = (
   isValid = true,
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+
+  // Closure-captures `targetAppealCase` so the 38 call sites below don't have
+  // to thread it through. COA step validators read from it (Step 10).
+  const validateFormStepper = (
+    isActiveSubSectionValid: boolean,
+    steps: string[],
+    workingCase: Case,
+  ) => {
+    if (!isActiveSubSectionValid) {
+      return false
+    }
+
+    const validationForStep = stepValidations(targetAppealCase)
+
+    return steps.some(
+      (step) =>
+        validationForStep[step as keyof typeof validationForStep](
+          workingCase,
+        ) === false,
+    )
+      ? false
+      : true
+  }
 
   const router = useRouter()
   const isActive = (pathname: string) =>

@@ -30,10 +30,8 @@ export const resolveTargetAppealCaseByAppealCaseId = (
 const useTargetAppealCaseByAppealCaseId = (): AppealCase | undefined | null => {
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
-  const appealCaseId =
-    typeof router.query.appealCaseId === 'string'
-      ? router.query.appealCaseId
-      : undefined
+  const queryValue = router.query?.appealCaseId
+  const appealCaseId = typeof queryValue === 'string' ? queryValue : undefined
 
   return resolveTargetAppealCaseByAppealCaseId(workingCase, appealCaseId)
 }

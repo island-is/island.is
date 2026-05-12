@@ -29,10 +29,8 @@ export const resolveTargetAppealCaseByRulingFileId = (
 const useTargetAppealCaseByRulingFileId = (): AppealCase | undefined | null => {
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
-  const rulingFileId =
-    typeof router.query.rulingFileId === 'string'
-      ? router.query.rulingFileId
-      : undefined
+  const queryValue = router.query?.rulingFileId
+  const rulingFileId = typeof queryValue === 'string' ? queryValue : undefined
 
   return resolveTargetAppealCaseByRulingFileId(workingCase, rulingFileId)
 }

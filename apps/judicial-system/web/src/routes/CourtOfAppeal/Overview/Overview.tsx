@@ -23,10 +23,16 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealCaseBanner,
+  useTargetAppealCaseByAppealCaseId,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
-import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  shouldUseAppealWithdrawnRoutes,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
@@ -36,6 +42,7 @@ const CourtOfAppealOverview = () => {
     useContext(FormContext)
 
   const { appealBanner } = useAppealCaseBanner()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -54,7 +61,12 @@ const CourtOfAppealOverview = () => {
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+    router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        targetAppealCase?.id,
+      ),
+    )
 
   const isIndictment = isIndictmentCase(workingCase.type)
 
@@ -72,7 +84,7 @@ const CourtOfAppealOverview = () => {
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             <CaseOverviewHeader
               alerts={
-                workingCase.appealCase?.requestAppealRulingNotToBePublished
+                targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
                         message: formatMessage(
