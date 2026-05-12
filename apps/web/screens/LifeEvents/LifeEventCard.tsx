@@ -46,11 +46,7 @@ export const LifeEventCard = ({
         justifyContent="spaceBetween"
         style={{ height: 140 }}
       >
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="flexEnd"
-        >
+        <Box display="flex" flexDirection="column" justifyContent="flexEnd">
           {limitedFeaturedItems.length > 0 && (
             <FeaturedItemTags featuredItems={limitedFeaturedItems} truncate />
           )}
