@@ -405,4 +405,210 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('BE submission branch (extracted resolvePhotoAndHealthCert)', () => {
+    let service: DrivingLicenseSubmissionService
+    let applyForBELicense: jest.Mock
+    let getFiles: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'BE',
+      drivingInstructor: '0101010101',
+      email: 'mock@email.com',
+      phone: '9999999',
+      delivery: {
+        deliveryMethod: 'post',
+        jurisdiction: '37',
+      },
+    }
+
+    beforeEach(async () => {
+      applyForBELicense = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      getFiles = jest.fn(async () => [])
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { applyForBELicense },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('calls applyForBELicense with photo + cert payload when health declaration triggers a cert', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          selectLicensePhoto: 'qualityPhoto',
+          healthDeclaration: { hasDiabetes: 'yes' },
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+
+      const [nationalId, authorization, input] = applyForBELicense.mock.calls[0]
+      expect(nationalId).toBe(application.applicant)
+      expect(authorization).toBe(user.authorization)
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        instructorSSN: '0101010101',
+        primaryPhoneNumber: expect.any(String),
+        studentEmail: 'mock@email.com',
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+        healthDeclarationModel: expect.objectContaining({
+          hasDiabetes: true,
+          isDisabled: false,
+        }),
+      })
+      expect(input.contentList).toHaveLength(1)
+      expect(input.contentList[0]).toMatchObject({
+        fileName: 'cert.pdf',
+        contentType: 'application/pdf',
+        description: 'Laeknisvottord',
+      })
+    })
+
+    it('calls applyForBELicense with contentList undefined when no health declaration triggers a cert', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          selectLicensePhoto: 'qualityPhoto',
+          // no healthDeclaration trigger, no remarks, no glasses
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      expect(getFiles).not.toHaveBeenCalled()
+
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.contentList).toBeUndefined()
+      expect(input).toMatchObject({
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+    })
+
+    it('resolves Þjóðskrá biometric IDs when a FACIAL photo is selected', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          selectLicensePhoto: 'facial-id-123',
+          healthDeclaration: { hasDiabetes: 'yes' },
+        },
+        externalData: {
+          allPhotosFromThjodskra: {
+            data: {
+              images: [
+                {
+                  biometricId: 'facial-id-123',
+                  contentSpecification: 'FACIAL',
+                  content: 'base64facial',
+                },
+                {
+                  biometricId: 'sig-id-456',
+                  contentSpecification: 'SIGNATURE',
+                  content: 'base64sig',
+                },
+              ],
+            },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: 'facial-id-123',
+        signatureBiometricsId: 'sig-id-456',
+      })
+    })
+  })
 })

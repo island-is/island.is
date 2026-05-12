@@ -57,6 +57,20 @@ const getContentType = (fileName: string): string => {
   }
 }
 
+type HealthCertContentItem = {
+  fileName: string
+  fileExtension: string
+  contentType: string
+  content: string
+  description: string
+}
+
+type PhotoAndHealthCert = {
+  photoBiometricsId: string | null
+  signatureBiometricsId: string | null
+  contentList: HealthCertContentItem[] | undefined
+}
+
 @Injectable()
 export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   constructor(
@@ -66,6 +80,115 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     private readonly attachmentS3Service: AttachmentS3Service,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
+  }
+
+  // Shared between the BE and redesigned 65+ submit paths (and, once Phase 2
+  // lands, the B-temp redesigned path). Resolves the user's photo selection to
+  // biometric IDs and optionally pulls the health-certificate PDF from S3.
+  //
+  // - `selectLicensePhoto === 'qualityPhoto'` → both biometric IDs return null
+  //   (RLS already has the photo on file).
+  // - Any other value is treated as a Þjóðskrá FACIAL `biometricId`. The
+  //   matching signature is whichever Þjóðskrá entry has
+  //   `contentSpecification === 'SIGNATURE'` (today's logic uses `find`, not
+  //   pair-by-index — preserved verbatim).
+  // - When `healthCertRequired` is true the cert is fetched and a missing-cert
+  //   error is thrown if empty. When false the cert isn't fetched at all and
+  //   `contentList` is `undefined` (matches BE's pre-extraction behavior when
+  //   no health-declaration answer triggered the cert).
+  private async resolvePhotoAndHealthCert(
+    application: ApplicationWithAttachments,
+    answers: FormValue,
+    { healthCertRequired }: { healthCertRequired: boolean },
+  ): Promise<PhotoAndHealthCert> {
+    const selectedPhoto = getValueViaPath<string>(answers, 'selectLicensePhoto')
+
+    let photoBiometricsId: string | null = null
+    let signatureBiometricsId: string | null = null
+
+    if (selectedPhoto === 'qualityPhoto') {
+      const qualityPhotoData = application.externalData
+        ?.qualityPhotoAndSignature?.data as {
+        pohto?: string | null
+        imageTypeId?: number | null
+      } | null
+
+      if (!qualityPhotoData?.pohto) {
+        this.log(
+          'error',
+          'User selected qualityPhoto but no quality photo exists in externalData',
+          {},
+        )
+      }
+    } else if (selectedPhoto) {
+      const allThjodskraPhotos =
+        getValueViaPath<
+          Array<{ biometricId: string; contentSpecification: string }>
+        >(application.externalData, 'allPhotosFromThjodskra.data.images') ?? []
+
+      const facialPhotos = allThjodskraPhotos.filter(
+        (p) => p.contentSpecification === 'FACIAL',
+      )
+
+      const isValidFacial = facialPhotos.some(
+        (p) => p.biometricId === selectedPhoto,
+      )
+
+      if (!isValidFacial) {
+        this.log(
+          'error',
+          'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+          { selectedPhoto },
+        )
+      }
+
+      photoBiometricsId = isValidFacial ? selectedPhoto : null
+      signatureBiometricsId = isValidFacial
+        ? allThjodskraPhotos.find((p) => p.contentSpecification === 'SIGNATURE')
+            ?.biometricId ?? null
+        : null
+    }
+
+    let contentList: HealthCertContentItem[] | undefined
+
+    if (healthCertRequired) {
+      try {
+        const files = await this.attachmentS3Service.getFiles(application, [
+          'healthCertificate',
+        ])
+
+        contentList = files
+          .filter((f) => f.fileContent)
+          .map((f) => {
+            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
+            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
+            return {
+              fileName: f.fileName,
+              fileExtension: ext,
+              contentType: getContentType(f.fileName),
+              content: f.fileContent,
+              description: 'Laeknisvottord',
+            }
+          })
+      } catch (e) {
+        this.log('error', 'Failed to read health certificate files from S3', {
+          e,
+        })
+        throw e
+      }
+
+      if (!contentList || contentList.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.failedDataProviderSubmit,
+            summary: drivingLicenseMessages.healthCertificateRequired,
+          },
+          400,
+        )
+      }
+    }
+
+    return { photoBiometricsId, signatureBiometricsId, contentList }
   }
 
   async createCharge({
@@ -275,103 +398,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       const renewalPhone = formatPhoneNumber(
         getValueViaPath<string>(answers, 'phone') ?? '',
       )
-      const selectedRenewalPhoto = getValueViaPath<string>(
-        answers,
-        'selectLicensePhoto',
-      )
 
-      let renewalPhotoBiometricsId: string | null = null
-      let renewalSignatureBiometricsId: string | null = null
-
-      if (selectedRenewalPhoto === 'qualityPhoto') {
-        const qualityPhotoData = application.externalData
-          ?.qualityPhotoAndSignature?.data as {
-          pohto?: string | null
-          imageTypeId?: number | null
-        } | null
-
-        if (!qualityPhotoData?.pohto) {
-          this.log(
-            'error',
-            'User selected qualityPhoto but no quality photo exists in externalData',
-            {},
-          )
-        }
-      } else if (selectedRenewalPhoto) {
-        const allThjodskraPhotos =
-          getValueViaPath<
-            Array<{ biometricId: string; contentSpecification: string }>
-          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
-          []
-
-        const facialPhotos = allThjodskraPhotos.filter(
-          (p) => p.contentSpecification === 'FACIAL',
-        )
-
-        const isValidFacial = facialPhotos.some(
-          (p) => p.biometricId === selectedRenewalPhoto,
-        )
-
-        if (!isValidFacial) {
-          this.log(
-            'error',
-            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
-            { selectedPhoto: selectedRenewalPhoto },
-          )
-        }
-
-        renewalPhotoBiometricsId = isValidFacial ? selectedRenewalPhoto : null
-        renewalSignatureBiometricsId = isValidFacial
-          ? allThjodskraPhotos.find(
-              (p) => p.contentSpecification === 'SIGNATURE',
-            )?.biometricId ?? null
-          : null
-      }
-
-      let renewalContentList:
-        | Array<{
-            fileName: string
-            fileExtension: string
-            contentType: string
-            content: string
-            description: string
-          }>
-        | undefined
-
-      try {
-        const files = await this.attachmentS3Service.getFiles(application, [
-          'healthCertificate',
-        ])
-
-        renewalContentList = files
-          .filter((f) => f.fileContent)
-          .map((f) => {
-            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
-            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
-            return {
-              fileName: f.fileName,
-              fileExtension: ext,
-              contentType: getContentType(f.fileName),
-              content: f.fileContent,
-              description: 'Laeknisvottord',
-            }
-          })
-      } catch (e) {
-        this.log('error', 'Failed to read health certificate files from S3', {
-          e,
-        })
-        throw e
-      }
-
-      if (!renewalContentList || renewalContentList.length === 0) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.failedDataProviderSubmit,
-            summary: drivingLicenseMessages.healthCertificateRequired,
-          },
-          400,
-        )
-      }
+      const {
+        photoBiometricsId: renewalPhotoBiometricsId,
+        signatureBiometricsId: renewalSignatureBiometricsId,
+        contentList: renewalContentList,
+      } = await this.resolvePhotoAndHealthCert(application, answers, {
+        healthCertRequired: true,
+      })
 
       return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
         jurisdiction: jurisdictionId
@@ -430,67 +464,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       const bePhone = formatPhoneNumber(
         getValueViaPath<string>(answers, 'phone') ?? '',
       )
-      const selectedPhoto = getValueViaPath<string>(
-        answers,
-        'selectLicensePhoto',
-      )
 
-      // Determine photo biometric IDs based on user selection
-      let photoBiometricsId: string | null = null
-      let signatureBiometricsId: string | null = null
-
-      if (selectedPhoto === 'qualityPhoto') {
-        // User selected the RLS quality photo — verify it actually exists
-        const qualityPhotoData = application.externalData
-          ?.qualityPhotoAndSignature?.data as {
-          pohto?: string | null
-          imageTypeId?: number | null
-        } | null
-
-        if (!qualityPhotoData?.pohto) {
-          this.log(
-            'error',
-            'User selected qualityPhoto but no quality photo exists in externalData',
-            {},
-          )
-        }
-
-        // Backend already has the quality photo — no biometric IDs needed
-        photoBiometricsId = null
-        signatureBiometricsId = null
-      } else if (selectedPhoto) {
-        // User selected a Thjodskra photo — validate against FACIAL entries only
-        const allThjodskraPhotos =
-          getValueViaPath<
-            Array<{ biometricId: string; contentSpecification: string }>
-          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
-          []
-
-        const facialPhotos = allThjodskraPhotos.filter(
-          (p) => p.contentSpecification === 'FACIAL',
-        )
-
-        const isValidFacial = facialPhotos.some(
-          (p) => p.biometricId === selectedPhoto,
-        )
-
-        if (!isValidFacial) {
-          this.log(
-            'error',
-            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
-            { selectedPhoto },
-          )
-        }
-
-        photoBiometricsId = isValidFacial ? selectedPhoto : null
-        signatureBiometricsId = isValidFacial
-          ? allThjodskraPhotos.find(
-              (p) => p.contentSpecification === 'SIGNATURE',
-            )?.biometricId ?? null
-          : null
-      }
-
-      // Health certificate handling
       const healthDeclaration =
         getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
         {}
@@ -502,52 +476,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           'glassesCheck.data',
         ) === true
 
-      let contentList:
-        | Array<{
-            fileName: string
-            fileExtension: string
-            contentType: string
-            content: string
-            description: string
-          }>
-        | undefined
-
-      if (beNeedsHealthCert) {
-        try {
-          const files = await this.attachmentS3Service.getFiles(application, [
-            'healthCertificate',
-          ])
-
-          contentList = files
-            .filter((f) => f.fileContent)
-            .map((f) => {
-              const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
-              const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
-              return {
-                fileName: f.fileName,
-                fileExtension: ext,
-                contentType: getContentType(f.fileName),
-                content: f.fileContent,
-                description: 'Laeknisvottord',
-              }
-            })
-        } catch (e) {
-          this.log('error', 'Failed to read health certificate files from S3', {
-            e,
-          })
-          throw e
-        }
-
-        if (!contentList || contentList.length === 0) {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.failedDataProviderSubmit,
-              summary: drivingLicenseMessages.healthCertificateRequired,
-            },
-            400,
-          )
-        }
-      }
+      const { photoBiometricsId, signatureBiometricsId, contentList } =
+        await this.resolvePhotoAndHealthCert(application, answers, {
+          healthCertRequired: beNeedsHealthCert,
+        })
 
       // Health declaration model — always sent for BE
       const healthDeclarationModel = {
