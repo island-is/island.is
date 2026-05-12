@@ -57,6 +57,28 @@ const completeSection = (
   completed = true,
 ) => sections.map((s, i) => (i === idx ? { ...s, isCompleted: completed } : s))
 
+const stripFieldListsFromSections = (
+  sections: FormSystemSection[],
+): FormSystemSection[] =>
+  sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen
+        ? {
+            ...screen,
+            fields: screen.fields?.map((field) => {
+              if (!field) return field
+
+              return {
+                ...field,
+                list: undefined,
+              }
+            }),
+          }
+        : screen,
+    ),
+  }))
+
 export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
@@ -91,7 +113,7 @@ export const incrementWithScreens = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: true,
-          sections: removeTypename(state.sections),
+          sections: stripFieldListsFromSections(removeTypename(state.sections)),
         },
       },
     },
@@ -169,7 +191,7 @@ export const incrementWithoutScreens = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: true,
-          sections: removeTypename(state.sections),
+          sections: stripFieldListsFromSections(removeTypename(state.sections)),
         },
       },
     },
@@ -247,7 +269,7 @@ export const decrement = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: false,
-          sections: removeTypename(state.sections),
+          sections: stripFieldListsFromSections(removeTypename(state.sections)),
         },
       },
     },

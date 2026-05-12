@@ -110,5 +110,8 @@ export class UpdateFieldSettingsInput {
   zendeskTicketFieldId?: string
 
   @Field(() => String, { nullable: true })
+  zendeskCustomObjectKey?: string
+
+  @Field(() => String, { nullable: true })
   dataSourceUrl?: string
 }

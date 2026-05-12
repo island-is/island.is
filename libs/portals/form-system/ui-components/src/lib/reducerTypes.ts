@@ -3,6 +3,7 @@ import type {
   FormSystemScreen,
   FormSystemValidationError,
   FormSystemSection,
+  FormSystemLanguageType,
 } from '@island.is/api/schema'
 
 export interface ApplicationState {
@@ -17,6 +18,10 @@ export interface ApplicationState {
     index: number
     data?: FormSystemScreen
   }
+  externalListPlaceholders?: Array<{
+    fieldId: string
+    placeholder?: FormSystemLanguageType | null
+  }>
   errors?: string[]
   screenError?: FormSystemValidationError
   isValid?: boolean

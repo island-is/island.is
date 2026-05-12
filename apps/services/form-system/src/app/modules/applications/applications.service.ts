@@ -1077,7 +1077,8 @@ export class ApplicationsService {
     if (
       fieldType === FieldTypesEnum.DROPDOWN_LIST &&
       fieldSettings.listType &&
-      fieldSettings.listType === ListTypesEnum.ZENDESK_LIST
+      (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+        fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
     ) {
       response = await this.serviceManager.getListFromZendesk(
         fieldSettings,
@@ -1101,8 +1102,6 @@ export class ApplicationsService {
         dataFromUrlRequestDto,
       )
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 2000))
 
     return response
   }
@@ -1171,7 +1170,6 @@ export class ApplicationsService {
       submissionUrl,
     )
 
-    screen.fields = this.mergeMissing(response.fields, screen.fields)
     response.screen = screen
 
     response.screen.screenError = {
@@ -1202,47 +1200,6 @@ export class ApplicationsService {
     return response
   }
 
-  private mergeMissing(
-    responseFields: ApplicationXroadFieldDto[] | undefined,
-    screenFields: FieldDto[] | undefined,
-  ): FieldDto[] | undefined {
-    if (!screenFields?.length) return screenFields
-    if (!responseFields?.length) return screenFields
-
-    const byIdentifier = new Map(responseFields.map((f) => [f.identifier, f]))
-
-    return screenFields.map((field) => {
-      const override = byIdentifier.get(field.identifier)
-      if (!override) return field
-
-      const existingValueIdByOrder = new Map(
-        (field.values ?? []).map((v: any) => [v.order, v.id]),
-      )
-
-      const merged: any = { ...field, ...override }
-
-      if (Array.isArray(override.values)) {
-        merged.values = override.values.map((v: any) => ({
-          ...v,
-          id:
-            typeof v.id === 'string' && v.id.length > 0
-              ? v.id
-              : existingValueIdByOrder.get(v.order),
-        }))
-      }
-
-      // id is required for list items but is not used for populated lists
-      if (Array.isArray(override.list)) {
-        merged.list = override.list.map((li: any) => ({
-          ...li,
-          id: '1',
-        }))
-      }
-
-      return merged
-    })
-  }
-
   private getDefaultScreenErrorValidate(): ValidationErrorDto {
     return {
       hasError: true,
@@ -1253,20 +1210,6 @@ export class ApplicationsService {
       message: {
         is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
         en: 'Please try again later or send an email to island@island.is',
-      },
-    }
-  }
-
-  private getDefaultScreenErrorPopulate(): ValidationErrorDto {
-    return {
-      hasError: true,
-      title: {
-        is: 'Ekki tókst að sækja gögn frá ytri þjónustu',
-        en: 'Could not fetch data from external service',
-      },
-      message: {
-        is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-        en: 'Please try to refresh the page or send an email to island@island.is',
       },
     }
   }

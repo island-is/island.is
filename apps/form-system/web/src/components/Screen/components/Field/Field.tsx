@@ -63,6 +63,7 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
       slug: state.application.slug,
       isTest: state.application.isTest,
       orgNationalId: state.application.organizationNationalId,
+      state,
     }),
   }
 

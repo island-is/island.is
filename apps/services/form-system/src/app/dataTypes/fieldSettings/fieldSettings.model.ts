@@ -191,5 +191,10 @@ export class FieldSettings {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  zendeskCustomObjectKey?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   dataSourceUrl?: string
 }

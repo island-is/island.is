@@ -9,7 +9,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LoadingScreen } from '@island.is/react/components'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'

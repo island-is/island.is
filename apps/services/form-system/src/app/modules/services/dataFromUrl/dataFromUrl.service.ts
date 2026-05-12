@@ -79,7 +79,7 @@ export class DataFromUrlService {
       console.log('responseData:', responseData)
     } catch (error) {
       this.logger.error(`Error fetching data from URL ${url}: ${error}`)
-      return { isError: true }
+      // return { isError: true }
     }
 
     const response = new DataFromUrlResDto()
@@ -107,7 +107,7 @@ export class DataFromUrlService {
         },
         value: '',
         displayOrder: 0,
-        isSelected: true,
+        isSelected: false,
       },
       {
         id: '1',

@@ -1,4 +1,8 @@
-import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemLanguageType,
+  FormSystemListItem,
+} from '@island.is/api/schema'
 import { ListTypesEnum } from '@island.is/form-system/enums'
 import { Box, Text, Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -10,7 +14,7 @@ import { getCurrenciesList } from '../../../lib/lists/currencies.list'
 import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
 import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
 import { m } from '../../../lib/messages'
-import { Action } from '../../../lib/reducerTypes'
+import { Action, ApplicationState } from '../../../lib'
 import { DATA_FROM_URL, removeTypename } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 
@@ -22,6 +26,7 @@ interface Props {
   slug?: string
   isTest?: boolean
   orgNationalId?: string
+  state?: ApplicationState
 }
 
 type ListItem = {
@@ -55,6 +60,7 @@ export const List = ({
   slug,
   isTest,
   orgNationalId,
+  state,
 }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
@@ -62,33 +68,49 @@ export const List = ({
   const [urlList, setUrlList] = useState<(FormSystemListItem | null)[]>([])
   const [dataFromUrlHasError, setDataFromUrlHasError] = useState(false)
 
+  let listType = item.fieldSettings?.listType
+  if (!listType) {
+    listType = ListTypesEnum.CUSTOM
+  }
+
   const shouldFetch =
-    item.fieldSettings?.listType === ListTypesEnum.LIST_FROM_URL ||
-    item.fieldSettings?.listType === ListTypesEnum.ZENDESK_LIST
+    listType === ListTypesEnum.LIST_FROM_URL ||
+    listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+    listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
 
   const cached = (item.list?.length ?? 0) > 0
 
   const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
 
-  const handleFetchListFromUrl = async (): Promise<
-    (FormSystemListItem | null)[]
-  > => {
-    if (!shouldFetch || !slug) return []
+  const handleFetchListFromUrl = async (): Promise<{
+    list: (FormSystemListItem | null)[]
+    placeholderFromUrl: FormSystemLanguageType | null
+  }> => {
+    if (!shouldFetch || !slug) return { list: [], placeholderFromUrl: null }
 
-    const { data } = await dataFromUrl({
-      variables: {
-        input: {
-          slug,
-          isTest: Boolean(isTest),
-          fieldId: item.id,
-          orgNationalId,
+    try {
+      const { data } = await dataFromUrl({
+        variables: {
+          input: {
+            slug,
+            isTest: Boolean(isTest),
+            fieldId: item.id,
+            orgNationalId,
+          },
         },
-      },
-    })
+      })
 
-    setDataFromUrlHasError(Boolean(data?.formSystemDataFromUrl?.isError))
+      const placeholderFromUrl =
+        data?.formSystemDataFromUrl?.placeholder ?? null
+      const list: (FormSystemListItem | null)[] =
+        data?.formSystemDataFromUrl?.list ?? []
+      setDataFromUrlHasError(Boolean(data?.formSystemDataFromUrl?.isError))
 
-    return data?.formSystemDataFromUrl?.list ?? []
+      return { list, placeholderFromUrl }
+    } catch (e) {
+      setDataFromUrlHasError(true)
+      return { list: [], placeholderFromUrl: null }
+    }
   }
 
   useEffect(() => {
@@ -107,20 +129,21 @@ export const List = ({
     setIsLoading(true)
     ;(async () => {
       try {
-        const list = await handleFetchListFromUrl()
+        const { list, placeholderFromUrl } = await handleFetchListFromUrl()
 
+        console.log('placeholderFromUrl after fetch:', placeholderFromUrl)
         dispatch?.({
           type: 'SET_FIELD_LIST',
           payload: {
             id: item.id,
             list: removeTypename(list),
+            placeholder: removeTypename(placeholderFromUrl),
           },
         })
 
         if (!cancelled) setUrlList(list)
       } catch (e) {
         if (!cancelled) setUrlList([])
-        console.error('Error fetching data from url:', e)
       } finally {
         if (!cancelled) setIsLoading(false)
       }
@@ -159,7 +182,7 @@ export const List = ({
   }
 
   const listByType = () => {
-    switch (item.fieldSettings?.listType) {
+    switch (listType) {
       case ListTypesEnum.COUNTRIES:
         return countriesAsListItems()
       case ListTypesEnum.MUNICIPALITIES:
@@ -189,8 +212,8 @@ export const List = ({
           payload: {
             id: item.id,
             value: {
-              label: selected.label,
-              value: selected.value,
+              label: removeTypename(selected.label),
+              value: removeTypename(selected.value),
             },
             valueIndex,
           },
@@ -204,10 +227,16 @@ export const List = ({
     if (shouldFetch) trigger(item.id)
   }, [isLoading, shouldFetch, trigger, item.id])
 
-  const placeholder = item.fieldSettings?.listType
-    ? listTypePlaceholder[item.fieldSettings.listType]?.[lang] ??
-      formatMessage(m.select)
-    : formatMessage(m.select)
+  const externalPlaceholder = state?.externalListPlaceholders?.find(
+    (p) => p.fieldId === item.id,
+  )?.placeholder
+
+  if (externalPlaceholder?.[lang]) console.log('halllllló')
+
+  const placeholder =
+    externalPlaceholder?.[lang] ||
+    listTypePlaceholder[listType]?.[lang] ||
+    formatMessage(m.select)
 
   return (
     <Controller

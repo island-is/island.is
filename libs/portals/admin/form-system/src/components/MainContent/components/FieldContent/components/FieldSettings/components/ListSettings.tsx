@@ -35,13 +35,20 @@ export const ListSettings = () => {
 
   const predeterminedLists = [
     { label: 'Landalisti', value: ListTypesEnum.COUNTRIES },
-    { label: 'Zendesk listi', value: ListTypesEnum.ZENDESK_LIST },
-    ...(form?.submissionServiceUrl !== 'zendesk'
-      ? [{ label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL }]
-      : []),
     { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
     { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
     { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
+    ...(form?.submissionServiceUrl !== 'zendesk'
+      ? [{ label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL }]
+      : []),
+    {
+      label: 'Zendesk forhlaðinn listi',
+      value: ListTypesEnum.ZENDESK_FIELD_OPTIONS,
+    },
+    {
+      label: 'Zendesk sérsniðinn hlutur',
+      value: ListTypesEnum.ZENDESK_CUSTOM_OBJECT,
+    },
   ]
 
   const selectedPredetermined =
@@ -118,7 +125,7 @@ export const ListSettings = () => {
               />
             </Column>
             {currentItem.fieldSettings?.listType ===
-              ListTypesEnum.ZENDESK_LIST && (
+              ListTypesEnum.ZENDESK_FIELD_OPTIONS && (
               <Column span="5/10">
                 <Input
                   label="Zendesk ticket field ID"
@@ -136,6 +143,34 @@ export const ListSettings = () => {
                       type: 'SET_ANY_FIELD_SETTING',
                       payload: {
                         property: 'zendeskTicketFieldId',
+                        value: e.target.value,
+                      },
+                    })
+                  }
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                />
+              </Column>
+            )}
+            {currentItem.fieldSettings?.listType ===
+              ListTypesEnum.ZENDESK_CUSTOM_OBJECT && (
+              <Column span="5/10">
+                <Input
+                  label="Zendesk custom object key"
+                  name="zendeskCustomObjectKey"
+                  type="text"
+                  value={
+                    currentItem.fieldSettings?.zendeskCustomObjectKey
+                      ? String(currentItem.fieldSettings.zendeskCustomObjectKey)
+                      : ''
+                  }
+                  backgroundColor="blue"
+                  readOnly={isReadOnly}
+                  onChange={(e) =>
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property: 'zendeskCustomObjectKey',
                         value: e.target.value,
                       },
                     })
