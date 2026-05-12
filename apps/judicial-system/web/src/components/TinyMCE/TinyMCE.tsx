@@ -220,11 +220,13 @@ const TinyMCE = ({
                 variants={itemVariants}
                 onMouseDown={(e) => {
                   e.preventDefault()
-                  editorRef.current?.execCommand(
-                    'HiliteColor',
-                    false,
-                    'transparent',
-                  )
+                  if (selectedColor) {
+                    editorRef.current?.execCommand(
+                      'HiliteColor',
+                      false,
+                      selectedColor,
+                    )
+                  }
                   setSelectedColor(null)
                   setPickerOpen(false)
                 }}
