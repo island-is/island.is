@@ -1,5 +1,6 @@
-import { globalStyle, style, type StyleRule } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const container = style({
   top: theme.headerHeight.small,
@@ -16,7 +17,7 @@ export const container = style({
   }),
 })
 
-const dropdownBase: StyleRule = {
+const dropdownBase: StyleWithSelectors = {
   position: 'fixed',
   right: spacing[0],
   left: spacing[0],
@@ -25,7 +26,7 @@ const dropdownBase: StyleRule = {
   height: '100vh',
 }
 
-const dropdownBaseMD: StyleRule = {
+const dropdownBaseMD: StyleWithSelectors = {
   top: spacing[3],
   width: 358,
   borderRadius: theme.border.radius.large,

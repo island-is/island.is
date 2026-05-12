@@ -4,8 +4,8 @@ import {
   keyframes,
   style,
   styleVariants,
-  type StyleRule,
 } from '@vanilla-extract/css'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const wrapperAnimation = keyframes({
@@ -55,7 +55,7 @@ export const itemBlock = style({
   transition: 'border-color 200ms',
 })
 
-const iconBase: StyleRule = {
+const iconBase: StyleWithSelectors = {
   width: 30,
   display: 'flex',
   alignItems: 'center',
@@ -102,7 +102,7 @@ export const container = style({
   }),
 })
 
-const dropdownBase: StyleRule = {
+const dropdownBase: StyleWithSelectors = {
   position: 'fixed',
   right: spacing[0],
   left: spacing[0],
@@ -111,7 +111,7 @@ const dropdownBase: StyleRule = {
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
 }
 
-const dropdownBaseMD: StyleRule = {
+const dropdownBaseMD: StyleWithSelectors = {
   top: spacing[3],
   width: 448,
   borderRadius: theme.border.radius.large,

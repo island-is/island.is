@@ -1,5 +1,6 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { globalStyle, style, type StyleRule } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const modalBase = style({
   width: '100%',
@@ -10,7 +11,7 @@ export const modalBase = style({
   zIndex: 100,
 })
 
-const modalHeaderSidesBase: StyleRule = {
+const modalHeaderSidesBase: StyleWithSelectors = {
   content: '""',
   position: 'absolute',
   top: -1,
