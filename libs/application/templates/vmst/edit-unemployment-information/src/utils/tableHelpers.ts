@@ -8,15 +8,10 @@ import {
   findDegreeLabel,
   findCourseLabel,
 } from './educationInformation'
-import {
-  getDefaultDrivingLicenses,
-  getDefaultEducation,
-  getDefaultLanguages,
-  getDefaultEures,
-} from './defaultValues'
+import { getDefaultEducation, getDefaultLanguages } from './defaultValues'
 
 export const getEducationStaticTableData = (application: Application) => {
-  const defaults = getDefaultEducation(application.externalData)
+  const defaults = getDefaultEducation(application)
   const levels = getLevelsOfStudyOptions(application, 'is' as Locale)
   return defaults.map((edu) => ({
     levelOfStudy:
@@ -47,13 +42,8 @@ export const formatLevelOfStudy = (
   return opts.find((o) => o.value === value)?.label ?? value
 }
 
-export const getDefaultHasDrivingLicense = (application: Application) => {
-  const defaults = getDefaultDrivingLicenses(application.externalData)
-  return defaults.length > 0 ? ['yes'] : []
-}
-
 export const getLanguageStaticTableData = (application: Application) => {
-  const defaults = getDefaultLanguages(application.externalData)
+  const defaults = getDefaultLanguages(application)
   const langs = getLanguageOptions(application.externalData, 'is' as Locale)
   const abilities = getLanguageAbilityOptions(
     application.externalData,
@@ -106,9 +96,3 @@ export const formatCourseOfStudy = (
   if (!application) return value
   return findCourseLabel(application, value)
 }
-
-export const getDefaultDrivingLicenseTypes = (application: Application) =>
-  getDefaultDrivingLicenses(application.externalData)
-
-export const getDefaultEuresValue = (application: Application) =>
-  getDefaultEures(application.externalData)

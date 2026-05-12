@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSubmitField,
@@ -44,13 +43,23 @@ import {
   formatLevelOfStudy,
   formatDegree,
   formatCourseOfStudy,
-  getDefaultHasDrivingLicense,
-  getDefaultDrivingLicenseTypes,
-  getDefaultEuresValue,
   getLanguageStaticTableData,
   formatLanguage,
   formatLanguageSkill,
 } from '../../utils/tableHelpers'
+import {
+  getOtherAddressDefault,
+  getCurrentAddressIsNotDifferentDefault,
+  getOtherPostcodeDefault,
+  getPasswordDefault,
+  getBankAccountDefault,
+  getDefaultJobWishes,
+  getDefaultHeavyMachineryLicenses,
+  getDefaultEures,
+  getDefaultHasDrivingLicense,
+  getDefaultDrivingLicenses,
+  getDefaultHasHeavyMachineryLicense,
+} from '../../utils/defaultValues'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -83,12 +92,14 @@ export const MainForm = buildForm({
                       label: m.application.addressIsSameAsNationalRegistry,
                     },
                   ],
+                  defaultValue: getCurrentAddressIsNotDifferentDefault,
                 }),
                 buildTextField({
                   condition: showOtherAddress,
                   id: 'otherAddress.otherAddress',
                   title: m.application.addressLabel,
                   width: 'half',
+                  defaultValue: getOtherAddressDefault,
                 }),
                 buildSelectField({
                   condition: showOtherAddress,
@@ -98,6 +109,7 @@ export const MainForm = buildForm({
                   options: (application) => {
                     return getPostcodeOptions(application.externalData)
                   },
+                  defaultValue: getOtherPostcodeDefault,
                 }),
               ],
             },
@@ -108,6 +120,7 @@ export const MainForm = buildForm({
                   id: 'password',
                   title: m.application.passwordLabel,
                   description: m.application.passwordDescription,
+                  defaultValue: getPasswordDefault,
                 }),
               ],
             },
@@ -116,6 +129,7 @@ export const MainForm = buildForm({
               children: [
                 buildBankAccountField({
                   id: 'bankAccount',
+                  defaultValue: getBankAccountDefault,
                 }),
               ],
             },
@@ -130,6 +144,7 @@ export const MainForm = buildForm({
                     return getJobCodeOptions(application.externalData, locale)
                   },
                   isMulti: true,
+                  defaultValue: getDefaultJobWishes,
                 }),
               ],
             },
@@ -228,7 +243,7 @@ export const MainForm = buildForm({
                   condition: showDrivingLicenseTypes,
                   options: (application) =>
                     getDrivingLicenseOptions(application.externalData),
-                  defaultValue: getDefaultDrivingLicenseTypes,
+                  defaultValue: getDefaultDrivingLicenses,
                   large: true,
                 }),
                 buildCheckboxField({
@@ -241,13 +256,16 @@ export const MainForm = buildForm({
                       label: m.application.workMachineCheckbox,
                     },
                   ],
+                  defaultValue: getDefaultHasHeavyMachineryLicense,
                 }),
                 buildSelectField({
                   condition: showHeavyMachineryLicenseTypes,
                   id: 'licenses.heavyMachineryLicensesTypes',
                   title: m.application.workMachineTitle,
+                  isMulti: true,
                   options: (application, _field, locale) =>
                     getHeavyMachineryOptions(application.externalData, locale),
+                  defaultValue: getDefaultHeavyMachineryLicenses,
                 }),
               ],
             },
@@ -309,7 +327,7 @@ export const MainForm = buildForm({
                     { value: YES, label: coreMessages.radioYes },
                     { value: NO, label: coreMessages.radioNo },
                   ],
-                  defaultValue: getDefaultEuresValue,
+                  defaultValue: getDefaultEures,
                 }),
                 buildAlertMessageField({
                   id: 'eures.alertMessage',
