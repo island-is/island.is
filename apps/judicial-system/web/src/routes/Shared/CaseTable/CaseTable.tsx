@@ -196,12 +196,7 @@ const CaseTable: FC = () => {
         case CaseActionType.OPEN_APPEAL_CASE:
           return {
             onClick: () =>
-              handleOpenCase(
-                r.caseId,
-                false,
-                r.defendantIds,
-                r.appealCaseId,
-              ),
+              handleOpenCase(r.caseId, false, r.defendantIds, r.appealCaseId),
             isDisabled:
               isOpeningCaseId === r.caseId &&
               compareArrays(isOpeningDefendantIds, r.defendantIds) &&
