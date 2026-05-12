@@ -197,8 +197,10 @@ const RentalAgreementTemplate: ApplicationTemplate<
               .join(', ')
             const args: Array<{ key: string; value: string }> = []
             if (address) args.push({ key: 'address', value: address })
-            if (landlordNames) args.push({ key: 'landlordNames', value: landlordNames })
-            if (tenantNames) args.push({ key: 'tenantNames', value: tenantNames })
+            if (landlordNames)
+              args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames)
+              args.push({ key: 'tenantNames', value: tenantNames })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
@@ -289,8 +291,10 @@ const RentalAgreementTemplate: ApplicationTemplate<
               .join(', ')
             const args: Array<{ key: string; value: string }> = []
             if (address) args.push({ key: 'address', value: address })
-            if (landlordNames) args.push({ key: 'landlordNames', value: landlordNames })
-            if (tenantNames) args.push({ key: 'tenantNames', value: tenantNames })
+            if (landlordNames)
+              args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames)
+              args.push({ key: 'tenantNames', value: tenantNames })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
