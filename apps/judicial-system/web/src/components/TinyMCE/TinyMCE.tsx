@@ -113,6 +113,7 @@ const TinyMCE = ({
       <div
         className={[
           styles.wrapper,
+          disabled && styles.wrapperDisabled,
           errorMessage && styles.wrapperError,
           focused && styles.wrapperFocused,
         ]
@@ -122,7 +123,7 @@ const TinyMCE = ({
         <label
           className={`${styles.label}${
             errorMessage ? ` ${styles.labelError}` : ''
-          }`}
+          }${disabled ? ` ${styles.labelDisabled}` : ''}`}
           htmlFor={editorId}
         >
           {`${label} `}

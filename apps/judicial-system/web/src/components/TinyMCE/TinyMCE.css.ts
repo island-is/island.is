@@ -23,6 +23,10 @@ export const labelError = style({
   color: theme.color.red600,
 })
 
+export const labelDisabled = style({
+  color: theme.color.blue300,
+})
+
 export const wrapper = style({
   position: 'relative',
   borderRadius: 8,
@@ -42,6 +46,14 @@ export const wrapper = style({
   selectors: {
     '&:hover::before': {
       boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
+    },
+  },
+})
+
+export const wrapperDisabled = style({
+  selectors: {
+    '&:hover::before': {
+      boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
     },
   },
 })
@@ -120,6 +132,24 @@ globalStyle(
     color: theme.color.blue400,
   },
 )
+
+globalStyle(`${wrapper} .tox-tinymce--disabled .tox-toolbar-overlord`, {
+  display: 'none',
+})
+
+globalStyle(`${wrapper} .tox-tinymce--disabled .tox-edit-area`, {
+  position: 'relative',
+})
+
+globalStyle(`${wrapper} .tox-tinymce--disabled .tox-edit-area::after`, {
+  content: '""',
+  position: 'absolute',
+  inset: 0,
+  backgroundColor: theme.color.blue100,
+  opacity: 0.35,
+  pointerEvents: 'none',
+  zIndex: 1,
+})
 
 globalStyle(`${wrapper} .tox .tox-tbtn:active`, {
   background: theme.color.blue200,
